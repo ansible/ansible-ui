@@ -117,49 +117,91 @@ export function PageFormDataEditor<
 
   const [originalYamlWithComments, setOriginalYamlWithComments] = useState<string | null>(null);
 
+  // Tracks the most recent client-side parse error so the Controller's
+  // validate rule can block form submission when the editor shows invalid
+  // content.  setError() alone does not prevent handleSubmit() — it clears
+  // manual errors before re-running registered rules, so without this ref
+  // the form would silently submit with the previous valid value while the
+  // editor still shows (and the user believes they saved) invalid content.
+  const parseErrorRef = useRef<string | undefined>(undefined);
+
   const getDisplayValue = useCallback(
     (formValue: string | object, targetLanguage: DataEditorLanguages): string => {
-      if (originalYamlWithComments) {
-        if (targetLanguage === 'yaml') {
-          return originalYamlWithComments;
-        } else if (targetLanguage === 'json') {
-          try {
-            return objectToString(valueToObject(originalYamlWithComments, isArray), 'json');
-          } catch {
-            return objectToString(valueToObject(formValue, isArray), targetLanguage);
-          }
-        }
+      if (originalYamlWithComments && targetLanguage === 'yaml') {
+        return originalYamlWithComments;
       }
-
-      return objectToString(valueToObject(formValue, isArray), targetLanguage);
+      if (originalYamlWithComments && targetLanguage === 'json') {
+        return formatEditorDisplayValue(originalYamlWithComments, 'json', isArray);
+      }
+      return formatEditorDisplayValue(formValue, targetLanguage, isArray);
     },
     [originalYamlWithComments, isArray]
+  );
+
+  const syncParseErrorFromFormValue = useCallback(
+    (formValue: string | object | undefined | null) => {
+      const message = getValueToObjectParseError(formValue, isArray);
+      if (message) {
+        parseErrorRef.current = message;
+        setError(name, { message });
+      }
+    },
+    [isArray, name, setError]
   );
 
   const alertToaster = usePageAlertToaster();
   const { writeToClipboard } = useClipboard();
 
-  const handleCopy = useCallback(
-    () => writeToClipboard(objectToString(valueToObject(getValues(name), isArray), language)),
-    [getValues, isArray, language, name, writeToClipboard]
-  );
+  const handleCopy = useCallback(() => {
+    const formValue = getValues(name);
+    const parseError = getValueToObjectParseError(formValue, isArray);
+    if (parseError) {
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Cannot copy invalid content'),
+        timeout: true,
+      });
+      return;
+    }
+    writeToClipboard(objectToString(valueToObject(formValue, isArray), language));
+  }, [alertToaster, getValues, isArray, language, name, t, writeToClipboard]);
 
   const onDrop = useCallback(
     (contents: string) => {
-      setDataEditorValue(objectToString(valueToObject(contents, isArray), language));
+      const parseError = getValueToObjectParseError(contents, isArray);
+      if (parseError) {
+        parseErrorRef.current = parseError;
+        setError(name, { message: parseError });
+        setDataEditorValue(contents);
+        alertToaster.addAlert({ variant: 'danger', title: parseError, timeout: true });
+        return;
+      }
+      clearErrors(name);
+      parseErrorRef.current = undefined;
+      setDataEditorValue(formatEditorDisplayValue(contents, language, isArray));
     },
-    [isArray, language]
+    [alertToaster, clearErrors, isArray, language, name, setError]
   );
 
   const dropZoneInputRef = useRef<HTMLInputElement>(null);
   const handleUpload = useCallback(() => dropZoneInputRef.current?.click(), []);
 
   const handleDownload = useCallback(() => {
+    const formValue = getValues(name);
+    const parseError = getValueToObjectParseError(formValue, isArray);
+    if (parseError) {
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Cannot download invalid content'),
+        timeout: true,
+      });
+      return;
+    }
     const fileName = name || 'data';
     const extension = language === 'json' ? 'json' : 'yaml';
     downloadTextFile(
       fileName,
-      objectToString(valueToObject(getValues(name), isArray), language),
+      objectToString(valueToObject(formValue, isArray), language),
       extension
     );
     alertToaster.addAlert({ variant: 'success', title: t('File downloaded'), timeout: true });
@@ -174,7 +216,16 @@ export function PageFormDataEditor<
 
     const value = getDisplayValue(formValue, language);
     setDataEditorValue(value);
-  }, [getValues, isArray, language, name, getDisplayValue, originalYamlWithComments]);
+    syncParseErrorFromFormValue(formValue);
+  }, [
+    getValues,
+    isArray,
+    language,
+    name,
+    getDisplayValue,
+    originalYamlWithComments,
+    syncParseErrorFromFormValue,
+  ]);
 
   const [hasFocus, setHasFocus] = useState(false);
 
@@ -192,7 +243,16 @@ export function PageFormDataEditor<
 
     const value = getDisplayValue(watchValue, language);
     setDataEditorValue(value);
-  }, [hasFocus, watchValue, isArray, language, getDisplayValue, originalYamlWithComments]);
+    syncParseErrorFromFormValue(watchValue);
+  }, [
+    hasFocus,
+    watchValue,
+    isArray,
+    language,
+    getDisplayValue,
+    originalYamlWithComments,
+    syncParseErrorFromFormValue,
+  ]);
 
   const {
     setValue,
@@ -200,14 +260,6 @@ export function PageFormDataEditor<
   } = useFormContext<TFieldValues>();
 
   const required = useRequiredValidationRule(props.label, props.isRequired);
-
-  // Tracks the most recent client-side parse error so the Controller's
-  // validate rule can block form submission when the editor shows invalid
-  // content.  setError() alone does not prevent handleSubmit() — it clears
-  // manual errors before re-running registered rules, so without this ref
-  // the form would silently submit with the previous valid value while the
-  // editor still shows (and the user believes they saved) invalid content.
-  const parseErrorRef = useRef<string | undefined>(undefined);
 
   const undoValue = getValue(defaultValues as object, props.name) as PathValue<
     TFieldValues,
@@ -339,8 +391,9 @@ export function PageFormDataEditor<
                         setDataEditorValue('');
                         setTimeout(() => {
                           setDataEditorValue(
-                            objectToString(valueToObject(undoValue, isArray), language)
+                            formatEditorDisplayValue(undoValue, language, isArray)
                           );
+                          syncParseErrorFromFormValue(undoValue);
                         }, 0);
                       },
                       isHidden: () => !props.enableUndo || isDeepEqual(value, undoValue),
@@ -360,8 +413,9 @@ export function PageFormDataEditor<
                         setDataEditorValue('');
                         setTimeout(() => {
                           setDataEditorValue(
-                            objectToString(valueToObject(props.defaultValue, isArray), language)
+                            formatEditorDisplayValue(props.defaultValue, language, isArray)
                           );
+                          syncParseErrorFromFormValue(props.defaultValue);
                         }, 0);
                       },
                       isHidden: () => !props.enableReset || isDeepEqual(value, props.defaultValue),
@@ -393,8 +447,8 @@ export function PageFormDataEditor<
 
           if (!props.validate) return { parseFormat } as ValidateRecord;
           if (typeof props.validate === 'function')
-            return { parseFormat, custom: props.validate } as ValidateRecord;
-          return { parseFormat, ...props.validate } as ValidateRecord;
+            return { custom: props.validate, parseFormat } as ValidateRecord;
+          return { ...props.validate, parseFormat } as ValidateRecord;
         })(),
       }}
     />
@@ -538,6 +592,44 @@ function hasYamlComments(yamlString: string): boolean {
   });
 }
 
+/** Display-only formatting: never throw; show raw string when parse fails. */
+export function formatEditorDisplayValue(
+  value: string | object | undefined | null,
+  language: DataEditorLanguages,
+  isArray?: boolean
+): string {
+  if (value === undefined || value === null) {
+    return '';
+  }
+  try {
+    return objectToString(valueToObject(value, isArray), language);
+  } catch {
+    if (typeof value === 'string') {
+      return value;
+    }
+    try {
+      return objectToString(value, language);
+    } catch {
+      return '';
+    }
+  }
+}
+
+export function getValueToObjectParseError(
+  value: string | object | undefined | null,
+  isArray?: boolean
+): string | undefined {
+  if (value === undefined || value === null || value === '') {
+    return undefined;
+  }
+  try {
+    valueToObject(value, isArray);
+    return undefined;
+  } catch (err) {
+    return err instanceof Error ? err.message : 'Failed to parse value as JSON or YAML';
+  }
+}
+
 export function valueToObject(
   value: string | object | undefined | null,
   isArray?: boolean
@@ -567,7 +659,7 @@ export function valueToObject(
         const parsed = safeLoad(rawString);
         // Whitespace-only strings (e.g. a lone space while typing in JSON mode) load as
         // `undefined` but must not commit as empty extra_vars and wipe saved content.
-        if (parsed === undefined && rawString !== '') {
+        if ((parsed === undefined || parsed === null) && rawString.length > 0) {
           throw new YAMLException('invalid or incomplete YAML/JSON content');
         }
         value = parsed as object;

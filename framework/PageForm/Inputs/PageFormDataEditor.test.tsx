@@ -5,7 +5,13 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
 import jsyaml from 'js-yaml';
 import * as yamlSchema from '../../utils/yamlSchema';
-import { PageFormDataEditor, valueToObject, objectToString } from './PageFormDataEditor';
+import {
+  PageFormDataEditor,
+  valueToObject,
+  objectToString,
+  formatEditorDisplayValue,
+  getValueToObjectParseError,
+} from './PageFormDataEditor';
 
 beforeEach(() => {
   vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
@@ -113,6 +119,11 @@ variable2: value2`;
         expect(() => valueToObject('  ')).toThrow();
       });
 
+      test('throws when YAML loads non-empty input as null (e.g. --- or tab)', () => {
+        expect(() => valueToObject('---')).toThrow();
+        expect(() => valueToObject('\t')).toThrow();
+      });
+
       test('rethrows YAMLException from safeLoad when JSON parsing fails', () => {
         vi.spyOn(yamlSchema, 'safeLoad').mockImplementation(() => {
           throw new jsyaml.YAMLException('mock-yaml-load-failure');
@@ -121,6 +132,20 @@ variable2: value2`;
         expect(() => valueToObject('not-json')).toThrow('mock-yaml-load-failure');
 
         vi.restoreAllMocks();
+      });
+    });
+
+    describe('formatEditorDisplayValue', () => {
+      test('returns raw string when value cannot be parsed', () => {
+        const stdout = 'Installed: pkg1\nInstalled: pkg2';
+        expect(formatEditorDisplayValue(stdout, 'yaml', false)).toBe(stdout);
+      });
+
+      test('getValueToObjectParseError returns message for invalid input', () => {
+        expect(getValueToObjectParseError('  ---\n  a: b', false)).toMatch(
+          /document separator|end of the stream/i
+        );
+        expect(getValueToObjectParseError('abc: 1', false)).toBeUndefined();
       });
     });
   });
@@ -461,6 +486,20 @@ debug_mode: true         # Enable debugging`;
   // re-render.  This prevents userEvent.type from accumulating multi-character
   // text, making fireEvent.change the only reliable way to fire the onChange
   // callback with the full invalid string in one shot.
+  test('should show parse error when mounted with invalid preloaded extra vars (AAP-93178)', async () => {
+    render(
+      <TestWrapper defaultValue={{ vars: '  ---\n  a: b' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
+  });
+
   test('should display an inline parse error when invalid YAML is entered (AAP-93178)', async () => {
     render(
       <TestWrapper defaultValue={{ vars: '' }} onSubmit={vi.fn()}>

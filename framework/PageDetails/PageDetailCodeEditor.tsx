@@ -10,22 +10,17 @@ import React, { ReactNode, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { usePageSettings } from '..';
-import { objectToString, valueToObject } from '../PageForm/Inputs/PageFormDataEditor';
+import { formatEditorDisplayValue } from '../PageForm/Inputs/PageFormDataEditor';
 import { DataEditorLanguages } from '../components/DataEditor';
 import { useClipboard } from '../hooks/useClipboard';
 import { PageDetail } from './PageDetail';
 
-/** Read-only display: keep original text when value is not structured YAML/JSON (e.g. job stdout). */
 export function formatDetailCodeEditorValue(
   value: string,
   language: DataEditorLanguages,
   isArray: boolean
 ): string {
-  try {
-    return objectToString(valueToObject(value, isArray), language);
-  } catch {
-    return value;
-  }
+  return formatEditorDisplayValue(value, language, isArray);
 }
 
 export function PageDetailCodeEditor(props: {
@@ -64,7 +59,7 @@ export function PageDetailCodeEditor(props: {
 
   useLayoutEffect(() => {
     if (toggleLanguage) {
-      setCodeEditorValue(formatDetailCodeEditorValue(value, language, isArray));
+      setCodeEditorValue(formatEditorDisplayValue(value, language, isArray));
     }
   }, [language, toggleLanguage, value, isArray]);
 
