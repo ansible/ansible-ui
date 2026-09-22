@@ -103,12 +103,12 @@ const CREDENTIAL_TYPE_WITHOUT_PATTERN = {
   ],
 };
 
-test.beforeEach(setupBefore({ path: '/execution/infrastructure/credentials/create' }));
 test.afterEach(setupAfter);
 
 test.describe('Credentials - JSON Sub-Key Pattern Validation', () => {
   test('should show validation error when input violates pattern', async ({ page }) => {
     // Mock credential types API to return type with pattern fields
+    // Register mock BEFORE navigation so it intercepts the initial fetch
     await page.route('**/api/controller/v2/credential_types/*', async (route) => {
       await route.fulfill({
         status: 200,
@@ -117,11 +117,13 @@ test.describe('Credentials - JSON Sub-Key Pattern Validation', () => {
       });
     });
 
+    await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
+
     // Fill in required top-level fields
     await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
 
     // Select the credential type
-    await page.getByTestId('credential_type').click();
+    await page.getByTestId('credential-type').click();
     await page.getByRole('option', { name: 'Custom Cloud' }).click();
 
     // Wait for sub-form to render
@@ -142,6 +144,7 @@ test.describe('Credentials - JSON Sub-Key Pattern Validation', () => {
   });
 
   test('should not show validation error when input matches pattern', async ({ page }) => {
+    // Register mock BEFORE navigation so it intercepts the initial fetch
     await page.route('**/api/controller/v2/credential_types/*', async (route) => {
       await route.fulfill({
         status: 200,
@@ -150,8 +153,10 @@ test.describe('Credentials - JSON Sub-Key Pattern Validation', () => {
       });
     });
 
+    await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
+
     await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
-    await page.getByTestId('credential_type').click();
+    await page.getByTestId('credential-type').click();
     await page.getByRole('option', { name: 'Custom Cloud' }).click();
 
     await expect(page.getByRole('textbox', { name: 'API Endpoint' })).toBeVisible({
@@ -174,6 +179,7 @@ test.describe('Credentials - JSON Sub-Key Pattern Validation', () => {
     page,
   }) => {
     // Mock credential types API WITHOUT pattern fields (toggle off)
+    // Register mock BEFORE navigation so it intercepts the initial fetch
     await page.route('**/api/controller/v2/credential_types/*', async (route) => {
       await route.fulfill({
         status: 200,
@@ -182,8 +188,10 @@ test.describe('Credentials - JSON Sub-Key Pattern Validation', () => {
       });
     });
 
+    await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
+
     await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
-    await page.getByTestId('credential_type').click();
+    await page.getByTestId('credential-type').click();
     await page.getByRole('option', { name: 'Custom Cloud' }).click();
 
     await expect(page.getByRole('textbox', { name: 'API Endpoint' })).toBeVisible({
