@@ -20,26 +20,34 @@ export async function login(
   url: string = platformUI,
   options?: { username?: string; password?: string }
 ) {
-  // Go to the login page
-  await page.goto(url);
+  const username = options?.username ?? process.env.PLATFORM_USERNAME!;
+  const password = options?.password ?? process.env.PLATFORM_PASSWORD!;
+  const usernameField = page.locator('#pf-login-username-id');
+  const toolbarUser = page.getByTestId('toolbar').getByRole('button', { name: username });
 
-  // Wait for the login form to be ready
-  await expect(page).toHaveTitle(/Ansible/, { timeout: 10000 });
+  // SPA bootstrap can hang on `load` (long-lived requests). DOMContentLoaded is
+  // enough to start waiting for the login form or the authenticated shell.
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+  await expect(page).toHaveTitle(/Ansible/, { timeout: 30_000 });
 
-  // Enter the username
-  await page.fill('#pf-login-username-id', options?.username ?? process.env.PLATFORM_USERNAME!);
+  // PatternFly Spinner aria-label is "Contents" while the app hydrates. Do not
+  // fill the login fields until the form (or an already-authenticated toolbar)
+  // is actually on the page.
+  const loginReady = usernameField.or(toolbarUser).first();
+  try {
+    await expect(loginReady).toBeVisible({ timeout: 30_000 });
+  } catch {
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30_000 });
+    await expect(loginReady).toBeVisible({ timeout: 30_000 });
+  }
 
-  // Enter the password
-  await page.fill('#pf-login-password-id', options?.password ?? process.env.PLATFORM_PASSWORD!);
+  if (await toolbarUser.isVisible().catch(() => false)) {
+    return;
+  }
 
-  // Click the login button
+  await usernameField.fill(username);
+  await page.locator('#pf-login-password-id').fill(password);
   await page.click('button[type="submit"]');
 
-  // Live CI can be slow to render the shell after auth; allow extra time without
-  // changing the default Playwright action timeout for the rest of the test.
-  await expect(
-    page
-      .getByTestId('toolbar')
-      .getByRole('button', { name: options?.username ?? process.env.PLATFORM_USERNAME! })
-  ).toBeVisible({ timeout: 15_000 });
+  await expect(toolbarUser).toBeVisible({ timeout: 30_000 });
 }

@@ -209,12 +209,15 @@ export const Role = {
 
       const createRoleResponse = page.waitForResponse(
         (response) =>
-          response.url().includes('/role_definitions/') &&
-          response.request().method() === 'POST' &&
-          response.status() === 201
+          response.url().includes('/role_definitions/') && response.request().method() === 'POST',
+        { timeout: 20_000 }
       );
       await page.getByRole('button', { name: 'Create role', exact: true }).click();
-      await createRoleResponse;
+      const response = await createRoleResponse;
+      if (response.status() !== 201) {
+        const body = await response.text().catch(() => '');
+        throw new Error(`Create role POST returned ${response.status()}: ${body.slice(0, 500)}`);
+      }
       await expect(page.getByRole('heading', { name: roleName, exact: true })).toBeVisible({
         timeout: 15_000,
       });
