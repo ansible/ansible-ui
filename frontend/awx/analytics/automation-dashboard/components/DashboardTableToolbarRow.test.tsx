@@ -144,7 +144,7 @@ describe('DashboardTableToolbarRow', () => {
     // true (is_superuser: false).  This proves the in-component guard — not
     // merely the disabled attribute — is what prevents the PUT.
     // Must dispatch change on a disabled input to prove the in-component guard blocks PUT.
-    // eslint-disable-next-line testing-library/prefer-user-event -- disabled inputs reject userEvent
+    // fireEvent.change is intentional: disabled inputs reject userEvent
     fireEvent.change(input, { target: { value: '75' } });
 
     // Wait beyond the debounce (600 ms) to let any scheduled PUT fire.
