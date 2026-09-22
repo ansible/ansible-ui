@@ -1,12 +1,14 @@
-import { PageDetail, PageDetails } from '@ansible/ansible-ui-framework';
+import { PageDetail, PageDetails, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { StatusCell } from '@ansible/common-ui/Status';
 import { Tab, TabTitleText, Tabs, Modal, ModalHeader, ModalBody } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 import { PageDetailCodeEditor } from '@ansible/ansible-ui-framework/PageDetails/PageDetailCodeEditor';
 import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
 import { useState } from 'react';
 import { JobEvent } from '../../../interfaces/JobEvent';
+import { AwxRoute } from '../../../main/AwxRoutes';
 
 const processCodeEditorValue = (value: JobEvent) => {
   let codeEditorValue;
@@ -45,6 +47,7 @@ export function HostEventModal(props: {
 }) {
   const { onClose, hostEvent, isOpen = false } = props;
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
   const [activeTabKey, setActiveTabKey] = useState<number>(0);
 
   const handleTabClick = (tabIndex: number) => {
@@ -79,7 +82,17 @@ export function HostEventModal(props: {
           >
             <PageDetails>
               <PageDetail isEmpty={!hostEvent.event_data?.host} label={t('Host')}>
-                {hostEvent?.event_data?.host}
+                {hostEvent?.host ? (
+                  <Link
+                    to={getPageUrl(AwxRoute.HostDetails, {
+                      params: { id: hostEvent.host },
+                    })}
+                  >
+                    {hostEvent?.event_data?.host}
+                  </Link>
+                ) : (
+                  hostEvent?.event_data?.host
+                )}
               </PageDetail>
               <PageDetail label={t('Status')}>
                 <StatusCell status={processEventStatus(hostEvent)} />
