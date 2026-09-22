@@ -44,7 +44,9 @@ describe('ConstructedInventoryHint', () => {
     render(<ConstructedInventoryHint />);
 
     await user.click(screen.getByRole('button', { name: /Info alert details/i }));
-    await user.click(screen.getByRole('button', { name: /Construct 2 groups, limit to intersection/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Construct 2 groups, limit to intersection/i })
+    );
     await user.click(screen.getAllByRole('button', { name: /Copy to clipboard/i })[0]);
 
     expect(writeText).toHaveBeenCalledWith(expect.stringContaining('plugin: constructed'));
