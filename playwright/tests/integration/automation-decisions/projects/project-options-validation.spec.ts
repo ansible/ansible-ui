@@ -43,7 +43,9 @@ test.describe('EDA project OPTIONS-driven validation (create form)', () => {
     async ({ page }, testInfo) => {
       const nameField = await requireEdaOptionsFieldPattern(page, 'projects/', 'name', testInfo);
 
+      const optionsResponse = waitForEdaOptionsResponse(page, 'projects/');
       await openEdaProjectCreateForm(page);
+      await optionsResponse;
 
       const nameInput = page.getByRole('textbox', { name: 'Name', exact: true });
       await assertValidInputNoPatternError(page, testInfo, nameField, {
