@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 import { PageForm } from './PageForm';
@@ -21,7 +21,7 @@ describe('PageForm', () => {
       await userEvent.type(input, 'test');
 
       // Simulate Enter key press
-      fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+      await userEvent.keyboard('{Enter}');
 
       // Form should not be submitted
       expect(onSubmit).not.toHaveBeenCalled();
