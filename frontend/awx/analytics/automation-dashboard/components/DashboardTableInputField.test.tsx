@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { DashboardTableInputField } from './DashboardTableInputField';
-import { render, waitFor, fireEvent, act } from '@testing-library/react';
+import { render, waitFor, act, fireEvent } from '@testing-library/react';
 
 function renderInputField(props = {}) {
   return render(
@@ -62,53 +62,62 @@ describe('DashboardTableInputField', () => {
 
   describe('onChange debounce', () => {
     beforeEach(() => {
-      vi.useFakeTimers();
+      vi.useFakeTimers({ shouldAdvanceTime: true });
     });
     afterEach(() => {
       vi.useRealTimers();
     });
 
     test('should call onChange with valid value after debounce delay', async () => {
+      const user = userEvent.setup();
       const onChange = vi.fn();
       const { container } = renderInputField({ value: 0, onChange });
       const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-      fireEvent.change(input, { target: { value: '50' } });
+      await user.clear(input);
+      await user.type(input, '50');
       await act(() => vi.advanceTimersByTime(600));
       expect(onChange).toHaveBeenCalledWith(50);
     });
 
     test('should not call onChange for empty input', async () => {
+      const user = userEvent.setup();
       const onChange = vi.fn();
       const { container } = renderInputField({ value: 5, onChange });
       const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-      fireEvent.change(input, { target: { value: '' } });
+      await user.clear(input);
       await act(() => vi.advanceTimersByTime(600));
       expect(onChange).not.toHaveBeenCalled();
     });
 
     test('should not call onChange for value above max', async () => {
+      const user = userEvent.setup();
       const onChange = vi.fn();
       const { container } = renderInputField({ value: 0, min: 0, max: 10, onChange });
       const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-      fireEvent.change(input, { target: { value: '555' } });
+      await user.clear(input);
+      await user.type(input, '555');
       await act(() => vi.advanceTimersByTime(600));
       expect(onChange).not.toHaveBeenCalled();
     });
 
     test('should not call onChange for value below min', async () => {
+      const user = userEvent.setup();
       const onChange = vi.fn();
       const { container } = renderInputField({ value: 50, min: 10, max: 100, onChange });
       const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-      fireEvent.change(input, { target: { value: '1' } });
+      await user.clear(input);
+      await user.type(input, '1');
       await act(() => vi.advanceTimersByTime(600));
       expect(onChange).not.toHaveBeenCalled();
     });
 
     test('should not call onChange for non-integer when type is integer', async () => {
+      const user = userEvent.setup();
       const onChange = vi.fn();
       const { container } = renderInputField({ value: 5, type: 'integer', onChange });
       const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-      fireEvent.change(input, { target: { value: '5.5' } });
+      await user.clear(input);
+      await user.type(input, '5.5');
       await act(() => vi.advanceTimersByTime(600));
       expect(onChange).not.toHaveBeenCalled();
     });

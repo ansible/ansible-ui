@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { HubError } from './HubError';
@@ -25,12 +26,12 @@ describe('HubError', () => {
     expect(refreshButton).toBeInTheDocument();
   });
 
-  it('should call handleRefresh when refresh button is clicked', () => {
+  it('should call handleRefresh when refresh button is clicked', async () => {
     const handleRefresh = vi.fn();
     render(<HubError handleRefresh={handleRefresh} />);
 
     const refreshButton = screen.getByRole('button', { name: 'Refresh' });
-    fireEvent.click(refreshButton);
+    await userEvent.click(refreshButton);
 
     expect(handleRefresh).toHaveBeenCalledTimes(1);
   });

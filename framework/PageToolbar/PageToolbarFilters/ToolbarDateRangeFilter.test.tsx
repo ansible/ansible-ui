@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { fireEvent, render, screen } from '@testing-library/react';
+import {render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -207,7 +207,7 @@ describe('ToolbarDateRangeFilter', () => {
     expect(screen.getByLabelText('End date')).toHaveValue('2024-03-10');
   });
 
-  it('should call setFilterValues with the start date when it is entered', () => {
+  it('should call setFilterValues with the start date when it is entered', async () => {
     const setFilterValues = vi.fn();
     render(
       <ToolbarDateRangeFilter
@@ -218,13 +218,14 @@ describe('ToolbarDateRangeFilter', () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '2024-01-01' } });
+    await userEvent.clear(screen.getByLabelText('Start date'));
+    await userEvent.type(screen.getByLabelText('Start date'), '2024-01-01');
 
     const setterFn = setFilterValues.mock.calls.at(-1)?.[0] as () => string[];
     expect(setterFn()).toEqual(['custom', '2024-01-01']);
   });
 
-  it('should call setFilterValues with both dates when the end date is entered after the start date', () => {
+  it('should call setFilterValues with both dates when the end date is entered after the start date', async () => {
     const setFilterValues = vi.fn();
     render(
       <ToolbarDateRangeFilter
@@ -235,13 +236,14 @@ describe('ToolbarDateRangeFilter', () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText('End date'), { target: { value: '2024-01-31' } });
+    await userEvent.clear(screen.getByLabelText('End date'));
+    await userEvent.type(screen.getByLabelText('End date'), '2024-01-31');
 
     const setterFn = setFilterValues.mock.calls.at(-1)?.[0] as () => string[];
     expect(setterFn()).toEqual(['custom', '2024-01-01', '2024-01-31']);
   });
 
-  it('should preserve the existing end date when the start date is changed', () => {
+  it('should preserve the existing end date when the start date is changed', async () => {
     const setFilterValues = vi.fn();
     render(
       <ToolbarDateRangeFilter
@@ -252,13 +254,14 @@ describe('ToolbarDateRangeFilter', () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '2024-01-05' } });
+    await userEvent.clear(screen.getByLabelText('Start date'));
+    await userEvent.type(screen.getByLabelText('Start date'), '2024-01-05');
 
     const setterFn = setFilterValues.mock.calls.at(-1)?.[0] as () => string[];
     expect(setterFn()).toEqual(['custom', '2024-01-05', '2024-01-31']);
   });
 
-  it('should drop the start date but keep the end date when the start date is cleared', () => {
+  it('should drop the start date but keep the end date when the start date is cleared', async () => {
     const setFilterValues = vi.fn();
     render(
       <ToolbarDateRangeFilter
@@ -269,13 +272,13 @@ describe('ToolbarDateRangeFilter', () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '' } });
+    await userEvent.clear(screen.getByLabelText('Start date'));
 
     const setterFn = setFilterValues.mock.calls.at(-1)?.[0] as () => string[];
     expect(setterFn()).toEqual(['custom', '', '2024-01-31']);
   });
 
-  it('should drop both dates when the start date is cleared and there was no end date', () => {
+  it('should drop both dates when the start date is cleared and there was no end date', async () => {
     const setFilterValues = vi.fn();
     render(
       <ToolbarDateRangeFilter
@@ -286,13 +289,13 @@ describe('ToolbarDateRangeFilter', () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '' } });
+    await userEvent.clear(screen.getByLabelText('Start date'));
 
     const setterFn = setFilterValues.mock.calls.at(-1)?.[0] as () => string[];
     expect(setterFn()).toEqual(['custom']);
   });
 
-  it('should make the end date field read-only but keep showing its value when the start date is cleared', () => {
+  it('should make the end date field read-only but keep showing its value when the start date is cleared', async () => {
     render(
       <StatefulToolbarDateRangeFilter
         placeholder="Select range"
@@ -301,7 +304,7 @@ describe('ToolbarDateRangeFilter', () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '' } });
+    await userEvent.clear(screen.getByLabelText('Start date'));
 
     expect(screen.getByLabelText('End date')).toHaveValue('2024-01-31');
     expect(screen.getByLabelText('End date')).toBeDisabled();
@@ -335,8 +338,10 @@ describe('ToolbarDateRangeFilter', () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '2024-01-01' } });
-    fireEvent.change(screen.getByLabelText('End date'), { target: { value: '2024-01-31' } });
+    await userEvent.clear(screen.getByLabelText('Start date'));
+    await userEvent.type(screen.getByLabelText('Start date'), '2024-01-01');
+    await userEvent.clear(screen.getByLabelText('End date'));
+    await userEvent.type(screen.getByLabelText('End date'), '2024-01-31');
     expect(screen.getByLabelText('Start date')).toHaveValue('2024-01-01');
     expect(screen.getByLabelText('End date')).toHaveValue('2024-01-31');
 
@@ -380,7 +385,8 @@ describe('ToolbarDateRangeFilter', () => {
       />
     );
 
-    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '2024-01-01' } });
+    await userEvent.clear(screen.getByLabelText('Start date'));
+    await userEvent.type(screen.getByLabelText('Start date'), '2024-01-01');
     expect(screen.getByLabelText('End date')).toHaveValue('');
 
     await user.click(screen.getByRole('button', { name: 'Custom' }));
