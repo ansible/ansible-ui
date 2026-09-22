@@ -137,7 +137,7 @@ describe('GatewaySettingsEdit Component', () => {
 
       const input = screen.getByLabelText('Gateway proxy url');
       await userEvent.clear(input);
-    await userEvent.type(input, 'https://new-gateway.example.com');
+      await userEvent.type(input, 'https://new-gateway.example.com');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
       await userEvent.click(submitButton);
@@ -291,7 +291,7 @@ describe('GatewaySettingsEdit Component', () => {
 
       const input = screen.getByLabelText('Gateway proxy url');
       await userEvent.clear(input);
-    await userEvent.type(input, 'https://new-gateway.example.com');
+      await userEvent.type(input, 'https://new-gateway.example.com');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
       await userEvent.click(submitButton);
