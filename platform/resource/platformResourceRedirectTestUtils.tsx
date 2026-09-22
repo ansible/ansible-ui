@@ -1,6 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import type { SetupServerApi } from 'msw/node';
+import { setupServer } from 'msw/node';
+
+type MswTestServer = ReturnType<typeof setupServer>;
 import { ComponentType, ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, test } from 'vitest';
@@ -20,7 +22,7 @@ function matchesApiPath(request: Request, apiPathIncludes: string) {
 }
 
 export function registerPlatformResourceRedirectTests(
-  server: SetupServerApi,
+  server: MswTestServer,
   config: PlatformResourceRedirectTestConfig
 ) {
   function wrapper({ children }: { children: ReactNode }) {
