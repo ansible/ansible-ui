@@ -203,7 +203,7 @@ describe('EventStreamForm', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/you do not have permissions to edit this credential/i)
+        screen.getByText(/you do not have permissions to edit this event stream/i)
       ).toBeInTheDocument();
     });
   });
