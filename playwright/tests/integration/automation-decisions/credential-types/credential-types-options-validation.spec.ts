@@ -9,13 +9,12 @@ import {
 } from '@ansible/playwright/utils/optionsDrivenValidation';
 import { test } from '@playwright/test';
 
-test.beforeEach((_fixtures, testInfo) => {
+test.beforeEach(async ({ page }, testInfo) => {
   if (isSaaS()) {
     testInfo.skip(true, 'EDA credential types not available on SaaS deployments');
   }
+  await setupBefore({ path: '/decisions/infrastructure/credential-types' })({ page });
 });
-
-test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credential-types' }));
 test.afterEach(setupAfter);
 
 /**
@@ -60,7 +59,9 @@ test.describe('EDA credential type OPTIONS-driven validation (create form)', () 
         testInfo
       );
 
+      const optionsResponse = waitForEdaOptionsResponse(page, 'credential-types/');
       await openEdaCredentialTypeCreateForm(page);
+      await optionsResponse;
 
       const nameInput = page.getByPlaceholder('Enter credential type name');
       await assertValidInputNoPatternError(page, testInfo, nameField, {
