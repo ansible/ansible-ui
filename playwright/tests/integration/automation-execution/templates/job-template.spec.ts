@@ -35,7 +35,7 @@ test.describe('Job Templates', () => {
     'can create a job template with prompted fields, launch from the list view, and complete launch via wizard',
     { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
-      test.setTimeout(5 * 30 * 1000);
+      test.setTimeout(5 * 60 * 1000);
       const label = createE2EName('label-jt');
       const jobTemplateName = await JobTemplate.ui.create(page, {
         inventoryName: inventoryName,

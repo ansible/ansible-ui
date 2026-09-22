@@ -59,6 +59,13 @@ async function lookupDemoProjectId(page: Page): Promise<number> {
   return match.id;
 }
 
+async function selectTypeaheadOption(page: Page, name: string): Promise<void> {
+  // Accessible name includes the option description (e.g. API-created resources).
+  const option = page.getByRole('option', { name });
+  await expect(option).toBeVisible({ timeout: 15_000 });
+  await option.click();
+}
+
 export const JobTemplate = {
   api: {
     create: async (
@@ -221,7 +228,7 @@ export const JobTemplate = {
       } else {
         await page.getByRole('button', { name: 'Inventory' }).click();
         await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
-        await page.getByRole('option', { name: inventoryName, exact: true }).click();
+        await selectTypeaheadOption(page, inventoryName);
       }
       const projectName = options.projectName ?? 'Demo Project';
       await page.locator('#project-select').click();
@@ -312,7 +319,7 @@ export const JobTemplate = {
         });
         await page.getByRole('button', { name: 'Inventory' }).click();
         await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
-        await page.getByRole('option', { name: inventoryName, exact: true }).click();
+        await selectTypeaheadOption(page, inventoryName);
         await page.getByLabel('Execution environment').click();
         await page.getByRole('option', { name: 'Control Plane Execution' }).click();
         await page.getByLabel('Instance groups').click();

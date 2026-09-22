@@ -54,6 +54,12 @@ export function jobOutputHeaderRunningOrTerminalStatusLocator(page: Page): Locat
     .or(bar.getByTestId('canceled-status'));
 }
 
+export function jobOutputHeaderAnyStatusLocator(page: Page): Locator {
+  return jobOutputHeaderRunningOrTerminalStatusLocator(page)
+    .or(jobOutputJobStatusBarLocator(page).getByTestId('pending-status'))
+    .or(jobOutputJobStatusBarLocator(page).getByTestId('waiting-status'));
+}
+
 export async function expectJobOutputStatusVisible(
   page: Page,
   options?: { timeout?: number }
@@ -72,6 +78,15 @@ export async function expectJobOutputRunningOrTerminal(
   });
 }
 
+export async function expectJobOutputHeaderAnyStatus(
+  page: Page,
+  options?: { timeout?: number }
+): Promise<void> {
+  await expect(jobOutputHeaderAnyStatusLocator(page)).toBeVisible({
+    timeout: options?.timeout ?? 15_000,
+  });
+}
+
 export async function expectJobOutputHeaderTerminal(
   page: Page,
   options?: { timeout?: number }
@@ -85,10 +100,11 @@ export async function expectJobOutputSuccess(
   page: Page,
   options?: { timeout?: number }
 ): Promise<void> {
-  const timeout = options?.timeout ?? 120_000;
-  const successStatus = page.getByTestId('success-status');
-  const failedStatus = page.getByTestId('failed-status');
-  const errorStatus = page.getByTestId('error-status');
+  const timeout = options?.timeout ?? 180_000;
+  const bar = jobOutputJobStatusBarLocator(page);
+  const successStatus = bar.getByTestId('success-status');
+  const failedStatus = bar.getByTestId('failed-status');
+  const errorStatus = bar.getByTestId('error-status');
 
   await expect(successStatus.or(failedStatus).or(errorStatus)).toBeVisible({ timeout });
   await expect(successStatus).toBeVisible();

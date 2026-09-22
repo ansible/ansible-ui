@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { expectJobOutputRunningOrTerminal } from './jobOutputStatus';
+import { expectJobOutputHeaderAnyStatus, jobOutputJobStatusBarLocator } from './jobOutputStatus';
 import { waitForBulkActionDialog } from './waitForBulkActionDialog';
 
 export interface AdHocCommandOptions {
@@ -128,14 +128,22 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
   // Wait for job to start and verify we're on the job output page
   await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 15000 });
 
-  const headerRunningStatus = page.getByTestId('job-status-bar').getByTestId('running-status');
+  const bar = jobOutputJobStatusBarLocator(page);
+  const headerRunningStatus = bar.getByTestId('running-status');
+  const cancelJob = page.getByRole('button', { name: 'Cancel job' });
 
-  // Wait past pending/waiting until the job is running or has reached a terminal state.
-  await expectJobOutputRunningOrTerminal(page);
+  // Confirm the job page rendered. Pending/waiting jobs cannot be canceled, so
+  // do not spend 60s waiting for Running — host delete already retries.
+  await expectJobOutputHeaderAnyStatus(page);
+  await expect(headerRunningStatus)
+    .toBeVisible({ timeout: 30_000 })
+    .catch(() => undefined);
 
-  if (await headerRunningStatus.isVisible().catch(() => false)) {
-    // Job is running, cancel it so inventory cleanup can proceed.
-    await page.getByRole('button', { name: 'Cancel job' }).click();
+  if (
+    (await headerRunningStatus.isVisible().catch(() => false)) &&
+    (await cancelJob.isEnabled().catch(() => false))
+  ) {
+    await cancelJob.click();
     const confirmCheckbox = page.locator('#confirm');
     await expect(confirmCheckbox).toBeVisible();
     await expect(confirmCheckbox).toBeEnabled();
@@ -146,18 +154,19 @@ export async function runAdHocCommandWizard(options: AdHocCommandOptions, page: 
     await dialog.getByRole('button', { name: /Cancel job/ }).click();
 
     if (await dialog.isVisible().catch(() => false)) {
-      await waitForBulkActionDialog(page, { timeout: 30_000, allowFailure: true });
+      await waitForBulkActionDialog(page, { timeout: 15_000, allowFailure: true });
     }
 
-    // Controller may keep status=running after a successful cancel POST. Host
-    // delete helpers already retry while the job holds the inventory.
     await expect(headerRunningStatus)
-      .toBeHidden({ timeout: 20_000 })
+      .toBeHidden({ timeout: 15_000 })
       .catch(() => undefined);
-  } else {
-    const cancelDialog = page.getByRole('dialog', { name: 'Cancel job' });
-    if (await cancelDialog.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await cancelDialog.getByRole('button', { name: 'Close' }).click();
+  }
+
+  const leftoverDialog = page.getByRole('dialog');
+  if (await leftoverDialog.isVisible().catch(() => false)) {
+    const closeBtn = leftoverDialog.getByRole('button', { name: 'Close' });
+    if (await closeBtn.isVisible().catch(() => false)) {
+      await closeBtn.click();
     }
   }
 }
