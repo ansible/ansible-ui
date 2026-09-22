@@ -486,6 +486,8 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           style={{
             borderCollapse: 'separate',
             minHeight: 0,
+            // workaround Safari render bug
+            // https://github.com/ansible/ansible-ui/pull/3541#issuecomment-5736509183
             transform: 'translateZ(0)',
           }}
         >
