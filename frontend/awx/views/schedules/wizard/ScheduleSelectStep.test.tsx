@@ -17,10 +17,16 @@ const { mockGetSchedulePromptValues } = vi.hoisted(() => ({
   mockGetSchedulePromptValues: vi.fn(),
 }));
 
-const { mockAlertToaster } = vi.hoisted(() => ({
+const { mockAlertToaster, mockScheduleParams } = vi.hoisted(() => ({
   mockAlertToaster: {
     addAlert: vi.fn(),
   },
+  mockScheduleParams: {} as { id?: string; schedule_id?: string },
+}));
+
+vi.mock('react-router', async () => ({
+  ...(await vi.importActual<typeof import('react-router')>('react-router')),
+  useParams: () => mockScheduleParams,
 }));
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
@@ -120,6 +126,8 @@ describe('ScheduleSelectStep', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockScheduleParams.id = undefined;
+    mockScheduleParams.schedule_id = undefined;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     mockSetStepData.mockImplementation((fn) => (typeof fn === 'function' ? fn({}) : fn));
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
@@ -497,6 +505,58 @@ describe('ScheduleSelectStep', () => {
       });
     });
 
+    it('should include schedule labels when labels are not prompted on launch', async () => {
+      const resourceRequest = vi.fn();
+      const launchRequest = vi.fn();
+      const labelsRequest = vi.fn();
+      server.use(
+        http.get(awxAPI`/job_templates/123/`, () => {
+          resourceRequest();
+          return HttpResponse.json({ id: 123, type: 'job_template', name: 'Test Template' });
+        }),
+        http.get(awxAPI`/job_templates/123/launch/`, () => {
+          launchRequest();
+          return HttpResponse.json({
+            ask_credential_on_launch: false,
+            ask_instance_groups_on_launch: false,
+            ask_labels_on_launch: false,
+            survey_enabled: false,
+            defaults: { labels: [{ id: 99, name: 'template-label' }] },
+          });
+        }),
+        http.get(awxAPI`/schedules/789/labels/`, () => {
+          labelsRequest();
+          return HttpResponse.json({ results: [{ id: 1, name: 'schedule-label' }] });
+        })
+      );
+      mockGetSchedulePromptValues.mockResolvedValue({});
+
+      mockScheduleParams.id = '123';
+      mockScheduleParams.schedule_id = '789';
+      render(
+        <TestWrapper
+          route="/job-templates/123/schedules/789/edit"
+          path="/job-templates/:id/schedules/:schedule_id/edit"
+          defaultValues={{ resourceId: 123, schedule_type: 'job_template' }}
+        >
+          <ScheduleSelectStep />
+        </TestWrapper>
+      );
+
+      await waitFor(() => {
+        expect(mockGetSchedulePromptValues).toHaveBeenCalledWith(
+          expect.anything(),
+          [],
+          [],
+          [{ id: 1, name: 'schedule-label' }],
+          undefined
+        );
+      });
+      expect(resourceRequest).toHaveBeenCalled();
+      expect(launchRequest).toHaveBeenCalled();
+      expect(labelsRequest).toHaveBeenCalled();
+    });
+
     it('should fetch survey spec and schedule data when schedule_id is provided and survey_enabled is true', async () => {
       server.use(
         http.get(awxAPI`/job_templates/123/`, () => {
@@ -588,6 +648,7 @@ describe('ScheduleSelectStep', () => {
             ask_instance_groups_on_launch: false,
             ask_labels_on_launch: false,
             survey_enabled: false,
+            defaults: { labels: [] },
           }),
           [],
           [],

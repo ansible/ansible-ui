@@ -1,17 +1,22 @@
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
+import { Label } from '../../../interfaces/Label';
 import { Schedule } from '../../../interfaces/Schedule';
 import { BaseSchedulePayload, ScheduleAccessoriesPayload, ScheduleFormWizard } from '../types';
 import { ensureUntilZSuffix, mungePromptData, mungeSurveyAndExtraVarsData } from './ruleHelpers';
 import { usePostAccessories } from './usePostScheduleAccessories';
+import { useProcessLabels } from './useProcessLabels';
 import { useSetRRuleItemToRuleSet } from './useSetRRuleItemToRuleSet';
 
 export const useProcessSchedule = () => {
   const params = useParams<{ id?: string; schedule_id: string }>();
   const postAccessories = usePostAccessories();
+  const processLabels = useProcessLabels();
   const postSchedule = usePostRequest<BaseSchedulePayload | ScheduleAccessoriesPayload, Schedule>();
   const updateSchedule = usePatchRequest<
     BaseSchedulePayload | ScheduleAccessoriesPayload,
@@ -45,6 +50,37 @@ export const useProcessSchedule = () => {
       }
 
       const { type, id } = resource;
+      const resourceOrganization =
+        'summary_fields' in resource && 'organization' in resource.summary_fields
+          ? resource.summary_fields.organization?.id
+          : undefined;
+      const labelOrganization = prompt?.organization ?? resourceOrganization;
+      const removeLabelsBeforeUpdate = async () => {
+        if (
+          !params.schedule_id ||
+          !prompt?.labels ||
+          payloadData.launch_config?.ask_labels_on_launch !== false
+        ) {
+          return;
+        }
+        const scheduleLabels = await requestGet<AwxItemsResponse<Label>>(
+          awxAPI`/schedules/${params.schedule_id}/labels/?page_size=200`
+        );
+        const launchConfig = {
+          ...payloadData.launch_config,
+          defaults: {
+            ...payloadData.launch_config.defaults,
+            labels: scheduleLabels.results,
+          },
+        };
+        await processLabels(
+          Number(params.schedule_id),
+          prompt.labels,
+          launchConfig,
+          labelOrganization,
+          'disassociate'
+        );
+      };
 
       let schedule: Schedule;
       switch (type) {
@@ -79,6 +115,7 @@ export const useProcessSchedule = () => {
             ...promptData,
             extra_data: mungeSurveyAndExtraVarsData(survey ?? {}, prompt?.extra_vars ?? ''),
           };
+          await removeLabelsBeforeUpdate();
           schedule = await request(
             awxAPI`/workflow_job_templates/${id.toString()}/schedules/`,
             requestPayload
@@ -88,7 +125,7 @@ export const useProcessSchedule = () => {
             credentials: prompt?.credentials,
             instance_groups: prompt?.instance_groups,
             labels: prompt?.labels,
-            organization: prompt?.organization,
+            organization: labelOrganization,
           });
           return {
             schedule,
@@ -101,6 +138,7 @@ export const useProcessSchedule = () => {
             ...promptData,
             extra_data: mungeSurveyAndExtraVarsData(survey ?? {}, prompt?.extra_vars ?? ''),
           };
+          await removeLabelsBeforeUpdate();
           schedule = await request(
             awxAPI`/job_templates/${id.toString()}/schedules/`,
             requestPayload
@@ -111,7 +149,7 @@ export const useProcessSchedule = () => {
               credentials: prompt.credentials,
               instance_groups: prompt.instance_groups,
               labels: prompt.labels,
-              organization: prompt.organization,
+              organization: labelOrganization,
             });
           }
 
@@ -121,6 +159,14 @@ export const useProcessSchedule = () => {
         }
       }
     },
-    [params.schedule_id, updateSchedule, postSchedule, getRuleSet, params.id, postAccessories]
+    [
+      params.schedule_id,
+      updateSchedule,
+      postSchedule,
+      getRuleSet,
+      params.id,
+      postAccessories,
+      processLabels,
+    ]
   );
 };

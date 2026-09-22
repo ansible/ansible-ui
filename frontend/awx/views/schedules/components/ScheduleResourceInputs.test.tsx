@@ -1,5 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useMemo } from 'react';
+import { PageWizardContext } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -7,15 +9,33 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleFormWizard } from '../types';
 import { ScheduleResourceInputs } from './ScheduleResourceInputs';
 
-vi.mock('../hooks/useGetTimezones', () => ({
-  useGetTimezones: () => ({
+const mockUseGetTimezones = vi.hoisted(() =>
+  vi.fn<
+    () => {
+      timeZones: { label: string; value: string }[];
+      links?: Record<string, string>;
+    }
+  >(() => ({
     timeZones: [
       { label: 'UTC', value: 'UTC' },
       { label: 'America/New_York', value: 'America/New_York' },
     ],
-    links: {},
-  }),
+    links: { 'US/Eastern': 'America/New_York' },
+  }))
+);
+
+vi.mock('../hooks/useGetTimezones', () => ({
+  useGetTimezones: mockUseGetTimezones,
 }));
+
+function ScheduleDaysToKeepProbe() {
+  const value = useWatch<ScheduleFormWizard, 'schedule_days_to_keep'>({
+    name: 'schedule_days_to_keep',
+  });
+  return (
+    <span data-testid="schedule-days-state">{value === undefined ? 'removed' : 'present'}</span>
+  );
+}
 
 function TestWrapper({
   children,
@@ -34,8 +54,13 @@ function TestWrapper({
       ...defaultValues,
     },
   });
+  const wizardContextValue = useMemo(() => ({ setWizardData: vi.fn() }), []);
 
-  return <FormProvider {...methods}>{children}</FormProvider>;
+  return (
+    <PageWizardContext.Provider value={wizardContextValue as never}>
+      <FormProvider {...methods}>{children}</FormProvider>
+    </PageWizardContext.Provider>
+  );
 }
 
 describe('ScheduleResourceInputs', () => {
@@ -47,6 +72,13 @@ describe('ScheduleResourceInputs', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseGetTimezones.mockImplementation(() => ({
+      timeZones: [
+        { label: 'UTC', value: 'UTC' },
+        { label: 'America/New_York', value: 'America/New_York' },
+      ],
+      links: { 'US/Eastern': 'America/New_York' },
+    }));
   });
 
   it('renders all common fields', () => {
@@ -60,6 +92,84 @@ describe('ScheduleResourceInputs', () => {
     expect(screen.getByRole('textbox', { name: 'Description' })).toBeInTheDocument();
     expect(screen.getByTestId('startDateTime-form-group')).toBeInTheDocument();
     expect(screen.getByTestId('timezone')).toBeInTheDocument();
+  });
+
+  it('renders labels when the resource does not prompt for labels', () => {
+    render(
+      <TestWrapper defaultValues={{ launch_config: { ask_labels_on_launch: false } as never }}>
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Labels')).toBeInTheDocument();
+  });
+
+  it('does not render labels when the resource prompts for labels', () => {
+    render(
+      <TestWrapper defaultValues={{ launch_config: { ask_labels_on_launch: true } as never }}>
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    expect(screen.queryByText('Labels')).not.toBeInTheDocument();
+  });
+
+  it('updates wizard data and warns when many labels are selected', async () => {
+    render(
+      <TestWrapper
+        defaultValues={{
+          prompt: {
+            labels: Array.from({ length: 81 }, (_, index) => ({
+              id: index,
+              name: `label-${index}`,
+            })),
+          } as never,
+          launch_config: null,
+          resource: {
+            id: 1,
+            ask_labels_on_launch: false,
+            summary_fields: { organization: { id: 42 } },
+          } as never,
+        }}
+      >
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Many labels selected')).toBeInTheDocument();
+    });
+    expect(screen.getByText(/This schedule has 81 labels/)).toBeInTheDocument();
+  });
+
+  it('clears the timezone warning when timezone links are unavailable', () => {
+    mockUseGetTimezones.mockImplementation(() => ({ timeZones: [], links: undefined }));
+
+    render(
+      <TestWrapper defaultValues={{ timezone: 'US/Eastern' }}>
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    expect(
+      screen.queryByText(
+        'Warning: US/Eastern is a link to America/New_York and will be saved as that.'
+      )
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows a warning when the selected timezone is a link', () => {
+    render(
+      <TestWrapper defaultValues={{ timezone: 'US/Eastern' }}>
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    expect(
+      screen.getByText(
+        'Warning: US/Eastern is a link to America/New_York and will be saved as that.'
+      )
+    ).toBeInTheDocument();
   });
 
   it('does not render days_to_keep field by default', () => {
@@ -187,17 +297,16 @@ describe('ScheduleResourceInputs', () => {
         defaultValues={{
           schedule_type: 'system_job_template',
           resourceId: 3,
+          schedule_days_to_keep: 10,
         }}
       >
         <ScheduleResourceInputs />
+        <ScheduleDaysToKeepProbe />
       </TestWrapper>
     );
 
-    // Wait for API call to complete
     await waitFor(() => {
-      expect(
-        screen.queryByRole('spinbutton', { name: 'Days of data to keep' })
-      ).not.toBeInTheDocument();
+      expect(screen.getByTestId('schedule-days-state')).toHaveTextContent('removed');
     });
   });
 
