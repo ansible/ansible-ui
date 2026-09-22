@@ -207,8 +207,8 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           children =
             parsedErrors.length > 0 ? (
               <>
-                {parsedErrors.map((parsedError, index) => (
-                  <div key={index}>{parsedError.message}</div>
+                {parsedErrors.map((parsedError) => (
+                  <div key={String(parsedError.message)}>{parsedError.message}</div>
                 ))}
               </>
             ) : (
