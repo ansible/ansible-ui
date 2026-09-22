@@ -57,7 +57,7 @@
     "insights:ci-build": "cd frontend/hub/insights && npm ci --legacy-peer-deps && npm run build && cd /opt/app-root/src && rm -f package-lock.json"
   },
   "dependencies": {
-    "@ansible/ansible-ai-connect-chatbot": "^0.1.16",
+    "@ansible/ansible-ai-connect-chatbot": "^0.1.17",
     "@ansible/react-json-chart-builder": "3.0.0",
     "@patternfly/patternfly": "6.5.1",
     "@patternfly/quickstarts": "6.5.0",
