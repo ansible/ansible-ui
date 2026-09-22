@@ -205,6 +205,7 @@ const mockView: IAutomationDashboardView = {
   detailsError: undefined,
   detailsLoading: false,
   templateIdsError: undefined,
+  isLoadingTemplateIds: false,
   costState: {
     id: 1,
     monthly_subscription_cost: 100,
@@ -496,6 +497,19 @@ describe('AutomationDashboard', () => {
 
     expect(screen.getByTestId('Top 5 projects-filter-state')).toHaveTextContent('none');
     expect(screen.getByTestId('Top 5 users-filter-state')).toHaveTextContent('none');
+  });
+
+  // ─── Template IDs loading state ────────────────────────────────────────────
+
+  test('should show loading state when template IDs are still loading', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      isLoadingTemplateIds: true,
+    });
+    render(testWrapper());
+
+    expect(screen.getByTestId('loading-state')).toBeInTheDocument();
+    expect(screen.queryByText('Successful jobs')).not.toBeInTheDocument();
   });
 
   // ─── Template IDs error state ─────────────────────────────────────────────

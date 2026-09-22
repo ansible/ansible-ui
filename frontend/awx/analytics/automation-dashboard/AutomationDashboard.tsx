@@ -38,7 +38,7 @@ export function AutomationDashboard() {
   );
 
   const view = useAutomationDashboardView({ toolbarFilters });
-  const { details, templateIdsError } = view;
+  const { details, templateIdsError, isLoadingTemplateIds } = view;
 
   const noDataString = t('No jobs have been run.');
   const { isLoading } = useAutomationDashboardCollectionStatus();
@@ -234,14 +234,14 @@ export function AutomationDashboard() {
               gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
             }}
           >
-            {isLoading && <LoadingState />}
-            {!isLoading && templateIdsError && (
+            {(isLoading || isLoadingTemplateIds) && <LoadingState />}
+            {!isLoading && !isLoadingTemplateIds && templateIdsError && (
               <EmptyStateError
                 titleProp={t('Unable to load dashboard data')}
                 message={templateIdsError.message}
               />
             )}
-            {!isLoading && !templateIdsError && dashboardContent}
+            {!isLoading && !isLoadingTemplateIds && !templateIdsError && dashboardContent}
           </div>
         </Scrollable>
       </PageDashboardContext.Provider>

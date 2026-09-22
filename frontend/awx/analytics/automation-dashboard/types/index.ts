@@ -174,6 +174,7 @@ export type IAutomationDashboardView = {
   detailsError: Error | undefined;
   detailsLoading: boolean;
   templateIdsError: Error | undefined;
+  isLoadingTemplateIds: boolean;
   costState: ISubscriptionCosts | undefined;
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>>;
   loading: boolean;

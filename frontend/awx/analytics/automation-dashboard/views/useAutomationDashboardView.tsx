@@ -51,7 +51,9 @@ export function useAutomationDashboardView(options: {
     error: templateIdsError,
   } = useJobTemplateIds();
 
-  const isTemplateIdsUnavailable = isLoadingTemplateIds || !!templateIdsError;
+  const noTemplatesExist =
+    !isLoadingTemplateIds && !templateIdsError && allTemplateIds?.length === 0;
+  const isTemplateIdsUnavailable = isLoadingTemplateIds || !!templateIdsError || noTemplatesExist;
 
   const mainTableViewBase = useAutomationDashboardBaseView<IJobTemplate>({
     url: metricsAPI`/dashboard_reports/report/`,
@@ -138,6 +140,7 @@ export function useAutomationDashboardView(options: {
       detailsError: detailsResponse.error,
       detailsLoading: detailsResponse.isLoading,
       templateIdsError,
+      isLoadingTemplateIds,
       costState,
       setCostState,
       loading,
@@ -152,6 +155,7 @@ export function useAutomationDashboardView(options: {
       detailsResponse.error,
       detailsResponse.isLoading,
       templateIdsError,
+      isLoadingTemplateIds,
       costState,
       setCostState,
       loading,

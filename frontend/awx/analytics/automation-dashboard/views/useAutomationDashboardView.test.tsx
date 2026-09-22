@@ -291,6 +291,35 @@ describe('useAutomationDashboardView', () => {
     );
   });
 
+  test('should pass isLoadingSystemJobExclusionIds as true when template IDs are empty (no templates on instance)', () => {
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: [],
+      isLoading: false,
+      error: undefined,
+    });
+
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
+      expect.objectContaining({ isLoadingSystemJobExclusionIds: true })
+    );
+  });
+
+  test('should expose isLoadingTemplateIds as false when templates loaded', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.isLoadingTemplateIds).toBe(false);
+  });
+
+  test('should expose isLoadingTemplateIds as true when templates are loading', () => {
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: undefined,
+      isLoading: true,
+      error: undefined,
+    });
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.isLoadingTemplateIds).toBe(true);
+  });
+
   test('should expose templateIdsError as undefined when template IDs load successfully', () => {
     const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
     expect(result.current.templateIdsError).toBeUndefined();

@@ -54,6 +54,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     refresh,
     exportCsv,
     loading,
+    isLoadingTemplateIds,
     detailsError,
     isFilterStateDefault,
     toolbarFilters,
@@ -263,7 +264,9 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       exportType={'csv'}
       title={t('Export as CSV')}
       icon={ExportIcon}
-      isDisabled={loading || !(mainTableView.itemCount ?? 0) || !costState || !filtersValid}
+      isDisabled={
+        loading || isLoadingTemplateIds || !(mainTableView.itemCount ?? 0) || !costState || !filtersValid
+      }
       onExport={exportCsv}
     ></DashboardExportButton>
   );

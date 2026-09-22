@@ -32,7 +32,8 @@ const PAGE_SIZE = 200;
  * NOTE: Injecting all template IDs as query params may exceed URL length
  * limits (8-20 KB) for very large deployments (thousands of templates).
  * This is a known limitation of the frontend workaround, pending a
- * backend-side fix (e.g. an `exclude_system_jobs` query parameter).
+ * backend-side fix (e.g. an `exclude_system_jobs` query parameter on
+ * metrics-service — see AAP-92027 for the tracking ticket).
  */
 export function useJobTemplateIds(): UseJobTemplateIdsResult {
   const baseUrl = metricsAPI`/dashboard_reports/templates/`;

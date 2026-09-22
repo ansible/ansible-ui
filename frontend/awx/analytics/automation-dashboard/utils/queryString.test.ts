@@ -591,8 +591,8 @@ describe('queryString', () => {
       expect(getSystemJobExclusionParams({}, undefined)).toBeUndefined();
     });
 
-    test('should return undefined when templateIds is empty', () => {
-      expect(getSystemJobExclusionParams({}, [])).toBeUndefined();
+    test('should return empty array when templateIds is empty (no templates on instance)', () => {
+      expect(getSystemJobExclusionParams({}, [])).toEqual([]);
     });
 
     test('should return undefined when user has template filter and templateIds is empty', () => {
