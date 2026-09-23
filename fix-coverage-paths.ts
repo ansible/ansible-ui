@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import * as fs from 'fs';
-import { globSync } from 'glob';
+import { globSync } from 'node:fs';
 import * as path from 'path';
 
 interface Location {
@@ -35,7 +35,7 @@ interface CoverageMap {
 function fixAllCoveragePaths(): void {
   const searchPattern = '.nyc_output/*.json';
 
-  const coverageFiles = globSync(searchPattern, { ignore: '**/node_modules/**' });
+  const coverageFiles = globSync(searchPattern);
 
   if (coverageFiles.length === 0) {
     console.log('No coverage files found to process.');
