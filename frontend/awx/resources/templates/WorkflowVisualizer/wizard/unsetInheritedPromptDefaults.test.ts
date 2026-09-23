@@ -23,11 +23,11 @@ describe('unsetInheritedPromptDefaults', () => {
       forks: 5,
     };
 
-    unsetInheritedPromptDefaults(
-      effectivePrompt,
-      launchConfig,
-      { timeout: null, limit: null, forks: null }
-    );
+    unsetInheritedPromptDefaults(effectivePrompt, launchConfig, {
+      timeout: null,
+      limit: null,
+      forks: null,
+    });
 
     expect(effectivePrompt).toEqual({});
   });
@@ -35,11 +35,7 @@ describe('unsetInheritedPromptDefaults', () => {
   it('should keep prompt fields when the node has an explicit override', () => {
     const effectivePrompt = { timeout: 3000, forks: 5 };
 
-    unsetInheritedPromptDefaults(
-      effectivePrompt,
-      launchConfig,
-      { timeout: 0, forks: null }
-    );
+    unsetInheritedPromptDefaults(effectivePrompt, launchConfig, { timeout: 0, forks: null });
 
     expect(effectivePrompt).toEqual({ timeout: 3000, forks: 5 });
   });
