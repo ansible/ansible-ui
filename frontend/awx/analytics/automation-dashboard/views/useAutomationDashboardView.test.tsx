@@ -2,6 +2,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
+import { getAutomationDashboardDefaultPeriodDates } from '../utils/localCalendarDate';
 import { QUERY_PARAMS, useAutomationDashboardView } from './useAutomationDashboardView';
 import { useAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 import type { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
@@ -19,8 +20,7 @@ const { mockSetFilterState, mockBaseViewRefresh, mockRefreshDetails, mockExportC
 // ─── Dependency mocks ─────────────────────────────────────────────────────────
 
 // Calculate default dates to match the source code's DEFAULT_FILTERS
-const DEFAULT_END_DATE = new Date(Date.now());
-const DEFAULT_START_DATE = new Date(DEFAULT_END_DATE.getTime() - 7 * 24 * 60 * 60 * 1000);
+const defaultPeriodDates = getAutomationDashboardDefaultPeriodDates();
 
 vi.mock('../common/useAutomationDashboardBaseView', () => ({
   useAutomationDashboardBaseView: vi.fn(() => ({
@@ -35,8 +35,8 @@ vi.mock('../common/useAutomationDashboardBaseView', () => ({
     filterState: {
       period: [
         AutomationDashboardDateRangeFilterPresets.last_7_days,
-        DEFAULT_START_DATE.toISOString().split('T')[0],
-        DEFAULT_END_DATE.toISOString().split('T')[0],
+        defaultPeriodDates.start,
+        defaultPeriodDates.end,
       ],
     },
     setFilterState: mockSetFilterState,

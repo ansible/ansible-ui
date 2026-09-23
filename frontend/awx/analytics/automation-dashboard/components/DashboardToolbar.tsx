@@ -6,31 +6,21 @@ import {
   useBreakpoint,
 } from '@ansible/ansible-ui-framework';
 import { PageAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSingleSelect';
-import {
-  Toolbar,
-  ToolbarContent,
-  ToolbarGroup,
-  ToolbarItem,
-  yyyyMMddFormat,
-} from '@patternfly/react-core';
+import { Toolbar, ToolbarContent, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAutomationDashboardToolbarActions } from '../common/useAutomationDashboardToolbarActions';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { IDashboardFilterSet, IJobTemplate } from '../types';
 import { useFilterSetView } from '../views/useFilterSetView';
+import {
+  AUTOMATION_DASHBOARD_DEFAULT_RANGE_DAYS,
+  localCalendarDateDaysAgo,
+} from '../utils/localCalendarDate';
 
 const DEFAULT_FILTER_STATE: IFilterState = {
   period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
 };
-
-const CUSTOM_RANGE_DEFAULT_FROM_DAYS = 7;
-
-function getDefaultCustomFrom(): string {
-  const date = new Date();
-  date.setDate(date.getDate() - CUSTOM_RANGE_DEFAULT_FROM_DAYS);
-  return yyyyMMddFormat(date);
-}
 
 function parseFilterState(raw: string): IFilterState {
   try {
@@ -98,7 +88,10 @@ export function DashboardToolbar(
     if (enteringCustom && period?.length === 1) {
       setFilterState?.((prev) => ({
         ...prev,
-        period: [AutomationDashboardDateRangeFilterPresets.custom, getDefaultCustomFrom()],
+        period: [
+          AutomationDashboardDateRangeFilterPresets.custom,
+          localCalendarDateDaysAgo(AUTOMATION_DASHBOARD_DEFAULT_RANGE_DAYS),
+        ],
       }));
     }
   }, [filterState?.period, setFilterState]);

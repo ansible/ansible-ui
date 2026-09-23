@@ -293,6 +293,27 @@ describe('ToolbarDateRangeFilter', () => {
     expect(screen.getByLabelText('End date')).toHaveValue('');
   });
 
+  it('should not show a stale end date after clearing start, switching to a preset, and returning to Custom', async () => {
+    const user = userEvent.setup();
+    render(
+      <StatefulToolbarDateRangeFilter
+        placeholder="Select range"
+        options={defaultOptions}
+        initialFilterValues={['custom', '2024-01-01', '2024-01-31']}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '' } });
+    expect(screen.getByLabelText('End date')).toHaveValue('2024-01-31');
+
+    await user.click(screen.getByRole('button', { name: 'Custom' }));
+    await user.click(screen.getByRole('option', { name: 'Last 7 days' }));
+    await user.click(screen.getByRole('button', { name: 'Last 7 days' }));
+    await user.click(screen.getByRole('option', { name: 'Custom' }));
+
+    expect(screen.getByLabelText('End date')).toHaveValue('');
+  });
+
   it('should drop both dates when the start date is cleared and there was no end date', () => {
     const setFilterValues = vi.fn();
     render(

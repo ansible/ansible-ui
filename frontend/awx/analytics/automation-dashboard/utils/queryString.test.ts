@@ -14,7 +14,7 @@ import {
   hasValidRequiredFilters,
   isRequiredFilterValid,
 } from './queryString';
-import { yyyyMMddFormat } from '@patternfly/react-core';
+import { localTodayDateString } from './localCalendarDate';
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
@@ -332,7 +332,7 @@ describe('queryString', () => {
       expect(params.get('end_date')).toBeTruthy();
       // Verify end_date is current date
       const endDate = params.get('end_date');
-      const today = yyyyMMddFormat(new Date());
+      const today = localTodayDateString();
       expect(endDate).toBe(today);
     });
 
@@ -625,6 +625,8 @@ describe('queryString', () => {
     });
 
     test('should return false when only a start date after today is provided (end defaults to today)', () => {
+      const originalTz = process.env.TZ;
+      process.env.TZ = 'America/Los_Angeles';
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-06-15T12:00:00Z'));
       try {
@@ -633,10 +635,13 @@ describe('queryString', () => {
         ).toBe(false);
       } finally {
         vi.useRealTimers();
+        process.env.TZ = originalTz;
       }
     });
 
     test('should return true when only a start date of today is provided (end defaults to today)', () => {
+      const originalTz = process.env.TZ;
+      process.env.TZ = 'America/Los_Angeles';
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-06-15T12:00:00Z'));
       try {
@@ -645,7 +650,46 @@ describe('queryString', () => {
         ).toBe(true);
       } finally {
         vi.useRealTimers();
+        process.env.TZ = originalTz;
       }
+    });
+
+    describe('implicit end date aligned with local today', () => {
+      const originalTz = process.env.TZ;
+
+      afterEach(() => {
+        vi.useRealTimers();
+        process.env.TZ = originalTz;
+      });
+
+      describe('Australia/Sydney (east of UTC)', () => {
+        beforeEach(() => {
+          process.env.TZ = 'Australia/Sydney';
+          vi.useFakeTimers();
+          // 14:00 UTC on June 15 → June 16 local in Sydney (AEST, UTC+10)
+          vi.setSystemTime(new Date('2024-06-15T14:00:00Z'));
+        });
+
+        test('should accept start date equal to local today for start-only custom range', () => {
+          expect(
+            isRequiredFilterValid(requiredDateRangeFilter, { period: ['custom', '2024-06-16'] })
+          ).toBe(true);
+        });
+
+        test('should reject start date after local today for start-only custom range', () => {
+          expect(
+            isRequiredFilterValid(requiredDateRangeFilter, { period: ['custom', '2024-06-17'] })
+          ).toBe(false);
+        });
+
+        test('should use local today as implied end_date in query params', () => {
+          const params = filtersToSearchObj([customPeriodFilter], {
+            period: ['custom', '2024-06-01'],
+          });
+          expect(params.get('end_date')).toBe('2024-06-16');
+          expect(params.get('end_date')).toBe(localTodayDateString());
+        });
+      });
     });
 
     describe('timezones west of UTC', () => {

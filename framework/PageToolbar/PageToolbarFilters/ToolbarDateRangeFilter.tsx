@@ -49,7 +49,7 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     setFilterValues(() => [defaultValue ?? props.options[0].value]);
   }
 
-  // End date shown while the start is cleared (not written to filterValues / URL).
+  // UI-only end date while the start is cleared (not persisted in filterValues / URL).
   const [orphanEndDate, setOrphanEndDate] = useState<string | undefined>();
 
   // `from`/`to` are derived from filterValues (not local state) so externally-set
@@ -83,6 +83,7 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     const option = props.options.find((option) => option.value === value);
     if (!option) return;
     if (!option.isCustom) {
+      setOrphanEndDate(undefined);
       setFilterValues(() => [value]);
       return;
     }
@@ -91,6 +92,8 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     if (remembered.from) {
       newValues.push(remembered.from);
       if (remembered.to) newValues.push(remembered.to);
+    } else {
+      setOrphanEndDate(undefined);
     }
     setFilterValues(() => newValues);
   }

@@ -7,15 +7,11 @@ import {
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
 import { isValidDate, yyyyMMddFormat } from '@patternfly/react-core';
+import { localTodayDateString } from './localCalendarDate';
 
 function isIsoDateString(value: string): boolean {
   const date = new Date(`${value}T00:00:00`);
   return isValidDate(date) && yyyyMMddFormat(date) === value;
-}
-
-/** Calendar "today" in the local timezone (matches DatePicker / validation). */
-function localTodayDateString(): string {
-  return yyyyMMddFormat(new Date());
 }
 
 export function getQueryString(

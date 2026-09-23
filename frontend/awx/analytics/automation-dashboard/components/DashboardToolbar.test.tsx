@@ -29,6 +29,7 @@ vi.mock('@ansible/ansible-ui-framework/PageInputs/PageAsyncSingleSelect', () => 
       <option value="">-- select --</option>
       <option value="1">Report A</option>
       <option value="2">Report B</option>
+      <option value="3">Custom range report</option>
     </select>
   ),
 }));
@@ -70,6 +71,13 @@ const filterSetB: IDashboardFilterSet = {
   is_default: false,
 };
 
+const filterSetCustomRange: IDashboardFilterSet = {
+  id: 3,
+  name: 'Custom range report',
+  filters: '{"period":["custom","2024-03-01","2024-03-15"]}',
+  is_default: false,
+};
+
 const { mockUseFilterSetView } = vi.hoisted(() => ({
   mockUseFilterSetView: vi.fn(),
 }));
@@ -84,7 +92,7 @@ function makeFilterSetViewReturn(overrides = {}) {
     version: 0,
     setValue: vi.fn(),
     queryOptions: vi.fn().mockResolvedValue({ options: [], remaining: 0, next: '' }),
-    filterSets: [filterSetA, filterSetB],
+    filterSets: [filterSetA, filterSetB, filterSetCustomRange],
     selectedFilterSet: undefined as IDashboardFilterSet | undefined,
     setSelectedFilterSet: mockSetSelectedFilterSet,
     removeFilterSet: vi.fn(),
@@ -189,6 +197,22 @@ describe('DashboardToolbar', () => {
       expect(mockSetSelectedFilterSet).toHaveBeenCalledWith(filterSetA);
     });
 
+    test('should call setFilterState with parsed custom period when a saved custom report is selected', async () => {
+      const user = userEvent.setup();
+      render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} />
+        </Wrapper>
+      );
+
+      await user.selectOptions(screen.getByTestId('filterset-select'), '3');
+
+      expect(mockSetFilterState).toHaveBeenCalledWith({
+        period: ['custom', '2024-03-01', '2024-03-15'],
+      });
+      expect(mockSetSelectedFilterSet).toHaveBeenCalledWith(filterSetCustomRange);
+    });
+
     test('should fall back to default filter state when selected filter set has invalid JSON', async () => {
       const user = userEvent.setup();
       render(
@@ -273,6 +297,8 @@ describe('DashboardToolbar', () => {
 
   describe('custom period default start date', () => {
     test('should seed the start date to 7 days ago when switching to Custom with no dates', () => {
+      const originalTz = process.env.TZ;
+      process.env.TZ = 'America/Los_Angeles';
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-06-15T12:00:00Z'));
       try {
@@ -295,6 +321,7 @@ describe('DashboardToolbar', () => {
         expect(updater({ period: ['custom'] })).toEqual({ period: ['custom', '2024-06-08'] });
       } finally {
         vi.useRealTimers();
+        process.env.TZ = originalTz;
       }
     });
 

@@ -1,27 +1,27 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { metricsAPI } from '../../../common/api/metrics-utils';
-import { AutomationDashboardDateRangeFilterPresets } from '../constants';
-import { IAutomationDashboardView, IJobTemplate, ReportType } from '../types';
-import { useGetReportDetails } from './useGetReportDetails';
-import { useSubscriptionCostState } from './useSubscriptionCostState';
-import { useExportCsv } from './useExportCsv';
 import {
   IAutomationDashboardBaseView,
   useAutomationDashboardBaseView,
 } from '../common/useAutomationDashboardBaseView';
+import { AutomationDashboardDateRangeFilterPresets } from '../constants';
+import { IAutomationDashboardView, IJobTemplate, ReportType } from '../types';
+import { getAutomationDashboardDefaultPeriodDates } from '../utils/localCalendarDate';
+import { useGetReportDetails } from './useGetReportDetails';
+import { useSubscriptionCostState } from './useSubscriptionCostState';
+import { useExportCsv } from './useExportCsv';
 
 // Resolved once at module load — the user's time zone does not change during a session.
 export const QUERY_PARAMS = { tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
 
-const DEFAULT_END_DATE = new Date(Date.now());
-const DEFAULT_START_DATE = new Date(DEFAULT_END_DATE.getTime() - 7 * 24 * 60 * 60 * 1000);
+const defaultPeriodDates = getAutomationDashboardDefaultPeriodDates();
 
 const DEFAULT_FILTERS: Record<string, string[]> = {
   period: [
     AutomationDashboardDateRangeFilterPresets.last_7_days,
-    DEFAULT_START_DATE.toISOString().split('T')[0],
-    DEFAULT_END_DATE.toISOString().split('T')[0],
+    defaultPeriodDates.start,
+    defaultPeriodDates.end,
   ],
 };
 
