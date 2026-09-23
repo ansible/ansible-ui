@@ -34,7 +34,10 @@ interface CoverageMap {
  */
 function fixAllCoveragePaths(): void {
   const searchPattern = '.nyc_output/*.json';
-
+  // The old `glob` package passed `ignore: '**/node_modules/**'`. This pattern is
+  // non-recursive (only `*.json` in `.nyc_output/`), so that ignore was a no-op.
+  // Node's `globSync` also has no `ignore` option—`exclude` is a path predicate, not
+  // a glob list—so we omit it rather than reimplement equivalent filtering.
   const coverageFiles = globSync(searchPattern);
 
   if (coverageFiles.length === 0) {
