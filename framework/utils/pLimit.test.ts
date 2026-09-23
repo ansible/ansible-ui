@@ -22,4 +22,21 @@ describe('pLimit', () => {
   test('rejects when concurrency is invalid', () => {
     expect(() => pLimit(0)).toThrow();
   });
+
+  test('returns resolved values from each task', async () => {
+    const limit = pLimit(2);
+    const results = await Promise.all([
+      limit(() => Promise.resolve(1)),
+      limit(() => Promise.resolve(2)),
+      limit(() => Promise.resolve(3)),
+    ]);
+    expect(results).toEqual([1, 2, 3]);
+  });
+
+  test('rejects when a task throws', async () => {
+    const limit = pLimit(1);
+    await expect(
+      limit(() => Promise.reject(new Error('bulk failed')))
+    ).rejects.toThrow('bulk failed');
+  });
 });
