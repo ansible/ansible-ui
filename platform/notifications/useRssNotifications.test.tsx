@@ -11,12 +11,12 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 vi.mock('@ansible/common-ui/crud/useGet');
 vi.mock('swr');
 vi.mock('@ansible/ansible-ui-framework/PageNotifications/usePageNotifications');
-vi.mock('xml2js');
+vi.mock('./parseAtomFeedXml');
 
 import { usePageNotifications } from '@ansible/ansible-ui-framework/PageNotifications/usePageNotifications';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import useSWR from 'swr';
-import { parseStringPromise } from 'xml2js';
+import { parseAtomFeedXml } from './parseAtomFeedXml';
 import { useRssNotifications } from './useRssNotifications';
 
 describe('useRssNotifications', () => {
@@ -120,7 +120,7 @@ describe('useRssNotifications', () => {
       },
     };
 
-    vi.mocked(parseStringPromise).mockResolvedValue(parsedFeed);
+    vi.mocked(parseAtomFeedXml).mockReturnValue(parsedFeed);
 
     renderHook(() => useRssNotifications());
 
@@ -128,10 +128,7 @@ describe('useRssNotifications', () => {
       expect(mockSetNotificationGroups).toHaveBeenCalled();
     });
 
-    expect(parseStringPromise).toHaveBeenCalledWith(feedContent, {
-      trim: true,
-      explicitArray: false,
-    });
+    expect(parseAtomFeedXml).toHaveBeenCalledWith(feedContent);
   });
 
   test('should filter notifications by deployment type', async () => {
@@ -167,7 +164,7 @@ describe('useRssNotifications', () => {
       },
     };
 
-    vi.mocked(parseStringPromise).mockResolvedValue(parsedFeed);
+    vi.mocked(parseAtomFeedXml).mockReturnValue(parsedFeed);
 
     renderHook(() => useRssNotifications());
 
@@ -209,11 +206,11 @@ describe('useRssNotifications', () => {
       },
     };
 
-    vi.mocked(parseStringPromise).mockResolvedValue(parsedFeed);
+    vi.mocked(parseAtomFeedXml).mockReturnValue(parsedFeed);
 
     renderHook(() => useRssNotifications());
 
-    expect(parseStringPromise).toHaveBeenCalled();
+    expect(parseAtomFeedXml).toHaveBeenCalled();
 
     // Should not set notifications for unpublished items
     expect(mockSetNotificationGroups).not.toHaveBeenCalled();
@@ -226,11 +223,13 @@ describe('useRssNotifications', () => {
     setupGatewaySettings({ feedUrl });
     setupSWRMock(feedContent);
 
-    vi.mocked(parseStringPromise).mockRejectedValue(new Error('Invalid XML'));
+    vi.mocked(parseAtomFeedXml).mockImplementation(() => {
+      throw new Error('Invalid XML');
+    });
 
     renderHook(() => useRssNotifications());
 
-    expect(parseStringPromise).toHaveBeenCalled();
+    expect(parseAtomFeedXml).toHaveBeenCalled();
 
     // Should not crash and not set notifications
     expect(mockSetNotificationGroups).not.toHaveBeenCalled();
@@ -265,7 +264,7 @@ describe('useRssNotifications', () => {
       },
     };
 
-    vi.mocked(parseStringPromise).mockResolvedValue(parsedFeed);
+    vi.mocked(parseAtomFeedXml).mockReturnValue(parsedFeed);
 
     renderHook(() => useRssNotifications());
 
@@ -307,7 +306,7 @@ describe('useRssNotifications', () => {
       },
     };
 
-    vi.mocked(parseStringPromise).mockResolvedValue(parsedFeed);
+    vi.mocked(parseAtomFeedXml).mockReturnValue(parsedFeed);
 
     renderHook(() => useRssNotifications());
 

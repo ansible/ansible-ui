@@ -1,7 +1,7 @@
 import { Flex, FlexItem, Icon, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { CopyIcon, DownloadIcon, UploadIcon } from '@patternfly/react-icons';
 import isDeepEqual from 'fast-deep-equal';
-import getValue from 'get-value';
+import { getByPath } from '../../utils/getByPath';
 import jsyaml, { YAMLException } from 'js-yaml';
 import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { parseJSONPreservingLargeInts, stringifyPreservingLargeInts } from '../../utils/jsonUtils';
@@ -201,7 +201,7 @@ export function PageFormDataEditor<
 
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
-  const undoValue = getValue(defaultValues as object, props.name) as PathValue<
+  const undoValue = getByPath(defaultValues as object, props.name) as PathValue<
     TFieldValues,
     TFieldName
   >;

@@ -18,7 +18,7 @@ import {
 
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { DashboardToolbar } from './components/DashboardToolbar';
-import useResizeObserver from '@react-hook/resize-observer';
+import useResizeObserver from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { Scrollable } from '@ansible/ansible-ui-framework/components/Scrollable';

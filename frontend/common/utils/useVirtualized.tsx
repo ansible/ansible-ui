@@ -1,4 +1,4 @@
-import useResizeObserver from '@react-hook/resize-observer';
+import useResizeObserver from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
 export function useVirtualizedList<T>(

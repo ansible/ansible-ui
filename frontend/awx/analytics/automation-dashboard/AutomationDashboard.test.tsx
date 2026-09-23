@@ -7,7 +7,7 @@ import {
   PageAlertToasterProvider,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
-import useResizeObserver from '@react-hook/resize-observer';
+import useResizeObserver from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardToolbar } from './components';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
@@ -20,7 +20,7 @@ import type {
   IAutomationDashboardCollectionStatus,
 } from './types';
 
-vi.mock('@react-hook/resize-observer', () => ({
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
   default: vi.fn(),
 }));
 
