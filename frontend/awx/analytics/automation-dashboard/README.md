@@ -8,9 +8,12 @@ tabbed page:
   organization, project), export results to CSV, and adjust the cost-calculation parameters
   interactively.
 - **Leaderboards** — enterprise "at a glance" summary, automation streaks, per-dimension user
-  leaderboards, an organizations leaderboard, and 30-day achievement badges.
-  **The Leaderboards tab currently renders mock data** — see
+  leaderboards, an organizations leaderboard, and 30-day achievement badges. Data comes from
+  `/dashboard_reports/leaderboard/` via
   [`views/useAutomationLeaderboardsView.ts`](./views/useAutomationLeaderboardsView.ts).
+
+Which tabs a user sees depends on their role and on server-side flags — see
+[Access and visibility](#access-and-visibility).
 
 ---
 
@@ -24,8 +27,10 @@ automation-dashboard/
 ├── AutomationDashboard.css          # Styles for leaderboard visuals (streak strip, badges)
 ├── README.md
 ├── common/                          # Hooks: data views, toolbar filters, filter-set CRUD, grid sizing
+│   ├── applyAutomationDashboardNavVisibility.ts  # Removes / collapses the nav entry per visibility
+│   ├── leaderboardCardWidths.ts     # Leaderboards card column spans per grid width
 │   ├── useAutomationDashboardBaseView.ts
-│   ├── useAutomationDashboardCollectionStatus.tsx
+│   ├── useAutomationDashboardCollectionStatus.tsx  # Collection status + canSeeDashboard/Leaderboard
 │   ├── useAutomationDashboardToolbarFilters.tsx
 │   ├── useAutomationDashboardToolbarActions.tsx
 │   ├── useCreateToolbarFilterSet.tsx / useUpdateToolbarFilterSet.tsx / useRemoveToolbarFilterSet.tsx
@@ -44,10 +49,11 @@ automation-dashboard/
 │   ├── DashboardTableToolbarRow.tsx # Cost controls + Export CSV
 │   ├── DashboardTableInputField.tsx # Inline numeric input
 │   ├── DashboardExportButton.tsx    # CSV export split button
-│   └── leaderboards/                # "Leaderboards" tab components (mock data via the view hook)
+│   └── leaderboards/                # "Leaderboards" tab components (data via the view hook)
 │       ├── AutomationAtAGlance.tsx
 │       ├── AtAGlanceKpiMetric.tsx
 │       ├── AutomationDimensions.tsx
+│       ├── AutomationStreak.tsx
 │       ├── HighlightsLeaderboardPanel.tsx
 │       ├── HighlightsSyncTimestamp.tsx
 │       ├── MilestoneBadgesCard.tsx
@@ -66,7 +72,7 @@ automation-dashboard/
 │   └── persistedFilterState.ts      # Per-user sessionStorage persistence of toolbar state
 └── views/                           # Data / state hooks
     ├── useAutomationDashboardView.tsx      # Dashboard tab: central data + export hook
-    ├── useAutomationLeaderboardsView.ts    # Leaderboards tab: single data source (mock for now)
+    ├── useAutomationLeaderboardsView.ts    # Leaderboards tab: single data source (SWR)
     ├── useFilterSetView.tsx                # "Select report" async filter-set dropdown state
     ├── useGetReportDetails.tsx             # Fetches aggregate dashboard data (SWR)
     ├── useGetReportSubscriptionCosts.tsx   # Fetches subscription cost settings
@@ -91,7 +97,44 @@ Registered in `useAwxNavigation` under `analytics/automation-dashboard`:
 | `AwxRoute.AutomationDashboard`         | `automation-dashboard/dashboard`    | `AutomationDashboard`         |
 | `AwxRoute.AutomationLeaderboards`      | `automation-dashboard/leaderboards` | `AutomationLeaderboards`      |
 
-The index path redirects to `dashboard`.
+The index path (`AwxRoute.AutomationDashboardRedirect`) redirects to `dashboard`.
+
+These are the routes when the user can see both tabs. When only one is visible the two tab
+sub-routes and the redirect are dropped, so `automation-dashboard` renders that view directly and
+the tab URLs return 404. When neither is visible the entry is removed entirely.
+
+---
+
+## Access and visibility
+
+`useAutomationDashboardCollectionStatus` fetches `/dashboard_reports/collection_status/` and derives:
+
+| Flag                | True when                                                                |
+| ------------------- | ------------------------------------------------------------------------ |
+| `canSeeDashboard`   | AWX user is superuser or system auditor **and** `show_dashboard` is true |
+| `canSeeLeaderboard` | `show_gamification` is true (any user)                                   |
+
+It uses `useAwxActiveUser`, so it works in both the Platform and the standalone AWX builds.
+
+Where the flags are applied:
+
+- **Navigation** — `useAwxNavigation` calls `applyAutomationDashboardNavVisibility` (neither
+  visible → remove the entry; one visible → drop the tab sub-routes). It is skipped while loading
+  and on error, so the page can show its own state. An Analytics group left without children is
+  hidden. Platform's `useAutomationAnalytics` inherits this tree and additionally removes the entry
+  when collection is disabled (`enabled` falsy).
+- **Page** — `AutomationDashboardMainPage` picks what to render (see below).
+
+Request behavior:
+
+- Polls every 10 s; the global SWR `dedupingInterval` lets concurrent callers share one request.
+- A failed poll keeps the last good data, so a transient error doesn't unmount the page or change
+  the menu. `error` is only returned when there is no data at all.
+- A **404** means there is no metrics service (e.g. standalone AWX): the feature is treated as
+  unavailable (default status, no `error`) and polling slows to every 5 minutes without error
+  retries, returning to normal as soon as the endpoint answers.
+- A **401** revalidates both the gateway and the AWX `/me/` queries so the app switches to the login
+  screen right away.
 
 ---
 
@@ -99,10 +142,10 @@ The index path redirects to `dashboard`.
 
 ```text
 AutomationDashboardMainPage (page shell — stays mounted across tab switches)
-  ├── useAutomationDashboardCollectionStatus()   ← gates the loading state
+  ├── useAutomationDashboardCollectionStatus()   ← loading state + canSeeDashboard/canSeeLeaderboard
   ├── useDashboardGridColumns()                  ← measures the grid column count once
   └── PageDashboardContext.Provider { columns }
-        └── PageRoutedTabs
+        └── PageRoutedTabs                     (both visible; otherwise a single view, see below)
               ├── AutomationDashboard        (Dashboard tab)
               │     ├── useAutomationDashboardToolbar()   ← toolbar filters
               │     ├── useAutomationDashboardView()      ← central data + export hook
@@ -113,7 +156,7 @@ AutomationDashboardMainPage (page shell — stays mounted across tab switches)
               │     ├── <DashboardToolbar>
               │     └── <DashboardLayout> → DashboardGridRow × 3
               └── AutomationLeaderboards     (Leaderboards tab)
-                    ├── useAutomationLeaderboardsView()   ← single data source (mock for now)
+                    ├── useAutomationLeaderboardsView()   ← single data source (SWR)
                     └── <DashboardLayout> → DashboardGridRow × 4
 ```
 
@@ -134,8 +177,16 @@ content in `<DashboardLayout>` (a `<Scrollable>` + CSS grid) and lays out full-w
 
 ### `AutomationDashboardMainPage.tsx`
 
-The tabbed page shell. Shows a `LoadingState` while the collection status is loading, otherwise a
-`PageHeader` and the `Dashboard` / `Leaderboards` tabs via `PageRoutedTabs`.
+The page shell. Shows a `LoadingState` while the collection status is loading, otherwise a
+`PageHeader` and, depending on [access](#access-and-visibility):
+
+| Condition                | Renders                                                |
+| ------------------------ | ------------------------------------------------------ |
+| `error` (no data at all) | `EmptyStateError`                                      |
+| can see both             | `Dashboard` / `Leaderboards` tabs via `PageRoutedTabs` |
+| only `canSeeDashboard`   | `Divider` + `AutomationDashboard`, no tabs             |
+| only `canSeeLeaderboard` | `Divider` + `AutomationLeaderboards`, no tabs          |
+| neither                  | `EmptyStateUnauthorized`                               |
 
 ### `AutomationDashboard.tsx` (Dashboard tab)
 
@@ -225,11 +276,12 @@ The central view hook consumed by the Dashboard tab. Composes the sub-hooks and 
 
 ### `useAutomationLeaderboardsView`
 
-**Single source of data for the Leaderboards tab.** Owns the data contract (types) and, for now, a
-`MOCK_LEADERBOARDS` constant; the hook returns `{ ...mock, isLoading: false, error: undefined }`.
-When the analytics API exposes a leaderboards report, replace the hook body with a `useSWR` /
-`useGet` call (pattern: `useGetReportDetails`) that resolves to `AutomationLeaderboardsData` — the
-components consume only this hook, so nothing else changes. Marked with a `TODO(api)` comment.
+**Single source of data for the Leaderboards tab.** Owns the data contract (types), fetches
+`/dashboard_reports/leaderboard/` with `useSWR` and maps the raw response through the exported
+`mapLeaderboardReport`. `lastSyncedAt` comes from the shared `useAutomationDashboardCollectionStatus`
+(`min_collection_timestamp`, a stand-in until collection_status exposes a real last-sync field);
+its failure is reported separately as `collectionStatusError`. The components consume only this
+hook.
 
 ### `useFilterSetView`
 
@@ -261,7 +313,15 @@ prepends the mandatory **Period** single-select filter.
 
 ### `useAutomationDashboardCollectionStatus`
 
-Fetches the analytics collection status; drives the page-shell loading state.
+Fetches the analytics collection status and returns `collectionStatus`, `isLoading`,
+`canSeeDashboard`, `canSeeLeaderboard` and `error`. Shared by the page shell, the navigation hooks
+and `useAutomationLeaderboardsView` (for the "Updated" timestamp). Error, 404 and 401 handling is
+described in [Access and visibility](#access-and-visibility).
+
+### `applyAutomationDashboardNavVisibility`
+
+Mutates a navigation tree in place: removes the `AutomationDashboardMainPage` entry when neither
+view is visible, or empties its tab children when only one is.
 
 ### `use{Create,Update,Remove}ToolbarFilterSet` / `useCreateEditToolbarFilterSetDialog`
 
@@ -289,9 +349,10 @@ before use. All writes are best-effort (wrapped in try/catch for private browsin
 ## Testing
 
 Most source files have a co-located test file (`*.test.tsx` / `*.test.ts`) using **Vitest** +
-**React Testing Library** + **MSW v2**. The Leaderboards tab (`AutomationLeaderboards`,
-`components/leaderboards/*`, `useAutomationLeaderboardsView`) is not covered yet — tests are
-pending alongside the real API wiring.
+**React Testing Library** + **MSW v2**. `useAutomationLeaderboardsView` is tested with MSW;
+components that read it mock the hook with a typed fixture instead of rendering it for real.
+`useAutomationDashboardCollectionStatus` mocks `swr` directly to drive the role / error / 404
+combinations by hand.
 
 **Key conventions**
 
