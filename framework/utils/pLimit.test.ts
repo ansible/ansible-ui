@@ -1,5 +1,5 @@
-import { describe, expect, test, vi } from 'vitest';
-import pLimit from './pLimit';
+import { describe, expect, test } from 'vitest';
+import { pLimit } from './pLimit';
 
 describe('pLimit', () => {
   test('limits concurrent executions', async () => {
@@ -35,8 +35,8 @@ describe('pLimit', () => {
 
   test('rejects when a task throws', async () => {
     const limit = pLimit(1);
-    await expect(
-      limit(() => Promise.reject(new Error('bulk failed')))
-    ).rejects.toThrow('bulk failed');
+    await expect(limit(() => Promise.reject(new Error('bulk failed')))).rejects.toThrow(
+      'bulk failed'
+    );
   });
 });
