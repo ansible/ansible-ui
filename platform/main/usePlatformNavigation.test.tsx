@@ -198,6 +198,18 @@ describe('usePlatformNavigation', () => {
     mockUseAwxNavigation.mockImplementation(() => buildAwxNav());
     mockUseEdaNavigation.mockImplementation(() => buildEdaNav());
     mockUseHubNavigation.mockImplementation(() => buildHubNav());
+    mockUseHasAwxService.mockReturnValue(true);
+    mockUseHasEdaService.mockReturnValue(true);
+    mockUseHasHubService.mockReturnValue(true);
+    mockUseIsManagedCloudInstall.mockReturnValue(false);
+    mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'administration' });
+    mockUseUIFlag.mockReturnValue({ enabled: false });
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
+    mockUseAutomationDashboardCollectionStatus.mockReturnValue({
+      collectionStatus: { enabled: true },
+      isLoading: false,
+    });
+    mockUseRuntimeFeatureFlagsEnabled.mockReturnValue({ isEnabled: false });
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: { is_superuser: true, is_platform_auditor: false },
     });

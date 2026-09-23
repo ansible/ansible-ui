@@ -7,6 +7,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vite
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { PlatformResource } from './PlatformResource';
 
+// PlatformResource uses i18next's t() directly; vitest.setup only mocks react-i18next.
 vi.mock('i18next', () => ({
   t: (key: string) => key,
 }));
