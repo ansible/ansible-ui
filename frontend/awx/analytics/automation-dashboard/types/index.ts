@@ -62,10 +62,9 @@ export interface IDashboardFilterSet {
 export interface IAutomationDashboardCollectionStatus {
   enabled: boolean | null;
   /** ISO 8601 string as returned by the API (useFetcher applies no date reviver), or null. */
-  next_run: string | null;
-  initial_collection_status: string | null;
-  /** ISO 8601 string as returned by the API (useFetcher applies no date reviver), or null. */
   min_collection_timestamp?: string | null;
+  show_dashboard: boolean | null;
+  show_gamification: boolean | null;
 }
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────────
