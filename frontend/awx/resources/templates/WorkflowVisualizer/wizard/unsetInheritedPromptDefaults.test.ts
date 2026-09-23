@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import { unsetInheritedPromptDefaults } from './unsetInheritedPromptDefaults';
+import {
+  type ResourcePromptSnapshot,
+  unsetInheritedPromptDefaults,
+} from './unsetInheritedPromptDefaults';
 
 const launchConfig = {
   defaults: {
@@ -35,9 +38,17 @@ describe('unsetInheritedPromptDefaults', () => {
   it('should keep prompt fields when the node has an explicit override', () => {
     const effectivePrompt = { timeout: 3000, forks: 5 };
 
-    unsetInheritedPromptDefaults(effectivePrompt, launchConfig, { timeout: 0, forks: null });
+    unsetInheritedPromptDefaults(effectivePrompt, launchConfig, { timeout: 0, forks: 5 });
 
     expect(effectivePrompt).toEqual({ timeout: 3000, forks: 5 });
+  });
+
+  it('should strip inherited defaults only for fields the node still stores as null', () => {
+    const effectivePrompt = { timeout: 3000, forks: 5 };
+
+    unsetInheritedPromptDefaults(effectivePrompt, launchConfig, { timeout: 0, forks: null });
+
+    expect(effectivePrompt).toEqual({ timeout: 3000 });
   });
 
   it('should keep prompt fields when the user changed the value away from the template default', () => {
@@ -54,7 +65,9 @@ describe('unsetInheritedPromptDefaults', () => {
     } as LaunchConfiguration;
     const effectivePrompt = { forks: 0 };
 
-    unsetInheritedPromptDefaults(effectivePrompt, configWithZeroForks, { forks: 0 });
+    unsetInheritedPromptDefaults(effectivePrompt, configWithZeroForks, {
+      forks: 0,
+    } as ResourcePromptSnapshot);
 
     expect(effectivePrompt).toEqual({ forks: 0 });
   });

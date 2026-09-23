@@ -196,7 +196,7 @@ describe('buildEffectivePrompt', () => {
         forks: 5,
         credentials: [],
       },
-    } as LaunchConfiguration;
+    } as unknown as LaunchConfiguration;
 
     test('should omit unchanged template defaults when the node had no API override', () => {
       const { effectivePrompt } = buildEffectivePrompt({
