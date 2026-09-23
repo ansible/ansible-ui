@@ -49,7 +49,7 @@
     "knip": "knip",
     "knip:files": "knip --include files",
     "eslint": "nx run-many --target=eslint",
-    "eslint:guardrails": "eslint --no-eslintrc --config .eslintrc.guardrails.json --ext .ts,.tsx frontend platform framework",
+    "eslint:guardrails": "eslint --config eslint.guardrails.config.mjs frontend platform framework",
     "eslint:fix": "nx run-many --target=eslint:fix",
     "fix": "nx run-many --target=eslint:fix,prettier:fix",
     "upgrade": "npx npm-check-updates -u --workspaces && npm npm-check-updates -u && npm i && npm test",
@@ -58,6 +58,8 @@
     "insights:ci-build": "cd frontend/hub/insights && npm ci --legacy-peer-deps && npm run build && cd /opt/app-root/src && rm -f package-lock.json"
   },
   "dependencies": {
+    "@eslint/eslintrc": "2.1.4",
+    "@eslint/js": "8.57.1",
     "@ansible/ansible-ai-connect-chatbot": "^0.1.17",
     "@ansible/react-json-chart-builder": "3.0.0",
     "@patternfly/patternfly": "6.5.1",
