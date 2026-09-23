@@ -1,5 +1,22 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+
+// Requires controller list filters last_job_host_summary__failed on the E2E backend (2.7 today).
+async function expectHostsPageWithStatusFilter(page: Page, status: 'ready' | 'failed') {
+  const isReady = status === 'ready';
+  const chipLabel = isReady ? 'Show only ready hosts' : 'Show only failed hosts';
+  const urlPattern = isReady ? /ready_status=True/ : /failed_status=True/;
+  const errorHeading = page.getByRole('heading', { name: 'Error loading hosts' });
+  const toolbar = page.getByTestId('page-toolbar');
+
+  await expect(page.getByTestId('page-title')).toContainText('Hosts');
+  // Hosts OPTIONS and the filtered list must finish before the real toolbar
+  // (and chips) exist. The loading table and skeleton toolbar have neither.
+  await expect(toolbar.or(errorHeading)).toBeVisible({ timeout: 60_000 });
+  await expect(errorHeading).not.toBeVisible();
+  await expect(page).toHaveURL(urlPattern);
+  await expect(toolbar.getByText(chipLabel, { exact: true })).toBeVisible();
+}
 
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
@@ -39,16 +56,12 @@ test('hosts resource counts should redirect correctly', async ({ page }) => {
     await expect(page.locator('#resource-counts')).toContainText('Resource Counts');
     if (await page.locator('#hosts').getByRole('link', { name: 'Ready' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Ready' }).click();
-      await expect(page.getByTestId('page-title')).toContainText('Hosts');
-      await expect(page.getByText('Ready Status')).toBeVisible();
-      await expect(page.getByText('Show only ready hosts')).toBeVisible();
+      await expectHostsPageWithStatusFilter(page, 'ready');
     }
     await page.getByRole('link', { name: 'Overview' }).click();
     if (await page.locator('#hosts').getByRole('link', { name: 'Failed' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Failed' }).click();
-      await expect(page.getByRole('heading')).toContainText('Hosts');
-      await expect(page.getByText('Failed Status')).toBeVisible();
-      await expect(page.getByText('Show only failed hosts')).toBeVisible();
+      await expectHostsPageWithStatusFilter(page, 'failed');
     }
   }
 });

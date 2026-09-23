@@ -82,6 +82,7 @@ function makeGraphNode(
   } = {}
 ) {
   const { id = '42', visible = true, modified = true, nodeData = {}, sourceEdges = [] } = overrides;
+  let currentId = id;
 
   const defaultNodeData: GraphNodeData = {
     resource: {
@@ -121,11 +122,13 @@ function makeGraphNode(
   } as GraphNodeData;
 
   return {
-    getId: () => id,
+    getId: () => currentId,
     getData: () => defaultNodeData,
     getState: () => ({ modified }),
     isVisible: () => visible,
-    setId: vi.fn(),
+    setId: vi.fn((newId: string) => {
+      currentId = newId;
+    }),
     setData: vi.fn(),
     setState: vi.fn(),
     setLabel: vi.fn(),
@@ -329,6 +332,162 @@ describe('useSaveVisualizer', () => {
       true
     );
     expect(postCalls.some((c: unknown[]) => (c[0] as string).includes('/credentials/'))).toBe(true);
+  });
+
+  test('should not associate labels, instance groups, or credentials on a new node when those fields are not prompted', async () => {
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-unprompted',
+      visible: true,
+      modified: false,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: 'job-unprompted',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Deploy',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          labels: [{ id: 11, name: 'jt-label' }],
+          instance_groups: [{ id: 21, name: 'jt-ig' }],
+          credentials: [{ id: 31, name: 'jt-cred' }],
+          extra_vars: 'foo: bar',
+          original: {
+            launch_config: {
+              ask_variables_on_launch: true,
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [newNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const postCalls = mockPostFn.mock.calls;
+    expect(postCalls.some((c: unknown[]) => (c[0] as string).includes('/workflow_nodes/'))).toBe(
+      true
+    );
+    expect(postCalls.some((c: unknown[]) => (c[0] as string).includes('/labels/'))).toBe(false);
+    expect(postCalls.some((c: unknown[]) => (c[0] as string).includes('/instance_groups/'))).toBe(
+      false
+    );
+    expect(postCalls.some((c: unknown[]) => (c[0] as string).includes('/credentials/'))).toBe(
+      false
+    );
+  });
+
+  test('should associate a new node as a sequential child of the selected source node', async () => {
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-child',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: 'child',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Child',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    const sourceNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'parent',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Parent',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+      sourceEdges: [
+        {
+          isVisible: () => true,
+          getData: () => ({ tagStatus: EdgeStatus.success }),
+          getTarget: () => ({ getId: () => newNode.getId() }),
+        },
+      ],
+    });
+    mockGraphNodes = [sourceNode, newNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const associateCall = mockPostFn.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' &&
+        c[0].includes('/workflow_job_template_nodes/42/success_nodes/') &&
+        !(c[1] as { disassociate?: boolean })?.disassociate
+    );
+    expect(associateCall).toBeDefined();
+    expect(associateCall?.[1]).toEqual({ id: 100 });
   });
 
   test('should create new system job node with extra_data days', async () => {
@@ -724,6 +883,110 @@ describe('useSaveVisualizer', () => {
 
     expect(mockSetState).toHaveBeenCalledWith(expect.objectContaining({ modified: false }));
     expect(mockRefresh).toHaveBeenCalled();
+  });
+
+  test('should disassociate existing instance groups when instance group prompt is disabled', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [{ id: 60, name: 'existing-ig' }],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const disassociateCalls = mockPostFn.mock.calls.filter(
+      (c: unknown[]) =>
+        (c[1] as { disassociate?: boolean })?.disassociate === true &&
+        typeof c[0] === 'string' &&
+        c[0].includes('/instance_groups/')
+    );
+    expect(disassociateCalls).toHaveLength(1);
+    expect(disassociateCalls[0]?.[1]).toEqual({ id: 60, disassociate: true });
+  });
+
+  test('should disassociate existing credentials when credential prompt is disabled', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [{ id: 70, name: 'existing-cred' }],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const disassociateCalls = mockPostFn.mock.calls.filter(
+      (c: unknown[]) =>
+        (c[1] as { disassociate?: boolean })?.disassociate === true &&
+        typeof c[0] === 'string' &&
+        c[0].includes('/credentials/')
+    );
+    expect(disassociateCalls).toHaveLength(1);
+    expect(disassociateCalls[0]?.[1]).toEqual({ id: 70, disassociate: true });
   });
 
   test('should process labels with no prompt but existing labels on disassociate', async () => {

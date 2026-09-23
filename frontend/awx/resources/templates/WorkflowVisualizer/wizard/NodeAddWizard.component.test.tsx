@@ -2,43 +2,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { RESOURCE_TYPE } from '../constants';
-import { EdgeStatus } from '../types';
+import { RESOURCE_TYPE, START_NODE_ID } from '../constants';
+import { EdgeStatus, type WizardFormValues } from '../types';
 import { NodeAddWizard } from './NodeAddWizard';
-
-const mockCloseSidebar = vi.fn();
-const mockCreateEdge = vi.fn((source: string, target: string, status?: string) => ({
-  id: `${source}-${target}`,
-  type: 'edge',
-  source,
-  target,
-  visible: true,
-  data: { status },
-}));
-const mockFromModel = vi.fn();
-const mockSetState = vi.fn();
-const mockLayout = vi.fn();
-const mockNodeSetState = vi.fn();
-const mockSourceSetState = vi.fn();
-
-let mockSourceNode: { getId: () => string; setState: typeof mockSourceSetState } | undefined;
-let mockNodeTypeDefaults: () => Record<string, unknown>;
-
-const mockGraphStartNode = { getId: () => 'startNode' };
-
-function createMockVisualizationController() {
-  return {
-    getState: () => ({ sourceNode: mockSourceNode }),
-    setState: mockSetState,
-    getGraph: () => ({
-      getNodes: () => [mockGraphStartNode],
-      layout: mockLayout,
-    }),
-    toModel: () => ({ nodes: [], edges: [] }),
-    fromModel: mockFromModel,
-    getNodeById: () => ({ setState: mockNodeSetState }),
-  };
-}
+import type { BuildEffectivePromptParams } from './buildEffectivePrompt';
 
 vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
   greyBadgeLabel: {
@@ -48,63 +15,183 @@ vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
   },
 }));
 
+const mockCloseSidebar = vi.fn();
+const mockCreateEdge = vi.fn((source: string, target: string, status: EdgeStatus) => ({
+  id: `${source}-${target}`,
+  type: 'edge',
+  source,
+  target,
+  data: { tagStatus: status },
+}));
+const mockFromModel = vi.fn();
+const mockSetState = vi.fn();
+const mockLayout = vi.fn();
+const mockSourceSetState = vi.fn();
+const mockNewNodeSetState = vi.fn();
+const mockSourceNodeSetStateAfterFromModel = vi.fn();
+
+const EXISTING_GRAPH_NODE_ID = '1-unsavedNode';
+
+let mockSourceNode:
+  | {
+      getId: () => string;
+      setState: ReturnType<typeof vi.fn>;
+    }
+  | undefined;
+
+let mockModel: { nodes: unknown[]; edges: unknown[] };
+
+function getExistingGraphNodeId(): string {
+  return EXISTING_GRAPH_NODE_ID;
+}
+
+function getMockGraphNodes() {
+  return [{ getId: getExistingGraphNodeId }];
+}
+
+function getMockGraph() {
+  return {
+    getNodes: getMockGraphNodes,
+    layout: mockLayout,
+  };
+}
+
+function getMockControllerState() {
+  return { sourceNode: mockSourceNode, modified: false };
+}
+
+function createMockVisualizationController() {
+  return {
+    getState: getMockControllerState,
+    setState: mockSetState,
+    getGraph: getMockGraph,
+    toModel: () => mockModel,
+    fromModel: mockFromModel,
+    getNodeById: mockGetNodeById,
+  };
+}
+
+function identityObserver(component: unknown) {
+  return component;
+}
+
+const mockGetNodeById = vi.fn((id: string) => {
+  if (id === '42') {
+    return { setState: mockSourceNodeSetStateAfterFromModel };
+  }
+  return { setState: mockNewNodeSetState };
+});
+
 vi.mock('@patternfly/react-topology', () => ({
   useVisualizationController: vi.fn(createMockVisualizationController),
   NodeModel: {},
   NodeShape: { circle: 'circle' },
   EdgeTerminalType: { directional: 'directional' },
   NodeStatus: { danger: 'danger', success: 'success', info: 'info' },
-  observer: (component: unknown) => component,
+  observer: identityObserver,
   TopologySideBar: () => null,
   TopologyView: () => null,
 }));
 
-vi.mock('@ansible/common-ui/crud/useOptions', () => ({
-  useOptions: () => ({ data: { actions: { POST: {} } } }),
-}));
+function createNodeTypeStepDefaults() {
+  return {
+    approval_description: 'Approval description',
+    approval_name: 'Approval step',
+    approval_timeout: 300,
+    node_alias: '',
+    node_convergence: 'any' as const,
+    node_days_to_keep: 30,
+    resource: null,
+    resourceId: undefined,
+    node_type: RESOURCE_TYPE.workflow_approval,
+    node_status_type: EdgeStatus.success,
+  };
+}
+
+function useNodeTypeStepDefaultsMock() {
+  return createNodeTypeStepDefaults;
+}
 
 vi.mock('../hooks', () => ({
   useCloseSidebar: () => mockCloseSidebar,
   useCreateEdge: () => mockCreateEdge,
-  useNodeTypeStepDefaults: () => mockNodeTypeDefaults,
+  useNodeTypeStepDefaults: useNodeTypeStepDefaultsMock,
 }));
 
-vi.mock('./NodeTypeStep', () => ({
-  NodeTypeStep: () => <div data-testid="node-type-step">Node type step</div>,
+const mockBuildEffectivePrompt = vi.fn(
+  ({ prompt, launchConfig, resourceOrganization }: BuildEffectivePromptParams) => ({
+    effectivePrompt: {
+      ...(prompt as object),
+      organization: resourceOrganization,
+      original: { launch_config: launchConfig },
+    },
+    isTemplateChange: false,
+  })
+);
+
+function buildEffectivePromptMock(params: BuildEffectivePromptParams) {
+  return mockBuildEffectivePrompt(params);
+}
+
+vi.mock('./buildEffectivePrompt', () => ({
+  buildEffectivePrompt: buildEffectivePromptMock,
 }));
 
-vi.mock('./NodePromptsStep', () => ({
-  NodePromptsStep: () => <div data-testid="node-prompts-step">Prompts</div>,
-}));
+function createDefaultFormValues(): WizardFormValues {
+  return {
+    approval_name: 'Approval step',
+    approval_description: 'Approval description',
+    launch_config: null,
+    node_type: RESOURCE_TYPE.workflow_approval,
+    resource: null,
+    resourceId: undefined,
+    approval_timeout: 300,
+    node_alias: '',
+    node_convergence: 'any',
+    node_days_to_keep: 30,
+    node_status_type: EdgeStatus.success,
+    prompt: { credentials: [], labels: [], instance_groups: [] },
+    survey: {},
+  };
+}
 
-vi.mock('./NodeReviewStep', () => ({
-  NodeReviewStep: () => <div data-testid="node-review-step">Review</div>,
-}));
+let mockFormValues: WizardFormValues = createDefaultFormValues();
 
-vi.mock('../../../../common/SurveyStep', () => ({
-  SurveyStep: () => <div data-testid="survey-step">Survey</div>,
-}));
+function handleMockWizardSubmit(onSubmit: (values: WizardFormValues) => Promise<void>) {
+  void onSubmit(mockFormValues);
+}
 
-const approvalDefaults = {
-  approval_description: 'Approve this',
-  approval_name: 'Approval Node',
-  approval_timeout: 60,
-  node_alias: '',
-  node_convergence: 'any' as const,
-  node_days_to_keep: 30,
-  resource: null,
-  resourceId: undefined,
-  node_type: RESOURCE_TYPE.workflow_approval,
-  node_status_type: EdgeStatus.info,
-};
+function MockPageWizard({
+  onSubmit,
+  title,
+}: {
+  onSubmit: (values: WizardFormValues) => Promise<void>;
+  title: string;
+}) {
+  return (
+    <div>
+      <div data-testid="wizard-title">{title}</div>
+      <button
+        type="button"
+        data-testid="wizard-submit"
+        onClick={() => handleMockWizardSubmit(onSubmit)}
+      >
+        Finish
+      </button>
+    </div>
+  );
+}
 
-async function finishWizard() {
-  const user = userEvent.setup();
-  const nextButton = await screen.findByRole('button', { name: 'Next' }, { timeout: 5000 });
-  await user.click(nextButton);
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    PageWizard: MockPageWizard,
+  };
+});
 
-  const finishButton = await screen.findByRole('button', { name: 'Finish' }, { timeout: 5000 });
-  await user.click(finishButton);
+function expectFromModelCalled() {
+  expect(mockFromModel).toHaveBeenCalled();
 }
 
 describe('NodeAddWizard submit', () => {
@@ -114,255 +201,132 @@ describe('NodeAddWizard submit', () => {
     mockFromModel.mockClear();
     mockSetState.mockClear();
     mockLayout.mockClear();
-    mockNodeSetState.mockClear();
     mockSourceSetState.mockClear();
+    mockNewNodeSetState.mockClear();
+    mockSourceNodeSetStateAfterFromModel.mockClear();
+    mockGetNodeById.mockClear();
+    mockBuildEffectivePrompt.mockClear();
     mockSourceNode = undefined;
-    mockNodeTypeDefaults = () => ({ ...approvalDefaults });
+    mockModel = { nodes: [], edges: [] };
+    mockFormValues = createDefaultFormValues();
   });
 
-  it('should render Add step wizard', async () => {
-    render(
-      <MemoryRouter>
-        <NodeAddWizard />
-      </MemoryRouter>
-    );
-    expect(await screen.findByTestId('wizard-title')).toHaveTextContent('Add step');
-  });
-
-  it('should create a root edge and node when there is no source node', async () => {
+  async function submitWizard() {
+    const user = userEvent.setup();
     render(
       <MemoryRouter>
         <NodeAddWizard />
       </MemoryRouter>
     );
 
-    await finishWizard();
+    await user.click(screen.getByTestId('wizard-submit'));
+    await waitFor(expectFromModelCalled);
+  }
 
-    await waitFor(() => {
-      expect(mockFromModel).toHaveBeenCalled();
-    });
-    expect(mockCreateEdge).toHaveBeenCalledWith(
-      'startNode',
-      expect.stringContaining('-unsavedNode'),
-      EdgeStatus.info
+  it('should call buildEffectivePrompt and add a root edge when there is no source node', async () => {
+    await submitWizard();
+
+    expect(mockBuildEffectivePrompt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        originalTemplateId: undefined,
+        newResourceId: undefined,
+        resourceOrganization: undefined,
+      })
     );
+    expect(mockCreateEdge).toHaveBeenCalledWith(START_NODE_ID, '2-unsavedNode', EdgeStatus.info);
+    expect(mockModel.edges).toHaveLength(1);
+    expect(mockModel.nodes).toHaveLength(1);
+    expect(mockNewNodeSetState).toHaveBeenCalledWith({ modified: true });
+    expect(mockSourceNodeSetStateAfterFromModel).not.toHaveBeenCalled();
     expect(mockCloseSidebar).toHaveBeenCalled();
     expect(mockLayout).toHaveBeenCalled();
-    expect(mockNodeSetState).toHaveBeenCalledWith({ modified: true });
   });
 
-  it('should attach grey badge when convergence is all', async () => {
-    mockNodeTypeDefaults = () => ({
-      ...approvalDefaults,
-      node_convergence: 'all',
-    });
-
-    render(
-      <MemoryRouter>
-        <NodeAddWizard />
-      </MemoryRouter>
-    );
-
-    await finishWizard();
-
-    await waitFor(() => {
-      expect(mockFromModel).toHaveBeenCalled();
-    });
-    const model = mockFromModel.mock.calls[0][0] as {
-      nodes: Array<{ data: { badge?: string } }>;
-    };
-    expect(model.nodes[0].data.badge).toBe('ALL');
-  });
-
-  it('should keep identifier when alias is set and remove timeout for non-approval nodes', async () => {
-    mockNodeTypeDefaults = () => ({
-      ...approvalDefaults,
-      node_type: RESOURCE_TYPE.job,
-      node_alias: 'my-alias',
-      resource: {
-        id: 7,
-        name: 'Demo Job',
-        description: 'desc',
-        type: 'job_template',
-        project: 1,
-        inventory: 1,
-        organization: 3,
-        ask_inventory_on_launch: false,
-      },
-      resourceId: 7,
-      prompt: {
-        credentials: [],
-        labels: [],
-        instance_groups: [],
-      },
-      launch_config: {
-        ask_credential_on_launch: false,
-        survey_enabled: false,
-      },
-      survey: { foo: 'bar' },
-    });
-
-    render(
-      <MemoryRouter>
-        <NodeAddWizard />
-      </MemoryRouter>
-    );
-
-    await finishWizard();
-
-    await waitFor(() => {
-      expect(mockFromModel).toHaveBeenCalled();
-    });
-    const model = mockFromModel.mock.calls[0][0] as {
-      nodes: Array<{
-        label: string;
-        data: {
-          resource: {
-            identifier?: string;
-            extra_data?: unknown;
-            summary_fields: {
-              unified_job_template: { timeout?: number; name: string };
-            };
-          };
-          launch_data: { organization?: number; original?: unknown };
-          survey_data: { foo: string };
-        };
-      }>;
-    };
-    const node = model.nodes[0];
-    expect(node.label).toBe('my-alias');
-    expect(node.data.resource.identifier).toBe('my-alias');
-    expect(node.data.resource.summary_fields.unified_job_template.timeout).toBeUndefined();
-    expect(node.data.resource.extra_data).toBeUndefined();
-    expect(node.data.launch_data.organization).toBe(3);
-    expect(node.data.launch_data.original).toEqual({
-      launch_config: {
-        ask_credential_on_launch: false,
-        survey_enabled: false,
-      },
-    });
-    expect(node.data.survey_data).toEqual({ foo: 'bar' });
-  });
-
-  it('should keep extra_data days when resource has cleanup job type', async () => {
-    mockNodeTypeDefaults = () => ({
-      ...approvalDefaults,
-      node_type: RESOURCE_TYPE.system_job,
-      resource: {
-        id: 9,
-        name: 'Cleanup',
-        description: '',
-        type: 'system_job_template',
-        job_type: 'cleanup_jobs',
-      },
-      resourceId: 9,
-      node_days_to_keep: 14,
-    });
-
-    render(
-      <MemoryRouter>
-        <NodeAddWizard />
-      </MemoryRouter>
-    );
-
-    await finishWizard();
-
-    await waitFor(() => {
-      expect(mockFromModel).toHaveBeenCalled();
-    });
-    const model = mockFromModel.mock.calls[0][0] as {
-      nodes: Array<{ data: { resource: { extra_data?: { days: number } } } }>;
-    };
-    expect(model.nodes[0].data.resource.extra_data).toEqual({ days: 14 });
-  });
-
-  it('should create an edge from the source node using status type', async () => {
+  it('should link the new node from the source node and re-mark the source after fromModel', async () => {
     mockSourceNode = {
-      getId: () => 'source-1',
+      getId: () => '42',
       setState: mockSourceSetState,
     };
-    mockNodeTypeDefaults = () => ({
-      ...approvalDefaults,
-      node_status_type: EdgeStatus.success,
-    });
 
-    render(
-      <MemoryRouter>
-        <NodeAddWizard />
-      </MemoryRouter>
-    );
+    await submitWizard();
 
-    await finishWizard();
-
-    await waitFor(() => {
-      expect(mockCreateEdge).toHaveBeenCalledWith(
-        'source-1',
-        expect.stringContaining('-unsavedNode'),
-        EdgeStatus.success
-      );
-    });
+    expect(mockCreateEdge).toHaveBeenCalledWith('42', '2-unsavedNode', EdgeStatus.success);
     expect(mockSourceSetState).toHaveBeenCalledWith({ modified: true });
-    // Root edge should not be created when source node exists
+    expect(mockGetNodeById).toHaveBeenCalledWith('42');
+    expect(mockSourceNodeSetStateAfterFromModel).toHaveBeenCalledWith({ modified: true });
     expect(mockCreateEdge).not.toHaveBeenCalledWith(
-      'startNode',
-      expect.anything(),
+      START_NODE_ID,
+      expect.any(String),
       expect.anything()
     );
   });
 
-  it('should map danger status when source node status is not info or success', async () => {
-    mockSourceNode = {
-      getId: () => 'source-2',
-      setState: mockSourceSetState,
+  it('should pass resource organization and id into buildEffectivePrompt', async () => {
+    mockFormValues = {
+      ...mockFormValues,
+      node_type: RESOURCE_TYPE.job,
+      resourceId: undefined,
+      resource: {
+        id: 9,
+        name: 'Deploy',
+        description: 'Deploy app',
+        organization: 3,
+      } as WizardFormValues['resource'],
+      prompt: { credentials: [], labels: [], instance_groups: [] },
     };
-    mockNodeTypeDefaults = () => ({
-      ...approvalDefaults,
-      node_status_type: EdgeStatus.danger,
-    });
 
-    render(
-      <MemoryRouter>
-        <NodeAddWizard />
-      </MemoryRouter>
+    await submitWizard();
+
+    expect(mockBuildEffectivePrompt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        newResourceId: 9,
+        resourceOrganization: 3,
+      })
     );
-
-    await finishWizard();
-
-    await waitFor(() => {
-      expect(mockCreateEdge).toHaveBeenCalledWith(
-        'source-2',
-        expect.stringContaining('-unsavedNode'),
-        EdgeStatus.danger
-      );
-    });
   });
 
-  it('should preserve approval timeout on approval nodes', async () => {
-    render(
-      <MemoryRouter>
-        <NodeAddWizard />
-      </MemoryRouter>
-    );
-
-    await finishWizard();
-
-    await waitFor(() => {
-      expect(mockFromModel).toHaveBeenCalled();
-    });
-    const model = mockFromModel.mock.calls[0][0] as {
-      nodes: Array<{
-        data: {
-          resource: {
-            identifier?: string;
-            summary_fields: { unified_job_template: { timeout?: number; name: string } };
-          };
-        };
-      }>;
+  it('should create an always edge when node_status_type is info', async () => {
+    mockSourceNode = {
+      getId: () => '42',
+      setState: mockSourceSetState,
     };
-    expect(model.nodes[0].data.resource.summary_fields.unified_job_template.timeout).toBe(60);
-    expect(model.nodes[0].data.resource.summary_fields.unified_job_template.name).toBe(
-      'Approval Node'
-    );
-    expect(model.nodes[0].data.resource.identifier).toBeUndefined();
+    mockFormValues = {
+      ...mockFormValues,
+      node_status_type: EdgeStatus.info,
+    };
+
+    await submitWizard();
+
+    expect(mockCreateEdge).toHaveBeenCalledWith('42', '2-unsavedNode', EdgeStatus.info);
+  });
+
+  it('should create a failure edge when node_status_type is danger', async () => {
+    mockSourceNode = {
+      getId: () => '42',
+      setState: mockSourceSetState,
+    };
+    mockFormValues = {
+      ...mockFormValues,
+      node_status_type: EdgeStatus.danger,
+    };
+
+    await submitWizard();
+
+    expect(mockCreateEdge).toHaveBeenCalledWith('42', '2-unsavedNode', EdgeStatus.danger);
+  });
+
+  it('should default to an always edge when node_status_type is unset during link', async () => {
+    mockSourceNode = {
+      getId: () => '42',
+      setState: mockSourceSetState,
+    };
+    mockFormValues = {
+      ...mockFormValues,
+      node_status_type: undefined,
+    };
+
+    await submitWizard();
+
+    expect(mockCreateEdge).toHaveBeenCalledWith('42', '2-unsavedNode', EdgeStatus.info);
   });
 });

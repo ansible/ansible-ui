@@ -9,6 +9,7 @@ import { selectTableRow } from '../../../../commands/selectTableRow';
 import { clickPageAction } from '../../../../commands/clickPageAction';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { waitForJobStatus } from '../../../../commands/waitForJobStatus';
+import { expectJobOutputSuccess } from '../../../../commands/jobOutputStatus';
 import { filterTable } from '../../../../commands/filterTable';
 
 test.beforeEach(setupBefore({ path: '/execution/jobs' }));
@@ -48,7 +49,7 @@ test.describe('Jobs: Relaunch', () => {
     'can relaunch the job and navigate to job output',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(180000);
+      test.setTimeout(4 * 60 * 1000);
       await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: true });
       await navigateTo(page, 'Automation Execution', 'Jobs');
 
@@ -59,9 +60,7 @@ test.describe('Jobs: Relaunch', () => {
 
       // Verify navigated to job output page
       await expect(page).toHaveURL(/\/jobs\/playbook\/\d+\/output/);
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
-      });
+      await expectJobOutputSuccess(page, { timeout: 180_000 });
     }
   );
 });
@@ -146,7 +145,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Management job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(180000);
+      test.setTimeout(4 * 60 * 1000);
       await navigateTo(page, 'Automation Execution', 'Administration', 'Management Jobs');
       await clickTableRowAction(
         {
@@ -166,10 +165,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
         page.getByRole('main').getByRole('heading', { name: 'Cleanup Expired Sessions' }).first()
       ).toBeVisible();
 
-      // Wait for job to complete (check job status indicator)
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
-      });
+      await expectJobOutputSuccess(page, { timeout: 180_000 });
     }
   );
 

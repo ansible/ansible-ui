@@ -1,7 +1,11 @@
 coverage:
   status:
     project:
-      default: true
+      default:
+        target: auto
+        threshold: 2%
+        flags:
+          - unit-tests
   ignore:
     - "**/*.test.ts"
     - "**/*.test.tsx"

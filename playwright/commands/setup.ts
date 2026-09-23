@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, TestInfo } from '@playwright/test';
 import { existsSync, mkdirSync, appendFileSync } from 'fs';
 import { join } from 'path';
 import { login, platformUI } from './login';
@@ -7,7 +7,12 @@ import { login, platformUI } from './login';
 const workerId = process.env.TEST_WORKER_INDEX || '0';
 
 export function setupBefore(options?: { path?: string }) {
-  return async ({ page }: { page: Page }) => {
+  return async ({ page }: { page: Page }, testInfo?: TestInfo) => {
+    // Login waits for SPA bootstrap (Contents spinner → form → shell) and can
+    // exceed the 60s default before the test body runs. Optional because some
+    // specs call this helper as setupBefore()({ page }) without TestInfo.
+    testInfo?.setTimeout(Math.max(testInfo.timeout, 2 * 60 * 1000));
+
     await page.addInitScript(() => {
       (window as unknown as Record<string, unknown>).__SWR_DEDUPING_INTERVAL__ = 0;
       (window as unknown as Record<string, unknown>).__SWR_REFRESH_INTERVAL__ = 5000;

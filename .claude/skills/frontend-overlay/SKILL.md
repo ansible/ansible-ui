@@ -26,11 +26,21 @@ description: >
 - E2E: `playwright/` (`playwright.config.ts`, `commands/`, `tests/`, `utils/`)
 - Storybook command and port: N/A — no Storybook
 - Check command: `npm test` (eslint + tsc + prettier + vitest). There is no `npm run check`
+- Also `npm run eslint:guardrails` on touched `frontend/` / `platform/` / `framework/` `.ts`/`.tsx`. Advisory in CI; thresholds in `.eslintrc.guardrails.json`; do not add new warnings (see coding_standards §15)
 - Test command: `npm run vitest` (unit); Playwright from `playwright/`
 - Dev server: `npm start` (from `platform/`)
 - Build all workspaces: `npm run build`
 - Fix lint + formatting: `npm run fix` (`npm run prettier:fix` for formatting only)
 - Instruction files: `CLAUDE.md` (symlink `AGENTS.md`)
+
+## MCP-assisted implementation
+
+Before implementing UI, consult `patternfly-mcp` for the official PF6 API and
+accessibility guidance, then search `framework/` and the relevant workspace for
+an existing wrapper. For workflow or browser changes, use `playwright` to
+inspect the running UI; use `chrome-devtools` for console, network, layout, and
+performance diagnosis. Do not invent component props when an MCP or official
+documentation lookup can answer the question.
 
 ## Wrappers (use these, not raw PatternFly)
 

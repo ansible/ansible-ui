@@ -38,4 +38,28 @@ describe('WorkflowJobTemplatePage', () => {
       expect(screen.getByTestId('Test Workflow Job Template')).toBeInTheDocument();
     });
   });
+
+  it('should render when notification admin organization lookup fails', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('organizations'),
+        () => HttpResponse.json({}, { status: 500 })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/workflow-job-template/1']}>
+        <Routes>
+          <Route
+            path="/templates/workflow-job-template/:id"
+            element={<WorkflowJobTemplatePage />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('Test Workflow Job Template')).toBeInTheDocument();
+    });
+  });
 });

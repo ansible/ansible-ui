@@ -21,6 +21,24 @@ Before writing any code, read these skills in order:
 4. **`.claude/skills/library_references.md`** — Fetch llms.txt for any library
    you are about to use (React, Vitest, Vite, Zustand)
 
+## Step 1.5: Consult MCPs Before Implementation
+
+For any UI implementation, consult the MCPs configured in `.mcp.json` before
+choosing a component or validating behavior:
+
+- **PatternFly MCP**: search the official PF6 component, prop, variant, token,
+  and accessibility documentation. Never invent PatternFly props.
+- **Playwright MCP**: inspect the running UI when changing a user workflow,
+  selector, or E2E behavior. Prefer accessible locators and existing test
+  utilities.
+- **Chrome DevTools MCP**: inspect console errors, network failures, layout, or
+  performance when the browser behavior is unclear or regression-prone.
+
+Use the repository wrappers and existing components together with MCP results;
+MCP documentation does not replace searching `framework/` and the relevant
+workspace. If an MCP is unavailable, use the official fallback URLs in
+`library_references.md` and mention the fallback in the handoff.
+
 ---
 
 ## Step 2: Identify the Workspace
@@ -165,6 +183,10 @@ Only create new components as a last resort.
 - No default exports — use named exports
 - Hardcoded API paths are ESLint errors — use tagged template helpers
 - `jsx-a11y/recommended` — accessibility enforced
+- Advisory guardrails: `npm run eslint:guardrails`. Rules and thresholds live
+  in `.eslintrc.guardrails.json` (source of truth — do not hardcode limits
+  here). Do **not** introduce new warnings. Extract helpers instead of
+  disabling rules. See coding_standards §15.
 
 ---
 
@@ -209,6 +231,7 @@ Only create new components as a last resort.
 ### Quality Gates
 - [ ] TypeScript passes: `npm run tsc`
 - [ ] ESLint passes: `npm run eslint`
+- [ ] Guardrails: `npm run eslint:guardrails` — no new warnings on files you touched
 - [ ] Prettier applied: `npm run prettier:fix`
 - [ ] Tests pass: `npm run vitest`
 
@@ -222,7 +245,7 @@ Only create new components as a last resort.
    — prefer editing existing files over creating new ones
 4. Implement incrementally — happy path first, then edge cases
 5. Write tests alongside implementation (not after)
-6. Run quality checks: `npm run tsc && npm run eslint && npm run vitest`
+6. Run quality checks: `npm run tsc && npm run eslint && npm run eslint:guardrails && npm run vitest`
 
 ---
 
