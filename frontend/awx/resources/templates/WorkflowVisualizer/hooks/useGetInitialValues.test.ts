@@ -964,6 +964,43 @@ describe('useGetInitialValues', () => {
     expect(prompt?.forks).toBe(1);
   });
 
+  it('should use legacy scalar fallbacks when launch defaults omit a field', async () => {
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_timeout_on_launch: true,
+      ask_forks_on_launch: true,
+      survey_enabled: false,
+      defaults: {},
+    });
+
+    const node = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: undefined,
+        resource: {
+          identifier: 'existing-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          timeout: null,
+          forks: null,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Demo Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(node);
+    const prompt = initialValues.nodePromptsStep?.prompt;
+
+    expect(prompt?.timeout).toBe(0);
+    expect(prompt?.forks).toBe(0);
+  });
+
   it('should keep an in-session prompt edit ahead of the job template default', async () => {
     testOverrides.set('/api/v2/job_templates/1/launch/', {
       ask_timeout_on_launch: true,

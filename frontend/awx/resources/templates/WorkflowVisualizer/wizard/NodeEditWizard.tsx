@@ -160,6 +160,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       nodeOriginalResources,
       resourceOrganization:
         resource && 'organization' in resource ? (resource.organization ?? null) : undefined,
+      resourceNode: nodeData.resource,
     });
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);

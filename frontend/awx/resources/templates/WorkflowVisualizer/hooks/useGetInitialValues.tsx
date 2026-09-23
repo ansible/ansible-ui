@@ -206,7 +206,8 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
 
       // A null node field means no override was stored. That happens when prompt-on-launch
       // is enabled after the node was added. Prefill from the job template launch defaults
-      // so the editor does not show and save a hardcoded 0 or blank value.
+      // so the editor does not show a hardcoded 0 or blank value. On submit, unchanged
+      // values that match the template default are omitted from launch_data (see buildEffectivePrompt).
       const templateDefaults = launch?.defaults;
       const nodePromptsValues = {
         credentials: aggregateCredentials ?? (nodeCredentials || []),
