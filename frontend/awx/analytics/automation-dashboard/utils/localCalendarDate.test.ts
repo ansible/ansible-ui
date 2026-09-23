@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   AUTOMATION_DASHBOARD_DEFAULT_RANGE_DAYS,
   getAutomationDashboardDefaultPeriodDates,
