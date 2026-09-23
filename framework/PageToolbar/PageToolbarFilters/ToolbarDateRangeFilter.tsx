@@ -1,6 +1,6 @@
 import { Button, DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-core';
 import { TimesCircleIcon } from '@patternfly/react-icons';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
@@ -49,16 +49,24 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     setFilterValues(() => [defaultValue ?? props.options[0].value]);
   }
 
-  // `from`/`to` are derived directly from filterValues (not local state) so that
-  // externally-set values — e.g. loading a saved report with a custom range —
-  // are always reflected, not just the value present when this component first mounted.
-  const from = filterValues && filterValues.length > 1 ? filterValues[1] : undefined;
-  const to = filterValues && filterValues.length > 2 ? filterValues[2] : undefined;
+  // End date shown while the start is cleared (not written to filterValues / URL).
+  const [orphanEndDate, setOrphanEndDate] = useState<string | undefined>();
 
-  // Remembers the last custom range entered so it can be restored if the user
-  // switches to a preset and back to Custom, without controlling the displayed
-  // from/to values itself (those stay solely derived from filterValues above).
+  // `from`/`to` are derived from filterValues (not local state) so externally-set
+  // values — e.g. loading a saved report — are always reflected.
+  const from =
+    filterValues && filterValues.length > 1 && filterValues[1] ? filterValues[1] : undefined;
+  const toInFilter = filterValues && filterValues.length > 2 ? filterValues[2] : undefined;
+  const to = toInFilter ?? (from ? undefined : orphanEndDate);
+
+  // Remembers the last custom range for preset ↔ Custom switching.
   const lastCustomRangeRef = useRef<{ from?: string; to?: string }>({});
+  useEffect(() => {
+    if (from) {
+      setOrphanEndDate(undefined);
+    }
+  }, [from]);
+
   useEffect(() => {
     if (selectedOption?.isCustom && (from || to)) {
       lastCustomRangeRef.current = { from, to };
@@ -90,21 +98,35 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
   function setFrom(value?: string) {
     if (!selectedOption) return;
     if (!value) {
-      // Keep "to" as-is when "from" is cleared — the "to" DatePicker becomes
-      // read-only (see DateRange below) rather than losing its value.
-      const newValues = to ? [selectedOption.value, '', to] : [selectedOption.value];
-      setFilterValues(() => newValues);
+      // Keep showing the end date (read-only) without polluting filter state with ''.
+      const endToRemember = toInFilter ?? orphanEndDate;
+      if (endToRemember) {
+        lastCustomRangeRef.current = { from: undefined, to: endToRemember };
+        setOrphanEndDate(endToRemember);
+      } else {
+        lastCustomRangeRef.current = { from: undefined, to: undefined };
+        setOrphanEndDate(undefined);
+      }
+      setFilterValues(() => [selectedOption.value]);
       return;
     }
-    const newValues = to ? [selectedOption.value, value, to] : [selectedOption.value, value];
+    setOrphanEndDate(undefined);
+    const end = toInFilter ?? orphanEndDate;
+    const newValues = end ? [selectedOption.value, value, end] : [selectedOption.value, value];
     setFilterValues(() => newValues);
   }
 
   function setTo(value?: string) {
-    // The "to" DatePicker is disabled until "from" is set (see DateRange below),
-    // so `from` is always defined here.
-    if (!selectedOption || !from) return;
+    if (!selectedOption) return;
+    if (!from) {
+      if (!value) {
+        lastCustomRangeRef.current = { from: undefined, to: undefined };
+        setOrphanEndDate(undefined);
+      }
+      return;
+    }
     if (value) {
+      setOrphanEndDate(undefined);
       setFilterValues(() => [selectedOption.value, from, value]);
       return;
     }

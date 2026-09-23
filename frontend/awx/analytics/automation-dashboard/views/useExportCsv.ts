@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { yyyyMMddFormat } from '@patternfly/react-core';
 import {
   IFilterState,
   IToolbarFilter,
@@ -43,7 +44,7 @@ export function useExportCsv(
           const rfc5987 = disposition?.match(/filename\*=[a-z0-9-]+'[a-z-]*'([^;\n]+)/i)?.[1];
           // Plain filename fallback
           const plain = disposition?.match(/\bfilename="?([^";\n]+)"?/i)?.[1];
-          const endDate = new Date().toISOString().split('T')[0];
+          const endDate = yyyyMMddFormat(new Date());
           let filename: string;
           if (rfc5987) {
             filename = decodeURIComponent(rfc5987.trim()).replace(/\.csv$/i, '');

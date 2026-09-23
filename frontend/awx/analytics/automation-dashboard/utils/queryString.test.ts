@@ -14,6 +14,7 @@ import {
   hasValidRequiredFilters,
   isRequiredFilterValid,
 } from './queryString';
+import { yyyyMMddFormat } from '@patternfly/react-core';
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
@@ -331,7 +332,7 @@ describe('queryString', () => {
       expect(params.get('end_date')).toBeTruthy();
       // Verify end_date is current date
       const endDate = params.get('end_date');
-      const today = new Date().toISOString().split('T')[0];
+      const today = yyyyMMddFormat(new Date());
       expect(endDate).toBe(today);
     });
 

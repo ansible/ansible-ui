@@ -13,6 +13,11 @@ function isIsoDateString(value: string): boolean {
   return isValidDate(date) && yyyyMMddFormat(date) === value;
 }
 
+/** Calendar "today" in the local timezone (matches DatePicker / validation). */
+function localTodayDateString(): string {
+  return yyyyMMddFormat(new Date());
+}
+
 export function getQueryString(
   view: IView,
   toolbarFilters: IToolbarFilter[],
@@ -47,7 +52,7 @@ export function isRequiredFilterValid(filter: IToolbarFilter, filterState: IFilt
   if (filter.type === ToolbarFilterType.DateRange && values[0] === 'custom') {
     if (values.length === 2) {
       if (!isIsoDateString(values[1])) return false;
-      return values[1] <= yyyyMMddFormat(new Date());
+      return values[1] <= localTodayDateString();
     }
     if (values.length === 3) {
       if (!isIsoDateString(values[1]) || !isIsoDateString(values[2])) return false;
@@ -126,7 +131,7 @@ export function getPeriodFilterParam(filterState: IFilterState, filter: IToolbar
       return [
         [filter.query, values[0]],
         ['start_date', values[1]],
-        ['end_date', new Date(Date.now()).toISOString().split('T')[0]], // Use current date as end_date if not provided
+        ['end_date', localTodayDateString()], // Use local calendar today when end is omitted (matches validation)
       ];
     }
     if (values.length === 3) {

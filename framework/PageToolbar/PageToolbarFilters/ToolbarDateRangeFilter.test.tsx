@@ -272,7 +272,25 @@ describe('ToolbarDateRangeFilter', () => {
     fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '' } });
 
     const setterFn = setFilterValues.mock.calls.at(-1)?.[0] as () => string[];
-    expect(setterFn()).toEqual(['custom', '', '2024-01-31']);
+    expect(setterFn()).toEqual(['custom']);
+  });
+
+  it('should clear the end date after the start date was cleared', async () => {
+    const user = userEvent.setup();
+    render(
+      <StatefulToolbarDateRangeFilter
+        placeholder="Select range"
+        options={defaultOptions}
+        initialFilterValues={['custom', '2024-01-01', '2024-01-31']}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText('Start date'), { target: { value: '' } });
+    expect(screen.getByLabelText('End date')).toHaveValue('2024-01-31');
+
+    await user.click(screen.getByTestId('toolbar-date-picker-clear-end-date'));
+
+    expect(screen.getByLabelText('End date')).toHaveValue('');
   });
 
   it('should drop both dates when the start date is cleared and there was no end date', () => {
