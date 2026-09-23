@@ -1,25 +1,13 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { PageDashboardContext } from '@ansible/ansible-ui-framework';
 import { AutomationDashboardMainPage } from './AutomationDashboardMainPage';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
-import type { IAutomationDashboardCollectionStatus } from './types';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-const DEFAULT_COLLECTION_STATUS: IAutomationDashboardCollectionStatus = {
-  enabled: true,
-  next_run: null,
-  initial_collection_status: null,
-};
-
-vi.mock('./common/useAutomationDashboardCollectionStatus', () => ({
-  useAutomationDashboardCollectionStatus: vi.fn(() => ({
-    collectionStatus: DEFAULT_COLLECTION_STATUS,
-    isLoading: false,
-  })),
-}));
+vi.mock('./common/useAutomationDashboardCollectionStatus');
 
 vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
 
@@ -49,14 +37,43 @@ vi.mock('@ansible/common-ui/PageRoutedTabs', () => ({
   },
 }));
 
+vi.mock('./AutomationDashboard', () => ({
+  AutomationDashboard: () => <div data-testid="automation-dashboard">Dashboard content</div>,
+}));
+
+vi.mock('./AutomationLeaderboards', () => ({
+  AutomationLeaderboards: () => (
+    <div data-testid="automation-leaderboards">Leaderboards content</div>
+  ),
+}));
+
+type CollectionStatusResult = ReturnType<typeof useAutomationDashboardCollectionStatus>;
+
+function mockStatus(overrides: Partial<CollectionStatusResult> = {}) {
+  vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValue({
+    collectionStatus: {
+      enabled: true,
+      min_collection_timestamp: null,
+      show_dashboard: true,
+      show_gamification: true,
+    },
+    isLoading: false,
+    canSeeDashboard: true,
+    canSeeLeaderboard: true,
+    error: undefined,
+    ...overrides,
+  });
+}
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('AutomationDashboardMainPage', () => {
-  afterEach(() => {
+  beforeEach(() => {
     vi.clearAllMocks();
+    mockStatus();
   });
 
-  test('should render the page title and the Dashboard/Leaderboards tabs when not loading', () => {
+  test('should render the page title and the Dashboard/Leaderboards tabs when the user can see both', () => {
     render(<AutomationDashboardMainPage />);
 
     expect(screen.getByRole('heading', { name: 'Automation Dashboard' })).toBeInTheDocument();
@@ -80,15 +97,63 @@ describe('AutomationDashboardMainPage', () => {
   });
 
   test('should show only the loading state while the collection status is loading', () => {
-    vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValueOnce({
-      collectionStatus: DEFAULT_COLLECTION_STATUS,
-      isLoading: true,
-    });
+    mockStatus({ isLoading: true });
 
     render(<AutomationDashboardMainPage />);
 
     expect(screen.getByTestId('loading-state')).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Automation Dashboard' })).not.toBeInTheDocument();
+    expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
+  });
+
+  test('should render only the dashboard, without tabs, when the user cannot see leaderboards', () => {
+    mockStatus({ canSeeLeaderboard: false });
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(screen.getByTestId('automation-dashboard')).toBeInTheDocument();
+    expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('automation-leaderboards')).not.toBeInTheDocument();
+  });
+
+  test('should render only the leaderboards, without tabs, when the user cannot see the dashboard', () => {
+    mockStatus({ canSeeDashboard: false });
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(screen.getByTestId('automation-leaderboards')).toBeInTheDocument();
+    expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('automation-dashboard')).not.toBeInTheDocument();
+  });
+
+  test('should show the unauthorized empty state when the user can see neither view', () => {
+    mockStatus({ canSeeDashboard: false, canSeeLeaderboard: false });
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'You do not have permission to view the Automation Dashboard or Leaderboards.',
+      })
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
+  });
+
+  test('should show an error state instead of a permission message when collection status fails', () => {
+    mockStatus({
+      canSeeDashboard: false,
+      canSeeLeaderboard: false,
+      error: new Error('Server error'),
+    });
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(screen.getByRole('heading', { name: 'Something went wrong' })).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        'You do not have permission to view the Automation Dashboard or Leaderboards.'
+      )
+    ).not.toBeInTheDocument();
     expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
   });
 });

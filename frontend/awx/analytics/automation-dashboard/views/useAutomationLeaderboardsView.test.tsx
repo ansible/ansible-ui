@@ -299,9 +299,9 @@ describe('mapLeaderboardReport', () => {
 describe('useAutomationLeaderboardsView', () => {
   const collectionStatusFixture: IAutomationDashboardCollectionStatus = {
     enabled: true,
-    next_run: null,
-    initial_collection_status: 'completed',
     min_collection_timestamp: '2026-09-01T14:00:00.000Z',
+    show_dashboard: true,
+    show_gamification: true,
   };
 
   const server = setupServer();
