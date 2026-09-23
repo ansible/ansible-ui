@@ -5,7 +5,14 @@ import { PageFormOptionsData } from '../PageForm/PageFormOptionsContext';
 export type WizardSupplementalData = Record<string, unknown>;
 
 export function isWizardSupplementalData(value: unknown): value is WizardSupplementalData {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+  if (value instanceof Date || value instanceof Error) {
+    return false;
+  }
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === null || prototype === Object.prototype;
 }
 
 export interface PageWizardBasicStep {
@@ -16,9 +23,10 @@ export interface PageWizardBasicStep {
   element?: React.ReactNode;
   hidden?: (wizardData: object) => boolean;
   /*
-    Validate is called before proceeding to the next step. If it throws an
-    error, the wizard will stay on the current step and pass the error to
-    the wizard's errorAdapter for handling.
+    Validate runs before proceeding to the next step. Throw to block navigation;
+    the wizard passes the error to errorAdapter. To merge extra wizard state
+    (for example before evaluating hidden steps), return a plain object with
+    only own enumerable fields — not class instances such as Error.
   */
   validate?: (
     formData: object,

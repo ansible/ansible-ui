@@ -11,4 +11,16 @@ describe('isWizardSupplementalData', () => {
     expect(isWizardSupplementalData(null)).toBe(false);
     expect(isWizardSupplementalData(undefined)).toBe(false);
   });
+
+  it('rejects class instances such as Error and Date', () => {
+    expect(isWizardSupplementalData(new Error('fail'))).toBe(false);
+    expect(isWizardSupplementalData(new Date())).toBe(false);
+  });
+
+  it('rejects objects with a non-plain prototype', () => {
+    class SupplementalBag {
+      flag = true;
+    }
+    expect(isWizardSupplementalData(new SupplementalBag())).toBe(false);
+  });
 });

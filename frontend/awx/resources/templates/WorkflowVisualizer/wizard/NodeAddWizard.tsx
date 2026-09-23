@@ -20,7 +20,7 @@ import {
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
-import { validateNodeTypeStep, validateRequiredCredentialTypes } from './validationHelpers';
+import { validateNodePromptsStep, validateNodeTypeStep } from './validationHelpers';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -91,9 +91,12 @@ export function NodeAddWizard() {
         }
         return true;
       },
-      validate: (wizardData: Partial<WizardFormValues>) => {
-        const requiredCredentialTypes = wizardData.prompt?.requiredCredentialTypes;
-        validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes || []);
+      validate: (formData: object, wizardData: object) => {
+        validateNodePromptsStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>
+        );
       },
     },
     {
