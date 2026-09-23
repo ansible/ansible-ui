@@ -72,6 +72,59 @@ describe('parseAtomFeedXml', () => {
   test('throws on invalid XML', () => {
     expect(() => parseAtomFeedXml('<feed><entry></feed>')).toThrow('Invalid XML');
   });
+
+  test('parses feed metadata and nested child elements', () => {
+    const xml = `<feed>
+      <title>My Feed</title>
+      <subtitle type="html">Feed summary</subtitle>
+      <entry><id>1</id><title>E</title><updated>2024-01-01T00:00:00Z</updated></entry>
+    </feed>`;
+
+    const { feed } = parseAtomFeedXml(xml);
+    expect(feed.title).toBe('My Feed');
+    const subtitle = feed.subtitle as XmlNode;
+    expect(subtitle.$?.type).toBe('html');
+    expect(subtitle._).toBe('Feed summary');
+  });
+
+  test('collapses three or more sibling tags into an array', () => {
+    const xml = `<feed>
+      <entry>
+        <id>n1</id>
+        <title>T</title>
+        <updated>2024-01-01T00:00:00Z</updated>
+        <category>one</category>
+        <category>two</category>
+        <category>three</category>
+      </entry>
+    </feed>`;
+
+    const { feed } = parseAtomFeedXml(xml);
+    const entry = feed.entry as XmlNode;
+    expect(entry.category).toEqual(['one', 'two', 'three']);
+  });
+
+  test('parses notification children when the third duplicate becomes an array', () => {
+    const xml = `<feed xmlns:aap="https://example.com/aap"><entry>
+      <id>n1</id><title>T</title><updated>2024-01-01T00:00:00Z</updated>
+      <aap:notification>
+        <aap:tag>a</aap:tag>
+        <aap:tag>b</aap:tag>
+        <aap:tag>c</aap:tag>
+      </aap:notification>
+    </entry></feed>`;
+
+    const { feed } = parseAtomFeedXml(xml);
+    const entry = feed.entry as XmlNode;
+    const aap = entry['aap:notification'] as Record<string, unknown>;
+    expect(aap['aap:tag']).toEqual(['a', 'b', 'c']);
+  });
+
+  test('uses documentElement when no feed tag is present', () => {
+    const xml = `<rss><channel><title>Channel</title></channel></rss>`;
+    const { feed } = parseAtomFeedXml(xml);
+    expect((feed.channel as XmlNode).title).toBe('Channel');
+  });
 });
 
 type XmlNode = import('./parseAtomFeedXml').XmlNode;
