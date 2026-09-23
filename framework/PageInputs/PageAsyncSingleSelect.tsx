@@ -4,7 +4,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { SetRequired } from 'type-fest';
+import { SetRequired } from '../utils/utilityTypes';
 import { PageAsyncQueryErrorText, PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect, PageSingleSelectProps } from './PageSingleSelect';
