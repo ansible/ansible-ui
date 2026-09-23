@@ -120,7 +120,8 @@
     },
     "postcss": "8.5.26",
     "fflate": "0.8.3",
-    "dompurify": "3.4.15"
+    "dompurify": "3.4.15",
+    "compression": "1.8.2"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "2.3.0",
