@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { PageCarousel, useCarouselContext } from './PageCarousel';
 
 vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
-  default: vi.fn(),
+  useResizeObserver: vi.fn(),
 }));
 
 function ContextReader() {

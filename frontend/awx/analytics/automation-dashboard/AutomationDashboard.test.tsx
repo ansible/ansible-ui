@@ -21,7 +21,7 @@ import type {
 } from './types';
 
 vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
-  default: vi.fn(),
+  useResizeObserver: vi.fn(),
 }));
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
