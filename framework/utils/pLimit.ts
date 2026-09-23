@@ -3,7 +3,7 @@ export type LimitFunction = <T>(fn: () => PromiseLike<T> | T) => Promise<T>;
 /**
  * Limit concurrent async work (same API as the `p-limit` package).
  */
-export default function pLimit(concurrency: number): LimitFunction {
+export function pLimit(concurrency: number): LimitFunction {
   if (concurrency < 1) {
     throw new TypeError('Expected `concurrency` to be a number from 1 and up');
   }
@@ -18,7 +18,11 @@ export default function pLimit(concurrency: number): LimitFunction {
     }
   };
 
-  const run = async <T>(fn: () => PromiseLike<T> | T, resolve: (v: T) => void, reject: (e: unknown) => void) => {
+  const run = async <T>(
+    fn: () => PromiseLike<T> | T,
+    resolve: (v: T) => void,
+    reject: (e: unknown) => void
+  ) => {
     activeCount++;
     try {
       resolve(await fn());

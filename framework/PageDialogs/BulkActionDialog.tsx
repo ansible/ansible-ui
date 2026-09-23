@@ -10,7 +10,7 @@ import {
   ModalFooter,
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
-import pLimit from '../utils/pLimit';
+import { pLimit } from '../utils/pLimit';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
@@ -69,6 +69,18 @@ export interface BulkActionDialogProps<T extends object> {
 
   /** function to parse the response */
   statusParser?: (response: unknown) => null | StatusWithMessageAndUrl;
+}
+
+type BulkCloseStatus = 'success' | 'failures' | 'canceled';
+
+function resolveBulkCloseStatus(isCanceled: boolean, error: string): BulkCloseStatus {
+  if (isCanceled) {
+    return 'canceled';
+  }
+  if (error) {
+    return 'failures';
+  }
+  return 'success';
 }
 
 /**
@@ -135,7 +147,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
     onClose?.(
-      isCanceled ? 'canceled' : error ? 'failures' : 'success',
+      resolveBulkCloseStatus(isCanceled, error),
       items.filter(
         (item) =>
           statuses?.[keyFn(item)] === null ||
