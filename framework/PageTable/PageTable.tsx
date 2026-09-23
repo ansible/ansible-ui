@@ -21,7 +21,7 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import { ThSortType } from '@patternfly/react-table/dist/esm/components/Table/base/types';
-import useResizeObserver from '@react-hook/resize-observer';
+import useResizeObserver from '../hooks/useResizeObserver';
 import {
   Dispatch,
   Fragment,
