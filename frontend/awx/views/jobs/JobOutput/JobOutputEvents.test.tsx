@@ -9,7 +9,7 @@ import * as JobOutputRowModule from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
 
 vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
-  default: vi.fn(),
+  useResizeObserver: vi.fn(),
 }));
 
 vi.mock('./useJobOutput', () => ({
