@@ -4,7 +4,8 @@ export type GatewaySettingsOption =
   | BooleanOption
   | UrlOption
   | FieldOption
-  | StringArrayOption;
+  | StringArrayOption
+  | FloatOption;
 
 interface StringOption {
   type: 'string';
@@ -58,6 +59,7 @@ interface FieldOption {
   label: string;
   help_text: string;
 }
+
 interface FloatOption {
   type: 'float';
   required: boolean;
