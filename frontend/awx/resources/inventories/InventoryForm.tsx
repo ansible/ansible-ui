@@ -7,6 +7,7 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
+  getValueToObjectParseError,
   valueToObject,
 } from '@ansible/ansible-ui-framework';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
@@ -461,6 +462,10 @@ function InventoryInputs(props: { inventoryKind: string }) {
           validate={(item) => {
             if (inventoryKind !== 'constructed') {
               return undefined;
+            }
+            const parseError = getValueToObjectParseError(item);
+            if (parseError) {
+              return parseError;
             }
             const obj = valueToObject(item) as { plugin?: unknown; __preserveYamlString?: string };
             if (obj.__preserveYamlString) {
