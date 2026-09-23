@@ -8,7 +8,7 @@ import { JobOutputEvents } from './JobOutputEvents';
 import * as JobOutputRowModule from './JobOutputRow';
 import { useJobOutput } from './useJobOutput';
 
-vi.mock('@react-hook/resize-observer', () => ({
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
   default: vi.fn(),
 }));
 
