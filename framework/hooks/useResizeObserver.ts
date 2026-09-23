@@ -5,7 +5,7 @@ type ResizeTarget = React.RefObject<Element | null | undefined> | Element | null
 /**
  * Observe an element's size changes (replacement for `@react-hook/resize-observer`).
  */
-export default function useResizeObserver(
+export function useResizeObserver(
   target: ResizeTarget,
   callback: (entry: ResizeObserverEntry) => void,
   options?: ResizeObserverOptions
@@ -29,5 +29,6 @@ export default function useResizeObserver(
 
     observer.observe(element, options);
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, options?.box]);
 }

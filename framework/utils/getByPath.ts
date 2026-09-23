@@ -7,7 +7,7 @@ export function getByPath(object: object, path: string): unknown {
   const segments = path.split('.');
   let current: unknown = object;
   for (const segment of segments) {
-    if (current == null || typeof current !== 'object') {
+    if (current === null || current === undefined || typeof current !== 'object') {
       return undefined;
     }
     current = (current as Record<string, unknown>)[segment];

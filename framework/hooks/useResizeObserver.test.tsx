@@ -1,7 +1,19 @@
 import { render } from '@testing-library/react';
 import { useRef } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import useResizeObserver from './useResizeObserver';
+import { useResizeObserver } from './useResizeObserver';
+
+function TestHost({ onResize }: { onResize: (entry: ResizeObserverEntry) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useResizeObserver(ref, onResize);
+  return <div ref={ref} data-testid="resize-target" />;
+}
+
+function EmptyRefHost() {
+  const ref = useRef<HTMLDivElement>(null);
+  useResizeObserver(ref, vi.fn());
+  return null;
+}
 
 describe('useResizeObserver', () => {
   let observe: ReturnType<typeof vi.fn>;
@@ -29,12 +41,6 @@ describe('useResizeObserver', () => {
     vi.unstubAllGlobals();
   });
 
-  function TestHost({ onResize }: { onResize: (entry: ResizeObserverEntry) => void }) {
-    const ref = useRef<HTMLDivElement>(null);
-    useResizeObserver(ref, onResize);
-    return <div ref={ref} data-testid="resize-target" />;
-  }
-
   test('observes the mounted element and forwards resize entries', () => {
     const onResize = vi.fn();
     render(<TestHost onResize={onResize} />);
@@ -55,11 +61,6 @@ describe('useResizeObserver', () => {
   });
 
   test('does not observe when ref is unset', () => {
-    function EmptyRefHost() {
-      const ref = useRef<HTMLDivElement>(null);
-      useResizeObserver(ref, vi.fn());
-      return null;
-    }
     render(<EmptyRefHost />);
     expect(observe).not.toHaveBeenCalled();
   });
