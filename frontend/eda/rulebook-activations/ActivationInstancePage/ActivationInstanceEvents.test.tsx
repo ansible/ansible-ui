@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ActivationInstanceEvents } from './ActivationInstanceEvents';
 
 vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
-  default: vi.fn(),
+  useResizeObserver: vi.fn(),
 }));
 
 vi.mock('@ansible/common-ui/crud/useGet', () => ({
