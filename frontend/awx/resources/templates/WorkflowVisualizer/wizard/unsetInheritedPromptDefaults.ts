@@ -1,5 +1,4 @@
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import type { PromptFormValues } from '../types';
 
 const INHERITED_SCALAR_PROMPT_FIELDS = [
@@ -15,7 +14,10 @@ const INHERITED_SCALAR_PROMPT_FIELDS = [
 
 type InheritedScalarPromptField = (typeof INHERITED_SCALAR_PROMPT_FIELDS)[number];
 
-export type ResourcePromptSnapshot = Partial<Pick<WorkflowNode, InheritedScalarPromptField>>;
+/** API workflow node scalar prompts: null means inherit; a set value is an explicit override. */
+export type ResourcePromptSnapshot = Partial<{
+  [K in InheritedScalarPromptField]: PromptFormValues[K] | null;
+}>;
 
 /**
  * Removes prompt fields that only reflect job-template launch defaults in the UI.

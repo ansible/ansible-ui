@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import {
-  type ResourcePromptSnapshot,
-  unsetInheritedPromptDefaults,
-} from './unsetInheritedPromptDefaults';
+import { unsetInheritedPromptDefaults } from './unsetInheritedPromptDefaults';
 
 const launchConfig = {
   defaults: {
@@ -65,9 +62,7 @@ describe('unsetInheritedPromptDefaults', () => {
     } as LaunchConfiguration;
     const effectivePrompt = { forks: 0 };
 
-    unsetInheritedPromptDefaults(effectivePrompt, configWithZeroForks, {
-      forks: 0,
-    } as ResourcePromptSnapshot);
+    unsetInheritedPromptDefaults(effectivePrompt, configWithZeroForks, { forks: 0 });
 
     expect(effectivePrompt).toEqual({ forks: 0 });
   });
