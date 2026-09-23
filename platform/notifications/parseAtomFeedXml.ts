@@ -1,7 +1,7 @@
 export interface XmlNode {
   $?: { [key: string]: string };
   _?: string;
-  [key: string]: XmlNode | XmlNode[] | string | { [key: string]: string } | undefined;
+  [key: string]: XmlNode | XmlNode[] | string | { [key: string]: string | string[] } | undefined;
 }
 
 function attributesToRecord(element: Element): { [key: string]: string } | undefined {
@@ -29,7 +29,7 @@ function assignChild(
     (existing as Array<XmlNode | string>).push(value as XmlNode | string);
     return;
   }
-  node[key] = [existing as XmlNode | string, value as XmlNode | string];
+  node[key] = [existing as XmlNode | string, value as XmlNode | string] as unknown as XmlNode[];
 }
 
 function parseAapNotification(element: Element): Record<string, unknown> {
