@@ -27,6 +27,48 @@ describe('parseAtomFeedXml', () => {
     );
   });
 
+  test('parses multiple entries into an array', () => {
+    const xml = `<feed>
+      <entry><id>a</id><title>A</title><updated>2024-01-01T00:00:00Z</updated></entry>
+      <entry><id>b</id><title>B</title><updated>2024-01-02T00:00:00Z</updated></entry>
+    </feed>`;
+
+    const { feed } = parseAtomFeedXml(xml);
+    const entries = feed.entry as XmlNode[];
+    expect(entries).toHaveLength(2);
+    expect(entries[0].id).toBe('a');
+    expect(entries[1].id).toBe('b');
+  });
+
+  test('parses link alternate href for notifications', () => {
+    const xml = `<feed xmlns:aap="https://example.com/aap"><entry>
+      <id>n1</id><title>T</title><updated>2024-01-01T00:00:00Z</updated>
+      <link rel="alternate" href="https://example.com/post"/>
+      <aap:notification><aap:deployment_type>standalone</aap:deployment_type></aap:notification>
+    </entry></feed>`;
+
+    const { feed } = parseAtomFeedXml(xml);
+    const entry = feed.entry as XmlNode;
+    const link = entry.link as XmlNode;
+    expect(link.$?.rel).toBe('alternate');
+    expect(link.$?.href).toBe('https://example.com/post');
+  });
+
+  test('collapses repeated deployment_type elements into an array', () => {
+    const xml = `<feed xmlns:aap="https://example.com/aap"><entry>
+      <id>n1</id><title>T</title><updated>2024-01-01T00:00:00Z</updated>
+      <aap:notification>
+        <aap:deployment_type>standalone</aap:deployment_type>
+        <aap:deployment_type>cloud</aap:deployment_type>
+      </aap:notification>
+    </entry></feed>`;
+
+    const { feed } = parseAtomFeedXml(xml);
+    const entry = feed.entry as XmlNode;
+    const aap = entry['aap:notification'] as Record<string, unknown>;
+    expect(aap['aap:deployment_type']).toEqual(['standalone', 'cloud']);
+  });
+
   test('throws on invalid XML', () => {
     expect(() => parseAtomFeedXml('<feed><entry></feed>')).toThrow('Invalid XML');
   });
