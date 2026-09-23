@@ -10,7 +10,7 @@ export function localTodayDateString(referenceDate: Date = new Date()): string {
 
 /** Local calendar date N days before referenceDate (handles DST via setDate). */
 export function localCalendarDateDaysAgo(days: number, referenceDate: Date = new Date()): string {
-  const date = new Date(referenceDate.getTime());
+  const date = new Date(referenceDate);
   date.setDate(date.getDate() - days);
   return yyyyMMddFormat(date);
 }
