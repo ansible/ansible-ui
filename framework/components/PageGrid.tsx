@@ -1,4 +1,4 @@
-import useResizeObserver from '@react-hook/resize-observer';
+import useResizeObserver from '../hooks/useResizeObserver';
 import { ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 export function PageGrid(props: { size?: number; maxColumns?: number; children?: ReactNode }) {

@@ -1,4 +1,4 @@
-import useResizeObserver from '@react-hook/resize-observer';
+import useResizeObserver from '../hooks/useResizeObserver';
 import {
   createContext,
   ReactNode,
