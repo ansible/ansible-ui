@@ -95,9 +95,11 @@ jobs:
           {
             echo "### knip — unused code report"
             echo
-            grep -E '^(Unused|Unlisted|Unresolved|Duplicate|Configuration hints)' knip-report.txt \
-              | sed 's/^/- /' \
-              || echo "- No findings 🎉"
+            if findings=$(grep -E '^(Unused|Unlisted|Unresolved|Duplicate|Configuration hints)' knip-report.txt); then
+              printf '%s\n' "$findings" | sed 's/^/- /'
+            else
+              echo "- No findings 🎉"
+            fi
             echo
             echo "<details><summary>Show full report</summary>"
             echo
