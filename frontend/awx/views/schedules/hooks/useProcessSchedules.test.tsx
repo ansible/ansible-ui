@@ -110,7 +110,7 @@ function makePayload(
     description: 'desc',
     schedule_type: 'rrule',
     timezone: 'UTC',
-    startDateTime: { date: '2023-01-01', time: '00:00' },
+    startDateTime: { date: '2024-01-15', time: '5:00 PM' },
     resource: {
       id: 10,
       type: resourceType,

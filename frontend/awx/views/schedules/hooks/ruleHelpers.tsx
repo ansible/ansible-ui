@@ -1,9 +1,11 @@
 import { parseVariableField } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
-import { Frequency, Options, RRule } from 'rrule';
+import { datetime, Frequency, Options, RRule } from 'rrule';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import { RuleListItemType } from '../types';
 
 export function useGetFrequencyOptions() {
   const { t } = useTranslation();
@@ -210,6 +212,36 @@ export function parseRruleComponents(rruleStr: string): {
 
 export function ensureUntilZSuffix(ruleStr: string): string {
   return ruleStr.replace(/UNTIL=(\d{8}T\d{6})(?!Z)/g, 'UNTIL=$1Z');
+}
+
+/**
+ * Rewrites each rule's DTSTART/TZID to match the wizard's Start date/time
+ * field. This is the single source of truth for a schedule's "first run" —
+ * callers must not rely on a rule string's own embedded DTSTART, which can
+ * be stale from an earlier step or a previous edit.
+ */
+export function applyStartDateTimeToRules(
+  rules: RuleListItemType[],
+  startDateTime: { date: string; time: string },
+  timezone: string
+): RuleListItemType[] {
+  const { date, time } = startDateTime;
+  const parsedTime = DateTime.fromFormat(time, 'h:mm a');
+  const { year, month, day, hour, minute } = DateTime.fromISO(`${date}`).set({
+    hour: parsedTime.hour,
+    minute: parsedTime.minute,
+  });
+
+  return (rules || []).map(({ rule, id }) => ({
+    rule: ensureUntilZSuffix(
+      RRule.optionsToString({
+        ...RRule.fromString(rule).origOptions,
+        tzid: timezone,
+        dtstart: datetime(year, month, day, hour, minute),
+      })
+    ),
+    id,
+  }));
 }
 
 export const normalizeOptions = (options: Partial<Options>) => {

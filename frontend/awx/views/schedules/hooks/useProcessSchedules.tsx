@@ -5,7 +5,12 @@ import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
 import { BaseSchedulePayload, ScheduleAccessoriesPayload, ScheduleFormWizard } from '../types';
-import { ensureUntilZSuffix, mungePromptData, mungeSurveyAndExtraVarsData } from './ruleHelpers';
+import {
+  applyStartDateTimeToRules,
+  ensureUntilZSuffix,
+  mungePromptData,
+  mungeSurveyAndExtraVarsData,
+} from './ruleHelpers';
 import { usePostAccessories } from './usePostScheduleAccessories';
 import { useSetRRuleItemToRuleSet } from './useSetRRuleItemToRuleSet';
 
@@ -21,7 +26,16 @@ export const useProcessSchedule = () => {
   return useCallback(
     async (payloadData: ScheduleFormWizard) => {
       const { resourceId, resource, prompt, survey, rules, exceptions, ...rest } = payloadData;
-      const ruleset = getRuleSet(rules, exceptions);
+      // The wizard's Start date/time field is the source of truth for a
+      // schedule's "first run" — a rule's own embedded DTSTART can be stale
+      // (e.g. left over from before the Details step was last edited), so
+      // rewrite it here rather than trusting whatever is already in `rules`.
+      const correctedRules = applyStartDateTimeToRules(
+        rules,
+        payloadData.startDateTime,
+        payloadData.timezone
+      );
+      const ruleset = getRuleSet(correctedRules, exceptions);
 
       const rrule = ensureUntilZSuffix(ruleset.toString().replaceAll('\n', ' '));
 
