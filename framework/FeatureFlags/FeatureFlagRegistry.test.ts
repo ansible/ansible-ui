@@ -116,7 +116,7 @@ describe('createFeatureFlagRegistry', () => {
     try {
       const provider = createLocalFeatureFlagProvider();
       const listener = vi.fn();
-      provider.subscribe(listener);
+      provider.subscribe?.(listener);
 
       provider.setOverride('experimentalView', true);
       provider.setOverride('experimentalView', true);
