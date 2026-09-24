@@ -301,3 +301,44 @@ posting:
 
 An independent pass from a clean context catches the assumptions the first pass
 carried in.
+
+---
+
+## 10. Posting reviews on GitHub
+
+Community-visible reviews should read like a maintainer, not a generated report.
+
+- **Inline comments** for every concrete finding. Do not post numbered “request
+  changes” essays at PR level — one short approve note is enough (“Left a
+  question inline.”).
+- **No AI/tool disclosure** in review text (agents, ChatGPT, Copilot, etc.).
+- **Substantive findings:** prefix severity when it helps scanning, e.g.
+  `(Major, Security)` or `(Minor, Functionality)` — then file/line and a
+  concrete fix.
+- **Separate** blocking issues from nits and follow-ups.
+
+When a reviewer asks **how to test** a change, reply in the thread with scoped
+commands (`npm run vitest -- path`, Playwright spec path), not process narrative.
+
+---
+
+## 11. CI, ESLint, and agent-skill PRs
+
+Extra checks when the diff touches `.github/workflows/`, eslint config, or
+`.claude/skills/`:
+
+| Area | Review for |
+| --- | --- |
+| GitHub Actions | Third-party actions pinned to **full SHAs** or immutable versions; treat workflow edits as security-sensitive. |
+| ESLint | Prefer **flat config** (`eslint.config.mjs`). Avoid new parallel `.eslintrc.*` unless there is a documented reason (e.g. isolated guardrails). |
+| Agent skills | No private product or org names. No meta lines like “moved here from CLAUDE.md”. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
+| Lockfile | Intentional `package-lock.json` churn should be obvious in the PR description. |
+
+### Security-sensitive dev tooling
+
+When reviewing Vite/dev-server or static-file middleware changes, check:
+
+- Path containment (`startsWith` on directories — sibling paths that share a prefix)
+- Whether `host: '0.0.0.0'` and permissive `allowedHosts` are limited to the
+  intended local/E2E scenario
+- Whether new security-sensitive code is excluded from Sonar without justification
