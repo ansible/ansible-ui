@@ -55,6 +55,7 @@ function ClearLogsDescription(props: Readonly<ClearLogsDescriptionProps>) {
     return (
       <Trans>
         This deletes stored database logs for the selected instance (<strong>{targetNames}</strong>
+        {/* */}
         ). Rulebook activations will continue running, and system logs on activation workers remain
         unaffected.
       </Trans>
