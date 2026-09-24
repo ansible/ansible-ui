@@ -169,6 +169,7 @@ variable2: value2`;
       test('treats AWX empty extra_vars marker --- as empty object', () => {
         expect(valueToObject('---\n')).toEqual({});
         expect(valueToObject('---')).toEqual({});
+        expect(valueToObject('--- \n')).toEqual({});
       });
 
       test('throws when YAML loads whitespace-only input as null', () => {
@@ -202,6 +203,12 @@ variable2: value2`;
 
       test('formats in-memory object values for display', () => {
         expect(formatEditorDisplayValue({ count: 2 }, 'json', false)).toContain('count');
+      });
+
+      test('getValueToObjectParseError returns undefined for empty values', () => {
+        expect(getValueToObjectParseError(undefined, false)).toBeUndefined();
+        expect(getValueToObjectParseError(null, false)).toBeUndefined();
+        expect(getValueToObjectParseError('', false)).toBeUndefined();
       });
     });
   });
@@ -848,6 +855,59 @@ debug_mode: true         # Enable debugging`;
 
     await waitFor(() => {
       expect(screen.getByDisplayValue(/dropped_key/)).toBeInTheDocument();
+    });
+  });
+
+  test('should restore editor value when undo is clicked', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 1' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars>
+          label="Extra variables"
+          name="vars"
+          format="yaml"
+          enableUndo
+        />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: 'xyz: 2' },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'kebab dropdown toggle' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Undo changes' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId<HTMLTextAreaElement>('data-editor').value).toContain('abc');
+    });
+  });
+
+  test('should restore default value when reset is clicked', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 1' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars>
+          label="Extra variables"
+          name="vars"
+          format="yaml"
+          defaultValue="abc: 1"
+          enableReset
+        />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: 'xyz: 2' },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'kebab dropdown toggle' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Reset to default' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId<HTMLTextAreaElement>('data-editor').value).toContain('abc');
     });
   });
 
