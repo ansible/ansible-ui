@@ -23,16 +23,14 @@ export async function fetchLaunchConfigLoadResult(
     `${nodeResourceUrl}/${resourceId.toString()}`
   );
 
-  let launchConfigResults = {} as LaunchConfiguration;
-  if (nodeType === RESOURCE_TYPE.job) {
-    launchConfigResults = await requestGet<LaunchConfiguration>(
-      awxAPI`/job_templates/${resourceId.toString()}/launch/`
-    );
-  } else {
-    launchConfigResults = await requestGet<LaunchConfiguration>(
-      awxAPI`/workflow_job_templates/${resourceId.toString()}/launch/`
-    );
-  }
+  const launchConfigResults =
+    nodeType === RESOURCE_TYPE.job
+      ? await requestGet<LaunchConfiguration>(
+          awxAPI`/job_templates/${resourceId.toString()}/launch/`
+        )
+      : await requestGet<LaunchConfiguration>(
+          awxAPI`/workflow_job_templates/${resourceId.toString()}/launch/`
+        );
 
   const shouldShowPromptStep = !shouldHideOtherStep(launchConfigResults);
   const shouldShowSurveyStep = launchConfigResults.survey_enabled;

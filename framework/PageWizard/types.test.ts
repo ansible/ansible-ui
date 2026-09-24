@@ -4,6 +4,7 @@ import { isWizardSupplementalData } from './types';
 describe('isWizardSupplementalData', () => {
   it('accepts plain supplemental objects', () => {
     expect(isWizardSupplementalData({ showPrompts: true })).toBe(true);
+    expect(isWizardSupplementalData(Object.create(null))).toBe(true);
   });
 
   it('rejects arrays, null, and undefined', () => {

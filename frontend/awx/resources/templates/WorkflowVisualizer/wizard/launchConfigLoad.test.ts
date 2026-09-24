@@ -55,6 +55,27 @@ describe('launchConfigLoad', () => {
     await expect(concurrentAwait).resolves.toEqual(loadResult);
   });
 
+  it('returns the in-flight promise when ensureLaunchConfigLoad is called again', async () => {
+    const loadResult: LaunchConfigLoadResult = {
+      launch_config: null,
+      resource: { id: 11, name: 'JT', type: 'job_template' } as JobTemplate,
+      resourceId: 11,
+    };
+    const loader = vi.fn(
+      () =>
+        new Promise<LaunchConfigLoadResult | undefined>((resolve) =>
+          setTimeout(() => resolve(loadResult), 20)
+        )
+    );
+
+    const first = ensureLaunchConfigLoad('job', 11, loader);
+    const second = ensureLaunchConfigLoad('job', 11, loader);
+
+    expect(second).toBe(first);
+    expect(loader).toHaveBeenCalledOnce();
+    await expect(first).resolves.toEqual(loadResult);
+  });
+
   it('does not remove a newer registered load when an older load settles', async () => {
     const newerResult: LaunchConfigLoadResult = {
       launch_config: { survey_enabled: false } as LaunchConfiguration,

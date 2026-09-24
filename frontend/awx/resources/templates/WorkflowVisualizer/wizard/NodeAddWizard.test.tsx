@@ -36,6 +36,10 @@ vi.mock('@patternfly/react-topology', () => ({
   TopologyView: () => null,
 }));
 
+vi.mock('@ansible/common-ui/crud/useOptions', () => ({
+  useOptions: () => ({ data: { actions: { POST: {} } } }),
+}));
+
 vi.mock('../hooks', () => ({
   useCloseSidebar: () => vi.fn(),
   useCreateEdge: () => (source: string, target: string) => ({

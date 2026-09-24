@@ -69,6 +69,14 @@ describe('validationHelpers', () => {
       expect(() =>
         validateRequiredCredentialTypes(mockT, wizardData as WizardData, requiredCredentialTypes)
       ).toThrow(RequestError);
+
+      try {
+        validateRequiredCredentialTypes(mockT, wizardData as WizardData, requiredCredentialTypes);
+      } catch (error) {
+        expect((error as RequestError).json).toEqual({
+          __all__: [expect.stringContaining('Please select only credentials')],
+        });
+      }
     });
 
     it('should fail validation when required credential types are missing', () => {
@@ -229,6 +237,27 @@ describe('validationHelpers', () => {
         resource: loadResult.resource,
         resourceId: 8,
       });
+    });
+
+    it('should return undefined when the fetch returns nothing and the resource id is unchanged', async () => {
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        undefined
+      );
+
+      await expect(
+        awaitNodeLaunchConfigForWizard(
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 1,
+          },
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 1,
+            launch_config: { survey_enabled: true } as LaunchConfiguration,
+            resource: { id: 1, name: 'Old', type: 'job_template' } as JobTemplate,
+          }
+        )
+      ).resolves.toBeUndefined();
     });
 
     it('should clear stale launch_config and resource when the fetch returns nothing', async () => {
