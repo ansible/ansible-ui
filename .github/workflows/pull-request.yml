@@ -83,6 +83,7 @@ jobs:
       # Enforced: actionable unused-code findings block the required check.
       - name: knip report
         run: |
+          # Keep tee from masking Knip's failure; explicit behavior is clearer than relying on the shell default.
           set -o pipefail
           npm run knip | tee knip-report.txt
       # Surface the report on the run's Summary page so findings are visible
