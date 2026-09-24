@@ -22,6 +22,7 @@ import useResizeObserver from '@react-hook/resize-observer';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { Scrollable } from '@ansible/ansible-ui-framework/components/Scrollable';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 
 const Divisor = 1662 / 24;
 /** Breakpoint range (in grid columns) where value cards switch from 'md' to 'xs' size. */
@@ -37,7 +38,7 @@ export function AutomationDashboard() {
   );
 
   const view = useAutomationDashboardView({ toolbarFilters });
-  const { details } = view;
+  const { details, templateIdsError, isLoadingTemplateIds } = view;
 
   const noDataString = t('No jobs have been run.');
   const { isLoading } = useAutomationDashboardCollectionStatus();
@@ -233,7 +234,14 @@ export function AutomationDashboard() {
               gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
             }}
           >
-            {isLoading ? <LoadingState /> : dashboardContent}
+            {(isLoading || isLoadingTemplateIds) && <LoadingState />}
+            {!isLoading && !isLoadingTemplateIds && templateIdsError && (
+              <EmptyStateError
+                titleProp={t('Unable to load dashboard data')}
+                message={templateIdsError.message}
+              />
+            )}
+            {!isLoading && !isLoadingTemplateIds && !templateIdsError && dashboardContent}
           </div>
         </Scrollable>
       </PageDashboardContext.Provider>
