@@ -47,7 +47,7 @@
   ],
   "workspaces": {
     "framework": {
-      "entry": ["**/*.{test,spec}.{ts,tsx}"]
+      "entry": ["**/*.{test,spec}.{ts,tsx}", "**/*.test-d.ts"]
     },
     "frontend/common": {
       "entry": ["**/*.{test,spec}.{ts,tsx}"]
