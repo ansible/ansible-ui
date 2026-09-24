@@ -19,8 +19,12 @@ describe('pLimit', () => {
     expect(maxActive).toBeLessThanOrEqual(2);
   });
 
-  test('rejects when concurrency is invalid', () => {
-    expect(() => pLimit(0)).toThrow();
+  test.each([0, -1, 1.5, Number.NaN])('rejects invalid concurrency: %s', (concurrency) => {
+    expect(() => pLimit(concurrency)).toThrow();
+  });
+
+  test('accepts infinite concurrency', () => {
+    expect(() => pLimit(Number.POSITIVE_INFINITY)).not.toThrow();
   });
 
   test('returns resolved values from each task', async () => {
