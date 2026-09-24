@@ -191,6 +191,10 @@ jobs:
       - name: Run vitest with coverage
         working-directory: ${{ matrix.directory }}
         run: npx vitest run --coverage
+      - name: Run framework utility type tests
+        if: matrix.name == 'framework'
+        working-directory: ${{ matrix.directory }}
+        run: npm run vitest:types
       - name: Upload coverage artifact
         if: always()
         uses: actions/upload-artifact@v4
