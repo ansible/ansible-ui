@@ -145,11 +145,7 @@ export async function requireOptionsFieldPattern(
   const field = getOptionsFieldMetadata(options, fieldName);
 
   if (!field?.pattern || !field.pattern_description) {
-    const skipReason =
-      Object.keys(options).length === 0
-        ? `Enhanced validations not enabled for ${path} (OPTIONS returned no data)`
-        : `OPTIONS ${path} does not advertise pattern metadata for "${fieldName}"`;
-    testInfo.skip(true, skipReason);
+    testInfo.skip(true, `OPTIONS ${path} does not advertise pattern metadata for "${fieldName}"`);
   }
 
   return field!;
