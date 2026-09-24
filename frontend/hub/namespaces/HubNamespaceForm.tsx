@@ -33,7 +33,6 @@ export function CreateHubNamespace() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubNamespace>();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     hubAPI`/_ui/v1/namespaces/`
   );
@@ -91,7 +90,6 @@ export function EditHubNamespace() {
     error,
     refresh,
   } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name}/`);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     hubAPI`/_ui/v1/namespaces/`
   );
