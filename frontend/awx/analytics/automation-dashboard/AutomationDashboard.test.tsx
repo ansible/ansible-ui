@@ -143,6 +143,8 @@ const mockView: IAutomationDashboardView = {
   details: mockDetails,
   detailsError: undefined,
   detailsLoading: false,
+  templateIdsError: undefined,
+  isLoadingTemplateIds: false,
   costState: {
     id: 1,
     monthly_subscription_cost: 100,
