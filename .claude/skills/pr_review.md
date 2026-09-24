@@ -315,12 +315,3 @@ Extra checks when the diff touches `.github/workflows/`, eslint config, or
 | ESLint | Prefer **flat config** (`eslint.config.mjs`). Avoid new parallel `.eslintrc.*` unless there is a documented reason (e.g. isolated guardrails). |
 | Agent skills | No private product or org names. No meta lines like “moved here from CLAUDE.md”. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
 | Lockfile | Intentional `package-lock.json` churn should be obvious in the PR description. |
-
-### Security-sensitive dev tooling
-
-When reviewing Vite/dev-server or static-file middleware changes, check:
-
-- Path containment (`startsWith` on directories — sibling paths that share a prefix)
-- Whether `host: '0.0.0.0'` and permissive `allowedHosts` are limited to the
-  intended local/E2E scenario
-- Whether new security-sensitive code is excluded from Sonar without justification
