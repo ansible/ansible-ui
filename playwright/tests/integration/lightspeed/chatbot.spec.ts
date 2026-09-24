@@ -125,56 +125,58 @@ test.describe('Chatbot', () => {
     }
   );
 
-  test(
-    'should have MCP conversation return a meaningful response',
-    { tag: ['@not_mock', '@tier1'] },
-    async ({ page }) => {
-      if (isOcpA()) {
-        test.skip(true, 'MCP chatbot integration is not available on ocp-a topology');
+  test.describe('MCP conversation', () => {
+    test.skip(isOcpA(), 'MCP chatbot integration is not available on ocp-a topology');
+
+    test(
+      'should have MCP conversation return a meaningful response',
+      { tag: ['@not_mock', '@tier1'] },
+      async ({ page }) => {
+        const healthResponse = await page.request.get(
+          `${platformUI}/api/lightspeed/v1/health/status/chatbot/`
+        );
+
+        if (healthResponse.status() === 404) {
+          test.skip(true, 'Lightspeed is not deployed');
+        }
+        expect(healthResponse.status(), 'Chatbot health check should return 200').toBe(200);
+        const healthBody = (await healthResponse.json()) as Record<string, string>;
+        expect(healthBody['chatbot-service'], 'Chatbot service should be ok').toBe('ok');
+        expect(healthBody['streaming-chatbot-service'], 'Streaming service should be ok').toBe(
+          'ok'
+        );
+
+        const chatbotBadge = page.locator('[data-testid="chatbot-badge"]');
+        await expect(chatbotBadge).toBeVisible({ timeout: 5000 });
+
+        // Open chatbot and send an MCP query
+        await chatbotBadge.click();
+        await page.waitForTimeout(1000);
+        const chatbotIFrame = page.frameLocator('iframe[title="Ansible Chatbot IFrame"]');
+        const chatbotTextArea = chatbotIFrame.locator('textarea[aria-label="Send a message..."]');
+        await chatbotTextArea.waitFor({ timeout: 5000 });
+        await chatbotTextArea.fill('How many job templates are in my Automation Controller?');
+        await chatbotIFrame.locator('button[aria-label="Send"]').click();
+
+        // Wait for bot response to render
+        const responseText = await waitForChatbotResponse(chatbotIFrame);
+
+        expect(
+          responseText,
+          `Response should not contain an error. Got: ${responseText.substring(0, 300)}`
+        ).not.toContain('Bot returned status_code');
+
+        // Cross-check: get the real job template count from the controller API
+        const jtResponse = await page.request.get(`${platformUI}/api/controller/v2/job_templates/`);
+        expect(jtResponse.status()).toBe(200);
+        const jtBody = (await jtResponse.json()) as { count: number };
+        const actualCount = jtBody.count;
+        // The chatbot response should mention the real count
+        expect(
+          responseText,
+          `MCP response should mention the actual job template count (${actualCount})`
+        ).toContain(actualCount.toString());
       }
-
-      const healthResponse = await page.request.get(
-        `${platformUI}/api/lightspeed/v1/health/status/chatbot/`
-      );
-
-      if (healthResponse.status() === 404) {
-        test.skip(true, 'Lightspeed is not deployed');
-      }
-      expect(healthResponse.status(), 'Chatbot health check should return 200').toBe(200);
-      const healthBody = (await healthResponse.json()) as Record<string, string>;
-      expect(healthBody['chatbot-service'], 'Chatbot service should be ok').toBe('ok');
-      expect(healthBody['streaming-chatbot-service'], 'Streaming service should be ok').toBe('ok');
-
-      const chatbotBadge = page.locator('[data-testid="chatbot-badge"]');
-      await expect(chatbotBadge).toBeVisible({ timeout: 5000 });
-
-      // Open chatbot and send an MCP query
-      await chatbotBadge.click();
-      await page.waitForTimeout(1000);
-      const chatbotIFrame = page.frameLocator('iframe[title="Ansible Chatbot IFrame"]');
-      const chatbotTextArea = chatbotIFrame.locator('textarea[aria-label="Send a message..."]');
-      await chatbotTextArea.waitFor({ timeout: 5000 });
-      await chatbotTextArea.fill('How many job templates are in my Automation Controller?');
-      await chatbotIFrame.locator('button[aria-label="Send"]').click();
-
-      // Wait for bot response to render
-      const responseText = await waitForChatbotResponse(chatbotIFrame);
-
-      expect(
-        responseText,
-        `Response should not contain an error. Got: ${responseText.substring(0, 300)}`
-      ).not.toContain('Bot returned status_code');
-
-      // Cross-check: get the real job template count from the controller API
-      const jtResponse = await page.request.get(`${platformUI}/api/controller/v2/job_templates/`);
-      expect(jtResponse.status()).toBe(200);
-      const jtBody = (await jtResponse.json()) as { count: number };
-      const actualCount = jtBody.count;
-      // The chatbot response should mention the real count
-      expect(
-        responseText,
-        `MCP response should mention the actual job template count (${actualCount})`
-      ).toContain(actualCount.toString());
-    }
-  );
+    );
+  });
 });
