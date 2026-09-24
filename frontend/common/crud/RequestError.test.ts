@@ -28,6 +28,33 @@ describe('createRequestError', () => {
     expect(error.details).toBe('error: Not found\n');
   });
 
+  it('should preserve nested objects and arrays when formatting details', async () => {
+    const responseBody = JSON.stringify({
+      error: 'Validation failed',
+      details: {
+        resource: 'job',
+        fields: ['name', 'description'],
+      },
+      retryable: false,
+    });
+    const response = new Response(responseBody, {
+      status: 422,
+      statusText: 'Unprocessable Entity',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const error = await createRequestError(response);
+    expect(error.details).toBe(
+      'error: Validation failed\n' +
+        'details:\n' +
+        '  resource: job\n' +
+        '  fields:\n' +
+        '    - name\n' +
+        '    - description\n' +
+        'retryable: false\n'
+    );
+  });
+
   it('should create a RequestError for plain text responses', async () => {
     const response = new Response('Plain Error', {
       status: 500,
