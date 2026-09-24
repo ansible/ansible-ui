@@ -113,6 +113,23 @@ describe('BulkActionDialog', () => {
     });
   });
 
+  it('should limit concurrent actions to five', async () => {
+    let activeActions = 0;
+    let maxActiveActions = 0;
+    const actionFn = vi.fn(async () => {
+      activeActions++;
+      maxActiveActions = Math.max(maxActiveActions, activeActions);
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      activeActions--;
+    });
+    const items = Array.from({ length: 6 }, (_, id) => ({ id: id + 1, name: `Item ${id + 1}` }));
+
+    renderDialog({ items, actionFn });
+
+    await waitFor(() => expect(actionFn).toHaveBeenCalledTimes(items.length));
+    expect(maxActiveActions).toBe(5);
+  });
+
   it('should show error message and Retry button when an action fails', async () => {
     const actionFn = vi.fn().mockImplementation((item: Item) => {
       if (item.id === 1) return Promise.reject(new Error('Conflict: resource is in use'));

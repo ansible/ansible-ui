@@ -26,7 +26,7 @@ test.describe('Hub - Remotes', () => {
 
     try {
       await test.step('Create multiple remotes via API', async () => {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 6; i++) {
           const remoteName = `${testSignature}-remote-${i}`;
           await Remote.api.create(page, { name: remoteName });
           remoteNames.push(remoteName);
@@ -41,7 +41,7 @@ test.describe('Hub - Remotes', () => {
 
         // Verify all remotes are visible
         const rows = page.locator('tbody tr');
-        await expect(rows).toHaveCount(5, { timeout: 10000 });
+        await expect(rows).toHaveCount(6, { timeout: 10000 });
       });
 
       await test.step('Select all and bulk delete', async () => {
