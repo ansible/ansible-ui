@@ -304,25 +304,7 @@ carried in.
 
 ---
 
-## 10. Posting reviews on GitHub
-
-Community-visible reviews should read like a maintainer, not a generated report.
-
-- **Inline comments** for every concrete finding. Do not post numbered “request
-  changes” essays at PR level — one short approve note is enough (“Left a
-  question inline.”).
-- **No AI/tool disclosure** in review text (agents, ChatGPT, Copilot, etc.).
-- **Substantive findings:** prefix severity when it helps scanning, e.g.
-  `(Major, Security)` or `(Minor, Functionality)` — then file/line and a
-  concrete fix.
-- **Separate** blocking issues from nits and follow-ups.
-
-When a reviewer asks **how to test** a change, reply in the thread with scoped
-commands (`npm run vitest -- path`, Playwright spec path), not process narrative.
-
----
-
-## 11. CI, ESLint, and agent-skill PRs
+## 10. CI, ESLint, and agent-skill PRs
 
 Extra checks when the diff touches `.github/workflows/`, eslint config, or
 `.claude/skills/`:
