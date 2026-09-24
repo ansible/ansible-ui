@@ -110,6 +110,30 @@ describe('createFeatureFlagRegistry', () => {
     expect(registry.isEnabled('defaultOnView')).toBe(true);
   });
 
+  it('keeps local overrides usable without browser storage', () => {
+    vi.stubGlobal('window', undefined);
+
+    try {
+      const provider = createLocalFeatureFlagProvider();
+      const listener = vi.fn();
+      provider.subscribe(listener);
+
+      provider.setOverride('experimentalView', true);
+      provider.setOverride('experimentalView', true);
+      provider.resetOverride('missing');
+      provider.resetOverride('experimentalView');
+
+      expect(provider.evaluateBoolean('experimentalView', false)).toEqual({
+        flagKey: 'experimentalView',
+        reason: 'DEFAULT',
+        value: false,
+      });
+      expect(listener).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('ignores stored overrides with an invalid shape', () => {
     storage.setItem('test-flags', JSON.stringify({ experimentalView: 'enabled' }));
     const provider = createLocalFeatureFlagProvider({
