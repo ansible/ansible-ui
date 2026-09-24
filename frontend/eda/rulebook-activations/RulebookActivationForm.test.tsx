@@ -241,13 +241,15 @@ describe('CreateRulebookActivation', () => {
     expect(
       await screen.findByText(/Debug logging generates significantly more data\./)
     ).toHaveTextContent('Debug logging generates significantly more data.');
-    expect(
-      await screen.findByText(
-        /By default, debug logs are sent to container logs \(stdout\) but are not stored in the database\. Enable the option below to persist them, but be aware this can significantly increase database storage\./
-      )
-    ).toHaveTextContent(
-      'By default, debug logs are sent to container logs (stdout) but are not stored in the database. Enable the option below to persist them, but be aware this can significantly increase database storage.'
+    const debugWarning = screen
+      .getByText('Debug logging generates significantly more data.')
+      .closest('.pf-v6-l-grid__item');
+    expect(debugWarning).toHaveTextContent(
+      'By default, debug logs are written to system logs on activation workers, but are not saved to the database. Enabling Store debug logs in database lets you view them in the activation history, but can significantly increase database storage.'
     );
+    expect(
+      screen.getByText('Store debug logs in database', { selector: 'strong' })
+    ).toBeInTheDocument();
     expect(
       screen
         .getByText('Debug logging generates significantly more data.')

@@ -33,20 +33,20 @@ describe('RulebookActivationToolbar', () => {
     expect(screen.getByRole('button', { name: /Unfollow/i })).toBeInTheDocument();
   });
 
-  it('should render the dangerous Clear logs action when allowed', () => {
+  it('should render the dangerous Delete logs action when allowed', () => {
     render(<RulebookActivationToolbar {...defaultProps} />);
 
-    const clearLogs = screen.getByRole('button', { name: 'Clear logs' });
-    expect(clearLogs).toBeEnabled();
-    expect(clearLogs).toHaveClass('pf-m-secondary');
+    const deleteLogs = screen.getByRole('button', { name: 'Delete logs' });
+    expect(deleteLogs).toBeEnabled();
+    expect(deleteLogs).toHaveClass('pf-m-secondary');
   });
 
-  it('should call onClearLogs when the allowed Clear logs action is clicked', async () => {
+  it('should call onClearLogs when the allowed Delete logs action is clicked', async () => {
     const user = userEvent.setup();
     const onClearLogs = vi.fn();
     render(<RulebookActivationToolbar {...defaultProps} onClearLogs={onClearLogs} />);
 
-    await user.click(screen.getByRole('button', { name: 'Clear logs' }));
+    await user.click(screen.getByRole('button', { name: 'Delete logs' }));
 
     expect(onClearLogs).toHaveBeenCalledOnce();
   });

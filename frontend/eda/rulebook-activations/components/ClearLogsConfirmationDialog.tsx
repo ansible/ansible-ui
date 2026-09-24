@@ -20,7 +20,7 @@ import {
   yyyyMMddFormat,
 } from '@patternfly/react-core';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 export interface ClearLogsTarget {
   id: number;
@@ -33,10 +33,48 @@ interface ClearLogsConfirmationDialogProps {
   targets: ReadonlyArray<ClearLogsTarget>;
   targetType?: ClearLogsTargetType;
   onClose: () => void;
-  onConfirm: (beforeDate: string) => void;
+  onConfirm: (beforeDate?: string) => void;
 }
 
-type ClearLogsRange = 'older-than' | 'keep-last';
+type ClearLogsRange = 'all' | 'older-than' | 'keep-last';
+
+interface ClearLogsDescriptionProps {
+  targets: ReadonlyArray<ClearLogsTarget>;
+  targetType: ClearLogsTargetType;
+}
+
+function ClearLogsDescription(props: Readonly<ClearLogsDescriptionProps>) {
+  const { t } = useTranslation();
+  const targetNames = (
+    props.targetType === 'activation' ? props.targets.slice(0, 5) : props.targets
+  )
+    .map((target) => target.name)
+    .join(', ');
+
+  if (props.targetType === 'instance') {
+    return (
+      <Trans>
+        This deletes stored database logs for the selected instance (<strong>{targetNames}</strong>
+        ). Rulebook activations will continue running, and system logs on activation workers remain
+        unaffected.
+      </Trans>
+    );
+  }
+
+  if (props.targets.length > 5) {
+    return t(
+      'This deletes stored database logs for {{count}} activations. Rulebook activations will continue running, and system logs on activation workers remain unaffected.',
+      { count: props.targets.length }
+    );
+  }
+
+  return (
+    <Trans>
+      This deletes stored database logs for <strong>{targetNames}</strong>. Rulebook activations
+      will continue running, and system logs on activation workers remain unaffected.
+    </Trans>
+  );
+}
 
 export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmationDialogProps>) {
   const { t } = useTranslation();
@@ -57,16 +95,16 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
 
   const canSubmit =
     isAcknowledged &&
-    isKeepLastDaysValid &&
-    (range === 'keep-last' || (olderThanDate.length > 0 && isOlderThanDateValid));
-
+    (range === 'all' ||
+      (range === 'keep-last' && isKeepLastDaysValid) ||
+      (range === 'older-than' && olderThanDate.length > 0 && isOlderThanDateValid));
   const onConfirm = () => {
     if (!canSubmit) return;
 
-    let beforeDate: string;
+    let beforeDate: string | undefined;
     if (range === 'older-than') {
       beforeDate = `${olderThanDate}T00:00:00.000Z`;
-    } else {
+    } else if (range === 'keep-last') {
       let days = 0;
       if (typeof keepLastDays === 'number') {
         days = keepLastDays;
@@ -78,30 +116,27 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
 
   return (
     <Modal
-      aria-label={t('Clear logs?')}
+      aria-label={t('Permanently Delete Logs')}
       elementToFocus="#clear-logs-cancel"
       isOpen
       onClose={props.onClose}
       variant={ModalVariant.medium}
     >
       <ModalHeader
-        title={t('Clear logs?')}
+        title={t('Permanently Delete Logs')}
         titleIconVariant="warning"
-        description={
-          targetType === 'instance'
-            ? t(
-                'Removes stored logs for the selected instance ({{names}}). Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.',
-                { names: targets.map((target) => target.name).join(', ') }
-              )
-            : t(
-                'Removes stored logs for {{names}}. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.',
-                { names: targets.map((target) => target.name).join(', ') }
-              )
-        }
+        description={<ClearLogsDescription targets={targets} targetType={targetType} />}
       />
       <ModalBody>
         <Stack hasGutter>
           <Stack hasGutter>
+            <Radio
+              id="clear-logs-all"
+              name="clear-logs-range"
+              isChecked={range === 'all'}
+              onChange={() => setRange('all')}
+              label={t('Delete all logs')}
+            />
             <Flex alignItems={{ default: 'alignItemsCenter' }} gap={{ default: 'gapMd' }}>
               <FlexItem>
                 <Radio
@@ -109,12 +144,12 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
                   name="clear-logs-range"
                   isChecked={range === 'older-than'}
                   onChange={() => setRange('older-than')}
-                  label={t('Older than')}
+                  label={t('Delete logs older than')}
                 />
               </FlexItem>
               <FlexItem flex={{ default: 'flex_1' }}>
                 <DatePicker
-                  aria-label={t('Clear logs older than')}
+                  aria-label={t('Delete logs older than')}
                   appendTo={() => document.body}
                   isDisabled={range !== 'older-than'}
                   invalidFormatText={t('Enter a valid date in YYYY-MM-DD format')}
@@ -136,17 +171,19 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
                   name="clear-logs-range"
                   isChecked={range === 'keep-last'}
                   onChange={() => setRange('keep-last')}
-                  label={t('Keep last')}
+                  label={t('Delete logs older than {{days}} days', {
+                    days: keepLastDays === '' ? '?' : keepLastDays,
+                  })}
                 />
               </FlexItem>
               <FlexItem>
                 <NumberInput
-                  aria-label={t('Days to keep')}
-                  inputAriaLabel={t('Days to keep')}
+                  aria-label={t('Number of days')}
+                  inputAriaLabel={t('Number of days')}
                   isDisabled={range !== 'keep-last'}
                   max={36500}
                   min={1}
-                  minusBtnAriaLabel={t('Decrease days to keep')}
+                  minusBtnAriaLabel={t('Decrease number of days')}
                   inputProps={{
                     'aria-describedby': keepLastDaysErrorId,
                     max: 36500,
@@ -167,7 +204,7 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
                       typeof days === 'number' ? Math.min(36500, days + 1) : 1
                     )
                   }
-                  plusBtnAriaLabel={t('Increase days to keep')}
+                  plusBtnAriaLabel={t('Increase number of days')}
                   value={keepLastDays}
                   validated={
                     range === 'keep-last' && !isKeepLastDaysValid
@@ -193,13 +230,15 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
             id="clear-logs-acknowledgement"
             isChecked={isAcknowledged}
             onChange={(_, checked) => setIsAcknowledged(checked)}
-            label={t('I understand that clearing logs cannot be undone.')}
+            label={t(
+              'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.'
+            )}
           />
         </Stack>
       </ModalBody>
       <ModalFooter>
         <Button variant="danger" isDisabled={!canSubmit} onClick={onConfirm}>
-          {t('Clear logs')}
+          {t('Delete logs')}
         </Button>
         <Button id="clear-logs-cancel" variant="link" onClick={props.onClose}>
           {t('Cancel')}

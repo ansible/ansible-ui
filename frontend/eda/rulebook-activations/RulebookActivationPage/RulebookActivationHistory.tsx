@@ -45,7 +45,7 @@ export function RulebookActivationHistory() {
       {
         type: PageActionType.Button,
         selection: PageActionSelection.None,
-        label: t('Clear logs'),
+        label: t('Delete logs'),
         isPinned: true,
         onClick: confirmClearLogs,
         isDanger: true,

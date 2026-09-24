@@ -15,7 +15,7 @@ interface ClearLogsResponse {
 }
 
 interface ClearLogsRequest {
-  before_date: string;
+  before_date?: string;
 }
 
 type ClearLogsEndpointBuilder = (target: ClearLogsTarget) => string;
@@ -32,7 +32,7 @@ const activationEndpointBuilder: ClearLogsEndpointBuilder = (target) =>
 export function useClearLogsDialog(options: Readonly<UseClearLogsDialogOptions> = {}) {
   const { t } = useTranslation();
   const [_, setDialog] = usePageDialog();
-  const postRequest = usePostRequest<ClearLogsRequest, ClearLogsResponse>();
+  const postRequest = usePostRequest<ClearLogsRequest | undefined, ClearLogsResponse>();
   const openProgressDialog = useEdaBulkActionDialog<ClearLogsTarget>();
   const {
     endpointBuilder = activationEndpointBuilder,
@@ -63,11 +63,11 @@ export function useClearLogsDialog(options: Readonly<UseClearLogsDialogOptions> 
           onClose={closeDialog}
           onConfirm={(beforeDate) => {
             openProgressDialog({
-              title: t('Clearing logs'),
+              title: t('Deleting logs'),
               description: t(
-                'Removing stored logs. Activations continue running, and container logs are not affected.'
+                'Deleting stored logs. Activations continue running, and container logs are not affected.'
               ),
-              processingText: t('Clearing logs'),
+              processingText: t('Deleting logs'),
               items: dialogTargets,
               keyFn: (target) => target.id,
               actionColumns,
@@ -75,7 +75,7 @@ export function useClearLogsDialog(options: Readonly<UseClearLogsDialogOptions> 
               actionFn: async (target, signal) => {
                 const result = await postRequest(
                   endpointBuilder(target),
-                  { before_date: beforeDate },
+                  beforeDate ? { before_date: beforeDate } : undefined,
                   signal
                 );
                 return result;

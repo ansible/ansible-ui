@@ -22,7 +22,7 @@ import { Alert, GridItem } from '@patternfly/react-core';
 import jsyaml from 'js-yaml';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { getEventPersistenceHelpText } from './constants/eventPersistenceHelpText';
@@ -317,9 +317,12 @@ export function RulebookActivationInputs() {
               isInline
               title={t('Debug logging generates significantly more data.')}
             >
-              {t(
-                'By default, debug logs are sent to container logs (stdout) but are not stored in the database. Enable the option below to persist them, but be aware this can significantly increase database storage.'
-              )}
+              <Trans>
+                By default, debug logs are written to system logs on activation workers, but are not
+                saved to the database. Enabling <strong>Store debug logs in database</strong> lets
+                you view them in the activation history, but can significantly increase database
+                storage.
+              </Trans>
             </Alert>
           </GridItem>
           <PageFormSwitch<IEdaRulebookActivationInputs>

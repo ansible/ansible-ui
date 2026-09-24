@@ -176,7 +176,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
-        label: t('Clear logs'),
+        label: t('Delete logs'),
         onClick: (activations: EdaRulebookActivation[]) => openClearLogsDialog(activations),
         isDanger: true,
       },

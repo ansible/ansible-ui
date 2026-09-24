@@ -196,29 +196,30 @@ describe('ActivationInstanceDetails', () => {
       expect(getByText('Pulling image quay.io/ansible/ansible-rulebook:main')).toBeInTheDocument();
     });
 
-    await user.click(getByRole('button', { name: 'Clear logs' }));
+    await user.click(getByRole('button', { name: 'Delete logs' }));
 
-    const confirmationDialog = getByRole('dialog', { name: 'Clear logs?' });
+    const confirmationDialog = getByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(confirmationDialog).toHaveTextContent(
+      'This deletes stored database logs for the selected instance (1 - prat-rba). Rulebook activations will continue running, and system logs on activation workers remain unaffected.'
+    );
     expect(
-      within(confirmationDialog).getByText(
-        'Removes stored logs for the selected instance (1 - prat-rba). Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.'
-      )
+      within(confirmationDialog).getByText('1 - prat-rba', { selector: 'strong' })
     ).toBeInTheDocument();
     await user.click(
       within(confirmationDialog).getByRole('checkbox', {
-        name: 'I understand that clearing logs cannot be undone.',
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
       })
     );
-    await user.click(within(confirmationDialog).getByRole('button', { name: 'Clear logs' }));
+    await user.click(within(confirmationDialog).getByRole('button', { name: 'Delete logs' }));
 
-    const progressDialog = await waitFor(() => getByRole('dialog', { name: 'Clearing logs' }));
+    const progressDialog = await waitFor(() => getByRole('dialog', { name: 'Deleting logs' }));
     expect(within(progressDialog).getByText('1 - prat-rba')).toBeInTheDocument();
 
     await waitFor(() => expect(clearLogsRequestCount).toBe(1), { timeout: 2000 });
 
     await waitFor(
       () => {
-        expect(queryByRole('dialog', { name: 'Clear logs?' })).not.toBeInTheDocument();
+        expect(queryByRole('dialog', { name: 'Permanently Delete Logs' })).not.toBeInTheDocument();
         expect(container.querySelector('.output-grid-row')).not.toBeInTheDocument();
       },
       { timeout: 5000 }
@@ -232,7 +233,7 @@ describe('ActivationInstanceDetails', () => {
     expect(logRequestCount).toBe(2);
   });
 
-  test('should allow non-admin users to open instance clear logs for backend authorization', async () => {
+  test('should allow non-admin users to open instance delete logs for backend authorization', async () => {
     const user = userEvent.setup();
     const { findByRole, getByRole } = render(
       <PageDialogProvider>
@@ -260,16 +261,16 @@ describe('ActivationInstanceDetails', () => {
       </PageDialogProvider>
     );
 
-    await user.click(await findByRole('button', { name: 'Clear logs' }));
-    expect(getByRole('dialog', { name: 'Clear logs?' })).toBeInTheDocument();
+    await user.click(await findByRole('button', { name: 'Delete logs' }));
+    expect(getByRole('dialog', { name: 'Permanently Delete Logs' })).toBeInTheDocument();
   });
 
-  test('should show the parsed permission error when instance clear logs is forbidden', async () => {
+  test('should show the parsed permission error when instance delete logs is forbidden', async () => {
     const user = userEvent.setup();
     server.use(
       http.post(edaAPI`/activation-instances/1/clear-logs/`, () =>
         HttpResponse.json(
-          { detail: 'You do not have permission to clear logs for this instance.' },
+          { detail: 'You do not have permission to delete logs for this instance.' },
           { status: 403 }
         )
       )
@@ -304,19 +305,19 @@ describe('ActivationInstanceDetails', () => {
     await waitFor(() => {
       expect(getByText('Pulling image quay.io/ansible/ansible-rulebook:main')).toBeInTheDocument();
     });
-    await user.click(getByRole('button', { name: 'Clear logs' }));
-    const confirmationDialog = getByRole('dialog', { name: 'Clear logs?' });
+    await user.click(getByRole('button', { name: 'Delete logs' }));
+    const confirmationDialog = getByRole('dialog', { name: 'Permanently Delete Logs' });
     await user.click(
       within(confirmationDialog).getByRole('checkbox', {
-        name: 'I understand that clearing logs cannot be undone.',
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
       })
     );
-    await user.click(within(confirmationDialog).getByRole('button', { name: 'Clear logs' }));
+    await user.click(within(confirmationDialog).getByRole('button', { name: 'Delete logs' }));
 
-    const progressDialog = await waitFor(() => getByRole('dialog', { name: 'Clearing logs' }));
+    const progressDialog = await waitFor(() => getByRole('dialog', { name: 'Deleting logs' }));
     expect(
       await within(progressDialog).findByText(
-        'You do not have permission to clear logs for this instance.'
+        'You do not have permission to delete logs for this instance.'
       )
     ).toBeInTheDocument();
     expect(within(progressDialog).getByRole('button', { name: 'Retry' })).toBeInTheDocument();

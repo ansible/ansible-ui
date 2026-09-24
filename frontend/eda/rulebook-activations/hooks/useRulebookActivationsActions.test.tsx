@@ -173,14 +173,14 @@ describe('useRulebookActivationsActions', () => {
     expect(mockDeleteRulebookActivations).toHaveBeenCalledWith(activations);
   });
 
-  it('should clear logs for selected activations', async () => {
+  it('should delete logs for selected activations', async () => {
     const user = userEvent.setup();
     const clearLogs = vi.fn(() => HttpResponse.json({ deleted: 2 }));
     server.use(http.post('*/activations/:id/clear-logs/', clearLogs));
 
     const { result } = renderHook(() => useRulebookActivationsActions(mockView), { wrapper });
     const clearLogsAction = result.current.find(
-      (action) => action.type === PageActionType.Button && action.label === 'Clear logs'
+      (action) => action.type === PageActionType.Button && action.label === 'Delete logs'
     ) as IPageActionButtonMultiple<EdaRulebookActivation>;
     const activations = [
       { id: 1, name: 'Activation 2' },
@@ -191,33 +191,34 @@ describe('useRulebookActivationsActions', () => {
       clearLogsAction.onClick(activations);
     });
 
-    const dialog = await screen.findByRole('dialog', { name: 'Clear logs?' });
+    const dialog = await screen.findByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(dialog).toHaveTextContent(
+      'This deletes stored database logs for Activation 1, Activation 2. Rulebook activations will continue running, and system logs on activation workers remain unaffected.'
+    );
     expect(
-      within(dialog).getByText(
-        'Removes stored logs for Activation 1, Activation 2. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.'
-      )
+      within(dialog).getByText('Activation 1, Activation 2', { selector: 'strong' })
     ).toBeInTheDocument();
     expect(within(dialog).queryByRole('table')).not.toBeInTheDocument();
-    expect(within(dialog).getByRole('button', { name: 'Clear logs' })).toBeDisabled();
+    expect(within(dialog).getByRole('button', { name: 'Delete logs' })).toBeDisabled();
 
     await user.click(
       within(dialog).getByRole('checkbox', {
-        name: 'I understand that clearing logs cannot be undone.',
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
       })
     );
-    await user.click(within(dialog).getByRole('button', { name: 'Clear logs' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Delete logs' }));
 
     await waitFor(() => {
       expect(clearLogs).toHaveBeenCalledTimes(2);
     });
   });
 
-  it('should allow non-admin users to open clear logs for backend authorization', () => {
+  it('should allow non-admin users to open delete logs for backend authorization', () => {
     const { result } = renderHook(() => useRulebookActivationsActions(mockView), {
       wrapper: createWrapper({ ...mockActiveUser, is_superuser: false }),
     });
     const clearLogsAction = result.current.find(
-      (action) => action.type === PageActionType.Button && action.label === 'Clear logs'
+      (action) => action.type === PageActionType.Button && action.label === 'Delete logs'
     ) as IPageActionButtonMultiple<EdaRulebookActivation>;
 
     expect(clearLogsAction.isDisabled).toBeUndefined();

@@ -51,7 +51,7 @@ function TestHarness(
     <button
       onClick={() => openClearLogsDialog(props.targets ?? [{ id: 201, name: '201 - Instance 1' }])}
     >
-      Open clear logs
+      Open delete logs
     </button>
   );
 }
@@ -68,14 +68,14 @@ describe('useClearLogsDialog', () => {
       </PageDialogProvider>
     );
 
-    await user.click(screen.getByRole('button', { name: 'Open clear logs' }));
-    const confirmationDialog = screen.getByRole('dialog', { name: 'Clear logs?' });
+    await user.click(screen.getByRole('button', { name: 'Open delete logs' }));
+    const confirmationDialog = screen.getByRole('dialog', { name: 'Permanently Delete Logs' });
     await user.click(
       within(confirmationDialog).getByRole('checkbox', {
-        name: 'I understand that clearing logs cannot be undone.',
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
       })
     );
-    await user.click(within(confirmationDialog).getByRole('button', { name: 'Clear logs' }));
+    await user.click(within(confirmationDialog).getByRole('button', { name: 'Delete logs' }));
 
     const progressProps = openProgressDialog.mock
       .calls[0]?.[0] as BulkActionDialogProps<ClearLogsTarget>;
@@ -99,9 +99,11 @@ describe('useClearLogsDialog', () => {
       </PageDialogProvider>
     );
 
-    await user.click(screen.getByRole('button', { name: 'Open clear logs' }));
+    await user.click(screen.getByRole('button', { name: 'Open delete logs' }));
 
-    expect(screen.queryByRole('dialog', { name: 'Clear logs?' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('dialog', { name: 'Permanently Delete Logs' })
+    ).not.toBeInTheDocument();
     expect(openProgressDialog).not.toHaveBeenCalled();
     expect(onComplete).not.toHaveBeenCalled();
   });

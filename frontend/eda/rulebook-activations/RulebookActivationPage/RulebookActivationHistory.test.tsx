@@ -132,7 +132,7 @@ describe('RulebookActivationHistory', () => {
     });
   });
 
-  it('should confirm before clearing logs for a system administrator', async () => {
+  it('should confirm before deleting logs for a system administrator', async () => {
     const user = userEvent.setup();
     const clearLogs = vi.fn();
     server.use(
@@ -146,23 +146,22 @@ describe('RulebookActivationHistory', () => {
     );
     renderHistory();
 
-    await user.click(await screen.findByRole('button', { name: 'Clear logs' }));
+    await user.click(await screen.findByRole('button', { name: 'Delete logs' }));
 
-    const dialog = screen.getByRole('dialog', { name: 'Clear logs?' });
-    expect(
-      within(dialog).getByText(
-        'Removes stored logs for Activation 5. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.'
-      )
-    ).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(dialog).toHaveTextContent(
+      'This deletes stored database logs for Activation 5. Rulebook activations will continue running, and system logs on activation workers remain unaffected.'
+    );
+    expect(within(dialog).getByText('Activation 5', { selector: 'strong' })).toBeInTheDocument();
     expect(dialog).toHaveAttribute('data-element-to-focus', '#clear-logs-cancel');
-    expect(within(dialog).getByRole('button', { name: 'Clear logs' })).toBeDisabled();
+    expect(within(dialog).getByRole('button', { name: 'Delete logs' })).toBeDisabled();
 
     await user.click(
       within(dialog).getByRole('checkbox', {
-        name: 'I understand that clearing logs cannot be undone.',
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
       })
     );
-    await user.click(within(dialog).getByRole('button', { name: 'Clear logs' }));
+    await user.click(within(dialog).getByRole('button', { name: 'Delete logs' }));
 
     await waitFor(() => expect(clearLogs).toHaveBeenCalledOnce());
   });
@@ -175,33 +174,37 @@ describe('RulebookActivationHistory', () => {
     );
     renderHistory();
 
-    await user.click(await screen.findByRole('button', { name: 'Clear logs' }));
+    await user.click(await screen.findByRole('button', { name: 'Delete logs' }));
 
+    const dialog = screen.getByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(dialog).toHaveTextContent(
+      'This deletes stored database logs for Rulebook activation. Rulebook activations will continue running, and system logs on activation workers remain unaffected.'
+    );
     expect(
-      within(screen.getByRole('dialog', { name: 'Clear logs?' })).getByText(
-        'Removes stored logs for Rulebook activation. Activations continue running, and container logs are not affected. Logs outside this window remain unchanged. This cannot be undone.'
-      )
+      within(dialog).getByText('Rulebook activation', { selector: 'strong' })
     ).toBeInTheDocument();
   });
 
-  it('should not open the clear logs dialog when the activation id is missing', async () => {
+  it('should not open the delete logs dialog when the activation id is missing', async () => {
     const user = userEvent.setup();
     server.use(http.get('*/activations//instances/*', () => HttpResponse.json(mockInstances)));
     renderHistory(mockActiveUser, '/rulebook-activations', '/rulebook-activations');
 
-    await user.click(await screen.findByRole('button', { name: 'Clear logs' }));
+    await user.click(await screen.findByRole('button', { name: 'Delete logs' }));
 
-    expect(screen.queryByRole('dialog', { name: 'Clear logs?' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('dialog', { name: 'Permanently Delete Logs' })
+    ).not.toBeInTheDocument();
   });
 
-  it('should allow non-admin users to open clear logs for backend authorization', async () => {
+  it('should allow non-admin users to open delete logs for backend authorization', async () => {
     const user = userEvent.setup();
     server.use(http.get('*/activations/5/instances/*', () => HttpResponse.json(mockInstances)));
 
     renderHistory({ ...mockActiveUser, is_superuser: false });
 
-    const clearLogs = await screen.findByRole('button', { name: 'Clear logs' });
-    await user.click(clearLogs);
-    expect(screen.getByRole('dialog', { name: 'Clear logs?' })).toBeInTheDocument();
+    const deleteLogs = await screen.findByRole('button', { name: 'Delete logs' });
+    await user.click(deleteLogs);
+    expect(screen.getByRole('dialog', { name: 'Permanently Delete Logs' })).toBeInTheDocument();
   });
 });
