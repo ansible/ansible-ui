@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { isOcpA } from '@ansible/playwright/commands/getTopologyType';
 import { Lightspeed } from '@ansible/playwright/utils';
 import {
   waitForChatbotResponse,
@@ -128,6 +129,10 @@ test.describe('Chatbot', () => {
     'should have MCP conversation return a meaningful response',
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
+      if (isOcpA()) {
+        test.skip(true, 'MCP chatbot integration is not available on ocp-a topology');
+      }
+
       const healthResponse = await page.request.get(
         `${platformUI}/api/lightspeed/v1/health/status/chatbot/`
       );
