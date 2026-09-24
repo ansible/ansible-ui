@@ -19,7 +19,9 @@ export async function fetchLaunchConfigLoadResult(
   }
 
   const nodeResourceUrl = getResourceURL(nodeType);
-  const nodeResource = await requestGet<AllResources>(`${nodeResourceUrl}/${resourceId.toString()}`);
+  const nodeResource = await requestGet<AllResources>(
+    `${nodeResourceUrl}/${resourceId.toString()}`
+  );
 
   let launchConfigResults = {} as LaunchConfiguration;
   if (nodeType === RESOURCE_TYPE.job) {
@@ -34,8 +36,7 @@ export async function fetchLaunchConfigLoadResult(
 
   const shouldShowPromptStep = !shouldHideOtherStep(launchConfigResults);
   const shouldShowSurveyStep = launchConfigResults.survey_enabled;
-  const launchConfig =
-    shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null;
+  const launchConfig = shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null;
 
   return {
     launch_config: launchConfig,

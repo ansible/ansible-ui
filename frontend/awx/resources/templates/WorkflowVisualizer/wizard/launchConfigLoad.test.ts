@@ -37,11 +37,22 @@ describe('launchConfigLoad', () => {
       resource: { id: 3, name: 'JT', type: 'job_template' } as JobTemplate,
       resourceId: 3,
     };
-    const loader = vi.fn().mockResolvedValue(loadResult);
+    let resolveLoader!: (value: LaunchConfigLoadResult) => void;
+    const loader = vi.fn(
+      () =>
+        new Promise<LaunchConfigLoadResult>((resolve) => {
+          resolveLoader = resolve;
+        })
+    );
 
-    await expect(ensureLaunchConfigLoad('job', 3, loader)).resolves.toEqual(loadResult);
+    const loadPromise = ensureLaunchConfigLoad('job', 3, loader);
+    const concurrentAwait = awaitLaunchConfigLoad('job', 3);
     expect(loader).toHaveBeenCalledOnce();
-    await expect(awaitLaunchConfigLoad('job', 3)).resolves.toEqual(loadResult);
+    expect(concurrentAwait).toBe(loadPromise);
+
+    resolveLoader(loadResult);
+    await expect(loadPromise).resolves.toEqual(loadResult);
+    await expect(concurrentAwait).resolves.toEqual(loadResult);
   });
 
   it('does not remove a newer registered load when an older load settles', async () => {

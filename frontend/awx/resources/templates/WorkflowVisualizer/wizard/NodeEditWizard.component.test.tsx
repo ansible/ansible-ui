@@ -5,6 +5,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus } from '../types';
 import { NodeEditWizard } from './NodeEditWizard';
+import * as fetchLaunchConfigLoadResultModule from './fetchLaunchConfigLoadResult';
+
+vi.mock('./fetchLaunchConfigLoadResult', () => ({
+  fetchLaunchConfigLoadResult: vi.fn(),
+}));
 
 vi.mock('@patternfly/react-topology', () => ({
   Edge: {},
@@ -171,6 +176,21 @@ describe('NodeEditWizard', () => {
     mockSetData.mockClear();
     mockSetState.mockClear();
     mockAddAlert.mockClear();
+    vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockImplementation(
+      (_nodeType, resourceId) =>
+        Promise.resolve({
+          launch_config: null,
+          resource: {
+            id: resourceId,
+            name: 'Demo Template',
+            type: 'job_template',
+            project: 1,
+            inventory: 1,
+            ask_inventory_on_launch: false,
+          },
+          resourceId,
+        })
+    );
   });
 
   it('should render null initially while loading initial values', () => {
@@ -237,6 +257,21 @@ describe('NodeEditWizard', () => {
 
   it('should show prompts step for job nodes with promptable launch config', async () => {
     const user = userEvent.setup();
+    vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValueOnce({
+      launch_config: {
+        ask_credential_on_launch: true,
+        survey_enabled: false,
+      },
+      resource: {
+        id: 1,
+        name: 'Demo Template',
+        type: 'job_template',
+        project: 1,
+        inventory: 1,
+        ask_inventory_on_launch: false,
+      },
+      resourceId: 1,
+    });
     mockGetInitialValues.mockResolvedValueOnce({
       nodeTypeStep: {
         node_type: RESOURCE_TYPE.job,

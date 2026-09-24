@@ -11,7 +11,7 @@ export function isWizardSupplementalData(value: unknown): value is WizardSupplem
   if (value instanceof Date || value instanceof Error) {
     return false;
   }
-  const prototype = Object.getPrototypeOf(value);
+  const prototype = Object.getPrototypeOf(value) as object | null;
   return prototype === null || prototype === Object.prototype;
 }
 
