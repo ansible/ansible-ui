@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -10,20 +10,14 @@ import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
 import type { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
 
-// ─── Hoisted mocks ────────────────────────────────────────────────────────────
-
-const { mockUseAwxActiveUser } = vi.hoisted(() => ({
-  mockUseAwxActiveUser: vi.fn(),
-}));
-
-vi.mock('../../../common/useAwxActiveUser', () => ({
-  useAwxActiveUser: mockUseAwxActiveUser,
-}));
-
 // ─── MSW server ───────────────────────────────────────────────────────────────
 
+let requestedOrganization: string | null = null;
 const server = setupServer(
-  http.put(/subscription_costs/, async ({ request }) => HttpResponse.json(await request.json()))
+  http.put(/subscription_costs/, async ({ request }) => {
+    requestedOrganization = new URL(request.url).searchParams.get('organization');
+    return HttpResponse.json(await request.json());
+  })
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -48,6 +42,9 @@ function buildProps(
   return {
     costState: defaultCostState,
     setCostState: mockSetCostState,
+    useGlobalSettings: false,
+    settingsOrganizationId: 1,
+    canEditSettings: true,
     refresh: mockRefresh,
     ...overrides,
   };
@@ -79,8 +76,8 @@ async function triggerInputChange(testId: string, value: string) {
 describe('DashboardTableToolbarRow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    requestedOrganization = null;
     mockRefresh.mockResolvedValue(undefined);
-    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
   });
 
   // --- Rendering ---
@@ -118,36 +115,18 @@ describe('DashboardTableToolbarRow', () => {
   });
 
   // --- Inputs disabled ---
-  test('should disable cost inputs and switch when not superuser', () => {
-    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
-    renderRow();
+  test('should disable cost inputs and switch when the selected organization is read-only', () => {
+    renderRow(buildProps({ canEditSettings: false }));
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
     expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
     expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
   });
 
-  test('should not call put when not superuser', async () => {
-    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
-    let putCalled = false;
-    server.use(
-      http.put(/subscription_costs/, () => {
-        putCalled = true;
-        return HttpResponse.json({});
-      })
-    );
-    renderRow();
-    const input = screen.getByTestId('engineer_avg_hourly_rate');
-
-    // Dispatch a change event directly on the disabled input, bypassing the
-    // browser-level disabled guard.  The debounce fires after 600 ms and calls
-    // toolbarChangeHandler, which must return early because controlsDisabled is
-    // true (is_superuser: false).  This proves the in-component guard — not
-    // merely the disabled attribute — is what prevents the PUT.
-    fireEvent.change(input, { target: { value: '75' } });
-
-    // Wait beyond the debounce (600 ms) to let any scheduled PUT fire.
-    await new Promise((r) => setTimeout(r, 700));
-    expect(putCalled).toBe(false);
+  test('should disable settings controls when no organization is selected', () => {
+    renderRow(buildProps({ settingsOrganizationId: undefined }));
+    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
+    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
+    expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
   });
 
   // --- toolbarChangeHandler: success ---
@@ -158,8 +137,19 @@ describe('DashboardTableToolbarRow', () => {
     await waitFor(() =>
       expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
     );
+    expect(requestedOrganization).toBe('1');
     expect(mockSetCostState).toHaveBeenCalled();
     expect(mockRefresh).toHaveBeenCalled();
+  });
+
+  test('should preserve unscoped writes for global settings', async () => {
+    renderRow(buildProps({ useGlobalSettings: true, settingsOrganizationId: undefined }));
+    await triggerInputChange('engineer_avg_hourly_rate', '75');
+    await waitFor(() =>
+      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
+    );
+
+    expect(requestedOrganization).toBeNull();
   });
 
   test('should show success alert on monthly_subscription_cost change', async () => {

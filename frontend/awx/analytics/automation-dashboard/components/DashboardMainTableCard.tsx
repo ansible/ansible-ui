@@ -13,7 +13,6 @@ import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import useResizeObserver from '@react-hook/resize-observer';
 import { CardBody } from '@patternfly/react-core';
 import styled from 'styled-components';
@@ -51,6 +50,9 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     details,
     costState,
     setCostState,
+    useGlobalSettings,
+    settingsOrganizationId,
+    canEditSettings,
     refresh,
     exportCsv,
     loading,
@@ -60,7 +62,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     topCardsWidth,
   } = props;
   const { t } = useTranslation();
-  const { activeAwxUser } = useAwxActiveUser();
+  const hasSettingsContext = useGlobalSettings || settingsOrganizationId !== undefined;
   const putRequest = usePutRequest<IJobTemplateModify, IJobTemplateModify>();
   const alertToaster = usePageAlertToaster();
 
@@ -88,6 +90,16 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     columnKey: keyof IJobTemplateModify,
     value: number
   ) => {
+    if (!canEditSettings || !hasSettingsContext) return;
+
+    let metadataUrl: string | undefined;
+    if (useGlobalSettings) {
+      metadataUrl = metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/`;
+    } else if (settingsOrganizationId !== undefined) {
+      metadataUrl = metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/?organization=${settingsOrganizationId}`;
+    }
+    if (!metadataUrl) return;
+
     setErrors(null);
     const templateName = item.template_name;
     const data = {
@@ -97,10 +109,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     };
     let updatedData: IJobTemplateModify;
     try {
-      updatedData = await putRequest(
-        metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/`,
-        data as IJobTemplateModify
-      );
+      updatedData = await putRequest(metadataUrl, data as IJobTemplateModify);
     } catch (err) {
       const { genericErrors, fieldErrors } = awxErrorAdapter(err);
       alertToaster.addAlert({
@@ -153,6 +162,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
         type={'integer'}
         value={item[columnKey]}
         onChange={(value: number) => void onTableInputChange(item, columnKey, value)}
+        readOnly={!canEditSettings || !hasSettingsContext}
         error={errors?.[item.id]?.[columnKey]}
       />
     </div>
@@ -167,7 +177,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       'Time taken to create the automation for the job template. This is used to calculate the total time spent on automation, which includes both the time taken to create the automation and the time taken to execute it.'
     ),
     cell: (item) =>
-      activeAwxUser?.is_superuser
+      canEditSettings && hasSettingsContext
         ? tableInputField('time_taken_create_automation_minutes', item)
         : tableCell('time_taken_create_automation_minutes', item, TIME_COLUMN_WIDTH),
   };
@@ -219,7 +229,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       maxWidth: TIME_COLUMN_WIDTH,
       minWidth: TIME_COLUMN_WIDTH,
       cell: (item) =>
-        activeAwxUser?.is_superuser
+        canEditSettings && hasSettingsContext
           ? tableInputField('time_taken_manually_execute_minutes', item)
           : tableCell('time_taken_manually_execute_minutes', item, TIME_COLUMN_WIDTH),
     },
@@ -282,6 +292,9 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
         <DashboardTableToolbarRow
           costState={costState}
           setCostState={setCostState}
+          useGlobalSettings={useGlobalSettings}
+          settingsOrganizationId={settingsOrganizationId}
+          canEditSettings={canEditSettings}
           refresh={refresh}
         ></DashboardTableToolbarRow>
         <div

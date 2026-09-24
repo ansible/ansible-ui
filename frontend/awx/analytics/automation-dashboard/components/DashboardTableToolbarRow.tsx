@@ -7,21 +7,27 @@ import { useState } from 'react';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
-import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 
 const SWITCH_ID = 'switch-time-taken-automation';
 
 export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
-  const { costState, setCostState, refresh } = props;
+  const {
+    costState,
+    setCostState,
+    useGlobalSettings,
+    settingsOrganizationId,
+    canEditSettings,
+    refresh,
+  } = props;
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
   const putRequest = usePutRequest<ISubscriptionCosts, ISubscriptionCosts>();
-  const { activeAwxUser } = useAwxActiveUser();
   const [errors, setErrors] = useState<Partial<Record<keyof ISubscriptionCosts, string>> | null>(
     null
   );
 
-  const controlsDisabled = !costState || !activeAwxUser?.is_superuser;
+  const hasSettingsContext = useGlobalSettings || settingsOrganizationId !== undefined;
+  const controlsDisabled = !costState || !canEditSettings || !hasSettingsContext;
 
   const toolbarChangeHandler = async <K extends keyof ISubscriptionCosts>(
     value: ISubscriptionCosts[K],
@@ -39,11 +45,16 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
 
     // Save: report failure only when the PUT itself rejects.
     const id = costState.id;
+    let subscriptionCostsUrl: string | undefined;
+    if (useGlobalSettings) {
+      subscriptionCostsUrl = metricsAPI`/dashboard_reports/subscription_costs/${id}/`;
+    } else if (settingsOrganizationId !== undefined) {
+      subscriptionCostsUrl = metricsAPI`/dashboard_reports/subscription_costs/${id}/?organization=${settingsOrganizationId}`;
+    }
+    if (!subscriptionCostsUrl) return;
+
     try {
-      const savedState = await putRequest(
-        metricsAPI`/dashboard_reports/subscription_costs/${id}/`,
-        updatedCostState
-      );
+      const savedState = await putRequest(subscriptionCostsUrl, updatedCostState);
       if (setCostState) {
         setCostState(savedState);
       }

@@ -16,23 +16,17 @@ import type { IAutomationDashboardView, IDashboardDetails, IJobTemplate } from '
 
 // ─── Hoisted mocks ────────────────────────────────────────────────────────────
 
-const { mockUseAwxActiveUser } = vi.hoisted(() => ({
-  mockUseAwxActiveUser: vi.fn(),
-}));
-
-vi.mock('../../../common/useAwxActiveUser', () => ({
-  useAwxActiveUser: mockUseAwxActiveUser,
-}));
-
 // ─── MSW server ───────────────────────────────────────────────────────────────
 
+let requestedTemplateMetadataOrganization: string | null = null;
 const server = setupServer(
-  http.put(/template_metadata\/1\//, () =>
-    HttpResponse.json({
+  http.put(/template_metadata\/1\//, ({ request }) => {
+    requestedTemplateMetadataOrganization = new URL(request.url).searchParams.get('organization');
+    return HttpResponse.json({
       time_taken_manually_execute_minutes: 42,
       time_taken_create_automation_minutes: 60,
-    })
-  ),
+    });
+  }),
   http.put(/subscription_costs/, async ({ request }) => HttpResponse.json(await request.json()))
 );
 
@@ -131,6 +125,9 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
       include_template_creation_time_in_costs: false,
     },
     setCostState: vi.fn(),
+    useGlobalSettings: false,
+    settingsOrganizationId: 1,
+    canEditSettings: true,
     loading: false,
     refresh: mockRefresh,
     exportCsv: vi.fn(),
@@ -141,6 +138,24 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
 }
 
 function Wrapper({ children }: { children: ReactNode }) {
+  if (typeof globalThis.localStorage === 'undefined') {
+    const entries = new Map<string, string>();
+    const localStorageMock: Storage = {
+      get length() {
+        return entries.size;
+      },
+      clear: () => entries.clear(),
+      getItem: (key) => entries.get(key) ?? null,
+      key: (index) => Array.from(entries.keys())[index] ?? null,
+      removeItem: (key) => void entries.delete(key),
+      setItem: (key, value) => entries.set(key, String(value)),
+    };
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value: localStorageMock,
+    });
+  }
+
   return (
     <MemoryRouter>
       <PageAlertToasterProvider>{children}</PageAlertToasterProvider>
@@ -156,9 +171,9 @@ function renderCard(props: IAutomationDashboardView = buildProps()) {
 
 // Triggers a debounce-based save: types a value and waits for the debounce (600 ms) to fire.
 // Note: tab/blur does NOT trigger the save — the PUT is sent by the debounce after typing stops.
-async function triggerInputSave(value = '50') {
+async function triggerInputSave(value = '50', props: IAutomationDashboardView = buildProps()) {
   const user = userEvent.setup();
-  renderCard();
+  renderCard(props);
   const input = screen.getByTestId('time_taken_manually_execute_minutes_1');
   await user.clear(input);
   await user.type(input, value);
@@ -170,8 +185,8 @@ async function triggerInputSave(value = '50') {
 describe('DashboardMainTableCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    requestedTemplateMetadataOrganization = null;
     mockRefresh.mockResolvedValue(undefined);
-    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
   });
 
   // --- Value cards ---
@@ -384,19 +399,18 @@ describe('DashboardMainTableCard', () => {
     expect(screen.getByTestId('time_taken_create_automation_minutes_1')).toBeInTheDocument();
   });
 
-  // --- Superuser vs non-superuser cell rendering ---
+  // --- Editor vs viewer cell rendering ---
 
-  test('should show plain value for time_taken_manually_execute_minutes when not superuser', () => {
-    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
-    renderCard();
+  test('should show plain value for time_taken_manually_execute_minutes for a viewer', () => {
+    renderCard(buildProps({ canEditSettings: false }));
     expect(screen.queryByTestId('time_taken_manually_execute_minutes_1')).not.toBeInTheDocument();
     expect(screen.getByText('30')).toBeInTheDocument();
   });
 
-  test('should show plain value for time_taken_create_automation_minutes when not superuser and column is visible', () => {
-    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+  test('should show plain value for template metadata when no organization context is selected', () => {
     renderCard(
       buildProps({
+        settingsOrganizationId: undefined,
         costState: {
           id: 1,
           monthly_subscription_cost: 100,
@@ -499,6 +513,21 @@ describe('DashboardMainTableCard', () => {
         screen.getByText(/Template metadata for Test Template updated successfully/i)
       ).toBeInTheDocument()
     );
+    expect(requestedTemplateMetadataOrganization).toBe('1');
+  });
+
+  test('should preserve unscoped template metadata writes for global settings', async () => {
+    await triggerInputSave(
+      '50',
+      buildProps({ useGlobalSettings: true, settingsOrganizationId: undefined })
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText(/Template metadata for Test Template updated successfully/i)
+      ).toBeInTheDocument()
+    );
+
+    expect(requestedTemplateMetadataOrganization).toBeNull();
   });
 
   test('should call refresh after successful put', async () => {

@@ -27,6 +27,7 @@ import { ApiTokenPage } from '../access/api-tokens/ApiTokenPage';
 import { ApiTokensPage } from '../access/api-tokens/ApiTokensPage';
 import { PlatformOverview } from '../overview/PlatformOverview';
 import { QuickStartsPage } from '../overview/quickstarts/Quickstarts';
+import { AutomationDashboard } from '../../frontend/awx/analytics/automation-dashboard/AutomationDashboard';
 import { useGetPlatformApplicationsRoutes } from '../routes/useGetPlatformApplicationsRoutes';
 import { useGetPlatformAuthenticatorsRoutes } from '../routes/useGetPlatformAuthenticatorsRoutes';
 import { useGetPlatformOrganizationsRoutes } from '../routes/useGetPlatformOrganizationsRoutes';
@@ -52,6 +53,7 @@ import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
 import { useAutomationDashboardCollectionStatus } from '../../frontend/awx/analytics/automation-dashboard/common/useAutomationDashboardCollectionStatus';
+import { useAutomationDashboardAccess } from '../../frontend/awx/analytics/automation-dashboard/common/useAutomationDashboardAccess';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -280,44 +282,146 @@ function useAutomationDecisionsNavigation(): PageNavigationItem {
   };
 }
 
+type DashboardAccess = ReturnType<typeof useAutomationDashboardAccess>['access'];
+
+function retainOnlyAutomationDashboard(analytics: PageNavigationItem): void {
+  if (!('children' in analytics)) return;
+  const dashboardId = AwxRoute.AutomationDashboard;
+  analytics.children
+    .filter((item) => item.id !== dashboardId)
+    .forEach((item) => {
+      if (item.id) removeNavigationItemById(analytics.children, item.id);
+    });
+}
+
+function updateGlobalAnalyticsNavigation(options: {
+  analytics: PageNavigationItem;
+  activePlatformUser: ReturnType<typeof usePlatformActiveUser>['activePlatformUser'];
+  awxService: boolean;
+  isCollectionStatusLoading: boolean;
+  automationDashboardEnabled: boolean;
+  showAutomationDashboard: boolean;
+}): void {
+  const {
+    analytics,
+    activePlatformUser,
+    awxService,
+    isCollectionStatusLoading,
+    automationDashboardEnabled,
+    showAutomationDashboard,
+  } = options;
+  if (!('children' in analytics)) return;
+
+  const shouldShowDashboard = automationDashboardEnabled && showAutomationDashboard;
+  if (!isCollectionStatusLoading) {
+    if (!shouldShowDashboard) {
+      removeNavigationItemById(analytics.children, AwxRoute.AutomationDashboard);
+    } else if (!activePlatformUser?.is_superuser) {
+      retainOnlyAutomationDashboard(analytics);
+    }
+  }
+  analytics.hidden = !awxService || isCollectionStatusLoading || !analytics.children.length;
+}
+
+function updateOrganizationAnalyticsNavigation(options: {
+  analytics: PageNavigationItem;
+  access: DashboardAccess;
+  awxService: boolean;
+  isAccessLoading: boolean;
+  isCollectionStatusLoading: boolean;
+  automationDashboardEnabled: boolean;
+  showAutomationDashboard: boolean;
+}): void {
+  const {
+    analytics,
+    access,
+    awxService,
+    isAccessLoading,
+    isCollectionStatusLoading,
+    automationDashboardEnabled,
+    showAutomationDashboard,
+  } = options;
+  if (!('children' in analytics)) return;
+
+  const hasOrganizationDashboardAccess =
+    access?.scope === 'organization' && access.organizations.length > 0;
+  const shouldShowDashboard =
+    hasOrganizationDashboardAccess &&
+    access?.dashboard_enabled === true &&
+    automationDashboardEnabled &&
+    showAutomationDashboard;
+  const isLoading = isAccessLoading || isCollectionStatusLoading;
+
+  if (!isLoading) {
+    retainOnlyAutomationDashboard(analytics);
+    if (!shouldShowDashboard) {
+      removeNavigationItemById(analytics.children, AwxRoute.AutomationDashboard);
+    }
+  }
+  analytics.hidden = !awxService || isLoading || !shouldShowDashboard || !analytics.children.length;
+}
+
 export function useAutomationAnalytics(): PageNavigationItem {
   const awxNav = useAwxNavigation();
   const { t } = useTranslation();
-  const awxService = useHasAwxService();
+  const awxService = useHasAwxService() ?? false;
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
-  const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics)!;
   const { activePlatformUser } = usePlatformActiveUser();
+  const { access, isLoading: isAccessLoading } = useAutomationDashboardAccess();
   const { collectionStatus, isLoading: isCollectionStatusLoading } =
     useAutomationDashboardCollectionStatus();
-  const automationDashboardEnabled = collectionStatus.enabled;
+  const automationDashboardEnabled = collectionStatus.enabled === true;
+  const showAutomationDashboard = collectionStatus.show_dashboard === true;
+  const hasGlobalAnalyticsAccess =
+    activePlatformUser?.is_superuser === true || activePlatformUser?.is_platform_auditor === true;
+  let analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics);
+
+  if (!analytics) {
+    const hasOrganizationDashboardAccess =
+      access?.scope === 'organization' && access.organizations.length > 0;
+    analytics = {
+      id: AwxRoute.Analytics,
+      label: t('Automation Analytics'),
+      path: 'analytics',
+      children: hasOrganizationDashboardAccess
+        ? [
+            {
+              id: AwxRoute.AutomationDashboard,
+              label: t('Automation Dashboard'),
+              path: 'automation-dashboard',
+              element: <AutomationDashboard />,
+            },
+          ]
+        : [],
+    };
+  }
 
   if (analytics && 'children' in analytics) {
     analytics.label = t('Automation Analytics');
     if (managedCloudInstall) {
       removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage);
     }
-    const automationDashboardId = 'awx-automation-dashboard';
 
-    // Only apply logic after loading is complete to prevent flicker
-    if (!isCollectionStatusLoading) {
-      if (automationDashboardEnabled) {
-        if (!activePlatformUser?.is_superuser) {
-          analytics.children
-            .filter((c) => c.id !== automationDashboardId)
-            .forEach((item) => {
-              if (item.id) removeNavigationItemById(analytics.children, item.id);
-            });
-        }
-      } else {
-        // Not enabled or error - remove automation dashboard from menu
-        removeNavigationItemById(analytics.children, automationDashboardId);
-      }
+    if (hasGlobalAnalyticsAccess) {
+      updateGlobalAnalyticsNavigation({
+        analytics,
+        activePlatformUser,
+        awxService,
+        isCollectionStatusLoading,
+        automationDashboardEnabled,
+        showAutomationDashboard,
+      });
+    } else {
+      updateOrganizationAnalyticsNavigation({
+        analytics,
+        access,
+        awxService,
+        isAccessLoading,
+        isCollectionStatusLoading,
+        automationDashboardEnabled,
+        showAutomationDashboard,
+      });
     }
-
-    analytics.hidden =
-      !awxService ||
-      !(activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) ||
-      !analytics.children.length;
   }
   return analytics;
 }

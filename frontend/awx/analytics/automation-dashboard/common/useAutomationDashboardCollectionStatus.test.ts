@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 vi.mock('swr');
 vi.mock('../../../../../platform/main/PlatformActiveUserProvider');
+vi.mock('./useAutomationDashboardAccess', () => ({ useAutomationDashboardAccess: vi.fn() }));
 vi.mock('../../../common/api/metrics-utils', () => ({
   metricsAPI: (strings: TemplateStringsArray, ...values: string[]) =>
     strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), ''),
@@ -14,12 +15,14 @@ import useSWR from 'swr';
 import { usePlatformActiveUser } from '@ansible/platform-ui/main/PlatformActiveUserProvider';
 import { useFetcher } from '../../../../common/crud/Data';
 import { useAutomationDashboardCollectionStatus } from './useAutomationDashboardCollectionStatus';
+import { useAutomationDashboardAccess } from './useAutomationDashboardAccess';
 import { IAutomationDashboardCollectionStatus } from '../types';
 
 const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
   enabled: null,
   next_run: null,
   initial_collection_status: null,
+  show_dashboard: false,
 };
 
 function setupActiveUser({
@@ -94,6 +97,11 @@ describe('useAutomationDashboardCollectionStatus', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useFetcher).mockReturnValue(vi.fn());
+    vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+      access: undefined,
+      isLoading: false,
+      error: undefined,
+    });
   });
 
   describe('when user is not superuser or auditor', () => {
@@ -107,6 +115,88 @@ describe('useAutomationDashboardCollectionStatus', () => {
       expect(result.current.isLoading).toBe(false);
       // SWR should be called with null key (no fetch)
       expect(vi.mocked(useSWR).mock.calls[0][0]).toBeNull();
+    });
+
+    test('should fetch show_dashboard for organization-scoped readers', () => {
+      setupActiveUser({ is_superuser: false, is_platform_auditor: false });
+      vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+        access: {
+          scope: 'organization',
+          dashboard_enabled: true,
+          organizations: [{ id: 1, name: 'Org 1', can_edit: false }],
+        },
+        isLoading: false,
+        error: undefined,
+      });
+      setupSWR({
+        enabled: true,
+        next_run: null,
+        initial_collection_status: 'completed',
+        show_dashboard: true,
+      });
+
+      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
+
+      expect(result.current.collectionStatus.enabled).toBe(true);
+      expect(result.current.collectionStatus.show_dashboard).toBe(true);
+      expect(vi.mocked(useSWR).mock.calls[0][0]).toContain('dashboard_reports/collection_status');
+    });
+
+    test('should not fetch collection status without organization access', () => {
+      setupActiveUser({ is_superuser: false, is_platform_auditor: false });
+      vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+        access: {
+          scope: 'organization',
+          dashboard_enabled: true,
+          organizations: [],
+        },
+        isLoading: false,
+        error: undefined,
+      });
+      setupSWR();
+
+      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
+
+      expect(result.current.collectionStatus.show_dashboard).toBe(false);
+      expect(vi.mocked(useSWR).mock.calls[0][0]).toBeNull();
+    });
+
+    test('should respect show_dashboard=false for an organization reader', () => {
+      setupActiveUser({ is_superuser: false, is_platform_auditor: false });
+      vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+        access: {
+          scope: 'organization',
+          dashboard_enabled: true,
+          organizations: [{ id: 1, name: 'Org 1', can_edit: false }],
+        },
+        isLoading: false,
+        error: undefined,
+      });
+      setupSWR({
+        enabled: true,
+        next_run: null,
+        initial_collection_status: 'completed',
+        show_dashboard: false,
+      });
+
+      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
+
+      expect(result.current.collectionStatus.show_dashboard).toBe(false);
+    });
+
+    test('should wait for organization access before reporting disabled', () => {
+      setupActiveUser({ is_superuser: false, is_platform_auditor: false });
+      vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+        access: undefined,
+        isLoading: true,
+        error: undefined,
+      });
+      setupSWR();
+
+      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
+
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
     });
   });
 

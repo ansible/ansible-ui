@@ -30,7 +30,7 @@ const fixture: ISubscriptionCosts[] = [
  *  returns the hook handles plus the edited value for further assertions. */
 async function setupWithUserEdit() {
   mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
-  const { result, rerender } = renderHook(() => useSubscriptionCostState());
+  const { result, rerender } = renderHook(() => useSubscriptionCostState(1));
   await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
 
   const userEdit: ISubscriptionCosts = { ...fixture[0], engineer_avg_hourly_rate: 75 };
@@ -48,14 +48,14 @@ describe('useSubscriptionCostState', () => {
   });
 
   test('should return costState as undefined and setCostState as function initially', () => {
-    const { result } = renderHook(() => useSubscriptionCostState());
+    const { result } = renderHook(() => useSubscriptionCostState(1));
 
     expect(result.current.costState).toBeUndefined();
     expect(result.current.setCostState).toBeTypeOf('function');
   });
 
   test('should set costState when subscriptionCosts becomes defined', async () => {
-    const { result, rerender } = renderHook(() => useSubscriptionCostState());
+    const { result, rerender } = renderHook(() => useSubscriptionCostState(1));
     expect(result.current.costState).toBeUndefined();
 
     mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
@@ -66,7 +66,7 @@ describe('useSubscriptionCostState', () => {
 
   test('should not overwrite costState when subscriptionCosts becomes undefined', async () => {
     mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
-    const { result, rerender } = renderHook(() => useSubscriptionCostState());
+    const { result, rerender } = renderHook(() => useSubscriptionCostState(1));
 
     await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
 
@@ -98,7 +98,7 @@ describe('useSubscriptionCostState', () => {
 
   test('should clear costState when subscriptionCosts becomes an empty array', async () => {
     mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
-    const { result, rerender } = renderHook(() => useSubscriptionCostState());
+    const { result, rerender } = renderHook(() => useSubscriptionCostState(1));
     await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
 
     mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: [] });
@@ -115,5 +115,20 @@ describe('useSubscriptionCostState', () => {
     rerender();
 
     await waitFor(() => expect(result.current.costState).toBeUndefined());
+  });
+
+  test('should hide the previous organization cost state while another organization loads', async () => {
+    mockUseGetReportSubscriptionCosts.mockImplementation((organizationId: number | undefined) =>
+      organizationId === 1 ? { subscriptionCosts: fixture } : { subscriptionCosts: undefined }
+    );
+    const { result, rerender } = renderHook(
+      ({ organizationId }: { organizationId: number }) => useSubscriptionCostState(organizationId),
+      { initialProps: { organizationId: 1 } }
+    );
+
+    await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
+    rerender({ organizationId: 2 });
+
+    expect(result.current.costState).toBeUndefined();
   });
 });

@@ -3,12 +3,14 @@ import { useMemo } from 'react';
 import { usePlatformActiveUser } from '../../../../../platform/main/PlatformActiveUserProvider';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useFetcher } from '../../../../common/crud/Data';
+import { useAutomationDashboardAccess } from './useAutomationDashboardAccess';
 import useSWR from 'swr';
 
 const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
   enabled: null,
   next_run: null,
   initial_collection_status: null,
+  show_dashboard: false,
 };
 
 export function useAutomationDashboardCollectionStatus(): {
@@ -18,6 +20,10 @@ export function useAutomationDashboardCollectionStatus(): {
   const { activePlatformUser } = usePlatformActiveUser();
   const isSuperuserOrAuditor =
     activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor;
+  const { access, isLoading: isAccessLoading } = useAutomationDashboardAccess();
+  const hasDashboardAccess =
+    access?.scope === 'global' ||
+    (access?.scope === 'organization' && access.organizations.length > 0);
 
   const url = metricsAPI`/dashboard_reports/collection_status/`;
   const fetcher = useFetcher();
@@ -26,7 +32,7 @@ export function useAutomationDashboardCollectionStatus(): {
     error,
     isLoading: isSwrLoading,
   } = useSWR<IAutomationDashboardCollectionStatus, Error>(
-    isSuperuserOrAuditor ? url : null,
+    isSuperuserOrAuditor || hasDashboardAccess ? url : null,
     fetcher,
     {
       // Disable deduplication so each refreshInterval poll fetches fresh data
@@ -37,11 +43,32 @@ export function useAutomationDashboardCollectionStatus(): {
 
   // Use only useMemo - no useState/useEffect to avoid multiple re-renders
   return useMemo(() => {
-    // If user is not superuser or auditor, we don't fetch
     if (!isSuperuserOrAuditor) {
+      const fallbackStatus: IAutomationDashboardCollectionStatus = {
+        ...DEFAULT_STATUS,
+        enabled: access?.scope === 'organization' ? access.dashboard_enabled : null,
+        show_dashboard: false,
+      };
+
+      if (!hasDashboardAccess) {
+        return {
+          collectionStatus: fallbackStatus,
+          isLoading: isAccessLoading,
+        };
+      }
+
+      const collectionStatus =
+        error || !data
+          ? fallbackStatus
+          : {
+              ...fallbackStatus,
+              enabled: data.enabled,
+              show_dashboard: data.show_dashboard === true,
+            };
+
       return {
-        collectionStatus: DEFAULT_STATUS,
-        isLoading: false,
+        collectionStatus,
+        isLoading: isAccessLoading || isSwrLoading,
       };
     }
 
@@ -51,5 +78,13 @@ export function useAutomationDashboardCollectionStatus(): {
       collectionStatus,
       isLoading: isSwrLoading,
     };
-  }, [data, error, isSwrLoading, isSuperuserOrAuditor]);
+  }, [
+    access,
+    data,
+    error,
+    hasDashboardAccess,
+    isSwrLoading,
+    isSuperuserOrAuditor,
+    isAccessLoading,
+  ]);
 }

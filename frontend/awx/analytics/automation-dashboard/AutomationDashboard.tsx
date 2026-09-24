@@ -5,7 +5,7 @@ import {
   PageLayout,
   useGetPageUrl,
 } from '@ansible/ansible-ui-framework';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Alert, Grid, GridItem } from '@patternfly/react-core';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
@@ -20,8 +20,10 @@ import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { DashboardToolbar } from './components/DashboardToolbar';
 import useResizeObserver from '@react-hook/resize-observer';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
+import { useAutomationDashboardAccess } from './common/useAutomationDashboardAccess';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { Scrollable } from '@ansible/ansible-ui-framework/components/Scrollable';
+import { usePlatformActiveUser } from '../../../../platform/main/PlatformActiveUserProvider';
 
 const Divisor = 1662 / 24;
 /** Breakpoint range (in grid columns) where value cards switch from 'md' to 'xs' size. */
@@ -32,15 +34,25 @@ export function AutomationDashboard() {
   const { t } = useTranslation();
   const toolbarFilters = useAutomationDashboardToolbar();
   const getPageUrl = useGetPageUrl();
+  const { access, isLoading: isAccessLoading } = useAutomationDashboardAccess();
+  const { activePlatformUser } = usePlatformActiveUser();
   const description = t(
     'Discover the significant cost and time savings achieved by automating Ansible jobs with the Ansible Automation Platform. Explore how automation reduces manual effort, enhances efficiency, and optimizes IT operations across your organization.'
   );
 
-  const view = useAutomationDashboardView({ toolbarFilters });
+  const view = useAutomationDashboardView({
+    toolbarFilters,
+    access,
+    isPlatformSuperuser: activePlatformUser?.is_superuser === true,
+    isPlatformAuditor: activePlatformUser?.is_platform_auditor === true,
+  });
   const { details } = view;
 
   const noDataString = t('No jobs have been run.');
-  const { isLoading } = useAutomationDashboardCollectionStatus();
+  const { isLoading: isCollectionStatusLoading } = useAutomationDashboardCollectionStatus();
+  const isLoading = isCollectionStatusLoading || isAccessLoading;
+  const organizationDashboardDisabled =
+    access?.scope === 'organization' && access.dashboard_enabled !== true;
 
   const ref = useRef<HTMLDivElement>(null);
   const [gridColumns, setGridColumns] = useState(1);
@@ -205,6 +217,14 @@ export function AutomationDashboard() {
     </>
   );
 
+  let dashboardBody = dashboardContent;
+  if (organizationDashboardDisabled) {
+    dashboardBody = <Alert variant="info" title={t('Automation Dashboard is not enabled.')} />;
+  }
+  if (isLoading) {
+    dashboardBody = <LoadingState />;
+  }
+
   return (
     <PageLayout>
       {!isLoading && (
@@ -221,6 +241,15 @@ export function AutomationDashboard() {
             keyFn={(item) => item.id}
             registerClearCallback={view.registerClearCallback}
           />
+          {access?.scope === 'organization' &&
+            access.organizations.length > 1 &&
+            access.organizations.some((organization) => organization.can_edit) &&
+            !view.canEditSettings && (
+              <Alert
+                variant="info"
+                title={t('Select one organization to edit its dashboard settings.')}
+              />
+            )}
         </>
       )}
       <PageDashboardContext.Provider value={pageDashboardContextValue}>
@@ -233,7 +262,7 @@ export function AutomationDashboard() {
               gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
             }}
           >
-            {isLoading ? <LoadingState /> : dashboardContent}
+            {dashboardBody}
           </div>
         </Scrollable>
       </PageDashboardContext.Provider>

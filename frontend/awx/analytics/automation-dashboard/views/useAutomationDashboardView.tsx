@@ -2,10 +2,16 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
-import { IAutomationDashboardView, IJobTemplate, ReportType } from '../types';
+import {
+  IAutomationDashboardAccess,
+  IAutomationDashboardView,
+  IJobTemplate,
+  ReportType,
+} from '../types';
 import { useGetReportDetails } from './useGetReportDetails';
 import { useSubscriptionCostState } from './useSubscriptionCostState';
 import { useExportCsv } from './useExportCsv';
+import { getDashboardSettingsContext } from '../common/useAutomationDashboardAccess';
 import {
   IAutomationDashboardBaseView,
   useAutomationDashboardBaseView,
@@ -40,8 +46,16 @@ function isDefaultFilterState(filterState: IFilterState | undefined): boolean {
 
 export function useAutomationDashboardView(options: {
   toolbarFilters: IToolbarFilter[];
+  access?: IAutomationDashboardAccess;
+  isPlatformSuperuser?: boolean;
+  isPlatformAuditor?: boolean;
 }): IAutomationDashboardView {
-  const { toolbarFilters } = options;
+  const {
+    toolbarFilters,
+    access,
+    isPlatformSuperuser = false,
+    isPlatformAuditor = false,
+  } = options;
   const mainTableViewBase = useAutomationDashboardBaseView<IJobTemplate>({
     url: metricsAPI`/dashboard_reports/report/`,
     defaultFilters: DEFAULT_FILTERS,
@@ -71,8 +85,15 @@ export function useAutomationDashboardView(options: {
     [mainTableViewBase, clearAllFilters]
   );
 
+  const settingsContext = useMemo(
+    () => getDashboardSettingsContext(access, filterState, isPlatformSuperuser, isPlatformAuditor),
+    [access, filterState, isPlatformSuperuser, isPlatformAuditor]
+  );
   const detailsResponse = useGetReportDetails(toolbarFilters, filterState, QUERY_PARAMS);
-  const { costState, setCostState } = useSubscriptionCostState();
+  const { costState, setCostState } = useSubscriptionCostState(
+    settingsContext.organization?.id,
+    settingsContext.useGlobalSettings
+  );
 
   const [loading, setLoading] = useState(false);
 
@@ -110,6 +131,9 @@ export function useAutomationDashboardView(options: {
       detailsLoading: detailsResponse.isLoading,
       costState,
       setCostState,
+      useGlobalSettings: settingsContext.useGlobalSettings,
+      settingsOrganizationId: settingsContext.organization?.id,
+      canEditSettings: settingsContext.canEditSettings,
       loading,
       refresh,
       exportCsv,
@@ -123,6 +147,7 @@ export function useAutomationDashboardView(options: {
       detailsResponse.isLoading,
       costState,
       setCostState,
+      settingsContext,
       loading,
       refresh,
       exportCsv,
