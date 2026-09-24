@@ -16,6 +16,18 @@ describe('createRequestError', () => {
     expect(error.body).toEqual({ error: 'Not found' });
   });
 
+  it('should format JSON error bodies as YAML in details', async () => {
+    const responseBody = JSON.stringify({ error: 'Not found' });
+    const response = new Response(responseBody, {
+      status: 404,
+      statusText: 'Not Found',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const error = await createRequestError(response);
+    expect(error.details).toBe('error: Not found\n');
+  });
+
   it('should create a RequestError for plain text responses', async () => {
     const response = new Response('Plain Error', {
       status: 500,
