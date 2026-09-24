@@ -152,12 +152,7 @@ export async function options<T = unknown>(
       },
     });
 
-    if (response.status() !== expectStatus) {
-      // Return null for non-200 responses (e.g., 403 when enhanced validations are disabled)
-      // rather than throwing, so tests can skip gracefully
-      return null;
-    }
-
+    expect(response.status()).toBe(expectStatus);
     const responseBody = await parseResponse<T>(response);
 
     return responseBody;
