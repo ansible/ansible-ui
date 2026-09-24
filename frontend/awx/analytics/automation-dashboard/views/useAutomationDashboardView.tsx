@@ -12,6 +12,8 @@ import {
   IAutomationDashboardBaseView,
   useAutomationDashboardBaseView,
 } from '../common/useAutomationDashboardBaseView';
+import { useJobTemplateIds } from '../common/useJobTemplateIds';
+import { getSystemJobExclusionParams } from '../utils/queryString';
 
 // Resolved once at module load — the user's time zone does not change during a session.
 export const QUERY_PARAMS = { tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
@@ -61,10 +63,22 @@ export function useAutomationDashboardView(options: {
   );
   const [initialSearch] = useState(() => window.location.search);
 
+  const {
+    templateIds: allTemplateIds,
+    isLoading: isLoadingTemplateIds,
+    error: templateIdsError,
+  } = useJobTemplateIds();
+
+  const noTemplatesExist =
+    !isLoadingTemplateIds && !templateIdsError && allTemplateIds?.length === 0;
+  const isTemplateIdsUnavailable = isLoadingTemplateIds || !!templateIdsError || noTemplatesExist;
+
   const mainTableViewBase = useAutomationDashboardBaseView<IJobTemplate>({
     url: metricsAPI`/dashboard_reports/report/`,
     defaultFilters: initialFilters,
     toolbarFilters,
+    systemJobExclusionTemplateIds: allTemplateIds,
+    isLoadingSystemJobExclusionIds: isTemplateIdsUnavailable,
   });
 
   const { filterState, setFilterState } = mainTableViewBase;
@@ -102,6 +116,11 @@ export function useAutomationDashboardView(options: {
     writePersistedFilterState(filterState, userId);
   }, [filterState, userId, seededUserId]);
 
+  const systemJobExclusionParams = useMemo(
+    () => getSystemJobExclusionParams(filterState, allTemplateIds),
+    [filterState, allTemplateIds]
+  );
+
   // Ref for callback from toolbar (to reset dropdown when filters cleared)
   const onClearFiltersCallback = useRef<(() => void) | undefined>();
 
@@ -123,7 +142,13 @@ export function useAutomationDashboardView(options: {
     [mainTableViewBase, clearAllFilters]
   );
 
-  const detailsResponse = useGetReportDetails(toolbarFilters, filterState, QUERY_PARAMS);
+  const detailsResponse = useGetReportDetails(
+    toolbarFilters,
+    filterState,
+    QUERY_PARAMS,
+    systemJobExclusionParams,
+    isTemplateIdsUnavailable
+  );
   const { costState, setCostState } = useSubscriptionCostState();
 
   const [loading, setLoading] = useState(false);
@@ -137,7 +162,12 @@ export function useAutomationDashboardView(options: {
     }
   }, [mainTableView, detailsResponse]);
 
-  const exportCsvBase = useExportCsv(toolbarFilters, filterState, QUERY_PARAMS);
+  const exportCsvBase = useExportCsv(
+    toolbarFilters,
+    filterState,
+    QUERY_PARAMS,
+    systemJobExclusionParams
+  );
 
   const exportCsv = useCallback(
     async (reportType: ReportType) => {
@@ -160,6 +190,8 @@ export function useAutomationDashboardView(options: {
       details: detailsResponse.reportDetails,
       detailsError: detailsResponse.error,
       detailsLoading: detailsResponse.isLoading,
+      templateIdsError,
+      isLoadingTemplateIds,
       costState,
       setCostState,
       loading,
@@ -173,6 +205,8 @@ export function useAutomationDashboardView(options: {
       detailsResponse.reportDetails,
       detailsResponse.error,
       detailsResponse.isLoading,
+      templateIdsError,
+      isLoadingTemplateIds,
       costState,
       setCostState,
       loading,
