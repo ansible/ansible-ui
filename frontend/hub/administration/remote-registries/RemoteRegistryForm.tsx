@@ -55,7 +55,6 @@ export function CreateRemoteRegistry() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<RemoteRegistryProps>();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     hubAPI`/_ui/v1/execution-environments/registries/`
   );
@@ -155,7 +154,6 @@ export function EditRemoteRegistry() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id: string }>();
   const { clearCacheByKey } = useClearCache();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     hubAPI`/_ui/v1/execution-environments/registries/`
   );

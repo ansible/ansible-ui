@@ -35,7 +35,6 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<Partial<HubRbacRole>, HubRbacRole>();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     hubAPI`/_ui/v2/role_definitions/`
   );
@@ -88,7 +87,6 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
 
   const postRequest = usePostRequest<Partial<HubRbacRole>, HubRbacRole>();
   const patchRequest = usePatchRequest<Partial<HubRbacRole>, HubRbacRole>();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     hubAPI`/_ui/v2/role_definitions/`
   );
