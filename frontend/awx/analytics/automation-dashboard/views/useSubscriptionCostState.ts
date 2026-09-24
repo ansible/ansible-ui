@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
-import { ISubscriptionCosts } from '../types';
+import { DashboardSettingsContext, ISubscriptionCosts } from '../types';
 import { useGetReportSubscriptionCosts } from './useGetReportSubscriptionCosts';
 
 interface ISubscriptionCostState {
@@ -21,9 +21,14 @@ interface ISubscriptionCostState {
  *   locally via `setCostState`, protecting pending edits from being
  *   overwritten by a same-cycle SWR revalidation.
  */
-export function useSubscriptionCostState(): ISubscriptionCostState {
-  const { subscriptionCosts } = useGetReportSubscriptionCosts();
+export function useSubscriptionCostState(
+  organizationId: number | undefined,
+  useGlobalSettings = false
+): ISubscriptionCostState {
+  const { subscriptionCosts } = useGetReportSubscriptionCosts(organizationId, useGlobalSettings);
+  const settingsContext = useGlobalSettings ? 'global' : organizationId;
   const [costState, setCostState] = useState<ISubscriptionCosts | undefined>(undefined);
+  const [stateContext, setStateContext] = useState<DashboardSettingsContext>(undefined);
   const [isPristine, setIsPristine] = useState(true);
 
   // Reset to pristine whenever fresh server data arrives.
@@ -38,19 +43,27 @@ export function useSubscriptionCostState(): ISubscriptionCostState {
   // Seed / resync only when pristine (no uncommitted local edits).
   useEffect(() => {
     if (subscriptionCosts !== undefined && isPristine) {
+      setStateContext(settingsContext);
       setCostState(subscriptionCosts[0]);
     }
-  }, [subscriptionCosts, isPristine]);
+  }, [subscriptionCosts, isPristine, settingsContext]);
 
   // Wrap the setter: any caller-initiated edit marks the state as dirty so
   // background SWR revalidations with unchanged data cannot overwrite it.
   const handleSetCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>> = useCallback(
     (value) => {
       setIsPristine(false);
-      setCostState(value);
+      setStateContext(settingsContext);
+      setCostState((currentCostState) => {
+        const currentValue = stateContext === settingsContext ? currentCostState : undefined;
+        return typeof value === 'function' ? value(currentValue) : value;
+      });
     },
-    []
+    [settingsContext, stateContext]
   );
 
-  return { costState, setCostState: handleSetCostState };
+  return {
+    costState: stateContext === settingsContext ? costState : undefined,
+    setCostState: handleSetCostState,
+  };
 }

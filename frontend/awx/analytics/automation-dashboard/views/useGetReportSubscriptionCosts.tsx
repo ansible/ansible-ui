@@ -9,13 +9,23 @@ interface IGetReportSubscriptionCosts {
   error: Error | undefined;
 }
 
-export function useGetReportSubscriptionCosts(): IGetReportSubscriptionCosts {
+export function useGetReportSubscriptionCosts(
+  organizationId: number | undefined = undefined,
+  useGlobalSettings = false
+): IGetReportSubscriptionCosts {
   const {
     data: subscriptionCosts,
     refresh,
     isLoading,
     error,
-  } = useGet<ISubscriptionCosts[]>(metricsAPI`/dashboard_reports/subscription_costs/`);
+  } = useGet<ISubscriptionCosts[]>(
+    useGlobalSettings || organizationId !== undefined
+      ? metricsAPI`/dashboard_reports/subscription_costs/`
+      : undefined,
+    !useGlobalSettings && organizationId !== undefined
+      ? { organization: organizationId }
+      : undefined
+  );
 
   return { subscriptionCosts, refresh, isLoading, error };
 }

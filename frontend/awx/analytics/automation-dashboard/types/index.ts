@@ -75,7 +75,22 @@ export interface IAutomationDashboardCollectionStatus {
   enabled: boolean | null;
   next_run: Date | null;
   initial_collection_status: string | null;
+  show_dashboard?: boolean | null;
 }
+
+export interface IAutomationDashboardOrganizationAccess {
+  id: number;
+  name: string;
+  can_edit: boolean;
+}
+
+export interface IAutomationDashboardAccess {
+  scope: 'global' | 'organization';
+  dashboard_enabled: boolean;
+  organizations: IAutomationDashboardOrganizationAccess[];
+}
+
+export type DashboardSettingsContext = number | 'global' | undefined;
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────────
 
@@ -163,6 +178,9 @@ export type DashboardTableInputFieldProps = {
 export type DashboardTableToolbarProps = {
   costState: ISubscriptionCosts | undefined;
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>> | undefined;
+  useGlobalSettings: boolean;
+  settingsOrganizationId: number | undefined;
+  canEditSettings: boolean;
   refresh: () => Promise<void>;
 };
 
@@ -175,6 +193,9 @@ export type IAutomationDashboardView = {
   detailsLoading: boolean;
   costState: ISubscriptionCosts | undefined;
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>>;
+  useGlobalSettings: boolean;
+  settingsOrganizationId: number | undefined;
+  canEditSettings: boolean;
   loading: boolean;
   refresh: () => Promise<void>;
   exportCsv: (reportType: ReportType) => Promise<void>;

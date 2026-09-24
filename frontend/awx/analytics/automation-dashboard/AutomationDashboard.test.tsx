@@ -1,4 +1,4 @@
-import { vi, test, afterEach, describe, expect } from 'vitest';
+import { vi, test, afterEach, beforeEach, describe, expect } from 'vitest';
 import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardToolbar } from './components';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
+import { useAutomationDashboardAccess } from './common/useAutomationDashboardAccess';
 import type {
   IAutomationDashboardView,
   IDashboardDetails,
@@ -35,6 +36,13 @@ const DEFAULT_COLLECTION_STATUS: IAutomationDashboardCollectionStatus = {
 vi.mock('./common/useAutomationDashboardCollectionStatus', () => ({
   useAutomationDashboardCollectionStatus: vi.fn(() => ({
     collectionStatus: DEFAULT_COLLECTION_STATUS,
+    isLoading: false,
+  })),
+}));
+
+vi.mock('./common/useAutomationDashboardAccess', () => ({
+  useAutomationDashboardAccess: vi.fn(() => ({
+    access: { scope: 'global', dashboard_enabled: true, organizations: [] },
     isLoading: false,
   })),
 }));
@@ -202,6 +210,9 @@ const mockView: IAutomationDashboardView = {
     include_template_creation_time_in_costs: true,
   },
   setCostState: vi.fn(),
+  useGlobalSettings: false,
+  settingsOrganizationId: undefined,
+  canEditSettings: false,
   loading: false,
   refresh: vi.fn(),
   exportCsv: vi.fn(),
@@ -222,6 +233,14 @@ function testWrapper() {
 }
 
 describe('AutomationDashboard', () => {
+  beforeEach(() => {
+    vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+      access: { scope: 'global', dashboard_enabled: true, organizations: [] },
+      isLoading: false,
+      error: undefined,
+    });
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -233,6 +252,64 @@ describe('AutomationDashboard', () => {
   test('renders dashboard title', () => {
     const { getByText } = render(testWrapper());
     expect(getByText('Automation Dashboard')).toBeInTheDocument();
+  });
+
+  test('should show an organization selection hint when several organizations are available', () => {
+    vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+      access: {
+        scope: 'organization',
+        dashboard_enabled: true,
+        organizations: [
+          { id: 1, name: 'Org 1', can_edit: true },
+          { id: 2, name: 'Org 2', can_edit: true },
+        ],
+      },
+      isLoading: false,
+      error: undefined,
+    });
+    render(testWrapper());
+    expect(
+      screen.getByText('Select one organization to edit its dashboard settings.')
+    ).toBeInTheDocument();
+  });
+
+  test('should show the organization selection hint for a selected view-only organization', () => {
+    vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+      access: {
+        scope: 'organization',
+        dashboard_enabled: true,
+        organizations: [
+          { id: 1, name: 'Editable Org', can_edit: true },
+          { id: 2, name: 'View-only Org', can_edit: false },
+        ],
+      },
+      isLoading: false,
+      error: undefined,
+    });
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      settingsOrganizationId: 2,
+      canEditSettings: false,
+    });
+
+    render(testWrapper());
+
+    expect(
+      screen.getByText('Select one organization to edit its dashboard settings.')
+    ).toBeInTheDocument();
+  });
+
+  test('should gate an organization dashboard when access reports it disabled', () => {
+    vi.mocked(useAutomationDashboardAccess).mockReturnValue({
+      access: { scope: 'organization', dashboard_enabled: false, organizations: [] },
+      isLoading: false,
+      error: undefined,
+    });
+
+    render(testWrapper());
+
+    expect(screen.getByText('Automation Dashboard is not enabled.')).toBeInTheDocument();
+    expect(screen.queryByTestId('dashboard-main-table-card')).not.toBeInTheDocument();
   });
 
   test('should render all dashboard card labels', () => {

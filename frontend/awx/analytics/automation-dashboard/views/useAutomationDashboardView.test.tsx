@@ -97,11 +97,55 @@ describe('useAutomationDashboardView', () => {
     expect(view.detailsError).toBeUndefined();
     expect(view.detailsLoading).toBe(false);
     expect(view.costState).toBeUndefined();
+    expect(view.useGlobalSettings).toBe(false);
+    expect(view.settingsOrganizationId).toBeUndefined();
+    expect(view.canEditSettings).toBe(false);
     expect(view.loading).toBe(false);
     expect(view.refresh).toBeTypeOf('function');
     expect(view.setCostState).toBeTypeOf('function');
     expect(view.isFilterStateDefault).toBe(true);
     expect(view.registerClearCallback).toBeTypeOf('function');
+  });
+
+  test('should use the only authorized organization as the settings context', () => {
+    const { result } = renderHook(() =>
+      useAutomationDashboardView({
+        toolbarFilters: [],
+        access: {
+          scope: 'organization',
+          dashboard_enabled: true,
+          organizations: [{ id: 42, name: 'Org 42', can_edit: true }],
+        },
+      })
+    );
+
+    expect(result.current.settingsOrganizationId).toBe(42);
+    expect(result.current.canEditSettings).toBe(true);
+  });
+
+  test('should preserve global settings for a platform superuser', () => {
+    const { result } = renderHook(() =>
+      useAutomationDashboardView({
+        toolbarFilters: [],
+        isPlatformSuperuser: true,
+      })
+    );
+
+    expect(result.current.useGlobalSettings).toBe(true);
+    expect(result.current.settingsOrganizationId).toBeUndefined();
+    expect(result.current.canEditSettings).toBe(true);
+  });
+
+  test('should preserve global settings read-only for an auditor when access lookup fails', () => {
+    const { result } = renderHook(() =>
+      useAutomationDashboardView({
+        toolbarFilters: [],
+        isPlatformAuditor: true,
+      })
+    );
+
+    expect(result.current.useGlobalSettings).toBe(true);
+    expect(result.current.canEditSettings).toBe(false);
   });
 
   // --- clearAllFilters override ---

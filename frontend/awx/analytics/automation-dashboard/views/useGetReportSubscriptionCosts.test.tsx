@@ -39,7 +39,7 @@ describe('useGetReportSubscriptionCosts', () => {
         })
       );
 
-      const { result } = renderHook(() => useGetReportSubscriptionCosts());
+      const { result } = renderHook(() => useGetReportSubscriptionCosts(1));
 
       expect(result.current.isLoading).toBe(true);
       await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -48,19 +48,22 @@ describe('useGetReportSubscriptionCosts', () => {
 
   describe('Success state', () => {
     test('should return subscription costs when data is fetched', async () => {
+      let requestedOrganization: string | null = null;
       server.use(
-        http.get(metricsAPI`/dashboard_reports/subscription_costs/`, () =>
-          HttpResponse.json(subscriptionCostsFixture)
-        )
+        http.get(metricsAPI`/dashboard_reports/subscription_costs/`, ({ request }) => {
+          requestedOrganization = new URL(request.url).searchParams.get('organization');
+          return HttpResponse.json(subscriptionCostsFixture);
+        })
       );
 
-      const { result } = renderHook(() => useGetReportSubscriptionCosts());
+      const { result } = renderHook(() => useGetReportSubscriptionCosts(1));
 
       await waitFor(() => expect(result.current.subscriptionCosts).toBeDefined());
 
       expect(result.current.subscriptionCosts).toEqual(subscriptionCostsFixture);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeUndefined();
+      expect(requestedOrganization).toBe('1');
     });
 
     test('should expose a refresh function', async () => {
@@ -70,7 +73,7 @@ describe('useGetReportSubscriptionCosts', () => {
         )
       );
 
-      const { result } = renderHook(() => useGetReportSubscriptionCosts());
+      const { result } = renderHook(() => useGetReportSubscriptionCosts(1));
 
       await waitFor(() => expect(result.current.subscriptionCosts).toBeDefined());
 
@@ -86,12 +89,34 @@ describe('useGetReportSubscriptionCosts', () => {
         )
       );
 
-      const { result } = renderHook(() => useGetReportSubscriptionCosts());
+      const { result } = renderHook(() => useGetReportSubscriptionCosts(1));
 
       await waitFor(() => expect(result.current.error).toBeDefined());
 
       expect(result.current.subscriptionCosts).toBeUndefined();
       expect(result.current.isLoading).toBe(false);
     });
+  });
+
+  test('should not fetch settings without an organization context', () => {
+    const { result } = renderHook(() => useGetReportSubscriptionCosts(undefined));
+
+    expect(result.current.subscriptionCosts).toBeUndefined();
+    expect(result.current.isLoading).toBe(false);
+  });
+
+  test('should preserve an unscoped request for global settings', async () => {
+    let requestedOrganization: string | null = 'unexpected';
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/subscription_costs/`, ({ request }) => {
+        requestedOrganization = new URL(request.url).searchParams.get('organization');
+        return HttpResponse.json(subscriptionCostsFixture);
+      })
+    );
+
+    const { result } = renderHook(() => useGetReportSubscriptionCosts(undefined, true));
+
+    await waitFor(() => expect(result.current.subscriptionCosts).toEqual(subscriptionCostsFixture));
+    expect(requestedOrganization).toBeNull();
   });
 });
