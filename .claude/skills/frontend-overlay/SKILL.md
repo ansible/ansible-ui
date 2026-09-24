@@ -11,7 +11,9 @@ description: >
 
 - React 18, not 19 — no `ref`-as-prop, no `use(Context)` (exact version in `package.json`)
 - PatternFly 6 (exact version in `package.json`)
-- Node 20+ and npm 8+ (`engines` in `package.json`)
+- Node version from `.nvmrc` and `engines` in root `package.json` (CI uses Node 24;
+  some jobs still use Node 20). Use the npm that ships with that Node — do not
+  cite stale npm major versions in skills or comments.
 - Monorepo/build tooling: Nx
 - Server state: SWR
 - Router: react-router
