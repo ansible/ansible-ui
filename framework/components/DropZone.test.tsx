@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { PageAlertToasterProvider } from '../PageAlertToaster';
 import { DropZone } from './DropZone';
 
-const dropHandler = vi.hoisted(() => vi.fn());
+const dropHandler = vi.hoisted(() => vi.fn<(files: File[]) => void>());
 
 vi.mock('react-dropzone', () => ({
   useDropzone: ({ onDrop }: { onDrop: (files: File[]) => void }) => {
