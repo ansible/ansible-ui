@@ -109,12 +109,20 @@ the tab URLs return 404. When neither is visible the entry is removed entirely.
 
 `useAutomationDashboardCollectionStatus` fetches `/dashboard_reports/collection_status/` and derives:
 
-| Flag                | True when                                                                |
-| ------------------- | ------------------------------------------------------------------------ |
-| `canSeeDashboard`   | AWX user is superuser or system auditor **and** `show_dashboard` is true |
-| `canSeeLeaderboard` | `show_gamification` is true (any user)                                   |
+| Flag                | True when                                                                                                              |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `canSeeDashboard`   | `show_dashboard` is true **and** the user is one of: AWX superuser, AWX system auditor, or platform auditor (AAP only) |
+| `canSeeLeaderboard` | `show_gamification` is true (any user)                                                                                 |
 
-It uses `useAwxActiveUser`, so it works in both the Platform and the standalone AWX builds.
+It reads the AWX user from `useAwxActiveUser` (both builds) and the Platform user from
+`usePlatformActiveUser` (Platform build only; the context is empty in standalone AWX, so the
+platform-auditor check is simply false there).
+
+While `show_dashboard` is true, `isLoading` also stays true until each mounted `/me/` provider has
+settled. Otherwise, if collection_status answered first, `canSeeDashboard` would briefly be false
+and superusers/auditors would see the leaderboards-only page and nav. A provider that isn't mounted
+(its context is empty) doesn't count as pending, and once either user already grants access the
+hook stops waiting for the other.
 
 Where the flags are applied:
 

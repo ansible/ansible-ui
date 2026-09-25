@@ -7,6 +7,7 @@ import { isRequestError } from '../../../../common/crud/RequestError';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import useSWR, { mutate } from 'swr';
 import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { usePlatformActiveUser } from '@ansible/platform-ui/main/PlatformActiveUserProvider';
 
 function hasStatusCode(error: unknown, statusCode: number): boolean {
   return isRequestError(error) && error.statusCode === statusCode;
@@ -24,8 +25,9 @@ const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
 
 export function useAutomationDashboardCollectionStatus(): {
   collectionStatus: IAutomationDashboardCollectionStatus;
+  /** collection_status is loading, or show_dashboard is true and the user's role is not known yet. */
   isLoading: boolean;
-  /** Superuser or system auditor, and show_dashboard is true. */
+  /** Superuser, system auditor or platform auditor, and show_dashboard is true. */
   canSeeDashboard: boolean;
   canSeeLeaderboard: boolean;
   /** Fetch error when there is no data to fall back on; a 404 (no metrics service) is not an error. */
@@ -33,9 +35,14 @@ export function useAutomationDashboardCollectionStatus(): {
 } {
   const url = metricsAPI`/dashboard_reports/collection_status/`;
   const fetcher = useFetcher();
-  // useAwxActiveUser (not usePlatformActiveUser) so this hook works in both the Platform
-  // build and the standalone AWX build - only the former mounts PlatformActiveUserProvider.
-  const { activeAwxUser } = useAwxActiveUser();
+  // The AWX user works in both builds; the Platform user is only set when
+  // PlatformActiveUserProvider is mounted (the context defaults to {} in standalone AWX).
+  // A mounted provider always supplies its refresh function, so undefined user + refresh
+  // function means /me/ is still loading, while no refresh function means no provider.
+  const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
+  const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
+  const isAwxUserPending = !!refreshActiveAwxUser && activeAwxUser === undefined;
+  const isPlatformUserPending = !!refreshActivePlatformUser && activePlatformUser === undefined;
   // A 404 means no metrics service (e.g. standalone AWX): poll rarely until it answers again
   const [isUnavailable, setIsUnavailable] = useState(false);
   const {
@@ -64,15 +71,33 @@ export function useAutomationDashboardCollectionStatus(): {
     const isNotFound = hasStatusCode(error, 404);
     const collectionStatus = isNotFound ? DEFAULT_STATUS : (data ?? DEFAULT_STATUS);
     const canSeeDashboard =
-      !!(activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) &&
-      !!collectionStatus.show_dashboard;
+      !!(
+        activeAwxUser?.is_superuser ||
+        activeAwxUser?.is_system_auditor ||
+        activePlatformUser?.is_platform_auditor
+      ) && !!collectionStatus.show_dashboard;
     const canSeeLeaderboard = !!collectionStatus.show_gamification;
+    // If collection_status answers before /me/, canSeeDashboard would be false for a moment and
+    // superusers/auditors would briefly get the leaderboards-only page and nav; wait for the role.
+    // Once either user grants access the other can't revoke it, so there is nothing to wait for.
+    const isRolePending =
+      !!collectionStatus.show_dashboard &&
+      !canSeeDashboard &&
+      (isAwxUserPending || isPlatformUserPending);
     return {
       collectionStatus,
-      isLoading: isSwrLoading,
+      isLoading: isSwrLoading || isRolePending,
       canSeeDashboard,
       canSeeLeaderboard,
       error: data || isNotFound ? undefined : error,
     };
-  }, [data, error, isSwrLoading, activeAwxUser]);
+  }, [
+    data,
+    error,
+    isSwrLoading,
+    activeAwxUser,
+    activePlatformUser,
+    isAwxUserPending,
+    isPlatformUserPending,
+  ]);
 }
