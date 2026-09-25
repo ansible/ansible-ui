@@ -95,6 +95,20 @@ describe('useRssNotifications', () => {
     expect(useSWR).toHaveBeenCalledWith(feedUrl, expect.any(Object));
   });
 
+  test('should reject failed RSS requests', async () => {
+    const feedUrl = 'https://example.com/feed.xml';
+    setupGatewaySettings({ feedUrl });
+    setupSWRMock();
+    renderHook(() => useRssNotifications());
+
+    const options = vi.mocked(useSWR).mock.calls[0]?.[1] as {
+      fetcher: (url: string) => Promise<string>;
+    };
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }));
+
+    await expect(options.fetcher(feedUrl)).rejects.toThrow('RSS request failed: 503');
+  });
+
   test('should parse RSS feed and set notifications', async () => {
     const feedUrl = 'https://example.com/feed.xml';
     const feedContent = '<xml>sample feed</xml>';

@@ -1,8 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useContext } from 'react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   PageAlertToasterProvider,
   PageAlertToasterContext,
@@ -34,6 +34,10 @@ function TestConsumer() {
 }
 
 describe('PageAlertToaster', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   describe('errorToAlertProps', () => {
     it('should convert Error instance to alert props', () => {
       const result = errorToAlertProps(new Error('Something failed'));
@@ -79,6 +83,24 @@ describe('PageAlertToaster', () => {
 
       await user.click(screen.getByRole('button', { name: 'Add' }));
       expect(screen.getByText('Test Alert')).toBeInTheDocument();
+    });
+
+    it('should remove timed alerts after their timeout', async () => {
+      vi.useFakeTimers();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: 'Add Timed' }));
+      expect(screen.getByText('Timed Alert')).toBeInTheDocument();
+
+      await act(() => {
+        vi.advanceTimersByTime(1000);
+        return Promise.resolve();
+      });
+      expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
     });
 
     it('should replace an alert when the same alert is added again', async () => {
