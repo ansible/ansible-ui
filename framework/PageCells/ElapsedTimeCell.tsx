@@ -15,7 +15,7 @@ export function ElapsedTimeCell(props: { start?: number | string; finish?: numbe
         else setElapsed(Math.max(0, finish - start));
       }
     }, 1000);
-    return () => clearTimeout(timeout);
+    return () => clearInterval(timeout);
   }, [start, finish, props.finish]);
 
   const totalSeconds = Math.floor(elapsed / 1000);
