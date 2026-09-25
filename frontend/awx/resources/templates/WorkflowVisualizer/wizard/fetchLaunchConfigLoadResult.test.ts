@@ -10,7 +10,9 @@ const jobTemplateResource = { id: 5, name: 'Deploy', type: 'job_template' };
 const workflowJobTemplateResource = { id: 8, name: 'Child WF', type: 'workflow_job_template' };
 
 const server = setupServer(
-  http.get(`${getResourceURL(RESOURCE_TYPE.job)}/${5}`, () => HttpResponse.json(jobTemplateResource)),
+  http.get(`${getResourceURL(RESOURCE_TYPE.job)}/${5}`, () =>
+    HttpResponse.json(jobTemplateResource)
+  ),
   http.get(awxAPI`/job_templates/5/launch/`, () =>
     HttpResponse.json({
       ask_timeout_on_launch: true,

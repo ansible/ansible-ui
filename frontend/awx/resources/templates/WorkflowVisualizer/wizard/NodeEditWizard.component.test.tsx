@@ -84,9 +84,7 @@ const mockGetInitialValues = vi.fn(
 
 const mockWorkflowNodeOptions = { actions: { POST: {} } };
 
-const mockUseOptions = vi.hoisted(() =>
-  vi.fn(() => ({ data: mockWorkflowNodeOptions }))
-);
+const mockUseOptions = vi.hoisted(() => vi.fn(() => ({ data: mockWorkflowNodeOptions })));
 
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
   useOptions: mockUseOptions,
