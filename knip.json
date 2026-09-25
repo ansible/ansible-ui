@@ -4,6 +4,7 @@
   "vite": false,
   "vitest": false,
   "ignore": [
+    "frontend/hub/insights-tests/eslint.config.mjs",
     "**/vite.config.ts",
     "vitest.config.ts",
     "**/vitest.setup.ts",
