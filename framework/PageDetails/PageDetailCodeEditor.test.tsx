@@ -66,6 +66,13 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <BrowserRouter>{children}</BrowserRouter>
 );
 
+async function loadFormatDetailCodeEditorValue() {
+  vi.resetModules();
+  vi.unmock('../PageForm/Inputs/PageFormDataEditor');
+  const module = await import('./PageDetailCodeEditor');
+  return module.formatDetailCodeEditorValue;
+}
+
 describe('PageDetailCodeEditor', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -227,5 +234,22 @@ describe('PageDetailCodeEditor', () => {
     );
 
     expect(screen.getByTestId('code-block-value')).toBeInTheDocument();
+  });
+});
+
+describe('formatDetailCodeEditorValue', () => {
+  test('preserves plain text that is not valid structured YAML (job stdout)', async () => {
+    const formatDetailCodeEditorValue = await loadFormatDetailCodeEditorValue();
+    const stdout = 'Installed: pkg1\nInstalled: pkg2';
+    expect(formatDetailCodeEditorValue(stdout, 'yaml', false)).toBe(stdout);
+    expect(formatDetailCodeEditorValue(stdout, 'json', false)).toBe(stdout);
+  });
+
+  test('formats valid JSON when toggling display language', async () => {
+    const formatDetailCodeEditorValue = await loadFormatDetailCodeEditorValue();
+    const json = '{"key": "value"}';
+    const result = formatDetailCodeEditorValue(json, 'json', false);
+    expect(result).toContain('"key"');
+    expect(result).toContain('value');
   });
 });
