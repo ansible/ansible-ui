@@ -11,6 +11,63 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Fail fast if any PR commit is not verified by GitHub (GPG/SSH signed +
+  # key linked to the author). Matches branch-protection "Require signed
+  # commits"; uses the API, not local git %G?, so CI trust stores do not matter.
+  signed-commits:
+    name: Signed commits
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Verify all PR commits are signed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+
+          # --paginate emits one JSON array per page; jq -s add merges them.
+          COMMITS=$(gh api "repos/$REPO/pulls/$PR_NUMBER/commits" --paginate)
+          TOTAL=$(jq -rs 'add | length' <<< "$COMMITS")
+
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "::error::No commits returned for PR #$PR_NUMBER."
+            exit 1
+          fi
+
+          UNVERIFIED=$(jq -rs '
+            add
+            | map(select(.commit.verification.verified != true))
+            | .[]
+            | "- `\(.sha[0:12])` (\(.commit.verification.reason // "unverified")) — \(.commit.message | split("\n")[0])"
+          ' <<< "$COMMITS")
+
+          if [ -n "$UNVERIFIED" ]; then
+            COUNT=$(printf '%s\n' "$UNVERIFIED" | wc -l | tr -d ' ')
+            {
+              echo "### Signed commits — failed"
+              echo
+              echo "$COUNT of $TOTAL commit(s) in this PR are not verified by GitHub:"
+              echo
+              printf '%s\n' "$UNVERIFIED"
+              echo
+              echo "Set up [GPG](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key) or [SSH](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification#ssh-commit-signature-verification) signing, then rewrite the branch so every commit is signed (e.g. interactive rebase with \`git commit --amend -S\` / \`git rebase --exec 'git commit --amend --no-edit -S'\`)."
+            } >> "$GITHUB_STEP_SUMMARY"
+
+            echo "::error::$COUNT of $TOTAL commit(s) in this PR are not verified by GitHub."
+            printf '%s\n' "$UNVERIFIED"
+            exit 1
+          fi
+
+          echo "All $TOTAL commit(s) in PR #$PR_NUMBER are verified by GitHub."
+          echo "### Signed commits — passed" >> "$GITHUB_STEP_SUMMARY"
+          echo >> "$GITHUB_STEP_SUMMARY"
+          echo "All $TOTAL commit(s) are verified." >> "$GITHUB_STEP_SUMMARY"
+
   packages:
     name: Install dependencies
     runs-on: ubuntu-latest
@@ -305,6 +362,7 @@ jobs:
     name: All checks passed
     runs-on: ubuntu-latest
     needs:
+      - signed-commits
       - checks
       - knip
       - vitest-awx
@@ -314,11 +372,12 @@ jobs:
     if: ${{ always() }}
     steps:
       - name: Success Check
-        if: ${{ needs.checks.result == 'success' && needs.knip.result == 'success' && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' && needs.hub-insights.result == 'success' }}
+        if: ${{ needs.signed-commits.result == 'success' && needs.checks.result == 'success' && needs.knip.result == 'success' && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' && needs.hub-insights.result == 'success' }}
         run: echo "All jobs succeeded"
       - name: Log dependency results
-        if: ${{ needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
+        if: ${{ needs.signed-commits.result != 'success' || needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
         run: |
+          echo "signed-commits: ${{ needs.signed-commits.result }}"
           echo "checks: ${{ needs.checks.result }}"
           echo "knip: ${{ needs.knip.result }}"
           echo "vitest-awx: ${{ needs.vitest-awx.result }}"
@@ -326,7 +385,7 @@ jobs:
           echo "vitest-coverage: ${{ needs.vitest-coverage.result }}"
           echo "hub-insights: ${{ needs.hub-insights.result }}"
       - name: Failure or Cancelled
-        if: ${{ needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
+        if: ${{ needs.signed-commits.result != 'success' || needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
         run: |
           echo "One or more jobs failed or were canceled."
           exit 1
