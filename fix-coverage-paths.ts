@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import * as fs from 'fs';
-import { globSync } from 'glob';
+import { globSync } from 'node:fs';
 import * as path from 'path';
 
 interface Location {
@@ -34,8 +34,11 @@ interface CoverageMap {
  */
 function fixAllCoveragePaths(): void {
   const searchPattern = '.nyc_output/*.json';
-
-  const coverageFiles = globSync(searchPattern, { ignore: '**/node_modules/**' });
+  // The old `glob` package passed `ignore: '**/node_modules/**'`. This pattern is
+  // non-recursive (only `*.json` in `.nyc_output/`), so that ignore was a no-op.
+  // Node's `globSync` also has no `ignore` option—`exclude` is a path predicate, not
+  // a glob list—so we omit it rather than reimplement equivalent filtering.
+  const coverageFiles = globSync(searchPattern);
 
   if (coverageFiles.length === 0) {
     console.log('No coverage files found to process.');
