@@ -88,7 +88,12 @@ export function extractPageFormOptionsFields(
         try {
           new RegExp(pattern, flags || '');
         } catch {
-          // Skip this field if pattern is invalid
+          if (process.env.NODE_ENV === 'development') {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `extractPageFormOptionsFields: skipping field "${fieldName}" — invalid regex pattern: ${pattern}`
+            );
+          }
           return;
         }
       }
@@ -125,6 +130,24 @@ export function usePageFormOptionsFields(
  * validation, which matters when different parts of one form correspond to
  * different backend resources (or when the relevant resource is only known
  * at runtime, e.g. after the user picks a type).
+ *
+ * ### Supported controls
+ *
+ * The following controls call {@link usePageFormOptionsContext} and apply
+ * pattern validation automatically when metadata is present:
+ *
+ * - **PageFormTextInput** — string fields (CharField, URLField, etc.)
+ * - **PageFormTextArea** — multiline string fields (PrivateKey, etc.)
+ *
+ * The following controls do **not** consume metadata. This is intentional:
+ *
+ * - **PageFormDataEditor** — structured JSON/YAML; regex patterns are
+ *   semantically wrong for serialized objects, and the backend never
+ *   injects `pattern` into non-CharField schema fields.
+ * - **PageFormFileUpload** — binary/file uploads; operates on `File`
+ *   objects, not strings.
+ * - **PageFormCheckbox**, **PageFormSelect** — boolean/enum values;
+ *   regex pattern validation is not applicable.
  */
 export function PageFormFieldMetadataProvider(
   props: Readonly<{

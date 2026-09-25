@@ -344,6 +344,31 @@ describe('extractPageFormOptionsFields', () => {
     expect(fields.name?.pattern).toBe('^put$');
     expect(fields.description?.pattern).toBe('^patch$');
   });
+
+  it('emits console.warn for invalid regex in development mode', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      const fields = extractPageFormOptionsFields({
+        actions: { POST: { host: { pattern: '[invalid(' } } },
+      });
+      expect(fields).toEqual({});
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('host'));
+    } finally {
+      process.env.NODE_ENV = originalEnv;
+      warnSpy.mockRestore();
+    }
+  });
+
+  it('does not emit console.warn outside development mode', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    extractPageFormOptionsFields({
+      actions: { POST: { host: { pattern: '[invalid(' } } },
+    });
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
 });
 
 describe('usePageFormOptionsFields', () => {
@@ -517,5 +542,91 @@ describe('PageFormOptionsProvider', () => {
       </PageFormOptionsProvider>
     );
     expect(screen.getByText('child content')).toBeInTheDocument();
+  });
+});
+
+describe('PageFormFieldMetadataProvider — submit-blocking integration', () => {
+  it('blocks form submission when a field violates the metadata pattern', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    // Simulates the notifier/authenticator/EDA pattern: a PageForm wrapping a
+    // PageFormFieldMetadataProvider that injects schema-derived patterns for a
+    // dynamic sub-form section (e.g. notification type details, authenticator
+    // configuration fields, EDA credential type inputs).
+    render(
+      <PageForm onSubmit={onSubmit} defaultValue={{ host: '' }} submitText="Save">
+        <PageFormFieldMetadataProvider
+          fields={{
+            host: {
+              pattern: '^[a-zA-Z0-9.-]+$',
+              pattern_description: 'Host must be a valid hostname',
+            },
+          }}
+          merge
+        >
+          <PageFormTextInput name="host" label="Host" />
+        </PageFormFieldMetadataProvider>
+      </PageForm>
+    );
+
+    const input = screen.getByLabelText('Host');
+
+    // Type an invalid hostname (contains space and colon)
+    await user.type(input, 'not a:host');
+    await user.tab();
+
+    // Validation error should appear
+    await waitFor(() => {
+      expect(screen.getByText('Host must be a valid hostname')).toBeInTheDocument();
+    });
+
+    // Attempt submit — should be blocked by the pattern validation
+    await user.click(screen.getByTestId('Submit'));
+
+    // Form must NOT submit when validation fails
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('allows form submission when the field matches the metadata pattern', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+
+    render(
+      <PageForm onSubmit={onSubmit} defaultValue={{ host: '' }} submitText="Save">
+        <PageFormFieldMetadataProvider
+          fields={{
+            host: {
+              pattern: '^[a-zA-Z0-9.-]+$',
+              pattern_description: 'Host must be a valid hostname',
+            },
+          }}
+          merge
+        >
+          <PageFormTextInput name="host" label="Host" />
+        </PageFormFieldMetadataProvider>
+      </PageForm>
+    );
+
+    const input = screen.getByLabelText('Host');
+
+    // Type a valid hostname
+    await user.type(input, 'smtp.example.com');
+    await user.tab();
+
+    // No validation error should appear
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Host must be a valid hostname')).not.toBeInTheDocument();
+      },
+      { timeout: 1000 }
+    );
+
+    // Submit — should succeed
+    await user.click(screen.getByTestId('Submit'));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalled();
+    });
   });
 });

@@ -71,7 +71,13 @@ const mockCredentialTypes = {
       kind: 'cloud',
       inputs: {
         fields: [
-          { id: 'host', type: 'string', label: 'VCenter Host' },
+          {
+            id: 'host',
+            type: 'string',
+            label: 'VCenter Host',
+            pattern: '^https?://',
+            pattern_description: 'Must start with http:// or https://',
+          },
           { id: 'username', type: 'string', label: 'Username' },
           { id: 'password', type: 'string', label: 'Password', secret: true },
         ],
@@ -663,6 +669,41 @@ describe('CredentialForm', () => {
       // Verify required indicators on VMware fields
       const hostFormGroup = screen.getByTestId('host-form-group');
       expect(hostFormGroup.querySelector('.pf-v6-c-form__label-required')).toBeInTheDocument();
+    });
+
+    it('should render sub-form fields for credential type with pattern metadata', async () => {
+      server.use(
+        http.get(awxAPI`/credentials/1/`, () =>
+          HttpResponse.json({
+            ...mockCredential,
+            credential_type: 4,
+            summary_fields: {
+              ...mockCredential.summary_fields,
+              credential_type: { id: 4, name: 'VMware vCenter' },
+            },
+          })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/credentials/1/edit']}>
+          <Routes>
+            <Route path="/credentials/:id/edit" element={<EditCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('name')).toHaveValue('Test Credential');
+      });
+
+      // Verify sub-form renders with the pattern-bearing VCenter Host field
+      await waitFor(() => {
+        expect(screen.getByText('Type Details')).toBeInTheDocument();
+        expect(screen.getByText('VCenter Host')).toBeInTheDocument();
+        expect(screen.getByText('Username')).toBeInTheDocument();
+        expect(screen.getByText('Password')).toBeInTheDocument();
+      });
     });
 
     it('should display error alert when server returns 500 on save', async () => {
