@@ -269,8 +269,15 @@ export function PageSingleSelect<
   }, [open, setSearchValue]);
 
   useEffect(() => {
-    if (!props.disableAutoSelect && props.isRequired && !selectedOption && options.length === 1) {
-      onSelect(options[0].value);
+    const onlyOption = options[0];
+    if (
+      !props.disableAutoSelect &&
+      props.isRequired &&
+      !selectedOption &&
+      options.length === 1 &&
+      onlyOption
+    ) {
+      onSelect(onlyOption.value);
     }
   }, [onSelect, options, props.disableAutoSelect, props.isRequired, selectedOption]);
 
@@ -377,7 +384,7 @@ export function PageSingleSelect<
               <>
                 {Object.keys(groups).map((groupName) => (
                   <SelectGroup label={groupName} key={groupName}>
-                    <PageSingleSelectList searchRef={searchRef} options={groups[groupName]} />
+                    <PageSingleSelectList searchRef={searchRef} options={groups[groupName] ?? []} />
                     <Divider />
                   </SelectGroup>
                 ))}
