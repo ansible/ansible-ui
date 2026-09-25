@@ -39,7 +39,7 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
     function addAlert(alert: AlertProps) {
       const preparedAlert = prepareAlert(alert);
       setToasterAlerts((alerts) => {
-        const alertIndex = alerts.findIndex((a) => a === preparedAlert);
+        const alertIndex = alerts.indexOf(preparedAlert);
         if (alertIndex !== -1) {
           const newAlerts = [...alerts];
           newAlerts[alertIndex] = preparedAlert;
