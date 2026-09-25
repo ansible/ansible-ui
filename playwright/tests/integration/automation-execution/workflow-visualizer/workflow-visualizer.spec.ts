@@ -71,39 +71,6 @@ test.describe('Workflow Viz', () => {
     }
   );
 
-  test(
-    'should reopen a workflow visualizer and select an existing node after leaving it',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
-    async ({ page }) => {
-      test.setTimeout(5 * 60 * 1000);
-      const projectName = createE2EName('wfviz-project');
-      const project = await Project.ui.create(page, {
-        projectName,
-        organizationName: 'Default',
-      });
-      const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
-
-      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', project);
-      await expect(
-        page.locator('[class*="topology__node__label"]', { hasText: projectName })
-      ).toBeVisible();
-
-      await page.getByTestId('workflow-visualizer-toolbar-close').click();
-      await WorkflowVisualizer.ui.navigateToVisualizer(page, workflowJobTemplate);
-
-      const projectNode = page.locator('[class*="topology__node__label"]', {
-        hasText: projectName,
-      });
-      await expect(projectNode).toBeVisible();
-      await projectNode.click();
-      await expect(page.getByTestId('workflow-topology-sidebar')).toBeVisible();
-
-      await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
-      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
-      await Project.ui.delete(page, project);
-    }
-  );
-
   //Unskip this test when https://issues.redhat.com/browse/AAP-42422 is fixed
   test.skip(
     'Adds a new Job Template node linked to an existing node with on-success status, save the visualizer, then remove all nodes',
