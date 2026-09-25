@@ -411,6 +411,23 @@ describe('PageWizard', () => {
       expect(screen.getByTestId('wizard-next')).toHaveTextContent('Finish');
     });
 
+    it('should start at the first substep when the first step is a parent', async () => {
+      render(
+        <MemoryRouter>
+          <PageWizard
+            steps={[stepsWithSubsteps[1]]}
+            onCancel={vi.fn()}
+            onSubmit={vi.fn().mockResolvedValue(undefined)}
+            stepDefaults={{}}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('wizard-section-substepA')).toHaveTextContent('Substep A');
+      });
+    });
+
     it('should navigate back through substeps', async () => {
       const user = userEvent.setup();
       render(
