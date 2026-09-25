@@ -77,6 +77,10 @@ describe('queryString', () => {
       expect(filtersToSearchObj([nameFilter], {})).instanceOf(URLSearchParams);
     });
 
+    it('should ignore filters with no selected values', () => {
+      expect(filtersToSearchObj([nameFilter], { name: [] }).toString()).toBe('');
+    });
+
     it('should build simple string', () => {
       const filters = [nameFilter];
       const state: IFilterState = {
