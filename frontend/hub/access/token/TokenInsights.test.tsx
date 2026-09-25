@@ -103,6 +103,7 @@ describe('TokenInsights Component', () => {
   });
 
   it('should call doOffline when Load token button is clicked', async () => {
+    const user = userEvent.setup();
     render(
       <MemoryRouter>
         <TokenInsights />
@@ -110,12 +111,13 @@ describe('TokenInsights Component', () => {
     );
 
     const loadTokenButton = screen.getByTestId('load-token');
-    await userEvent.click(loadTokenButton);
+    await user.click(loadTokenButton);
 
     expect(mockDoOffline).toHaveBeenCalledTimes(1);
   });
 
   it('should display token when getOfflineToken succeeds', async () => {
+    const user = userEvent.setup();
     mockGetOfflineToken.mockResolvedValue({ data: mockTokenData });
 
     render(
@@ -208,6 +210,7 @@ describe('TokenInsights Component', () => {
   });
 
   it('should not call insights APIs when window.insights is not available', async () => {
+    const user = userEvent.setup();
     // Remove window.insights
     delete (globalThis as typeof globalThis & { insights?: unknown }).insights;
 
@@ -225,7 +228,7 @@ describe('TokenInsights Component', () => {
     expect(loadTokenButton).toBeInTheDocument();
 
     // Clicking should not throw error
-    await userEvent.click(loadTokenButton);
+    await user.click(loadTokenButton);
 
     // APIs should not be called
     expect(mockDoOffline).not.toHaveBeenCalled();
