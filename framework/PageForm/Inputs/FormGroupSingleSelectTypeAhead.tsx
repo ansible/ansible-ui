@@ -465,7 +465,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
                 {groupIndex > 0 && <Divider />}
                 <SelectGroup label={groupName || t('Other')}>
                   <SelectList id={`${id}-typeahead-select-listbox-${groupName}`}>
-                    {groups[groupName].map((option, index) => {
+                    {groups[groupName]?.map((option, index) => {
                       const globalIndex = selectOptions.findIndex(
                         (opt) => opt.value === option.value
                       );
