@@ -14,7 +14,7 @@ const jobTemplateResource = {
   project: 1,
   inventory: 1,
   ask_inventory_on_launch: false,
-} satisfies JobTemplate;
+} as JobTemplate;
 
 const workflowJobTemplateResource = {
   id: 21,
