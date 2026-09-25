@@ -7,6 +7,10 @@ import type { FieldMetadata } from '@ansible/ansible-ui-framework/PageForm/PageF
  * - AWX `CredentialInputField` (keyed by `id`)
  * - EDA `EdaCredentialTypeField` (keyed by `id`)
  * - Platform `PluginConfiguration` (keyed by `name`)
+ *
+ * Some backends (notably the Gateway authenticator-plugins API) serialize
+ * the description in camelCase (`patternDescription`) rather than
+ * snake_case (`pattern_description`).  Both forms are accepted.
  */
 export interface SchemaFieldWithPattern {
   /** Field identifier used as the lookup key. */
@@ -15,6 +19,9 @@ export interface SchemaFieldWithPattern {
   name?: string;
   pattern?: string;
   pattern_description?: string;
+  /** camelCase variant emitted by the Gateway authenticator-plugins API. */
+  patternDescription?: string;
+  flags?: string;
 }
 
 /**
@@ -55,10 +62,18 @@ export function buildFieldMetadataMap(
       continue;
     }
 
-    const patternDescription =
-      typeof field.pattern_description === 'string' ? field.pattern_description : undefined;
+    // Accept both snake_case and camelCase (Gateway authenticator-plugins API
+    // uses `patternDescription`; AWX/EDA use `pattern_description`).
+    let patternDescription: string | undefined;
+    if (typeof field.pattern_description === 'string') {
+      patternDescription = field.pattern_description;
+    } else if (typeof field.patternDescription === 'string') {
+      patternDescription = field.patternDescription;
+    }
 
-    map[key] = { pattern, pattern_description: patternDescription };
+    const flags = typeof field.flags === 'string' ? field.flags : undefined;
+
+    map[key] = { pattern, pattern_description: patternDescription, flags };
   }
 
   return map;

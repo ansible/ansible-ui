@@ -10,6 +10,9 @@ export interface PluginConfiguration {
   choices?: { [name: string]: string };
   pattern?: string;
   pattern_description?: string;
+  /** camelCase variant emitted by the Gateway authenticator-plugins API. */
+  patternDescription?: string;
+  flags?: string;
 }
 
 export interface AuthenticatorPlugin {
