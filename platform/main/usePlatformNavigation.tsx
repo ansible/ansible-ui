@@ -296,7 +296,7 @@ export function useAutomationAnalytics(): PageNavigationItem {
     if (managedCloudInstall) {
       removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage);
     }
-    const automationDashboardId = 'awx-automation-dashboard';
+    const automationDashboardId = AwxRoute.AutomationDashboardMainPage;
 
     // Only apply logic after loading is complete to prevent flicker
     if (!isCollectionStatusLoading) {
