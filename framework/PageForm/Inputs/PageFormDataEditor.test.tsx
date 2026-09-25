@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
 import { PageFormDataEditor, valueToObject, objectToString } from './PageFormDataEditor';
+import { PageFormOptionsContext, PageFormOptionsContextValue } from '../PageFormOptionsContext';
 
 beforeEach(() => {
   vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
@@ -393,5 +394,100 @@ debug_mode: true         # Enable debugging`;
     );
 
     expect(screen.getByTestId('data-editor')).toBeInTheDocument();
+  });
+});
+
+describe('PageFormDataEditor — metadata-validation contract', () => {
+  // Module-level constant: a stable context value (no useMemo needed outside React)
+  const METADATA_WITH_PATTERN: PageFormOptionsContextValue = {
+    fields: {
+      config: {
+        pattern: '^\\{',
+        pattern_description: 'Must start with {',
+      },
+    },
+  };
+
+  function MetadataTestWrapper({
+    defaultValue,
+    onSubmit,
+    children,
+  }: Readonly<{
+    defaultValue: Record<string, unknown>;
+    onSubmit: (data: Record<string, unknown>) => void;
+    children: React.ReactNode;
+  }>) {
+    const methods = useForm({ defaultValues: defaultValue });
+
+    return (
+      <PageFormOptionsContext.Provider value={METADATA_WITH_PATTERN}>
+        <FormProvider {...methods}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void methods.handleSubmit(onSubmit)(e);
+            }}
+          >
+            {children}
+            <button type="submit">Submit</button>
+          </form>
+        </FormProvider>
+      </PageFormOptionsContext.Provider>
+    );
+  }
+
+  test('does not apply pattern validation from context metadata', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <MetadataTestWrapper defaultValue={{ config: '' }} onSubmit={onSubmit}>
+        <PageFormDataEditor label="Config" name="config" format="json" />
+      </MetadataTestWrapper>
+    );
+
+    const editor = screen.getByTestId('data-editor');
+
+    // Type a value that would violate the pattern (doesn't start with '{')
+    await user.clear(editor);
+    await user.type(editor, 'not-json');
+
+    // Submit the form — DataEditor should NOT run pattern validation
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalled();
+    });
+
+    // The pattern error message from metadata should never appear
+    expect(screen.queryByText('Must start with {')).not.toBeInTheDocument();
+  });
+
+  test('explicit validate prop still works independently of metadata context', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const customValidate = vi.fn((value: string) => {
+      if (!value || value.trim().length === 0) return 'Config is required';
+      return undefined;
+    });
+
+    render(
+      <MetadataTestWrapper defaultValue={{ config: '' }} onSubmit={onSubmit}>
+        <PageFormDataEditor label="Config" name="config" format="json" validate={customValidate} />
+      </MetadataTestWrapper>
+    );
+
+    // Submit without entering a value — the explicit validate should fire
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(customValidate).toHaveBeenCalled();
+    });
+
+    // The explicit validation error should appear, not the metadata pattern error
+    await waitFor(() => {
+      expect(screen.getByText('Config is required')).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Must start with {')).not.toBeInTheDocument();
   });
 });
