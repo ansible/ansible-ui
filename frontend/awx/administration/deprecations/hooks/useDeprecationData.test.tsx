@@ -3,7 +3,13 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useDeprecationData } from './useDeprecationData';
+import {
+  extractDeprecationMessages,
+  extractDeprecationMessagesFromLines,
+  getDeprecationOccurrences,
+  JobEvent,
+  useDeprecationData,
+} from './useDeprecationData';
 
 const mockJobsResponse = {
   results: [
@@ -701,5 +707,190 @@ describe('useDeprecationData', () => {
     capturedEventUrls.forEach((url) => {
       expect(new URL(url).searchParams.get('page_size')).toBe('200');
     });
+  });
+  it('should query markers, search and the verbose stream without filtering on stdout', async () => {
+    const capturedEventUrls: string[] = [];
+    server.use(
+      http.get(awxAPI`/jobs/`, () => HttpResponse.json(mockJobsResponse)),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, ({ request }) => {
+        capturedEventUrls.push(request.url);
+        return HttpResponse.json(mockEventsWithItems);
+      })
+    );
+
+    const { result } = renderHook(() => useDeprecationData());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    const queries = capturedEventUrls.map((url) => new URL(url).searchParams);
+    expect(queries.some((q) => q.get('event') === 'deprecated')).toBe(true);
+    expect(queries.some((q) => q.get('search') === 'DEPRECATION')).toBe(true);
+    expect(queries.some((q) => q.get('event__in') === 'deprecated,verbose')).toBe(true);
+    queries.forEach((q) => {
+      expect([...q.keys()].some((key) => key.includes('stdout'))).toBe(false);
+    });
+  });
+
+  it('should rebuild messages from AAP verbose events, one wrapped line per event', async () => {
+    server.use(
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({ results: [mockJobsResponse.results[0]], count: 1 })
+      ),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () =>
+        HttpResponse.json({ count: aapEvents.length, next: null, results: aapEvents })
+      )
+    );
+
+    const { result } = renderHook(() => useDeprecationData());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.data?.totalWarnings).toBe(2);
+    expect(result.current.data?.deprecations.map((d) => [d.type, d.count]).sort()).toEqual([
+      ['Bare variables in conditionals', 1],
+      ['with_dict loop', 1],
+    ]);
+  });
+});
+
+const PURPLE = '\u001b[0;35m';
+const RESET = '\u001b[0m';
+
+function event(overrides: Partial<JobEvent>): JobEvent {
+  return {
+    id: 0,
+    event: 'verbose',
+    stdout: '',
+    start_line: 0,
+    task: '',
+    play: '',
+    playbook: 'site.yml',
+    created: '2026-01-01T00:00:00Z',
+    job: 1,
+    ...overrides,
+  };
+}
+
+// Real AAP 2.7 / ansible-core 2.16 shape: empty deprecated marker, then one verbose event per wrapped line
+const aapEvents: JobEvent[] = [
+  event({ id: 10, counter: 7, event: 'deprecated' }),
+  event({
+    id: 11,
+    counter: 8,
+    stdout: `${PURPLE}[DEPRECATION WARNING]: with_dict is deprecated. Use loop with the dict2items ${RESET}`,
+  }),
+  event({
+    id: 12,
+    counter: 9,
+    stdout: `${PURPLE}filter instead. This feature will be removed in version 2.23.${RESET}`,
+  }),
+  event({ id: 13, counter: 11, event: 'deprecated' }),
+  event({
+    id: 14,
+    counter: 12,
+    stdout: `${PURPLE}[DEPRECATION WARNING]: evaluating 'install_packages' as a bare variable, this ${RESET}`,
+  }),
+  event({ id: 15, counter: 13, stdout: `${PURPLE}behaviour will go away.${RESET}` }),
+  event({ id: 16, counter: 14, stdout: '\u001b[0;32mok: [localhost] => with_items\u001b[0m' }),
+];
+
+// Real ansible-core 2.20 runner_on_ok output: deprecations, source context, then the task result
+const runnerOnOk220 =
+  `${PURPLE}[DEPRECATION WARNING]: Empty conditional expression was evaluated as True. This feature will be removed in the future.${RESET}\r\n` +
+  `${PURPLE}Origin: /runner/project/tasks/real_task_time.yml:26:9${RESET}\r\n` +
+  `${PURPLE}${RESET}\r\n` +
+  `${PURPLE}26   when: with_items${RESET}\r\n` +
+  `${PURPLE}${RESET}\r\n` +
+  `${PURPLE}[DEPRECATION WARNING]: The \`bool\` filter coerced invalid value 'maybe' (str) to False.${RESET}\r\n` +
+  '\u001b[0;32mok: [localhost] => {\u001b[0m\r\n' +
+  '\u001b[0;32m    "msg": "with_dict"\u001b[0m\r\n' +
+  '\u001b[0;32m}\u001b[0m';
+
+describe('extractDeprecationMessagesFromLines', () => {
+  it('re-joins lines of the same colour and stops at a different colour', () => {
+    expect(
+      extractDeprecationMessagesFromLines([
+        `${PURPLE}[DEPRECATION WARNING]: evaluating 'x' as a bare variable, this ${RESET}`,
+        `${PURPLE}behaviour will go away.${RESET}`,
+        '\u001b[0;32mok: [localhost]\u001b[0m',
+      ])
+    ).toEqual([
+      "[DEPRECATION WARNING]: evaluating 'x' as a bare variable, this behaviour will go away.",
+    ]);
+  });
+
+  it('stops at a hard break', () => {
+    expect(
+      extractDeprecationMessagesFromLines([
+        `${PURPLE}[DEPRECATION WARNING]: a ${RESET}`,
+        null,
+        `${PURPLE}b${RESET}`,
+      ])
+    ).toEqual(['[DEPRECATION WARNING]: a']);
+  });
+});
+
+describe('extractDeprecationMessages', () => {
+  it('splits several deprecations in one event and ignores source context and task output', () => {
+    const messages = extractDeprecationMessages(runnerOnOk220);
+    expect(messages).toHaveLength(2);
+    expect(messages[0]).toContain('Empty conditional expression');
+    expect(messages[0]).not.toContain('with_items');
+    expect(messages[1]).toContain('The `bool` filter coerced');
+    expect(messages[1]).not.toContain('with_dict');
+  });
+
+  it('returns nothing for events without a deprecation', () => {
+    expect(extractDeprecationMessages('')).toEqual([]);
+    expect(extractDeprecationMessages('ok: [localhost]')).toEqual([]);
+  });
+});
+
+describe('getDeprecationOccurrences', () => {
+  it('counts each AAP marker once, using the text from the verbose events', () => {
+    const occurrences = getDeprecationOccurrences(aapEvents);
+    expect(occurrences.map((o) => o.text)).toEqual([
+      '[DEPRECATION WARNING]: with_dict is deprecated. Use loop with the dict2items filter instead. This feature will be removed in version 2.23.',
+      "[DEPRECATION WARNING]: evaluating 'install_packages' as a bare variable, this behaviour will go away.",
+    ]);
+  });
+
+  it('ignores duplicate events returned by more than one query', () => {
+    expect(getDeprecationOccurrences([...aapEvents, ...aapEvents])).toHaveLength(2);
+  });
+
+  it('reads deprecations inside task result events with the task name', () => {
+    const occurrences = getDeprecationOccurrences([
+      event({
+        id: 1,
+        counter: 3,
+        event: 'runner_on_ok',
+        task: 'Check flags',
+        stdout: runnerOnOk220,
+      }),
+    ]);
+    expect(occurrences).toHaveLength(2);
+    expect(occurrences[0].task).toBe('Check flags');
+  });
+
+  it('still counts empty deprecated markers when no text is available', () => {
+    const occurrences = getDeprecationOccurrences([
+      event({ id: 1, counter: 1, event: 'deprecated', task: 'Install with_items' }),
+      event({ id: 2, counter: 5, event: 'deprecated' }),
+    ]);
+    expect(occurrences).toEqual([
+      { text: '', task: 'Install with_items' },
+      { text: '', task: '' },
+    ]);
+  });
+
+  it('skips the ansible-core 2.20 "deprecation warnings can be disabled" notice', () => {
+    const occurrences = getDeprecationOccurrences([
+      event({
+        id: 1,
+        counter: 1,
+        event: 'deprecated',
+        stdout: '[WARNING]: Deprecation warnings can be disabled',
+      }),
+    ]);
+    expect(occurrences).toEqual([]);
   });
 });
