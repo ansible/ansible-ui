@@ -108,4 +108,58 @@ describe('buildFieldMetadataMap', () => {
     expect(result).toEqual({});
     expect(Object.keys(result).length).toBe(0);
   });
+
+  it('accepts camelCase patternDescription (Gateway authenticator API format)', () => {
+    const fields: SchemaFieldWithPattern[] = [
+      { name: 'CLIENT_ID', pattern: '^[A-Z0-9]+$', patternDescription: 'Uppercase alphanumeric' },
+    ];
+    const result = buildFieldMetadataMap(fields, 'name');
+    expect(result.CLIENT_ID?.pattern_description).toBe('Uppercase alphanumeric');
+  });
+
+  it('prefers snake_case pattern_description over camelCase when both are present', () => {
+    const fields: SchemaFieldWithPattern[] = [
+      {
+        name: 'URL',
+        pattern: '^https://',
+        pattern_description: 'snake wins',
+        patternDescription: 'camel loses',
+      },
+    ];
+    const result = buildFieldMetadataMap(fields, 'name');
+    expect(result.URL?.pattern_description).toBe('snake wins');
+  });
+
+  it('includes flags when present', () => {
+    const fields: SchemaFieldWithPattern[] = [
+      { id: 'host', pattern: String.raw`^\p{L}+$`, flags: 'u' },
+    ];
+    const result = buildFieldMetadataMap(fields);
+    expect(result.host?.flags).toBe('u');
+  });
+
+  it('works with Gateway authenticator schema shape (name + patternDescription + flags)', () => {
+    const fields: SchemaFieldWithPattern[] = [
+      {
+        name: 'CALLBACK_URL',
+        pattern: '^https?://',
+        patternDescription: 'Must be an HTTP(S) URL',
+        flags: 'i',
+      },
+      { name: 'SECRET_KEY', pattern: '^.{8,}$', patternDescription: 'At least 8 characters' },
+    ];
+    const result = buildFieldMetadataMap(fields, 'name');
+    expect(result).toEqual({
+      CALLBACK_URL: {
+        pattern: '^https?://',
+        pattern_description: 'Must be an HTTP(S) URL',
+        flags: 'i',
+      },
+      SECRET_KEY: {
+        pattern: '^.{8,}$',
+        pattern_description: 'At least 8 characters',
+        flags: undefined,
+      },
+    });
+  });
 });
