@@ -154,7 +154,11 @@ export function useRssNotifications() {
   const { data: feedContent } = useSWR<string>(
     gatewaySettings?.NOTIFICATION_RSS_FEED_ENABLED && gatewaySettings?.NOTIFICATION_RSS_FEED_URL,
     {
-      fetcher: (url: string) => fetch(url).then((res) => res.text()),
+      fetcher: (url: string) =>
+        fetch(url).then((response) => {
+          if (!response.ok) throw new Error(`RSS request failed: ${response.status}`);
+          return response.text();
+        }),
       refreshInterval: 10 * 60 * 1000, // Refresh every 10 minutes
       revalidateOnFocus: false, // Do not revalidate on focus
     }

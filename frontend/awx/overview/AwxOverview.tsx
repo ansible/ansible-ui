@@ -42,7 +42,10 @@ export function AwxOverview() {
 function AwxOverviewInternal(props: { managedResources: Resource[] }) {
   const { managedResources } = props;
   const { data, isLoading } = useSWR<IAwxDashboardData>(awxAPI`/dashboard/`, (url: string) =>
-    fetch(url).then((r) => r.json())
+    fetch(url).then((response) => {
+      if (!response.ok) throw new Error(`Overview request failed: ${response.status}`);
+      return response.json();
+    })
   );
   if (!data || isLoading) {
     return (
