@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RESOURCE_TYPE } from '../constants';
 import type { WizardFormValues } from '../types';
 import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
@@ -36,8 +36,10 @@ vi.mock('@patternfly/react-topology', () => ({
   TopologyView: () => null,
 }));
 
+const mockUseOptions = vi.fn(() => ({ data: { actions: { POST: {} } } }));
+
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
-  useOptions: () => ({ data: { actions: { POST: {} } } }),
+  useOptions: (...args: unknown[]) => mockUseOptions(...args),
 }));
 
 vi.mock('../hooks', () => ({
@@ -65,6 +67,20 @@ vi.mock('../hooks', () => ({
 }));
 
 describe('NodeAddWizard', () => {
+  beforeEach(() => {
+    mockUseOptions.mockClear();
+  });
+
+  it('should load workflow node options for PageWizard', () => {
+    render(
+      <MemoryRouter>
+        <NodeAddWizard />
+      </MemoryRouter>
+    );
+
+    expect(mockUseOptions).toHaveBeenCalled();
+  });
+
   it('should render wizard with Add step title', () => {
     render(
       <MemoryRouter>

@@ -10,6 +10,7 @@ import * as fetchLaunchConfigLoadResultModule from './fetchLaunchConfigLoadResul
 import {
   awaitNodeLaunchConfigForWizard,
   validateJobTemplateRequirements,
+  validateNodePromptsStep,
   validateNodeTypeStep,
   validateRequiredCredentialTypes,
 } from './validationHelpers';
@@ -161,6 +162,94 @@ describe('validationHelpers', () => {
         expect(errorMessage).not.toContain('5'); // Should not contain raw IDs
         expect(errorMessage).not.toContain('6');
       }
+    });
+  });
+
+  describe('validateNodePromptsStep', () => {
+    const machineType = { id: 1, name: 'Machine' };
+    const vaultType = { id: 2, name: 'Vault' };
+
+    it('should validate credentials from merged formData instead of stale wizardData', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [],
+          requiredCredentialTypes: [machineType],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1 }],
+          requiredCredentialTypes: [machineType],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fail when merged credentials do not satisfy the required types', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1 }],
+          requiredCredentialTypes: [machineType, vaultType],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1 }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).toThrow(RequestError);
+    });
+
+    it('should prefer requiredCredentialTypes from the merged prompt', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [vaultType],
+          credentials: [{ id: 2, name: 'Vault', credential_type: 2 }],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [machineType],
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1 }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fall back to wizardData.prompt.requiredCredentialTypes when form prompt omits them', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [machineType],
+          credentials: [],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1 }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fall back to fallbackRequiredCredentialTypes when prompt metadata is missing', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1 }],
+        },
+      };
+
+      expect(() =>
+        validateNodePromptsStep(mockT, formData, wizardData, [machineType])
+      ).not.toThrow();
     });
   });
 

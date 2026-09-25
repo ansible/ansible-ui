@@ -7,10 +7,12 @@ describe('isWizardSupplementalData', () => {
     expect(isWizardSupplementalData(Object.create(null))).toBe(true);
   });
 
-  it('rejects arrays, null, and undefined', () => {
+  it('rejects arrays, null, undefined, and primitives', () => {
     expect(isWizardSupplementalData(['ignored'])).toBe(false);
     expect(isWizardSupplementalData(null)).toBe(false);
     expect(isWizardSupplementalData(undefined)).toBe(false);
+    expect(isWizardSupplementalData('supplemental')).toBe(false);
+    expect(isWizardSupplementalData(0)).toBe(false);
   });
 
   it('rejects class instances such as Error and Date', () => {
