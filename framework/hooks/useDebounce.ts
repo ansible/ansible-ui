@@ -6,7 +6,9 @@ export function useDebounce<Args extends unknown[]>(
   wait: number
 ): DebouncedFunction<Args> {
   const callbackRef = useRef(callback);
-  callbackRef.current = callback;
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
   const debounced = useMemo(
     () => debounce((...args: Args) => callbackRef.current(...args), wait),

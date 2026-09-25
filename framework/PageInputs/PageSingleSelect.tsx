@@ -158,7 +158,8 @@ export function PageSingleSelect<
   const [open, setOpen] = useOverridableState(props.open ?? false, props.setOpen);
   useEffect(() => {
     if (open) {
-      setTimeout(() => searchRef.current?.focus(), 1);
+      const timeout = setTimeout(() => searchRef.current?.focus(), 1);
+      return () => clearTimeout(timeout);
     }
   }, [open]);
 
