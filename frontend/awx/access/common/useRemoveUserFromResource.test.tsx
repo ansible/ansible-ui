@@ -51,4 +51,14 @@ describe('useRemoveUsersFromResource', () => {
       expect.objectContaining({ title: 'Remove user' })
     );
   });
+
+  it('uses the generic title when the resource has no type', () => {
+    const { result } = renderHook(() => useRemoveUsersFromResource());
+
+    result.current([user], { ...resource, type: undefined });
+
+    expect(mockConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Remove user' })
+    );
+  });
 });
