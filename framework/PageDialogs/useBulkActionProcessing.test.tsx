@@ -41,4 +41,62 @@ describe('useBulkActionProcessing', () => {
     expect(setError).toHaveBeenCalledWith('Action failed');
     expect(setSuccessfulItems).toHaveBeenCalledWith([{ id: 1 }]);
   });
+
+  it('does not update processing state after cancellation', async () => {
+    const abortController = new AbortController();
+    abortController.abort();
+    const setProcessing = vi.fn();
+    const setSuccessfulItems = vi.fn();
+
+    renderHook(() =>
+      useBulkActionProcessing({
+        abortController,
+        actionFn: vi.fn(),
+        errorAdapter: vi.fn(),
+        items: [{ id: 1 }],
+        keyFn: (item: { id: number }) => item.id,
+        retry: 0,
+        setError: vi.fn(),
+        setProcessing,
+        setProgress: vi.fn(),
+        setStatuses: vi.fn() as never,
+        setSuccessfulItems,
+        successfulItems: [],
+        t: (key) => key,
+        translations: { errorText: 'Action failed' },
+      })
+    );
+
+    await waitFor(() => expect(setSuccessfulItems).toHaveBeenCalledWith([]));
+    expect(setProcessing).not.toHaveBeenCalled();
+  });
+
+  it('records a null status when the parser has no status detail', async () => {
+    const statusUpdates: unknown[] = [];
+    const setStatuses = vi.fn((update: (value: undefined) => unknown) => {
+      statusUpdates.push(update(undefined));
+    });
+
+    renderHook(() =>
+      useBulkActionProcessing({
+        abortController: new AbortController(),
+        actionFn: vi.fn(() => Promise.resolve({})),
+        errorAdapter: vi.fn(),
+        items: [{ id: 1 }],
+        keyFn: (item: { id: number }) => item.id,
+        retry: 0,
+        setError: vi.fn(),
+        setProcessing: vi.fn(),
+        setProgress: vi.fn(),
+        setStatuses: setStatuses as never,
+        setSuccessfulItems: vi.fn(),
+        statusParser: () => null,
+        successfulItems: [],
+        t: (key) => key,
+        translations: { errorText: 'Action failed' },
+      })
+    );
+
+    await waitFor(() => expect(statusUpdates).toEqual([{ 1: null }]));
+  });
 });
