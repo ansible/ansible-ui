@@ -18,6 +18,7 @@ export function DropZone(props: {
     (files: File[]) => {
       if (!files || files.length === 0) return;
       const file = files[0];
+      if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
         const contents = reader.result;

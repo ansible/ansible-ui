@@ -82,10 +82,14 @@ function getFilterParam(
   if (!values?.length) {
     return [undefined, undefined];
   }
+  const firstValue = values[0];
+  if (typeof firstValue !== 'string') {
+    return [undefined, undefined];
+  }
 
   if (filter.query === 'object1__in') {
     if (values.length === 1 && values.some((value) => value !== '')) {
-      return ['or__object1__in', values[0].replaceAll('+', ',')];
+      return ['or__object1__in', firstValue.replaceAll('+', ',')];
     } else {
       return [undefined, undefined];
     }
@@ -115,7 +119,7 @@ function getFilterParam(
   }
 
   if (values.length === 1) {
-    return [filter.query, values[0]];
+    return [filter.query, firstValue];
   }
 
   if ('useAndOperator' in filter && filter.useAndOperator) {

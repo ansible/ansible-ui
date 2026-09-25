@@ -132,8 +132,14 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     if (fromIndex === toIndex) {
       return arr;
     }
+    if (fromIndex < 0) {
+      return arr;
+    }
     const temp = arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, temp[0]);
+    const item = temp[0];
+    if (item) {
+      arr.splice(toIndex, 0, item);
+    }
 
     return arr;
   };
