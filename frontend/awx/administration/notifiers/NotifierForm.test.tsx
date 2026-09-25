@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { awxAPI } from '../../common/api/awx-utils';
 import { AddNotifier } from './NotifierForm';
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
@@ -135,8 +136,17 @@ describe('NotifierForm', () => {
       expect(screen.getByText('Host')).toBeInTheDocument();
     });
 
-    it('should show pattern validation error when Host violates the OPTIONS metadata pattern', async () => {
+    it('should show pattern validation error and block submission when Host violates the OPTIONS metadata pattern', async () => {
       const user = userEvent.setup();
+      const postSpy = vi.fn();
+
+      // Register a POST handler to detect whether the form submits
+      server.use(
+        http.post(awxAPI`/notification_templates/`, () => {
+          postSpy();
+          return HttpResponse.json({ id: 1 }, { status: 201 });
+        })
+      );
 
       render(
         <MemoryRouter initialEntries={['/notifiers/create']}>
@@ -149,6 +159,9 @@ describe('NotifierForm', () => {
       await waitFor(() => {
         expect(screen.getByTestId('page-title')).toHaveTextContent('Create notifier');
       });
+
+      // Fill the required Name field so it doesn't block for a different reason
+      await user.type(screen.getByTestId('name'), 'Test Email Notifier');
 
       // Select Email notification type to render the dynamic sub-form
       await user.click(screen.getByRole('button', { name: /Notification type/i }));
@@ -176,6 +189,12 @@ describe('NotifierForm', () => {
       await waitFor(() => {
         expect(screen.getByText('Host must be a valid hostname')).toBeInTheDocument();
       });
-    });
+
+      // Click the real submit button — the form should refuse to POST
+      await user.click(screen.getByTestId('Submit'));
+
+      // The notifier-create API must NOT be called
+      expect(postSpy).not.toHaveBeenCalled();
+    }, 15000);
   });
 });
