@@ -22,7 +22,7 @@ import { buildEffectivePrompt } from './buildEffectivePrompt';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
-import { validateNodeTypeStep, validateRequiredCredentialTypes } from './validationHelpers';
+import { validateNodePromptsStep, validateNodeTypeStep } from './validationHelpers';
 
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
@@ -104,15 +104,13 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         }
         return true;
       },
-      validate: (wizardData: Partial<WizardFormValues>) => {
-        // Prefer the live wizard data's requiredCredentialTypes so that validation reflects
-        // the currently selected template, not the template that was loaded when the wizard
-        // was first opened (which is stale if the user switched templates mid-edit).
-        const requiredCredentialTypes =
-          wizardData.prompt?.requiredCredentialTypes ||
-          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes ||
-          [];
-        validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes);
+      validate: (formData: object, wizardData: object) => {
+        validateNodePromptsStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>,
+          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes || []
+        );
       },
     },
     {

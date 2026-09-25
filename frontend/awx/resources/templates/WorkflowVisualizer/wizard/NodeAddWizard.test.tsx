@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { RESOURCE_TYPE } from '../constants';
 import type { WizardFormValues } from '../types';
 import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
@@ -18,6 +18,11 @@ vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
   },
 }));
 
+vi.mock('./NodeTypeStep', () => ({ NodeTypeStep: () => null }));
+vi.mock('./NodePromptsStep', () => ({ NodePromptsStep: () => null }));
+vi.mock('./NodeReviewStep', () => ({ NodeReviewStep: () => null }));
+vi.mock('../../../../common/SurveyStep', () => ({ SurveyStep: () => null }));
+
 vi.mock('@patternfly/react-topology', () => ({
   useVisualizationController: vi.fn(() => ({
     getState: () => ({ sourceNode: undefined }),
@@ -34,6 +39,12 @@ vi.mock('@patternfly/react-topology', () => ({
   observer: (component: unknown) => component,
   TopologySideBar: () => null,
   TopologyView: () => null,
+}));
+
+const mockUseOptions = vi.hoisted(() => vi.fn(() => ({ data: { actions: { POST: {} } } })));
+
+vi.mock('@ansible/common-ui/crud/useOptions', () => ({
+  useOptions: mockUseOptions,
 }));
 
 vi.mock('../hooks', () => ({
@@ -61,6 +72,20 @@ vi.mock('../hooks', () => ({
 }));
 
 describe('NodeAddWizard', () => {
+  beforeEach(() => {
+    mockUseOptions.mockClear();
+  });
+
+  it('should load workflow node options for PageWizard', () => {
+    render(
+      <MemoryRouter>
+        <NodeAddWizard />
+      </MemoryRouter>
+    );
+
+    expect(mockUseOptions).toHaveBeenCalled();
+  });
+
   it('should render wizard with Add step title', () => {
     render(
       <MemoryRouter>

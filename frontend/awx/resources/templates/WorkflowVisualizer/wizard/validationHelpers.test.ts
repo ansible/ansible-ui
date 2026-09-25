@@ -1,21 +1,30 @@
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { RESOURCE_TYPE } from '../constants';
 import { WizardFormValues } from '../types';
-import { registerLaunchConfigLoad, type LaunchConfigLoadResult } from './launchConfigLoad';
+import { type LaunchConfigLoadResult } from './launchConfigLoad';
+import * as fetchLaunchConfigLoadResultModule from './fetchLaunchConfigLoadResult';
 import {
   awaitNodeLaunchConfigForWizard,
   validateJobTemplateRequirements,
+  validateNodePromptsStep,
   validateNodeTypeStep,
   validateRequiredCredentialTypes,
 } from './validationHelpers';
 
+vi.mock('./fetchLaunchConfigLoadResult', () => ({
+  fetchLaunchConfigLoadResult: vi.fn(),
+}));
+
 type WizardData = Partial<WizardFormValues>;
 
 describe('validationHelpers', () => {
+  beforeEach(() => {
+    vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockReset();
+  });
   const mockT = (key: string, params?: Record<string, unknown>) => {
     if (params) {
       return key.replace(
@@ -61,6 +70,14 @@ describe('validationHelpers', () => {
       expect(() =>
         validateRequiredCredentialTypes(mockT, wizardData as WizardData, requiredCredentialTypes)
       ).toThrow(RequestError);
+
+      try {
+        validateRequiredCredentialTypes(mockT, wizardData as WizardData, requiredCredentialTypes);
+      } catch (error) {
+        expect((error as RequestError).json).toEqual({
+          __all__: [expect.stringContaining('Please select only credentials')],
+        });
+      }
     });
 
     it('should fail validation when required credential types are missing', () => {
@@ -148,6 +165,94 @@ describe('validationHelpers', () => {
     });
   });
 
+  describe('validateNodePromptsStep', () => {
+    const machineType = { id: 1, name: 'Machine' };
+    const vaultType = { id: 2, name: 'Vault' };
+
+    it('should validate credentials from merged formData instead of stale wizardData', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [],
+          requiredCredentialTypes: [machineType],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+          requiredCredentialTypes: [machineType],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fail when merged credentials do not satisfy the required types', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+          requiredCredentialTypes: [machineType, vaultType],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).toThrow(RequestError);
+    });
+
+    it('should prefer requiredCredentialTypes from the merged prompt', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [vaultType],
+          credentials: [{ id: 2, name: 'Vault', credential_type: 2, passwords_needed: [] }],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [machineType],
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fall back to wizardData.prompt.requiredCredentialTypes when form prompt omits them', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [machineType],
+          credentials: [],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fall back to fallbackRequiredCredentialTypes when prompt metadata is missing', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        },
+      };
+
+      expect(() =>
+        validateNodePromptsStep(mockT, formData, wizardData, [machineType])
+      ).not.toThrow();
+    });
+  });
+
   describe('awaitNodeLaunchConfigForWizard', () => {
     it('should return undefined when resourceId is missing', async () => {
       await expect(
@@ -164,7 +269,11 @@ describe('validationHelpers', () => {
       ).resolves.toBeUndefined();
     });
 
-    it('should return undefined when no launch config load is registered', async () => {
+    it('should return undefined when the launch config fetch returns nothing', async () => {
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        undefined
+      );
+
       await expect(
         awaitNodeLaunchConfigForWizard({
           node_type: RESOURCE_TYPE.job,
@@ -173,14 +282,16 @@ describe('validationHelpers', () => {
       ).resolves.toBeUndefined();
     });
 
-    it('should return launch config data when a registered load completes', async () => {
+    it('should return launch config data when the fetch completes', async () => {
       const loadResult: LaunchConfigLoadResult = {
         launch_config: { survey_enabled: true } as LaunchConfiguration,
         resource: { id: 5, name: 'Deploy', type: 'job_template' } as JobTemplate,
         resourceId: 5,
       };
 
-      registerLaunchConfigLoad(RESOURCE_TYPE.job, 5, Promise.resolve(loadResult));
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        loadResult
+      );
 
       await expect(
         awaitNodeLaunchConfigForWizard({
@@ -201,7 +312,9 @@ describe('validationHelpers', () => {
         resourceId: 8,
       };
 
-      registerLaunchConfigLoad(RESOURCE_TYPE.workflow_job, 8, Promise.resolve(loadResult));
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        loadResult
+      );
 
       await expect(
         awaitNodeLaunchConfigForWizard({
@@ -215,7 +328,32 @@ describe('validationHelpers', () => {
       });
     });
 
-    it('should clear stale launch_config when the selected template has no registered load', async () => {
+    it('should return undefined when the fetch returns nothing and the resource id is unchanged', async () => {
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        undefined
+      );
+
+      await expect(
+        awaitNodeLaunchConfigForWizard(
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 1,
+          },
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 1,
+            launch_config: { survey_enabled: true } as LaunchConfiguration,
+            resource: { id: 1, name: 'Old', type: 'job_template' } as JobTemplate,
+          }
+        )
+      ).resolves.toBeUndefined();
+    });
+
+    it('should clear stale launch_config and resource when the fetch returns nothing', async () => {
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        undefined
+      );
+
       await expect(
         awaitNodeLaunchConfigForWizard(
           {
@@ -226,11 +364,13 @@ describe('validationHelpers', () => {
             node_type: RESOURCE_TYPE.job,
             resourceId: 1,
             launch_config: { survey_enabled: true } as LaunchConfiguration,
+            resource: { id: 1, name: 'Old', type: 'job_template' } as JobTemplate,
           }
         )
       ).resolves.toEqual({
         launch_config: null,
         resourceId: 2,
+        resource: undefined,
       });
     });
   });
@@ -239,20 +379,16 @@ describe('validationHelpers', () => {
     const mockSimpleT = (key: string) => key;
 
     it('should validate the loaded resource rather than form-only values', async () => {
-      registerLaunchConfigLoad(
-        RESOURCE_TYPE.job,
-        5,
-        Promise.resolve({
-          launch_config: null,
-          resource: {
-            type: 'job_template',
-            project: null,
-            inventory: 1,
-            ask_inventory_on_launch: false,
-          } as unknown as JobTemplate,
-          resourceId: 5,
-        })
-      );
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue({
+        launch_config: null,
+        resource: {
+          type: 'job_template',
+          project: null,
+          inventory: 1,
+          ask_inventory_on_launch: false,
+        } as unknown as JobTemplate,
+        resourceId: 5,
+      });
 
       await expect(
         validateNodeTypeStep(
@@ -269,7 +405,9 @@ describe('validationHelpers', () => {
         resource: { id: 5, name: 'Deploy', type: 'job_template' } as JobTemplate,
         resourceId: 5,
       };
-      registerLaunchConfigLoad(RESOURCE_TYPE.job, 5, Promise.resolve(loadResult));
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        loadResult
+      );
 
       await expect(
         validateNodeTypeStep(

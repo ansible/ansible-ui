@@ -37,3 +37,18 @@ export function awaitLaunchConfigLoad(
     pendingLoads.get(getLaunchConfigLoadKey(nodeType, resourceId)) ?? Promise.resolve(undefined)
   );
 }
+
+export function ensureLaunchConfigLoad(
+  nodeType: string,
+  resourceId: number,
+  loader: () => Promise<LaunchConfigLoadResult | undefined>
+): Promise<LaunchConfigLoadResult | undefined> {
+  const key = getLaunchConfigLoadKey(nodeType, resourceId);
+  const pending = pendingLoads.get(key);
+  if (pending) {
+    return pending;
+  }
+  const promise = loader();
+  registerLaunchConfigLoad(nodeType, resourceId, promise);
+  return promise;
+}
