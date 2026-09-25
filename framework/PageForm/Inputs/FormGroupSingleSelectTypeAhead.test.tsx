@@ -35,6 +35,35 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     expect(input).toHaveAttribute('aria-expanded', 'true');
   });
 
+  it('should render grouped options', async () => {
+    const user = userEvent.setup();
+    render(
+      <FormGroupSingleSelectTypeAhead
+        {...defaultProps}
+        options={[
+          { value: 'one', label: 'One', group: 'First' },
+          { value: 'two', label: 'Two', group: 'Second' },
+        ]}
+      />
+    );
+
+    await user.click(screen.getByRole('textbox'));
+
+    expect(screen.getByText('First')).toBeInTheDocument();
+    expect(screen.getByText('Second')).toBeInTheDocument();
+  });
+
+  it('should handle keyboard navigation with no options', async () => {
+    const user = userEvent.setup();
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} options={[]} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-expanded', 'true');
+  });
+
   // Test the core deletion fix - this is what was broken
   describe('Deletion Functionality', () => {
     it('should allow deleting typed characters with backspace', async () => {
