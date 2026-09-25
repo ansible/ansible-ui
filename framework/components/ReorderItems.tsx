@@ -44,6 +44,26 @@ type ReorderItemsProps<T extends object> = {
   isSelectableWithCheckbox?: boolean;
 };
 
+export function moveItem<T>(
+  arr: T[],
+  itemId: string,
+  toIndex: number,
+  keyFn: (item: T) => string | number
+) {
+  const fromIndex = arr.findIndex((item) => keyFn(item) === itemId);
+
+  if (fromIndex === toIndex || fromIndex < 0) {
+    return arr;
+  }
+
+  const item = arr.splice(fromIndex, 1)[0];
+  if (item) {
+    arr.splice(toIndex, 0, item);
+  }
+
+  return arr;
+}
+
 /**
  * Component to reorder items in a list by dragging items to a desired position.
  * [Optionally allows selecting items from the list using checkboxes.]
@@ -119,23 +139,11 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
         (item) => item.id === dragId
       );
       if (newDraggedItemIndex !== itemStartIndex && draggedItemId) {
-        const tempItemOrder = moveItem([...items], draggedItemId, newDraggedItemIndex);
+        const tempItemOrder = moveItem([...items], draggedItemId, newDraggedItemIndex, keyFn);
         setItems(tempItemOrder);
       }
     }
     return null;
-  };
-
-  const moveItem = (arr: T[], itemId: string, toIndex: number) => {
-    const fromIndex = arr.findIndex((item) => keyFn(item) === itemId);
-
-    if (fromIndex === toIndex) {
-      return arr;
-    }
-    const temp = arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, temp[0]);
-
-    return arr;
   };
 
   const onDragLeave: TbodyProps['onDragLeave'] = (evt) => {

@@ -1,0 +1,37 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": [
+    "framework",
+    "frontend/awx",
+    "frontend/chatbot",
+    "frontend/common",
+    "frontend/eda",
+    "frontend/hub",
+    "packages",
+    "platform",
+    "types"
+  ],
+  "exclude": [
+    "**/*.cy.ts",
+    "**/*.cy.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__tests__/**",
+    "**/coverage/**",
+    "**/dist/**",
+    "**/dist-insights/**",
+    "**/node_modules/**",
+    "**/build/**",
+    "frontend/hub/insights/**",
+    "playwright/**",
+    "playwright-insights/**",
+    "scripts/**"
+  ]
+}
