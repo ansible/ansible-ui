@@ -44,7 +44,7 @@ type ReorderItemsProps<T extends object> = {
   isSelectableWithCheckbox?: boolean;
 };
 
-function moveItem<T>(
+export function moveItem<T>(
   arr: T[],
   itemId: string,
   toIndex: number,

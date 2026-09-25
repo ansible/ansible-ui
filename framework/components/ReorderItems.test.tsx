@@ -1,8 +1,21 @@
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ReorderItems } from './ReorderItems';
+import { moveItem, ReorderItems } from './ReorderItems';
 
 describe('ReorderItems', () => {
+  it('leaves the list unchanged when the item is missing or already positioned', () => {
+    const items = [{ id: 'first' }, { id: 'second' }];
+
+    expect(moveItem([...items], 'missing', 1, (item) => item.id)).toEqual(items);
+    expect(moveItem([...items], 'first', 0, (item) => item.id)).toEqual(items);
+  });
+
+  it('does not insert an undefined item from a sparse list', () => {
+    const items = [undefined, { id: 'second' }] as unknown as { id: string }[];
+
+    expect(moveItem([...items], 'missing', 1, (item) => item?.id ?? 'missing')).toEqual([items[1]]);
+  });
+
   it('moves a dragged item to the target row', () => {
     const items = [{ id: 'first' }, { id: 'second' }];
     const setItems = vi.fn();

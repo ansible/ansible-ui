@@ -82,10 +82,7 @@ function getFilterParam(
   if (!values?.length) {
     return [undefined, undefined];
   }
-  const firstValue = values[0];
-  if (typeof firstValue !== 'string') {
-    return [undefined, undefined];
-  }
+  const firstValue = values[0] ?? '';
 
   const activityStreamParam = getActivityStreamParam(filter, values, firstValue);
   if (activityStreamParam) return activityStreamParam;
