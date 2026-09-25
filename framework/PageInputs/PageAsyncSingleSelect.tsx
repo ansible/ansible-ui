@@ -114,7 +114,10 @@ export function PageAsyncSingleSelect<
             }
             if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
               // Defer onSelect to avoid setState during render
-              setTimeout(() => onSelect(newOptions[0].value), 0);
+              const [firstOption] = newOptions;
+              if (firstOption) {
+                setTimeout(() => onSelect(firstOption.value), 0);
+              }
             }
             setTotal(result.remaining + newOptions.length);
             if (writeInOption && result.remaining + newOptions.length === 0) {
