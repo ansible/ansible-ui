@@ -51,21 +51,23 @@ export function filtersToSearchObj(toolbarFilters: IToolbarFilter[], filterState
     const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
     const [param, value] = getFilterParam(filterState, toolbarFilter);
     if (param && value) {
-      if (Array.isArray(value)) {
-        value.forEach((val) => {
-          params.append(param, val);
-        });
-      } else {
-        params.append(param, value);
-      }
+      appendFilterValues(params, param, value);
     }
     // Support for Activity Stream needing two values
     if (param === 'or__object1__in' && value) {
-      params.append('or__object2__in', Array.isArray(value) ? value[0] : value);
+      appendFilterValues(params, 'or__object2__in', value);
     }
   }
 
   return params;
+}
+
+function appendFilterValues(params: URLSearchParams, param: string, value: string | string[]) {
+  if (Array.isArray(value)) {
+    value.forEach((val) => params.append(param, val));
+    return;
+  }
+  params.append(param, value);
 }
 
 function getFilterParam(
