@@ -17,6 +17,9 @@ function TestConsumer() {
       <button type="button" onClick={() => toaster.addAlert(alert)}>
         Add
       </button>
+      <button type="button" onClick={() => toaster.replaceAlert(alert, { title: 'Replaced' })}>
+        Replace
+      </button>
       <button
         type="button"
         onClick={() => toaster.addAlert({ title: 'Timed Alert', variant: 'info', timeout: 1000 })}
@@ -116,6 +119,21 @@ describe('PageAlertToaster', () => {
       await user.click(addButton);
 
       expect(screen.getAllByText('Test Alert')).toHaveLength(1);
+    });
+
+    it('should replace an existing alert through replaceAlert', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add' }));
+      await user.click(screen.getByRole('button', { name: 'Replace' }));
+
+      expect(screen.getByText('Replaced')).toBeInTheDocument();
+      expect(screen.queryByText('Test Alert')).not.toBeInTheDocument();
     });
 
     it('should remove all alerts', async () => {
