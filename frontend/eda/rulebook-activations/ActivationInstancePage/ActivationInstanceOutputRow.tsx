@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Ansi } from '@ansible/common-ui/Ansi';
 import { Label } from '@patternfly/react-core';
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { useRef } from 'react';
 import styled from 'styled-components';
 import './ActivationInstancePage.css';

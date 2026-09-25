@@ -7,7 +7,7 @@ import {
   PageAlertToasterProvider,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardToolbar } from './components';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
@@ -20,8 +20,8 @@ import type {
   IAutomationDashboardCollectionStatus,
 } from './types';
 
-vi.mock('@react-hook/resize-observer', () => ({
-  default: vi.fn(),
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
 }));
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
@@ -445,7 +445,7 @@ describe('AutomationDashboard', () => {
 
     const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
     act(() => {
-      resizeCallback({ contentRect: { width: 1450 } } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: { width: 1450 } } as ResizeObserverEntry);
     });
 
     expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'xs');
@@ -463,7 +463,7 @@ describe('AutomationDashboard', () => {
 
     const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
     act(() => {
-      resizeCallback({ contentRect: {} } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: {} } as ResizeObserverEntry);
     });
 
     // no reported width -> gridColumns falls back to 1, below the wide-layout range

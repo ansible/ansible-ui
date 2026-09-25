@@ -1,5 +1,5 @@
 import { ButtonVariant, InputGroup, InputGroupItem, TextInput } from '@patternfly/react-core';
-import getValue from 'get-value';
+import { getByPath } from '../../utils/getByPath';
 import { ReactNode, useState } from 'react';
 import {
   Controller,
@@ -368,7 +368,7 @@ export function PageFormTextInput<
   // Smart defaults: password fields default to 'new-password', others default to 'off'
   // TypeScript provides type safety for valid autoComplete values
 
-  const undoValue = getValue(defaultValues as object, props.name) as PathValue<
+  const undoValue = getByPath(defaultValues as object, props.name) as PathValue<
     TFieldValues,
     TFieldName
   >;
@@ -486,7 +486,7 @@ export function PageFormTextInput<
       rules={{
         required,
         validate: createFieldValidate(fieldMetadata, validate, () =>
-          getValue(defaultValues as object, name)
+          getByPath(defaultValues as object, name)
         ),
 
         minLength:
