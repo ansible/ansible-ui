@@ -402,7 +402,7 @@ describe('PageFormDataEditor — metadata-validation contract', () => {
   const METADATA_WITH_PATTERN: PageFormOptionsContextValue = {
     fields: {
       config: {
-        pattern: '^\\{',
+        pattern: String.raw`^\{`,
         pattern_description: 'Must start with {',
       },
     },
