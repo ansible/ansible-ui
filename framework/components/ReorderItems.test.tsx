@@ -39,4 +39,40 @@ describe('ReorderItems', () => {
 
     expect(setItems).toHaveBeenCalledWith([items[1], items[0]]);
   });
+
+  it('moves an item down when the target row follows it', () => {
+    const items = [{ id: 'first' }, { id: 'second' }, { id: 'third' }];
+    const setItems = vi.fn();
+    const { container } = render(
+      <ReorderItems
+        columns={[{ header: 'ID', cell: (item) => item.id }]}
+        items={items}
+        setItems={setItems}
+        keyFn={(item) => item.id}
+        isSelected={() => false}
+        selectItem={vi.fn()}
+        unselectItem={vi.fn()}
+        allSelected={false}
+        selectAll={vi.fn()}
+        unselectAll={vi.fn()}
+      />
+    );
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      top: 0,
+      right: 100,
+      bottom: 100,
+      left: 0,
+      toJSON: () => ({}),
+    });
+
+    const rows = container.querySelectorAll('tbody tr');
+    fireEvent.dragStart(rows[1], { dataTransfer: { effectAllowed: '' } });
+    fireEvent.dragOver(rows[2], { clientX: 50, clientY: 50 });
+
+    expect(setItems).toHaveBeenCalledWith([items[0], items[2], items[1]]);
+  });
 });
