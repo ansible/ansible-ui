@@ -99,7 +99,6 @@
     "styled-components": "6.5.1",
     "swr": "2.5.0",
     "xml2js": "^0.6.2",
-    "yaml": "2.9.0",
     "zustand": "^5.0.14"
   },
   "overrides": {
