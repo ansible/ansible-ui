@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
+import { PageDashboardContext } from '@ansible/ansible-ui-framework';
 import { DashboardChartCard } from './DashboardChartCard';
 import type { DashboardChartCardProps } from '../types';
 
@@ -126,5 +127,33 @@ describe('DashboardChartCard', () => {
     };
     render(<DashboardChartCard {...defaultProps} data={dataWithoutItems} />);
     expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  describe('card size', () => {
+    // Without a PageDashboardContext the card span is clamped to 1 column, so provide a wide grid.
+    const renderInGrid = (props: DashboardChartCardProps) =>
+      render(
+        <PageDashboardContext.Provider value={{ columns: 32 }}>
+          <DashboardChartCard {...props} />
+        </PageDashboardContext.Provider>
+      );
+
+    test('should default to md width and md height when width is not provided', () => {
+      renderInGrid(defaultProps);
+      const card = screen.getByTestId('test-card');
+      expect(card).toHaveStyle({ gridColumn: 'span 8', gridRow: 'span 4' });
+    });
+
+    test('should use md height for md width', () => {
+      renderInGrid({ ...defaultProps, width: 'md' });
+      const card = screen.getByTestId('test-card');
+      expect(card).toHaveStyle({ gridColumn: 'span 8', gridRow: 'span 4' });
+    });
+
+    test('should use lg height for xl width', () => {
+      renderInGrid({ ...defaultProps, width: 'xl' });
+      const card = screen.getByTestId('test-card');
+      expect(card).toHaveStyle({ gridColumn: 'span 16', gridRow: 'span 6' });
+    });
   });
 });
