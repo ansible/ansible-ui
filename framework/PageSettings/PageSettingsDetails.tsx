@@ -44,7 +44,7 @@ export function PageSettingsDetails() {
           <PageSettingsDetail
             key={option.name}
             option={option}
-            value={(settings as Record<string, string | number>)[option.name]}
+            value={(settings as Record<string, string | number>)[option.name] ?? ''}
           />
         ))}
       </PageDetails>

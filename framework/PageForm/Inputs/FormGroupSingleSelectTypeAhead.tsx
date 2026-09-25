@@ -241,6 +241,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
   const setActiveAndFocusedItem = (itemIndex: number) => {
     setFocusedItemIndex(itemIndex);
     const focusedItem = selectOptions[itemIndex];
+    if (!focusedItem) return;
     setActiveItemId(createItemId(focusedItem.value as string));
   };
 
@@ -308,7 +309,8 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
 
     for (let i = 0; i < totalOptions; i++) {
       index = (index + step + totalOptions) % totalOptions;
-      if (!selectOptions[index].isDisabled) {
+      const option = selectOptions[index];
+      if (option && !option.isDisabled) {
         return index;
       }
     }
@@ -458,7 +460,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
                 {groupIndex > 0 && <Divider />}
                 <SelectGroup label={groupName || t('Other')}>
                   <SelectList id={`${id}-typeahead-select-listbox-${groupName}`}>
-                    {groups[groupName].map((option, index) => {
+                    {groups[groupName]?.map((option, index) => {
                       const globalIndex = selectOptions.findIndex(
                         (opt) => opt.value === option.value
                       );

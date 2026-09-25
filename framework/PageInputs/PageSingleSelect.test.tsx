@@ -30,6 +30,7 @@ function PageSingleSelectTest<T>(props: {
   defaultValue?: T | null;
   options: PageSelectOption<T>[];
   footer?: ReactNode;
+  isRequired?: boolean;
 }) {
   const { placeholder, defaultValue, options } = props;
   const [value, setValue] = useState(() => defaultValue);
@@ -42,6 +43,7 @@ function PageSingleSelectTest<T>(props: {
         options={options}
         onSelect={setValue}
         footer={props.footer}
+        isRequired={props.isRequired}
       />
     </PageSection>
   );
@@ -62,6 +64,20 @@ describe('PageSingleSelect', () => {
       />
     );
     expect(screen.getByRole('button', { name: testObjects[0].name })).toBeInTheDocument();
+  });
+
+  it('should auto-select the only option when required', async () => {
+    render(
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={[{ value: testObjects[0], label: testObjects[0].name }]}
+        isRequired
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: testObjects[0].name })).toBeInTheDocument();
+    });
   });
 
   it('should show options when clicking on the dropdown toggle', async () => {
@@ -134,5 +150,19 @@ describe('PageSingleSelect', () => {
     await waitFor(() => {
       expect(screen.getByText('Footer')).toBeInTheDocument();
     });
+  });
+
+  it('should show grouped options', async () => {
+    const user = userEvent.setup();
+    render(
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={[{ value: testObjects[0], label: testObjects[0].name, group: 'Group' }]}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: placeholderText }));
+
+    expect(await screen.findByText(testObjects[0].name)).toBeInTheDocument();
   });
 });
