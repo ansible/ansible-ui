@@ -187,9 +187,10 @@ export function PageFormSelect<
 
   useEffect(() => {
     const value = getValues(props.name);
+    const onlyOption = options[0];
     if (!value) {
-      if (options.length === 1 && isRequired) {
-        setValue(props.name, options[0].value as PathValue<TFieldValues, TFieldName>);
+      if (options.length === 1 && isRequired && onlyOption) {
+        setValue(props.name, onlyOption.value as PathValue<TFieldValues, TFieldName>);
       }
     }
   }, [getValues, isRequired, options, props.name, setValue]);
