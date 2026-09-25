@@ -124,7 +124,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                     to={getPageUrl(sourceResourceRoute, {
                       params: {
                         id: sourceResourceObj.id,
-                        inventory_type: INVENTORYURLPATHS[sourceResourceObj.kind],
+                        inventory_type: INVENTORYURLPATHS[sourceResourceObj.kind ?? ''],
                       },
                     })}
                     data-cy="source-resource-detail"

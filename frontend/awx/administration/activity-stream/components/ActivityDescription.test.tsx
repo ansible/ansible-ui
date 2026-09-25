@@ -91,4 +91,23 @@ describe('ActivityDescription', () => {
       screen.getByText((content) => content.includes('disassociated user'))
     ).toBeInTheDocument();
   });
+
+  it('should render inventory activity when the inventory kind is missing', () => {
+    const activity = createActivity({
+      operation: 'update',
+      object1: 'inventory',
+      summary_fields: {
+        inventory: [{ id: '3', name: 'Demo Inventory' }],
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Demo Inventory')).toBeInTheDocument();
+    expect(screen.getByTestId('source-resource-detail')).toBeInTheDocument();
+  });
 });
