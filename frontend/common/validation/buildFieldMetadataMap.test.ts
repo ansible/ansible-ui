@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { buildFieldMetadataMap, SchemaFieldWithPattern } from './buildFieldMetadataMap';
 
 describe('buildFieldMetadataMap', () => {
@@ -161,5 +161,27 @@ describe('buildFieldMetadataMap', () => {
         flags: undefined,
       },
     });
+  });
+
+  it('emits console.warn for invalid regex in development mode', () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      buildFieldMetadataMap([{ id: 'bad', pattern: '[invalid(' }]);
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('bad') && expect.stringContaining('[invalid(')
+      );
+    } finally {
+      process.env.NODE_ENV = originalEnv;
+      warnSpy.mockRestore();
+    }
+  });
+
+  it('does not emit console.warn outside development mode', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    buildFieldMetadataMap([{ id: 'bad', pattern: '[invalid(' }]);
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
   });
 });

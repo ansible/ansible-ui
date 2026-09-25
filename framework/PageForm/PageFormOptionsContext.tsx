@@ -88,7 +88,12 @@ export function extractPageFormOptionsFields(
         try {
           new RegExp(pattern, flags || '');
         } catch {
-          // Skip this field if pattern is invalid
+          if (process.env.NODE_ENV === 'development') {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `extractPageFormOptionsFields: skipping field "${fieldName}" — invalid regex pattern: ${pattern}`
+            );
+          }
           return;
         }
       }
