@@ -187,8 +187,9 @@ async function fetchJobEvents(jobId: number, filters: Record<string, string>): P
   const events: JobEvent[] = [];
   for (let page = 1; page <= MAX_EVENT_PAGES; page++) {
     params.set('page', String(page));
+    const eventsUrl = awxAPI`/jobs/${jobId.toString()}/job_events/`;
     const response = await requestGet<{ count: number; next?: string | null; results: JobEvent[] }>(
-      `${awxAPI`/jobs/${jobId.toString()}/job_events/`}?${params.toString()}`
+      `${eventsUrl}?${params.toString()}`
     );
     events.push(...response.results);
     if (!response.next) break;
