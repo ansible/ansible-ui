@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { IView } from '../useView';
+import { ISelected } from '../PageTable/useTableItems';
 import { PageDialogProvider } from './PageDialog';
 import { SingleSelectDialog } from './SingleSelectDialog';
 
@@ -14,7 +15,7 @@ describe('SingleSelectDialog', () => {
     const view = {
       selectedItems: [item],
       pageItems: [item],
-    } as unknown as IView & { selectedItems: (typeof item)[]; pageItems: (typeof item)[] };
+    } as unknown as IView & ISelected<typeof item> & { pageItems: (typeof item)[] | undefined };
 
     render(
       <PageDialogProvider>
