@@ -85,7 +85,7 @@ export function AwxSelectResourcesStep(props: { userOrTeamName: string }) {
 
   const view = useAwxMultiSelectListView<AwxResourceType>(
     {
-      url: resourceToEndpointMapping[resourceType as string],
+      url: resourceToEndpointMapping[resourceType as string] ?? '',
       queryParams:
         /** Filter out managed and global execution environments as they do not support role assignments */
         resourceType === 'awx.executionenvironment'
