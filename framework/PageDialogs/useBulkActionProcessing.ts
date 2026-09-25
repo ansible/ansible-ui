@@ -44,6 +44,10 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
   } = props;
 
   useEffect(() => {
+    function updateStatus(key: string | number, status: BulkActionStatus) {
+      setStatuses((statuses) => (statuses ? { ...statuses, [key]: status } : { [key]: status }));
+    }
+
     function updateSuccessState(key: string | number, response: unknown) {
       if (abortController.signal.aborted) {
         return;
@@ -52,11 +56,7 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
       if (statusParser) {
         successState = statusParser(response);
       }
-      setStatuses((statuses) =>
-        Object.assign({}, statuses, {
-          [key]: successState !== undefined ? successState : null,
-        })
-      );
+      updateStatus(key, successState !== undefined ? successState : null);
     }
 
     function updateErrorState(
@@ -72,9 +72,9 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
           typeof parsedErrors[0].message === 'string' && parsedErrors.length === 1
             ? parsedErrors[0].message
             : t(`Unknown error`);
-        setStatuses((statuses) => Object.assign({}, statuses, { [key]: message }));
+        updateStatus(key, message);
       } else {
-        setStatuses((statuses) => Object.assign({}, statuses, { [key]: t(`Unknown error`) }));
+        updateStatus(key, t(`Unknown error`));
       }
       setError(translations.errorText);
     }
@@ -99,9 +99,10 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
       }
     }
 
+    const limit = pLimit(5);
+    const tasks = items.map((item: T) => limit(() => processItem(item)));
     async function process() {
-      const limit = pLimit(5);
-      await Promise.all(items.map((item: T) => limit(() => processItem(item))));
+      await Promise.all(tasks);
       setSuccessfulItems([...successfulItems, ...successfulItemsArray]);
       if (!abortController.signal.aborted) {
         setProcessing(false);
