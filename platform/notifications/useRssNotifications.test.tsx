@@ -101,7 +101,7 @@ describe('useRssNotifications', () => {
     setupSWRMock();
     renderHook(() => useRssNotifications());
 
-    const options = vi.mocked(useSWR).mock.calls[0]?.[1] as {
+    const options = vi.mocked(useSWR).mock.calls[0]?.[1] as unknown as {
       fetcher: (url: string) => Promise<string>;
     };
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }));
