@@ -3,11 +3,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PageAlertToasterProvider } from '../PageAlertToaster';
 import { DropZone } from './DropZone';
 
-let capturedOnDrop: ((files: File[]) => void) | undefined;
+const dropHandler = vi.hoisted(() => vi.fn<(files: File[]) => void>());
 
 vi.mock('react-dropzone', () => ({
-  useDropzone: (options: { onDrop: (files: File[]) => void }) => {
-    capturedOnDrop = options.onDrop;
+  useDropzone: ({ onDrop }: { onDrop: (files: File[]) => void }) => {
+    dropHandler.mockImplementation(onDrop);
     return {
       getRootProps: () => ({}),
       getInputProps: () => ({ type: 'file' }),
@@ -28,7 +28,7 @@ describe('DropZone', () => {
       </PageAlertToasterProvider>
     );
 
-    capturedOnDrop?.([]);
+    dropHandler([]);
     expect(onDrop).not.toHaveBeenCalled();
 
     const input = container.querySelector('input[type="file"]');
@@ -43,7 +43,7 @@ describe('DropZone', () => {
       </PageAlertToasterProvider>
     );
 
-    capturedOnDrop?.([undefined as unknown as File]);
+    dropHandler([undefined as unknown as File]);
 
     expect(onDrop).not.toHaveBeenCalled();
   });
@@ -57,7 +57,7 @@ describe('DropZone', () => {
     );
 
     const file = new File(['{"hello":"world"}'], 'data.json', { type: 'application/json' });
-    capturedOnDrop?.([file]);
+    dropHandler([file]);
 
     await vi.waitFor(() => {
       expect(onDrop).toHaveBeenCalledWith('{"hello":"world"}');
@@ -82,7 +82,7 @@ describe('DropZone', () => {
       </PageAlertToasterProvider>
     );
 
-    capturedOnDrop?.([new File(['contents'], 'data.json')]);
+    dropHandler([new File(['contents'], 'data.json')]);
 
     expect(await screen.findByText('Failed to upload file')).toBeInTheDocument();
     expect(screen.getByText('Unable to upload')).toBeInTheDocument();
