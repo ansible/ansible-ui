@@ -56,6 +56,7 @@ export function CreateRulebookActivation() {
   const pageNavigate = usePageNavigate();
 
   const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/activations/`);
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
     requestGet
@@ -103,6 +104,7 @@ export function CreateRulebookActivation() {
           is_enabled: true,
           enable_persistence: false,
         }}
+        optionsData={optionsData}
       >
         <RulebookActivationInputs />
       </EdaPageForm>
@@ -354,10 +356,10 @@ export function EditRulebookActivation() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/activations/${params.id ?? ''}/`
   );
-  const canEditRulebookActivation = data ? Boolean(data.actions?.['PATCH']) : true;
+  const canEditRulebookActivation = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
 
   const { data: rulebookActivation } = useGet<EdaRulebookActivation>(
     edaAPI`/activations/${id.toString()}/`
@@ -437,6 +439,7 @@ export function EditRulebookActivation() {
               event_streams: rulebookActivation.event_streams as [],
               rule_engine_credential_id: rulebookActivation.rule_engine_credential_id || null,
             }}
+            optionsData={optionsData}
           >
             <RulebookActivationInputs />
           </EdaPageForm>

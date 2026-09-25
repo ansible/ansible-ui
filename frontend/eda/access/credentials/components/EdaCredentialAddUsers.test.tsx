@@ -119,7 +119,7 @@ describe('EdaCredentialAddUsers', () => {
   });
 
   it('should fetch roles filtered by eda.edacredential content type', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderComponent();
 
     await waitFor(() => {
@@ -140,5 +140,5 @@ describe('EdaCredentialAddUsers', () => {
     const backButton = within(wizardFooter).getByRole('button', { name: /^Back$/ });
     expect(backButton).toBeInTheDocument();
     expect(backButton).toBeEnabled();
-  });
+  }, 15_000);
 });

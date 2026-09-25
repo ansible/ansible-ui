@@ -1,5 +1,5 @@
 import { expect, type Page, type TestInfo } from '@playwright/test';
-import { awxAPI } from '../commands/apiClient';
+import { awxAPI, edaAPI } from '../commands/apiClient';
 import { navigateTo } from '../commands/navigateTo';
 
 /** Minimal OPTIONS shape used by Playwright validation helpers (no UI framework import). */
@@ -115,6 +115,38 @@ export async function fetchAwxOptions(page: Page, path: string): Promise<PageFor
   return response ?? {};
 }
 
+export async function fetchEdaOptions(page: Page, path: string): Promise<PageFormOptionsData> {
+  const normalizedPath = path.startsWith('/') ? path.slice(1) : path;
+  const response = await edaAPI.options<PageFormOptionsData>(page, normalizedPath);
+  return response ?? {};
+}
+
+export function waitForEdaOptionsResponse(page: Page, pathFragment: string) {
+  return page.waitForResponse(
+    (response) =>
+      response.request().method() === 'OPTIONS' &&
+      response.url().includes('/api/eda/v1') &&
+      response.url().includes(pathFragment) &&
+      response.ok()
+  );
+}
+
+export async function requireEdaOptionsFieldPattern(
+  page: Page,
+  path: string,
+  fieldName: string,
+  testInfo: TestInfo
+): Promise<FieldMetadata> {
+  const options = await fetchEdaOptions(page, path);
+  const field = getOptionsFieldMetadata(options, fieldName);
+
+  if (!field?.pattern || !field.pattern_description) {
+    testInfo.skip(true, `OPTIONS ${path} does not advertise pattern metadata for "${fieldName}"`);
+  }
+
+  return field!;
+}
+
 /**
  * Fetch OPTIONS for ``path`` and skip when ``fieldName`` has no ``pattern`` /
  * ``pattern_description`` (enhanced validation off or backend without injection).
@@ -199,4 +231,16 @@ export async function openInventoryCreateForm(page: Page): Promise<void> {
   await page.getByLabel('dropdown toggle', { exact: true }).click();
   await page.getByRole('menuitem', { name: 'Create inventory' }).click();
   await expect(page.getByRole('heading', { name: 'Create inventory' })).toBeVisible();
+}
+
+export async function openEdaProjectCreateForm(page: Page): Promise<void> {
+  await navigateTo(page, 'Automation Decisions', 'Projects');
+  await page.getByText('Create project').click();
+  await expect(page.getByRole('heading', { name: 'Create project' })).toBeVisible();
+}
+
+export async function openEdaCredentialTypeCreateForm(page: Page): Promise<void> {
+  await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credential Types');
+  await page.getByText('Create credential type').click();
+  await expect(page.getByRole('heading', { name: 'Create credential type' })).toBeVisible();
 }
