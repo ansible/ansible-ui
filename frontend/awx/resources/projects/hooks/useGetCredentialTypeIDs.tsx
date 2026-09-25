@@ -25,20 +25,25 @@ export function useGetCredentialTypeIDs() {
   );
   const credentialTypeIDs: { [key: string]: number } = useMemo(() => {
     const credentialTypeIds: { [key: string]: number } = {};
-    if (scmCredentialTypeResponse?.data?.results) {
-      credentialTypeIds['scm'] = scmCredentialTypeResponse?.data?.results[0]?.id;
+    const scmId = scmCredentialTypeResponse?.data?.results?.[0]?.id;
+    if (scmId !== undefined) {
+      credentialTypeIds['scm'] = scmId;
     }
-    if (insightsCredentialTypeResponse?.data?.results) {
-      credentialTypeIds['insights'] = insightsCredentialTypeResponse?.data?.results[0]?.id;
+    const insightsId = insightsCredentialTypeResponse?.data?.results?.[0]?.id;
+    if (insightsId !== undefined) {
+      credentialTypeIds['insights'] = insightsId;
     }
-    if (cryptoCredentialTypeResponse?.data?.results) {
-      credentialTypeIds['cryptography'] = cryptoCredentialTypeResponse?.data?.results[0]?.id;
+    const cryptographyId = cryptoCredentialTypeResponse?.data?.results?.[0]?.id;
+    if (cryptographyId !== undefined) {
+      credentialTypeIds['cryptography'] = cryptographyId;
     }
-    if (registryCredentialTypeResponse?.data?.results) {
-      credentialTypeIds['registry'] = registryCredentialTypeResponse?.data?.results[0]?.id;
+    const registryId = registryCredentialTypeResponse?.data?.results?.[0]?.id;
+    if (registryId !== undefined) {
+      credentialTypeIds['registry'] = registryId;
     }
-    if (galaxyCredentialTypeResponse?.data?.results) {
-      credentialTypeIds['galaxy'] = galaxyCredentialTypeResponse?.data?.results[0]?.id;
+    const galaxyId = galaxyCredentialTypeResponse?.data?.results?.[0]?.id;
+    if (galaxyId !== undefined) {
+      credentialTypeIds['galaxy'] = galaxyId;
     }
     return credentialTypeIds;
   }, [
