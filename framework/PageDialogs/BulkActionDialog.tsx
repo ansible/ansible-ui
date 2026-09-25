@@ -10,11 +10,10 @@ import {
   ModalFooter,
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
-import pLimit from 'p-limit';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
-import { ErrorAdapter, GenericErrorDetail } from '../PageForm/typesErrorAdapter';
+import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageTable } from '../PageTable/PageTable';
 import { ITableColumn, useVisibleModalColumns } from '../PageTable/PageTableColumn';
 import { usePaged } from '../PageTable/useTableItems';
@@ -22,8 +21,10 @@ import { pfDanger, pfInfo, pfSuccess } from '../components/pfcolors';
 import { useAbortController } from '../hooks/useAbortController';
 import { useFrameworkTranslations } from '../useFrameworkTranslations';
 import { usePageDialog } from './PageDialog';
+import { useBulkActionProcessing } from './useBulkActionProcessing';
 
 export type StatusWithMessageAndUrl = { message: string; url: string };
+export type BulkActionCompletionStatus = 'success' | 'failures' | 'canceled';
 export interface BulkActionDialogProps<T extends object> {
   /** The title of the model.
    * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
@@ -50,7 +51,7 @@ export interface BulkActionDialogProps<T extends object> {
 
   /** Callback called when the dialog closes. */
   onClose?: (
-    status: 'success' | 'failures' | 'canceled',
+    status: BulkActionCompletionStatus,
     successfulItems: T[],
     failedItems: T[],
     canceledItems: T[]
@@ -88,18 +89,14 @@ export interface BulkActionDialogProps<T extends object> {
  * @param {boolean=} isDanger - Indicates if this is a destructive operation.
  * @param {ErrorAdapter} [errorAdapter] - Optional adapter for error handling.
  */
-export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
+function useBulkActionDialogState<T extends object>(props: BulkActionDialogProps<T>) {
   const {
-    title,
     keyFn,
-    actionColumns,
     actionFn,
     onComplete,
     onClose,
     processingText,
-    isDanger,
     errorAdapter = genericErrorAdapter,
-    description,
     statusParser,
   } = props;
   const { t } = useTranslation();
@@ -134,8 +131,11 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
 
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
+    let closeStatus: 'success' | 'failures' | 'canceled' = 'success';
+    if (error) closeStatus = 'failures';
+    if (isCanceled) closeStatus = 'canceled';
     onClose?.(
-      isCanceled ? 'canceled' : error ? 'failures' : 'success',
+      closeStatus,
       items.filter(
         (item) =>
           statuses?.[keyFn(item)] === null ||
@@ -184,92 +184,23 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     return undefined;
   }, [error, isCanceled, items.length, progress]);
 
-  useEffect(() => {
-    function updateSuccessState(key: string | number, response: unknown) {
-      if (abortController.signal.aborted) {
-        return;
-      }
-      let successState = undefined;
-      if (statusParser) {
-        successState = statusParser(response);
-      }
-      setStatuses((statuses) => ({
-        ...(statuses ?? {}),
-        [key]: successState !== undefined ? successState : null,
-      }));
-    }
-
-    function updateErrorState(
-      key: string | number,
-      parsedErrors: GenericErrorDetail[],
-      err: unknown
-    ) {
-      if (abortController.signal.aborted) {
-        return;
-      }
-      if (err instanceof Error) {
-        const message =
-          typeof parsedErrors[0].message === 'string' && parsedErrors.length === 1
-            ? parsedErrors[0].message
-            : t(`Unknown error`);
-        setStatuses((statuses) => ({
-          ...(statuses ?? {}),
-          [key]: message,
-        }));
-      } else {
-        setStatuses((statuses) => ({
-          ...(statuses ?? {}),
-          [key]: t(`Unknown error`),
-        }));
-      }
-      setError(translations.errorText);
-    }
-
-    async function process() {
-      const limit = pLimit(5);
-      let progress = 0;
-      const successfulItemsArray: T[] = [];
-      await Promise.all(
-        items.map((item: T) =>
-          limit(async () => {
-            if (abortController.signal.aborted) return;
-            const key = keyFn(item);
-            try {
-              const response = await actionFn(item, abortController.signal);
-              updateSuccessState(key, response);
-              successfulItemsArray.push(item);
-            } catch (err) {
-              const { genericErrors, fieldErrors } = errorAdapter(err);
-              const parsedErrors = [...genericErrors, ...fieldErrors.filter((e) => e.message)];
-              updateErrorState(key, parsedErrors, err);
-            } finally {
-              if (!abortController.signal.aborted) {
-                setProgress(++progress);
-              }
-            }
-          })
-        )
-      );
-      setSuccessfulItems([...successfulItems, ...successfulItemsArray]);
-      if (!abortController.signal.aborted) {
-        setProcessing(false);
-      }
-    }
-
-    void process();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
+  useBulkActionProcessing({
     abortController,
     actionFn,
+    errorAdapter,
     items,
     keyFn,
-    onComplete,
-    translations.errorText,
-    t,
-    errorAdapter,
-    statusParser,
     retry,
-  ]);
+    setError,
+    setProcessing,
+    setProgress,
+    setStatuses,
+    setSuccessfulItems,
+    statusParser,
+    successfulItems,
+    t,
+    translations,
+  });
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -281,10 +212,41 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
     return () => clearTimeout(timer);
   }, [isProcessing, error, onCloseClicked]);
 
+  return {
+    error,
+    isProcessing,
+    items,
+    onCancelClicked,
+    onCloseClicked,
+    onRetryClicked,
+    progress,
+    progressTitle,
+    progressVariant,
+    statuses,
+    successfulItems,
+    t,
+    translations,
+  };
+}
+
+export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<T>) {
+  const { title, keyFn, actionColumns, description, isDanger } = props;
+  const {
+    error,
+    isProcessing,
+    items,
+    onCancelClicked,
+    onCloseClicked,
+    onRetryClicked,
+    progress,
+    progressTitle,
+    progressVariant,
+    statuses,
+    t,
+    translations,
+  } = useBulkActionDialogState(props);
   const pagination = usePaged(items);
-
   const modalColumns = useVisibleModalColumns(actionColumns);
-
   const modalActions = useMemo(() => {
     if (isProcessing) {
       return [
