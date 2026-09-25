@@ -155,7 +155,9 @@ export const TopologyViewLayer = (props: { mesh: MeshVisualizer }) => {
     controllerRef.current = newController;
 
     return () => {
-      newController.removeEventListener(SELECTION_EVENT, setSelectedIds);
+      if (typeof newController.removeEventListener === 'function') {
+        newController.removeEventListener(SELECTION_EVENT, setSelectedIds);
+      }
     };
   }, []);
 
