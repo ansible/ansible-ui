@@ -13,7 +13,8 @@ export function PageToggleGroup<ValueT>(props: PageToggleGroupProps<ValueT>) {
   const { id, value, onSelect, options } = props;
   useEffect(() => {
     if (!options.find((option) => value === option.value) && options.length > 0) {
-      setTimeout(() => onSelect(options[0].value), 0);
+      const timeout = setTimeout(() => onSelect(options[0].value), 0);
+      return () => clearTimeout(timeout);
     }
   }, [onSelect, options, value]);
   return (
