@@ -1190,6 +1190,62 @@ describe('useSaveVisualizer', () => {
     expect(payload).not.toHaveProperty('scm_branch');
   });
 
+  test('should not PATCH inherited prompt fields omitted from launch_data', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          timeout: null,
+          forks: null,
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              ask_timeout_on_launch: true,
+              ask_forks_on_launch: true,
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { timeout: 3000, forks: 5, credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCall = mockPatchFn.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCall).toBeDefined();
+    const payload = (nodePatchCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty('timeout');
+    expect(payload).not.toHaveProperty('forks');
+  });
+
   test('should send null to API when scm_branch prompt field is cleared on an existing node', async () => {
     const editedNode = makeGraphNode({
       id: '42',

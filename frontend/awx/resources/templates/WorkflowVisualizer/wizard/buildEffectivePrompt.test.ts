@@ -186,6 +186,78 @@ describe('buildEffectivePrompt', () => {
     });
   });
 
+  describe('inherited prompt defaults on existing nodes', () => {
+    const launchWithDefaults = {
+      ...baseLaunchConfig,
+      ask_timeout_on_launch: true,
+      ask_forks_on_launch: true,
+      defaults: {
+        timeout: 3000,
+        forks: 5,
+        credentials: [],
+      },
+    } as unknown as LaunchConfiguration;
+
+    test('should omit unchanged template defaults when the node had no API override', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt: { timeout: 3000, forks: 5 },
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null, forks: null },
+      });
+
+      expect(effectivePrompt.timeout).toBeUndefined();
+      expect(effectivePrompt.forks).toBeUndefined();
+    });
+
+    test('should keep values when the user overrides away from the template default', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt: { timeout: 120 },
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null },
+      });
+
+      expect(effectivePrompt.timeout).toBe(120);
+    });
+
+    test('should not strip inherited defaults when the template changes', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 2,
+        prompt: { timeout: 3000 },
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null },
+      });
+
+      expect(effectivePrompt.timeout).toBe(3000);
+    });
+
+    test('should not mutate the caller prompt object when stripping inherited defaults', () => {
+      const prompt = { timeout: 3000, forks: 5 };
+
+      buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt,
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null, forks: null },
+      });
+
+      expect(prompt).toEqual({ timeout: 3000, forks: 5 });
+    });
+  });
+
   describe('prompt fallback', () => {
     test('should use empty object when prompt is undefined', () => {
       const { effectivePrompt } = buildEffectivePrompt({

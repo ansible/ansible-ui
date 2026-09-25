@@ -204,24 +204,53 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         defaults?.extra_data || {}
       );
 
+      // A null node field means no override was stored. That happens when prompt-on-launch
+      // is enabled after the node was added. Prefill from the job template launch defaults
+      // so the editor does not show a hardcoded 0 or blank value. On submit, unchanged
+      // values that match the template default are omitted from launch_data (see buildEffectivePrompt).
+      const templateDefaults = launch?.defaults;
       const nodePromptsValues = {
         credentials: aggregateCredentials ?? (nodeCredentials || []),
-        diff_mode: resolvePromptField(defaults?.diff_mode, prompt?.diff_mode, false),
+        diff_mode: resolvePromptField(
+          defaults?.diff_mode,
+          prompt?.diff_mode,
+          templateDefaults?.diff_mode ?? false
+        ),
         execution_environment:
           prompt?.execution_environment ?? (defaults?.execution_environment || undefined),
         extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(extraVarsWithoutSurvey)),
-        forks: resolvePromptField(defaults?.forks, prompt?.forks, 0),
+        forks: resolvePromptField(defaults?.forks, prompt?.forks, templateDefaults?.forks ?? 0),
         instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
         inventory: prompt?.inventory ?? (nodeData?.resource?.summary_fields?.inventory || null),
-        job_slice_count: resolvePromptField(defaults?.job_slice_count, prompt?.job_slice_count, 0),
+        job_slice_count: resolvePromptField(
+          defaults?.job_slice_count,
+          prompt?.job_slice_count,
+          templateDefaults?.job_slice_count ?? 0
+        ),
         job_tags: resolveTagField(prompt?.job_tags, defaults?.job_tags),
-        job_type: resolvePromptField(defaults?.job_type, prompt?.job_type, 'run'),
+        job_type: resolvePromptField(
+          defaults?.job_type,
+          prompt?.job_type,
+          templateDefaults?.job_type ?? 'run'
+        ),
         labels: prompt?.labels ?? (nodeLabels || []),
-        limit: resolvePromptField(defaults?.limit, prompt?.limit, ''),
-        scm_branch: resolvePromptField(defaults?.scm_branch, prompt?.scm_branch, ''),
+        limit: resolvePromptField(defaults?.limit, prompt?.limit, templateDefaults?.limit ?? ''),
+        scm_branch: resolvePromptField(
+          defaults?.scm_branch,
+          prompt?.scm_branch,
+          templateDefaults?.scm_branch ?? ''
+        ),
         skip_tags: resolveTagField(prompt?.skip_tags, defaults?.skip_tags),
-        timeout: resolvePromptField(defaults?.timeout, prompt?.timeout, 0),
-        verbosity: resolvePromptField(defaults?.verbosity, prompt?.verbosity, 0),
+        timeout: resolvePromptField(
+          defaults?.timeout,
+          prompt?.timeout,
+          templateDefaults?.timeout ?? 0
+        ),
+        verbosity: resolvePromptField(
+          defaults?.verbosity,
+          prompt?.verbosity,
+          templateDefaults?.verbosity ?? 0
+        ),
         launch_config: launch,
         original,
         requiredCredentialTypes: templateCredentials.map((cred) => {
