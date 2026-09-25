@@ -21,6 +21,8 @@ describe('PageNotification', () => {
       setNotificationGroups: vi.fn(),
     });
     vi.mocked(usePageNotificationsRead).mockReturnValue({
+      markAllNotificationsRead: vi.fn(),
+      markAllNotificationsUnread: vi.fn(),
       isNotificationRead: vi.fn(() => false),
       setNotificationRead,
     });
