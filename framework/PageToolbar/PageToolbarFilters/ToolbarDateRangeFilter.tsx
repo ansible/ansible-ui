@@ -45,9 +45,11 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
   const selectedValue = filterValues && filterValues.length > 0 ? filterValues[0] : undefined;
   const selectedOption = props.options.find((option) => option.value === selectedValue);
 
-  if (isRequired && !selectedOption) {
-    setFilterValues(() => [defaultValue ?? props.options[0].value]);
-  }
+  useEffect(() => {
+    if (isRequired && !selectedOption && props.options.length > 0) {
+      setFilterValues(() => [defaultValue ?? props.options[0].value]);
+    }
+  }, [defaultValue, isRequired, props.options, selectedOption, setFilterValues]);
 
   // `from`/`to` are derived directly from filterValues (not local state) so that
   // externally-set values — e.g. loading a saved report with a custom range —
