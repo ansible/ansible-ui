@@ -7,6 +7,11 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { DateRangeFilterPresets } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
 
+const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
+const MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
+const MILLISECONDS_PER_WEEK = 7 * MILLISECONDS_PER_DAY;
+const MILLISECONDS_PER_MONTH = 30 * MILLISECONDS_PER_DAY;
+
 export function buildQueryString(
   view: IView,
   toolbarFilters: IToolbarFilter[],
@@ -126,10 +131,10 @@ function getDateRangeParam(filter: IToolbarFilter, values: string[]): [string, s
   date.setSeconds(0);
   date.setMilliseconds(0);
   const offsets: Partial<Record<DateRangeFilterPresets, number>> = {
-    [DateRangeFilterPresets.LastHour]: 60 * 60 * 1000,
-    [DateRangeFilterPresets.Last24Hours]: 24 * 60 * 60 * 1000,
-    [DateRangeFilterPresets.LastWeek]: 7 * 24 * 60 * 60 * 1000,
-    [DateRangeFilterPresets.LastMonth]: 30 * 24 * 60 * 60 * 1000,
+    [DateRangeFilterPresets.LastHour]: MILLISECONDS_PER_HOUR,
+    [DateRangeFilterPresets.Last24Hours]: MILLISECONDS_PER_DAY,
+    [DateRangeFilterPresets.LastWeek]: MILLISECONDS_PER_WEEK,
+    [DateRangeFilterPresets.LastMonth]: MILLISECONDS_PER_MONTH,
   };
   const offset = offsets[values[0] as DateRangeFilterPresets];
   return offset === undefined ? undefined : [name, new Date(date.getTime() - offset).toISOString()];
