@@ -117,7 +117,6 @@ describe('TokenInsights Component', () => {
   });
 
   it('should display token when getOfflineToken succeeds', async () => {
-    const user = userEvent.setup();
     mockGetOfflineToken.mockResolvedValue({ data: mockTokenData });
 
     render(
