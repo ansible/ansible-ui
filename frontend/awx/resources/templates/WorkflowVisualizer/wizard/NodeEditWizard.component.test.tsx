@@ -82,8 +82,14 @@ const mockGetInitialValues = vi.fn(
     })
 );
 
+const mockWorkflowNodeOptions = { actions: { POST: {} } };
+
+const mockUseOptions = vi.hoisted(() =>
+  vi.fn(() => ({ data: mockWorkflowNodeOptions }))
+);
+
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
-  useOptions: () => ({ data: { actions: { POST: {} } } }),
+  useOptions: mockUseOptions,
 }));
 
 const mockAddAlert = vi.fn();
@@ -174,6 +180,7 @@ const mockNode = {
 
 describe('NodeEditWizard', () => {
   beforeEach(() => {
+    mockUseOptions.mockClear();
     mockGetInitialValues.mockClear();
     mockSetLabel.mockClear();
     mockSetData.mockClear();
@@ -221,6 +228,7 @@ describe('NodeEditWizard', () => {
     );
 
     expect(screen.getByTestId('wizard-title')).toHaveTextContent('Edit step');
+    expect(mockUseOptions).toHaveBeenCalled();
   });
 
   it('should call getInitialValues with the provided node', async () => {

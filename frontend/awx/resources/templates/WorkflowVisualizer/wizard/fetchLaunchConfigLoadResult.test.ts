@@ -4,12 +4,13 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { RESOURCE_TYPE } from '../constants';
 import { fetchLaunchConfigLoadResult } from './fetchLaunchConfigLoadResult';
+import { getResourceURL } from './helpers';
 
 const jobTemplateResource = { id: 5, name: 'Deploy', type: 'job_template' };
 const workflowJobTemplateResource = { id: 8, name: 'Child WF', type: 'workflow_job_template' };
 
 const server = setupServer(
-  http.get(awxAPI`/job_templates//5`, () => HttpResponse.json(jobTemplateResource)),
+  http.get(`${getResourceURL(RESOURCE_TYPE.job)}/${5}`, () => HttpResponse.json(jobTemplateResource)),
   http.get(awxAPI`/job_templates/5/launch/`, () =>
     HttpResponse.json({
       ask_timeout_on_launch: true,
@@ -17,7 +18,7 @@ const server = setupServer(
       defaults: { timeout: 300 },
     })
   ),
-  http.get(awxAPI`/job_templates//6`, () =>
+  http.get(`${getResourceURL(RESOURCE_TYPE.job)}/${6}`, () =>
     HttpResponse.json({ id: 6, name: 'No prompts', type: 'job_template' })
   ),
   http.get(awxAPI`/job_templates/6/launch/`, () =>
@@ -26,7 +27,7 @@ const server = setupServer(
       defaults: {},
     })
   ),
-  http.get(awxAPI`/workflow_job_templates//8`, () =>
+  http.get(`${getResourceURL(RESOURCE_TYPE.workflow_job)}/${8}`, () =>
     HttpResponse.json(workflowJobTemplateResource)
   ),
   http.get(awxAPI`/workflow_job_templates/8/launch/`, () =>
