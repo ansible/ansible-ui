@@ -22,9 +22,8 @@ describe('AwxSelectResourcesStep', () => {
     render(<AwxSelectResourcesStep userOrTeamName="Alex" />);
 
     expect(screen.getByRole('heading', { name: 'Select inventories' })).toBeInTheDocument();
-    expect(useAwxMultiSelectListView).toHaveBeenCalledWith(
-      expect.objectContaining({ url: expect.stringContaining('/inventories/') }),
-      'resources'
-    );
+    const viewCall = useAwxMultiSelectListView.mock.calls[0];
+    expect(viewCall?.[0]?.url).toContain('/inventories/');
+    expect(viewCall?.[1]).toBe('resources');
   });
 });
