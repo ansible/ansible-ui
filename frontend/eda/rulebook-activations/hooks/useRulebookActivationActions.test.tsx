@@ -20,6 +20,7 @@ import { postRequest } from '@ansible/common-ui/crud/Data';
 import { hasCopyNamePattern } from '../../common/eda-utils';
 
 const mockNavigate = vi.fn();
+const mockCopyRulebookActivation = vi.hoisted(() => vi.fn());
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
   return {
@@ -57,7 +58,7 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
 });
 
 vi.mock('./useCopyRulebookactivation', () => ({
-  useCopyRulebookActivation: () => vi.fn(),
+  useCopyRulebookActivation: () => mockCopyRulebookActivation,
 }));
 
 describe('useRulebookActivationActions', () => {
@@ -223,8 +224,7 @@ describe('useRulebookActivationActions', () => {
     act(() => {
       duplicateAction.onClick(activation);
     });
-    // Duplicate action is mocked to do nothing but we call it for coverage
-    expect(duplicateAction).toBeDefined();
+    expect(mockCopyRulebookActivation).toHaveBeenCalledWith(activation);
   });
 
   it('should handle delete action', () => {

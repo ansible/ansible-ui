@@ -1,3 +1,4 @@
+import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import vitest from '@vitest/eslint-plugin';
 import i18next from 'eslint-plugin-i18next';
@@ -8,6 +9,7 @@ export default [
     ignores: ['**/node_modules/**', 'playwright/**'],
   },
   {
+    // Test-only rules stay separate because eslint.guardrails.config.mjs excludes test files.
     files: [
       'frontend/**/*.{test,spec}.{ts,tsx}',
       'platform/**/*.{test,spec}.{ts,tsx}',
@@ -21,6 +23,7 @@ export default [
       },
     },
     plugins: {
+      '@typescript-eslint': tsPlugin,
       '@vitest': vitest,
       'testing-library': testingLibrary,
       i18next,
