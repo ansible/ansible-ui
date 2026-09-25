@@ -44,7 +44,7 @@ export function buildEffectivePrompt({
   const isTemplateChange =
     originalTemplateId !== undefined && Number(newResourceId) !== originalTemplateId;
 
-  const effectivePrompt: Partial<PromptFormValues> = prompt ?? {};
+  const effectivePrompt: Partial<PromptFormValues> = prompt ? { ...prompt } : {};
 
   if (resourceOrganization !== undefined) {
     effectivePrompt.organization = resourceOrganization;

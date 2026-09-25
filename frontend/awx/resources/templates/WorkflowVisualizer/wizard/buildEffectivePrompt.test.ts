@@ -240,6 +240,22 @@ describe('buildEffectivePrompt', () => {
 
       expect(effectivePrompt.timeout).toBe(3000);
     });
+
+    test('should not mutate the caller prompt object when stripping inherited defaults', () => {
+      const prompt = { timeout: 3000, forks: 5 };
+
+      buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt,
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null, forks: null },
+      });
+
+      expect(prompt).toEqual({ timeout: 3000, forks: 5 });
+    });
   });
 
   describe('prompt fallback', () => {
