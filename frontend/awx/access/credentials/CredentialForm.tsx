@@ -204,9 +204,7 @@ export function CreateCredential() {
                 e.preventDefault();
                 openCredentialsExternalTestModal({
                   credentialType:
-                    parsedCredentialTypes !== undefined
-                      ? parsedCredentialTypes?.[selectedCredentialTypeId]
-                      : ({} as CredentialType),
+                    parsedCredentialTypes?.[selectedCredentialTypeId] ?? ({} as CredentialType),
                   watchedSubFormFields: watchedSubFormFields,
                 });
               }}
@@ -486,9 +484,7 @@ export function EditCredential() {
                 openCredentialsExternalTestModal({
                   credential: credential,
                   credentialType:
-                    parsedCredentialTypes !== undefined
-                      ? parsedCredentialTypes?.[credential?.credential_type]
-                      : ({} as CredentialType),
+                    parsedCredentialTypes?.[credential?.credential_type] ?? ({} as CredentialType),
                   watchedSubFormFields: watchedSubFormFields,
                 });
               }}
@@ -838,7 +834,7 @@ function CredentialTextInput({
     defaultValue: fieldInitialValue === ASK_VALUE,
   }) as boolean;
 
-  const useGetSourceCredential = (id: number) => {
+  const useGetSourceCredential = (id: number | undefined) => {
     const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
     return data;
   };
