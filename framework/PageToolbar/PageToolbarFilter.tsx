@@ -69,8 +69,8 @@ export type PageToolbarFiltersProps = {
 function FiltersToolbarItem(props: PageToolbarFiltersProps) {
   const { toolbarFilters, filterState, setFilterState } = props;
 
-  const [selectedFilterKey, setSeletedFilterKey] = useState<string | null>(() =>
-    toolbarFilters ? (toolbarFilters?.length > 0 ? toolbarFilters[0].key : '') : ''
+  const [selectedFilterKey, setSeletedFilterKey] = useState<string | null>(
+    () => toolbarFilters?.[0]?.key ?? ''
   );
 
   const selectedFilter = toolbarFilters?.find((filter) => filter.key === selectedFilterKey);
@@ -79,13 +79,13 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
   if (!toolbarFilters) return <></>;
   if (toolbarFilters.length === 0) return <></>;
 
+  const firstFilter = toolbarFilters[0];
   let showLabel = toolbarFilters.length === 1;
   if (toolbarFilters.length >= 1) {
     if (
-      toolbarFilters[0].type === ToolbarFilterType.SingleSelect &&
-      toolbarFilters[0].isPinned &&
-      (filterState[toolbarFilters[0].key] === undefined ||
-        filterState[toolbarFilters[0].key]?.length === 0)
+      firstFilter?.type === ToolbarFilterType.SingleSelect &&
+      firstFilter.isPinned &&
+      (filterState[firstFilter.key] === undefined || filterState[firstFilter.key]?.length === 0)
     ) {
       // Do not show the label if the pinned filter does not have a value
       showLabel = false;
@@ -98,7 +98,7 @@ function FiltersToolbarItem(props: PageToolbarFiltersProps) {
         <ToolbarItem>
           {showLabel && (
             <div style={{ marginTop: 6, marginRight: 6, whiteSpace: 'nowrap' }}>
-              {toolbarFilters[0].label}
+              {firstFilter?.label}
             </div>
           )}
           <ToolbarFilterComponent
@@ -321,7 +321,7 @@ function ToolbarFilterComponent(props: {
           id={props.id ?? filter.key}
           placeholder={filter.placeholder}
           setValue={(value) => setFilterValues(() => (value ? [value] : []))}
-          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          value={filterValues?.[0] ?? ''}
           hasKey={!!filterState?.[filter.key]}
         />
       );
@@ -334,7 +334,7 @@ function ToolbarFilterComponent(props: {
           placeholder={filter.placeholder}
           comparison={filter.comparison}
           setValue={(value) => setFilterValues(() => (value ? [value] : []))}
-          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          value={filterValues?.[0] ?? ''}
           hasKey={!!filterState?.[filter.key]}
         />
       );
@@ -348,7 +348,7 @@ function ToolbarFilterComponent(props: {
             placeholder={filter.placeholder}
             comparison={filter.comparison}
             setValue={(value) => setFilterValues(() => (value ? [value] : []))}
-            value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+            value={filterValues?.[0] ?? ''}
             hasKey={!!filterState?.[filter.key]}
           />
         );
@@ -369,7 +369,7 @@ function ToolbarFilterComponent(props: {
           key={filter.key}
           id={props.id ?? filter.key}
           placeholder={filter.placeholder}
-          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          value={filterValues?.[0] ?? ''}
           onSelect={(item) => setFilterValues(() => [item!])}
           options={filter.options}
           isRequired={filter.isRequired || !filter.isPinned}
@@ -384,7 +384,7 @@ function ToolbarFilterComponent(props: {
         <PageAsyncSingleSelect<string>
           key={filter.key}
           id={props.id ?? filter.key}
-          value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+          value={filterValues?.[0] ?? ''}
           onSelect={(item) => setFilterValues(() => [item!])}
           placeholder={filter.placeholder || ''}
           queryOptions={filter.queryOptions}
@@ -424,7 +424,7 @@ function ToolbarFilterComponent(props: {
           <PageAsyncSingleSelect<string>
             key={filter.key}
             id={props.id ?? filter.key}
-            value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+            value={filterValues?.[0] ?? ''}
             onSelect={(item) => setFilterValues(() => [item!])}
             placeholder={filter.placeholder || ''}
             queryOptions={filter.queryOptions}
@@ -437,7 +437,7 @@ function ToolbarFilterComponent(props: {
                   variant="link"
                   onClick={() => {
                     filter.openBrowse?.(
-                      (selection) => setFilterValues(() => [selection.length ? selection[0] : '']),
+                      (selection) => setFilterValues(() => [selection[0] ?? '']),
                       filterValues && filterValues.length > 0 ? filterValues : undefined
                     );
                   }}
@@ -492,7 +492,7 @@ function ToolbarFilterComponent(props: {
             key={filter.key}
             id={props.id ?? filter.key}
             placeholder={filter.placeholder}
-            value={filterValues && filterValues?.length > 0 ? filterValues[0] : ''}
+            value={filterValues?.[0] ?? ''}
             onSelect={(item) => setFilterValues(() => [item!])}
             options={filter.options}
             disableSortOptions={filter.disableSortOptions}

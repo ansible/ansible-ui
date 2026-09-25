@@ -72,8 +72,9 @@ export function SingleSelectDialog<T extends object>(props: SingleSelectDialogPr
           id="submit"
           onClick={() => {
             onClose();
-            if (view.selectedItems.length > 0) {
-              onSelect(view.selectedItems[0]);
+            const [selectedItem] = view.selectedItems;
+            if (selectedItem) {
+              onSelect(selectedItem);
             }
           }}
           isAriaDisabled={view.selectedItems.length === 0}
