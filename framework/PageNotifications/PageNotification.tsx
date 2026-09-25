@@ -60,7 +60,7 @@ export function PageNotification(props: { notification: IPageNotification }) {
         setNotificationRead(props.notification.id, true);
         if (props.notification.to) {
           if (props.notification.newTab) {
-            window.open(props.notification.to, '_blank');
+            window.open(props.notification.to, '_blank', 'noopener,noreferrer');
           } else {
             void navigate(props.notification.to);
           }

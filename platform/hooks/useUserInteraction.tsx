@@ -26,6 +26,10 @@ export function useUserInteraction(throttleMs: number, callback: () => void) {
 
     return () => {
       document.removeEventListener('pointermove', handleInteraction);
+      if (timeoutIdRef.current !== null) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = null;
+      }
     };
   }, [throttleMs, callback]);
 }

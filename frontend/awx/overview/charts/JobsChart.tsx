@@ -39,7 +39,11 @@ export function JobsChart(props: {
 
   const { data, isLoading } = useSWR<IJobChartData>(
     awxAPI`/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
-    (url: string) => fetch(url).then((r) => r.json())
+    (url: string) =>
+      fetch(url).then((response) => {
+        if (!response.ok) throw new Error(`Jobs chart request failed: ${response.status}`);
+        return response.json();
+      })
   );
 
   const reducer = (tuple: [number, number]) => {

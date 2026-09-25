@@ -15,7 +15,10 @@ interface IConfigData {
 export function ManualSubForm(props: { localPath?: string }) {
   const { t } = useTranslation();
   const { data: config } = useSWR<IConfigData>(awxAPI`/config/`, (url: string) =>
-    fetch(url).then((r) => r.json())
+    fetch(url).then((response) => {
+      if (!response.ok) throw new Error(`Configuration request failed: ${response.status}`);
+      return response.json();
+    })
   );
   const brand: string = process.env.BRAND ?? t('Automation controller');
   const product: string = process.env.PRODUCT ?? t('Ansible');
