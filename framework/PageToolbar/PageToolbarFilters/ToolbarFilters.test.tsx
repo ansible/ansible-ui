@@ -153,7 +153,7 @@ function createAsyncSingleSelectFilter(
 
 function createAsyncMultiSelectFilter(
   index: number,
-  options?: { isPinned?: boolean }
+  options?: { isPinned?: boolean; openBrowse?: (onSelect: (values: string[]) => void) => void }
 ): IToolbarAsyncMultiSelectFilter {
   return {
     type: ToolbarFilterType.AsyncMultiSelect,
@@ -480,6 +480,27 @@ describe('PageToolbarFilters', () => {
     );
 
     expect(screen.getByText('Filter by ams2')).toBeInTheDocument();
+  });
+
+  it('should clear the async multi-select when Browse returns no selection', async () => {
+    const user = userEvent.setup();
+    const filter = createAsyncMultiSelectFilter(1, {
+      isPinned: true,
+      openBrowse: (onSelect) => onSelect([]),
+    });
+
+    render(
+      <ToolbarFiltersTest
+        toolbarFilters={[filter, createMultiSelectFilter(2, { isPinned: true })]}
+        limitFiltersToOneOrOperation
+        initialFilterState={{ ams1: ['existing'], ms2: ['one', 'two'] }}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'existing' }));
+    await user.click(await screen.findByRole('button', { name: 'Browse' }));
+    expect(screen.getByTestId('filter-state')).toHaveTextContent('"ams1"');
+    expect(screen.getByTestId('filter-state')).toHaveTextContent('""');
   });
 
   it('should render chip labels for non-pinned multi-select filter', () => {
