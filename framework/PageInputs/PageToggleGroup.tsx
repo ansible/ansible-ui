@@ -18,7 +18,8 @@ export function PageToggleGroup<ValueT>(props: PageToggleGroupProps<ValueT>) {
       !options.some((option) => value === option.value) &&
       firstOption
     ) {
-      setTimeout(() => onSelect(firstOption.value), 0);
+      const timeout = setTimeout(() => onSelect(firstOption.value), 0);
+      return () => clearTimeout(timeout);
     }
   }, [onSelect, options, value]);
   return (
