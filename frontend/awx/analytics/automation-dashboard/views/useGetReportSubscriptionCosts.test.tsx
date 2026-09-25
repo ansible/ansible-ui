@@ -99,7 +99,7 @@ describe('useGetReportSubscriptionCosts', () => {
   });
 
   test('should not fetch settings without an organization context', () => {
-    const { result } = renderHook(() => useGetReportSubscriptionCosts(undefined));
+    const { result } = renderHook(() => useGetReportSubscriptionCosts());
 
     expect(result.current.subscriptionCosts).toBeUndefined();
     expect(result.current.isLoading).toBe(false);

@@ -138,7 +138,7 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
 }
 
 function Wrapper({ children }: { children: ReactNode }) {
-  if (typeof globalThis.localStorage === 'undefined') {
+  if (!globalThis.localStorage) {
     const entries = new Map<string, string>();
     const localStorageMock: Storage = {
       get length() {
