@@ -1,10 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { hubAPI } from '../../common/api/formatPath';
 import { HubContext } from '../../common/useHubContext';
-import { CreateRemote } from './RemoteForm';
+import { CreateRemote, EditRemote } from './RemoteForm';
 
 describe('CreateRemote', () => {
   const server = setupServer();
@@ -103,6 +105,167 @@ describe('CreateRemote', () => {
     await waitFor(() => {
       const warning = container.querySelector('[data-testid="signed-only-warning"]');
       expect(warning).not.toBeInTheDocument();
+    });
+  });
+
+  test('fetches field patterns from the _ui/v1/remotes/ endpoint and validates on blur', async () => {
+    server.use(
+      http.options(hubAPI`/_ui/v1/remotes/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: '^[a-zA-Z0-9_-]+$',
+                patternDescription: 'Name must contain only letters, numbers, - and _.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup({ delay: null });
+    renderCreateRemote();
+
+    const nameInput = await screen.findByRole('textbox', { name: 'Name' });
+    await user.type(nameInput, 'invalid name!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Name must contain only letters, numbers, - and _.')
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('should load OPTIONS data from hub API endpoint', async () => {
+    server.use(
+      http.options(hubAPI`/_ui/v1/remotes/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                type: 'string',
+                required: true,
+              },
+              url: {
+                type: 'string',
+                required: true,
+              },
+            },
+          },
+        })
+      )
+    );
+
+    renderCreateRemote();
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
+    });
+  });
+
+  test('should submit form with all required fields populated', async () => {
+    const user = userEvent.setup({ delay: null });
+    let postPayload: Record<string, unknown> | undefined;
+
+    server.use(
+      http.post('*/remotes/ansible/collection/*', async ({ request }) => {
+        postPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({ pulp_href: '/pulp/api/v3/remotes/1/', name: 'test-remote' });
+      })
+    );
+
+    renderCreateRemote();
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
+    });
+
+    const nameInput = screen.getByRole('textbox', { name: 'Name' });
+    const urlInput = screen.getByRole('textbox', { name: /Server URL/i });
+
+    await user.type(nameInput, 'test-remote');
+    await user.type(urlInput, 'https://galaxy.ansible.com');
+
+    expect(postPayload).not.toBeDefined();
+  });
+});
+
+describe('EditRemote', () => {
+  const server = setupServer();
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+  afterAll(() => server.close());
+  beforeEach(() => {
+    vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
+      const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
+        <textarea
+          id={props.id as string}
+          name={props.id as string}
+          value={props.value as string}
+          onChange={props.onChange as () => void}
+          className={props.className as string}
+          onFocus={props.onFocus as () => void}
+          onBlur={props.onBlur as () => void}
+        />
+      ));
+      return { DataEditor: FakeDataEditor };
+    });
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    server.resetHandlers();
+  });
+
+  function renderEditRemote() {
+    return render(
+      <HubContext.Provider
+        value={{
+          featureFlags: { collection_signing: false },
+          settings: {},
+          hasPermission: () => true,
+        }}
+      >
+        <MemoryRouter initialEntries={['/remotes/test-remote/edit']}>
+          <Routes>
+            <Route path="/remotes/:id/edit" element={<EditRemote />} />
+          </Routes>
+        </MemoryRouter>
+      </HubContext.Provider>
+    );
+  }
+
+  test('should load OPTIONS data for edit form', async () => {
+    server.use(
+      http.options(hubAPI`/_ui/v1/remotes/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: { type: 'string', required: true },
+              url: { type: 'string', required: true },
+            },
+          },
+        })
+      ),
+      http.get('*/remotes/ansible/collection/*', () =>
+        HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              name: 'test-remote',
+              url: 'https://galaxy.ansible.com/api/',
+              pulp_href: '/pulp/api/v3/remotes/ansible/collection/1/',
+              hidden_fields: [],
+            },
+          ],
+        })
+      )
+    );
+
+    renderEditRemote();
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Edit test-remote/i })).toBeInTheDocument();
     });
   });
 });

@@ -37,7 +37,7 @@ export function CreatePlatformOrganization() {
       (Array.isArray(values.instanceGroups) && values.instanceGroups.length > 0) ||
       (Array.isArray(values.galaxyCredentials) && values.galaxyCredentials.length > 0) ||
       values.executionEnvironment !== undefined ||
-      values.policy !== undefined;
+      values.opa_query_path !== undefined;
     // Wait for the organization to be present in Controller before associating instance groups
     if (!createdOrganization.summary_fields?.resource?.ansible_id) {
       throw new Error(t('Organization resource ansible_id is not available'));
@@ -76,8 +76,8 @@ export function CreatePlatformOrganization() {
         } = {
           max_hosts: values?.maxHosts ?? 0,
         };
-        if (values?.policy) {
-          controllerOrganizationPayload.opa_query_path = values.policy;
+        if (values?.opa_query_path) {
+          controllerOrganizationPayload.opa_query_path = values.opa_query_path;
         }
         if (values?.executionEnvironment) {
           controllerOrganizationPayload.default_environment = values.executionEnvironment;

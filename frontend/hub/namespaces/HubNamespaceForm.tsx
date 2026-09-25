@@ -13,6 +13,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { usePutRequest } from '@ansible/common-ui/crud/usePutRequest';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -24,6 +25,7 @@ import { HubNamespace } from './HubNamespace';
 import { isInsightsMode } from '../common/isInsights';
 import { UsefulLinksFields } from './UsefulLinksFields';
 import { HubNamespaceErrorAdapter } from './components/HubNamespaceErrorAdapter';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export function CreateHubNamespace() {
   const { t } = useTranslation();
@@ -31,6 +33,9 @@ export function CreateHubNamespace() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<HubNamespace>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    hubAPI`/_ui/v1/namespaces/`
+  );
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace: HubNamespace) => {
     if (namespace?.links?.length === 1) {
       if (namespace.links[0].name === '' && namespace.links[0].url === '') {
@@ -64,6 +69,7 @@ export function CreateHubNamespace() {
         onCancel={() => void navigate(-1)}
         defaultValue={{ groups: [], links: [{ name: '', url: '' }] }}
         errorAdapter={HubNamespaceErrorAdapter}
+        optionsData={optionsData}
       >
         <HubNamespaceInputs isDisabled={false} isRequired={true} />
         <UsefulLinksFields />
@@ -84,6 +90,9 @@ export function EditHubNamespace() {
     error,
     refresh,
   } = useGet<HubNamespace>(hubAPI`/_ui/v1/my-namespaces/${name}/`);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    hubAPI`/_ui/v1/namespaces/`
+  );
   const putRequest = usePutRequest<HubNamespace, HubNamespace>();
   const onSubmit: PageFormSubmitHandler<HubNamespace> = async (namespace) => {
     if (namespace?.links?.length === 1) {
@@ -152,6 +161,7 @@ export function EditHubNamespace() {
         onCancel={() => void navigate(-1)}
         defaultValue={namespace}
         errorAdapter={HubNamespaceErrorAdapter}
+        optionsData={optionsData}
       >
         <HubNamespaceInputs isDisabled={true} />
         <UsefulLinksFields />

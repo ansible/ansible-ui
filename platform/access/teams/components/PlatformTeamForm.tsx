@@ -22,7 +22,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { PageFormPlatformOrganizationSelect } from '../../organizations/components/PageFormPlatformOrganizationSelect';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export function CreatePlatformTeam() {
   const { t } = useTranslation();

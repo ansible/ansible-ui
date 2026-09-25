@@ -8,7 +8,7 @@ import {
 import { PageTableEmptyState } from '@ansible/ansible-ui-framework/PageTable/PageTableEmptyState';
 import { ButtonLink } from '@ansible/ansible-ui-framework/components/ButtonLink';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
