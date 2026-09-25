@@ -59,6 +59,12 @@ export function buildFieldMetadataMap(
     try {
       new RegExp(pattern);
     } catch {
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `buildFieldMetadataMap: skipping field "${key}" — invalid regex pattern: ${pattern}`
+        );
+      }
       continue;
     }
 
