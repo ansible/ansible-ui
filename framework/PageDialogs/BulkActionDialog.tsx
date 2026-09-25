@@ -134,8 +134,11 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
 
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
+    let closeStatus: 'success' | 'failures' | 'canceled' = 'success';
+    if (error) closeStatus = 'failures';
+    if (isCanceled) closeStatus = 'canceled';
     onClose?.(
-      isCanceled ? 'canceled' : error ? 'failures' : 'success',
+      closeStatus,
       items.filter(
         (item) =>
           statuses?.[keyFn(item)] === null ||
