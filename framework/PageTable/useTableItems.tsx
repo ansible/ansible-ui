@@ -114,15 +114,16 @@ export function useSelected<T extends object>(
 
   useEffect(() => {
     setSelectedMap((selectedMap) => {
+      const updatedMap = { ...selectedMap };
       let changed = false;
       items.forEach((item) => {
         const key = `item-${keyFn(item)}`;
-        if (selectedMap[key] && selectedMap[key] !== item) {
+        if (updatedMap[key] && updatedMap[key] !== item) {
           changed = true;
-          selectedMap[key] = item;
+          updatedMap[key] = item;
         }
       });
-      return changed ? { ...selectedMap } : selectedMap;
+      return changed ? updatedMap : selectedMap;
     });
   }, [items, keyFn]);
 
@@ -131,11 +132,7 @@ export function useSelected<T extends object>(
       setSelectedMap((selectedMap) => {
         const itemKey = `item-${keyFn(item)}`;
         const existing = selectedMap[itemKey];
-        if (existing !== item) {
-          selectedMap = { ...selectedMap };
-          selectedMap[itemKey] = item;
-        }
-        return selectedMap;
+        return existing === item ? selectedMap : { ...selectedMap, [itemKey]: item };
       });
     },
     [keyFn]
@@ -146,11 +143,9 @@ export function useSelected<T extends object>(
       setSelectedMap((selectedMap) => {
         const itemKey = `item-${keyFn(item)}`;
         const existing = selectedMap[itemKey];
-        if (existing) {
-          selectedMap = { ...selectedMap };
-          delete selectedMap[itemKey];
-        }
-        return selectedMap;
+        if (!existing) return selectedMap;
+        const { [itemKey]: _, ...remaining } = selectedMap;
+        return remaining;
       });
     },
     [keyFn]
@@ -167,12 +162,12 @@ export function useSelected<T extends object>(
   const selectItems = useCallback(
     (items: T[]) => {
       setSelectedMap((selectedMap) => {
-        selectedMap = { ...selectedMap };
+        const updatedMap = { ...selectedMap };
         for (const item of items) {
           const itemKey = `item-${keyFn(item)}`;
-          selectedMap[itemKey] = item;
+          updatedMap[itemKey] = item;
         }
-        return selectedMap;
+        return updatedMap;
       });
     },
     [keyFn]
@@ -245,6 +240,7 @@ export function useSelectedInMemory<T extends object>(
 
   useEffect(() => {
     setSelectedMap((selectedMap) => {
+      const updatedMap = { ...selectedMap };
       let changed = false;
 
       const itemsKeys = !items
@@ -253,9 +249,9 @@ export function useSelectedInMemory<T extends object>(
             (itemsKeys, item) => {
               const key = keyFn(item);
               itemsKeys[key] = item;
-              if (selectedMap[key] && selectedMap[key] !== item) {
+              if (updatedMap[key] && updatedMap[key] !== item) {
                 changed = true;
-                selectedMap[key] = item;
+                updatedMap[key] = item;
               }
               return itemsKeys;
             },
@@ -273,11 +269,11 @@ export function useSelectedInMemory<T extends object>(
       if (removeKeys.length) {
         changed = true;
         for (const key of removeKeys) {
-          delete selectedMap[key];
+          delete updatedMap[key];
         }
       }
 
-      return changed ? { ...selectedMap } : selectedMap;
+      return changed ? updatedMap : selectedMap;
     });
   }, [items, keyFn]);
 
@@ -286,11 +282,7 @@ export function useSelectedInMemory<T extends object>(
       setSelectedMap((selectedMap) => {
         const itemKey = keyFn(item);
         const existing = selectedMap[itemKey];
-        if (existing !== item) {
-          selectedMap = { ...selectedMap };
-          selectedMap[itemKey] = item;
-        }
-        return selectedMap;
+        return existing === item ? selectedMap : { ...selectedMap, [itemKey]: item };
       });
     },
     [keyFn]
@@ -301,11 +293,9 @@ export function useSelectedInMemory<T extends object>(
       setSelectedMap((selectedMap) => {
         const itemKey = keyFn(item);
         const existing = selectedMap[itemKey];
-        if (existing) {
-          selectedMap = { ...selectedMap };
-          delete selectedMap[itemKey];
-        }
-        return selectedMap;
+        if (!existing) return selectedMap;
+        const { [itemKey]: _, ...remaining } = selectedMap;
+        return remaining;
       });
     },
     [keyFn]
@@ -331,12 +321,12 @@ export function useSelectedInMemory<T extends object>(
   const selectItems = useCallback(
     (items: T[]) => {
       setSelectedMap((selectedMap) => {
-        selectedMap = { ...selectedMap };
+        const updatedMap = { ...selectedMap };
         for (const item of items) {
           const itemKey = keyFn(item);
-          selectedMap[itemKey] = item;
+          updatedMap[itemKey] = item;
         }
-        return selectedMap;
+        return updatedMap;
       });
     },
     [keyFn]

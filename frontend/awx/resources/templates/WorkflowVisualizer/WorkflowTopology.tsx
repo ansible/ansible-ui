@@ -146,6 +146,12 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
   const visualization = visualizationRef.current;
 
   useEffect(() => {
+    return () => {
+      visualization.removeEventListener(SELECTION_EVENT, handleSelectedNode);
+    };
+  }, [handleSelectedNode, visualization]);
+
+  useEffect(() => {
     const edges: EdgeModel[] = [];
     const startNode = {
       id: START_NODE_ID,
