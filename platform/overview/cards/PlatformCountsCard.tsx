@@ -5,7 +5,10 @@ import useSWR from 'swr';
 
 export function PlatformCountsCard() {
   const { data, isLoading } = useSWR<IAwxDashboardData>(awxAPI`/dashboard/`, (url: string) =>
-    fetch(url).then((r) => r.json())
+    fetch(url).then((response) => {
+      if (!response.ok) throw new Error(`Dashboard request failed: ${response.status}`);
+      return response.json();
+    })
   );
   if (!data || isLoading) {
     return <></>;
