@@ -11,12 +11,10 @@ import {
 
 function TestConsumer() {
   const toaster = useContext(PageAlertToasterContext);
+  const alert = { title: 'Test Alert', variant: 'success' as const };
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => toaster.addAlert({ title: 'Test Alert', variant: 'success' })}
-      >
+      <button type="button" onClick={() => toaster.addAlert(alert)}>
         Add
       </button>
       <button
@@ -81,6 +79,21 @@ describe('PageAlertToaster', () => {
 
       await user.click(screen.getByRole('button', { name: 'Add' }));
       expect(screen.getByText('Test Alert')).toBeInTheDocument();
+    });
+
+    it('should replace an alert when the same alert is added again', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      const addButton = screen.getByRole('button', { name: 'Add' });
+      await user.click(addButton);
+      await user.click(addButton);
+
+      expect(screen.getAllByText('Test Alert')).toHaveLength(1);
     });
 
     it('should remove all alerts', async () => {
