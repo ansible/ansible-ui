@@ -18,6 +18,11 @@ vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
   },
 }));
 
+vi.mock('./NodeTypeStep', () => ({ NodeTypeStep: () => null }));
+vi.mock('./NodePromptsStep', () => ({ NodePromptsStep: () => null }));
+vi.mock('./NodeReviewStep', () => ({ NodeReviewStep: () => null }));
+vi.mock('../../../../common/SurveyStep', () => ({ SurveyStep: () => null }));
+
 vi.mock('@patternfly/react-topology', () => ({
   useVisualizationController: vi.fn(() => ({
     getState: () => ({ sourceNode: undefined }),
@@ -36,7 +41,7 @@ vi.mock('@patternfly/react-topology', () => ({
   TopologyView: () => null,
 }));
 
-const mockUseOptions = vi.fn(() => ({ data: { actions: { POST: {} } } }));
+const mockUseOptions = vi.hoisted(() => vi.fn(() => ({ data: { actions: { POST: {} } } })));
 
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
   useOptions: mockUseOptions,
