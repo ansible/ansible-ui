@@ -14,6 +14,8 @@ import { Divider } from '@patternfly/react-core';
 
 export function AutomationDashboardMainPage() {
   const { t } = useTranslation();
+  // isLoading also covers a pending /me/ role (see the hook), so the layout (tabs vs single view)
+  // is only chosen once canSeeDashboard is final
   const { isLoading, error, canSeeDashboard, canSeeLeaderboard } =
     useAutomationDashboardCollectionStatus();
   // Measured once here, in the shell that stays mounted across tab switches, and handed to
@@ -72,7 +74,7 @@ function AutomationDashboardMainPageContent(
   if (canSeeDashboard) {
     return (
       <>
-        <Divider style={{ marginBlockEnd: 'var(--pf-t--global--spacer--md)' }} />
+        <Divider className="pf-v6-u-mb-md" />
         <AutomationDashboard />
       </>
     );
