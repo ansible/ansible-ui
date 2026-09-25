@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isWizardSupplementalData } from './types';
+import { isWizardSupplementalData } from './wizardSupplementalData';
 
 describe('isWizardSupplementalData', () => {
   it('accepts plain supplemental objects', () => {
