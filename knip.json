@@ -17,6 +17,7 @@
     "framework/test-utils/testing-library.tsx",
     "framework/test-utils/wrapWithSwrTestWrapper.tsx",
     "frontend/hub/insights/**",
+    "frontend/hub/insights-tests/eslint.config.mjs",
     "frontend/hub/interfaces/generated/**",
     "frontend/hub/interfaces/expanded/**",
     "frontend/hub/interfaces/transform.cjs"
@@ -36,7 +37,6 @@
     "@types/json-schema",
     "@types/styled-components",
     "@vitejs/plugin-react",
-    "eslint-plugin-import",
     "selfsigned",
     "typescript-plugin-styled-components",
     "v8-to-istanbul",
