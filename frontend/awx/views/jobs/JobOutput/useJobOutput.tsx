@@ -21,6 +21,10 @@ type WebSocketMessage = {
 };
 
 const WS_EVENTS_BATCH_SIZE = 15;
+const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
+const MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
+const MILLISECONDS_PER_WEEK = 7 * MILLISECONDS_PER_DAY;
+const MILLISECONDS_PER_MONTH = 30 * MILLISECONDS_PER_DAY;
 const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 
 export function useJobOutput(
@@ -257,16 +261,16 @@ function getQueryParamsForDateRangeFilters(toolbarFilter: IToolbarFilter, value:
     date.setMilliseconds(0);
     switch (value as DateRangeFilterPresets) {
       case DateRangeFilterPresets.LastHour:
-        queryParamValue = new Date(date.getTime() - 60 * 60 * 1000).toISOString();
+        queryParamValue = new Date(date.getTime() - MILLISECONDS_PER_HOUR).toISOString();
         break;
       case DateRangeFilterPresets.Last24Hours:
-        queryParamValue = new Date(date.getTime() - 24 * 60 * 60 * 1000).toISOString();
+        queryParamValue = new Date(date.getTime() - MILLISECONDS_PER_DAY).toISOString();
         break;
       case DateRangeFilterPresets.LastWeek:
-        queryParamValue = new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        queryParamValue = new Date(date.getTime() - MILLISECONDS_PER_WEEK).toISOString();
         break;
       case DateRangeFilterPresets.LastMonth:
-        queryParamValue = new Date(date.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+        queryParamValue = new Date(date.getTime() - MILLISECONDS_PER_MONTH).toISOString();
         break;
     }
   }
