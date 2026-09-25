@@ -3,7 +3,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { AwxSelectResourcesStep } from './AwxSelectResourcesStep';
 
 const usePageWizard = vi.hoisted(() => vi.fn());
-const useAwxMultiSelectListView = vi.hoisted(() => vi.fn(() => ({ pageItems: [] })));
+const useAwxMultiSelectListView = vi.hoisted(() =>
+  vi.fn<(options: { url: string }, field: string) => { pageItems: never[] }>(() => ({
+    pageItems: [],
+  }))
+);
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({ usePageWizard }));
 vi.mock('../../../common/useAwxMultiSelectListView', () => ({ useAwxMultiSelectListView }));
