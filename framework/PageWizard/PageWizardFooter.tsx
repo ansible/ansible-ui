@@ -11,12 +11,17 @@ export function PageWizardFooter(props: {
   const { t } = useTranslation();
   const { activeStep, visibleStepsFlattened, setSubmitError } = usePageWizard();
 
-  const isLastStep = activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1].id;
+  const lastStep = visibleStepsFlattened[visibleStepsFlattened.length - 1];
+  const isLastStep = activeStep?.id === lastStep?.id;
   const nextButtonLabel = isLastStep ? t('Finish') : t('Next');
 
-  const isFirstStep = isPageWizardParentStep(visibleStepsFlattened[0])
-    ? activeStep?.id === visibleStepsFlattened[1].id
-    : activeStep?.id === visibleStepsFlattened[0].id;
+  const firstStep = visibleStepsFlattened[0];
+  const secondStep = visibleStepsFlattened[1];
+  const isFirstStep = firstStep
+    ? isPageWizardParentStep(firstStep)
+      ? activeStep?.id === secondStep?.id
+      : activeStep?.id === firstStep.id
+    : true;
   const backClassName = isFirstStep
     ? 'pf-v6-c-button pf-m-disabled'
     : 'pf-v6-c-button pf-m-secondary';
