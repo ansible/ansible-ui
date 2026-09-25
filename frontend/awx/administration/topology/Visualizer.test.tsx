@@ -6,6 +6,7 @@ import { TopologyViewLayer } from './Visualizer';
 
 const mockPostMessage = vi.fn();
 const mockTerminate = vi.fn();
+const mockRemoveEventListener = vi.fn();
 
 vi.mock('@patternfly/react-topology', () => ({
   observer: (C: unknown) => C,
@@ -47,6 +48,7 @@ vi.mock('@patternfly/react-topology', () => ({
     return {
       registerComponentFactory: vi.fn(),
       addEventListener: vi.fn(),
+      removeEventListener: mockRemoveEventListener,
       fromModel: vi.fn(),
       getGraph: vi.fn().mockReturnValue({
         fit: vi.fn(),
@@ -150,6 +152,7 @@ describe('TopologyViewLayer', () => {
     vi.stubGlobal('Worker', vi.fn());
     mockPostMessage.mockClear();
     mockTerminate.mockClear();
+    mockRemoveEventListener.mockClear();
   });
 
   it('should pass mesh data to worker via postMessage', async () => {
@@ -199,6 +202,7 @@ describe('TopologyViewLayer', () => {
 
     await waitFor(() => {
       expect(mockTerminate).toHaveBeenCalled();
+      expect(mockRemoveEventListener).toHaveBeenCalledWith('selection', expect.any(Function));
     });
   });
 });
