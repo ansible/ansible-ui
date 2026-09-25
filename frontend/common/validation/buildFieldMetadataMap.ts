@@ -25,6 +25,16 @@ export interface SchemaFieldWithPattern {
 }
 
 /**
+ * Resolves the pattern description from a schema field, preferring
+ * snake_case `pattern_description` over camelCase `patternDescription`.
+ */
+function resolvePatternDescription(field: SchemaFieldWithPattern): string | undefined {
+  if (typeof field.pattern_description === 'string') return field.pattern_description;
+  if (typeof field.patternDescription === 'string') return field.patternDescription;
+  return undefined;
+}
+
+/**
  * Builds a `Record<string, FieldMetadata>` map from an array of schema
  * fields, suitable for passing to {@link PageFormFieldMetadataProvider}.
  *
@@ -68,15 +78,7 @@ export function buildFieldMetadataMap(
       continue;
     }
 
-    // Accept both snake_case and camelCase (Gateway authenticator-plugins API
-    // uses `patternDescription`; AWX/EDA use `pattern_description`).
-    let patternDescription: string | undefined;
-    if (typeof field.pattern_description === 'string') {
-      patternDescription = field.pattern_description;
-    } else if (typeof field.patternDescription === 'string') {
-      patternDescription = field.patternDescription;
-    }
-
+    const patternDescription = resolvePatternDescription(field);
     const flags = typeof field.flags === 'string' ? field.flags : undefined;
 
     map[key] = { pattern, pattern_description: patternDescription, flags };
