@@ -22,7 +22,7 @@ export function WorkflowApprovalTimeRemaining(props: { approval_expiration: stri
     const timeout = setInterval(() => {
       setTimeRemaining(Math.max(0, approvalExpiration - Date.now().valueOf()));
     }, 1000);
-    return () => clearTimeout(timeout);
+    return () => clearInterval(timeout);
   }, [approvalExpiration, timeRemaining]);
 
   const totalSeconds = Math.floor(timeRemaining / 1000);

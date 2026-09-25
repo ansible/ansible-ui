@@ -27,34 +27,37 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
     function removeAlert(alert: AlertProps) {
       setToasterAlerts((alerts) => alerts.filter((a) => a !== alert));
     }
+
+    function prepareAlert(alert: AlertProps) {
+      if (!Number.isInteger(alert.timeout)) return alert;
+
+      const { timeout, ...alertWithoutTimeout } = alert;
+      setTimeout(() => removeAlert(alertWithoutTimeout), timeout as number);
+      return alertWithoutTimeout;
+    }
+
     function addAlert(alert: AlertProps) {
-      if (Number.isInteger(alert.timeout)) {
-        setTimeout(() => removeAlert(alert), alert.timeout as number);
-        delete alert.timeout;
-      }
+      const preparedAlert = prepareAlert(alert);
       setToasterAlerts((alerts) => {
-        const alertIndex = alerts.findIndex((a) => a === alert);
+        const alertIndex = alerts.findIndex((a) => a === preparedAlert);
         if (alertIndex !== -1) {
           const newAlerts = [...alerts];
-          newAlerts[alertIndex] = alert;
+          newAlerts[alertIndex] = preparedAlert;
           return newAlerts;
         } else {
-          return [...alerts, alert];
+          return [...alerts, preparedAlert];
         }
       });
     }
     function replaceAlert(oldAlert: AlertProps, alert: AlertProps) {
+      const preparedAlert = prepareAlert(alert);
       setToasterAlerts((alerts) => {
         const oldAlertIndex = alerts.findIndex(
           (a) => JSON.stringify(a) === JSON.stringify(oldAlert)
         );
         if (oldAlertIndex !== -1) {
-          if (Number.isInteger(alert.timeout)) {
-            setTimeout(() => removeAlert(alert), alert.timeout as number);
-            delete alert.timeout;
-          }
           const newAlerts = [...alerts];
-          newAlerts[oldAlertIndex] = alert;
+          newAlerts[oldAlertIndex] = preparedAlert;
           return newAlerts;
         }
         return alerts;
