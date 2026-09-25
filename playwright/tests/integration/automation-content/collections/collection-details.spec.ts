@@ -385,9 +385,17 @@ test.describe('Hub Collections - Details Page', () => {
           return;
         }
 
-        await clickKebabActionAndConfirm('sign-collection', page);
-
         await page.getByTestId('collection-detail-tab').click();
+        await expect(page.getByTestId('signed-state')).toContainText('Unsigned');
+
+        await page.getByTestId('actions-dropdown').click();
+        await page.getByTestId('sign-collection').click();
+
+        const modal = page.getByRole('dialog');
+        await modal.waitFor({ state: 'visible' });
+        await modal.getByTestId('confirm').click();
+        await modal.getByTestId('submit').click();
+
         await expect(page.getByTestId('signed-state')).toContainText('Signed', { timeout: 60000 });
       }
     );

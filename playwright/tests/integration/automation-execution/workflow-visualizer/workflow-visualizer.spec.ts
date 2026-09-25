@@ -283,16 +283,7 @@ test.describe('Workflow Viz', () => {
       const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
       await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', projectOne);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await expect(page.getByRole('button', { name: 'Add step' })).toBeVisible();
-      await page.getByRole('button', { name: 'Add step' }).click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-      await page.getByRole('option', { name: 'Project Sync' }).click();
-      await page.getByRole('button', { name: 'Project', exact: true }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill(projectTwo);
-      await page.getByRole('option', { name: projectTwo }).click();
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', projectTwo);
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
@@ -326,16 +317,7 @@ test.describe('Workflow Viz', () => {
         page.getByRole('heading', { name: 'Success alert: Successfully' })
       ).toBeVisible();
       await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
-      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-      await page.getByRole('option', { name: 'Project Sync' }).click();
-      await page.getByRole('button', { name: 'Project', exact: true }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill(projectTwo);
-      await page.getByRole('option', { name: projectTwo }).click();
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', projectTwo);
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
