@@ -87,36 +87,15 @@ function getFilterParam(
     return [undefined, undefined];
   }
 
-  if (filter.query === 'object1__in') {
-    if (values.length === 1 && values.some((value) => value !== '')) {
-      return ['or__object1__in', firstValue.replaceAll('+', ',')];
-    } else {
-      return [undefined, undefined];
-    }
-  }
+  const activityStreamParam = getActivityStreamParam(filter, values, firstValue);
+  if (activityStreamParam) return activityStreamParam;
 
   if (filter.query === 'search') {
     return [filter.query, values];
   }
 
-  if (filter.type === ToolbarFilterType.DateRange) {
-    const name = `${filter.query}__gte`;
-    const date = new Date(Date.now());
-    date.setSeconds(0);
-    date.setMilliseconds(0);
-    switch (values[0] as DateRangeFilterPresets) {
-      case DateRangeFilterPresets.LastHour:
-        return [name, new Date(date.getTime() - 60 * 60 * 1000).toISOString()];
-      case DateRangeFilterPresets.Last24Hours:
-        return [name, new Date(date.getTime() - 24 * 60 * 60 * 1000).toISOString()];
-      case DateRangeFilterPresets.LastWeek:
-        return [name, new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()];
-      case DateRangeFilterPresets.LastMonth:
-        return [name, new Date(date.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()];
-      default:
-        return [undefined, undefined];
-    }
-  }
+  const dateRangeParam = getDateRangeParam(filter, values);
+  if (dateRangeParam) return dateRangeParam;
 
   if (values.length === 1) {
     return [filter.query, firstValue];
@@ -128,4 +107,31 @@ function getFilterParam(
   }
 
   return [`or__${filter.query}`, values];
+}
+
+function getActivityStreamParam(
+  filter: IToolbarFilter,
+  values: string[],
+  firstValue: string
+): [string, string] | undefined {
+  if (filter.query !== 'object1__in') return undefined;
+  if (values.length !== 1 || !values.some((value) => value !== '')) return undefined;
+  return ['or__object1__in', firstValue.replaceAll('+', ',')];
+}
+
+function getDateRangeParam(filter: IToolbarFilter, values: string[]): [string, string] | undefined {
+  if (filter.type !== ToolbarFilterType.DateRange) return undefined;
+
+  const name = `${filter.query}__gte`;
+  const date = new Date(Date.now());
+  date.setSeconds(0);
+  date.setMilliseconds(0);
+  const offsets: Partial<Record<DateRangeFilterPresets, number>> = {
+    [DateRangeFilterPresets.LastHour]: 60 * 60 * 1000,
+    [DateRangeFilterPresets.Last24Hours]: 24 * 60 * 60 * 1000,
+    [DateRangeFilterPresets.LastWeek]: 7 * 24 * 60 * 60 * 1000,
+    [DateRangeFilterPresets.LastMonth]: 30 * 24 * 60 * 60 * 1000,
+  };
+  const offset = offsets[values[0] as DateRangeFilterPresets];
+  return offset === undefined ? undefined : [name, new Date(date.getTime() - offset).toISOString()];
 }
