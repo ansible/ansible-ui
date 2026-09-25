@@ -39,7 +39,7 @@ vi.mock('@patternfly/react-topology', () => ({
 const mockUseOptions = vi.fn(() => ({ data: { actions: { POST: {} } } }));
 
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
-  useOptions: (...args: unknown[]) => mockUseOptions(...args),
+  useOptions: mockUseOptions,
 }));
 
 vi.mock('../hooks', () => ({

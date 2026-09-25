@@ -178,7 +178,7 @@ describe('validationHelpers', () => {
       };
       const formData: WizardData = {
         prompt: {
-          credentials: [{ id: 10, name: 'SSH', credential_type: 1 }],
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
           requiredCredentialTypes: [machineType],
         },
       };
@@ -189,13 +189,13 @@ describe('validationHelpers', () => {
     it('should fail when merged credentials do not satisfy the required types', () => {
       const wizardData: WizardData = {
         prompt: {
-          credentials: [{ id: 10, name: 'SSH', credential_type: 1 }],
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
           requiredCredentialTypes: [machineType, vaultType],
         },
       };
       const formData: WizardData = {
         prompt: {
-          credentials: [{ id: 10, name: 'SSH', credential_type: 1 }],
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
         },
       };
 
@@ -206,13 +206,13 @@ describe('validationHelpers', () => {
       const wizardData: WizardData = {
         prompt: {
           requiredCredentialTypes: [vaultType],
-          credentials: [{ id: 2, name: 'Vault', credential_type: 2 }],
+          credentials: [{ id: 2, name: 'Vault', credential_type: 2, passwords_needed: [] }],
         },
       };
       const formData: WizardData = {
         prompt: {
           requiredCredentialTypes: [machineType],
-          credentials: [{ id: 1, name: 'SSH', credential_type: 1 }],
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
         },
       };
 
@@ -228,7 +228,7 @@ describe('validationHelpers', () => {
       };
       const formData: WizardData = {
         prompt: {
-          credentials: [{ id: 1, name: 'SSH', credential_type: 1 }],
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
         },
       };
 
@@ -243,7 +243,7 @@ describe('validationHelpers', () => {
       };
       const formData: WizardData = {
         prompt: {
-          credentials: [{ id: 1, name: 'SSH', credential_type: 1 }],
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
         },
       };
 
