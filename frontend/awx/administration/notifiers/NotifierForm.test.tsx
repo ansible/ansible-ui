@@ -134,5 +134,48 @@ describe('NotifierForm', () => {
       );
       expect(screen.getByText('Host')).toBeInTheDocument();
     });
+
+    it('should show pattern validation error when Host violates the OPTIONS metadata pattern', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter initialEntries={['/notifiers/create']}>
+          <Routes>
+            <Route path="/notifiers/create" element={<AddNotifier />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Create notifier');
+      });
+
+      // Select Email notification type to render the dynamic sub-form
+      await user.click(screen.getByRole('button', { name: /Notification type/i }));
+      await user.click(screen.getByRole('option', { name: 'Email' }));
+
+      // Wait for the Host field to render (the sub-form is loaded after type selection)
+      await waitFor(
+        () => {
+          expect(screen.getByText('Type Details')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      // Type an invalid hostname that violates the pattern '^[a-zA-Z0-9.-]+$'
+      // from the MSW mock OPTIONS response
+      const hostInput = screen.getByTestId('notification-configuration-host');
+      await user.type(hostInput, 'bad host!@#');
+      await user.tab();
+
+      // The pattern_description from the OPTIONS metadata should surface as a
+      // validation error, proving the full pipeline:
+      // OPTIONS → extractNotifierFieldMetadata → buildFieldMetadataMap →
+      // PageFormFieldMetadataProvider → usePageFormOptionsContext →
+      // createFieldValidate → Controller blocks submission
+      await waitFor(() => {
+        expect(screen.getByText('Host must be a valid hostname')).toBeInTheDocument();
+      });
+    });
   });
 });
