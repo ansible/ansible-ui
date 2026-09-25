@@ -5,7 +5,7 @@ import {
   type IToolbarFilter,
 } from '@ansible/ansible-ui-framework';
 import { describe, expect, it, vi } from 'vitest';
-import { applyBatchedEvents, getFiltersQueryString } from './useJobOutput';
+import { applyBatchedEvents, getFiltersQueryString, mergeJobEvents } from './useJobOutput';
 import type { JobEvent } from '../../../interfaces/JobEvent';
 
 const textFilter = {
@@ -178,5 +178,21 @@ describe('getFiltersQueryString', () => {
   it('should handle empty toolbar filters array', () => {
     const filterState: IFilterState = { search: ['hello'] };
     expect(getFiltersQueryString([], filterState)).toBe('');
+  });
+});
+
+describe('mergeJobEvents', () => {
+  const makeEvent = (counter: number) => ({ counter }) as JobEvent;
+
+  it('merges unfiltered events by counter', () => {
+    const result = mergeJobEvents({ 1: makeEvent(1) }, [makeEvent(2)], false);
+
+    expect(result).toEqual({ 1: makeEvent(1), 2: makeEvent(2) });
+  });
+
+  it('appends filtered events after existing events', () => {
+    const result = mergeJobEvents({ 1: makeEvent(1) }, [makeEvent(7)], true);
+
+    expect(result).toEqual({ 1: makeEvent(1), 2: makeEvent(7) });
   });
 });
