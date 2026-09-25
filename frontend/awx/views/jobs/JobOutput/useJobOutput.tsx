@@ -71,17 +71,7 @@ export function useJobOutput(
             setJobEventCount(itemsResponse.count);
           }
           setJobEvents((jobEvents) => {
-            const updated = { ...jobEvents };
-            let i = Object.keys(jobEvents).length + 1;
-            for (const jobEvent of itemsResponse.results) {
-              if (isFiltered) {
-                updated[i] = jobEvent;
-                i++;
-              } else {
-                updated[jobEvent.counter] = jobEvent;
-              }
-            }
-            return updated;
+            return mergeJobEvents(jobEvents, itemsResponse.results, isFiltered);
           });
         })
         .catch()
@@ -219,6 +209,24 @@ export function useJobOutput(
   }, [filterState]);
 
   return { jobEventCount, getJobOutputEvent, queryJobOutputEvent, jobEvents };
+}
+
+export function mergeJobEvents(
+  jobEvents: Record<number, JobEvent>,
+  newEvents: JobEvent[],
+  isFiltered: boolean
+) {
+  const updated = { ...jobEvents };
+  let i = Object.keys(jobEvents).length + 1;
+  for (const jobEvent of newEvents) {
+    if (isFiltered) {
+      updated[i] = jobEvent;
+      i++;
+    } else {
+      updated[jobEvent.counter] = jobEvent;
+    }
+  }
+  return updated;
 }
 
 export function getFiltersQueryString(toolbarFilters: IToolbarFilter[], filterState: IFilterState) {
