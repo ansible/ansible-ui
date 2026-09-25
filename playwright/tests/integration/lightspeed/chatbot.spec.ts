@@ -126,6 +126,7 @@ test.describe('Chatbot', () => {
   );
 
   test.describe('MCP conversation', () => {
+    // The MCP chatbot service is intentionally unavailable on the ocp-a topology.
     test.skip(isOcpA(), 'MCP chatbot integration is not available on ocp-a topology');
 
     test(
