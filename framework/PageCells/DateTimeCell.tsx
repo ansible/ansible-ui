@@ -62,7 +62,7 @@ export function DateTimeCell(props: {
     updateTime(props.value, format);
     if (format === 'since') {
       const timeout = setInterval(() => updateTime(props.value, format), 1000);
-      return () => clearTimeout(timeout);
+      return () => clearInterval(timeout);
     }
   }, [format, props.value, updateTime]);
 

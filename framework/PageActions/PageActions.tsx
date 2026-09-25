@@ -84,13 +84,7 @@ export function PageActions<T extends object>(props: PageActionProps<T>) {
     else onOpen?.(false);
   }, [onOpen, openLabels]);
   const handleOnOpen = useCallback((label: string, open: boolean) => {
-    setOpenLabels((labels) => {
-      if (labels[label] !== open) {
-        labels = { ...labels };
-        labels[label] = open;
-      }
-      return labels;
-    });
+    setOpenLabels((labels) => (labels[label] === open ? labels : { ...labels, [label]: open }));
   }, []);
 
   return (
