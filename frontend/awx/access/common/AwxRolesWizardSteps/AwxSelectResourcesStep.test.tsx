@@ -22,8 +22,17 @@ describe('AwxSelectResourcesStep', () => {
     render(<AwxSelectResourcesStep userOrTeamName="Alex" />);
 
     expect(screen.getByRole('heading', { name: 'Select inventories' })).toBeInTheDocument();
-    const viewCall = useAwxMultiSelectListView.mock.calls[0];
+    const viewCall = useAwxMultiSelectListView.mock.calls.at(-1);
     expect(viewCall?.[0]?.url).toContain('/inventories/');
     expect(viewCall?.[1]).toBe('resources');
+  });
+
+  it('uses an empty endpoint for an unknown resource type', () => {
+    usePageWizard.mockReturnValue({ wizardData: { resourceType: 'awx.unknown' } });
+
+    render(<AwxSelectResourcesStep userOrTeamName="Alex" />);
+
+    const viewCall = useAwxMultiSelectListView.mock.calls.at(-1);
+    expect(viewCall?.[0]?.url).toBe('');
   });
 });
