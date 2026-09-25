@@ -52,10 +52,11 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
       if (statusParser) {
         successState = statusParser(response);
       }
-      setStatuses((statuses) => ({
-        ...(statuses ?? {}),
-        [key]: successState !== undefined ? successState : null,
-      }));
+      setStatuses((statuses) =>
+        Object.assign({}, statuses, {
+          [key]: successState !== undefined ? successState : null,
+        })
+      );
     }
 
     function updateErrorState(
@@ -71,44 +72,36 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
           typeof parsedErrors[0].message === 'string' && parsedErrors.length === 1
             ? parsedErrors[0].message
             : t(`Unknown error`);
-        setStatuses((statuses) => ({
-          ...(statuses ?? {}),
-          [key]: message,
-        }));
+        setStatuses((statuses) => Object.assign({}, statuses, { [key]: message }));
       } else {
-        setStatuses((statuses) => ({
-          ...(statuses ?? {}),
-          [key]: t(`Unknown error`),
-        }));
+        setStatuses((statuses) => Object.assign({}, statuses, { [key]: t(`Unknown error`) }));
       }
       setError(translations.errorText);
     }
 
+    let progress = 0;
+    const successfulItemsArray: T[] = [];
+    async function processItem(item: T) {
+      if (abortController.signal.aborted) return;
+      const key = keyFn(item);
+      try {
+        const response = await actionFn(item, abortController.signal);
+        updateSuccessState(key, response);
+        successfulItemsArray.push(item);
+      } catch (err) {
+        const { genericErrors, fieldErrors } = errorAdapter(err);
+        const parsedErrors = [...genericErrors, ...fieldErrors.filter((e) => e.message)];
+        updateErrorState(key, parsedErrors, err);
+      } finally {
+        if (!abortController.signal.aborted) {
+          setProgress(++progress);
+        }
+      }
+    }
+
     async function process() {
       const limit = pLimit(5);
-      let progress = 0;
-      const successfulItemsArray: T[] = [];
-      await Promise.all(
-        items.map((item: T) =>
-          limit(async () => {
-            if (abortController.signal.aborted) return;
-            const key = keyFn(item);
-            try {
-              const response = await actionFn(item, abortController.signal);
-              updateSuccessState(key, response);
-              successfulItemsArray.push(item);
-            } catch (err) {
-              const { genericErrors, fieldErrors } = errorAdapter(err);
-              const parsedErrors = [...genericErrors, ...fieldErrors.filter((e) => e.message)];
-              updateErrorState(key, parsedErrors, err);
-            } finally {
-              if (!abortController.signal.aborted) {
-                setProgress(++progress);
-              }
-            }
-          })
-        )
-      );
+      await Promise.all(items.map((item: T) => limit(() => processItem(item))));
       setSuccessfulItems([...successfulItems, ...successfulItemsArray]);
       if (!abortController.signal.aborted) {
         setProcessing(false);

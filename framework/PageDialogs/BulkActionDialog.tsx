@@ -24,6 +24,7 @@ import { usePageDialog } from './PageDialog';
 import { useBulkActionProcessing } from './useBulkActionProcessing';
 
 export type StatusWithMessageAndUrl = { message: string; url: string };
+export type BulkActionCompletionStatus = 'success' | 'failures' | 'canceled';
 export interface BulkActionDialogProps<T extends object> {
   /** The title of the model.
    * @link https://www.patternfly.org/v4/components/modal/design-guidelines#confirmation-dialogs
@@ -50,7 +51,7 @@ export interface BulkActionDialogProps<T extends object> {
 
   /** Callback called when the dialog closes. */
   onClose?: (
-    status: 'success' | 'failures' | 'canceled',
+    status: BulkActionCompletionStatus,
     successfulItems: T[],
     failedItems: T[],
     canceledItems: T[]
