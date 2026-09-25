@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GatewaySettingsEdit } from './GatewaySettingsEdit';
@@ -135,10 +136,11 @@ describe('GatewaySettingsEdit Component', () => {
       renderWithContext();
 
       const input = screen.getByLabelText('Gateway proxy url');
-      fireEvent.change(input, { target: { value: 'https://new-gateway.example.com' } });
+      await userEvent.clear(input);
+      await userEvent.type(input, 'https://new-gateway.example.com');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      fireEvent.click(submitButton);
+      await userEvent.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalledWith(
@@ -152,11 +154,11 @@ describe('GatewaySettingsEdit Component', () => {
       expect(mockPageNavigate).toHaveBeenCalledWith('platform-gateway-settings');
     });
 
-    it('should allow admin to cancel editing', () => {
+    it('should allow admin to cancel editing', async () => {
       renderWithContext();
 
       const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-      fireEvent.click(cancelButton);
+      await userEvent.click(cancelButton);
 
       expect(mockPageNavigate).toHaveBeenCalledWith('platform-gateway-settings');
     });
@@ -267,7 +269,7 @@ describe('GatewaySettingsEdit Component', () => {
       renderWithContext(contextWithRedirect, 'authentication');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      fireEvent.click(submitButton);
+      await userEvent.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalled();
@@ -288,10 +290,11 @@ describe('GatewaySettingsEdit Component', () => {
       renderWithContext();
 
       const input = screen.getByLabelText('Gateway proxy url');
-      fireEvent.change(input, { target: { value: 'https://new-gateway.example.com' } });
+      await userEvent.clear(input);
+      await userEvent.type(input, 'https://new-gateway.example.com');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      fireEvent.click(submitButton);
+      await userEvent.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalled();

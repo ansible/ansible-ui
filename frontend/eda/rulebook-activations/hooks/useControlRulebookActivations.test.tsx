@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { renderHook, act, screen, fireEvent } from '@testing-library/react';
+import { renderHook, act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeAll, beforeEach, afterAll, afterEach, Mock } from 'vitest';
 import {
   useRestartRulebookActivationsWithWarning,
@@ -140,13 +141,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await userEvent.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Enable rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await userEvent.click(submitButton);
       await Promise.resolve();
     });
 
@@ -173,13 +174,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await userEvent.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Restart rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await userEvent.click(submitButton);
       await Promise.resolve();
     });
 
@@ -276,13 +277,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await userEvent.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Disable rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await userEvent.click(submitButton);
       await Promise.resolve();
     });
 
@@ -309,13 +310,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await userEvent.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Restart rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await userEvent.click(submitButton);
       await Promise.resolve();
     });
 
@@ -381,13 +382,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await userEvent.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Disable rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await userEvent.click(submitButton);
       await Promise.resolve();
     });
 
