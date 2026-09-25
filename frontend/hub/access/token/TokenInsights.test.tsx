@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TokenInsights } from './TokenInsights';
@@ -101,7 +102,8 @@ describe('TokenInsights Component', () => {
     expect(loadTokenButton).toHaveTextContent('Load token');
   });
 
-  it('should call doOffline when Load token button is clicked', () => {
+  it('should call doOffline when Load token button is clicked', async () => {
+    const user = userEvent.setup();
     render(
       <MemoryRouter>
         <TokenInsights />
@@ -109,7 +111,7 @@ describe('TokenInsights Component', () => {
     );
 
     const loadTokenButton = screen.getByTestId('load-token');
-    fireEvent.click(loadTokenButton);
+    await user.click(loadTokenButton);
 
     expect(mockDoOffline).toHaveBeenCalledTimes(1);
   });
@@ -206,7 +208,8 @@ describe('TokenInsights Component', () => {
     expect(tokenManagementLink).toBeInTheDocument();
   });
 
-  it('should not call insights APIs when window.insights is not available', () => {
+  it('should not call insights APIs when window.insights is not available', async () => {
+    const user = userEvent.setup();
     // Remove window.insights
     delete (globalThis as typeof globalThis & { insights?: unknown }).insights;
 
@@ -224,7 +227,7 @@ describe('TokenInsights Component', () => {
     expect(loadTokenButton).toBeInTheDocument();
 
     // Clicking should not throw error
-    fireEvent.click(loadTokenButton);
+    await user.click(loadTokenButton);
 
     // APIs should not be called
     expect(mockDoOffline).not.toHaveBeenCalled();

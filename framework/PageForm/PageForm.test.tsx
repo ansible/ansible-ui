@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 import { PageForm } from './PageForm';
@@ -9,6 +9,7 @@ import { PageFormTextArea } from './Inputs/PageFormTextArea';
 describe('PageForm', () => {
   describe('disableSubmitOnEnter behavior', () => {
     test('should prevent Enter key in text input when disableSubmitOnEnter is true', async () => {
+      const user = userEvent.setup();
       const onSubmit = vi.fn();
 
       render(
@@ -18,16 +19,17 @@ describe('PageForm', () => {
       );
 
       const input = screen.getByRole('textbox', { name: /text/i });
-      await userEvent.type(input, 'test');
+      await user.type(input, 'test');
 
       // Simulate Enter key press
-      fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+      await user.keyboard('{Enter}');
 
       // Form should not be submitted
       expect(onSubmit).not.toHaveBeenCalled();
     });
 
     test('should allow Enter key in textarea for new line when disableSubmitOnEnter is true', async () => {
+      const user = userEvent.setup();
       const onSubmit = vi.fn();
 
       render(
@@ -39,7 +41,7 @@ describe('PageForm', () => {
       const textarea = screen.getByRole('textbox', { name: /description/i });
 
       // Type some text, then Enter, then more text
-      await userEvent.type(textarea, 'line 1{Enter}line 2');
+      await user.type(textarea, 'line 1{Enter}line 2');
 
       // The textarea should contain a newline
       expect(textarea).toHaveValue('line 1\nline 2');
@@ -49,6 +51,7 @@ describe('PageForm', () => {
     });
 
     test('should not prevent Enter key when disableSubmitOnEnter is false', async () => {
+      const user = userEvent.setup();
       const onSubmit = vi.fn().mockResolvedValue(undefined);
 
       render(
@@ -58,7 +61,7 @@ describe('PageForm', () => {
       );
 
       const input = screen.getByRole('textbox', { name: /text/i });
-      await userEvent.type(input, 'test{Enter}');
+      await user.type(input, 'test{Enter}');
 
       // Form should be submitted (Enter triggers form submission)
       expect(onSubmit).toHaveBeenCalled();

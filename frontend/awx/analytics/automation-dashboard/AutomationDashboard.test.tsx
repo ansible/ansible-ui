@@ -238,7 +238,8 @@ describe('AutomationDashboard', () => {
   });
 
   test('renders AutomationDashboard component', () => {
-    render(testWrapper());
+    const { getByText } = render(testWrapper());
+    expect(getByText('Automation Dashboard')).toBeInTheDocument();
   });
 
   test('renders dashboard title', () => {
