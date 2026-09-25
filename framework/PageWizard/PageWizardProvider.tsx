@@ -117,12 +117,13 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
       const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
       // If the next step is a parent step, mark its first substep as the next active step
       const nextCandidate = visibleStepsFlattened[activeStepIndex + 1];
-      const nextStep = nextCandidate
-        ? isPageWizardParentStep(nextCandidate)
+      let nextStep: PageWizardStep | undefined;
+      if (nextCandidate) {
+        nextStep = isPageWizardParentStep(nextCandidate)
           ? visibleStepsFlattened[activeStepIndex + 2]
-          : nextCandidate
-        : undefined;
-      if (!nextStep) return Promise.resolve();
+          : nextCandidate;
+      }
+      if (!nextStep) return;
 
       // Clear search params
       setSearchParams(new URLSearchParams(''));
@@ -139,11 +140,12 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
 
     const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
     const previousCandidate = visibleStepsFlattened[activeStepIndex - 1];
-    const previousStep = previousCandidate
-      ? isPageWizardParentStep(previousCandidate)
+    let previousStep: PageWizardStep | undefined;
+    if (previousCandidate) {
+      previousStep = isPageWizardParentStep(previousCandidate)
         ? visibleStepsFlattened[activeStepIndex - 2]
-        : previousCandidate
-      : undefined;
+        : previousCandidate;
+    }
     if (!previousStep) return;
     // Clear search params
     setSearchParams(new URLSearchParams(''));

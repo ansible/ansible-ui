@@ -17,11 +17,14 @@ export function PageWizardFooter(props: {
 
   const firstStep = visibleStepsFlattened[0];
   const secondStep = visibleStepsFlattened[1];
-  const isFirstStep = firstStep
-    ? isPageWizardParentStep(firstStep)
-      ? activeStep?.id === secondStep?.id
-      : activeStep?.id === firstStep.id
-    : true;
+  let isFirstStep = true;
+  if (firstStep) {
+    if (isPageWizardParentStep(firstStep)) {
+      isFirstStep = activeStep?.id === secondStep?.id;
+    } else {
+      isFirstStep = activeStep?.id === firstStep.id;
+    }
+  }
   const backClassName = isFirstStep
     ? 'pf-v6-c-button pf-m-disabled'
     : 'pf-v6-c-button pf-m-secondary';
