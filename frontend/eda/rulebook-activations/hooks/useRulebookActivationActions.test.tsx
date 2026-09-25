@@ -11,6 +11,7 @@ import { IEdaView } from '../../common/useEventDrivenView';
 import {
   IPageActionButtonSingle,
   IPageActionSwitchSingle,
+  PageActionSelection,
   PageActionType,
 } from '@ansible/ansible-ui-framework';
 import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
@@ -238,6 +239,24 @@ describe('useRulebookActivationActions', () => {
     });
     expect(screen.getByText('Permanently delete rulebook activations')).toBeVisible();
     expect(screen.getByText('Delete rulebook activations')).toBeVisible();
+  });
+
+  it('should open delete logs for a single activation row', () => {
+    const { result } = renderHook(() => useRulebookActivationActions(mockView), { wrapper });
+    const activation = { id: 1, name: 'Test' } as EdaRulebookActivation;
+    const clearLogsAction = result.current.find(
+      (action) => 'label' in action && action.label === 'Delete logs'
+    ) as IPageActionButtonSingle<EdaRulebookActivation>;
+
+    expect(clearLogsAction.selection).toBe(PageActionSelection.Single);
+    expect(clearLogsAction.isDanger).toBe(true);
+
+    act(() => {
+      clearLogsAction.onClick(activation);
+    });
+
+    expect(screen.getByText('Permanently Delete Logs')).toBeVisible();
+    expect(screen.getByText('Test')).toBeVisible();
   });
 
   it('should handle enable activation failure', () => {

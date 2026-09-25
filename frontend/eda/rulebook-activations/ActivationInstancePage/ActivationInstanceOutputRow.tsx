@@ -31,19 +31,22 @@ const TimestampColumn = styled.div`
   user-select: none;
 `;
 
-export function ActivationInstanceOutputRow(props: {
+interface IActivationInstanceOutputRowProps {
   index: number;
+  lineNumber: number;
   row: EdaActivationInstanceLog;
   setHeight: (index: number, height: number) => void;
-}) {
-  const { index, row } = props;
+}
+
+export function ActivationInstanceOutputRow(props: Readonly<IActivationInstanceOutputRowProps>) {
+  const { index, lineNumber, row } = props;
   const ref = useRef<HTMLTableRowElement>(null);
   useResizeObserver(ref, () => props.setHeight(index, ref.current?.clientHeight ?? 0));
 
   return (
     <div className="output-grid-row" style={{ cursor: 'auto' }} ref={ref}>
       <LineNumberGutter>
-        <LineNumber>{index + 1}</LineNumber>
+        <LineNumber>{lineNumber}</LineNumber>
       </LineNumberGutter>
       <StdOutColumn>
         <Ansi input={row.log} />

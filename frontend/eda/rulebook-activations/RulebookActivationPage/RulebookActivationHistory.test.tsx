@@ -1,10 +1,34 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { SWRConfig } from 'swr';
+import userEvent from '@testing-library/user-event';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
+import { EdaActiveUserContext } from '../../common/useEdaActiveUser';
 import { RulebookActivationHistory } from './RulebookActivationHistory';
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({
+      children,
+      'aria-label': ariaLabel,
+      elementToFocus,
+    }: {
+      children: React.ReactNode;
+      'aria-label': string;
+      elementToFocus?: string;
+    }) => (
+      <dialog open aria-label={ariaLabel} data-element-to-focus={elementToFocus}>
+        {children}
+      </dialog>
+    ),
+  };
+});
 
 const mockInstances = {
   count: 2,
@@ -30,8 +54,42 @@ const mockInstances = {
 
 const server = setupServer();
 
+const mockActiveUser = {
+  id: 1,
+  username: 'admin',
+  is_superuser: true,
+  resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+  created_at: '2024-01-01T00:00:00Z',
+  modified_at: '2024-01-01T00:00:00Z',
+};
+
+function renderHistory(
+  activeEdaUser = mockActiveUser,
+  initialEntry = '/rulebook-activations/5/history',
+  routePath = '/rulebook-activations/:id/history'
+) {
+  render(
+    <SWRConfig value={{ provider: () => new Map() }}>
+      <PageDialogProvider>
+        <EdaActiveUserContext.Provider value={{ activeEdaUser }}>
+          <MemoryRouter initialEntries={[initialEntry]}>
+            <Routes>
+              <Route path={routePath} element={<RulebookActivationHistory />} />
+            </Routes>
+          </MemoryRouter>
+        </EdaActiveUserContext.Provider>
+      </PageDialogProvider>
+    </SWRConfig>
+  );
+}
+
 describe('RulebookActivationHistory', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+  beforeEach(() => {
+    server.use(
+      http.get('*/activations/5/', () => HttpResponse.json({ id: 5, name: 'Activation 5' }))
+    );
+  });
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
@@ -41,14 +99,7 @@ describe('RulebookActivationHistory', () => {
         return HttpResponse.json(mockInstances);
       })
     );
-
-    render(
-      <MemoryRouter initialEntries={['/rulebook-activations/5/history']}>
-        <Routes>
-          <Route path="/rulebook-activations/:id/history" element={<RulebookActivationHistory />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderHistory();
 
     await waitFor(() => {
       expect(screen.getByText(/Instance 1/)).toBeInTheDocument();
@@ -61,14 +112,7 @@ describe('RulebookActivationHistory', () => {
         return HttpResponse.json({ count: 0, results: [] });
       })
     );
-
-    render(
-      <MemoryRouter initialEntries={['/rulebook-activations/5/history']}>
-        <Routes>
-          <Route path="/rulebook-activations/:id/history" element={<RulebookActivationHistory />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderHistory();
 
     await waitFor(() => {
       expect(screen.getByText('No activation history')).toBeInTheDocument();
@@ -81,17 +125,86 @@ describe('RulebookActivationHistory', () => {
         return new HttpResponse(null, { status: 500 });
       })
     );
-
-    render(
-      <MemoryRouter initialEntries={['/rulebook-activations/5/history']}>
-        <Routes>
-          <Route path="/rulebook-activations/:id/history" element={<RulebookActivationHistory />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderHistory();
 
     await waitFor(() => {
       expect(screen.getByText('Error loading history')).toBeInTheDocument();
     });
+  });
+
+  it('should confirm before deleting logs for a system administrator', async () => {
+    const user = userEvent.setup();
+    const clearLogs = vi.fn();
+    server.use(
+      http.get('*/activations/5/', () => HttpResponse.json({ id: 5, name: 'Activation 5' })),
+      http.get('*/activations/5/instances/*', () => HttpResponse.json(mockInstances)),
+      http.post('*/activations/5/clear-logs/', async ({ request }) => {
+        expect(await request.text()).toMatch(/"before_date":"[^"]+"/);
+        clearLogs();
+        return HttpResponse.json({ deleted: 2 });
+      })
+    );
+    renderHistory();
+
+    await user.click(await screen.findByRole('button', { name: 'Delete logs' }));
+
+    const dialog = screen.getByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(dialog).toHaveTextContent(
+      'This deletes stored database logs for Activation 5. Rulebook activations will continue running, and system logs on activation workers remain unaffected.'
+    );
+    expect(within(dialog).getByText('Activation 5', { selector: 'strong' })).toBeInTheDocument();
+    expect(dialog).toHaveAttribute('data-element-to-focus', '#clear-logs-cancel');
+    expect(within(dialog).getByRole('button', { name: 'Delete logs' })).toBeDisabled();
+
+    await user.click(
+      within(dialog).getByRole('checkbox', {
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
+      })
+    );
+    await user.click(within(dialog).getByRole('button', { name: 'Delete logs' }));
+
+    await waitFor(() => expect(clearLogs).toHaveBeenCalledOnce());
+  });
+
+  it('should use the fallback activation label when the activation has no name', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/activations/5/', () => HttpResponse.json({ id: 5 })),
+      http.get('*/activations/5/instances/*', () => HttpResponse.json(mockInstances))
+    );
+    renderHistory();
+
+    await user.click(await screen.findByRole('button', { name: 'Delete logs' }));
+
+    const dialog = screen.getByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(dialog).toHaveTextContent(
+      'This deletes stored database logs for Rulebook activation. Rulebook activations will continue running, and system logs on activation workers remain unaffected.'
+    );
+    expect(
+      within(dialog).getByText('Rulebook activation', { selector: 'strong' })
+    ).toBeInTheDocument();
+  });
+
+  it('should not open the delete logs dialog when the activation id is missing', async () => {
+    const user = userEvent.setup();
+    server.use(http.get('*/activations//instances/*', () => HttpResponse.json(mockInstances)));
+    renderHistory(mockActiveUser, '/rulebook-activations', '/rulebook-activations');
+
+    await user.click(await screen.findByRole('button', { name: 'Delete logs' }));
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Permanently Delete Logs' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('should allow non-admin users to open delete logs for backend authorization', async () => {
+    const user = userEvent.setup();
+    server.use(http.get('*/activations/5/instances/*', () => HttpResponse.json(mockInstances)));
+
+    renderHistory({ ...mockActiveUser, is_superuser: false });
+
+    const deleteLogs = await screen.findByRole('button', { name: 'Delete logs' });
+    await user.click(deleteLogs);
+    expect(screen.getByRole('dialog', { name: 'Permanently Delete Logs' })).toBeInTheDocument();
   });
 });
