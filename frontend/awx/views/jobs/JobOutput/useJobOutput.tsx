@@ -71,17 +71,17 @@ export function useJobOutput(
             setJobEventCount(itemsResponse.count);
           }
           setJobEvents((jobEvents) => {
-            jobEvents = { ...jobEvents };
+            const updated = { ...jobEvents };
             let i = Object.keys(jobEvents).length + 1;
             for (const jobEvent of itemsResponse.results) {
               if (isFiltered) {
-                jobEvents[i] = jobEvent;
+                updated[i] = jobEvent;
                 i++;
               } else {
-                jobEvents[jobEvent.counter] = jobEvent;
+                updated[jobEvent.counter] = jobEvent;
               }
             }
-            return jobEvents;
+            return updated;
           });
         })
         .catch()
@@ -158,10 +158,10 @@ export function useJobOutput(
       (max, event) => Math.max(max, event.counter),
       jobEventCount
     );
+    const events = batchedEvents.current;
+    batchedEvents.current = [];
     setJobEvents((jobEvents) => {
-      const updated = applyBatchedEvents(jobEvents, batchedEvents.current);
-      batchedEvents.current = [];
-      return updated;
+      return applyBatchedEvents(jobEvents, events);
     });
     setJobEventCount(maxCounter);
   }, [isFiltered, jobEventCount]);
