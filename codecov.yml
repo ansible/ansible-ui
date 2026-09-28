@@ -19,6 +19,9 @@ coverage:
     - "**/swagger.json"
     - "**/openapi.json"
     - "**/package-lock.json"
+    - "**/platform/interfaces/**"
+    - "**/platform/main/Platform.tsx"
+    - "**/platform/**/__mocks__/**"
 
 flags:
   unit-tests:
