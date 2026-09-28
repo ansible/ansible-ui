@@ -1,5 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { ITableColumn } from '@ansible/ansible-ui-framework';
+import { InventorySource } from '../../../interfaces/InventorySource';
 import { useInventorySourceColumns } from './useInventorySourceColumns';
 
 // Mock dependencies
@@ -10,10 +12,9 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
   ITableColumn: {},
 }));
 
+const mockStatusCell = vi.fn(() => <div data-testid="status-cell" />);
 vi.mock('@ansible/common-ui/Status', () => ({
-  StatusCell: ({ to, status }: { to?: string; status?: string }) => (
-    <div data-testid="status-cell" data-to={to} data-status={status} />
-  ),
+  StatusCell: mockStatusCell,
 }));
 
 vi.mock('@ansible/common-ui/columns', () => ({
@@ -41,8 +42,11 @@ describe('useInventorySourceColumns', () => {
   });
 
   it('should include status column with job link when jobId is available', () => {
+    mockStatusCell.mockClear();
     const { result } = renderHook(() => useInventorySourceColumns());
-    const statusColumn = result.current.find((col) => (col as any).header === 'Last job status');
+    const statusColumn = result.current.find(
+      (col: ITableColumn<InventorySource>) => col.header === 'Last job status'
+    );
     expect(statusColumn).toBeDefined();
 
     const inventorySource = {
@@ -54,15 +58,25 @@ describe('useInventorySourceColumns', () => {
         current_job: { id: 123 },
       },
       related: { schedules: '/api/v2/schedules/', last_job: '/api/v2/inventory_updates/123/' },
-    };
+    } as InventorySource;
 
-    const cellContent = (statusColumn as any)?.cell(inventorySource);
-    expect(cellContent).toBeDefined();
+    statusColumn?.cell?.(inventorySource);
+    expect(mockStatusCell).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: expect.stringContaining('123'),
+        status: 'successful',
+        disableLinks: undefined,
+      }),
+      expect.anything()
+    );
   });
 
   it('should handle inventory source without job', () => {
+    mockStatusCell.mockClear();
     const { result } = renderHook(() => useInventorySourceColumns());
-    const statusColumn = result.current.find((col) => (col as any).header === 'Last job status');
+    const statusColumn = result.current.find(
+      (col: ITableColumn<InventorySource>) => col.header === 'Last job status'
+    );
 
     const inventorySource = {
       id: 1,
@@ -71,15 +85,24 @@ describe('useInventorySourceColumns', () => {
       status: 'failed',
       summary_fields: {},
       related: { schedules: '/api/v2/schedules/' },
-    };
+    } as InventorySource;
 
-    const cellContent = (statusColumn as any)?.cell(inventorySource);
-    expect(cellContent).toBeDefined();
+    statusColumn?.cell?.(inventorySource);
+    expect(mockStatusCell).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: undefined,
+        status: 'failed',
+      }),
+      expect.anything()
+    );
   });
 
   it('should respect disableLinks option', () => {
+    mockStatusCell.mockClear();
     const { result } = renderHook(() => useInventorySourceColumns({ disableLinks: true }));
-    const statusColumn = result.current.find((col) => (col as any).header === 'Last job status');
+    const statusColumn = result.current.find(
+      (col: ITableColumn<InventorySource>) => col.header === 'Last job status'
+    );
 
     const inventorySource = {
       id: 1,
@@ -90,9 +113,15 @@ describe('useInventorySourceColumns', () => {
         current_job: { id: 123 },
       },
       related: { schedules: '/api/v2/schedules/', last_job: '/api/v2/inventory_updates/123/' },
-    };
+    } as InventorySource;
 
-    const cellContent = (statusColumn as any)?.cell(inventorySource);
-    expect(cellContent).toBeDefined();
+    statusColumn?.cell?.(inventorySource);
+    expect(mockStatusCell).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: undefined,
+        disableLinks: true,
+      }),
+      expect.anything()
+    );
   });
 });

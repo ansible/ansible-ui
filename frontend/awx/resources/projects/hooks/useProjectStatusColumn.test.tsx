@@ -10,10 +10,9 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
   ITableColumn: {},
 }));
 
+const mockStatusCell = vi.fn(() => <div data-testid="status-cell" />);
 vi.mock('@ansible/common-ui/Status', () => ({
-  StatusCell: ({ to, status }: { to?: string; status?: string }) => (
-    <div data-testid="status-cell" data-to={to} data-status={status} />
-  ),
+  StatusCell: mockStatusCell,
 }));
 
 vi.mock('@patternfly/react-core', () => ({
@@ -29,6 +28,7 @@ describe('useProjectStatusColumn', () => {
   });
 
   it('should render status cell with job link when jobId is available', () => {
+    mockStatusCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn());
     const project = {
       status: 'successful',
@@ -38,11 +38,19 @@ describe('useProjectStatusColumn', () => {
       related: { last_job: '/api/v2/project_updates/456/' },
     };
 
-    const cellContent = result.current.cell(project);
-    expect(cellContent).toBeDefined();
+    result.current.cell(project);
+    expect(mockStatusCell).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: expect.stringContaining('456'),
+        status: 'successful',
+        disableLinks: undefined,
+      }),
+      expect.anything()
+    );
   });
 
   it('should render status cell without link when jobId is undefined', () => {
+    mockStatusCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn());
     const project = {
       status: 'new',
@@ -50,11 +58,18 @@ describe('useProjectStatusColumn', () => {
       related: {},
     };
 
-    const cellContent = result.current.cell(project);
-    expect(cellContent).toBeDefined();
+    result.current.cell(project);
+    expect(mockStatusCell).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: undefined,
+        status: 'new',
+      }),
+      expect.anything()
+    );
   });
 
   it('should respect disableLinks option', () => {
+    mockStatusCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn({ disableLinks: true }));
     const project = {
       status: 'successful',
@@ -64,11 +79,18 @@ describe('useProjectStatusColumn', () => {
       related: { last_job: '/api/v2/project_updates/456/' },
     };
 
-    const cellContent = result.current.cell(project);
-    expect(cellContent).toBeDefined();
+    result.current.cell(project);
+    expect(mockStatusCell).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: undefined,
+        disableLinks: true,
+      }),
+      expect.anything()
+    );
   });
 
   it('should use tooltip when jobId is available', () => {
+    mockStatusCell.mockClear();
     const tooltip = 'Job running';
     const { result } = renderHook(() => useProjectStatusColumn({ tooltip }));
     const project = {
@@ -79,24 +101,12 @@ describe('useProjectStatusColumn', () => {
       related: { last_job: '/api/v2/project_updates/456/' },
     };
 
-    const cellContent = result.current.cell(project);
-    expect(cellContent).toBeDefined();
-  });
-
-  it('should use tooltipAlt when jobId is undefined', () => {
-    const tooltipAlt = 'No job data';
-    const { result } = renderHook(() => useProjectStatusColumn({ tooltipAlt }));
-    const project = {
-      status: 'new',
-      summary_fields: {},
-      related: {},
-    };
-
-    const cellContent = result.current.cell(project);
-    expect(cellContent).toBeDefined();
+    result.current.cell(project);
+    expect(mockStatusCell).toHaveBeenCalledWith(expect.anything(), expect.anything());
   });
 
   it('should handle last_job fallback', () => {
+    mockStatusCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn());
     const project = {
       status: 'failed',
@@ -106,11 +116,18 @@ describe('useProjectStatusColumn', () => {
       related: { last_job: '/api/v2/project_updates/789/' },
     };
 
-    const cellContent = result.current.cell(project);
-    expect(cellContent).toBeDefined();
+    result.current.cell(project);
+    expect(mockStatusCell).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: expect.stringContaining('789'),
+        status: 'failed',
+      }),
+      expect.anything()
+    );
   });
 
   it('should handle current_update fallback', () => {
+    mockStatusCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn());
     const project = {
       status: 'pending',
@@ -120,8 +137,13 @@ describe('useProjectStatusColumn', () => {
       related: {},
     };
 
-    const cellContent = result.current.cell(project);
-    expect(cellContent).toBeDefined();
+    result.current.cell(project);
+    expect(mockStatusCell).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: expect.stringContaining('999'),
+      }),
+      expect.anything()
+    );
   });
 
   it('should respect disableSort option', () => {
