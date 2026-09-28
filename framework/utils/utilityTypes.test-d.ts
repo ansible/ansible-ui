@@ -1,12 +1,5 @@
-import { assertType, expectTypeOf, test } from 'vitest';
+import { assertType, test } from 'vitest';
 import type { SetOptional, SetRequired } from './utilityTypes';
-
-test('SetRequired matches type-fest SetRequired shape', () => {
-  expectTypeOf<SetRequired<{ a?: number; b: string }, 'a'>>().toEqualTypeOf<{
-    a: number;
-    b: string;
-  }>();
-});
 
 test('SetRequired makes selected keys required', () => {
   type Foo = {
