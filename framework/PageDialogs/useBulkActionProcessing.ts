@@ -19,7 +19,6 @@ export interface BulkActionProcessingProps<T extends object> {
   setStatuses: Dispatch<SetStateAction<BulkActionStatuses | undefined>>;
   setSuccessfulItems: Dispatch<SetStateAction<T[]>>;
   statusParser?: (response: unknown) => null | StatusWithMessageAndUrl;
-  successfulItems: T[];
   t: (key: string) => string;
   translations: { errorText: string };
 }
@@ -38,7 +37,6 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
     setStatuses,
     setSuccessfulItems,
     statusParser,
-    successfulItems,
     t,
     translations,
   } = props;
@@ -103,23 +101,27 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
     const tasks = items.map((item: T) => limit(() => processItem(item)));
     async function process() {
       await Promise.all(tasks);
-      setSuccessfulItems([...successfulItems, ...successfulItemsArray]);
+      setSuccessfulItems((prev) => [...prev, ...successfulItemsArray]);
       if (!abortController.signal.aborted) {
         setProcessing(false);
       }
     }
 
     void process();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     abortController,
     actionFn,
+    errorAdapter,
     items,
     keyFn,
-    translations.errorText,
-    t,
-    errorAdapter,
-    statusParser,
     retry,
+    setError,
+    setProcessing,
+    setProgress,
+    setStatuses,
+    setSuccessfulItems,
+    statusParser,
+    t,
+    translations.errorText,
   ]);
 }
