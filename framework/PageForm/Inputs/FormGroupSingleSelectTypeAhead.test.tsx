@@ -115,6 +115,32 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     expect(input).toBeInTheDocument();
   });
 
+  it('should skip disabled entries while finding the next option', async () => {
+    const user = userEvent.setup();
+    render(
+      <FormGroupSingleSelectTypeAhead
+        {...defaultProps}
+        options={[
+          { value: 'disabled', label: 'Disabled', isDisabled: true },
+          { value: 'enabled', label: 'Enabled' },
+        ]}
+      />
+    );
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    input.focus();
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => {
+      expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-enabled');
+    });
+
+    await user.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-enabled');
+  });
+
   // Test the core deletion fix - this is what was broken
   describe('Deletion Functionality', () => {
     it('should allow deleting typed characters with backspace', async () => {

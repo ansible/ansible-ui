@@ -32,7 +32,7 @@ export type FormGroupSingleSelectTypeAheadProps = {
   additionalControls?: React.ReactNode;
   isReadOnly?: boolean;
   placeholderText?: string;
-  options: { value: string; label: string; group?: string }[];
+  options: { value: string; label: string; group?: string; isDisabled?: boolean }[];
   onHandleSelection: (value: { name: string }) => void;
   isSubmitting?: boolean;
   value: string | string[] | Partial<{ name: string }> | null;
@@ -74,6 +74,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
         value: option.value,
         children: option.label,
         group: option.group,
+        isDisabled: option.isDisabled,
       })),
     [propOptions]
   );
@@ -310,6 +311,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
     for (let i = 0; i < totalOptions; i++) {
       index = (index + step + totalOptions) % totalOptions;
       const option = selectOptions[index];
+      /* v8 ignore next -- the caller returns when all options are disabled. */
       if (option && !option.isDisabled) {
         return index;
       }
