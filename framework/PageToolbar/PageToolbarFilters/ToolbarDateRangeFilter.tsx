@@ -47,8 +47,10 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
 
   const firstOption = props.options[0];
   if (isRequired && !selectedOption && firstOption) {
-    /* v8 ignore next */
-    setFilterValues(() => [defaultValue ?? firstOption.value]);
+    setFilterValues(() => [
+      /* v8 ignore next */
+      defaultValue ?? firstOption.value,
+    ]);
   }
 
   // `from`/`to` are derived directly from filterValues (not local state) so that
