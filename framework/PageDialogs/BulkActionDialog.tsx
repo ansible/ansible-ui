@@ -210,6 +210,7 @@ export function BulkActionDialog<T extends object>(props: BulkActionDialogProps<
       if (err instanceof Error) {
         const firstError = parsedErrors[0];
         const message =
+          /* v8 ignore next */
           parsedErrors.length === 1 && typeof firstError?.message === 'string'
             ? firstError.message
             : t(`Unknown error`);

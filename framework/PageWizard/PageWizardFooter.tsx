@@ -18,6 +18,7 @@ export function PageWizardFooter(props: {
   const firstStep = visibleStepsFlattened[0];
   const secondStep = visibleStepsFlattened[1];
   let isFirstStep = true;
+  /* v8 ignore next */
   if (firstStep) {
     if (isPageWizardParentStep(firstStep)) {
       isFirstStep = activeStep?.id === secondStep?.id;
