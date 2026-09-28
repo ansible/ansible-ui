@@ -1,29 +1,95 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
+import type { ComponentProps } from 'react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
-import { PageFormDataEditor, valueToObject, objectToString } from './PageFormDataEditor';
+import jsyaml from 'js-yaml';
+import * as yamlSchema from '../../utils/yamlSchema';
+import {
+  PageFormDataEditor,
+  valueToObject,
+  objectToString,
+  formatEditorDisplayValue,
+  getValueToObjectParseError,
+} from './PageFormDataEditor';
 
-beforeEach(() => {
-  vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
-    const FakeDataEditor = vi.fn((props: Record<string, string | ((value: string) => void)>) => (
+const mockAddAlert = vi.hoisted(() => vi.fn());
+const mockWriteToClipboard = vi.hoisted(() => vi.fn());
+const mockDownloadTextFile = vi.hoisted(() => vi.fn());
+
+vi.mock('../..', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../..')>();
+  return {
+    ...actual,
+    usePageAlertToaster: () => ({ addAlert: mockAddAlert }),
+  };
+});
+
+vi.mock('../../hooks/useClipboard', () => ({
+  useClipboard: () => ({ writeToClipboard: mockWriteToClipboard, copySuccess: false }),
+}));
+
+vi.mock('../../utils/download-file', () => ({
+  downloadTextFile: (...args: unknown[]) => {
+    mockDownloadTextFile(...args);
+  },
+}));
+
+vi.mock('../../components/DropZone', async (importOriginal) => {
+  const { DropZone: ActualDropZone } =
+    await importOriginal<typeof import('../../components/DropZone')>();
+  return {
+    DropZone: (props: ComponentProps<typeof ActualDropZone>) => (
+      <>
+        <ActualDropZone {...props} />
+        <button
+          type="button"
+          data-testid="simulate-invalid-drop"
+          onClick={() => props.onDrop('  ---\n  a: b')}
+        >
+          Simulate invalid drop
+        </button>
+        <button
+          type="button"
+          data-testid="simulate-valid-drop"
+          onClick={() => props.onDrop('dropped_key: ok')}
+        >
+          Simulate valid drop
+        </button>
+      </>
+    ),
+  };
+});
+
+vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
+  const FakeDataEditor = vi.fn(
+    (props: Record<string, string | ((value: string) => void) | undefined>) => (
       <textarea
         id={props.id as string}
         name={props.id as string}
         value={props.value as string}
         onChange={(e) => {
           const onChange = props.onChange as (value: string) => void;
-          onChange(e.target.value);
+          const setError = props.setError as ((error?: string) => void) | undefined;
+          const nextValue = e.target.value;
+          onChange(nextValue);
+          if (setError) {
+            if (nextValue.includes('monaco-syntax-error')) {
+              setError('Monaco syntax error');
+            } else {
+              setError(undefined);
+            }
+          }
         }}
         className={props.className as string}
         onFocus={props.onFocus as () => void}
         onBlur={props.onBlur as () => void}
         data-testid="data-editor"
       />
-    ));
-    return { DataEditor: FakeDataEditor };
-  });
+    )
+  );
+  return { DataEditor: FakeDataEditor };
 });
 
 interface ExtraVars {
@@ -65,6 +131,86 @@ variable2: value2`;
       expect(valueToObject(undefined)).toEqual({});
       expect(valueToObject('')).toBeUndefined();
     });
+
+    // Regression tests for AAP-93178: YAML/JSON parsing broken with unusual inputs.
+    // When both JSON and YAML parsing fail, valueToObject must throw rather than
+    // returning the raw string. Returning the raw string causes jsyaml.dump() to
+    // serialise it as a YAML block scalar that grows unboundedly on every
+    // parse→dump round-trip, eating memory until the browser tab crashes.
+    describe('invalid input does not cause growing content loop (AAP-93178)', () => {
+      test('throws for indented YAML document separator (leading spaces before ---)', () => {
+        // "  ---\n  a: b" — a common pattern when copy-pasting from code blocks.
+        // jsyaml rejects this because `---` is only a document separator at column 0.
+        expect(() => valueToObject('  ---\n  a: b')).toThrow();
+        expect(() => valueToObject(' ---\n a: b')).toThrow();
+      });
+
+      test('throws for unclosed single-quoted scalar in JSON mode', () => {
+        // " '\n" — a single quote with a leading space is invalid in both JSON and YAML.
+        expect(() => valueToObject(" '\n")).toThrow();
+      });
+
+      test('round-trip of invalid input does not grow unboundedly', () => {
+        // Verify that the transform loop that caused the crash no longer runs.
+        // Previously: valueToObject returned the raw string → objectToString called
+        // jsyaml.dump(string) → block scalar serialisation → each load+dump cycle
+        // added 2 more spaces → unbounded growth → browser crash.
+        const invalidInput = '  ---\n  a: b';
+        // valueToObject must throw for this input, preventing the loop entirely.
+        expect(() => valueToObject(invalidInput)).toThrow();
+      });
+
+      test('throws for whitespace-only strings that YAML loads as undefined', () => {
+        // Typing a lone space in JSON mode must not be treated as "empty" and wipe saved vars.
+        expect(() => valueToObject(' ')).toThrow();
+        expect(() => valueToObject('  ')).toThrow();
+      });
+
+      test('treats AWX empty extra_vars marker --- as empty object', () => {
+        expect(valueToObject('---\n')).toEqual({});
+        expect(valueToObject('---')).toEqual({});
+        expect(valueToObject('--- \n')).toEqual({});
+      });
+
+      test('throws when YAML loads whitespace-only input as null', () => {
+        expect(() => valueToObject('\t')).toThrow();
+      });
+
+      test('rethrows YAMLException from safeLoad when JSON parsing fails', () => {
+        vi.spyOn(yamlSchema, 'safeLoad').mockImplementation(() => {
+          throw new jsyaml.YAMLException('mock-yaml-load-failure');
+        });
+
+        expect(() => valueToObject('not-json')).toThrow('mock-yaml-load-failure');
+
+        vi.restoreAllMocks();
+      });
+    });
+
+    describe('formatEditorDisplayValue', () => {
+      test('returns raw string when value cannot be parsed', () => {
+        const stdout = 'Installed: pkg1\nInstalled: pkg2';
+        expect(formatEditorDisplayValue(stdout, 'yaml', false)).toBe(stdout);
+      });
+
+      test('getValueToObjectParseError returns message for invalid input', () => {
+        expect(getValueToObjectParseError('  ---\n  a: b', false)).toMatch(
+          /document separator|end of the stream/i
+        );
+        expect(getValueToObjectParseError('abc: 1', false)).toBeUndefined();
+        expect(getValueToObjectParseError('---\n', false)).toBeUndefined();
+      });
+
+      test('formats in-memory object values for display', () => {
+        expect(formatEditorDisplayValue({ count: 2 }, 'json', false)).toContain('count');
+      });
+
+      test('getValueToObjectParseError returns undefined for empty values', () => {
+        expect(getValueToObjectParseError(undefined, false)).toBeUndefined();
+        expect(getValueToObjectParseError(null, false)).toBeUndefined();
+        expect(getValueToObjectParseError('', false)).toBeUndefined();
+      });
+    });
   });
 
   describe('objectToString', () => {
@@ -100,6 +246,11 @@ variable2: value2  # inline comment`;
 });
 
 describe('PageFormDataEditor Component', () => {
+  beforeEach(() => {
+    mockAddAlert.mockClear();
+    mockWriteToClipboard.mockClear();
+    mockDownloadTextFile.mockClear();
+  });
   // Wrapper component for testing
   function TestWrapper<T extends Record<string, unknown>>({
     defaultValue,
@@ -393,5 +544,395 @@ debug_mode: true         # Enable debugging`;
     );
 
     expect(screen.getByTestId('data-editor')).toBeInTheDocument();
+  });
+
+  // Regression test for AAP-93178.
+  //
+  // The DataEditor mock renders a controlled textarea (value={props.value}).
+  // When handleChange() throws on an invalid YAML string, the form value does
+  // not update, so the textarea resets to its previous value after every
+  // re-render.  This prevents userEvent.type from accumulating multi-character
+  // text, making fireEvent.change the only reliable way to fire the onChange
+  // callback with the full invalid string in one shot.
+  test('should allow submit when mounted with AWX empty extra_vars marker', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '---\n' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+    expect(onSubmit).toHaveBeenCalled();
+  });
+
+  test('should show parse error when mounted with invalid preloaded extra vars (AAP-93178)', async () => {
+    render(
+      <TestWrapper defaultValue={{ vars: '  ---\n  a: b' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('should display an inline parse error when invalid YAML is entered (AAP-93178)', async () => {
+    render(
+      <TestWrapper defaultValue={{ vars: '' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    // Simulate entering leading-space YAML — a common copy-paste artifact.
+    // With the fix, valueToObject() throws so handleChange() calls setError()
+    // instead of normalising the raw string through jsyaml.dump(), which
+    // previously caused a growing block-scalar loop that crashed the browser.
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: '  ---\n  a: b' },
+    });
+
+    // The js-yaml parse error must appear in the field's helper text.
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('should not clear saved extra vars when user enters whitespace then invalid JSON (AAP-93178)', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'foo: bar' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: /json/i }));
+
+    fireEvent.change(screen.getByTestId('data-editor'), { target: { value: ' ' } });
+    fireEvent.change(screen.getByTestId('data-editor'), { target: { value: " '" } });
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  test('should block form submission when editor holds invalid YAML (AAP-93178)', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    // Enter invalid YAML so the parseFormat validate rule is armed.
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: '  ---\n  a: b' },
+    });
+
+    // Confirm the error helper text is visible.
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
+
+    // Click the submit button — the form must NOT call onSubmit because the
+    // parseFormat validate rule should block submission.
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    // onSubmit must not have been called.
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  test('should allow submit after invalid YAML is corrected to valid YAML (AAP-93178)', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: '  ---\n  a: b' },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: 'abc: 123' },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/end of the stream or a document separator is expected/i)
+      ).not.toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({ vars: 'abc: 123' }, expect.any(Object));
+    });
+  });
+
+  test('should apply custom validate function together with parseFormat rule', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const customValidate = vi.fn(() => 'Custom validation failed');
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 123' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars>
+          label="Extra variables"
+          name="vars"
+          format="yaml"
+          validate={customValidate}
+        />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(customValidate).toHaveBeenCalled();
+      expect(screen.getByText('Custom validation failed')).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  test('should block submit when Monaco reports a syntax error (AAP-93178)', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 123' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: 'monaco-syntax-error' },
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Monaco syntax error')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  test('should switch YAML with comments to JSON in the editor', async () => {
+    const user = userEvent.setup();
+    const yamlWithComments = `# heading\nfoo: bar`;
+
+    render(
+      <TestWrapper defaultValue={{ vars: yamlWithComments }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: /json/i }));
+
+    await waitFor(() => {
+      const editor = screen.getByTestId<HTMLTextAreaElement>('data-editor');
+      expect(editor.value).toContain('foo');
+      expect(editor.value).not.toContain('# heading');
+    });
+  });
+
+  test('should toast and skip clipboard when copying invalid content', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '  ---\n  a: b' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: /copy to clipboard/i }));
+
+    expect(mockAddAlert).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'danger', title: 'Cannot copy invalid content' })
+    );
+    expect(mockWriteToClipboard).not.toHaveBeenCalled();
+  });
+
+  test('should copy valid content to the clipboard', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 123' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: /copy to clipboard/i }));
+
+    expect(mockWriteToClipboard).toHaveBeenCalled();
+  });
+
+  test('should toast when downloading invalid content', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '  ---\n  a: b' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: /download file/i }));
+
+    expect(mockAddAlert).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'danger', title: 'Cannot download invalid content' })
+    );
+    expect(mockDownloadTextFile).not.toHaveBeenCalled();
+  });
+
+  test('should download valid content as a file', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 123' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: /download file/i }));
+
+    expect(mockDownloadTextFile).toHaveBeenCalled();
+    expect(mockAddAlert).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'success', title: 'File downloaded' })
+    );
+  });
+
+  test('should surface parse error when an invalid file is dropped', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByTestId('simulate-invalid-drop'));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/end of the stream or a document separator is expected/i)
+      ).toBeInTheDocument();
+    });
+    expect(mockAddAlert).toHaveBeenCalledWith(expect.objectContaining({ variant: 'danger' }));
+  });
+
+  test('should accept a valid dropped file in the editor', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByTestId('simulate-valid-drop'));
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue(/dropped_key/)).toBeInTheDocument();
+    });
+  });
+
+  test('should restore editor value when undo is clicked', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 1' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars>
+          label="Extra variables"
+          name="vars"
+          format="yaml"
+          enableUndo
+        />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: 'xyz: 2' },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'kebab dropdown toggle' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Undo changes' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId<HTMLTextAreaElement>('data-editor').value).toContain('abc');
+    });
+  });
+
+  test('should restore default value when reset is clicked', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 1' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars>
+          label="Extra variables"
+          name="vars"
+          format="yaml"
+          defaultValue="abc: 1"
+          enableReset
+        />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), {
+      target: { value: 'xyz: 2' },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'kebab dropdown toggle' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Reset to default' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId<HTMLTextAreaElement>('data-editor').value).toContain('abc');
+    });
+  });
+
+  test('should apply custom validate rules object together with parseFormat rule', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'abc: 123' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars>
+          label="Extra variables"
+          name="vars"
+          format="yaml"
+          validate={{
+            rejectValue: () => 'Object rule validation failed',
+          }}
+        />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Object rule validation failed')).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 });
