@@ -468,7 +468,7 @@ describe('PageWizard', () => {
               {
                 id: 'emptyParent',
                 label: 'Parent',
-                substeps: [],
+                substeps: [] as unknown as [PageWizardBasicStep, ...PageWizardBasicStep[]],
               },
             ]}
             onCancel={vi.fn()}
