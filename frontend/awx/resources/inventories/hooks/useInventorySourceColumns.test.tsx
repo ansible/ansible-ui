@@ -343,7 +343,11 @@ describe('useInventorySourceColumns', () => {
     const inventorySource = {
       id: 12,
       inventory: 1,
+      name: 'test-source',
+      description: 'test',
       source: 'scm',
+      scm_branch: 'main',
+      type: 'inventory',
       status: 'running',
       summary_fields: {
         current_job: {},
