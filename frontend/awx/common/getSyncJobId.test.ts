@@ -73,4 +73,53 @@ describe('getSyncJobId', () => {
     expect(getSyncJobId({})).toBeUndefined();
     expect(getSyncJobId({ current_job: {}, last_job: {} }, '')).toBeUndefined();
   });
+
+  it('should handle zero as invalid ID', () => {
+    expect(getSyncJobId({}, '/api/v2/inventory_updates/0/')).toBeUndefined();
+  });
+
+  it('should handle negative numbers as invalid IDs', () => {
+    expect(getSyncJobId({}, '/api/v2/inventory_updates/-5/')).toBeUndefined();
+  });
+
+  it('should return current_job ID when both current_job and last_job exist', () => {
+    expect(
+      getSyncJobId({
+        current_job: { id: 100 },
+        last_job: { id: 50 },
+      })
+    ).toBe(100);
+  });
+
+  it('should skip to last_job when current_job has no id', () => {
+    expect(
+      getSyncJobId({
+        current_job: {},
+        last_job: { id: 75 },
+      })
+    ).toBe(75);
+  });
+
+  it('should skip to current_update when neither current_job nor last_job have ids', () => {
+    expect(
+      getSyncJobId({
+        current_job: {},
+        last_job: {},
+        current_update: { id: 150 },
+      })
+    ).toBe(150);
+  });
+
+  it('should use URL as last resort', () => {
+    expect(
+      getSyncJobId(
+        {
+          current_job: {},
+          last_job: {},
+          current_update: {},
+        },
+        '/api/v2/inventory_updates/200/'
+      )
+    ).toBe(200);
+  });
 });
