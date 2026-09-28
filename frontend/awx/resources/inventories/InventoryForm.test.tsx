@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -527,6 +527,43 @@ describe('InventoryForm', () => {
       });
 
       expect(screen.getByTestId('source_vars')).toBeInTheDocument();
+    });
+
+    it('should show YAML parse error when source_vars is invalid', { timeout: 15000 }, async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/inventories/constructed_inventory/create']}>
+          <Routes>
+            <Route
+              path="/inventories/:inventory_type/create"
+              element={<CreateInventory inventoryKind="constructed" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /create inventory/i })).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByPlaceholderText(/enter inventory name/i), 'Test');
+      await user.click(screen.getByTestId('organization'));
+      await waitFor(() => {
+        expect(screen.getByRole('option', { name: 'Default' })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('option', { name: 'Default' }));
+
+      fireEvent.change(screen.getByTestId('source_vars'), {
+        target: { value: '  ---\n  a: b' },
+      });
+
+      await user.click(screen.getByRole('button', { name: /create inventory/i }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/end of the stream or a document separator is expected/i)
+        ).toBeInTheDocument();
+      });
     });
   });
 
