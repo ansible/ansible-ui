@@ -116,6 +116,7 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     expect(input).toBeInTheDocument();
   });
 
+<<<<<<< HEAD
   it('should skip disabled entries while finding the next option', async () => {
     const user = userEvent.setup();
     render(
@@ -142,6 +143,8 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-enabled');
   });
 
+=======
+>>>>>>> 6d0ba654d (test: cover typeahead navigation guards)
   // Test the core deletion fix - this is what was broken
   describe('Deletion Functionality', () => {
     it('should allow deleting typed characters with backspace', async () => {
