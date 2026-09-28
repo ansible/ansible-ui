@@ -126,7 +126,9 @@ describe('useProjectStatusColumn', () => {
 
   it('should respect disableSort option', () => {
     const { result: resultWithSort } = renderHook(() => useProjectStatusColumn());
-    const { result: resultNoSort } = renderHook(() => useProjectStatusColumn({ disableSort: true }));
+    const { result: resultNoSort } = renderHook(() =>
+      useProjectStatusColumn({ disableSort: true })
+    );
 
     expect(resultWithSort.current.sort).toBe('status');
     expect(resultNoSort.current.sort).toBeUndefined();
