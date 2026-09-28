@@ -345,7 +345,7 @@ describe('useInventorySourceColumns', () => {
       description: 'test',
       source: 'scm',
       scm_branch: 'main',
-      type: 'inventory',
+      type: 'inventory_source',
       status: 'running',
       summary_fields: {
         current_job: {},
