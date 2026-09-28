@@ -61,7 +61,12 @@ describe('getSyncJobId', () => {
   });
 
   it('should prefer summary fields over related URL', () => {
-    expect(getSyncJobId({ current_job: { id: 50 } }, '/api/v2/inventory_updates/100/')).toBe(50);
+    expect(
+      getSyncJobId(
+        { current_job: { id: 50 } },
+        '/api/v2/inventory_updates/100/'
+      )
+    ).toBe(50);
   });
 
   it('should return undefined when no data available', () => {
