@@ -22,8 +22,6 @@ export function getSyncJobId(
 ): number | undefined {
   const summaryJob = summaryFields?.current_job || summaryFields?.last_job;
   return (
-    summaryJob?.id ??
-    summaryFields?.current_update?.id ??
-    getIdFromAwxRelatedUrl(relatedLastJobUrl)
+    summaryJob?.id ?? summaryFields?.current_update?.id ?? getIdFromAwxRelatedUrl(relatedLastJobUrl)
   );
 }
