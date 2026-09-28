@@ -197,7 +197,6 @@ function useBulkActionDialogState<T extends object>(props: BulkActionDialogProps
     setStatuses,
     setSuccessfulItems,
     statusParser,
-    successfulItems,
     t,
     translations,
   });
@@ -223,7 +222,6 @@ function useBulkActionDialogState<T extends object>(props: BulkActionDialogProps
     progressTitle,
     progressVariant,
     statuses,
-    successfulItems,
     t,
     translations,
   };
