@@ -8,7 +8,7 @@ describe('getIdFromAwxRelatedUrl', () => {
   });
 
   it('should return undefined for empty or invalid values', () => {
-    expect(getIdFromAwxRelatedUrl(undefined)).toBeUndefined();
+    expect(getIdFromAwxRelatedUrl()).toBeUndefined();
     expect(getIdFromAwxRelatedUrl('/api/v2/inventory_updates/')).toBeUndefined();
   });
 });
