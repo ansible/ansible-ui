@@ -165,6 +165,7 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     await user.click(input);
     await user.keyboard('{ArrowDown}');
     await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowUp}');
 
     expect(input).toBeInTheDocument();
   });
