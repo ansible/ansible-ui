@@ -12,14 +12,11 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
 }));
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let statusCellMock: any;
+let statusCellMock: any = vi.fn(() => <div data-testid="status-cell" />);
 
-vi.mock('@ansible/common-ui/Status', () => {
-  statusCellMock = vi.fn(() => <div data-testid="status-cell" />);
-  return {
-    StatusCell: statusCellMock,
-  };
-});
+vi.mock('@ansible/common-ui/Status', () => ({
+  StatusCell: statusCellMock,
+}));
 
 vi.mock('@patternfly/react-core', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
