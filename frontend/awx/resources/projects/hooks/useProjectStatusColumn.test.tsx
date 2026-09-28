@@ -25,10 +25,8 @@ vi.mock('@patternfly/react-core', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-function getMockStatusCell() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return statusCellMock;
-}
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+const getMockStatusCell = () => statusCellMock;
 
 describe('useProjectStatusColumn', () => {
   it('should return a table column configuration', () => {

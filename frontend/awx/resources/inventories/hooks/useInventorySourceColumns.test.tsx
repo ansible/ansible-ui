@@ -60,10 +60,8 @@ vi.mock('../inventorySources/InventorySourceDetails', () => ({
   LastJobTooltip: ({ job }: { job: { id?: number } }) => <div>{job.id}</div>,
 }));
 
-function getMockStatusCell() {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return statusCellMock;
-}
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+const getMockStatusCell = () => statusCellMock;
 
 function findStatusColumn(columns: ReturnType<typeof useInventorySourceColumns>) {
   const col = columns.find((col) => col.header === 'Last job status');
