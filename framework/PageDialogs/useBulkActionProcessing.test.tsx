@@ -29,7 +29,7 @@ describe('useBulkActionProcessing', () => {
         setStatuses: setStatuses as never,
         setSuccessfulItems,
         statusParser: (response) => response as { message: string; url: string },
-            t: (key) => key,
+        t: (key) => key,
         translations: { errorText: 'Action failed' },
       })
     );
@@ -64,7 +64,7 @@ describe('useBulkActionProcessing', () => {
         setProgress: vi.fn(),
         setStatuses: vi.fn() as never,
         setSuccessfulItems,
-            t: (key) => key,
+        t: (key) => key,
         translations: { errorText: 'Action failed' },
       })
     );
@@ -104,7 +104,6 @@ describe('useBulkActionProcessing', () => {
         setProgress,
         setStatuses: vi.fn() as never,
         setSuccessfulItems,
-        successfulItems: [],
         t: (key) => key,
         translations: { errorText: 'Action failed' },
       })
@@ -115,7 +114,11 @@ describe('useBulkActionProcessing', () => {
     pendingActions.get(1)?.resolve({});
     pendingActions.get(2)?.reject(new Error('failed'));
 
-    await waitFor(() => expect(setSuccessfulItems).toHaveBeenCalledWith([{ id: 1 }]));
+    await waitFor(() => expect(setSuccessfulItems).toHaveBeenCalled());
+    const appendSuccessful = setSuccessfulItems.mock.calls.at(-1)?.[0] as (
+      prev: { id: number }[]
+    ) => { id: number }[];
+    expect(appendSuccessful([])).toEqual([{ id: 1 }]);
     expect(setProgress).not.toHaveBeenCalled();
     expect(setProcessing).not.toHaveBeenCalled();
   });
@@ -140,7 +143,7 @@ describe('useBulkActionProcessing', () => {
         setStatuses: setStatuses as never,
         setSuccessfulItems: vi.fn(),
         statusParser: () => null,
-            t: (key) => key,
+        t: (key) => key,
         translations: { errorText: 'Action failed' },
       })
     );
