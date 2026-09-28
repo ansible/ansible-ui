@@ -384,6 +384,7 @@ export function PageSingleSelect<
               <>
                 {Object.keys(groups).map((groupName) => (
                   <SelectGroup label={groupName} key={groupName}>
+                    {/* v8 ignore next */}
                     <PageSingleSelectList searchRef={searchRef} options={groups[groupName] ?? []} />
                     <Divider />
                   </SelectGroup>

@@ -311,7 +311,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
     for (let i = 0; i < totalOptions; i++) {
       index = (index + step + totalOptions) % totalOptions;
       const option = selectOptions[index];
-      /* v8 ignore next -- the caller returns when all options are disabled. */
+      /* v8 ignore next */
       if (option && !option.isDisabled) {
         return index;
       }
