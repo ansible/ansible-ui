@@ -34,7 +34,9 @@ vi.mock('../inventorySources/InventorySourceDetails', () => ({
 }));
 
 function findStatusColumn(columns: ReturnType<typeof useInventorySourceColumns>) {
-  return columns.find((col) => col.header === 'Last job status');
+  return columns.find(
+    (col) => col.header === 'Last job status' && 'cell' in col
+  ) as (typeof columns[0] & { cell: (item: InventorySource) => React.ReactNode }) | undefined;
 }
 
 describe('useInventorySourceColumns', () => {
@@ -62,16 +64,15 @@ describe('useInventorySourceColumns', () => {
       related: { schedules: '/api/v2/schedules/', last_job: '/api/v2/inventory_updates/123/' },
     } as InventorySource;
 
-    if (statusColumn.cell) {
-      statusColumn.cell(inventorySource);
-      expect(mockStatusCell).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: expect.stringContaining('123'),
-          status: 'successful',
-          disableLinks: undefined,
-        }),
-        expect.anything()
-      );
+    statusColumn.cell(inventorySource);
+    const lastCall = mockStatusCell.mock.calls[0];
+    expect(lastCall).toBeDefined();
+    if (lastCall) {
+      expect(lastCall[0]).toMatchObject({
+        status: 'successful',
+        disableLinks: undefined,
+      });
+      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/123/);
     }
   });
 
@@ -91,15 +92,14 @@ describe('useInventorySourceColumns', () => {
       related: { schedules: '/api/v2/schedules/' },
     } as InventorySource;
 
-    if (statusColumn.cell) {
-      statusColumn.cell(inventorySource);
-      expect(mockStatusCell).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: undefined,
-          status: 'failed',
-        }),
-        expect.anything()
-      );
+    statusColumn.cell(inventorySource);
+    const lastCall = mockStatusCell.mock.calls[0];
+    expect(lastCall).toBeDefined();
+    if (lastCall) {
+      expect(lastCall[0]).toMatchObject({
+        to: undefined,
+        status: 'failed',
+      });
     }
   });
 
@@ -121,15 +121,14 @@ describe('useInventorySourceColumns', () => {
       related: { schedules: '/api/v2/schedules/', last_job: '/api/v2/inventory_updates/123/' },
     } as InventorySource;
 
-    if (statusColumn.cell) {
-      statusColumn.cell(inventorySource);
-      expect(mockStatusCell).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: undefined,
-          disableLinks: true,
-        }),
-        expect.anything()
-      );
+    statusColumn.cell(inventorySource);
+    const lastCall = mockStatusCell.mock.calls[0];
+    expect(lastCall).toBeDefined();
+    if (lastCall) {
+      expect(lastCall[0]).toMatchObject({
+        to: undefined,
+        disableLinks: true,
+      });
     }
   });
 });
