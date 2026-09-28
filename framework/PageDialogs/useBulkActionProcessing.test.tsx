@@ -29,8 +29,7 @@ describe('useBulkActionProcessing', () => {
         setStatuses: setStatuses as never,
         setSuccessfulItems,
         statusParser: (response) => response as { message: string; url: string },
-        successfulItems: [],
-        t: (key) => key,
+            t: (key) => key,
         translations: { errorText: 'Action failed' },
       })
     );
@@ -39,7 +38,11 @@ describe('useBulkActionProcessing', () => {
     expect(setStatuses).toHaveBeenCalledTimes(2);
     expect(setProgress).toHaveBeenCalledTimes(2);
     expect(setError).toHaveBeenCalledWith('Action failed');
-    expect(setSuccessfulItems).toHaveBeenCalledWith([{ id: 1 }]);
+    expect(setSuccessfulItems).toHaveBeenCalled();
+    const appendSuccessful = setSuccessfulItems.mock.calls.at(-1)?.[0] as (
+      prev: { id: number }[]
+    ) => { id: number }[];
+    expect(appendSuccessful([])).toEqual([{ id: 1 }]);
   });
 
   it('does not update processing state after cancellation', async () => {
@@ -61,13 +64,16 @@ describe('useBulkActionProcessing', () => {
         setProgress: vi.fn(),
         setStatuses: vi.fn() as never,
         setSuccessfulItems,
-        successfulItems: [],
-        t: (key) => key,
+            t: (key) => key,
         translations: { errorText: 'Action failed' },
       })
     );
 
-    await waitFor(() => expect(setSuccessfulItems).toHaveBeenCalledWith([]));
+    await waitFor(() => expect(setSuccessfulItems).toHaveBeenCalled());
+    const appendSuccessful = setSuccessfulItems.mock.calls.at(-1)?.[0] as (
+      prev: { id: number }[]
+    ) => { id: number }[];
+    expect(appendSuccessful([{ id: 99 }])).toEqual([{ id: 99 }]);
     expect(setProcessing).not.toHaveBeenCalled();
   });
 
@@ -134,8 +140,7 @@ describe('useBulkActionProcessing', () => {
         setStatuses: setStatuses as never,
         setSuccessfulItems: vi.fn(),
         statusParser: () => null,
-        successfulItems: [],
-        t: (key) => key,
+            t: (key) => key,
         translations: { errorText: 'Action failed' },
       })
     );
