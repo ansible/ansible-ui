@@ -86,10 +86,10 @@ describe('getSyncJobId', () => {
     ).toBe(100);
   });
 
-  it('should skip to last_job when current_job has no id', () => {
+  it('should skip to last_job when current_job is null', () => {
     expect(
       getSyncJobId({
-        current_job: {},
+        current_job: null,
         last_job: { id: 75 },
       })
     ).toBe(75);
@@ -126,8 +126,8 @@ describe('getSyncJobId', () => {
     expect(getSyncJobId({ current_job: { id: 11 } })).toBe(11);
   });
 
-  it('should fallback to last_job.id when current_job exists but has no id', () => {
-    expect(getSyncJobId({ current_job: {}, last_job: { id: 22 } })).toBe(22);
+  it('should fallback to last_job.id when current_job is undefined', () => {
+    expect(getSyncJobId({ current_job: undefined, last_job: { id: 22 } })).toBe(22);
   });
 
   it('should fallback to current_update.id when both jobs exist but have no id', () => {
@@ -191,7 +191,7 @@ describe('getSyncJobId', () => {
     expect(
       getSyncJobId(
         {
-          current_job: {},
+          current_job: null,
           last_job: { id: 5 },
           current_update: { id: 6 },
         },
