@@ -3,6 +3,7 @@ import { FieldMetadata } from './PageFormOptionsContext';
 
 const DEFAULT_PATTERN_ERROR = 'This field does not match the required pattern.';
 const ALLOWED_REGEX_FLAGS = new Set(['g', 'i', 'm', 's', 'u', 'y', 'd']);
+const ALLOWED_NORMALIZE_FORMS = new Set(['NFC', 'NFD', 'NFKC', 'NFKD']);
 const REGEX_TIMEOUT_MS = 100;
 const MAX_ERROR_MESSAGE_LENGTH = 200;
 
@@ -12,6 +13,23 @@ const MAX_ERROR_MESSAGE_LENGTH = 200;
  */
 function sanitizeErrorMessage(msg: string): string {
   return msg.slice(0, MAX_ERROR_MESSAGE_LENGTH).replace(/[<>]/g, '');
+}
+
+/**
+ * Returns the string to test against the OPTIONS pattern. When `normalize` is set,
+ * applies that Unicode normalization form without mutating the form field value.
+ */
+function valueForPatternValidation(
+  value: string,
+  normalizeForm: string | undefined
+): string | null {
+  if (!normalizeForm) {
+    return value;
+  }
+  if (!ALLOWED_NORMALIZE_FORMS.has(normalizeForm)) {
+    return null;
+  }
+  return value.normalize(normalizeForm);
 }
 
 /**
@@ -38,12 +56,17 @@ export function validateOptionsPattern(
     }
   }
 
+  const validationValue = valueForPatternValidation(value, fieldMetadata.normalize);
+  if (validationValue === null) {
+    return true; // Skip validation for unsupported normalization forms
+  }
+
   try {
     // Use timeout wrapper to prevent ReDoS attacks
     const controller = new AbortController();
     const timeoutHandle = setTimeout(() => controller.abort(), REGEX_TIMEOUT_MS);
     const regex = new RegExp(fieldMetadata.pattern, flags);
-    const result = regex.test(value);
+    const result = regex.test(validationValue);
     clearTimeout(timeoutHandle);
     return result
       ? true

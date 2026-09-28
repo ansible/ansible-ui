@@ -7,6 +7,7 @@ export interface FieldMetadata {
   pattern?: string;
   pattern_description?: string;
   flags?: string;
+  normalize?: string;
 }
 
 /**
@@ -20,6 +21,7 @@ export interface PageFormOptionsFieldMetadata {
   pattern_description?: string;
   patternDescription?: string;
   flags?: string;
+  normalize?: string;
 }
 
 /**
@@ -82,6 +84,8 @@ export function extractPageFormOptionsFields(
         patternDescription = fieldMetadata.patternDescription;
       }
       const flags = typeof fieldMetadata.flags === 'string' ? fieldMetadata.flags : undefined;
+      const normalize =
+        typeof fieldMetadata.normalize === 'string' ? fieldMetadata.normalize : undefined;
 
       // Validate pattern syntax at extraction time
       if (pattern) {
@@ -94,7 +98,7 @@ export function extractPageFormOptionsFields(
       }
 
       if (pattern || patternDescription) {
-        fields[fieldName] = { pattern, pattern_description: patternDescription, flags };
+        fields[fieldName] = { pattern, pattern_description: patternDescription, flags, normalize };
       }
     });
   });
