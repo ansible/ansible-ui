@@ -1,11 +1,12 @@
 import { assertType, expectTypeOf, test } from 'vitest';
 import type { SetOptional, SetRequired } from './utilityTypes';
 
-// https://vitest.dev/guide/testing-types — parity with type-fest SetRequired / SetOptional
-expectTypeOf<SetRequired<{ a?: number; b: string }, 'a'>>().toEqualTypeOf<{
-  a: number;
-  b: string;
-}>();
+test('SetRequired matches type-fest SetRequired shape', () => {
+  expectTypeOf<SetRequired<{ a?: number; b: string }, 'a'>>().toEqualTypeOf<{
+    a: number;
+    b: string;
+  }>();
+});
 
 test('SetRequired makes selected keys required', () => {
   type Foo = {
