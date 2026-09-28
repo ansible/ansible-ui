@@ -12,7 +12,7 @@ export function getIdFromAwxRelatedUrl(relatedUrl?: string | null): number | und
   const segments = relatedUrl.replace(/\/$/, '').split('/');
   const idSegment = segments[segments.length - 1];
   const id = Number(idSegment);
-  return Number.isFinite(id) ? id : undefined;
+  return Number.isInteger(id) && id > 0 ? id : undefined;
 }
 
 /** Resolve the id of the latest project or inventory sync job for list/detail links. */
