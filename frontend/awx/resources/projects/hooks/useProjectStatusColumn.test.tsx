@@ -48,14 +48,11 @@ describe('useProjectStatusColumn', () => {
 
     result.current.cell(project);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    expect(lastCall).toBeDefined();
-    if (lastCall && lastCall[0]) {
-      expect(lastCall[0]).toMatchObject({
-        status: 'successful',
-        disableLinks: undefined,
-      });
-      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/456/);
-    }
+    expect(lastCall?.[0]).toMatchObject({
+      status: 'successful',
+      disableLinks: undefined,
+    });
+    expect((lastCall?.[0] as Record<string, unknown>).to).toMatch(/456/);
   });
 
   it('should render status cell without link when jobId is undefined', () => {
@@ -70,13 +67,10 @@ describe('useProjectStatusColumn', () => {
 
     result.current.cell(project);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    expect(lastCall).toBeDefined();
-    if (lastCall && lastCall[0]) {
-      expect(lastCall[0]).toMatchObject({
-        to: undefined,
-        status: 'new',
-      });
-    }
+    expect(lastCall?.[0]).toMatchObject({
+      to: undefined,
+      status: 'new',
+    });
   });
 
   it('should respect disableLinks option', () => {
@@ -93,13 +87,10 @@ describe('useProjectStatusColumn', () => {
 
     result.current.cell(project);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    expect(lastCall).toBeDefined();
-    if (lastCall && lastCall[0]) {
-      expect(lastCall[0]).toMatchObject({
-        to: undefined,
-        disableLinks: true,
-      });
-    }
+    expect(lastCall?.[0]).toMatchObject({
+      to: undefined,
+      disableLinks: true,
+    });
   });
 
   it('should use tooltip when jobId is available', () => {
@@ -132,13 +123,10 @@ describe('useProjectStatusColumn', () => {
 
     result.current.cell(project);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    expect(lastCall).toBeDefined();
-    if (lastCall && lastCall[0]) {
-      expect(lastCall[0]).toMatchObject({
-        status: 'failed',
-      });
-      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/789/);
-    }
+    expect(lastCall?.[0]).toMatchObject({
+      status: 'failed',
+    });
+    expect((lastCall?.[0] as Record<string, unknown>).to).toMatch(/789/);
   });
 
   it('should handle current_update fallback', () => {
@@ -155,10 +143,7 @@ describe('useProjectStatusColumn', () => {
 
     result.current.cell(project);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    expect(lastCall).toBeDefined();
-    if (lastCall && lastCall[0]) {
-      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/999/);
-    }
+    expect((lastCall?.[0] as Record<string, unknown>).to).toMatch(/999/);
   });
 
   it('should respect disableSort option', () => {
@@ -186,9 +171,7 @@ describe('useProjectStatusColumn', () => {
 
     result.current.cell(project);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    if (lastCall && lastCall[0]) {
-      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/111/);
-    }
+    expect((lastCall?.[0] as Record<string, unknown>).to).toMatch(/111/);
   });
 
   it('should use related URL as fallback when no summary fields have ids', () => {
@@ -206,9 +189,7 @@ describe('useProjectStatusColumn', () => {
 
     result.current.cell(project);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    if (lastCall && lastCall[0]) {
-      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/333/);
-    }
+    expect((lastCall?.[0] as Record<string, unknown>).to).toMatch(/333/);
   });
 
   it('should handle tooltipAlt when no job id available', () => {

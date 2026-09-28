@@ -101,14 +101,12 @@ describe('useInventorySourceColumns', () => {
 
     statusColumn.cell(inventorySource);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    expect(lastCall).toBeDefined();
-    if (lastCall && lastCall[0]) {
-      expect(lastCall[0]).toMatchObject({
-        status: 'successful',
-        disableLinks: undefined,
-      });
-      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/123/);
-    }
+    expect(lastCall?.[0]).toBeDefined();
+    expect(lastCall?.[0]).toMatchObject({
+      status: 'successful',
+      disableLinks: undefined,
+    });
+    expect((lastCall?.[0] as Record<string, unknown>).to).toMatch(/123/);
   });
 
   it('should handle inventory source without job', () => {
@@ -130,13 +128,10 @@ describe('useInventorySourceColumns', () => {
 
     statusColumn.cell(inventorySource);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    expect(lastCall).toBeDefined();
-    if (lastCall && lastCall[0]) {
-      expect(lastCall[0]).toMatchObject({
-        to: undefined,
-        status: 'failed',
-      });
-    }
+    expect(lastCall?.[0]).toMatchObject({
+      to: undefined,
+      status: 'failed',
+    });
   });
 
   it('should respect disableLinks option', () => {
@@ -160,13 +155,10 @@ describe('useInventorySourceColumns', () => {
 
     statusColumn.cell(inventorySource);
     const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
-    expect(lastCall).toBeDefined();
-    if (lastCall && lastCall[0]) {
-      expect(lastCall[0]).toMatchObject({
-        to: undefined,
-        disableLinks: true,
-      });
-    }
+    expect(lastCall?.[0]).toMatchObject({
+      to: undefined,
+      disableLinks: true,
+    });
   });
 
   it('should render type column with value for known source', () => {
@@ -185,7 +177,7 @@ describe('useInventorySourceColumns', () => {
         related: { schedules: '/api/v2/schedules/' },
       } as InventorySource;
 
-      const value = typeColumn.value(inventorySource);
+      const value = typeColumn.value?.(inventorySource);
       expect(value).toBe('Source Control');
     }
   });
@@ -204,7 +196,7 @@ describe('useInventorySourceColumns', () => {
         related: { schedules: '/api/v2/schedules/' },
       } as InventorySource;
 
-      const value = typeColumn.value(inventorySource);
+      const value = typeColumn.value?.(inventorySource);
       expect(value).toBe('');
     }
   });
