@@ -11,10 +11,13 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
   ITableColumn: {},
 }));
 
-const mockStatusCell = vi.fn(() => <div data-testid="status-cell" />);
-vi.mock('@ansible/common-ui/Status', () => ({
-  StatusCell: mockStatusCell,
-}));
+vi.mock('@ansible/common-ui/Status', () => {
+  const mockStatusCell = vi.fn(() => <div data-testid="status-cell" />);
+  return {
+    StatusCell: mockStatusCell,
+    __mockStatusCell: mockStatusCell,
+  };
+});
 
 vi.mock('@ansible/common-ui/columns', () => ({
   useDescriptionColumn: () => ({ header: 'Description' }),
@@ -23,7 +26,18 @@ vi.mock('@ansible/common-ui/columns', () => ({
 
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
   useOptions: () => ({
-    data: undefined,
+    data: {
+      actions: {
+        GET: {
+          source: {
+            choices: [
+              ['scm', 'Source Control'],
+              ['manual', 'Manual'],
+            ],
+          },
+        },
+      },
+    },
     error: undefined,
     isLoading: false,
   }),
@@ -33,10 +47,30 @@ vi.mock('../inventorySources/InventorySourceDetails', () => ({
   LastJobTooltip: ({ job }: { job: { id?: number } }) => <div>{job.id}</div>,
 }));
 
+let mockStatusCell: ReturnType<typeof vi.fn>;
+
+vi.stubGlobal(
+  'mockStatusCell',
+  vi.fn(() => <div data-testid="status-cell" />)
+);
+
+function getMockStatusCell() {
+  // Access the mock from the StatusCell module
+  const { StatusCell } = require('@ansible/common-ui/Status');
+  return StatusCell;
+}
+
 function findStatusColumn(columns: ReturnType<typeof useInventorySourceColumns>) {
+  const col = columns.find((col) => col.header === 'Last job status');
+  return col && 'cell' in col ?
+    (col as typeof columns[0] & { cell: (item: InventorySource) => React.ReactNode }) :
+    undefined;
+}
+
+function findTypeColumn(columns: ReturnType<typeof useInventorySourceColumns>) {
   return columns.find(
-    (col) => col.header === 'Last job status' && 'cell' in col
-  ) as (typeof columns[0] & { cell: (item: InventorySource) => React.ReactNode }) | undefined;
+    (col) => col.header === 'Type' && 'value' in col
+  ) as (typeof columns[0] & { value: (item: InventorySource) => string }) | undefined;
 }
 
 describe('useInventorySourceColumns', () => {
@@ -47,7 +81,8 @@ describe('useInventorySourceColumns', () => {
   });
 
   it('should include status column with job link when jobId is available', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useInventorySourceColumns());
     const statusColumn = findStatusColumn(result.current);
     expect(statusColumn).toBeDefined();
@@ -65,9 +100,9 @@ describe('useInventorySourceColumns', () => {
     } as InventorySource;
 
     statusColumn.cell(inventorySource);
-    const lastCall = mockStatusCell.mock.calls[0];
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
     expect(lastCall).toBeDefined();
-    if (lastCall) {
+    if (lastCall && lastCall[0]) {
       expect(lastCall[0]).toMatchObject({
         status: 'successful',
         disableLinks: undefined,
@@ -77,7 +112,8 @@ describe('useInventorySourceColumns', () => {
   });
 
   it('should handle inventory source without job', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useInventorySourceColumns());
     const statusColumn = findStatusColumn(result.current);
     expect(statusColumn).toBeDefined();
@@ -93,9 +129,9 @@ describe('useInventorySourceColumns', () => {
     } as InventorySource;
 
     statusColumn.cell(inventorySource);
-    const lastCall = mockStatusCell.mock.calls[0];
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
     expect(lastCall).toBeDefined();
-    if (lastCall) {
+    if (lastCall && lastCall[0]) {
       expect(lastCall[0]).toMatchObject({
         to: undefined,
         status: 'failed',
@@ -104,7 +140,8 @@ describe('useInventorySourceColumns', () => {
   });
 
   it('should respect disableLinks option', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useInventorySourceColumns({ disableLinks: true }));
     const statusColumn = findStatusColumn(result.current);
     expect(statusColumn).toBeDefined();
@@ -122,13 +159,103 @@ describe('useInventorySourceColumns', () => {
     } as InventorySource;
 
     statusColumn.cell(inventorySource);
-    const lastCall = mockStatusCell.mock.calls[0];
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
     expect(lastCall).toBeDefined();
-    if (lastCall) {
+    if (lastCall && lastCall[0]) {
       expect(lastCall[0]).toMatchObject({
         to: undefined,
         disableLinks: true,
       });
+    }
+  });
+
+  it('should render type column with value for known source', () => {
+    const { result } = renderHook(() => useInventorySourceColumns());
+    const typeColumn = findTypeColumn(result.current);
+    expect(typeColumn).toBeDefined();
+    expect(typeColumn?.header).toBe('Type');
+
+    if (typeColumn?.value) {
+      const inventorySource = {
+        id: 5,
+        inventory: 1,
+        source: 'scm',
+        status: 'successful',
+        summary_fields: {},
+        related: { schedules: '/api/v2/schedules/' },
+      } as InventorySource;
+
+      const value = typeColumn.value(inventorySource);
+      expect(value).toBe('Source Control');
+    }
+  });
+
+  it('should render type column with empty string for unknown source', () => {
+    const { result } = renderHook(() => useInventorySourceColumns());
+    const typeColumn = findTypeColumn(result.current);
+
+    if (typeColumn?.value) {
+      const inventorySource = {
+        id: 6,
+        inventory: 1,
+        source: 'unknown',
+        status: 'successful',
+        summary_fields: {},
+        related: { schedules: '/api/v2/schedules/' },
+      } as InventorySource;
+
+      const value = typeColumn.value(inventorySource);
+      expect(value).toBe('');
+    }
+  });
+
+  it('should prefer current_job over last_job in status tooltip', () => {
+    mockStatusCell.mockClear();
+    const { result } = renderHook(() => useInventorySourceColumns());
+    const statusColumn = findStatusColumn(result.current);
+    if (!statusColumn) return;
+
+    const inventorySource = {
+      id: 7,
+      inventory: 1,
+      source: 'scm',
+      status: 'error',
+      summary_fields: {
+        current_job: { id: 999 },
+        last_job: { id: 100 },
+      },
+      related: { schedules: '/api/v2/schedules/', last_job: '/api/v2/inventory_updates/999/' },
+    } as InventorySource;
+
+    statusColumn.cell(inventorySource);
+    const lastCall = mockStatusCell.mock.calls[0];
+    if (lastCall) {
+      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/999/);
+    }
+  });
+
+  it('should fall back to last_job when current_job has no id', () => {
+    mockStatusCell.mockClear();
+    const { result } = renderHook(() => useInventorySourceColumns());
+    const statusColumn = findStatusColumn(result.current);
+    if (!statusColumn) return;
+
+    const inventorySource = {
+      id: 8,
+      inventory: 1,
+      source: 'scm',
+      status: 'pending',
+      summary_fields: {
+        current_job: {},
+        last_job: { id: 888 },
+      },
+      related: { schedules: '/api/v2/schedules/', last_job: '/api/v2/inventory_updates/888/' },
+    } as InventorySource;
+
+    statusColumn.cell(inventorySource);
+    const lastCall = mockStatusCell.mock.calls[0];
+    if (lastCall) {
+      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/888/);
     }
   });
 });

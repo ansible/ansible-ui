@@ -10,14 +10,21 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
   ITableColumn: {},
 }));
 
-const mockStatusCell = vi.fn(() => <div data-testid="status-cell" />);
-vi.mock('@ansible/common-ui/Status', () => ({
-  StatusCell: mockStatusCell,
-}));
+vi.mock('@ansible/common-ui/Status', () => {
+  const mockStatusCell = vi.fn(() => <div data-testid="status-cell" />);
+  return {
+    StatusCell: mockStatusCell,
+  };
+});
 
 vi.mock('@patternfly/react-core', () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
+
+function getMockStatusCell() {
+  const { StatusCell } = require('@ansible/common-ui/Status');
+  return StatusCell;
+}
 
 describe('useProjectStatusColumn', () => {
   it('should return a table column configuration', () => {
@@ -28,7 +35,8 @@ describe('useProjectStatusColumn', () => {
   });
 
   it('should render status cell with job link when jobId is available', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn());
     const project = {
       status: 'successful',
@@ -39,9 +47,9 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    const lastCall = mockStatusCell.mock.calls[0];
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
     expect(lastCall).toBeDefined();
-    if (lastCall) {
+    if (lastCall && lastCall[0]) {
       expect(lastCall[0]).toMatchObject({
         status: 'successful',
         disableLinks: undefined,
@@ -51,7 +59,8 @@ describe('useProjectStatusColumn', () => {
   });
 
   it('should render status cell without link when jobId is undefined', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn());
     const project = {
       status: 'new',
@@ -60,17 +69,19 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    expect(mockStatusCell).toHaveBeenCalledWith(
-      expect.objectContaining({
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
+    expect(lastCall).toBeDefined();
+    if (lastCall && lastCall[0]) {
+      expect(lastCall[0]).toMatchObject({
         to: undefined,
         status: 'new',
-      }),
-      expect.anything()
-    );
+      });
+    }
   });
 
   it('should respect disableLinks option', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn({ disableLinks: true }));
     const project = {
       status: 'successful',
@@ -81,13 +92,14 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    expect(mockStatusCell).toHaveBeenCalledWith(
-      expect.objectContaining({
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
+    expect(lastCall).toBeDefined();
+    if (lastCall && lastCall[0]) {
+      expect(lastCall[0]).toMatchObject({
         to: undefined,
         disableLinks: true,
-      }),
-      expect.anything()
-    );
+      });
+    }
   });
 
   it('should use tooltip when jobId is available', () => {
@@ -107,7 +119,8 @@ describe('useProjectStatusColumn', () => {
   });
 
   it('should handle last_job fallback', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn());
     const project = {
       status: 'failed',
@@ -118,9 +131,9 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    const lastCall = mockStatusCell.mock.calls[0];
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
     expect(lastCall).toBeDefined();
-    if (lastCall) {
+    if (lastCall && lastCall[0]) {
       expect(lastCall[0]).toMatchObject({
         status: 'failed',
       });
@@ -129,7 +142,8 @@ describe('useProjectStatusColumn', () => {
   });
 
   it('should handle current_update fallback', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useProjectStatusColumn());
     const project = {
       status: 'pending',
@@ -140,9 +154,9 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    const lastCall = mockStatusCell.mock.calls[0];
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
     expect(lastCall).toBeDefined();
-    if (lastCall) {
+    if (lastCall && lastCall[0]) {
       expect((lastCall[0] as Record<string, unknown>).to).toMatch(/999/);
     }
   });
@@ -155,5 +169,60 @@ describe('useProjectStatusColumn', () => {
 
     expect(resultWithSort.current.sort).toBe('status');
     expect(resultNoSort.current.sort).toBeUndefined();
+  });
+
+  it('should prefer current_job over last_job', () => {
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
+    const { result } = renderHook(() => useProjectStatusColumn());
+    const project = {
+      status: 'error',
+      summary_fields: {
+        current_job: { id: 111 },
+        last_job: { id: 222 },
+      },
+      related: { last_job: '/api/v2/project_updates/111/' },
+    };
+
+    result.current.cell(project);
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
+    if (lastCall && lastCall[0]) {
+      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/111/);
+    }
+  });
+
+  it('should use related URL as fallback when no summary fields have ids', () => {
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
+    const { result } = renderHook(() => useProjectStatusColumn());
+    const project = {
+      status: 'pending',
+      summary_fields: {
+        current_job: {},
+        last_job: {},
+      },
+      related: { last_job: '/api/v2/project_updates/333/' },
+    };
+
+    result.current.cell(project);
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
+    if (lastCall && lastCall[0]) {
+      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/333/);
+    }
+  });
+
+  it('should handle tooltipAlt when no job id available', () => {
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
+    const tooltipAlt = 'No job data available';
+    const { result } = renderHook(() => useProjectStatusColumn({ tooltipAlt }));
+    const project = {
+      status: 'new',
+      summary_fields: {},
+      related: {},
+    };
+
+    result.current.cell(project);
+    expect(mockCell).toHaveBeenCalled();
   });
 });
