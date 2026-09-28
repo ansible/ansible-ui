@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FormGroupSingleSelectTypeAhead } from './FormGroupSingleSelectTypeAhead';
@@ -75,6 +75,42 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     await user.keyboard('{ArrowDown}');
     await user.keyboard('{ArrowDown}');
     await user.keyboard('{ArrowUp}');
+
+    expect(input).toBeInTheDocument();
+  });
+
+  it('should move to the next option after an option is focused', async () => {
+    const user = userEvent.setup();
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => {
+      expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option1');
+    });
+
+    input.focus();
+    await user.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option2');
+  });
+
+  it('should skip sparse entries while finding the next option', async () => {
+    const user = userEvent.setup();
+    const sparseOptions = new Array<{ value: string; label: string }>(2);
+    sparseOptions[0] = { value: 'option0', label: 'Option 0' };
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} options={sparseOptions} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => {
+      expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option0');
+    });
+    await user.keyboard('{ArrowDown}');
 
     expect(input).toBeInTheDocument();
   });
