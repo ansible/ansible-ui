@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { InventorySource } from '../../../interfaces/InventorySource';
@@ -24,7 +25,7 @@ vi.mock('@ansible/common-ui/columns', () => ({
   useNameColumn: () => () => ({ header: 'Name' }),
 }));
 
-let useOptionsState = {
+const useOptionsState = {
   data: {
     actions: {
       GET: {
@@ -36,10 +37,20 @@ let useOptionsState = {
         },
       },
     },
-  },
-  error: undefined,
+  } as Record<string, unknown>,
+  error: undefined as Error | undefined,
   isLoading: false,
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let statusCellMock: any;
+
+vi.mock('@ansible/common-ui/Status', () => {
+  statusCellMock = vi.fn(() => <div data-testid="status-cell" />);
+  return {
+    StatusCell: statusCellMock,
+  };
+});
 
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
   useOptions: () => useOptionsState,
@@ -49,30 +60,23 @@ vi.mock('../inventorySources/InventorySourceDetails', () => ({
   LastJobTooltip: ({ job }: { job: { id?: number } }) => <div>{job.id}</div>,
 }));
 
-let mockStatusCell: ReturnType<typeof vi.fn>;
-
-vi.stubGlobal(
-  'mockStatusCell',
-  vi.fn(() => <div data-testid="status-cell" />)
-);
-
 function getMockStatusCell() {
-  // Access the mock from the StatusCell module
-  const { StatusCell } = require('@ansible/common-ui/Status');
-  return StatusCell;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return statusCellMock;
 }
 
 function findStatusColumn(columns: ReturnType<typeof useInventorySourceColumns>) {
   const col = columns.find((col) => col.header === 'Last job status');
-  return col && 'cell' in col ?
-    (col as typeof columns[0] & { cell: (item: InventorySource) => React.ReactNode }) :
-    undefined;
+  return col && 'cell' in col
+    ? (col as (typeof columns)[0] & { cell: (item: InventorySource) => React.ReactNode })
+    : undefined;
 }
 
 function findTypeColumn(columns: ReturnType<typeof useInventorySourceColumns>) {
-  return columns.find(
-    (col) => col.header === 'Type' && 'value' in col
-  ) as (typeof columns[0] & { value: (item: InventorySource) => string }) | undefined;
+  const col = columns.find((col) => col.header === 'Type' && 'value' in col);
+  return col
+    ? (col as (typeof columns)[0] & { value: (item: InventorySource) => string })
+    : undefined;
 }
 
 describe('useInventorySourceColumns', () => {

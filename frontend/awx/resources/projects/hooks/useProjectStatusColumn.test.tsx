@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
 import { renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { useProjectStatusColumn } from './useProjectStatusColumn';
@@ -10,10 +11,13 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
   ITableColumn: {},
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let statusCellMock: any;
+
 vi.mock('@ansible/common-ui/Status', () => {
-  const mockStatusCell = vi.fn(() => <div data-testid="status-cell" />);
+  statusCellMock = vi.fn(() => <div data-testid="status-cell" />);
   return {
-    StatusCell: mockStatusCell,
+    StatusCell: statusCellMock,
   };
 });
 
@@ -22,8 +26,8 @@ vi.mock('@patternfly/react-core', () => ({
 }));
 
 function getMockStatusCell() {
-  const { StatusCell } = require('@ansible/common-ui/Status');
-  return StatusCell;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return statusCellMock;
 }
 
 describe('useProjectStatusColumn', () => {
