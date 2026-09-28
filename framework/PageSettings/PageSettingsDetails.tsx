@@ -18,8 +18,10 @@ export function PageSettingsDetails() {
   const navigate = useNavigate();
   const getSettingValue = (name: string) => {
     const value = (settings as Record<string, string | number>)[name];
-    /* v8 ignore next */
-    return value ?? '';
+    return (
+      /* v8 ignore next */
+      value ?? ''
+    );
   };
   const actions = useMemo<IPageAction<object>[]>(
     () => [
