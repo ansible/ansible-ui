@@ -43,7 +43,7 @@ const useOptionsState = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const { statusCellMock } = vi.hoisted(() => {
+const { statusCellMock }: { statusCellMock: any } = vi.hoisted(() => {
   const mockFn = vi.fn(() => <div data-testid="status-cell" />);
   return { statusCellMock: mockFn };
 });
