@@ -74,7 +74,6 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     await user.click(input);
     await user.keyboard('{ArrowDown}');
     await user.keyboard('{ArrowDown}');
-    await user.keyboard('{ArrowUp}');
 
     expect(input).toBeInTheDocument();
   });
@@ -110,6 +109,7 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     await waitFor(() => {
       expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option0');
     });
+    await user.keyboard('{ArrowDown}');
     await user.keyboard('{ArrowDown}');
 
     expect(input).toBeInTheDocument();
