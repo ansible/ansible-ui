@@ -205,7 +205,8 @@ describe('useInventorySourceColumns', () => {
   });
 
   it('should prefer current_job over last_job in status tooltip', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const { result } = renderHook(() => useInventorySourceColumns());
     const statusColumn = findStatusColumn(result.current);
     if (!statusColumn) return;
@@ -223,9 +224,9 @@ describe('useInventorySourceColumns', () => {
     } as InventorySource;
 
     statusColumn.cell(inventorySource);
-    const lastCall = mockStatusCell.mock.calls[0];
+    const lastCall = mockCell.mock.calls[mockCell.mock.calls.length - 1];
     if (lastCall) {
-      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/999/);
+      expect((lastCall?.[0] as Record<string, unknown>).to).toMatch(/999/);
     }
   });
 

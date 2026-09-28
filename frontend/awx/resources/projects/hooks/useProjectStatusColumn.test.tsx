@@ -95,7 +95,8 @@ describe('useProjectStatusColumn', () => {
   });
 
   it('should use tooltip when jobId is available', () => {
-    mockStatusCell.mockClear();
+    const mockCell = getMockStatusCell();
+    mockCell.mockClear();
     const tooltip = 'Job running';
     const { result } = renderHook(() => useProjectStatusColumn({ tooltip }));
     const project = {
@@ -107,7 +108,7 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    expect(mockStatusCell).toHaveBeenCalledWith(expect.anything(), expect.anything());
+    expect(mockCell).toHaveBeenCalledWith(expect.anything(), expect.anything());
   });
 
   it('should handle last_job fallback', () => {
