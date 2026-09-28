@@ -97,6 +97,7 @@ describe('ScheduleAddWizard', () => {
   });
 
   it('should apply schedule name pattern validation from OPTIONS metadata', async () => {
+    const user = userEvent.setup();
     renderJobTemplateNestedAddWizard();
 
     await waitFor(() => {
@@ -104,9 +105,9 @@ describe('ScheduleAddWizard', () => {
     });
 
     const nameInput = await screen.findByRole('textbox', { name: 'Schedule name' });
-    await userEvent.clear(nameInput);
-    await userEvent.type(nameInput, 'invalid@name');
-    await userEvent.tab();
+    await user.clear(nameInput);
+    await user.type(nameInput, 'invalid@name');
+    await user.tab();
 
     await waitFor(() => {
       expect(screen.getByText('Valid schedule name')).toBeInTheDocument();

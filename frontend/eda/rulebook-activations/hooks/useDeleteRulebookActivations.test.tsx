@@ -76,6 +76,7 @@ describe('useDeleteRulebookActivations hooks', () => {
   });
 
   it('useDeleteRulebookActivations should call actionFn on confirm', async () => {
+    const user = userEvent.setup();
     server.use(
       http.delete(edaAPI`/activations/1/`, () => {
         return HttpResponse.json({});
@@ -89,12 +90,12 @@ describe('useDeleteRulebookActivations hooks', () => {
 
     const checkbox = screen.getByRole('checkbox');
     await act(async () => {
-      await userEvent.click(checkbox);
+      await user.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Delete rulebook activations' });
     await act(async () => {
-      await userEvent.click(submitButton);
+      await user.click(submitButton);
       await Promise.resolve();
     });
 
@@ -121,6 +122,7 @@ describe('useDeleteRulebookActivations hooks', () => {
   });
 
   it('useDeleteRulebookActivationsWithWarning should call actionFn on confirm', async () => {
+    const user = userEvent.setup();
     server.use(
       http.delete(edaAPI`/activations/1/`, () => {
         return HttpResponse.json({});
@@ -136,12 +138,12 @@ describe('useDeleteRulebookActivations hooks', () => {
 
     const checkbox = screen.getByRole('checkbox');
     await act(async () => {
-      await userEvent.click(checkbox);
+      await user.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Delete rulebook activations' });
     await act(async () => {
-      await userEvent.click(submitButton);
+      await user.click(submitButton);
       await Promise.resolve();
     });
 

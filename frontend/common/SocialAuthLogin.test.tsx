@@ -77,6 +77,7 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should store current path in sessionStorage when SAML button is clicked', async () => {
+    const user = userEvent.setup();
     render(
       <MemoryRouter>
         <SocialAuthLogin options={mockSocialAuthOptions} />
@@ -86,7 +87,7 @@ describe('SocialAuthLogin', () => {
     const samlButton = screen.getByRole('link', { name: /SAML Test/i });
 
     // Click the SAML button
-    await userEvent.click(samlButton);
+    await user.click(samlButton);
 
     // Verify sessionStorage was set with current path
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
@@ -95,6 +96,7 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should store current path in sessionStorage when GitHub button is clicked', async () => {
+    const user = userEvent.setup();
     render(
       <MemoryRouter>
         <SocialAuthLogin options={mockSocialAuthOptions} />
@@ -104,7 +106,7 @@ describe('SocialAuthLogin', () => {
     const githubButton = screen.getByRole('link', { name: /GitHub OAuth/i });
 
     // Click the GitHub button
-    await userEvent.click(githubButton);
+    await user.click(githubButton);
 
     // Verify sessionStorage was set with current path
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
@@ -113,6 +115,7 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should not store sessionStorage when on login page', async () => {
+    const user = userEvent.setup();
     // Mock being on login page
     globalThis.location.pathname = '/login';
     globalThis.location.search = '';
@@ -126,13 +129,14 @@ describe('SocialAuthLogin', () => {
     const samlButton = screen.getByRole('link', { name: /SAML Test/i });
 
     // Click the SAML button
-    await userEvent.click(samlButton);
+    await user.click(samlButton);
 
     // Verify sessionStorage was NOT set since we're on login page
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBeNull();
   });
 
   it('should remove stale sessionStorage value when redirectUrl is falsy', async () => {
+    const user = userEvent.setup();
     // Pre-seed sessionStorage with a stale value from a previous click
     sessionStorage.setItem('social_auth_redirect_url', '/old/stale/path');
 
@@ -147,7 +151,7 @@ describe('SocialAuthLogin', () => {
     );
 
     const samlButton = screen.getByRole('link', { name: /SAML Test/i });
-    await userEvent.click(samlButton);
+    await user.click(samlButton);
 
     // Verify stale sessionStorage value was removed
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBeNull();
@@ -198,6 +202,7 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should store next param value when on root page with next query parameter', async () => {
+    const user = userEvent.setup();
     globalThis.location.pathname = '/';
     globalThis.location.search =
       '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26redirect_uri%3Dhttps%3A%2F%2Frhdh.example.com%2Fcallback%26client_id%3Dxxx';
@@ -209,7 +214,7 @@ describe('SocialAuthLogin', () => {
     );
 
     const samlButton = screen.getByRole('link', { name: /SAML Test/i });
-    await userEvent.click(samlButton);
+    await user.click(samlButton);
 
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
       '/o/authorize/?response_type=code&redirect_uri=https://rhdh.example.com/callback&client_id=xxx'
@@ -217,6 +222,7 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should store next param value when on login page with next query parameter', async () => {
+    const user = userEvent.setup();
     globalThis.location.pathname = '/login';
     globalThis.location.search =
       '?next=%2Fo%2Fauthorize%2F%3Fresponse_type%3Dcode%26client_id%3Dxxx';
@@ -228,7 +234,7 @@ describe('SocialAuthLogin', () => {
     );
 
     const samlButton = screen.getByRole('link', { name: /SAML Test/i });
-    await userEvent.click(samlButton);
+    await user.click(samlButton);
 
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
       '/o/authorize/?response_type=code&client_id=xxx'
@@ -236,6 +242,7 @@ describe('SocialAuthLogin', () => {
   });
 
   it('should reject unsafe next param and fall through to regular logic', async () => {
+    const user = userEvent.setup();
     globalThis.location.pathname = '/';
     globalThis.location.search = '?next=https://malicious-url.com';
 
@@ -246,13 +253,14 @@ describe('SocialAuthLogin', () => {
     );
 
     const samlButton = screen.getByRole('link', { name: /SAML Test/i });
-    await userEvent.click(samlButton);
+    await user.click(samlButton);
 
     // validateUrlPath rejects absolute URL, falls through to store pathname without unsafe next param
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBe('/');
   });
 
   it('should handle complex paths with query parameters', async () => {
+    const user = userEvent.setup();
     // Mock a complex path
     globalThis.location.pathname = '/platform/users';
     globalThis.location.search = '?page=2&sort=username&filter=active';
@@ -264,7 +272,7 @@ describe('SocialAuthLogin', () => {
     );
 
     const samlButton = screen.getByRole('link', { name: /SAML Test/i });
-    await userEvent.click(samlButton);
+    await user.click(samlButton);
 
     expect(sessionStorage.getItem('social_auth_redirect_url')).toBe(
       '/platform/users?page=2&sort=username&filter=active'

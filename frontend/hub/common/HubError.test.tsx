@@ -27,11 +27,12 @@ describe('HubError', () => {
   });
 
   it('should call handleRefresh when refresh button is clicked', async () => {
+    const user = userEvent.setup();
     const handleRefresh = vi.fn();
     render(<HubError handleRefresh={handleRefresh} />);
 
     const refreshButton = screen.getByRole('button', { name: 'Refresh' });
-    await userEvent.click(refreshButton);
+    await user.click(refreshButton);
 
     expect(handleRefresh).toHaveBeenCalledTimes(1);
   });

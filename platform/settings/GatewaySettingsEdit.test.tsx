@@ -130,17 +130,18 @@ describe('GatewaySettingsEdit Component', () => {
     });
 
     it('should allow admin to edit and submit settings', async () => {
+      const user = userEvent.setup();
       const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
       mockRequestPut.mockResolvedValue({});
 
       renderWithContext();
 
       const input = screen.getByLabelText('Gateway proxy url');
-      await userEvent.clear(input);
-      await userEvent.type(input, 'https://new-gateway.example.com');
+      await user.clear(input);
+      await user.type(input, 'https://new-gateway.example.com');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      await userEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalledWith(
@@ -155,10 +156,11 @@ describe('GatewaySettingsEdit Component', () => {
     });
 
     it('should allow admin to cancel editing', async () => {
+      const user = userEvent.setup();
       renderWithContext();
 
       const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-      await userEvent.click(cancelButton);
+      await user.click(cancelButton);
 
       expect(mockPageNavigate).toHaveBeenCalledWith('platform-gateway-settings');
     });
@@ -233,6 +235,7 @@ describe('GatewaySettingsEdit Component', () => {
     });
 
     it('should exclude CONFIRM_LOGIN_REDIRECT_OVERRIDE from form submission', async () => {
+      const user = userEvent.setup();
       const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
       mockRequestPut.mockResolvedValue({});
 
@@ -269,7 +272,7 @@ describe('GatewaySettingsEdit Component', () => {
       renderWithContext(contextWithRedirect, 'authentication');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      await userEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalled();
@@ -372,6 +375,7 @@ describe('GatewaySettingsEdit Component', () => {
 
   describe('Edge Cases', () => {
     it('should handle form submission errors gracefully', async () => {
+      const user = userEvent.setup();
       const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       mockRequestPut.mockRejectedValue(new Error('API Error'));
@@ -379,11 +383,11 @@ describe('GatewaySettingsEdit Component', () => {
       renderWithContext();
 
       const input = screen.getByLabelText('Gateway proxy url');
-      await userEvent.clear(input);
-      await userEvent.type(input, 'https://new-gateway.example.com');
+      await user.clear(input);
+      await user.type(input, 'https://new-gateway.example.com');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      await userEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalled();

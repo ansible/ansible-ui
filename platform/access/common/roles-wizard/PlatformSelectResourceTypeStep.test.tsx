@@ -135,16 +135,18 @@ describe('PlatformSelectResourceTypeStep', () => {
     });
 
     it('should call handleResourceTypeSelection when a resource type is selected', async () => {
+      const user = userEvent.setup();
       render(<PlatformSelectResourceTypeStep />);
 
       const typeahead = screen.getByRole('textbox');
-      await userEvent.click(typeahead);
-      await userEvent.click(screen.getByText('Job Template'));
+      await user.click(typeahead);
+      await user.click(screen.getByText('Job Template'));
 
       expect(mockHandleResourceTypeSelection).toHaveBeenCalledWith('awx.jobtemplate');
     });
 
     it('should call handleClearSelection when clear button is clicked', async () => {
+      const user = userEvent.setup();
       mockUseResourceTypeWizard.mockReturnValue({
         resourceType: 'awx.jobtemplate',
         handleResourceTypeSelection: mockHandleResourceTypeSelection,
@@ -155,7 +157,7 @@ describe('PlatformSelectResourceTypeStep', () => {
 
       const clearButton = screen.getByRole('button', { name: /clear input value/i });
 
-      await userEvent.click(clearButton);
+      await user.click(clearButton);
 
       await waitFor(() => {
         expect(mockHandleClearSelection).toHaveBeenCalledTimes(1);
@@ -163,18 +165,19 @@ describe('PlatformSelectResourceTypeStep', () => {
     });
 
     it('should call handleResourceTypeSelection with correct value', async () => {
+      const user = userEvent.setup();
       render(<PlatformSelectResourceTypeStep />);
 
       const input = screen.getByRole('textbox');
 
       // Open dropdown and select an option
-      await userEvent.click(input);
+      await user.click(input);
 
       await waitFor(() => {
         expect(screen.getByText('Job Template')).toBeInTheDocument();
       });
 
-      await userEvent.click(screen.getByText('Job Template'));
+      await user.click(screen.getByText('Job Template'));
 
       expect(mockHandleResourceTypeSelection).toHaveBeenCalledWith('awx.jobtemplate');
       expect(mockHandleResourceTypeSelection).toHaveBeenCalledTimes(1);
@@ -183,6 +186,7 @@ describe('PlatformSelectResourceTypeStep', () => {
 
   describe('System Resource Type', () => {
     it('should display System option in the dropdown', async () => {
+      const user = userEvent.setup();
       const mockOptions = [
         {
           value: 'galaxy.namespace',
@@ -205,12 +209,13 @@ describe('PlatformSelectResourceTypeStep', () => {
       render(<PlatformSelectResourceTypeStep />);
 
       const typeahead = screen.getByRole('textbox');
-      await userEvent.click(typeahead);
+      await user.click(typeahead);
 
       expect(screen.getByText('System')).toBeInTheDocument();
     });
 
     it('should call handleResourceTypeSelection with system when System is selected', async () => {
+      const user = userEvent.setup();
       const mockOptions = [
         {
           value: 'system',
@@ -228,8 +233,8 @@ describe('PlatformSelectResourceTypeStep', () => {
       render(<PlatformSelectResourceTypeStep />);
 
       const typeahead = screen.getByRole('textbox');
-      await userEvent.click(typeahead);
-      await userEvent.click(screen.getByText('System'));
+      await user.click(typeahead);
+      await user.click(screen.getByText('System'));
 
       expect(mockHandleResourceTypeSelection).toHaveBeenCalledWith('system');
     });
