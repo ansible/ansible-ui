@@ -117,4 +117,99 @@ describe('getSyncJobId', () => {
       )
     ).toBe(200);
   });
+
+  it('should handle all empty summary fields with valid URL', () => {
+    expect(getSyncJobId({}, '/api/v2/job_templates/10/')).toBe(10);
+  });
+
+  it('should prefer current_job.id even when it is the only value', () => {
+    expect(getSyncJobId({ current_job: { id: 11 } })).toBe(11);
+  });
+
+  it('should fallback to last_job.id when current_job exists but has no id', () => {
+    expect(getSyncJobId({ current_job: {}, last_job: { id: 22 } })).toBe(22);
+  });
+
+  it('should fallback to current_update.id when both jobs exist but have no id', () => {
+    expect(
+      getSyncJobId({
+        current_job: {},
+        last_job: {},
+        current_update: { id: 33 },
+      })
+    ).toBe(33);
+  });
+
+  it('should parse URL correctly when all summary fields are empty', () => {
+    expect(
+      getSyncJobId(
+        { current_job: {}, last_job: {}, current_update: {} },
+        '/api/v2/inventory_updates/44/'
+      )
+    ).toBe(44);
+  });
+
+  it('should return undefined when all fields are null or missing', () => {
+    expect(getSyncJobId({ current_job: null, last_job: null }, null)).toBeUndefined();
+  });
+
+  it('should handle mixed null and undefined in summary fields', () => {
+    expect(getSyncJobId({ current_job: null, last_job: undefined })).toBeUndefined();
+  });
+
+  it('should extract large ID numbers from URL', () => {
+    expect(getIdFromAwxRelatedUrl('/api/v2/inventory_updates/999999999/')).toBe(999999999);
+  });
+
+  it('should reject non-integer decimals correctly', () => {
+    expect(getIdFromAwxRelatedUrl('/api/v2/inventory_updates/1.5/')).toBeUndefined();
+    expect(getIdFromAwxRelatedUrl('/api/v2/inventory_updates/9.99/')).toBeUndefined();
+  });
+
+  it('should handle empty string URL', () => {
+    expect(getIdFromAwxRelatedUrl('')).toBeUndefined();
+  });
+
+  it('should handle URL with only slashes', () => {
+    expect(getIdFromAwxRelatedUrl('///')).toBeUndefined();
+  });
+
+  it('should prioritize current_job over all other fallbacks', () => {
+    expect(
+      getSyncJobId(
+        {
+          current_job: { id: 1 },
+          last_job: { id: 2 },
+          current_update: { id: 3 },
+        },
+        '/api/v2/inventory_updates/4/'
+      )
+    ).toBe(1);
+  });
+
+  it('should prioritize last_job over current_update and URL', () => {
+    expect(
+      getSyncJobId(
+        {
+          current_job: {},
+          last_job: { id: 5 },
+          current_update: { id: 6 },
+        },
+        '/api/v2/inventory_updates/7/'
+      )
+    ).toBe(5);
+  });
+
+  it('should prioritize current_update over URL', () => {
+    expect(
+      getSyncJobId(
+        {
+          current_job: {},
+          last_job: {},
+          current_update: { id: 8 },
+        },
+        '/api/v2/inventory_updates/9/'
+      )
+    ).toBe(8);
+  });
 });
