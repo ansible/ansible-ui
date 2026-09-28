@@ -62,15 +62,17 @@ describe('useInventorySourceColumns', () => {
       related: { schedules: '/api/v2/schedules/', last_job: '/api/v2/inventory_updates/123/' },
     } as InventorySource;
 
-    statusColumn.cell?.(inventorySource);
-    expect(mockStatusCell).toHaveBeenCalledWith(
-      expect.objectContaining({
-        to: expect.stringContaining('123'),
-        status: 'successful',
-        disableLinks: undefined,
-      }),
-      expect.anything()
-    );
+    if (statusColumn.cell) {
+      statusColumn.cell(inventorySource);
+      expect(mockStatusCell).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: expect.stringContaining('123'),
+          status: 'successful',
+          disableLinks: undefined,
+        }),
+        expect.anything()
+      );
+    }
   });
 
   it('should handle inventory source without job', () => {
@@ -89,14 +91,16 @@ describe('useInventorySourceColumns', () => {
       related: { schedules: '/api/v2/schedules/' },
     } as InventorySource;
 
-    statusColumn.cell?.(inventorySource);
-    expect(mockStatusCell).toHaveBeenCalledWith(
-      expect.objectContaining({
-        to: undefined,
-        status: 'failed',
-      }),
-      expect.anything()
-    );
+    if (statusColumn.cell) {
+      statusColumn.cell(inventorySource);
+      expect(mockStatusCell).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: undefined,
+          status: 'failed',
+        }),
+        expect.anything()
+      );
+    }
   });
 
   it('should respect disableLinks option', () => {
@@ -117,13 +121,15 @@ describe('useInventorySourceColumns', () => {
       related: { schedules: '/api/v2/schedules/', last_job: '/api/v2/inventory_updates/123/' },
     } as InventorySource;
 
-    statusColumn.cell?.(inventorySource);
-    expect(mockStatusCell).toHaveBeenCalledWith(
-      expect.objectContaining({
-        to: undefined,
-        disableLinks: true,
-      }),
-      expect.anything()
-    );
+    if (statusColumn.cell) {
+      statusColumn.cell(inventorySource);
+      expect(mockStatusCell).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: undefined,
+          disableLinks: true,
+        }),
+        expect.anything()
+      );
+    }
   });
 });

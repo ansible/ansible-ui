@@ -59,10 +59,9 @@ export function useInventorySourceColumns(options?: {
     () => ({
       header: t('Last job status'),
       cell: (inventorySource: InventorySource) => {
-        const lastJob =
-          inventorySource.summary_fields?.current_job?.id
-            ? inventorySource.summary_fields.current_job
-            : inventorySource.summary_fields?.last_job;
+        const lastJob = inventorySource.summary_fields?.current_job?.id
+          ? inventorySource.summary_fields.current_job
+          : inventorySource.summary_fields?.last_job;
         const jobId = getSyncJobId(
           inventorySource.summary_fields,
           inventorySource.related?.last_job

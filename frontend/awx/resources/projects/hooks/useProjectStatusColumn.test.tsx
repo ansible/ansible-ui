@@ -39,14 +39,15 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    expect(mockStatusCell).toHaveBeenCalledWith(
-      expect.objectContaining({
-        to: expect.stringContaining('456'),
+    const lastCall = mockStatusCell.mock.calls[0];
+    expect(lastCall).toBeDefined();
+    if (lastCall) {
+      expect(lastCall[0]).toMatchObject({
         status: 'successful',
         disableLinks: undefined,
-      }),
-      expect.anything()
-    );
+      });
+      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/456/);
+    }
   });
 
   it('should render status cell without link when jobId is undefined', () => {
@@ -117,13 +118,14 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    expect(mockStatusCell).toHaveBeenCalledWith(
-      expect.objectContaining({
-        to: expect.stringContaining('789'),
+    const lastCall = mockStatusCell.mock.calls[0];
+    expect(lastCall).toBeDefined();
+    if (lastCall) {
+      expect(lastCall[0]).toMatchObject({
         status: 'failed',
-      }),
-      expect.anything()
-    );
+      });
+      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/789/);
+    }
   });
 
   it('should handle current_update fallback', () => {
@@ -138,12 +140,11 @@ describe('useProjectStatusColumn', () => {
     };
 
     result.current.cell(project);
-    expect(mockStatusCell).toHaveBeenCalledWith(
-      expect.objectContaining({
-        to: expect.stringContaining('999'),
-      }),
-      expect.anything()
-    );
+    const lastCall = mockStatusCell.mock.calls[0];
+    expect(lastCall).toBeDefined();
+    if (lastCall) {
+      expect((lastCall[0] as Record<string, unknown>).to).toMatch(/999/);
+    }
   });
 
   it('should respect disableSort option', () => {
