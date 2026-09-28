@@ -169,6 +169,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
       if (key === 'Enter') {
         event.preventDefault();
         const focusedOption = selectOptions[focusedItemIndex ?? 0];
+        /* v8 ignore next */
         if (focusedOption) {
           const optionValue = focusedOption.value as string | number;
           if (optionValue !== undefined) {

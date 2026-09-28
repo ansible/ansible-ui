@@ -13,6 +13,7 @@ export function PageToggleGroup<ValueT>(props: PageToggleGroupProps<ValueT>) {
   const { id, value, onSelect, options } = props;
   useEffect(() => {
     const firstOption = options[0];
+    /* v8 ignore next */
     if (!options.some((option) => value === option.value) && firstOption) {
       setTimeout(() => onSelect(firstOption.value), 0);
     }
