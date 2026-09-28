@@ -73,8 +73,8 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     const input = screen.getByRole('textbox');
     await user.click(input);
     await user.keyboard('{ArrowDown}');
-    await user.keyboard('{ArrowUp}');
     await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowUp}');
 
     expect(input).toBeInTheDocument();
   });
