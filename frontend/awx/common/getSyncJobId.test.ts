@@ -70,7 +70,7 @@ describe('getSyncJobId', () => {
   });
 
   it('should return undefined when no data available', () => {
-    expect(getSyncJobId({}, undefined)).toBeUndefined();
+    expect(getSyncJobId({})).toBeUndefined();
     expect(getSyncJobId({ current_job: {}, last_job: {} }, '')).toBeUndefined();
   });
 });
