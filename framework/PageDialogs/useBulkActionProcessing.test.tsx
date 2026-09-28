@@ -71,6 +71,49 @@ describe('useBulkActionProcessing', () => {
     expect(setProcessing).not.toHaveBeenCalled();
   });
 
+  it('does not update item state when an in-flight action is cancelled', async () => {
+    const abortController = new AbortController();
+    const pendingActions = new Map<
+      number,
+      { reject: (reason?: unknown) => void; resolve: (value: unknown) => void }
+    >();
+    const actionFn = vi.fn(
+      (item: { id: number }) =>
+        new Promise((resolve, reject) => pendingActions.set(item.id, { reject, resolve }))
+    );
+    const setProcessing = vi.fn();
+    const setProgress = vi.fn();
+    const setSuccessfulItems = vi.fn();
+
+    renderHook(() =>
+      useBulkActionProcessing({
+        abortController,
+        actionFn,
+        errorAdapter: vi.fn(() => ({ genericErrors: [], fieldErrors: [] })),
+        items: [{ id: 1 }, { id: 2 }],
+        keyFn: (item: { id: number }) => item.id,
+        retry: 0,
+        setError: vi.fn(),
+        setProcessing,
+        setProgress,
+        setStatuses: vi.fn() as never,
+        setSuccessfulItems,
+        successfulItems: [],
+        t: (key) => key,
+        translations: { errorText: 'Action failed' },
+      })
+    );
+
+    await waitFor(() => expect(actionFn).toHaveBeenCalledTimes(2));
+    abortController.abort();
+    pendingActions.get(1)?.resolve({});
+    pendingActions.get(2)?.reject(new Error('failed'));
+
+    await waitFor(() => expect(setSuccessfulItems).toHaveBeenCalledWith([{ id: 1 }]));
+    expect(setProgress).not.toHaveBeenCalled();
+    expect(setProcessing).not.toHaveBeenCalled();
+  });
+
   it('records a null status when the parser has no status detail', async () => {
     const statusUpdates: unknown[] = [];
     const setStatuses = vi.fn((update: (value: undefined) => unknown) => {
