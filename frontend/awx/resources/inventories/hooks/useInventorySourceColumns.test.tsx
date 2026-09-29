@@ -11,8 +11,8 @@ const mockGetPageUrl = (route: string, config: { params: Record<string, string |
 type TestInventorySource = {
   status?: string;
   summary_fields?: {
-    current_job?: { id?: number };
-    last_job?: { id?: number };
+    current_job?: { id?: number; status?: string; finished?: string };
+    last_job?: { id?: number; status?: string; finished?: string };
     current_update?: { id?: number };
   };
   related?: { schedules?: string; last_job?: string };

@@ -14,8 +14,8 @@ import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 type InventorySourceLike = {
   status?: string;
   summary_fields?: {
-    current_job?: { id?: number };
-    last_job?: { id?: number };
+    current_job?: { id?: number; status?: string; finished?: string };
+    last_job?: { id?: number; status?: string; finished?: string };
     current_update?: { id?: number };
   };
   related?: { last_job?: string };
