@@ -143,9 +143,9 @@ describe('buildInventorySourceStatusCellProps', () => {
 
   it('handles null/undefined summary_fields', () => {
     const source = createTestSource({
-      summary_fields: undefined as any,
+      summary_fields: undefined,
       related: { schedules: '/', last_job: '/api/v2/inventory_updates/500/' },
-    });
+    } as Partial<InventorySource>);
     const props = buildInventorySourceStatusCellProps(source, mockGetPageUrl);
     expect(props.to).toContain('500');
   });
@@ -153,8 +153,8 @@ describe('buildInventorySourceStatusCellProps', () => {
   it('handles null/undefined related', () => {
     const source = createTestSource({
       summary_fields: { current_job: { id: 600 } },
-      related: undefined as any,
-    });
+      related: undefined,
+    } as Partial<InventorySource>);
     const props = buildInventorySourceStatusCellProps(source, mockGetPageUrl);
     expect(props.to).toContain('600');
   });
