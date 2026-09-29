@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-import { InventorySource } from '../../../interfaces/InventorySource';
 import { buildInventorySourceStatusCellProps } from './useInventorySourceColumns';
 
 vi.mock('../inventorySources/InventorySourceDetails', () => ({
@@ -9,15 +8,18 @@ vi.mock('../inventorySources/InventorySourceDetails', () => ({
 const mockGetPageUrl = (route: string, config: { params: Record<string, string | number> }) =>
   `/jobs/${config.params.id}`;
 
-function createTestSource(overrides: Partial<InventorySource> = {}): InventorySource {
+type TestInventorySource = {
+  status?: string;
+  summary_fields?: {
+    current_job?: { id?: number };
+    last_job?: { id?: number };
+    current_update?: { id?: number };
+  };
+  related?: { schedules?: string; last_job?: string };
+};
+
+function createTestSource(overrides: TestInventorySource = {}): TestInventorySource {
   return {
-    id: 1,
-    inventory: 1,
-    name: 'test',
-    description: 'test',
-    source: 'scm',
-    scm_branch: 'main',
-    type: 'inventory_source' as const,
     status: 'successful',
     summary_fields: {},
     related: { schedules: '/' },
@@ -145,7 +147,7 @@ describe('buildInventorySourceStatusCellProps', () => {
     const source = createTestSource({
       summary_fields: undefined,
       related: { schedules: '/', last_job: '/api/v2/inventory_updates/500/' },
-    } as Partial<InventorySource>);
+    });
     const props = buildInventorySourceStatusCellProps(source, mockGetPageUrl);
     expect(props.to).toContain('500');
   });
@@ -154,7 +156,7 @@ describe('buildInventorySourceStatusCellProps', () => {
     const source = createTestSource({
       summary_fields: { current_job: { id: 600 } },
       related: undefined,
-    } as Partial<InventorySource>);
+    });
     const props = buildInventorySourceStatusCellProps(source, mockGetPageUrl);
     expect(props.to).toContain('600');
   });

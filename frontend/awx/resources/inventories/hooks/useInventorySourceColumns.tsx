@@ -11,8 +11,18 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 
+type InventorySourceLike = {
+  status?: string;
+  summary_fields?: {
+    current_job?: { id?: number };
+    last_job?: { id?: number };
+    current_update?: { id?: number };
+  };
+  related?: { last_job?: string };
+};
+
 export function buildInventorySourceStatusCellProps(
-  inventorySource: InventorySource,
+  inventorySource: InventorySourceLike,
   getPageUrl: (route: string, config: { params: Record<string, string | number> }) => string,
   disableLinks?: boolean
 ) {
