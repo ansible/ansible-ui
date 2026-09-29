@@ -232,6 +232,9 @@ export function PageFormDataEditor<
   const watchValue = useWatch({ name });
   useEffect(() => {
     if (hasFocus) return;
+    // Invalid editor content does not update the form value. On blur, keep showing
+    // the user's text and parse error instead of resetting from stale watchValue.
+    if (parseErrorRef.current) return;
 
     if (
       typeof watchValue === 'string' &&
@@ -317,6 +320,7 @@ export function PageFormDataEditor<
             if (err instanceof Error) {
               parseErrorRef.current = err.message;
               setError(name, { message: err.message });
+              setDataEditorValue(stringValue);
             }
           }
         }
