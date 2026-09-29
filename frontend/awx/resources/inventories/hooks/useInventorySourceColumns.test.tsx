@@ -81,7 +81,9 @@ describe('buildInventorySourceStatusCellProps', () => {
 
   it('sets tooltip when job available', () => {
     const source = createTestSource({
-      summary_fields: { current_job: { id: 600 } },
+      summary_fields: {
+        current_job: { id: 600, status: 'successful', finished: '2024-01-01T00:00:00Z' },
+      },
     });
     const props = buildInventorySourceStatusCellProps(source, mockGetPageUrl);
     expect(props.tooltip).toBeDefined();
