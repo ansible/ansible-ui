@@ -75,6 +75,20 @@ describe('buildProjectStatusCellProps', () => {
     expect(statusCellProps.disableLinks).toBe(true);
   });
 
+  it('shows tooltip when job available even with disableLinks', () => {
+    const project = createTestProject({
+      summary_fields: { current_job: { id: 550 } },
+    });
+    const { tooltipContent } = buildProjectStatusCellProps(
+      project,
+      mockGetPageUrl,
+      'Job available',
+      'No job',
+      true
+    );
+    expect(tooltipContent).toBe('Job available');
+  });
+
   it('uses tooltip text when job available', () => {
     const project = createTestProject({
       summary_fields: { current_job: { id: 600 } },

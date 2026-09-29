@@ -35,7 +35,7 @@ export function buildProjectStatusCellProps(
       : undefined;
 
   return {
-    tooltipContent: jobOutputUrl ? (tooltipText ?? '') : (tooltipAltText ?? ''),
+    tooltipContent: jobId !== undefined ? (tooltipText ?? '') : (tooltipAltText ?? ''),
     statusCellProps: {
       status: item.status,
       to: jobOutputUrl,
