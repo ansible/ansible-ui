@@ -605,6 +605,31 @@ debug_mode: true         # Enable debugging`;
     });
   });
 
+  test('should keep parse error visible after blur when form value is still AWX default (AAP-93178)', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper defaultValue={{ vars: '---\n' }} onSubmit={vi.fn()}>
+        <PageFormDataEditor<ExtraVars> label="Extra variables" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    const editor = screen.getByTestId('data-editor');
+    await user.click(editor);
+    fireEvent.change(editor, { target: { value: '  ---\n  a: b' } });
+
+    const parseError = /end of the stream or a document separator is expected/i;
+    await waitFor(() => {
+      expect(screen.getByText(parseError)).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(screen.getByText(parseError)).toBeInTheDocument();
+    });
+  });
+
   test('should not clear saved extra vars when user enters whitespace then invalid JSON (AAP-93178)', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
