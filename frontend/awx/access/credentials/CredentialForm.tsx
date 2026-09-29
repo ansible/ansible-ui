@@ -154,7 +154,11 @@ export function CreateCredential() {
       }
     });
     let payload = { ...credential, inputs: pluginInputs };
-    if (typeof pluginInputs.become_method === 'object' && pluginInputs.become_method !== null && 'name' in pluginInputs.become_method) {
+    if (
+      typeof pluginInputs.become_method === 'object' &&
+      pluginInputs.become_method !== null &&
+      'name' in pluginInputs.become_method
+    ) {
       payload = {
         ...credential,
         inputs: {
@@ -394,7 +398,11 @@ export function EditCredential() {
     });
 
     let modifiedCredential = { ...editedCredential, inputs: pluginInputs };
-    if (typeof pluginInputs.become_method === 'object' && pluginInputs.become_method !== null && 'name' in pluginInputs.become_method) {
+    if (
+      typeof pluginInputs.become_method === 'object' &&
+      pluginInputs.become_method !== null &&
+      'name' in pluginInputs.become_method
+    ) {
       modifiedCredential = {
         ...modifiedCredential,
         inputs: {
