@@ -18,19 +18,19 @@ export async function fetchAllHostMetrics(
   signal?: AbortSignal
 ): Promise<HostMetric[]> {
   const hosts: HostMetric[] = [];
-  let page = 1;
-  let hasNext = true;
 
-  while (hasNext) {
+  const fetchPage = async (page: number): Promise<void> => {
     const url = withHostMetricsPagination(listUrl, page, PAGE_SIZE);
     const response = await requestGet<AwxItemsResponse<HostMetric>>(url, signal);
     if (Array.isArray(response.results)) {
       hosts.push(...response.results);
     }
-    hasNext = Boolean(response.next);
-    page += 1;
-  }
+    if (response.next) {
+      await fetchPage(page + 1);
+    }
+  };
 
+  await fetchPage(1);
   return hosts;
 }
 

@@ -2,7 +2,7 @@ import { HostMetric } from '../../../interfaces/HostMetric';
 
 /** Escape a value for inclusion in a CSV cell (RFC 4180). */
 export function escapeCsvValue(value: string | number | null | undefined): string {
-  const str = value == null ? '' : String(value);
+  const str = value === null || value === undefined ? '' : String(value);
   if (/[",\n\r]/.test(str)) {
     return `"${str.replace(/"/g, '""')}"`;
   }
