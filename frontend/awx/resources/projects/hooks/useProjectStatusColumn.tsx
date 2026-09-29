@@ -6,6 +6,44 @@ import { useTranslation } from 'react-i18next';
 import { getSyncJobId } from '../../../common/getSyncJobId';
 import { AwxRoute } from '../../../main/AwxRoutes';
 
+type ProjectLike = {
+  status?: string;
+  summary_fields?: {
+    last_job?: { id?: number };
+    current_job?: { id?: number };
+    current_update?: { id?: number };
+  };
+  related?: { last_job?: string };
+};
+
+export function buildProjectStatusCellProps(
+  item: ProjectLike,
+  getPageUrl: (route: string, config: { params: Record<string, string | number> }) => string,
+  tooltipText?: string,
+  tooltipAltText?: string,
+  disableLinks?: boolean
+) {
+  const jobId = getSyncJobId(item.summary_fields, item.related?.last_job);
+  const jobOutputUrl =
+    jobId !== undefined && !disableLinks
+      ? getPageUrl(AwxRoute.JobOutput, {
+          params: {
+            job_type: 'project',
+            id: jobId,
+          },
+        })
+      : undefined;
+
+  return {
+    tooltipContent: jobOutputUrl ? (tooltipText ?? '') : (tooltipAltText ?? ''),
+    statusCellProps: {
+      status: item.status,
+      to: jobOutputUrl,
+      disableLinks,
+    },
+  };
+}
+
 export function useProjectStatusColumn(options?: {
   tooltip?: string;
   tooltipAlt?: string;
@@ -14,47 +52,21 @@ export function useProjectStatusColumn(options?: {
 }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const column: ITableColumn<{
-    status?: string;
-    summary_fields?: {
-      last_job?: {
-        id?: number;
-      };
-      current_job?: {
-        id?: number;
-      };
-      current_update?: {
-        id?: number;
-      };
-    };
-    related?: {
-      last_job?: string;
-    };
-  }> = useMemo(
+  const column: ITableColumn<ProjectLike> = useMemo(
     () => ({
       header: t('Status'),
       cell: (item) => {
-        const jobId = getSyncJobId(item.summary_fields, item.related?.last_job);
-        const jobOutputUrl =
-          jobId !== undefined && !options?.disableLinks
-            ? getPageUrl(AwxRoute.JobOutput, {
-                params: {
-                  job_type: 'project',
-                  id: jobId,
-                },
-              })
-            : undefined;
+        const { tooltipContent, statusCellProps } = buildProjectStatusCellProps(
+          item,
+          getPageUrl,
+          options?.tooltip,
+          options?.tooltipAlt,
+          options?.disableLinks
+        );
 
         return (
-          <Tooltip
-            content={jobOutputUrl ? (options?.tooltip ?? '') : (options?.tooltipAlt ?? '')}
-            position="top"
-          >
-            <StatusCell
-              status={item.status}
-              to={jobOutputUrl}
-              disableLinks={options?.disableLinks}
-            />
+          <Tooltip content={tooltipContent} position="top">
+            <StatusCell {...statusCellProps} />
           </Tooltip>
         );
       },

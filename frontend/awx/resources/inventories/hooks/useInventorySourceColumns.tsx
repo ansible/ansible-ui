@@ -11,6 +11,34 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 
+export function buildInventorySourceStatusCellProps(
+  inventorySource: InventorySource,
+  getPageUrl: (route: string, config: { params: Record<string, string | number> }) => string,
+  disableLinks?: boolean
+) {
+  const lastJob = inventorySource.summary_fields?.current_job?.id
+    ? inventorySource.summary_fields.current_job
+    : inventorySource.summary_fields?.last_job;
+  const jobId = getSyncJobId(inventorySource.summary_fields, inventorySource.related?.last_job);
+  const jobOutputUrl =
+    jobId !== undefined && !disableLinks
+      ? getPageUrl(AwxRoute.JobOutput, {
+          params: {
+            id: jobId,
+            job_type: 'inventory',
+          },
+        })
+      : undefined;
+
+  return {
+    tooltip: lastJob ? <LastJobTooltip job={lastJob} /> : undefined,
+    tooltipId: lastJob?.id,
+    status: inventorySource.status,
+    to: jobOutputUrl,
+    disableLinks,
+  };
+}
+
 export function useInventorySourceColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
@@ -59,32 +87,12 @@ export function useInventorySourceColumns(options?: {
     () => ({
       header: t('Last job status'),
       cell: (inventorySource: InventorySource) => {
-        const lastJob = inventorySource.summary_fields?.current_job?.id
-          ? inventorySource.summary_fields.current_job
-          : inventorySource.summary_fields?.last_job;
-        const jobId = getSyncJobId(
-          inventorySource.summary_fields,
-          inventorySource.related?.last_job
+        const props = buildInventorySourceStatusCellProps(
+          inventorySource,
+          getPageUrl,
+          options?.disableLinks
         );
-        const jobOutputUrl =
-          jobId !== undefined && !options?.disableLinks
-            ? getPageUrl(AwxRoute.JobOutput, {
-                params: {
-                  id: jobId,
-                  job_type: 'inventory',
-                },
-              })
-            : undefined;
-
-        return (
-          <StatusCell
-            tooltip={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
-            tooltipId={lastJob?.id}
-            status={inventorySource.status}
-            to={jobOutputUrl}
-            disableLinks={options?.disableLinks}
-          />
-        );
+        return <StatusCell {...props} />;
       },
     }),
     [t, getPageUrl, options?.disableLinks]
