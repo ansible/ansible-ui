@@ -8,7 +8,11 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PlatformOrganization } from '../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
-import { CreateOAuthApplication, EditOAuthApplication } from './OAuthApplicationForm';
+import {
+  choicesToOptions,
+  CreateOAuthApplication,
+  EditOAuthApplication,
+} from './OAuthApplicationForm';
 
 // Mock usePageNavigate and related hooks
 const mockPushDialog = vi.fn();
@@ -992,20 +996,34 @@ describe('OAuthApplicationForm', () => {
     });
   });
 
-  describe('choicesToOptions handling both formats', () => {
-    test('should handle both array-of-tuples [string, string][] and object {value, display_name}[] formats', () => {
-      const tupleFormat = [
-        ['value1', 'Label 1'],
-        ['value2', 'Label 2'],
-      ];
-      const objectFormat = [
-        { value: 'val1', display_name: 'Label A' },
-        { value: 'val2', display_name: 'Label B' },
-      ];
+  describe('choicesToOptions', () => {
+    test('maps tuple-style [value, label] choices to select options', () => {
+      expect(
+        choicesToOptions([
+          ['confidential', 'Confidential'],
+          ['public', 'Public'],
+        ])
+      ).toEqual([
+        { value: 'confidential', label: 'Confidential' },
+        { value: 'public', label: 'Public' },
+      ]);
+    });
 
-      expect(tupleFormat.length).toBe(2);
-      expect(objectFormat.length).toBe(2);
-      expect(objectFormat[0]).toHaveProperty('display_name');
+    test('maps object-style { value, display_name } choices to select options', () => {
+      expect(
+        choicesToOptions([
+          { value: 'authorization-code', display_name: 'Authorization code' },
+          { value: 'password', display_name: 'Resource owner password-based' },
+        ])
+      ).toEqual([
+        { value: 'authorization-code', label: 'Authorization code' },
+        { value: 'password', label: 'Resource owner password-based' },
+      ]);
+    });
+
+    test('returns an empty array when choices are missing or empty', () => {
+      expect(choicesToOptions()).toEqual([]);
+      expect(choicesToOptions([])).toEqual([]);
     });
   });
 

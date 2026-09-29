@@ -119,6 +119,59 @@ describe('authenticatorErrorAdapter', () => {
     });
   });
 
+  test('should merge multiple nested configuration field errors under the same configuration key', () => {
+    const mockError = new RequestError(
+      'Bad Request',
+      undefined,
+      400,
+      {
+        'GROUP_TYPE.class_name': ['Invalid class name'],
+        'GROUP_TYPE.base_dn': ['Invalid base DN'],
+      },
+      {
+        'GROUP_TYPE.class_name': ['Invalid class name'],
+        'GROUP_TYPE.base_dn': ['Invalid base DN'],
+      }
+    );
+
+    const result = authenticatorErrorAdapter(mockError, mockConfigurationFields);
+
+    expect(result).toEqual({
+      genericErrors: [],
+      fieldErrors: [
+        {
+          name: 'configuration.GROUP_TYPE',
+          message: 'class_name: Invalid class name; base_dn: Invalid base DN',
+        },
+      ],
+    });
+  });
+
+  test('should handle configuration errors with string messages under a top-level "configuration" key', () => {
+    const mockError = new RequestError(
+      'Bad Request',
+      undefined,
+      400,
+      {
+        configuration: {
+          CUSTOM_FIELD: 'Plain string error',
+        },
+      },
+      {
+        configuration: {
+          CUSTOM_FIELD: 'Plain string error',
+        },
+      }
+    );
+
+    const result = authenticatorErrorAdapter(mockError, mockConfigurationFields);
+
+    expect(result).toEqual({
+      genericErrors: [],
+      fieldErrors: [{ name: 'CUSTOM_FIELD', message: 'Plain string error' }],
+    });
+  });
+
   test('should handle configuration errors nested under a top-level "configuration" key', () => {
     const mockError = new RequestError(
       'Bad Request',
