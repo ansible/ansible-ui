@@ -79,7 +79,7 @@ describe('useDownloadHostMetrics', () => {
       })
     );
 
-    const listUrl = `${awxAPI`/host_metrics/`}?not__deleted=true&hostname__icontains=host&page=1&page_size=10`;
+    const listUrl = awxAPI`/host_metrics/?not__deleted=true&hostname__icontains=host&page=1&page_size=10`;
     const { result } = renderHook(() => useDownloadHostMetrics(listUrl));
 
     await act(async () => {
@@ -116,7 +116,7 @@ describe('useDownloadHostMetrics', () => {
     );
 
     const { result } = renderHook(() =>
-      useDownloadHostMetrics(`${awxAPI`/host_metrics/`}?not__deleted=true`)
+      useDownloadHostMetrics(awxAPI`/host_metrics/?not__deleted=true`)
     );
 
     await act(async () => {
