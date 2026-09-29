@@ -21,6 +21,12 @@ type InventorySourceLike = {
   related?: { last_job?: string };
 };
 
+function hasRequiredJobFields(
+  job: { id?: number; status?: string; finished?: string } | undefined
+): job is { id: number; status: string; finished: string } {
+  return !!(job?.id && job?.status && job?.finished);
+}
+
 export function buildInventorySourceStatusCellProps(
   inventorySource: InventorySourceLike,
   getPageUrl: (route: string, config: { params: Record<string, string | number> }) => string,
@@ -41,9 +47,7 @@ export function buildInventorySourceStatusCellProps(
       : undefined;
 
   return {
-    tooltip: lastJob?.id ? (
-      <LastJobTooltip job={lastJob as { id: number; status: string; finished: string }} />
-    ) : undefined,
+    tooltip: hasRequiredJobFields(lastJob) ? <LastJobTooltip job={lastJob} /> : undefined,
     tooltipId: lastJob?.id,
     status: inventorySource.status,
     to: jobOutputUrl,
