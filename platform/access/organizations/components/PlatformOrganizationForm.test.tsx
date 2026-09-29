@@ -237,6 +237,36 @@ describe('PlatformOrganizationForm', () => {
     });
   });
 
+  it('should merge awx OPTIONS patterns when gateway OPTIONS is unavailable', async () => {
+    server.use(
+      http.options(gatewayAPI`/organizations/`, () =>
+        HttpResponse.json({ actions: {} }, { status: 404 })
+      )
+    );
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <PlatformOrganizationForm
+          organization={mockPlatformOrganization}
+          controllerOrganization={mockControllerOrganization}
+          handleSubmit={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+
+    const input = await screen.findByRole('textbox', { name: /Policy enforcement/i });
+    await user.clear(input);
+    await user.type(input, 'INVALID PATH');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Policy enforcement path must be lowercase alphanumeric.')
+      ).toBeInTheDocument();
+    });
+  });
+
   it('should render the form without the opa_query_path pattern when the awx OPTIONS response is unavailable', async () => {
     server.use(
       http.options(awxAPI`/organizations/`, () =>

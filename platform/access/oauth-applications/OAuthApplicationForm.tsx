@@ -177,7 +177,7 @@ export function EditOAuthApplication() {
   );
 }
 
-function choicesToOptions(
+export function choicesToOptions(
   choices?: [string, string][] | { value: string; display_name: string }[]
 ) {
   if (!choices) return [];
