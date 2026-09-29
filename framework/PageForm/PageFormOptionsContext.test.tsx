@@ -318,6 +318,35 @@ describe('extractPageFormOptionsFields', () => {
     expect(fields.name?.flags).toBe('u');
   });
 
+  it('includes normalize when present', () => {
+    const fields = extractPageFormOptionsFields({
+      actions: {
+        POST: { name: { pattern: '^[a-z]+$', pattern_description: 'lowercase', normalize: 'NFC' } },
+      },
+    });
+    expect(fields.name).toEqual({
+      pattern: '^[a-z]+$',
+      pattern_description: 'lowercase',
+      flags: undefined,
+      normalize: 'NFC',
+    });
+  });
+
+  it('ignores non-string normalize values from OPTIONS', () => {
+    const fields = extractPageFormOptionsFields({
+      actions: {
+        POST: {
+          name: {
+            pattern: '^[a-z]+$',
+            pattern_description: 'lowercase',
+            normalize: 123 as unknown as string,
+          },
+        },
+      },
+    });
+    expect(fields.name?.normalize).toBeUndefined();
+  });
+
   it('skips fields with no pattern or pattern_description', () => {
     const fields = extractPageFormOptionsFields({
       actions: { POST: { description: { type: 'string' } as { pattern?: string } } },
