@@ -64,10 +64,15 @@ export function buildFieldMetadataMap(
 
     if (!key || !pattern) continue;
 
+    const flags = typeof field.flags === 'string' ? field.flags : undefined;
+
     // Validate pattern syntax at build time so a bad regex from the
     // backend doesn't cause a runtime error inside the form validator.
+    // Include flags in validation — the runtime (`validateOptionsPattern`)
+    // constructs `new RegExp(pattern, flags)`, so the same combination
+    // must be checked here.
     try {
-      new RegExp(pattern);
+      new RegExp(pattern, flags || '');
     } catch {
       if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
@@ -79,7 +84,6 @@ export function buildFieldMetadataMap(
     }
 
     const patternDescription = resolvePatternDescription(field);
-    const flags = typeof field.flags === 'string' ? field.flags : undefined;
 
     map[key] = { pattern, pattern_description: patternDescription, flags };
   }

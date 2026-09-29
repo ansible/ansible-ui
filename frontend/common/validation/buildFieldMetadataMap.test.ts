@@ -184,4 +184,50 @@ describe('buildFieldMetadataMap', () => {
     expect(warnSpy).not.toHaveBeenCalled();
     warnSpy.mockRestore();
   });
+
+  it('skips a pattern that is valid alone but invalid with the supplied flags', () => {
+    // \p{Invalid} without the 'u' flag is just the literal characters p{Invalid},
+    // so `new RegExp('\\p{Invalid}')` succeeds.  With 'u' the engine interprets
+    // \p as a Unicode property escape and throws because "Invalid" is not a
+    // recognised Unicode property.  The extraction must reject it because the
+    // runtime (`validateOptionsPattern`) constructs `new RegExp(pattern, flags)`.
+    const fields: SchemaFieldWithPattern[] = [
+      {
+        id: 'unicode_bad',
+        pattern: String.raw`^\p{Invalid}+$`,
+        pattern_description: 'Should not appear',
+        flags: 'u',
+      },
+    ];
+    const result = buildFieldMetadataMap(fields);
+    expect(result).not.toHaveProperty('unicode_bad');
+  });
+
+  it('accepts a pattern that requires flags to be valid', () => {
+    // \p{L} is a valid Unicode property escape only with the 'u' flag.
+    // The extraction must validate with the given flags so it passes.
+    const fields: SchemaFieldWithPattern[] = [
+      {
+        id: 'unicode_good',
+        pattern: String.raw`^\p{L}+$`,
+        pattern_description: 'Unicode letters',
+        flags: 'u',
+      },
+    ];
+    const result = buildFieldMetadataMap(fields);
+    expect(result).toHaveProperty('unicode_good');
+    expect(result.unicode_good).toEqual({
+      pattern: String.raw`^\p{L}+$`,
+      pattern_description: 'Unicode letters',
+      flags: 'u',
+    });
+  });
+
+  it('skips a pattern with unrecognised flags', () => {
+    const fields: SchemaFieldWithPattern[] = [
+      { id: 'bad_flags', pattern: '^[a-z]+$', flags: 'xyz' },
+    ];
+    const result = buildFieldMetadataMap(fields);
+    expect(result).not.toHaveProperty('bad_flags');
+  });
 });
