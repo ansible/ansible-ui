@@ -15,7 +15,7 @@ test.describe('Job Template Form - Validation', () => {
 
   test(
     'cannot create a job template with more than one machine credential',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
@@ -67,7 +67,7 @@ test.describe('Job Template Form - Validation', () => {
 
   test(
     'cannot create a job template with more than one vault credential with same vault_id',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
@@ -125,7 +125,7 @@ test.describe('Job Template Form - Validation', () => {
 
   test(
     'should not grow content for invalid YAML in Extra Variables (AAP-93178)',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock'] },
     async ({ page }) => {
       // Regression test for AAP-93178: YAML/JSON fields crashed the browser when
       // given certain inputs (e.g. indented `---`).
@@ -171,14 +171,15 @@ test.describe('Job Template Form - Validation', () => {
       const editorLines = page.getByTestId('extra-vars').locator('.view-lines');
       await expect(editorLines).not.toContainText('|2-', { timeout: 3000 });
 
-      const extraVarsField = page.getByTestId('extra-vars');
-      await expect(extraVarsField.getByText(/document separator|end of the stream/i)).toBeVisible({
+      const extraVarsFormGroup = page.getByTestId('extra-vars-form-group');
+      const parseErrorPattern = /end of the stream or a document separator is expected/i;
+      await expect(extraVarsFormGroup.getByText(parseErrorPattern)).toBeVisible({
         timeout: 10000,
       });
 
       await page.getByRole('button', { name: 'Create job template' }).click();
       await expect(page.getByRole('heading', { name: 'Create Job Template' })).toBeVisible();
-      await expect(extraVarsField.getByText(/document separator|end of the stream/i)).toBeVisible();
+      await expect(extraVarsFormGroup.getByText(parseErrorPattern)).toBeVisible();
 
       // Page must still be functional — not crashed or frozen.
       await expect(page.getByRole('heading', { name: 'Create Job Template' })).toBeVisible();
