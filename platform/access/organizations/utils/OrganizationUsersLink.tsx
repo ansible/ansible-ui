@@ -6,26 +6,34 @@ import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse';
 
-export function OrganizationUsersLink(props: { organizationName: string }) {
+export function OrganizationUsersLink(props: {
+  organizationName: string;
+  organizationId?: string | number;
+}) {
   const getPageUrl = useGetPageUrl();
   const { data: itemsResponse } = useGet<PlatformItemsResponse<PlatformOrganization>>(
-    gatewayAPI`/organizations/`,
-    {
-      name: props?.organizationName,
-    }
+    props.organizationId ? undefined : gatewayAPI`/organizations/`,
+    props.organizationId ? undefined : { name: props.organizationName }
   );
 
-  return itemsResponse && itemsResponse?.results?.length >= 1 ? (
+  const organizationId =
+    props.organizationId !== undefined && props.organizationId !== ''
+      ? String(props.organizationId)
+      : itemsResponse?.results?.[0]?.id;
+
+  if (!organizationId) {
+    return <span>{props.organizationName}</span>;
+  }
+
+  return (
     <Link
       to={getPageUrl(PlatformRoute.OrganizationUsers, {
         params: {
-          id: itemsResponse.results[0]?.id,
+          id: organizationId,
         },
       })}
     >
-      {props?.organizationName}
+      {props.organizationName}
     </Link>
-  ) : (
-    <div> {props?.organizationName} </div>
   );
 }
