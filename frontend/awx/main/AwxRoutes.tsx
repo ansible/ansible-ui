@@ -301,6 +301,7 @@ export enum AwxRoute {
   SettingsAuthentication = 'awx-settings-authentication',
   SettingsCategory = 'awx-settings-category',
   SettingsPolicy = 'awx-settings-policy',
+  SettingsAutomationAnalytics = 'awx-settings-automation-analytics',
 
   Login = 'awx-login',
 }

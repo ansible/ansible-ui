@@ -162,9 +162,9 @@ async function mockLeaderboardRoute(
 test.beforeEach(async ({ page }) => {
   // Register all route mocks BEFORE login/navigation so they intercept initial API calls.
   // The collection_status response controls whether the Automation Dashboard nav item appears.
-  // show_dashboard and show_gamification must both be true for the Dashboard and Leaderboards
+  // show_dashboard and show_leaderboard must both be true for the Dashboard and Leaderboards
   // tabs; a missing (null) flag hides that view, so the page could show only one view or none.
-  // min_collection_timestamp must be set (not null) — the Leaderboards tab treats a null
+  // last_sync must be set (not null) — the Leaderboards tab treats a null
   // timestamp as "never synced" and renders its empty state instead of the leaderboard data.
   await page.route(`**/api/metrics/v1/dashboard_reports/collection_status/`, async (route) => {
     await route.fulfill({
@@ -172,9 +172,9 @@ test.beforeEach(async ({ page }) => {
       contentType: 'application/json',
       body: JSON.stringify({
         enabled: true,
-        min_collection_timestamp: '2026-09-01T14:00:00.000Z',
+        last_sync: '2026-09-01T14:00:00.000Z',
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       }),
     });
   });

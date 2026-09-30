@@ -102,9 +102,9 @@ describe('useAutomationAnalytics', () => {
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
       collectionStatus: {
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       },
       isLoading: false,
       canSeeDashboard: true,
@@ -269,9 +269,9 @@ describe('useAutomationAnalytics', () => {
       mockUseAutomationDashboardCollectionStatus.mockReturnValue({
         collectionStatus: {
           enabled: null,
-          min_collection_timestamp: null,
+          last_sync: null,
           show_dashboard: null,
-          show_gamification: null,
+          show_leaderboard: null,
         },
         isLoading: false,
         canSeeDashboard: false,
@@ -307,9 +307,9 @@ describe('useAutomationAnalytics', () => {
       mockUseAutomationDashboardCollectionStatus.mockReturnValue({
         collectionStatus: {
           enabled: false,
-          min_collection_timestamp: null,
+          last_sync: null,
           show_dashboard: false,
-          show_gamification: false,
+          show_leaderboard: false,
         },
         isLoading: false,
         canSeeDashboard: false,
@@ -357,9 +357,9 @@ describe('useAutomationAnalytics', () => {
       mockUseAutomationDashboardCollectionStatus.mockReturnValue({
         collectionStatus: {
           enabled: true,
-          min_collection_timestamp: null,
+          last_sync: null,
           show_dashboard: true,
-          show_gamification: true,
+          show_leaderboard: true,
         },
         isLoading: false,
         canSeeDashboard: true,
@@ -471,9 +471,9 @@ describe('useAutomationAnalytics', () => {
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
       collectionStatus: {
         enabled: null,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: null,
-        show_gamification: null,
+        show_leaderboard: null,
       },
       canSeeDashboard: false,
       canSeeLeaderboard: false,

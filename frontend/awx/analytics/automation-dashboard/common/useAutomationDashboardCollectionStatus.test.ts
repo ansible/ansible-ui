@@ -25,9 +25,9 @@ import { AwxUser } from '../../../interfaces/User';
 
 const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
   enabled: null,
-  min_collection_timestamp: null,
+  last_sync: null,
   show_dashboard: null,
-  show_gamification: null,
+  show_leaderboard: null,
 };
 
 function setupActiveUser({
@@ -129,9 +129,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should return data from API when available', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        min_collection_timestamp: '2026-09-01T14:00:00.000Z',
+        last_sync: '2026-09-01T14:00:00.000Z',
         show_dashboard: true,
-        show_gamification: false,
+        show_leaderboard: false,
       };
       setupSWR(apiData);
 
@@ -154,9 +154,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should keep the last good data and hide the error when a revalidation fails', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       };
       setupSWR(apiData, new Error('Revalidation failed'));
 
@@ -172,9 +172,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
       setupActiveUser({ is_superuser: true });
       setupSWR({
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: false,
+        show_leaderboard: false,
       });
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -186,9 +186,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
       setupActiveUser({ is_system_auditor: true });
       setupSWR({
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: false,
+        show_leaderboard: false,
       });
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -201,9 +201,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
       setupPlatformUser({ is_platform_auditor: true });
       setupSWR({
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: false,
+        show_leaderboard: false,
       });
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -215,9 +215,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
       setupActiveUser({ is_superuser: false, is_system_auditor: false });
       setupSWR({
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: false,
+        show_leaderboard: false,
       });
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -229,9 +229,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
       setupActiveUser({ is_superuser: true });
       setupSWR({
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: false,
-        show_gamification: false,
+        show_leaderboard: false,
       });
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -239,13 +239,13 @@ describe('useAutomationDashboardCollectionStatus', () => {
       expect(result.current.canSeeDashboard).toBe(false);
     });
 
-    test('should allow a regular user to see leaderboards when show_gamification is true', () => {
+    test('should allow a regular user to see leaderboards when show_leaderboard is true', () => {
       setupActiveUser({ is_superuser: false, is_system_auditor: false });
       setupSWR({
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: false,
-        show_gamification: true,
+        show_leaderboard: true,
       });
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -267,9 +267,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
   describe('role pending (/me/ not settled yet)', () => {
     const showBoth: IAutomationDashboardCollectionStatus = {
       enabled: true,
-      min_collection_timestamp: null,
+      last_sync: null,
       show_dashboard: true,
-      show_gamification: true,
+      show_leaderboard: true,
     };
 
     test('should stay loading while the AWX user is pending and show_dashboard is true', () => {
@@ -388,6 +388,7 @@ describe('useAutomationDashboardCollectionStatus', () => {
       expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
       expect(result.current.canSeeDashboard).toBe(false);
       expect(result.current.canSeeLeaderboard).toBe(false);
+      expect(result.current.isUnavailable).toBe(true);
     });
 
     test('should poll every 5 minutes without error retries once the endpoint returns 404', () => {
@@ -406,9 +407,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should return to normal polling once the endpoint answers again', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       };
       setupSWR(undefined, notFound());
       const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -422,6 +423,7 @@ describe('useAutomationDashboardCollectionStatus', () => {
       expect(lastCall[2]).toMatchObject({ refreshInterval: 10 * 1000, shouldRetryOnError: true });
       expect(result.current.collectionStatus).toEqual(apiData);
       expect(result.current.canSeeLeaderboard).toBe(true);
+      expect(result.current.isUnavailable).toBe(false);
     });
 
     test('should keep normal polling and surface the error for other failures', () => {
@@ -430,6 +432,7 @@ describe('useAutomationDashboardCollectionStatus', () => {
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
       expect(result.current.error).toBeInstanceOf(RequestError);
+      expect(result.current.isUnavailable).toBe(false);
       const lastCall = vi.mocked(useSWR).mock.calls.at(-1)!;
       expect(lastCall[2]).toMatchObject({ refreshInterval: 10 * 1000, shouldRetryOnError: true });
     });
@@ -472,9 +475,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should not revalidate active-user queries when there is no error', () => {
       setupSWR({
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       });
 
       renderHook(() => useAutomationDashboardCollectionStatus());
@@ -487,9 +490,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should update status when data changes', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       };
 
       const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -509,9 +512,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should keep permissions unchanged when a poll fails after data was loaded', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       };
       setupActiveUser({ is_superuser: true });
       setupSWR(apiData);
@@ -535,9 +538,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should fall back to the default status after a 404 even if data was loaded', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       };
       setupSWR(apiData);
 
@@ -559,9 +562,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should return stable object reference when values do not change', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       };
       setupSWR(apiData);
 
@@ -592,9 +595,9 @@ describe('useAutomationDashboardCollectionStatus', () => {
       // Data arrives - isLoading changes
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
-        min_collection_timestamp: null,
+        last_sync: null,
         show_dashboard: true,
-        show_gamification: true,
+        show_leaderboard: true,
       };
       vi.mocked(useSWR).mockReturnValue({
         data: apiData,

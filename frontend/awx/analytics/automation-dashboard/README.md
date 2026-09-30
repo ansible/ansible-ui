@@ -112,7 +112,7 @@ the tab URLs return 404. When neither is visible the entry is removed entirely.
 | Flag                | True when                                                                                                              |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `canSeeDashboard`   | `show_dashboard` is true **and** the user is one of: AWX superuser, AWX system auditor, or platform auditor (AAP only) |
-| `canSeeLeaderboard` | `show_gamification` is true (any user)                                                                                 |
+| `canSeeLeaderboard` | `show_leaderboard` is true (any user)                                                                                  |
 
 It reads the AWX user from `useAwxActiveUser` (both builds) and the Platform user from
 `usePlatformActiveUser` (Platform build only; the context is empty in standalone AWX, so the
@@ -287,7 +287,7 @@ The central view hook consumed by the Dashboard tab. Composes the sub-hooks and 
 **Single source of data for the Leaderboards tab.** Owns the data contract (types), fetches
 `/dashboard_reports/leaderboard/` with `useSWR` and maps the raw response through the exported
 `mapLeaderboardReport`. `lastSyncedAt` comes from the shared `useAutomationDashboardCollectionStatus`
-(`min_collection_timestamp`, a stand-in until collection_status exposes a real last-sync field);
+(`last_sync`);
 its failure is reported separately as `collectionStatusError`. The components consume only this
 hook.
 

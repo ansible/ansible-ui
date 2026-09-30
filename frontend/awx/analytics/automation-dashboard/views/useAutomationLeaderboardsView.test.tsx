@@ -299,9 +299,9 @@ describe('mapLeaderboardReport', () => {
 describe('useAutomationLeaderboardsView', () => {
   const collectionStatusFixture: IAutomationDashboardCollectionStatus = {
     enabled: true,
-    min_collection_timestamp: '2026-09-01T14:00:00.000Z',
+    last_sync: '2026-09-01T14:00:00.000Z',
     show_dashboard: true,
-    show_gamification: true,
+    show_leaderboard: true,
   };
 
   const server = setupServer();
@@ -344,7 +344,7 @@ describe('useAutomationLeaderboardsView', () => {
     assertLeaderboardsContract(result.current);
   });
 
-  test("should derive lastSyncedAt from collection_status's min_collection_timestamp as an ISO string", async () => {
+  test("should derive lastSyncedAt from collection_status's last_sync as an ISO string", async () => {
     mockEndpoints();
 
     const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
@@ -358,7 +358,7 @@ describe('useAutomationLeaderboardsView', () => {
     mockEndpoints({
       collectionStatus: HttpResponse.json({
         ...collectionStatusFixture,
-        min_collection_timestamp: '2026-09-01T16:00:00+02:00',
+        last_sync: '2026-09-01T16:00:00+02:00',
       }),
     });
 
@@ -373,7 +373,7 @@ describe('useAutomationLeaderboardsView', () => {
     mockEndpoints({
       collectionStatus: HttpResponse.json({
         ...collectionStatusFixture,
-        min_collection_timestamp: 'not-a-date',
+        last_sync: 'not-a-date',
       }),
     });
 
@@ -388,7 +388,7 @@ describe('useAutomationLeaderboardsView', () => {
     mockEndpoints({
       collectionStatus: HttpResponse.json({
         ...collectionStatusFixture,
-        min_collection_timestamp: null,
+        last_sync: null,
       }),
     });
 
