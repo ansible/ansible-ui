@@ -49,8 +49,7 @@ export function buildInventorySourceStatusCellProps(
       : undefined;
 
   return {
-    tooltip:
-      jobId && hasRequiredJobFields(lastJob) ? <LastJobTooltip job={lastJob} /> : undefined,
+    tooltip: jobId && hasRequiredJobFields(lastJob) ? <LastJobTooltip job={lastJob} /> : undefined,
     tooltipId: lastJob?.id,
     status: inventorySource.status,
     to: jobOutputUrl,
