@@ -13,6 +13,8 @@ export function useResizeObserver(
   const callbackRef = useRef(callback);
   callbackRef.current = callback;
 
+  const box = options?.box;
+
   useLayoutEffect(() => {
     const element =
       target && typeof target === 'object' && 'current' in target ? target.current : target;
@@ -29,6 +31,5 @@ export function useResizeObserver(
 
     observer.observe(element, options);
     return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [target, options?.box]);
+  }, [target, box]);
 }
