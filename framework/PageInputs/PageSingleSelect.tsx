@@ -412,7 +412,7 @@ export function PageSingleSelectList(props: {
     >
       {props.options.map((option) => {
         const optionId = getID(option);
-        const optionKey = option.key !== undefined ? option.key : option.label;
+        const optionKey = option.key ?? option.label;
         return (
           <Fragment key={optionKey}>
             <SelectOption
