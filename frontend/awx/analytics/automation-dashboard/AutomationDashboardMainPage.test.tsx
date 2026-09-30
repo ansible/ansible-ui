@@ -9,6 +9,15 @@ import { useAutomationDashboardCollectionStatus } from './common/useAutomationDa
 
 vi.mock('./common/useAutomationDashboardCollectionStatus');
 
+vi.mock('@ansible/ansible-ui-framework/components/EmptyStateError', () => ({
+  EmptyStateError: ({ titleProp, message }: { titleProp: string; message: string }) => (
+    <div data-testid="error-state">
+      <span>{titleProp}</span>
+      <span>{message}</span>
+    </div>
+  ),
+}));
+
 vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
 
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
@@ -139,21 +148,16 @@ describe('AutomationDashboardMainPage', () => {
     expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
   });
 
-  test('should show an error state instead of a permission message when collection status fails', () => {
+  test('should show an error state with a descriptive message when collection status fails', () => {
     mockStatus({
-      canSeeDashboard: false,
-      canSeeLeaderboard: false,
-      error: new Error('Server error'),
+      error: new Error('Request failed with status 500'),
     });
 
     render(<AutomationDashboardMainPage />);
 
-    expect(screen.getByRole('heading', { name: 'Something went wrong' })).toBeInTheDocument();
-    expect(
-      screen.queryByText(
-        'You do not have permission to view the Automation Dashboard or Leaderboards.'
-      )
-    ).not.toBeInTheDocument();
+    expect(screen.getByTestId('error-state')).toBeInTheDocument();
+    expect(screen.getByText('Unable to load dashboard data')).toBeInTheDocument();
+    expect(screen.getByText('Request failed with status 500')).toBeInTheDocument();
     expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
   });
 });

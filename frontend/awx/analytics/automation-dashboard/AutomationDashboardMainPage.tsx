@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
 import { useDashboardGridColumns } from './common/useDashboardGridColumns';
 import { PageDashboardContext, PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
-import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { EmptyStateUnauthorized } from '@ansible/ansible-ui-framework/components/EmptyStateUnauthorized';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AwxRoute } from '../../main/AwxRoutes';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
 import { AutomationLeaderboards } from './AutomationLeaderboards';
@@ -37,9 +37,11 @@ export function AutomationDashboardMainPage() {
           description={description}
         />
       )}
-      {isLoading ? (
-        <LoadingState />
-      ) : (
+      {isLoading && <LoadingState />}
+      {!isLoading && error && (
+        <EmptyStateError titleProp={t('Unable to load dashboard data')} message={error.message} />
+      )}
+      {!isLoading && !error && (
         <PageDashboardContext.Provider value={dashboardContextValue}>
           <AutomationDashboardMainPageContent
             canSeeDashboard={canSeeDashboard}

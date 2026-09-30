@@ -59,6 +59,19 @@ vi.mock('./views/useAutomationDashboardView', () => ({
   useAutomationDashboardView: vi.fn(() => mockView),
 }));
 
+vi.mock('@ansible/ansible-ui-framework/components/EmptyStateError', () => ({
+  EmptyStateError: ({ titleProp, message }: { titleProp: string; message: string }) => (
+    <div data-testid="error-state">
+      <span>{titleProp}</span>
+      <span>{message}</span>
+    </div>
+  ),
+}));
+
+vi.mock('@ansible/ansible-ui-framework/components/LoadingState', () => ({
+  LoadingState: () => <div data-testid="loading-state">Loading...</div>,
+}));
+
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
   return {
@@ -303,5 +316,33 @@ describe('AutomationDashboard', () => {
 
     expect(screen.getByTestId('host-chart-card')).toHaveAttribute('data-width', 'xl');
     expect(screen.getByTestId('job-chart-card')).toHaveAttribute('data-width', 'xl');
+  });
+
+  // ─── Template ID loading and error paths ───────────────────────────────────
+
+  test('should show a full-width loading state while template IDs are loading', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      isLoadingTemplateIds: true,
+    });
+    render(testWrapper());
+
+    expect(screen.getByTestId('loading-state')).toBeInTheDocument();
+    expect(screen.queryByTestId('successful-jobs-card')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('dashboard-main-table-card')).not.toBeInTheDocument();
+  });
+
+  test('should show a full-width error state when template IDs fail to load', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      templateIdsError: new Error('Failed to fetch template IDs'),
+    });
+    render(testWrapper());
+
+    expect(screen.getByTestId('error-state')).toBeInTheDocument();
+    expect(screen.getByText('Unable to load dashboard data')).toBeInTheDocument();
+    expect(screen.getByText('Failed to fetch template IDs')).toBeInTheDocument();
+    expect(screen.queryByTestId('successful-jobs-card')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('dashboard-main-table-card')).not.toBeInTheDocument();
   });
 });
