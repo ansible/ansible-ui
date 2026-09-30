@@ -1,6 +1,6 @@
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { Page, expect } from '@playwright/test';
-import { awxAPI, constructURL, gatewayAPI } from '../commands/apiClient';
+import { awxAPI, gatewayAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
 import { createE2EName } from '../commands/createE2EName';
 import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
@@ -10,85 +10,32 @@ import { selectTableRow } from '../commands/selectTableRow';
 const TERMINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
 const ORGANIZATION_PROPAGATION_MAX_ATTEMPTS = 90;
 
-type EdaOrganizationLookup = {
-  available: boolean;
-  ready: boolean;
-};
-
-async function lookupEdaOrganization(
-  page: Page,
-  organizationName: string
-): Promise<EdaOrganizationLookup> {
-  const url = new URL(constructURL('/api/eda/v1/organizations/'));
-  url.searchParams.set('name', organizationName);
-
-  let response;
-  try {
-    response = await page.request.get(url.toString());
-  } catch (error) {
-    throw new Error(
-      `EDA organization lookup failed for '${organizationName}': ${
-        error instanceof Error ? error.message : String(error)
-      }`
-    );
-  }
-
-  if (response.status() === 404) {
-    return { available: false, ready: false };
-  }
-
-  // EDA can briefly return 5xx while services restart or during propagation.
-  // Treat as "not ready yet" so waitForOrganizationPropagation keeps polling.
-  if (response.status() >= 500) {
-    return { available: true, ready: false };
-  }
-
-  if (!response.ok()) {
-    throw new Error(
-      `EDA organization lookup failed for '${organizationName}': HTTP ${response.status()}`
-    );
-  }
-
-  const body = (await response.json()) as {
-    results?: { name: string }[];
-  };
-
-  return {
-    available: true,
-    ready: body.results?.some((organization) => organization.name === organizationName) ?? false,
-  };
-}
-
+/**
+ * Wait until the organization exists in Automation Execution (Controller).
+ * EDA propagation is handled in automation-decisions tests via edaOrganization.ts.
+ */
 async function waitForOrganizationPropagation(
   page: Page,
   organizationName: string
 ): Promise<{ id: number }> {
-  let lastAwxOrganization: { id: number } | undefined;
-
   for (let attempt = 0; attempt < ORGANIZATION_PROPAGATION_MAX_ATTEMPTS; attempt++) {
-    const [awxOrganizations, edaOrganization] = await Promise.all([
-      awxAPI
-        .get<{ results: { id: number; name: string }[] }>(page, '/organizations/', {
-          params: { name: organizationName },
-        })
-        .catch(() => null),
-      lookupEdaOrganization(page, organizationName),
-    ]);
+    const awxOrganizations = await awxAPI
+      .get<{ results: { id: number; name: string }[] }>(page, '/organizations/', {
+        params: { name: organizationName },
+      })
+      .catch(() => null);
 
-    lastAwxOrganization = awxOrganizations?.results?.[0];
-
-    // EDA is optional in some deployments. If its API is available, require
-    // the organization there too before creating dependent EDA resources.
-    if (lastAwxOrganization && (!edaOrganization.available || edaOrganization.ready)) {
-      return lastAwxOrganization;
+    const controllerOrganization = awxOrganizations?.results?.[0];
+    if (controllerOrganization) {
+      return controllerOrganization;
     }
 
-    // This polls server-side propagation; there is no UI response to await.
+    // Gateway -> Controller resource sync; no UI signal to await.
     await page.waitForTimeout(1000);
   }
 
   throw new Error(
-    `Organization '${organizationName}' was not propagated to downstream services within ${ORGANIZATION_PROPAGATION_MAX_ATTEMPTS} seconds`
+    `Organization '${organizationName}' was not propagated to Automation Execution within ${ORGANIZATION_PROPAGATION_MAX_ATTEMPTS} seconds`
   );
 }
 
