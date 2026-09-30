@@ -245,7 +245,6 @@ describe('queryString', () => {
         'or__object1__in=foo&or__object2__in=foo'
       );
     });
-
     it('should append only the first activity stream value to object2', () => {
       const filter: IToolbarFilter = {
         type: ToolbarFilterType.MultiSelect,
@@ -266,7 +265,6 @@ describe('queryString', () => {
         'or__object1__in=foo&or__object2__in=foo'
       );
     });
-
     it('should url encode string', () => {
       const filters = [nameFilter];
       const state: IFilterState = {
