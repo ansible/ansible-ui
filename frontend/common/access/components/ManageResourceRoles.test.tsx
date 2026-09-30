@@ -6,12 +6,15 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ManageResourceRoles } from './ManageResourceRoles';
 
-vi.mock('@ansible/common-ui/access/indirect-roles/hooks/useIndirectTeamRolesOnResourceView', () => ({
-  useIndirectTeamRolesOnResourceView: vi.fn(() => ({
-    view: { itemCount: 1, pageItems: [{ id: 1 }] },
-    tableColumns: [],
-  })),
-}));
+vi.mock(
+  '@ansible/common-ui/access/indirect-roles/hooks/useIndirectTeamRolesOnResourceView',
+  () => ({
+    useIndirectTeamRolesOnResourceView: vi.fn(() => ({
+      view: { itemCount: 1, pageItems: [{ id: 1 }] },
+      tableColumns: [],
+    })),
+  })
+);
 
 const mockRoleDefinitions = {
   count: 2,
