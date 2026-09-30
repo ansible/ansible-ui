@@ -66,9 +66,12 @@ export function useBulkActionProcessing<T extends object>(props: BulkActionProce
         return;
       }
       if (err instanceof Error) {
+        const firstError = parsedErrors[0];
         const message =
-          typeof parsedErrors[0].message === 'string' && parsedErrors.length === 1
-            ? parsedErrors[0].message
+          parsedErrors.length === 1 &&
+          firstError &&
+          typeof firstError.message === 'string'
+            ? firstError.message
             : t(`Unknown error`);
         updateStatus(key, message);
       } else {
