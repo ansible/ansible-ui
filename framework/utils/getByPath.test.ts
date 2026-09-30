@@ -17,4 +17,9 @@ describe('getByPath', () => {
   test('reads top-level keys', () => {
     expect(getByPath({ name: 'controller' }, 'name')).toBe('controller');
   });
+
+  test('prefers a full path key over nested segments', () => {
+    const data = { 'foo.bar': 'literal', foo: { bar: 'nested' } };
+    expect(getByPath(data, 'foo.bar')).toBe('literal');
+  });
 });
