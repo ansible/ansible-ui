@@ -372,6 +372,44 @@ describe('CredentialForm', () => {
 
       expect(postSpy).not.toHaveBeenCalled();
     });
+
+    it('should submit with null become_method without client-side TypeError (AAP-93580)', async () => {
+      const postSpy = vi.fn();
+      server.use(
+        http.post(awxAPI`/credentials/`, async ({ request }) => {
+          postSpy(await request.json());
+          return HttpResponse.json({ id: 999 }, { status: 201 });
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/create']}>
+          <Routes>
+            <Route path="/credentials/create" element={<CreateCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Create credential');
+      });
+
+      await user.type(screen.getByPlaceholderText('Enter credential name'), 'Test Machine Cred');
+
+      // Submit without setting become_method — value remains null
+      await user.click(screen.getByTestId('Submit'));
+
+      // Assert no TypeError alert about 'in' operator
+      await waitFor(() => {
+        expect(
+          screen.queryByText(/right-hand side of 'in' should be an object/i)
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(/Cannot use 'in' operator to search for 'name' in null/i)
+        ).not.toBeInTheDocument();
+      });
+    });
   });
 
   describe('HashiCorp Vault OIDC Alert', () => {
@@ -691,6 +729,64 @@ describe('CredentialForm', () => {
         expect(screen.getByRole('alert')).toBeInTheDocument();
       });
       expect(screen.getByText('Internal Server Error')).toBeInTheDocument();
+    });
+
+    it('should submit with null become_method without client-side TypeError (AAP-93580)', async () => {
+      // Credential pre-loaded with become_method: null — simulates field cleared state
+      server.use(
+        http.get(awxAPI`/credentials/1/`, () =>
+          HttpResponse.json({
+            ...mockCredential,
+            inputs: { username: 'testuser', become_method: null },
+          })
+        )
+      );
+
+      const patchSpy = vi.fn();
+      server.use(
+        http.patch(awxAPI`/credentials/1/`, async ({ request }) => {
+          patchSpy(await request.json());
+          return HttpResponse.json({
+            ...mockCredential,
+            inputs: { username: 'testuser', become_method: '' },
+          });
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/1/edit']}>
+          <Routes>
+            <Route path="/credentials/:id/edit" element={<EditCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('name')).toHaveValue('Test Credential');
+      });
+
+      // Submit with become_method === null — previously crashed with
+      // "right-hand side of 'in' should be an object, got null"
+      await user.click(screen.getByTestId('Submit'));
+
+      // Assert no TypeError alert
+      await waitFor(() => {
+        expect(
+          screen.queryByText(/right-hand side of 'in' should be an object/i)
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByText(/Cannot use 'in' operator to search for 'name' in null/i)
+        ).not.toBeInTheDocument();
+      });
+
+      // Assert PATCH was fired — form did not crash before sending the request
+      await waitFor(() => {
+        expect(patchSpy).toHaveBeenCalledTimes(1);
+      });
+
+      const patchBody = patchSpy.mock.calls[0][0] as { inputs?: { become_method?: string | null } };
+      expect(patchBody.inputs?.become_method ?? '').toBeFalsy();
     });
   });
 });
