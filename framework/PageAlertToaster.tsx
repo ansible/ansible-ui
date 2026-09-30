@@ -30,7 +30,8 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
 
     function withoutTimeout(alert: AlertProps) {
       if (!Number.isInteger(alert.timeout)) return alert;
-      const { timeout: _timeout, ...alertWithoutTimeout } = alert;
+      const { timeout, ...alertWithoutTimeout } = alert;
+      void timeout;
       return alertWithoutTimeout;
     }
 
