@@ -4,6 +4,7 @@ import { render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   PageSettingsProvider,
+  IPageSettings,
   usePageSettings,
   PageSettingsContext,
   createSWRErrorRetryHandler,
@@ -85,6 +86,7 @@ describe('PageSettingsProvider', () => {
         formLayout: 'vertical',
         dateFormat: 'date-time',
         dataEditorFormat: 'yaml',
+        language: 'browser',
         activeTheme: 'dark', // Based on mocked matchMedia
       });
     });
@@ -127,6 +129,30 @@ describe('PageSettingsProvider', () => {
       // Should use defaults when localStorage has invalid JSON
       expect(result.current.refreshInterval).toBe(60);
       expect(result.current.theme).toBe('system');
+    });
+
+    test('should persist and clear the selected language cache', async () => {
+      let setSettingsFunc: (settings: IPageSettings) => void = () => {};
+      const wrapper = ({ children }: { children: ReactNode }) => (
+        <PageSettingsProvider>
+          <PageSettingsContext.Consumer>
+            {([_settings, setSettings]) => {
+              setSettingsFunc = setSettings;
+              return children;
+            }}
+          </PageSettingsContext.Consumer>
+        </PageSettingsProvider>
+      );
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper });
+      setSettingsFunc({ ...result.current, language: 'fr' });
+      await waitFor(() => expect(localStorage.getItem('lang')).toBe('fr'));
+
+      setSettingsFunc({ ...result.current, language: 'browser' });
+      await waitFor(() => {
+        expect(localStorage.getItem('lang')).toBeNull();
+        expect(document.cookie).not.toContain('lang=');
+      });
     });
 
     test('should update settings and persist to localStorage', async () => {

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageSelectOption } from '../PageInputs/PageSelectOption';
+import { PAGE_SETTING_LANGUAGES } from './PageSettingsProvider';
 
 export interface IPageSettingsOption {
   name: string;
@@ -7,11 +8,34 @@ export interface IPageSettingsOption {
   helpText: string;
   options: PageSelectOption<string | number>[];
   defaultValue: string | number;
+  disableSortOptions?: boolean;
 }
 
 export function usePageSettingsOptions(): IPageSettingsOption[] {
   const { t } = useTranslation();
   return [
+    {
+      name: 'language',
+      label: t('Language'),
+      helpText: t('Select the language used by the interface.'),
+      options: [
+        { label: t('Follow browser'), value: 'browser', dividerAfter: true },
+        ...PAGE_SETTING_LANGUAGES.map((language) => ({
+          label: {
+            en: t('English'),
+            es: t('Spanish'),
+            fr: t('French'),
+            ja: t('Japanese'),
+            ko: t('Korean'),
+            nl: t('Dutch'),
+            zh: t('Chinese'),
+          }[language],
+          value: language,
+        })),
+      ],
+      defaultValue: 'browser',
+      disableSortOptions: true,
+    },
     {
       name: 'refreshInterval',
       label: t('Refresh interval'),
