@@ -94,6 +94,14 @@ function getFilterParam(
   const dateRangeParam = getDateRangeParam(filter, values);
   if (dateRangeParam) return dateRangeParam;
 
+  return getMultiValueFilterParam(filter, values, firstValue);
+}
+
+function getMultiValueFilterParam(
+  filter: IToolbarFilter,
+  values: string[],
+  firstValue: string
+): [string, string | string[]] {
   if (values.length === 1) {
     return [filter.query, firstValue];
   }
