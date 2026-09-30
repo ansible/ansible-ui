@@ -15,4 +15,18 @@ describe('moveReorderItem', () => {
 
     expect(reordered).toEqual(items);
   });
+
+  it('returns the original array when the item is not found', () => {
+    const items = [{ id: 'first' }, { id: 'second' }];
+    const reordered = moveReorderItem(items, 'missing', 1, (item) => item.id);
+
+    expect(reordered).toBe(items);
+  });
+
+  it('does not insert an unavailable item after removing it', () => {
+    const items = [undefined];
+    const reordered = moveReorderItem(items, 'missing', 1, () => 'missing');
+
+    expect(reordered).toEqual([]);
+  });
 });
