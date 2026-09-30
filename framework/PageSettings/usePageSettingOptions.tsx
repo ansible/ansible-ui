@@ -13,8 +13,12 @@ export interface IPageSettingsOption {
 
 const englishLanguageNames = new Intl.DisplayNames('en', { type: 'language' });
 
+function getEnglishLanguageName(language: string): string {
+  return englishLanguageNames.of(language) ?? language;
+}
+
 function getLanguageLabel(language: string): string {
-  const englishName = englishLanguageNames.of(language) ?? language;
+  const englishName = getEnglishLanguageName(language);
   const nativeName = new Intl.DisplayNames(language, { type: 'language' }).of(language);
   return nativeName && nativeName !== englishName ? `${englishName} (${nativeName})` : englishName;
 }
@@ -28,10 +32,12 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
       helpText: t('Select the language used by the interface.'),
       options: [
         { label: t('Follow browser'), value: 'browser', dividerAfter: true },
-        ...PAGE_SETTING_LANGUAGES.map((language) => ({
-          label: getLanguageLabel(language),
-          value: language,
-        })),
+        ...[...PAGE_SETTING_LANGUAGES]
+          .sort((a, b) => getEnglishLanguageName(a).localeCompare(getEnglishLanguageName(b), 'en'))
+          .map((language) => ({
+            label: getLanguageLabel(language),
+            value: language,
+          })),
       ],
       defaultValue: 'browser',
       disableSortOptions: true,
