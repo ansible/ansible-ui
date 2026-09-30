@@ -219,15 +219,11 @@ describe('queryString', () => {
 
     it('should append only the first activity stream value to object2', () => {
       const filter: IToolbarFilter = {
-        type: ToolbarFilterType.MultiSelect,
-        comparison: 'equals',
+        type: ToolbarFilterType.SingleText,
+        comparison: 'contains',
         key: 'name',
         label: 'Name',
         query: 'object1__in',
-        options: [
-          { label: 'Foo', value: 'foo' },
-          { label: 'Bar', value: 'bar' },
-        ],
       };
       const state: IFilterState = {
         name: ['foo', 'bar'],
