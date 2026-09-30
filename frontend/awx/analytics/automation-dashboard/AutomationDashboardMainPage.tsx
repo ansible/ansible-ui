@@ -46,7 +46,6 @@ export function AutomationDashboardMainPage() {
           <AutomationDashboardMainPageContent
             canSeeDashboard={canSeeDashboard}
             canSeeLeaderboard={canSeeLeaderboard}
-            hasError={!!error}
           />
         </PageDashboardContext.Provider>
       )}
@@ -55,14 +54,11 @@ export function AutomationDashboardMainPage() {
 }
 
 function AutomationDashboardMainPageContent(
-  props: Readonly<{ canSeeDashboard: boolean; canSeeLeaderboard: boolean; hasError: boolean }>
+  props: Readonly<{ canSeeDashboard: boolean; canSeeLeaderboard: boolean }>
 ) {
-  const { canSeeDashboard, canSeeLeaderboard, hasError } = props;
+  const { canSeeDashboard, canSeeLeaderboard } = props;
   const { t } = useTranslation();
 
-  if (hasError) {
-    return <EmptyStateError />;
-  }
   if (canSeeDashboard && canSeeLeaderboard) {
     return (
       <PageRoutedTabs

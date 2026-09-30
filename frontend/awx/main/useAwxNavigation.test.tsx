@@ -10,7 +10,10 @@ import { useAutomationDashboardCollectionStatus } from '../analytics/automation-
 import { AwxRoute } from './AwxRoutes';
 import { useAwxNavigation } from './useAwxNavigation';
 
-vi.mock('react-router-dom', () => ({ Navigate: () => null }));
+vi.mock('react-router-dom', () => ({
+  Navigate: () => null,
+  useLocation: () => ({ pathname: '/', search: '', hash: '', state: null, key: 'default' }),
+}));
 vi.mock('../common/useAwxActiveUser');
 vi.mock('../analytics/automation-dashboard/common/useAutomationDashboardCollectionStatus');
 

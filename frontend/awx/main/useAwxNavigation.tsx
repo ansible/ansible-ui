@@ -2,7 +2,7 @@ import { PageNavigationItem } from '@ansible/ansible-ui-framework/PageNavigation
 import { PageSettingsDetails } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsDetails';
 import { PageSettingsForm } from '@ansible/ansible-ui-framework/PageSettings/PageSettingsForm';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { AwxRoleDetails } from '../access/roles/AwxRoleDetails';
 import { AwxRolePage } from '../access/roles/AwxRolePage';
 import { AwxRoles } from '../access/roles/AwxRoles';
@@ -47,6 +47,7 @@ import { applyAutomationDashboardNavVisibility } from '../analytics/automation-d
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
+  const location = useLocation();
   const awxInventoryRoutes = useAwxInventoryRoutes();
   const awxHostRoutes = useAwxHostRoutes();
   const awxProjectRoutes = useAwxProjectRoutes();
