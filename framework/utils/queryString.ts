@@ -124,7 +124,10 @@ function getActivityStreamParam(
   return ['or__object1__in', firstValue.replaceAll('+', ',')];
 }
 
-function getDateRangeParam(filter: IToolbarFilter, values: string[]): [string, string] | undefined {
+function getDateRangeParam(
+  filter: IToolbarFilter,
+  values: string[]
+): [string | undefined, string | undefined] | undefined {
   if (filter.type !== ToolbarFilterType.DateRange) return undefined;
 
   const name = `${filter.query}__gte`;
@@ -138,5 +141,7 @@ function getDateRangeParam(filter: IToolbarFilter, values: string[]): [string, s
     [DateRangeFilterPresets.LastMonth]: 30 * 24 * 60 * 60 * 1000,
   };
   const offset = offsets[values[0] as DateRangeFilterPresets];
-  return offset === undefined ? undefined : [name, new Date(date.getTime() - offset).toISOString()];
+  return offset === undefined
+    ? [undefined, undefined]
+    : [name, new Date(date.getTime() - offset).toISOString()];
 }
