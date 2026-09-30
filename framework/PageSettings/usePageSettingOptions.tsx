@@ -11,6 +11,14 @@ export interface IPageSettingsOption {
   disableSortOptions?: boolean;
 }
 
+const englishLanguageNames = new Intl.DisplayNames('en', { type: 'language' });
+
+function getLanguageLabel(language: string): string {
+  const englishName = englishLanguageNames.of(language) ?? language;
+  const nativeName = new Intl.DisplayNames(language, { type: 'language' }).of(language);
+  return nativeName && nativeName !== englishName ? `${englishName} (${nativeName})` : englishName;
+}
+
 export function usePageSettingsOptions(): IPageSettingsOption[] {
   const { t } = useTranslation();
   return [
@@ -21,15 +29,7 @@ export function usePageSettingsOptions(): IPageSettingsOption[] {
       options: [
         { label: t('Follow browser'), value: 'browser', dividerAfter: true },
         ...PAGE_SETTING_LANGUAGES.map((language) => ({
-          label: {
-            en: t('English'),
-            es: t('Spanish'),
-            fr: t('French'),
-            ja: t('Japanese'),
-            ko: t('Korean'),
-            nl: t('Dutch'),
-            zh: t('Chinese'),
-          }[language],
+          label: getLanguageLabel(language),
           value: language,
         })),
       ],
