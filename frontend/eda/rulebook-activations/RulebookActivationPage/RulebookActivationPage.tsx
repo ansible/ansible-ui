@@ -236,6 +236,10 @@ export function RulebookActivationPage() {
             icon: TrashIcon,
             label: t('Delete logs'),
             onClick: (activation: EdaRulebookActivation) => openClearLogsDialog([activation]),
+            isDisabled: () =>
+              canPatchActivation
+                ? ''
+                : t('The activation logs cannot be deleted due to insufficient permission.'),
             isDanger: true,
           },
           {
