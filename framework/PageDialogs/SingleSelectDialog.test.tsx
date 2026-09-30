@@ -30,7 +30,8 @@ describe('SingleSelectDialog', () => {
       </PageDialogProvider>
     );
 
-    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: 'Confirm' }));
     expect(onSelect).toHaveBeenCalledWith(item);
   });
 });
