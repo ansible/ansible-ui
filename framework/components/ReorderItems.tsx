@@ -64,8 +64,9 @@ export function moveReorderItem<T>(
     return arr;
   }
   const temp = arr.splice(fromIndex, 1);
-  if (temp.length > 0 && temp[0] !== undefined) {
-    arr.splice(toIndex, 0, temp[0]);
+  const item = temp[0];
+  if (item) {
+    arr.splice(toIndex, 0, item);
   }
 
   return arr;
