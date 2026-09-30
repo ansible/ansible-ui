@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useContext } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -19,6 +19,23 @@ function TestConsumer() {
       </button>
       <button type="button" onClick={() => toaster.replaceAlert(alert, { title: 'Replaced' })}>
         Replace
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          toaster.replaceAlert(
+            { title: 'Timed Alert', variant: 'info', timeout: 5000 },
+            { title: 'Timed Replaced', variant: 'warning' }
+          )
+        }
+      >
+        Replace Timed
+      </button>
+      <button
+        type="button"
+        onClick={() => toaster.addAlert({ title: 'Timed Alert', variant: 'info', timeout: 5000 })}
+      >
+        Add Timed For Replace
       </button>
       <button
         type="button"
@@ -89,20 +106,36 @@ describe('PageAlertToaster', () => {
     });
 
     it('should remove timed alerts after their timeout', async () => {
-      vi.useFakeTimers();
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
       render(
         <PageAlertToasterProvider>
           <TestConsumer />
         </PageAlertToasterProvider>
       );
 
-      fireEvent.click(screen.getByRole('button', { name: 'Add Timed' }));
+      await user.click(screen.getByRole('button', { name: 'Add Timed' }));
       expect(screen.getByText('Timed Alert')).toBeInTheDocument();
 
       await act(() => {
         vi.advanceTimersByTime(1000);
         return Promise.resolve();
       });
+      expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
+    });
+
+    it('should replace timed alerts when replaceAlert uses the original timed props', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add Timed For Replace' }));
+      await user.click(screen.getByRole('button', { name: 'Replace Timed' }));
+
+      expect(screen.getByText('Timed Replaced')).toBeInTheDocument();
       expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
     });
 
