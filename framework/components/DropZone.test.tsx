@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { PageAlertToasterProvider } from '../PageAlertToaster';
 import { DropZone } from './DropZone';
@@ -32,19 +31,16 @@ describe('DropZone', () => {
     expect(input).toBeInTheDocument();
   });
 
-  it('reads an uploaded text file', async () => {
+  it('reads a dropped text file through the drop handler', async () => {
     const onDrop = vi.fn();
-    const user = userEvent.setup();
-    const { container } = render(
+    render(
       <PageAlertToasterProvider>
         <DropZone onDrop={onDrop}>Drop a file</DropZone>
       </PageAlertToasterProvider>
     );
 
-    const input = container.querySelector('input[type="file"]');
-    expect(input).toBeInTheDocument();
     const file = new File(['{"hello":"world"}'], 'data.json', { type: 'application/json' });
-    await user.upload(input as HTMLInputElement, file);
+    capturedOnDrop?.([file]);
 
     await vi.waitFor(() => {
       expect(onDrop).toHaveBeenCalledWith('{"hello":"world"}');
