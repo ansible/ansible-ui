@@ -122,8 +122,8 @@ describe('AuthenticatorSubForm — camelCase patternDescription integration', ()
     if (!input) throw new Error('Input not found');
 
     // Type a value that violates the pattern (does not start with https://)
-    await user.click(input!);
-    await user.type(input!, 'http://example.com');
+    await user.click(input);
+    await user.type(input, 'http://example.com');
     // Blur so the field triggers validation (pattern validation runs onBlur)
     await user.tab();
 
