@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { usePageSettingsOptions } from './usePageSettingOptions';
 
 const englishLanguageNames = new Intl.DisplayNames('en', { type: 'language' });
@@ -29,6 +29,19 @@ describe('usePageSettingsOptions', () => {
       expect.arrayContaining(['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh'])
     );
     expect(languageOptions.find((option) => option.value === 'es')?.label).toContain('español');
+  });
+
+  it('uses the language code when Intl has no display name', () => {
+    const displayName = vi.spyOn(Intl.DisplayNames.prototype, 'of').mockReturnValue(undefined);
+
+    try {
+      const { result } = renderHook(() => usePageSettingsOptions());
+      const language = result.current.find((option) => option.name === 'language');
+
+      expect(language?.options.find((option) => option.value === 'en')?.label).toBe('en');
+    } finally {
+      displayName.mockRestore();
+    }
   });
 
   it('returns the existing non-language settings', () => {
