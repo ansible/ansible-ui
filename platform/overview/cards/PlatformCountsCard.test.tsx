@@ -3,14 +3,11 @@ import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
-import useSWR from 'swr';
 import { PlatformCountsCard } from './PlatformCountsCard';
 
 vi.mock('@ansible/awx-ui/overview/cards/AwxCountsCard', () => ({
   AwxCountsCard: () => <div data-testid="awx-counts-card">counts</div>,
 }));
-
-vi.mock('swr');
 
 const server = setupServer();
 
@@ -39,40 +36,12 @@ describe('PlatformCountsCard', () => {
     });
   });
 
-  test('rejects failed dashboard requests', async () => {
-    vi.mocked(useSWR).mockReturnValue({
-      data: undefined,
-      error: undefined,
-      isLoading: false,
-      isValidating: false,
-      mutate: vi.fn(),
-    } as never);
-    render(<PlatformCountsCard />);
-    const fetcher = vi.mocked(useSWR).mock.calls[0]?.[1] as unknown as (
-      url: string
-    ) => Promise<unknown>;
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }));
+  test('should render nothing when the dashboard request fails', async () => {
+    server.use(http.get(awxAPI`/dashboard/`, () => new HttpResponse(null, { status: 503 })));
+    const { container } = render(<PlatformCountsCard />);
 
-    await expect(fetcher('/dashboard')).rejects.toThrow('Dashboard request failed: 503');
-  });
-
-  test('parses successful dashboard requests', async () => {
-    vi.mocked(useSWR).mockReturnValue({
-      data: undefined,
-      error: undefined,
-      isLoading: false,
-      isValidating: false,
-      mutate: vi.fn(),
-    } as never);
-    render(<PlatformCountsCard />);
-    const fetcher = vi.mocked(useSWR).mock.calls[0]?.[1] as unknown as (
-      url: string
-    ) => Promise<unknown>;
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({}) })
-    );
-
-    await expect(fetcher('/dashboard')).resolves.toEqual({});
+    await waitFor(() => {
+      expect(container).toBeEmptyDOMElement();
+    });
   });
 });
