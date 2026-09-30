@@ -4,6 +4,13 @@
  */
 export function getByPath(object: object, path: string): unknown {
   if (!path) return undefined;
+  if (
+    typeof object === 'object' &&
+    object !== null &&
+    Object.prototype.hasOwnProperty.call(object, path)
+  ) {
+    return (object as Record<string, unknown>)[path];
+  }
   const segments = path.split('.');
   let current: unknown = object;
   for (const segment of segments) {
