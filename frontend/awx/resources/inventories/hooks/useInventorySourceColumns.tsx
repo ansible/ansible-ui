@@ -23,8 +23,8 @@ type InventorySourceLike = {
 
 function hasRequiredJobFields(
   job: { id?: number; status?: string; finished?: string } | undefined
-): job is { id: number; status: string; finished: string } {
-  return !!(job?.id && job?.status && job?.finished);
+): job is { id: number; status: string; finished?: string } {
+  return job?.id != null && typeof job?.status === 'string';
 }
 
 export function buildInventorySourceStatusCellProps(
@@ -35,6 +35,8 @@ export function buildInventorySourceStatusCellProps(
   const lastJob = inventorySource.summary_fields?.current_job?.id
     ? inventorySource.summary_fields.current_job
     : inventorySource.summary_fields?.last_job;
+  // jobId may come from current_job, last_job, current_update, or related.last_job URL
+  // Tooltip is only available when current_job or last_job is present with required fields
   const jobId = getSyncJobId(inventorySource.summary_fields, inventorySource.related?.last_job);
   const jobOutputUrl =
     jobId !== undefined && !disableLinks

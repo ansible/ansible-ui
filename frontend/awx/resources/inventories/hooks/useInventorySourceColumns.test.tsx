@@ -79,7 +79,17 @@ describe('buildInventorySourceStatusCellProps', () => {
     expect(props.disableLinks).toBe(true);
   });
 
-  it('sets tooltip when job available', () => {
+  it('sets tooltip when job has id and status', () => {
+    const source = createTestSource({
+      summary_fields: {
+        current_job: { id: 600, status: 'successful' },
+      },
+    });
+    const props = buildInventorySourceStatusCellProps(source, mockGetPageUrl);
+    expect(props.tooltip).toBeDefined();
+  });
+
+  it('sets tooltip when job has id, status, and optional finished', () => {
     const source = createTestSource({
       summary_fields: {
         current_job: { id: 600, status: 'successful', finished: '2024-01-01T00:00:00Z' },
@@ -87,6 +97,16 @@ describe('buildInventorySourceStatusCellProps', () => {
     });
     const props = buildInventorySourceStatusCellProps(source, mockGetPageUrl);
     expect(props.tooltip).toBeDefined();
+  });
+
+  it('has no tooltip when job missing id or status', () => {
+    const source = createTestSource({
+      summary_fields: {
+        current_job: { finished: '2024-01-01T00:00:00Z' },
+      },
+    });
+    const props = buildInventorySourceStatusCellProps(source, mockGetPageUrl);
+    expect(props.tooltip).toBeUndefined();
   });
 
   it('has no tooltip when no job available', () => {
