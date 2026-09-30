@@ -1,7 +1,13 @@
 import { expect, test, Page } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
-import { Organization, Inventory, JobTemplate, InventoryHost, Project } from '@ansible/playwright/utils';
+import {
+  Organization,
+  Inventory,
+  JobTemplate,
+  InventoryHost,
+  Project,
+} from '@ansible/playwright/utils';
 import { awxAPI, createScopedClient } from '@ansible/playwright/commands/apiClient';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 
@@ -19,7 +25,7 @@ async function getSuccessfulJobsCountFromDashboard(page: Page): Promise<number> 
   // Get the value from the card body
   // The value is in a span element inside .pf-v6-c-card__body (no data-testid/data-cy on the value itself)
   const valueElement = successfulJobsCard.locator('.pf-v6-c-card__body span').filter({
-    hasText: /^\d+$/
+    hasText: /^\d+$/,
   });
 
   // Wait for the value element to exist and contain a number (dashboard might still be loading data)
@@ -59,7 +65,6 @@ async function triggerAndWaitForDataCollection(
   } = options;
 
   // Trigger data collection
-  console.log('Triggering data collection...');
   const scheduleResponse = await metricsAPI.post<{ task_id: string; message: string }>(
     page,
     'tasks/schedule_immediate/',
@@ -76,7 +81,6 @@ async function triggerAndWaitForDataCollection(
   }
 
   const taskId = parseInt(scheduleResponse.task_id, 10);
-  console.log(`Data collection task scheduled (ID: ${taskId}, Message: ${scheduleResponse.message})`);
 
   // Get initial task status
   const initialTask = await metricsAPI.get<{ id: number; status: string }>(
@@ -92,7 +96,6 @@ async function triggerAndWaitForDataCollection(
   let status = initialTask.status;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     if (status === 'completed') {
-      console.log(`Data collection completed after ${attempt} polls`);
       return { taskId, status };
     }
 
@@ -100,19 +103,15 @@ async function triggerAndWaitForDataCollection(
       throw new Error(`Data collection task ${taskId} failed with status: ${status}`);
     }
 
-    await page.waitForTimeout(pollInterval);
+    await page.waitForTimeout(pollInterval); // NOSONAR - intentional polling interval for task status check
 
-    const taskData = await metricsAPI.get<{ id: number; status: string }>(
-      page,
-      `tasks/${taskId}/`
-    );
+    const taskData = await metricsAPI.get<{ id: number; status: string }>(page, `tasks/${taskId}/`);
 
     if (!taskData) {
       throw new Error('Failed to get task status: API returned null');
     }
 
     status = taskData.status;
-    console.log(`  Task ${taskId} status: ${status} (attempt ${attempt + 1}/${maxAttempts})`);
   }
 
   throw new Error(
@@ -128,7 +127,6 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(setupAfter);
 
 test.describe('Automation Dashboard', () => {
-
   test('Automation dashboard view for System Administrator', async ({ page }) => {
     await expect(
       page.getByTestId('page-title').filter({ hasText: 'Automation Dashboard' })
@@ -147,7 +145,6 @@ test.describe('Automation Dashboard', () => {
       // Create organization
       const organization = await Organization.api.create(page);
       organizationId = organization.id;
-      console.log(`Created organization: ${organization.name} (ID: ${organizationId})`);
 
       // Create project with a known name for dashboard verification (includes random suffix)
       projectName = createE2EName('E2E-Dashboard-Project');
@@ -155,36 +152,31 @@ test.describe('Automation Dashboard', () => {
         name: projectName,
         organization: organizationId,
         scm_type: 'git',
-        scm_url: 'https://github.com/ansible/ansible-tower-samples'
+        scm_url: 'https://github.com/ansible/ansible-tower-samples',
       });
       projectId = project.id;
-      console.log(`Created project: ${projectName} (ID: ${projectId})`);
 
       // Wait for project sync to complete
       await Project.api.sync(page, projectId);
-      console.log(`Project synced successfully`);
 
       // Create inventory
       const inventory = await Inventory.api.create(page, { organization: organizationId });
       inventoryId = inventory.id;
-      console.log(`Created inventory: ${inventory.name} (ID: ${inventoryId})`);
 
       // Create host (localhost) in inventory with local connection (no SSH)
       const host = await InventoryHost.api.create(page, {
         name: 'localhost',
         inventory: inventoryId,
-        variables: 'ansible_connection: local'
+        variables: 'ansible_connection: local',
       });
       hostId = host.id;
-      console.log(`Created host: ${host.name} (ID: ${hostId}) with ansible_connection=local`);
 
       // Create job template using our project
       const jobTemplate = await JobTemplate.api.create(page, {
         inventoryId,
-        projectId
+        projectId,
       });
       jobTemplateId = jobTemplate.id;
-      console.log(`Created job template: ${jobTemplate.name} (ID: ${jobTemplateId})`);
     });
 
     test.afterEach(async ({ page }) => {
@@ -213,39 +205,34 @@ test.describe('Automation Dashboard', () => {
       // Get initial jobs count from awx/controller API
       const initialAwxJobs = await awxAPI.get<{ count: number; results: unknown[] }>(page, 'jobs/');
       const initialAwxCount = initialAwxJobs?.count || 0;
-      console.log(`Initial jobs count (API): ${initialAwxCount}`);
 
       await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
       // Get initial successful jobs count from dashboard UI
       const initialSuccessfulCount = await getSuccessfulJobsCountFromDashboard(page);
-      console.log(`Initial successful jobs count (Dashboard UI): ${initialSuccessfulCount}`);
 
-      // Launch job template
-      console.log('Launching job template...');
-      const job = await JobTemplate.api.launch(page, jobTemplateId);
-      console.log(`Job completed with status: ${job.status} (ID: ${job.id})`);
+      await test.step('Launch job template and verify success', async () => {
+        // Launch job template and wait for completion
+        const job = await JobTemplate.api.launch(page, jobTemplateId);
+        // Verify the job completed successfully
+        expect(job.status).toBe('successful');
 
-      // Get final jobs count
-      const finalAwxJobs = await awxAPI.get<{ count: number; results: unknown[] }>(page, 'jobs/');
-      const finalAwxCount = finalAwxJobs?.count || 0;
-      console.log(`Final jobs count: ${finalAwxCount}`);
-      console.log(`Jobs created: ${finalAwxCount - initialAwxCount}`);
-      // Verify at least one job was created
-      expect(finalAwxCount).toEqual(initialAwxCount + 1);
-
-      // Trigger initial data collection and wait for completion
-      console.log('\n=== Triggering collect_dashboard_reports_initial_data ===');
-      const initialDataResult = await triggerAndWaitForDataCollection(page, {
-        functionName: 'collect_dashboard_reports_initial_data'
+        // Get final jobs count
+        const finalAwxJobs = await awxAPI.get<{ count: number; results: unknown[] }>(page, 'jobs/');
+        const finalAwxCount = finalAwxJobs?.count || 0;
+        // Verify at least one job was created
+        expect(finalAwxCount).toEqual(initialAwxCount + 1);
       });
-      console.log(`Initial data collection completed: task ${initialDataResult.taskId}`);
+
+      await test.step('Trigger initial data collection and wait for completion', async () => {
+        await triggerAndWaitForDataCollection(page, {
+          functionName: 'collect_dashboard_reports_initial_data',
+        });
+      });
 
       // Full page reload to completely clear SWR cache and all browser state
       // 3000 ms wait should be enough to ensure SWR cache is cleared,
       // but somehow it was not always sufficient.
-      console.log('\n=== Full page reload to clear all caches ===');
       await page.reload({ waitUntil: 'networkidle' });
-      console.log('Page reloaded - all SWR cache and state cleared');
 
       // Wait for the top projects card to be visible
       const topProjectsCard = page.getByTestId('top-projects-card');
@@ -253,16 +240,11 @@ test.describe('Automation Dashboard', () => {
 
       // Verify successful jobs count increased on dashboard UI
       const finalSuccessfulCount = await getSuccessfulJobsCountFromDashboard(page);
-      console.log(`Final successful jobs count (Dashboard UI): ${finalSuccessfulCount}`);
-      console.log(`Expected: ${initialSuccessfulCount + 1}, Got: ${finalSuccessfulCount}`);
       expect(finalSuccessfulCount).toBeGreaterThanOrEqual(initialSuccessfulCount + 1);
 
       // Verify our specific project appears in the project list
-      console.log('\n=== Verifying project appears in Top 5 projects ===');
       const projectNameCells = topProjectsCard.locator('[data-testid="project-name-column-cell"]');
       await expect(projectNameCells).toContainText([projectName]);
-      console.log(`✓ Verified "${projectName}" appears in Top 5 projects`);
     });
   });
-
 });
