@@ -1,14 +1,18 @@
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { PageAlertToasterProvider } from '../PageAlertToaster';
 import { DropZone } from './DropZone';
 
-const dropHandler = vi.hoisted(() => vi.fn<(files: File[]) => void>());
+let capturedOnDrop: ((files: File[]) => void) | undefined;
 
 vi.mock('react-dropzone', () => ({
-  useDropzone: ({ onDrop }: { onDrop: (files: File[]) => void }) => {
-    dropHandler.mockImplementation(onDrop);
-    return { getRootProps: () => ({}), getInputProps: () => ({ type: 'file' }) };
+  useDropzone: (options: { onDrop: (files: File[]) => void }) => {
+    capturedOnDrop = options.onDrop;
+    return {
+      getRootProps: () => ({}),
+      getInputProps: () => ({ type: 'file' }),
+    };
   },
 }));
 
@@ -21,15 +25,16 @@ describe('DropZone', () => {
       </PageAlertToasterProvider>
     );
 
+    capturedOnDrop?.([]);
+    expect(onDrop).not.toHaveBeenCalled();
+
     const input = container.querySelector('input[type="file"]');
     expect(input).toBeInTheDocument();
-
-    expect(() => fireEvent.change(input!, { target: { files: [] } })).not.toThrow();
-    expect(onDrop).not.toHaveBeenCalled();
   });
 
-  it('does not read an undefined file entry', () => {
+  it('reads an uploaded text file', async () => {
     const onDrop = vi.fn();
+    const user = userEvent.setup();
     const { container } = render(
       <PageAlertToasterProvider>
         <DropZone onDrop={onDrop}>Drop a file</DropZone>
@@ -37,21 +42,12 @@ describe('DropZone', () => {
     );
 
     const input = container.querySelector('input[type="file"]');
-    expect(() =>
-      fireEvent.change(input!, { target: { files: [undefined] as unknown as File[] } })
-    ).not.toThrow();
-    expect(onDrop).not.toHaveBeenCalled();
-  });
+    expect(input).toBeInTheDocument();
+    const file = new File(['{"hello":"world"}'], 'data.json', { type: 'application/json' });
+    await user.upload(input as HTMLInputElement, file);
 
-  it('ignores an undefined file entry passed to the drop handler', () => {
-    const onDrop = vi.fn();
-    render(
-      <PageAlertToasterProvider>
-        <DropZone onDrop={onDrop}>Drop a file</DropZone>
-      </PageAlertToasterProvider>
-    );
-
-    expect(() => dropHandler([undefined] as unknown as File[])).not.toThrow();
-    expect(onDrop).not.toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(onDrop).toHaveBeenCalledWith('{"hello":"world"}');
+    });
   });
 });
