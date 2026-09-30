@@ -2,6 +2,7 @@
 import { createElement, ReactNode } from 'react';
 import { render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import i18n from 'i18next';
 import {
   PageSettingsProvider,
   IPageSettings,
@@ -131,6 +132,77 @@ describe('PageSettingsProvider', () => {
       expect(result.current.theme).toBe('system');
     });
 
+    test('should fall back to browser language for an unsupported preference', () => {
+      localStorage.setItem('user-preferences', JSON.stringify({ language: 'de' }));
+
+      const wrapper = ({ children }: { children: ReactNode }) => (
+        <PageSettingsProvider>{children}</PageSettingsProvider>
+      );
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper });
+
+      expect(result.current.language).toBe('browser');
+    });
+
+    test('should use the default context value outside the provider', () => {
+      const { result } = renderHook(() => usePageSettings());
+
+      expect(result.current).toEqual({});
+      render(
+        <PageSettingsContext.Consumer>
+          {([_settings, setSettings]) => {
+            setSettings({});
+            return null;
+          }}
+        </PageSettingsContext.Consumer>
+      );
+    });
+
+    test('should apply initialized i18next language changes', async () => {
+      const originalInitialized = i18n.isInitialized;
+      const originalDetector = i18n.services.languageDetector as unknown;
+      Object.defineProperty(i18n, 'isInitialized', { configurable: true, value: true });
+      Object.defineProperty(i18n.services, 'languageDetector', {
+        configurable: true,
+        value: { detect: () => 'fr' },
+      });
+      const changeLanguage = vi.spyOn(i18n, 'changeLanguage').mockResolvedValue(i18n.t);
+
+      try {
+        const wrapper = ({ children }: { children: ReactNode }) => (
+          <PageSettingsProvider>{children}</PageSettingsProvider>
+        );
+
+        renderHook(() => usePageSettings(), { wrapper });
+        await waitFor(() => expect(changeLanguage).toHaveBeenCalledWith('fr'));
+
+        changeLanguage.mockClear();
+        let setSettingsFunc: (settings: IPageSettings) => void = () => {};
+        render(
+          <PageSettingsProvider>
+            <PageSettingsContext.Consumer>
+              {([_settings, setSettings]) => {
+                setSettingsFunc = setSettings;
+                return null;
+              }}
+            </PageSettingsContext.Consumer>
+          </PageSettingsProvider>
+        );
+        setSettingsFunc({ language: 'ja' });
+        await waitFor(() => expect(changeLanguage).toHaveBeenCalledWith('ja'));
+      } finally {
+        changeLanguage.mockRestore();
+        Object.defineProperty(i18n.services, 'languageDetector', {
+          configurable: true,
+          value: originalDetector,
+        });
+        Object.defineProperty(i18n, 'isInitialized', {
+          configurable: true,
+          value: originalInitialized,
+        });
+      }
+    });
+
     test('should persist and clear the selected language cache', async () => {
       let setSettingsFunc: (settings: IPageSettings) => void = () => {};
       const wrapper = ({ children }: { children: ReactNode }) => (
@@ -153,6 +225,24 @@ describe('PageSettingsProvider', () => {
         expect(localStorage.getItem('lang')).toBeNull();
         expect(document.cookie).not.toContain('lang=');
       });
+    });
+
+    test('should skip language application when no language is set', async () => {
+      let setSettingsFunc: (settings: IPageSettings) => void = () => {};
+      const wrapper = ({ children }: { children: ReactNode }) => (
+        <PageSettingsProvider>
+          <PageSettingsContext.Consumer>
+            {([_settings, setSettings]) => {
+              setSettingsFunc = setSettings;
+              return children;
+            }}
+          </PageSettingsContext.Consumer>
+        </PageSettingsProvider>
+      );
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper });
+      setSettingsFunc({ ...result.current, language: undefined });
+      await waitFor(() => expect(result.current.language).toBeUndefined());
     });
 
     test('should update settings and persist to localStorage', async () => {
@@ -270,6 +360,19 @@ describe('PageSettingsProvider', () => {
         expect(result.current.activeTheme).toBe('light');
         expect(result.current.theme).toBe('light');
       });
+    });
+
+    test('should use an explicit dark theme', async () => {
+      localStorage.setItem('user-preferences', JSON.stringify({ theme: 'dark' }));
+
+      const wrapper = ({ children }: { children: ReactNode }) => (
+        <PageSettingsProvider>{children}</PageSettingsProvider>
+      );
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper });
+
+      await waitFor(() => expect(result.current.activeTheme).toBe('dark'));
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
     });
 
     const disabledThemeWrapper = ({ children }: { children: ReactNode }) => (
