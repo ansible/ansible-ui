@@ -30,6 +30,23 @@ Object.defineProperty(globalThis, 'matchMedia', {
 
 const capturedSWRConfigValues: Record<string, unknown>[] = [];
 
+function createSettingsWrapper(
+  onSettingsChange: (setSettings: (settings: IPageSettings) => void) => void
+) {
+  return function SettingsWrapper({ children }: Readonly<{ children: ReactNode }>) {
+    return (
+      <PageSettingsProvider>
+        <PageSettingsContext.Consumer>
+          {([_settings, setSettings]) => {
+            onSettingsChange(setSettings);
+            return children;
+          }}
+        </PageSettingsContext.Consumer>
+      </PageSettingsProvider>
+    );
+  };
+}
+
 vi.mock('swr', async (importOriginal) => {
   const actual = await importOriginal<typeof import('swr')>();
 
@@ -205,16 +222,9 @@ describe('PageSettingsProvider', () => {
 
     test('should persist and clear the selected language cache', async () => {
       let setSettingsFunc: (settings: IPageSettings) => void = () => {};
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider>
-          <PageSettingsContext.Consumer>
-            {([_settings, setSettings]) => {
-              setSettingsFunc = setSettings;
-              return children;
-            }}
-          </PageSettingsContext.Consumer>
-        </PageSettingsProvider>
-      );
+      const wrapper = createSettingsWrapper((setSettings) => {
+        setSettingsFunc = setSettings;
+      });
 
       const { result } = renderHook(() => usePageSettings(), { wrapper });
       setSettingsFunc({ ...result.current, language: 'fr' });
@@ -229,16 +239,9 @@ describe('PageSettingsProvider', () => {
 
     test('should skip language application when no language is set', async () => {
       let setSettingsFunc: (settings: IPageSettings) => void = () => {};
-      const wrapper = ({ children }: { children: ReactNode }) => (
-        <PageSettingsProvider>
-          <PageSettingsContext.Consumer>
-            {([_settings, setSettings]) => {
-              setSettingsFunc = setSettings;
-              return children;
-            }}
-          </PageSettingsContext.Consumer>
-        </PageSettingsProvider>
-      );
+      const wrapper = createSettingsWrapper((setSettings) => {
+        setSettingsFunc = setSettings;
+      });
 
       const { result } = renderHook(() => usePageSettings(), { wrapper });
       setSettingsFunc({ ...result.current, language: undefined });
