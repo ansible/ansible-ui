@@ -29,8 +29,8 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 /** Label for async subscription select when the selected id is not in the loaded option list. */
-export function subscriptionIdQueryLabel(subscription_id?: string) {
-  return subscription_id?.toString();
+export function subscriptionIdQueryLabel(value?: string | boolean | File) {
+  return value?.toString();
 }
 
 interface SubscriptionWizardData {
@@ -395,19 +395,7 @@ export function arrayBufferToBase64(buffer: ArrayBuffer) {
   return window.btoa(binary);
 }
 
-export function readSubscriptionManifestAsBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      if (!(fileReader.result instanceof ArrayBuffer)) {
-        reject(new Error('Subscription manifest could not be read.'));
-        return;
-      }
-      resolve(arrayBufferToBase64(fileReader.result));
-    };
-    fileReader.onerror = () => {
-      reject(fileReader.error ?? new Error('Subscription manifest could not be read.'));
-    };
-    fileReader.readAsArrayBuffer(file);
-  });
+export async function readSubscriptionManifestAsBase64(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer();
+  return arrayBufferToBase64(buffer);
 }

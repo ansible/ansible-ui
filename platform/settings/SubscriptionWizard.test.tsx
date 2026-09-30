@@ -56,24 +56,19 @@ const renderWithRouter = (props = defaultProps) => {
 
 describe('readSubscriptionManifestAsBase64', () => {
   afterEach(() => {
-    vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
-  it('should reject when FileReader returns a non-ArrayBuffer result', async () => {
-    class MockFileReader {
-      result: string | ArrayBuffer = 'not-a-buffer';
-      onload: (() => void) | null = null;
-      onerror: (() => void) | null = null;
-      readAsArrayBuffer() {
-        queueMicrotask(() => this.onload?.());
-      }
-    }
-    vi.stubGlobal('FileReader', MockFileReader as unknown as typeof FileReader);
+  it('should base64-encode manifest file contents', async () => {
+    const encoded = await readSubscriptionManifestAsBase64(new File(['abc'], 'manifest.zip'));
+    expect(encoded).toBe(window.btoa('abc'));
+  });
 
-    await expect(readSubscriptionManifestAsBase64(new File(['x'], 'manifest.zip'))).rejects.toThrow(
-      'Subscription manifest could not be read.'
-    );
+  it('should reject when reading the file fails', async () => {
+    const file = new File(['x'], 'manifest.zip');
+    vi.spyOn(file, 'arrayBuffer').mockRejectedValue(new Error('read failed'));
+
+    await expect(readSubscriptionManifestAsBase64(file)).rejects.toThrow('read failed');
   });
 });
 
@@ -96,7 +91,7 @@ describe('subscriptionIdQueryLabel', () => {
   });
 
   it('should return undefined when no subscription id is set', () => {
-    expect(subscriptionIdQueryLabel(undefined)).toBeUndefined();
+    expect(subscriptionIdQueryLabel()).toBeUndefined();
   });
 });
 
