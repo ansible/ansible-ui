@@ -30,7 +30,7 @@ import { useTranslation } from 'react-i18next';
 
 /** Label for async subscription select when the selected id is not in the loaded option list. */
 export function subscriptionIdQueryLabel(value?: string | boolean | File) {
-  return value?.toString();
+  return typeof value === 'string' ? value : undefined;
 }
 
 interface SubscriptionWizardData {
