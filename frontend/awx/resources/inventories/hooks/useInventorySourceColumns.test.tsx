@@ -109,12 +109,12 @@ describe('buildInventorySourceStatusCellProps', () => {
     expect(props.tooltip).toBeUndefined();
   });
 
-  it('has no tooltip when jobId not available even if lastJob has required fields', () => {
+  it('has no tooltip when lastJob missing required fields even if jobId available', () => {
     const source = createTestSource({
       summary_fields: {
-        last_job: { id: 100, status: 'successful' },
+        last_job: {},
         current_job: {},
-        current_update: {},
+        current_update: { id: 300 },
       },
       related: { schedules: '/' },
     });
