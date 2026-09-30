@@ -8,6 +8,31 @@ export interface IPageAlertToaster {
   removeAlerts: (filter?: (alert: AlertProps) => boolean) => void;
 }
 
+function stripTimeout(alert: AlertProps): AlertProps {
+  if (!Number.isInteger(alert.timeout)) return alert;
+  const { timeout, ...alertWithoutTimeout } = alert;
+  void timeout;
+  return alertWithoutTimeout;
+}
+
+function alertIdentity(alert: AlertProps): string {
+  return JSON.stringify(stripTimeout(alert));
+}
+
+function replaceAlertInList(
+  alerts: AlertProps[],
+  oldAlert: AlertProps,
+  preparedAlert: AlertProps
+): AlertProps[] {
+  const oldAlertIndex = alerts.findIndex((a) => alertIdentity(a) === alertIdentity(oldAlert));
+  if (oldAlertIndex === -1) {
+    return alerts;
+  }
+  const newAlerts = [...alerts];
+  newAlerts[oldAlertIndex] = preparedAlert;
+  return newAlerts;
+}
+
 export const PageAlertToasterContext = createContext<IPageAlertToaster>({
   addAlert: () => null,
   removeAlert: () => null,
@@ -28,15 +53,8 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
       setToasterAlerts((alerts) => alerts.filter((a) => a !== alert));
     }
 
-    function withoutTimeout(alert: AlertProps) {
-      if (!Number.isInteger(alert.timeout)) return alert;
-      const { timeout, ...alertWithoutTimeout } = alert;
-      void timeout;
-      return alertWithoutTimeout;
-    }
-
     function prepareAlert(alert: AlertProps) {
-      const alertWithoutTimeout = withoutTimeout(alert);
+      const alertWithoutTimeout = stripTimeout(alert);
       if (alertWithoutTimeout === alert) return alert;
 
       setTimeout(() => removeAlert(alertWithoutTimeout), alert.timeout as number);
@@ -58,17 +76,7 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
     }
     function replaceAlert(oldAlert: AlertProps, alert: AlertProps) {
       const preparedAlert = prepareAlert(alert);
-      setToasterAlerts((alerts) => {
-        const oldAlertIndex = alerts.findIndex(
-          (a) => JSON.stringify(a) === JSON.stringify(withoutTimeout(oldAlert))
-        );
-        if (oldAlertIndex !== -1) {
-          const newAlerts = [...alerts];
-          newAlerts[oldAlertIndex] = preparedAlert;
-          return newAlerts;
-        }
-        return alerts;
-      });
+      setToasterAlerts((alerts) => replaceAlertInList(alerts, oldAlert, preparedAlert));
     }
     return { addAlert, removeAlert, removeAlerts, replaceAlert };
   });
