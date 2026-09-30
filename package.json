@@ -177,7 +177,7 @@
     "vite-plugin-monaco-editor": "^1.1.0",
     "vite-plugin-static-copy": "^2.2.0",
     "vite-plugin-svgr": "4.3.0",
-    "vitest": "^4.1.10",
+    "vitest": "^5.0.1",
     "vitest-preview": "^0.0.3"
   },
   "lint-staged": {
