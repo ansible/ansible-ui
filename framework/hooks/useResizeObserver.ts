@@ -29,7 +29,7 @@ export function useResizeObserver(
       }
     });
 
-    observer.observe(element, options);
+    observer.observe(element, box === undefined ? undefined : { box });
     return () => observer.disconnect();
   }, [target, box]);
 }
