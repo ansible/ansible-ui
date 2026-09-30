@@ -12,7 +12,9 @@ import { awxErrorAdapter } from '@ansible/awx-ui/common/adapters/awxErrorAdapter
 import { awxAPI } from '@ansible/awx-ui/common/api/awx-utils';
 import { useAwxConfig, useAwxConfigState } from '@ansible/awx-ui/common/useAwxConfig';
 import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { ILicenseInfo } from '@ansible/common-ui/interfaces/Config';
+import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
 import { ExternalLink } from '@ansible/hub-ui//common/ExternalLink';
 import {
   Content,
@@ -25,6 +27,11 @@ import {
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+
+/** Label for async subscription select when the selected id is not in the loaded option list. */
+export function subscriptionIdQueryLabel(subscription_id?: string) {
+  return subscription_id?.toString();
+}
 
 interface SubscriptionWizardData {
   subscriptionSelection: 'manifest' | 'service_account' | 'username' | 'satellite';
@@ -42,6 +49,9 @@ interface SubscriptionWizardData {
 export function SubscriptionWizard(props: Readonly<{ onSuccess: () => void }>) {
   const { t } = useTranslation();
   const { refreshAwxConfig } = useAwxConfigState();
+  const { data: subscriptionsOptionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/config/subscriptions/`
+  );
 
   const steps = useMemo(() => {
     const steps: PageWizardStep[] = [
@@ -69,14 +79,7 @@ export function SubscriptionWizard(props: Readonly<{ onSuccess: () => void }>) {
       switch (data.subscriptionSelection) {
         case 'manifest':
           {
-            const manifest = await new Promise((resolve) => {
-              const fileReader = new FileReader();
-              fileReader.readAsArrayBuffer(data.subscriptionFile);
-              fileReader.onload = () => {
-                if (!(fileReader.result instanceof ArrayBuffer)) return;
-                resolve(arrayBufferToBase64(fileReader.result));
-              };
-            });
+            const manifest = await readSubscriptionManifestAsBase64(data.subscriptionFile);
             await postRequest(awxAPI`/config/`, { manifest });
           }
           break;
@@ -108,6 +111,7 @@ export function SubscriptionWizard(props: Readonly<{ onSuccess: () => void }>) {
       steps={steps}
       onSubmit={onSubmit}
       errorAdapter={awxErrorAdapter}
+      optionsData={subscriptionsOptionsData}
       singleColumn
     />
   );
@@ -135,26 +139,7 @@ function SubscriptionStep() {
     });
     return {
       remaining: 0,
-      options:
-        subscriptions.map((subscription) => {
-          const expires = new Date(subscription.license_date * 1000);
-          return {
-            label: subscription.subscription_name,
-            value: subscription.subscription_id,
-            description: (
-              <Stack>
-                <div>
-                  <b>{t('Managed nodes: ')}</b>
-                  {subscription.instance_count}
-                </div>
-                <div>
-                  <b>{t('Expires: ')}</b>
-                  {expires.toLocaleDateString()}
-                </div>
-              </Stack>
-            ),
-          };
-        }) ?? [],
+      options: subscriptionListToSelectOptions(subscriptions, t),
       next: 1,
     };
   }, [clientId, clientSecret, username, satelliteUsername, password, satellitePassword, t]);
@@ -233,6 +218,7 @@ function SubscriptionStep() {
         </Content>
         <PageFormTextInput<SubscriptionWizardData>
           name="client_id"
+          optionsFieldName="subscriptions_client_id"
           label={t`Client ID`}
           isRequired
         />
@@ -248,7 +234,7 @@ function SubscriptionStep() {
           queryOptions={querySubscriptions}
           queryErrorText={t('Failed to load subscriptions. Check your credentials.')}
           placeholder={t('Select your subscription')}
-          queryLabel={(subscription_id) => subscription_id?.toString()}
+          queryLabel={subscriptionIdQueryLabel}
           isRequired
           isDisabled={
             !clientId || !clientSecret
@@ -268,7 +254,12 @@ function SubscriptionStep() {
             )}
           </Content>
         </Content>
-        <PageFormTextInput<SubscriptionWizardData> name="username" label={t`Username`} isRequired />
+        <PageFormTextInput<SubscriptionWizardData>
+          name="username"
+          optionsFieldName="subscriptions_username"
+          label={t`Username`}
+          isRequired
+        />
         <PageFormTextInput<SubscriptionWizardData>
           name="password"
           label={t`Password`}
@@ -281,7 +272,7 @@ function SubscriptionStep() {
           queryOptions={querySubscriptions}
           queryErrorText={t('Failed to load subscriptions. Check your credentials.')}
           placeholder={t('Select your subscription')}
-          queryLabel={(subscription_id) => subscription_id?.toString()}
+          queryLabel={subscriptionIdQueryLabel}
           isRequired
           isDisabled={
             !username || !password ? t('Enter your credentials to load subscriptions.') : undefined
@@ -301,6 +292,7 @@ function SubscriptionStep() {
         </Content>
         <PageFormTextInput<SubscriptionWizardData>
           name="satellite_username"
+          optionsFieldName="subscriptions_username"
           label={t`Red Hat Satellite username`}
           isRequired
         />
@@ -316,7 +308,7 @@ function SubscriptionStep() {
           queryOptions={querySubscriptions}
           queryErrorText={t('Failed to load subscriptions. Check your credentials.')}
           placeholder={t('Select your subscription')}
-          queryLabel={(subscription_id) => subscription_id?.toString()}
+          queryLabel={subscriptionIdQueryLabel}
           isRequired
           isDisabled={
             !satelliteUsername || !satellitePassword
@@ -366,7 +358,34 @@ function LicenseReviewStep() {
     </Stack>
   );
 }
-function arrayBufferToBase64(buffer: ArrayBuffer) {
+export function subscriptionListToSelectOptions(
+  subscriptions: ILicenseInfo[] | null | undefined,
+  t: (key: string) => string
+) {
+  return (
+    subscriptions?.map((subscription) => {
+      const expires = new Date(subscription.license_date * 1000);
+      return {
+        label: subscription.subscription_name,
+        value: subscription.subscription_id,
+        description: (
+          <Stack>
+            <div>
+              <b>{t('Managed nodes: ')}</b>
+              {subscription.instance_count}
+            </div>
+            <div>
+              <b>{t('Expires: ')}</b>
+              {expires.toLocaleDateString()}
+            </div>
+          </Stack>
+        ),
+      };
+    }) ?? []
+  );
+}
+
+export function arrayBufferToBase64(buffer: ArrayBuffer) {
   let binary = '';
   const bytes = new Uint8Array(buffer);
   const len = bytes.byteLength;
@@ -374,4 +393,21 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
     binary += String.fromCharCode(bytes[i]);
   }
   return window.btoa(binary);
+}
+
+export function readSubscriptionManifestAsBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      if (!(fileReader.result instanceof ArrayBuffer)) {
+        reject(new Error('Subscription manifest could not be read.'));
+        return;
+      }
+      resolve(arrayBufferToBase64(fileReader.result));
+    };
+    fileReader.onerror = () => {
+      reject(fileReader.error ?? new Error('Subscription manifest could not be read.'));
+    };
+    fileReader.readAsArrayBuffer(file);
+  });
 }
