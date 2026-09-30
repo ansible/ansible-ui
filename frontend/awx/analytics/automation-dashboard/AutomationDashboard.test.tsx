@@ -17,6 +17,7 @@ import type {
   IAutomationDashboardView,
   IDashboardDetails,
   IJobTemplate,
+  DashboardChartCardProps,
   DashboardValueCardProps,
 } from './types';
 
@@ -41,7 +42,11 @@ vi.mock('./components', () => ({
       {linkText && <span>{linkText}</span>}
     </div>
   ),
-  DashboardChartCard: ({ title }: { title: string }) => <div>{title}</div>,
+  DashboardChartCard: ({ id, title, width }: DashboardChartCardProps) => (
+    <div data-testid={id} data-width={width}>
+      {title}
+    </div>
+  ),
   DashboardMainTableCard: ({ toolbarFilters }: { toolbarFilters?: IToolbarFilter[] }) => (
     <div
       data-testid="dashboard-main-table-card"
@@ -266,7 +271,7 @@ describe('AutomationDashboard', () => {
   // ─── Grid column layout ────────────────────────────────────────────────────
   // The column count itself is measured by useDashboardGridColumns (covered in its own test)
   // and supplied via PageDashboardContext. Here we only check how AutomationDashboard maps it
-  // to the value-card width.
+  // to the value-card and chart-card widths.
 
   test('should render value cards at md width when the grid is narrow', () => {
     render(testWrapper(8)); // below WIDE_LAYOUT_MIN_COLUMNS (16)
@@ -284,5 +289,19 @@ describe('AutomationDashboard', () => {
     render(testWrapper(40)); // above WIDE_LAYOUT_MAX_COLUMNS (31)
 
     expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
+  });
+
+  test('should render chart cards at md width up to WIDE_LAYOUT_MAX_COLUMNS', () => {
+    render(testWrapper(31));
+
+    expect(screen.getByTestId('host-chart-card')).toHaveAttribute('data-width', 'md');
+    expect(screen.getByTestId('job-chart-card')).toHaveAttribute('data-width', 'md');
+  });
+
+  test('should render chart cards at xl width when the grid is wider than WIDE_LAYOUT_MAX_COLUMNS', () => {
+    render(testWrapper(32));
+
+    expect(screen.getByTestId('host-chart-card')).toHaveAttribute('data-width', 'xl');
+    expect(screen.getByTestId('job-chart-card')).toHaveAttribute('data-width', 'xl');
   });
 });
