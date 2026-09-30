@@ -28,11 +28,17 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
       setToasterAlerts((alerts) => alerts.filter((a) => a !== alert));
     }
 
-    function prepareAlert(alert: AlertProps) {
+    function withoutTimeout(alert: AlertProps) {
       if (!Number.isInteger(alert.timeout)) return alert;
+      const { timeout: _timeout, ...alertWithoutTimeout } = alert;
+      return alertWithoutTimeout;
+    }
 
-      const { timeout, ...alertWithoutTimeout } = alert;
-      setTimeout(() => removeAlert(alertWithoutTimeout), timeout as number);
+    function prepareAlert(alert: AlertProps) {
+      const alertWithoutTimeout = withoutTimeout(alert);
+      if (alertWithoutTimeout === alert) return alert;
+
+      setTimeout(() => removeAlert(alertWithoutTimeout), alert.timeout as number);
       return alertWithoutTimeout;
     }
 
@@ -53,7 +59,7 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
       const preparedAlert = prepareAlert(alert);
       setToasterAlerts((alerts) => {
         const oldAlertIndex = alerts.findIndex(
-          (a) => JSON.stringify(a) === JSON.stringify(oldAlert)
+          (a) => JSON.stringify(a) === JSON.stringify(withoutTimeout(oldAlert))
         );
         if (oldAlertIndex !== -1) {
           const newAlerts = [...alerts];
