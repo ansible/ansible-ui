@@ -260,7 +260,6 @@ describe('queryString', () => {
       const state: IFilterState = {
         name: ['foo'],
       };
-
       expect(filtersToSearchObj([filter], state).toString()).to.equal(
         'or__object1__in=foo&or__object2__in=foo'
       );
