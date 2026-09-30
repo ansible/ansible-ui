@@ -24,7 +24,7 @@ type InventorySourceLike = {
 function hasRequiredJobFields(
   job: { id?: number; status?: string; finished?: string } | undefined
 ): job is { id: number; status: string; finished?: string } {
-  return job?.id != null && typeof job?.status === 'string';
+  return job?.id !== null && job?.id !== undefined && typeof job?.status === 'string';
 }
 
 export function buildInventorySourceStatusCellProps(
