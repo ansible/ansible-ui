@@ -51,9 +51,9 @@ type ReorderItemsProps<T extends object> = {
 
 export function moveReorderItem<T>(
   arr: T[],
-  itemId: string,
+  itemId: string | number,
   toIndex: number,
-  keyFn: (item: T) => string
+  keyFn: (item: T) => string | number
 ): T[] {
   const fromIndex = arr.findIndex((item) => keyFn(item) === itemId);
 
