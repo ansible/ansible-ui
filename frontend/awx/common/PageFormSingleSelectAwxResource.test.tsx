@@ -81,7 +81,12 @@ describe('PageFormSingleSelectAwxResource', () => {
 
   it('should show query error when the list request fails', async () => {
     const user = userEvent.setup();
-    server.use(http.get('/api/v2/inventories/', () => new HttpResponse(null, { status: 403 })));
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/api/v2/inventories/'),
+        () => new HttpResponse(null, { status: 403 })
+      )
+    );
 
     render(
       <TestWrapper>
@@ -97,7 +102,11 @@ describe('PageFormSingleSelectAwxResource', () => {
       </TestWrapper>
     );
 
-    await user.click(screen.getByRole('button', { name: 'Select inventory' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('inventory')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId('inventory'));
 
     await waitFor(() => {
       expect(screen.getByText('Error loading inventories')).toBeInTheDocument();
@@ -107,11 +116,13 @@ describe('PageFormSingleSelectAwxResource', () => {
   it('should show custom empty message when the list returns no results', async () => {
     const user = userEvent.setup();
     server.use(
-      http.get('/api/v2/inventories/', () =>
-        HttpResponse.json({
-          count: 0,
-          results: [],
-        })
+      http.get(
+        ({ request }) => request.url.includes('/api/v2/inventories/'),
+        () =>
+          HttpResponse.json({
+            count: 0,
+            results: [],
+          })
       )
     );
 
@@ -130,10 +141,88 @@ describe('PageFormSingleSelectAwxResource', () => {
       </TestWrapper>
     );
 
-    await user.click(screen.getByRole('button', { name: 'Select inventory' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('inventory')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId('inventory'));
 
     await waitFor(() => {
       expect(screen.getByText('No options currently available.')).toBeInTheDocument();
     });
+  });
+
+  it('should omit browse when enableBrowse is false', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper>
+        <PageFormSingleSelectAwxResource<MockResource>
+          name="inventory"
+          label="Inventory"
+          url="/api/v2/inventories/"
+          tableColumns={[{ header: 'Name', cell: (r) => r.name }]}
+          placeholder="Select inventory"
+          queryPlaceholder="Loading..."
+          queryErrorText="Error loading inventories"
+          enableBrowse={false}
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('inventory')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId('inventory'));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Browse' })).not.toBeInTheDocument();
+    });
+  });
+
+  it('should append array queryParams to list requests', async () => {
+    const user = userEvent.setup();
+    const requestUrls: string[] = [];
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/api/v2/inventories/'),
+        ({ request }) => {
+          requestUrls.push(request.url);
+          return HttpResponse.json({
+            count: 0,
+            results: [],
+          });
+        }
+      )
+    );
+
+    render(
+      <TestWrapper>
+        <PageFormSingleSelectAwxResource<MockResource>
+          name="inventory"
+          label="Inventory"
+          url="/api/v2/inventories/"
+          queryParams={{ organization: ['1', '2'] }}
+          tableColumns={[{ header: 'Name', cell: (r) => r.name }]}
+          placeholder="Select inventory"
+          queryPlaceholder="Loading..."
+          queryErrorText="Error loading inventories"
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('inventory')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId('inventory'));
+
+    await waitFor(() => {
+      expect(requestUrls.length).toBeGreaterThan(0);
+    });
+
+    const params = new URL(requestUrls[0]).searchParams;
+    expect(params.getAll('organization')).toEqual(['1', '2']);
   });
 });

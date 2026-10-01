@@ -185,6 +185,7 @@ describe('ApiTokenForm', () => {
     await waitFor(() => {
       expect(screen.getByText('Create API Token')).toBeInTheDocument();
       expect(screen.getByLabelText('Description')).toBeInTheDocument();
+      expect(screen.getByText('OAuth application')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Write' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Create token' })).toBeInTheDocument();
       expect(screen.getByText('Cancel')).toBeInTheDocument();
@@ -205,6 +206,7 @@ describe('ApiTokenForm', () => {
     await waitFor(() => {
       expect(screen.getByText('Edit Test token description')).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Update token' })).toBeInTheDocument();
+      expect(screen.getByText('OAuth application')).toBeInTheDocument();
     });
   });
 
@@ -470,6 +472,35 @@ describe('ApiTokenForm', () => {
           'You do not have permission to view OAuth applications. Please contact your system administrator if there is an issue with your access.'
         )
       ).toBeInTheDocument();
+    });
+  });
+
+  test('should show OAuth application field when OPTIONS omits application field metadata', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () => {
+        return HttpResponse.json({
+          actions: {
+            POST: {
+              description: {},
+              scope: {},
+            },
+          },
+        });
+      })
+    );
+
+    render(
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/api-tokens/create']}>
+          <Routes>
+            <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('OAuth application')).toBeInTheDocument();
     });
   });
 

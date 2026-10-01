@@ -77,13 +77,34 @@ describe('OAuthApplicationSelect', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Select OAuth application' })).toBeInTheDocument();
+      expect(screen.getByTestId('application')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('button', { name: 'Select OAuth application' }));
+    await user.click(screen.getByTestId('application'));
 
     await waitFor(() => {
       expect(screen.getByText('No options currently available.')).toBeInTheDocument();
+    });
+  });
+
+  test('should hide browse when applications cannot be listed', async () => {
+    const user = userEvent.setup();
+    server.use(http.get(gatewayAPI`/applications/`, () => new HttpResponse(null, { status: 403 })));
+
+    render(
+      <TestWrapper>
+        <OAuthApplicationSelect name="application" />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('application')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId('application'));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Browse' })).not.toBeInTheDocument();
     });
   });
 
@@ -106,10 +127,10 @@ describe('OAuthApplicationSelect', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Select OAuth application' })).toBeInTheDocument();
+      expect(screen.getByTestId('application')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('button', { name: 'Select OAuth application' }));
+    await user.click(screen.getByTestId('application'));
 
     await waitFor(() => {
       expect(screen.getByText('Error loading applications')).toBeInTheDocument();
