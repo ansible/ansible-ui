@@ -1,37 +1,41 @@
+import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { StatusCell } from '@ansible/common-ui/Status';
+import { useDescriptionColumn, useNameColumn } from '@ansible/common-ui/columns';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ITableColumn, usePageNavigate } from '../../../../../framework';
-import { StatusCell } from '../../../../common/Status';
-import { useDescriptionColumn, useNameColumn } from '../../../../common/columns';
-import { useOptions } from '../../../../common/crud/useOptions';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
+import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
 
 export function useInventorySourceColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
 }) {
   const { t } = useTranslation();
+  const getPageUrl = useGetPageUrl();
+
   const { data, error, isLoading } = useOptions<OptionsResponse<ActionsResponse>>(
     awxAPI`/inventory_sources/`
   );
-  const pageNavigate = usePageNavigate();
-  const nameClick = useCallback(
-    (inventorySource: InventorySource) => {
-      return pageNavigate(AwxRoute.InventorySourceDetail, {
+  const sourceChoices: [string, string][] | undefined = data?.actions?.GET?.source?.choices;
+  const nameTo = useCallback(
+    (item: InventorySource) =>
+      getPageUrl(AwxRoute.InventorySourceDetail, {
         params: {
           inventory_type: 'inventory',
-          id: inventorySource.inventory.toString(),
-          source_id: inventorySource.id,
+          id: item.inventory.toString(),
+          source_id: item.id,
         },
-      });
-    },
-    [pageNavigate]
+      }),
+    [getPageUrl]
   );
-  const sourceChoices: [string, string][] | undefined = data?.actions?.GET?.source?.choices;
-  const nameColumn = useNameColumn({ ...options, onClick: nameClick });
+  const nameColumn = useNameColumn({
+    ...options,
+    to: nameTo,
+  });
   const descriptionColumn = useDescriptionColumn();
   const typeColumn = useMemo<ITableColumn<InventorySource>>(
     () => ({
@@ -52,12 +56,27 @@ export function useInventorySourceColumns(options?: {
   );
   const statusColumn = useMemo<ITableColumn<InventorySource>>(
     () => ({
-      header: t('Status'),
+      header: t('Last job status'),
       cell: (inventorySource: InventorySource) => {
-        return <StatusCell status={inventorySource.status} />;
+        const lastJob = inventorySource.summary_fields?.last_job;
+        return (
+          <StatusCell
+            tooltip={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
+            tooltipId={lastJob?.id}
+            status={inventorySource.status}
+            to={
+              lastJob?.id
+                ? getPageUrl(AwxRoute.JobOutput, {
+                    params: { id: lastJob.id, job_type: 'inventory' },
+                  })
+                : undefined
+            }
+            disableLinks={options?.disableLinks}
+          />
+        );
       },
     }),
-    [t]
+    [t, getPageUrl, options?.disableLinks]
   );
   const tableColumns = useMemo<ITableColumn<InventorySource>[]>(
     () => [nameColumn, descriptionColumn, statusColumn, typeColumn],
