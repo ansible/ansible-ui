@@ -25,7 +25,7 @@ export { CARD_WIDTH_COL_SPAN } from './common/leaderboardCardWidths';
 const BOTTOM_CARDS_WIDTH = 'lg';
 
 /**
- * HACK: snap the measured grid width up to the full 24 columns whenever it's already
+ * Workaround: snap the measured grid width up to the full 24 columns whenever it's already
  * reasonably wide (above `NARROW_GRID_MAX_COLUMNS`, below 24). The hardcoded card widths on this
  * page (md×3, lg×2, xxl) are each sized to sum to 24 per row, so this makes them actually fill
  * the row instead of getting clamped at whatever gridColumns measured. Leaderboards-only —
