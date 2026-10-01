@@ -31,7 +31,7 @@ interface DeprecationData {
   affectedJobs: number;
   uniqueIssues: number;
   deprecations: DeprecationStat[];
-  /** true when one or more per-job event fetches failed (data is partial) */
+  /** true when a per-job event fetch failed or hit the page cap (data is partial) */
   hasPartialData: boolean;
 }
 
@@ -64,9 +64,10 @@ const DEPRECATION_MARKER = '[DEPRECATION WARNING]';
 const ANSI_ESCAPE = /\x1b\[[0-9;]*[A-Za-z]/g;
 // eslint-disable-next-line no-control-regex
 const LEADING_ANSI = /^(?:\x1b\[[0-9;]*[A-Za-z])*/;
-// Lines that end a deprecation message (task results, banners, other warnings)
+// Lines that end a deprecation message (task results, banners, other warnings, and the
+// ansible-core 2.19+ "Origin: <file>:<line>" source context, which shares the warning's colour)
 const END_OF_MESSAGE =
-  /^(ok|changed|skipping|fatal|failed|included|TASK \[|PLAY|RUNNING HANDLER|\[WARNING\]|\[ERROR\])/;
+  /^(ok|changed|skipping|fatal|failed|included|TASK \[|PLAY|RUNNING HANDLER|\[WARNING\]|\[ERROR\]|Origin: )/;
 
 /**
  * Pull each "[DEPRECATION WARNING]: ..." message out of a sequence of raw stdout lines.
@@ -120,6 +121,66 @@ interface DeprecationOccurrence {
 const isStreamEvent = (event: JobEvent) =>
   event.event === 'deprecated' || event.event === 'verbose';
 
+/** An empty `deprecated` marker and the stream lines printed after it. */
+interface StreamSegment {
+  marker?: DeprecationOccurrence;
+  lines: (string | null)[];
+}
+
+const isEmptyMarker = (event: JobEvent) => event.event === 'deprecated' && !event.stdout?.trim();
+
+/**
+ * Group the deprecated/verbose stream (sorted by counter) into one segment per empty marker.
+ * `deprecated` events that carry text without the usual prefix (an older event shape) are
+ * returned as occurrences. ansible-core 2.20 also tags its "deprecation warnings can be disabled"
+ * [WARNING] as deprecated; that event is skipped.
+ */
+function splitStream(streamEvents: JobEvent[]) {
+  const segments: StreamSegment[] = [];
+  const bareText: DeprecationOccurrence[] = [];
+  let previousCounter: number | undefined;
+
+  for (const event of streamEvents) {
+    const stdout = event.stdout || '';
+    const isContiguous =
+      event.counter !== undefined &&
+      previousCounter !== undefined &&
+      event.counter === previousCounter + 1;
+    previousCounter = event.counter;
+
+    if (isEmptyMarker(event)) {
+      segments.push({ marker: { text: '', task: event.task || '' }, lines: [] });
+      continue;
+    }
+    if (event.event === 'deprecated' && !stdout.includes(DEPRECATION_MARKER)) {
+      if (!stdout.includes('[WARNING]')) bareText.push({ text: stdout, task: event.task || '' });
+      continue;
+    }
+    if (segments.length === 0) segments.push({ lines: [] });
+    const { lines } = segments[segments.length - 1];
+    if (!isContiguous) lines.push(null);
+    lines.push(...stdout.split(/\r?\n/));
+  }
+  return { segments, bareText };
+}
+
+/**
+ * Drop one text-less marker for each warning printed in a task result, preferring a marker from
+ * the same task, since that marker's text is the task result's warning.
+ */
+function withoutMarkersExplainedBy(
+  markers: DeprecationOccurrence[],
+  taskOccurrences: DeprecationOccurrence[]
+): DeprecationOccurrence[] {
+  const remaining = [...markers];
+  for (const occurrence of taskOccurrences) {
+    if (remaining.length === 0) break;
+    const sameTask = remaining.findIndex((marker) => marker.task === occurrence.task);
+    remaining.splice(Math.max(sameTask, 0), 1);
+  }
+  return remaining;
+}
+
 /**
  * Turn a job's events into one entry per deprecation warning.
  *
@@ -128,57 +189,53 @@ const isStreamEvent = (event: JobEvent) =>
  * stream in counter order (a gap in the counter means another event type sat in between).
  * Task-level deprecations (module.deprecate(), and everything raised during a task on
  * ansible-core 2.19+) are printed inside the task's own result event and are read from there.
- * Empty markers are only counted when no text could be found, so nothing is counted twice.
+ *
+ * Each empty marker owns the stream lines that follow it. A marker whose lines hold no message is
+ * still counted, unless a task result event supplies the text for it, so nothing is counted twice
+ * and nothing is dropped.
  */
 export function getDeprecationOccurrences(events: JobEvent[]): DeprecationOccurrence[] {
   const byId = new Map(events.map((event) => [event.id, event]));
   const sorted = [...byId.values()].sort((a, b) => (a.counter ?? 0) - (b.counter ?? 0));
 
-  const occurrences: DeprecationOccurrence[] = [];
-  const emptyMarkers: DeprecationOccurrence[] = [];
-  const streamLines: (string | null)[] = [];
-  let previousCounter: number | undefined;
+  const taskOccurrences = sorted
+    .filter((event) => !isStreamEvent(event))
+    .flatMap((event) =>
+      extractDeprecationMessages(event.stdout || '').map((text) => ({
+        text,
+        task: event.task || '',
+      }))
+    );
 
-  for (const event of sorted) {
-    const stdout = event.stdout || '';
-    if (!isStreamEvent(event)) {
-      extractDeprecationMessages(stdout).forEach((text) =>
-        occurrences.push({ text, task: event.task || '' })
-      );
-      continue;
-    }
-    if (
-      event.counter === undefined ||
-      previousCounter === undefined ||
-      event.counter !== previousCounter + 1
-    ) {
-      streamLines.push(null);
-    }
-    previousCounter = event.counter;
-
-    if (event.event === 'deprecated' && !stdout.includes(DEPRECATION_MARKER)) {
-      if (!stdout.trim()) {
-        emptyMarkers.push({ text: '', task: event.task || '' });
-      } else if (!stdout.includes('[WARNING]')) {
-        // older event shape: the message text without the usual prefix
-        occurrences.push({ text: stdout, task: event.task || '' });
-      }
-      // ansible-core 2.20 also tags its "deprecation warnings can be disabled" [WARNING] as deprecated
-      continue;
-    }
-    streamLines.push(...stdout.split(/\r?\n/));
+  const { segments, bareText } = splitStream(sorted.filter(isStreamEvent));
+  const streamOccurrences: DeprecationOccurrence[] = [...bareText];
+  const textlessMarkers: DeprecationOccurrence[] = [];
+  for (const { marker, lines } of segments) {
+    const messages = extractDeprecationMessagesFromLines(lines);
+    messages.forEach((text) => streamOccurrences.push({ text, task: '' }));
+    if (marker && messages.length === 0) textlessMarkers.push(marker);
   }
 
-  extractDeprecationMessagesFromLines(streamLines).forEach((text) =>
-    occurrences.push({ text, task: '' })
-  );
-  return occurrences.length > 0 ? occurrences : emptyMarkers;
+  return [
+    ...taskOccurrences,
+    ...streamOccurrences,
+    ...withoutMarkersExplainedBy(textlessMarkers, taskOccurrences),
+  ];
 }
 
 const EVENTS_PAGE_SIZE = 200;
 const MAX_EVENT_PAGES = 5;
 
-async function fetchJobEvents(jobId: number, filters: Record<string, string>): Promise<JobEvent[]> {
+interface JobEventsResult {
+  events: JobEvent[];
+  /** true when the page cap was reached and more events were left unread */
+  truncated: boolean;
+}
+
+async function fetchJobEvents(
+  jobId: number,
+  filters: Record<string, string>
+): Promise<JobEventsResult> {
   const params = new URLSearchParams({
     ...filters,
     order_by: 'counter',
@@ -192,9 +249,9 @@ async function fetchJobEvents(jobId: number, filters: Record<string, string>): P
       `${eventsUrl}?${params.toString()}`
     );
     events.push(...response.results);
-    if (!response.next) break;
+    if (!response.next) return { events, truncated: false };
   }
-  return events;
+  return { events, truncated: true };
 }
 
 /**
@@ -202,14 +259,17 @@ async function fetchJobEvents(jobId: number, filters: Record<string, string>): P
  * AAP rejects filters on `stdout` (403), so text is found with `search` and by reading the
  * deprecated/verbose event stream, which only exists when the job has deprecated markers.
  */
-async function fetchJobDeprecationEvents(jobId: number): Promise<JobEvent[]> {
+async function fetchJobDeprecationEvents(jobId: number): Promise<JobEventsResult> {
   const [markers, searched] = await Promise.all([
     fetchJobEvents(jobId, { event: 'deprecated' }),
     fetchJobEvents(jobId, { search: 'DEPRECATION' }),
   ]);
-  if (markers.length === 0) return searched;
+  if (markers.events.length === 0) return searched;
   const stream = await fetchJobEvents(jobId, { event__in: 'deprecated,verbose' });
-  return [...markers, ...searched, ...stream];
+  return {
+    events: [...markers.events, ...searched.events, ...stream.events],
+    truncated: markers.truncated || searched.truncated || stream.truncated,
+  };
 }
 
 // Helper to get description for deprecation type
@@ -270,9 +330,12 @@ async function fetchDeprecationStats() {
   > = {};
   const affectedJobsSet = new Set<number>();
   let totalWarnings = 0;
+  let truncatedJobs = 0;
 
   const failureCount = await runInBatches(jobs, async (job) => {
-    const occurrences = getDeprecationOccurrences(await fetchJobDeprecationEvents(job.id));
+    const { events, truncated } = await fetchJobDeprecationEvents(job.id);
+    if (truncated) truncatedJobs++;
+    const occurrences = getDeprecationOccurrences(events);
     if (occurrences.length > 0) {
       affectedJobsSet.add(job.id);
       totalWarnings += occurrences.length;
@@ -303,7 +366,7 @@ async function fetchDeprecationStats() {
     }
   });
 
-  return { totalWarnings, affectedJobsSet, deprecationsByType, failureCount };
+  return { totalWarnings, affectedJobsSet, deprecationsByType, failureCount, truncatedJobs };
 }
 
 // Fetch and aggregate deprecation data from the last 50 jobs
@@ -328,7 +391,7 @@ async function fetchDeprecations(): Promise<DeprecationData> {
     affectedJobs: current.affectedJobsSet.size,
     uniqueIssues: deprecations.length,
     deprecations,
-    hasPartialData: current.failureCount > 0,
+    hasPartialData: current.failureCount > 0 || current.truncatedJobs > 0,
   };
 }
 

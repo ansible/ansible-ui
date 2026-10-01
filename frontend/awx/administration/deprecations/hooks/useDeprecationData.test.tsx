@@ -180,6 +180,28 @@ describe('useDeprecationData', () => {
     expect(result.current.data?.totalWarnings).toBe(2);
   });
 
+  it('should set hasPartialData when a job has more events than the page cap', async () => {
+    const pagesByQuery: Record<string, number> = {};
+    server.use(
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({ results: [mockJobsResponse.results[0]], count: 1 })
+      ),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, ({ request }) => {
+        const query = new URL(request.url).searchParams;
+        query.delete('page');
+        const key = query.toString();
+        pagesByQuery[key] = (pagesByQuery[key] ?? 0) + 1;
+        return HttpResponse.json({ ...mockEventsWithItems, next: 'more' });
+      })
+    );
+
+    const { result } = renderHook(() => useDeprecationData());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.data?.hasPartialData).toBe(true);
+    Object.values(pagesByQuery).forEach((pages) => expect(pages).toBe(5));
+  });
+
   it('should surface an error when the initial jobs fetch fails', async () => {
     server.use(http.get(awxAPI`/jobs/`, () => new HttpResponse(null, { status: 500 })));
 
@@ -834,6 +856,7 @@ describe('extractDeprecationMessages', () => {
     expect(messages).toHaveLength(2);
     expect(messages[0]).toContain('Empty conditional expression');
     expect(messages[0]).not.toContain('with_items');
+    expect(messages[0]).not.toContain('Origin:');
     expect(messages[1]).toContain('The `bool` filter coerced');
     expect(messages[1]).not.toContain('with_dict');
   });
@@ -841,6 +864,15 @@ describe('extractDeprecationMessages', () => {
   it('returns nothing for events without a deprecation', () => {
     expect(extractDeprecationMessages('')).toEqual([]);
     expect(extractDeprecationMessages('ok: [localhost]')).toEqual([]);
+  });
+
+  it('does not append the Origin source line to the message', () => {
+    expect(
+      extractDeprecationMessages(
+        `${PURPLE}[DEPRECATION WARNING]: Empty conditional expression was evaluated as True.${RESET}\r\n` +
+          `${PURPLE}Origin: /runner/project/tasks/with_items_include.yml:26:9${RESET}`
+      )
+    ).toEqual(['[DEPRECATION WARNING]: Empty conditional expression was evaluated as True.']);
   });
 });
 
@@ -879,6 +911,35 @@ describe('getDeprecationOccurrences', () => {
     expect(occurrences).toEqual([
       { text: '', task: 'Install with_items' },
       { text: '', task: '' },
+    ]);
+  });
+
+  it('keeps a marker without text alongside markers whose text was found', () => {
+    const occurrences = getDeprecationOccurrences([
+      ...aapEvents,
+      event({ id: 20, counter: 30, event: 'deprecated', task: 'Install with_items' }),
+      event({ id: 21, counter: 31, stdout: '\u001b[0;32mok: [localhost]\u001b[0m' }),
+    ]);
+    expect(occurrences).toHaveLength(3);
+    expect(occurrences[2]).toEqual({ text: '', task: 'Install with_items' });
+  });
+
+  it('does not count a marker twice when its text is in the task result', () => {
+    const occurrences = getDeprecationOccurrences([
+      event({ id: 1, counter: 1, event: 'deprecated', task: 'Check flags' }),
+      event({
+        id: 2,
+        counter: 2,
+        event: 'runner_on_ok',
+        task: 'Check flags',
+        stdout: `${PURPLE}[DEPRECATION WARNING]: The \`bool\` filter coerced 'maybe' to False.${RESET}`,
+      }),
+    ]);
+    expect(occurrences).toEqual([
+      {
+        text: "[DEPRECATION WARNING]: The `bool` filter coerced 'maybe' to False.",
+        task: 'Check flags',
+      },
     ]);
   });
 
