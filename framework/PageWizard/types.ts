@@ -1,12 +1,8 @@
 import { ErrorAdapter } from '../PageForm/typesErrorAdapter';
 import { PageFormOptionsData } from '../PageForm/PageFormOptionsContext';
+import type { WizardSupplementalData } from './wizardSupplementalData';
 
-/** Plain-object data a step validate hook may return to merge into wizard state. */
-export type WizardSupplementalData = Record<string, unknown>;
-
-export function isWizardSupplementalData(value: unknown): value is WizardSupplementalData {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
+export type { WizardSupplementalData } from './wizardSupplementalData';
 
 export interface PageWizardBasicStep {
   id: string;
@@ -16,9 +12,10 @@ export interface PageWizardBasicStep {
   element?: React.ReactNode;
   hidden?: (wizardData: object) => boolean;
   /*
-    Validate is called before proceeding to the next step. If it throws an
-    error, the wizard will stay on the current step and pass the error to
-    the wizard's errorAdapter for handling.
+    Validate runs before proceeding to the next step. Throw to block navigation;
+    the wizard passes the error to errorAdapter. To merge extra wizard state
+    (for example before evaluating hidden steps), return a plain object with
+    only own enumerable fields — not class instances such as Error.
   */
   validate?: (
     formData: object,

@@ -2,9 +2,17 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus } from '../types';
 import { NodeEditWizard } from './NodeEditWizard';
+import * as fetchLaunchConfigLoadResultModule from './fetchLaunchConfigLoadResult';
+import type { LaunchConfigLoadResult } from './launchConfigLoad';
+
+vi.mock('./fetchLaunchConfigLoadResult', () => ({
+  fetchLaunchConfigLoadResult: vi.fn(),
+}));
 
 vi.mock('@patternfly/react-topology', () => ({
   Edge: {},
@@ -74,8 +82,12 @@ const mockGetInitialValues = vi.fn(
     })
 );
 
+const mockWorkflowNodeOptions = { actions: { POST: {} } };
+
+const mockUseOptions = vi.hoisted(() => vi.fn(() => ({ data: mockWorkflowNodeOptions })));
+
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
-  useOptions: () => ({ data: { actions: { POST: {} } } }),
+  useOptions: mockUseOptions,
 }));
 
 const mockAddAlert = vi.fn();
@@ -166,11 +178,28 @@ const mockNode = {
 
 describe('NodeEditWizard', () => {
   beforeEach(() => {
+    mockUseOptions.mockClear();
     mockGetInitialValues.mockClear();
     mockSetLabel.mockClear();
     mockSetData.mockClear();
     mockSetState.mockClear();
     mockAddAlert.mockClear();
+    vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockImplementation(
+      (_nodeType, resourceId) =>
+        Promise.resolve({
+          launch_config: null,
+          resource: {
+            id: resourceId,
+            name: 'Demo Template',
+            description: '',
+            type: 'job_template',
+            project: 1,
+            inventory: 1,
+            ask_inventory_on_launch: false,
+          } as JobTemplate,
+          resourceId,
+        } satisfies LaunchConfigLoadResult)
+    );
   });
 
   it('should render null initially while loading initial values', () => {
@@ -197,6 +226,7 @@ describe('NodeEditWizard', () => {
     );
 
     expect(screen.getByTestId('wizard-title')).toHaveTextContent('Edit step');
+    expect(mockUseOptions).toHaveBeenCalled();
   });
 
   it('should call getInitialValues with the provided node', async () => {
@@ -237,6 +267,25 @@ describe('NodeEditWizard', () => {
 
   it('should show prompts step for job nodes with promptable launch config', async () => {
     const user = userEvent.setup();
+    const launchConfigLoadResult: LaunchConfigLoadResult = {
+      launch_config: {
+        ask_credential_on_launch: true,
+        survey_enabled: false,
+      } as LaunchConfiguration,
+      resource: {
+        id: 1,
+        name: 'Demo Template',
+        description: '',
+        type: 'job_template',
+        project: 1,
+        inventory: 1,
+        ask_inventory_on_launch: false,
+      } as JobTemplate,
+      resourceId: 1,
+    };
+    vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValueOnce(
+      launchConfigLoadResult
+    );
     mockGetInitialValues.mockResolvedValueOnce({
       nodeTypeStep: {
         node_type: RESOURCE_TYPE.job,

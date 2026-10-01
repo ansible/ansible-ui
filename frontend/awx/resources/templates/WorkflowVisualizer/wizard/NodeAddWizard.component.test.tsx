@@ -15,6 +15,11 @@ vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
   },
 }));
 
+vi.mock('./NodeTypeStep', () => ({ NodeTypeStep: () => null }));
+vi.mock('./NodePromptsStep', () => ({ NodePromptsStep: () => null }));
+vi.mock('./NodeReviewStep', () => ({ NodeReviewStep: () => null }));
+vi.mock('../../../../common/SurveyStep', () => ({ SurveyStep: () => null }));
+
 const mockCloseSidebar = vi.fn();
 const mockCreateEdge = vi.fn((source: string, target: string, status: EdgeStatus) => ({
   id: `${source}-${target}`,
@@ -118,6 +123,40 @@ vi.mock('../hooks', () => ({
   useNodeTypeStepDefaults: useNodeTypeStepDefaultsMock,
 }));
 
+const mockWorkflowNodeOptions = { actions: { POST: {} } };
+
+const { pageWizardPropsSpy, MockPageWizard } = vi.hoisted(() => {
+  const pageWizardPropsSpy = vi.fn();
+  function MockPageWizard({
+    onSubmit,
+    title,
+    optionsData,
+  }: {
+    onSubmit: (values: WizardFormValues) => Promise<void>;
+    title: string;
+    optionsData?: unknown;
+  }) {
+    pageWizardPropsSpy({ onSubmit, title, optionsData });
+    return (
+      <div>
+        <div data-testid="wizard-title">{title}</div>
+        <button
+          type="button"
+          data-testid="wizard-submit"
+          onClick={() => handleMockWizardSubmit(onSubmit)}
+        >
+          Finish
+        </button>
+      </div>
+    );
+  }
+  return { pageWizardPropsSpy, MockPageWizard };
+});
+
+vi.mock('@ansible/common-ui/crud/useOptions', () => ({
+  useOptions: () => ({ data: mockWorkflowNodeOptions }),
+}));
+
 const mockBuildEffectivePrompt = vi.fn(
   ({ prompt, launchConfig, resourceOrganization }: BuildEffectivePromptParams) => ({
     effectivePrompt: {
@@ -161,41 +200,32 @@ function handleMockWizardSubmit(onSubmit: (values: WizardFormValues) => Promise<
   void onSubmit(mockFormValues);
 }
 
-function MockPageWizard({
-  onSubmit,
-  title,
-}: {
-  onSubmit: (values: WizardFormValues) => Promise<void>;
-  title: string;
-}) {
-  return (
-    <div>
-      <div data-testid="wizard-title">{title}</div>
-      <button
-        type="button"
-        data-testid="wizard-submit"
-        onClick={() => handleMockWizardSubmit(onSubmit)}
-      >
-        Finish
-      </button>
-    </div>
-  );
-}
-
-vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
-  return {
-    ...actual,
-    PageWizard: MockPageWizard,
-  };
-});
+vi.mock('@ansible/ansible-ui-framework', () => ({
+  PageWizard: MockPageWizard,
+}));
 
 function expectFromModelCalled() {
   expect(mockFromModel).toHaveBeenCalled();
 }
 
+describe('NodeAddWizard', () => {
+  it('should forward workflow node options into PageWizard', () => {
+    pageWizardPropsSpy.mockClear();
+    render(
+      <MemoryRouter>
+        <NodeAddWizard />
+      </MemoryRouter>
+    );
+
+    expect(pageWizardPropsSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ optionsData: mockWorkflowNodeOptions })
+    );
+  });
+});
+
 describe('NodeAddWizard submit', () => {
   beforeEach(() => {
+    pageWizardPropsSpy.mockClear();
     mockCloseSidebar.mockClear();
     mockCreateEdge.mockClear();
     mockFromModel.mockClear();
