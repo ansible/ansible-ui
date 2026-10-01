@@ -2,10 +2,34 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import type { ReactNode } from 'react';
 import { describe, expect, test, vi, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { RevertAllDialog } from './useRevertAllGatewaySettingsModal';
 
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({
+      children,
+      'aria-label': ariaLabel,
+    }: {
+      children: ReactNode;
+      'aria-label'?: string;
+    }) => (
+      <div role="dialog" aria-label={ariaLabel}>
+        {children}
+      </div>
+    ),
+    ModalHeader: ({ title }: { title: string }) => <h1>{title}</h1>,
+    ModalBody: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+    ModalFooter: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  };
+});
+
 const server = setupServer();
+
+const mockAddAlert = vi.fn();
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
@@ -14,8 +38,6 @@ afterAll(() => server.close());
 beforeEach(() => {
   mockAddAlert.mockClear();
 });
-
-const mockAddAlert = vi.fn();
 
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
