@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
   DashboardChartCard,
@@ -22,11 +24,24 @@ export function AutomationDashboard() {
   const getPageUrl = useGetPageUrl();
 
   const view = useAutomationDashboardView({ toolbarFilters });
-  const { details } = view;
+  const { details, templateIdsError, isLoadingTemplateIds } = view;
 
   const noDataString = t('No jobs have been run.');
 
   const renderDashboardContent = (gridColumns: number) => {
+    if (isLoadingTemplateIds) {
+      return <LoadingState />;
+    }
+
+    if (templateIdsError) {
+      return (
+        <EmptyStateError
+          titleProp={t('Unable to load dashboard data')}
+          message={templateIdsError.message}
+        />
+      );
+    }
+
     const isWideLayout =
       WIDE_LAYOUT_MIN_COLUMNS <= gridColumns && gridColumns <= WIDE_LAYOUT_MAX_COLUMNS;
     const valueCardWidth = isWideLayout ? 'xs' : ('md' as const);

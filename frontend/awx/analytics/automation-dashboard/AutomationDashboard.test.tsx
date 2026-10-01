@@ -301,6 +301,30 @@ describe('AutomationDashboard', () => {
 
   // ─── Template IDs loading state ────────────────────────────────────────────
 
+  test('should show loading state when template IDs are still loading', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      isLoadingTemplateIds: true,
+    });
+    render(testWrapper());
+
+    expect(screen.getByTestId('loading-state')).toBeInTheDocument();
+    expect(screen.queryByText('Successful jobs')).not.toBeInTheDocument();
+  });
+
+  test('should show error state when template IDs fail to load', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      templateIdsError: new Error('Failed to fetch templates'),
+    });
+    render(testWrapper());
+
+    expect(screen.getByTestId('empty-state-error')).toBeInTheDocument();
+    expect(screen.getByText('Unable to load dashboard data')).toBeInTheDocument();
+    expect(screen.getByText('Failed to fetch templates')).toBeInTheDocument();
+    expect(screen.queryByText('Successful jobs')).not.toBeInTheDocument();
+  });
+
   test('should show dashboard content when template IDs load successfully', () => {
     render(testWrapper());
 
