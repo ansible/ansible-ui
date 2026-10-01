@@ -100,7 +100,12 @@ describe('useAutomationAnalytics', () => {
     });
     // Dashboard feature enabled by default
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
-      collectionStatus: { enabled: true, next_run: null, initial_collection_status: null },
+      collectionStatus: {
+        enabled: true,
+        last_sync: null,
+        show_dashboard: true,
+        show_leaderboard: true,
+      },
       isLoading: false,
     });
   });
@@ -220,12 +225,87 @@ describe('useAutomationAnalytics', () => {
     });
   });
 
+  // --- canSeeDashboard / canSeeLeaderboard are applied upstream by useAwxNavigation ---
+
+  describe('when useAwxNavigation already removed the Automation Dashboard entry', () => {
+    beforeEach(() => {
+      mockUseAwxNavigation.mockImplementation(() => {
+        const nav = buildMockNav();
+        const analytics = asGroup(nav[0]);
+        analytics.children = analytics.children.filter(
+          (c) => c.id !== AwxRoute.AutomationDashboardMainPage
+        );
+        return nav;
+      });
+    });
+
+    test('should be hidden for a regular user', () => {
+      mockUsePlatformActiveUser.mockReturnValue({
+        activePlatformUser: { is_superuser: false, is_platform_auditor: false },
+      });
+      const { result } = renderHook(() => useAutomationAnalytics());
+      expect(result.current.hidden).toBe(true);
+    });
+
+    test('should stay visible with the remaining pages for a superuser', () => {
+      const { result } = renderHook(() => useAutomationAnalytics());
+      expect(result.current.hidden).toBe(false);
+      expect(asGroup(result.current).children.map((c) => c.id)).toEqual([
+        AwxRoute.SubscriptionUsage,
+        AwxRoute.AutomationCalculator,
+      ]);
+    });
+  });
+
+  // --- collection_status request failed ---
+
+  describe('when the collection status request fails', () => {
+    beforeEach(() => {
+      mockUseAutomationDashboardCollectionStatus.mockReturnValue({
+        collectionStatus: {
+          enabled: null,
+          last_sync: null,
+          show_dashboard: null,
+          show_leaderboard: null,
+        },
+        isLoading: false,
+        canSeeDashboard: false,
+        canSeeLeaderboard: false,
+        error: new Error('Server error'),
+      });
+    });
+
+    test('should keep the automation dashboard route for a superuser', () => {
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children.map((c) => c.id)).toEqual([
+        AwxRoute.AutomationDashboardMainPage,
+        AwxRoute.SubscriptionUsage,
+        AwxRoute.AutomationCalculator,
+      ]);
+    });
+
+    test('should still keep only the automation dashboard for a non-superuser', () => {
+      mockUsePlatformActiveUser.mockReturnValue({
+        activePlatformUser: { is_superuser: false, is_platform_auditor: true },
+      });
+      const { result } = renderHook(() => useAutomationAnalytics());
+      const { children } = asGroup(result.current);
+      expect(children.map((c) => c.id)).toEqual([AwxRoute.AutomationDashboardMainPage]);
+    });
+  });
+
   // --- automationDashboardEnabled = false ---
 
   describe('when automationDashboardEnabled is false', () => {
     beforeEach(() => {
       mockUseAutomationDashboardCollectionStatus.mockReturnValue({
-        collectionStatus: { enabled: false, next_run: null, initial_collection_status: null },
+        collectionStatus: {
+          enabled: false,
+          last_sync: null,
+          show_dashboard: false,
+          show_leaderboard: false,
+        },
         isLoading: false,
       });
     });
@@ -267,7 +347,12 @@ describe('useAutomationAnalytics', () => {
     test('should not remove automation dashboard from children for superuser when dashboard is enabled', () => {
       // Sanity: switching back to enabled keeps the dashboard
       mockUseAutomationDashboardCollectionStatus.mockReturnValue({
-        collectionStatus: { enabled: true, next_run: null, initial_collection_status: null },
+        collectionStatus: {
+          enabled: true,
+          last_sync: null,
+          show_dashboard: true,
+          show_leaderboard: true,
+        },
         isLoading: false,
       });
       const { result } = renderHook(() => useAutomationAnalytics());
@@ -373,7 +458,15 @@ describe('useAutomationAnalytics', () => {
 
   test('should remove automation dashboard when enabled is null', () => {
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
-      collectionStatus: { enabled: null, next_run: null, initial_collection_status: null },
+      collectionStatus: {
+        enabled: null,
+        last_sync: null,
+        show_dashboard: null,
+        show_leaderboard: null,
+      },
+      canSeeDashboard: false,
+      canSeeLeaderboard: false,
+      error: undefined,
       isLoading: false,
     });
     const { result } = renderHook(() => useAutomationAnalytics());

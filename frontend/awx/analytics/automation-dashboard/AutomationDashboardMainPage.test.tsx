@@ -49,6 +49,34 @@ vi.mock('@ansible/common-ui/PageRoutedTabs', () => ({
   },
 }));
 
+vi.mock('./AutomationDashboard', () => ({
+  AutomationDashboard: () => <div data-testid="automation-dashboard">Dashboard content</div>,
+}));
+
+vi.mock('./AutomationLeaderboards', () => ({
+  AutomationLeaderboards: () => (
+    <div data-testid="automation-leaderboards">Leaderboards content</div>
+  ),
+}));
+
+type CollectionStatusResult = ReturnType<typeof useAutomationDashboardCollectionStatus>;
+
+function mockStatus(overrides: Partial<CollectionStatusResult> = {}) {
+  vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValue({
+    collectionStatus: {
+      enabled: true,
+      last_sync: null,
+      show_dashboard: true,
+      show_leaderboard: true,
+    },
+    isLoading: false,
+    canSeeDashboard: true,
+    canSeeLeaderboard: true,
+    error: undefined,
+    isUnavailable: false,
+    ...overrides,
+  });
+}
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('AutomationDashboardMainPage', () => {

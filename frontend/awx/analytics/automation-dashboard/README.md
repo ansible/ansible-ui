@@ -91,7 +91,52 @@ Registered in `useAwxNavigation` under `analytics/automation-dashboard`:
 | `AwxRoute.AutomationDashboard`         | `automation-dashboard/dashboard`    | `AutomationDashboard`         |
 | `AwxRoute.AutomationLeaderboards`      | `automation-dashboard/leaderboards` | `AutomationLeaderboards`      |
 
-The index path redirects to `dashboard`.
+The index path (`AwxRoute.AutomationDashboardRedirect`) redirects to `dashboard`.
+
+These are the routes when the user can see both tabs. When only one is visible the two tab
+sub-routes and the redirect are dropped, so `automation-dashboard` renders that view directly and
+the tab URLs return 404. When neither is visible the entry is removed entirely.
+
+---
+
+## Access and visibility
+
+`useAutomationDashboardCollectionStatus` fetches `/dashboard_reports/collection_status/` and derives:
+
+| Flag                | True when                                                                                                              |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `canSeeDashboard`   | `show_dashboard` is true **and** the user is one of: AWX superuser, AWX system auditor, or platform auditor (AAP only) |
+| `canSeeLeaderboard` | `show_leaderboard` is true (any user)                                                                                  |
+
+It reads the AWX user from `useAwxActiveUser` (both builds) and the Platform user from
+`usePlatformActiveUser` (Platform build only; the context is empty in standalone AWX, so the
+platform-auditor check is simply false there).
+
+While `show_dashboard` is true, `isLoading` also stays true until each mounted `/me/` provider has
+settled. Otherwise, if collection_status answered first, `canSeeDashboard` would briefly be false
+and superusers/auditors would see the leaderboards-only page and nav. A provider that isn't mounted
+(its context is empty) doesn't count as pending, and once either user already grants access the
+hook stops waiting for the other.
+
+Where the flags are applied:
+
+- **Navigation** — `useAwxNavigation` calls `applyAutomationDashboardNavVisibility` (neither
+  visible → remove the entry; one visible → drop the tab sub-routes). It is skipped while loading
+  and on error, so the page can show its own state. An Analytics group left without children is
+  hidden. Platform's `useAutomationAnalytics` inherits this tree and additionally removes the entry
+  when collection is disabled (`enabled` falsy).
+- **Page** — `AutomationDashboardMainPage` picks what to render (see below).
+
+Request behavior:
+
+- Polls every 10 s; the global SWR `dedupingInterval` lets concurrent callers share one request.
+- A failed poll keeps the last good data, so a transient error doesn't unmount the page or change
+  the menu. `error` is only returned when there is no data at all.
+- A **404** means there is no metrics service (e.g. standalone AWX): the feature is treated as
+  unavailable (default status, no `error`) and polling slows to every 5 minutes without error
+  retries, returning to normal as soon as the endpoint answers.
+- A **401** revalidates both the gateway and the AWX `/me/` queries so the app switches to the login
+  screen right away.
 
 ---
 
@@ -225,11 +270,12 @@ The central view hook consumed by the Dashboard tab. Composes the sub-hooks and 
 
 ### `useAutomationLeaderboardsView`
 
-**Single source of data for the Leaderboards tab.** Owns the data contract (types) and, for now, a
-`MOCK_LEADERBOARDS` constant; the hook returns `{ ...mock, isLoading: false, error: undefined }`.
-When the analytics API exposes a leaderboards report, replace the hook body with a `useSWR` /
-`useGet` call (pattern: `useGetReportDetails`) that resolves to `AutomationLeaderboardsData` — the
-components consume only this hook, so nothing else changes. Marked with a `TODO(api)` comment.
+**Single source of data for the Leaderboards tab.** Owns the data contract (types), fetches
+`/dashboard_reports/leaderboard/` with `useSWR` and maps the raw response through the exported
+`mapLeaderboardReport`. `lastSyncedAt` comes from the shared `useAutomationDashboardCollectionStatus`
+(`last_sync`);
+its failure is reported separately as `collectionStatusError`. The components consume only this
+hook.
 
 ### `useFilterSetView`
 
