@@ -26,6 +26,10 @@ import { PlatformPageForm } from '../../common/PlatformPageForm';
 import { OAuthApplicationSelect } from '../oauth-applications/components/OAuthApplicationSelect';
 import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
+interface TokenFieldMeta {
+  read_only?: boolean;
+}
+
 export function ApiTokenForm() {
   const { id: userId, tokenid } = useParams<{ id?: string; tokenid?: string }>();
   const { t } = useTranslation();
@@ -35,6 +39,16 @@ export function ApiTokenForm() {
   const { data: user } = useGet<PlatformUser>(userId ? gatewayAPI`/users/${userId}/` : undefined);
   const { data: token } = useGet<Token>(tokenid ? gatewayAPI`/tokens/${tokenid}/` : undefined);
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/tokens/`);
+  const showApplicationField = useMemo(() => {
+    if (tokenid) {
+      return true;
+    }
+    const applicationField = optionsData?.actions?.POST?.application as TokenFieldMeta | undefined;
+    if (applicationField === undefined) {
+      return true;
+    }
+    return !applicationField.read_only;
+  }, [optionsData, tokenid]);
 
   const title = useMemo(() => {
     if (token) {
@@ -172,7 +186,13 @@ export function ApiTokenForm() {
           isRequired={false}
           autoFocus
         />
-        <OAuthApplicationSelect<Token> name="application" isRequired={false} isDisabled={tokenid} />
+        {showApplicationField ? (
+          <OAuthApplicationSelect<Token>
+            name="application"
+            isRequired={false}
+            isDisabled={tokenid}
+          />
+        ) : null}
         <PageFormSelect<Token>
           name="scope"
           label={t('Scope')}

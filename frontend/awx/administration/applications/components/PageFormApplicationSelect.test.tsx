@@ -5,6 +5,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  resetTestSwrCache,
+  SwrTestWrapper,
+} from '../../../../../framework/test-utils/swrTestWrapper';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { PageFormApplicationSelect } from './PageFormApplicationSelect';
 
@@ -28,14 +32,19 @@ function TestWrapper({ children }: { children: React.ReactNode }) {
   const methods = useForm();
   return (
     <MemoryRouter>
-      <FormProvider {...methods}>{children}</FormProvider>
+      <SwrTestWrapper>
+        <FormProvider {...methods}>{children}</FormProvider>
+      </SwrTestWrapper>
     </MemoryRouter>
   );
 }
 
 describe('PageFormApplicationSelect', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    resetTestSwrCache();
+  });
   afterAll(() => server.close());
 
   beforeEach(() => {
