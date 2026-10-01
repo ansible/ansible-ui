@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GatewaySettingsEdit } from './GatewaySettingsEdit';
@@ -276,6 +277,88 @@ describe('GatewaySettingsEdit Component', () => {
       const submittedData = mockRequestPut.mock.calls[0][1] as Record<string, unknown>;
       expect(submittedData).toHaveProperty('LOGIN_REDIRECT_OVERRIDE');
       expect(submittedData).not.toHaveProperty('CONFIRM_LOGIN_REDIRECT_OVERRIDE');
+    });
+  });
+
+  describe('OPTIONS-driven pattern validation', () => {
+    const patternDescription = 'Letters, numbers, underscores, and hyphens only';
+
+    beforeEach(() => {
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'platform',
+          title: 'Platform gateway settings',
+          description: 'Edit platform gateway settings',
+          sections: [
+            {
+              title: 'Platform gateway',
+              options: {
+                platform_analytics_state: {
+                  type: 'string',
+                  label: 'Platform analytics state',
+                  help_text: 'Analytics state identifier.',
+                  default: 'enabled',
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should show validation message on blur and block submit for invalid input', async () => {
+      const user = userEvent.setup();
+      const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
+      mockRequestPut.mockResolvedValue({});
+
+      const contextWithPattern = {
+        ...adminContext,
+        options: {
+          GET: {
+            platform_analytics_state: {
+              type: 'string',
+              label: 'Platform analytics state',
+              help_text: 'Analytics state identifier.',
+              default: 'enabled',
+            },
+          },
+          PUT: {
+            platform_analytics_state: {
+              type: 'string',
+              label: 'Platform analytics state',
+              help_text: 'Analytics state identifier.',
+              default: 'enabled',
+              required: false,
+              read_only: false,
+              pattern: '^[a-zA-Z0-9_-]+$',
+              pattern_description: patternDescription,
+            },
+          },
+        },
+        settings: {
+          platform_analytics_state: 'enabled',
+        },
+        refresh: vi.fn(),
+      };
+
+      renderWithContext(contextWithPattern);
+
+      const input = screen.getByLabelText('Platform analytics state');
+      await user.clear(input);
+      await user.type(input, 'invalid@name');
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.getByText(patternDescription)).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Save platform gateway settings' }));
+
+      await waitFor(() => {
+        expect(mockRequestPut).not.toHaveBeenCalled();
+      });
     });
   });
 
