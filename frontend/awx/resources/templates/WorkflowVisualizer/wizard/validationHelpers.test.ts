@@ -1,12 +1,16 @@
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { RESOURCE_TYPE } from '../constants';
 import { WizardFormValues } from '../types';
-import { type LaunchConfigLoadResult } from './launchConfigLoad';
 import * as fetchLaunchConfigLoadResultModule from './fetchLaunchConfigLoadResult';
+import { getResourceURL } from './helpers';
+import { type LaunchConfigLoadResult } from './launchConfigLoad';
 import {
   awaitNodeLaunchConfigForWizard,
   validateJobTemplateRequirements,
@@ -15,9 +19,7 @@ import {
   validateRequiredCredentialTypes,
 } from './validationHelpers';
 
-vi.mock('./fetchLaunchConfigLoadResult', () => ({
-  fetchLaunchConfigLoadResult: vi.fn(),
-}));
+vi.spyOn(fetchLaunchConfigLoadResultModule, 'fetchLaunchConfigLoadResult');
 
 type WizardData = Partial<WizardFormValues>;
 
@@ -456,6 +458,105 @@ describe('validationHelpers', () => {
           } as unknown as WizardFormValues['resource'],
         })
       ).toThrow(RequestError);
+    });
+  });
+});
+
+const mswJobTemplateResource = {
+  id: 20,
+  name: 'Deploy',
+  type: 'job_template',
+  project: 1,
+  inventory: 1,
+  ask_inventory_on_launch: false,
+} as JobTemplate;
+
+const mswWorkflowJobTemplateResource = {
+  id: 21,
+  name: 'Nested WF',
+  type: 'workflow_job_template',
+};
+
+const launchConfigMswServer = setupServer(
+  http.get(`${getResourceURL(RESOURCE_TYPE.job)}/${20}`, () =>
+    HttpResponse.json(mswJobTemplateResource)
+  ),
+  http.get(awxAPI`/job_templates/20/launch/`, () =>
+    HttpResponse.json({
+      ask_inventory_on_launch: true,
+      survey_enabled: false,
+      defaults: {},
+    })
+  ),
+  http.get(`${getResourceURL(RESOURCE_TYPE.workflow_job)}/${21}`, () =>
+    HttpResponse.json(mswWorkflowJobTemplateResource)
+  ),
+  http.get(awxAPI`/workflow_job_templates/21/launch/`, () =>
+    HttpResponse.json({
+      survey_enabled: true,
+      defaults: {},
+    })
+  )
+);
+
+describe('validationHelpers launch config (MSW)', () => {
+  const mockT = (key: string) => key;
+
+  beforeAll(() => launchConfigMswServer.listen({ onUnhandledRequest: 'error' }));
+  afterEach(() => {
+    launchConfigMswServer.resetHandlers();
+    vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockReset();
+  });
+  afterAll(() => launchConfigMswServer.close());
+
+  it('should load job template launch config through ensureLaunchConfigLoad', async () => {
+    await expect(
+      awaitNodeLaunchConfigForWizard({
+        node_type: RESOURCE_TYPE.job,
+        resourceId: 20,
+      })
+    ).resolves.toEqual({
+      launch_config: {
+        ask_inventory_on_launch: true,
+        survey_enabled: false,
+        defaults: {},
+      },
+      resource: mswJobTemplateResource,
+      resourceId: 20,
+    });
+  });
+
+  it('should load workflow job template launch config through ensureLaunchConfigLoad', async () => {
+    await expect(
+      awaitNodeLaunchConfigForWizard({
+        node_type: RESOURCE_TYPE.workflow_job,
+        resourceId: 21,
+      })
+    ).resolves.toEqual({
+      launch_config: {
+        survey_enabled: true,
+        defaults: {},
+      },
+      resource: mswWorkflowJobTemplateResource,
+      resourceId: 21,
+    });
+  });
+
+  it('should return supplemental wizard data from validateNodeTypeStep when the load completes', async () => {
+    await expect(
+      validateNodeTypeStep(
+        mockT,
+        { node_type: RESOURCE_TYPE.job, resourceId: 20 },
+        { launch_config: null, resourceId: 1 }
+      )
+    ).resolves.toEqual({
+      launch_config: {
+        ask_inventory_on_launch: true,
+        survey_enabled: false,
+        defaults: {},
+      },
+      resource: mswJobTemplateResource,
+      resourceId: 20,
     });
   });
 });
