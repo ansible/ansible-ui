@@ -38,7 +38,8 @@ test.afterEach(setupAfter);
 
 test('should keep the last job activity chart day inside the plot area', async ({ page }) => {
   if (!(await page.locator('#platform-awx').isVisible())) {
-    test.skip(true, 'AWX overview is not available in this deployment');
+    await expect(page.locator('#job-activity')).not.toBeVisible();
+    return;
   }
 
   const jobActivityChart = page.locator('#job-activity .page-chart');
