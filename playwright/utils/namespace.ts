@@ -1,10 +1,11 @@
+import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
 import { Page, expect } from '@playwright/test';
 import { hubAPI } from '../commands/apiClient';
-import { createE2EName } from '../commands/createE2EName';
-import { navigateTo } from '../commands/navigateTo';
 import { clickTableRow } from '../commands/clickTableRow';
+import { createE2EName } from '../commands/createE2EName';
 import { deleteResourceFromDetailsPage } from '../commands/deleteResourceFromDetailsPage';
-import { HubNamespace } from '@ansible/hub-ui/namespaces/HubNamespace';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
+import { navigateTo } from '../commands/navigateTo';
 
 export interface CreateNamespaceOptions {
   name?: string;
@@ -76,8 +77,7 @@ export const Namespace = {
       }
 
       if (options.resources) {
-        await page.locator('.view-lines').click();
-        await page.keyboard.type(options.resources);
+        await fillMonacoEditor(page, options.resources);
       }
 
       if (options.linkText && options.linkUrl) {

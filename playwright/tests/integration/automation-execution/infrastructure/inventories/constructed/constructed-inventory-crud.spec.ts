@@ -1,12 +1,22 @@
 import { InstanceGroup, Inventory, InventoryHost, Organization } from '@ansible/playwright/utils';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { clickPageAction } from '../../../../../../commands/clickPageAction';
 import { confirmAndAssertDeletion } from '../../../../../../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../../../../../../commands/createE2EName';
-import { fillMonacoEditor } from '../../../../../../commands/fillMonacoEditor';
 import { filterTableByText } from '../../../../../../commands/filterTableByText';
 import { navigateTo } from '../../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../../commands/setup';
+import { syncConstructedInventoryAndWait } from '../../../../../../commands/syncConstructedInventoryAndWait';
+
+/** Upload source variables directly; Monaco select-all/type can concatenate YAML in live Chromium. */
+async function setSourceVarsYaml(page: Page, yaml: string) {
+  await page.locator('#code-editor-dropzone-input').setInputFiles({
+    name: 'source_vars.yml',
+    mimeType: 'text/yaml',
+    buffer: Buffer.from(yaml),
+  });
+  await expect(page.getByText('File uploaded')).toBeVisible();
+}
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
@@ -113,7 +123,7 @@ test.describe('Constructed Inventory', () => {
         // Edit description and source vars
         await page.getByPlaceholder('Enter description').clear();
         await page.getByPlaceholder('Enter description').fill(description);
-        await fillMonacoEditor(page, 'plugin: constructed');
+        await setSourceVarsYaml(page, 'plugin: constructed');
         await page.getByRole('button', { name: 'Save inventory' }).click();
 
         // Verify changes were saved
@@ -122,19 +132,11 @@ test.describe('Constructed Inventory', () => {
         ).toBeVisible();
         await expect(page.getByTestId('description')).toHaveText(description);
 
-        // Sync inventory
-        const syncResponsePromise = page.waitForResponse(
-          (response) =>
-            response.url().includes('/inventory_sources/') &&
-            response.url().includes('/update/') &&
-            response.request().method() === 'POST'
-        );
-        await page.getByRole('button', { name: 'Sync inventory' }).click();
-        await syncResponsePromise;
-
-        // Wait for sync to complete and verify success status
-        await expect(page.getByTestId('last-job-status')).toContainText('Success', {
-          timeout: 60000,
+        await syncConstructedInventoryAndWait(page, 'successful');
+        // Reload so Inventory sources with active failures reflects the finished update.
+        await page.reload();
+        await expect(page.getByTestId('inventory-sources-with-active-failures')).toHaveText('0', {
+          timeout: 15000,
         });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories
@@ -176,25 +178,17 @@ test.describe('Constructed Inventory', () => {
         await clickPageAction('Edit inventory', page);
         await expect(page.getByRole('heading', { name: 'Edit' })).toBeVisible();
 
-        // Update source vars to add strict mode and bad variables
-        await page.locator('.view-line').click();
-        await page.keyboard.press('Control+a');
+        await setSourceVarsYaml(
+          page,
+          [
+            'plugin: constructed',
+            'strict: true',
+            'groups:',
+            '  is_shutdown: not_a_valid_jinja',
+          ].join('\n')
+        );
 
-        // Type YAML line by line with actual Enter key presses
-        const yamlLines = [
-          `plugin: constructed`,
-          `strict: true`,
-          `groups:`,
-          `  is_shutdown: "state | default('running') == 'shutdown'"`,
-          `  product_dev: "account_alias == 'product_dev'"`,
-        ];
-
-        for (let i = 0; i < yamlLines.length; i++) {
-          await page.keyboard.type(yamlLines[i]);
-          if (i < yamlLines.length - 1) {
-            await page.keyboard.press('Enter');
-          }
-        }
+        await expect(page.getByText('The plugin parameter is required.')).toBeHidden();
 
         // Save and wait for navigation
         await page.getByRole('button', { name: 'Save inventory' }).click();
@@ -204,19 +198,11 @@ test.describe('Constructed Inventory', () => {
           page.getByRole('heading', { name: constructedInventoryName, exact: true })
         ).toBeVisible({ timeout: 10000 });
 
-        // Trigger sync
-        const syncResponsePromise = page.waitForResponse(
-          (response) =>
-            response.url().includes('/inventory_sources/') &&
-            response.url().includes('/update/') &&
-            response.request().method() === 'POST'
-        );
-        await page.getByRole('button', { name: 'Sync inventory' }).click();
-        await syncResponsePromise;
-
-        // Wait for sync to complete and verify failed status
-        await expect(page.getByTestId('last-job-status')).toContainText('Failed', {
-          timeout: 30000,
+        await syncConstructedInventoryAndWait(page, 'failed');
+        // Reload so Inventory sources with active failures reflects the finished update.
+        await page.reload();
+        await expect(page.getByTestId('inventory-sources-with-active-failures')).toHaveText('1', {
+          timeout: 15000,
         });
       } finally {
         // Cleanup - Organization.api.deleteByName handles dependent inventories

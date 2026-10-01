@@ -172,6 +172,35 @@ describe('useExportCsv', () => {
     expect(url).toContain('end_date=2024-01-31');
   });
 
+  // --- System job exclusion params ---
+
+  test('should include extraSearchParams in the export URL', async () => {
+    const extra: [string, string][] = [
+      ['template', '10'],
+      ['template', '20'],
+    ];
+    const { result } = renderHook(() => useExportCsv([], {}, {}, extra));
+
+    await act(async () => {
+      await result.current('summary');
+    });
+
+    const [url] = fetchSpy.mock.calls[0] as [string];
+    expect(url).toContain('template=10');
+    expect(url).toContain('template=20');
+  });
+
+  test('should not include template params when extraSearchParams is undefined', async () => {
+    const { result } = renderHook(() => useExportCsv([], {}, {}));
+
+    await act(async () => {
+      await result.current('summary');
+    });
+
+    const [url] = fetchSpy.mock.calls[0] as [string];
+    expect(url).not.toContain('template=');
+  });
+
   // --- Filename derivation ---
 
   test('should use fallback filename with reportType and date when no Content-Disposition header', async () => {

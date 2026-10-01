@@ -1,3 +1,4 @@
+import { Credential as CredentialType } from '@ansible/awx-ui/interfaces/Credential';
 import { Page, expect } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
 import { clickTableRow } from '../commands/clickTableRow';
@@ -23,8 +24,51 @@ export interface CreateCredentialOptions {
   promptOnLaunchSshKeyUnlock?: boolean;
 }
 
+export interface CreateCredentialAPIOptions {
+  name?: string;
+  credentialType: number;
+  organization?: number;
+  description?: string;
+  inputs?: Record<string, string>;
+}
+
+async function lookupCredentialTypeId(page: Page, name: string): Promise<number> {
+  const result = await awxAPI.get<{ results: { id: number; name: string }[] }>(
+    page,
+    'credential_types/',
+    { params: { name } }
+  );
+  const match = result?.results?.find((item) => item.name === name);
+  if (!match) {
+    throw new Error(`Credential type '${name}' not found`);
+  }
+  return match.id;
+}
+
+export { lookupCredentialTypeId };
+
 export const Credential = {
   api: {
+    create: async (page: Page, options: CreateCredentialAPIOptions): Promise<CredentialType> => {
+      const credential = await awxAPI.post<CredentialType>(page, 'credentials/', {
+        name: options.name ?? createE2EName('credential'),
+        description: options.description,
+        credential_type: options.credentialType,
+        organization: options.organization ?? 1,
+        inputs: options.inputs ?? {},
+      });
+
+      if (!credential) {
+        throw new Error('Failed to create credential: API returned null');
+      }
+
+      return credential;
+    },
+
+    delete: async (page: Page, credentialId: number): Promise<void> => {
+      await awxAPI.delete(page, `/credentials/${credentialId}/`);
+    },
+
     deleteByName: async (page: Page, credentialName: string): Promise<void> => {
       const url = `/credentials/?name=${encodeURIComponent(credentialName)}`;
       const list = await awxAPI
@@ -37,10 +81,35 @@ export const Credential = {
   },
 
   ui: {
+    /**
+     * Open a credential details page by id without going through the list.
+     * Uses client-side routing so the SPA is not fully reloaded (page.goto is
+     * too slow on the Vite dev build and the unfiltered list can 500 in CI).
+     */
+    open: async (page: Page, credential: { id: number; name: string }): Promise<void> => {
+      const path = `/execution/infrastructure/credentials/${credential.id}/details`;
+      await page.evaluate((nextPath) => {
+        window.history.pushState({}, '', nextPath);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }, path);
+      await expect(page).toHaveURL(new RegExp(`/credentials/${credential.id}/details`));
+      await expect(page.getByRole('heading', { name: credential.name, exact: true })).toBeVisible({
+        timeout: 15000,
+      });
+    },
+
     create: async (page: Page, options: CreateCredentialOptions = {}): Promise<string> => {
       const testToken = createE2EName('test-token');
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await page.getByText('Create credential', { exact: true }).click();
+      const createCredential = page.getByText('Create credential', { exact: true });
+      const listError = page.getByRole('heading', { name: 'Error loading credentials' });
+      await expect(createCredential.or(listError)).toBeVisible({ timeout: 30000 });
+      if (await listError.isVisible()) {
+        throw new Error(
+          'Credentials list failed to load (Error loading credentials). Create credential is unavailable because GET /api/controller/v2/credentials/ returned an error.'
+        );
+      }
+      await createCredential.click();
       const credentialName = options.credentialName ?? createE2EName('credential');
       await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
       await page.getByPlaceholder('Enter credential name').fill(credentialName);

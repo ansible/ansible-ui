@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const ChatbotTitle = lazy(() => import('./ChatbotSideBarHeader'));

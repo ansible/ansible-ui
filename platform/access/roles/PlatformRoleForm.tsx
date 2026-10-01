@@ -1,5 +1,4 @@
 import {
-  PageForm,
   PageFormSubmitHandler,
   PageFormTextInput,
   PageHeader,
@@ -21,6 +20,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PageFormHidden } from '../../../framework/PageForm/Utils/PageFormHidden';
 import { PlatformRole } from '../../interfaces/PlatformRole';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
+import { PlatformPageForm } from '../../common/PlatformPageForm';
 import { PageFormRolePermissionsSelect } from './components/PageFormPermissionsSelect';
 import { PageFormRoleTypeSelect } from './components/PageFormRoleTypeSelect';
 import { ContentTypeEnum } from '@ansible/hub-ui/interfaces/expanded/ContentType';
@@ -57,14 +57,14 @@ export function CreatePlatformRole(props: Readonly<{ breadcrumbLabelForPreviousP
           { label: t('Create role') },
         ]}
       />
-      <PageForm<PlatformRole>
+      <PlatformPageForm<PlatformRole>
         submitText={t('Create role')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
       >
         <PlatformRoleInputs isEditMode={false} />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }
@@ -118,7 +118,7 @@ export function EditPlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPag
               { label: role?.name ? t('Edit {{roleName}}', { roleName: role?.name }) : t('Roles') },
             ]}
           />
-          <PageForm<PlatformRole>
+          <PlatformPageForm<PlatformRole>
             submitText={t('Save role')}
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
@@ -130,7 +130,7 @@ export function EditPlatformRole(props: Readonly<{ breadcrumbLabelForPreviousPag
             onCancel={onCancel}
           >
             <PlatformRoleInputs isEditMode={true} />
-          </PageForm>
+          </PlatformPageForm>
         </PageLayout>
       );
     }

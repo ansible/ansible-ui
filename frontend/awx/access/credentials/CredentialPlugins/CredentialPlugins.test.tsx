@@ -3,17 +3,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialPlugins, CredentialPluginsForm } from './CredentialPlugins';
 
 function TestWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </SWRConfig>
-  );
+  return <MemoryRouter>{children}</MemoryRouter>;
 }
 
 const mockCredentialOptions = {
@@ -54,7 +49,16 @@ const mockOidcCredentialType = {
   namespace: 'hashivault-kv-oidc',
   inputs: {
     fields: [],
-    metadata: [{ id: 'account-name', type: 'string', label: 'Account Name', secret: false }],
+    metadata: [
+      {
+        id: 'account-name',
+        type: 'string',
+        label: 'Account Name',
+        secret: false,
+        pattern: '^[a-zA-Z0-9_-]+$',
+        pattern_description: 'Only alphanumeric, dashes, and underscores',
+      },
+    ],
     required: ['account-name'],
   },
 };

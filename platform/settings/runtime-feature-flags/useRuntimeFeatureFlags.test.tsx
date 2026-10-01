@@ -2,7 +2,6 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { SWRConfig } from 'swr';
 import { useRuntimeFeatureFlags } from './useRuntimeFeatureFlags';
 import { IFeatureFlag } from './IFeatureFlag';
 
@@ -11,12 +10,6 @@ const server = setupServer();
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-
-function wrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>{children}</SWRConfig>
-  );
-}
 
 function createFlag(overrides: Partial<IFeatureFlag> = {}): IFeatureFlag {
   return {
@@ -73,7 +66,7 @@ describe('useRuntimeFeatureFlags', () => {
     ];
     mockFeatureFlagsAPI(flags);
 
-    const { result } = renderHook(() => useRuntimeFeatureFlags(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlags());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -89,7 +82,7 @@ describe('useRuntimeFeatureFlags', () => {
     ];
     mockFeatureFlagsAPI(flags);
 
-    const { result } = renderHook(() => useRuntimeFeatureFlags(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlags());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -104,7 +97,7 @@ describe('useRuntimeFeatureFlags', () => {
     ];
     mockFeatureFlagsAPI(flags);
 
-    const { result } = renderHook(() => useRuntimeFeatureFlags(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlags());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -119,7 +112,7 @@ describe('useRuntimeFeatureFlags', () => {
     ];
     mockFeatureFlagsAPI(flags);
 
-    const { result } = renderHook(() => useRuntimeFeatureFlags(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlags());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -131,7 +124,7 @@ describe('useRuntimeFeatureFlags', () => {
   it('should return error on API failure', async () => {
     server.use(http.get('/api/gateway/v1/feature_flags/', () => HttpResponse.error()));
 
-    const { result } = renderHook(() => useRuntimeFeatureFlags(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlags());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -150,7 +143,7 @@ describe('useRuntimeFeatureFlags', () => {
       )
     );
 
-    const { result } = renderHook(() => useRuntimeFeatureFlags(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlags());
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.flags).toEqual([]);

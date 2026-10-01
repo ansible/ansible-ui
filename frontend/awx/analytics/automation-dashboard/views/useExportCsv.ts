@@ -23,7 +23,8 @@ import { filtersToSearchObj } from '../utils/queryString';
 export function useExportCsv(
   toolbarFilters: IToolbarFilter[],
   filterState: IFilterState,
-  queryParams: QueryParams
+  queryParams: QueryParams,
+  extraSearchParams?: [string, string][]
 ): (reportType: ReportType) => Promise<void> {
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
@@ -78,12 +79,13 @@ export function useExportCsv(
       const params = new URLSearchParams([
         ...paramsToSearchObj(queryParams),
         ...filtersToSearchObj(toolbarFilters, filterState),
+        ...(extraSearchParams ?? []),
         ['report_type', reportType],
         ['export_format', 'csv'],
       ]);
       const url = metricsAPI`/dashboard_reports/report/export/?${params.toString()}`;
       await downloadCsv(url, reportType);
     },
-    [toolbarFilters, filterState, queryParams, downloadCsv]
+    [toolbarFilters, filterState, queryParams, extraSearchParams, downloadCsv]
   );
 }

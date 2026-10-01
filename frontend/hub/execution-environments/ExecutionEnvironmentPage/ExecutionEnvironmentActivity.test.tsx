@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { ExecutionEnvironmentActivity } from './ExecutionEnvironmentActivity';
 
 const mockEmptyActivityResponse = {
@@ -40,16 +39,14 @@ describe('ExecutionEnvironmentActivity', () => {
 
   test('should display empty state when no activities exist', async () => {
     render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={['/execution-environments/test-ee/activity']}>
-          <Routes>
-            <Route
-              path="/execution-environments/:id/activity"
-              element={<ExecutionEnvironmentActivity />}
-            />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
+      <MemoryRouter initialEntries={['/execution-environments/test-ee/activity']}>
+        <Routes>
+          <Route
+            path="/execution-environments/:id/activity"
+            element={<ExecutionEnvironmentActivity />}
+          />
+        </Routes>
+      </MemoryRouter>
     );
 
     await waitFor(() => {

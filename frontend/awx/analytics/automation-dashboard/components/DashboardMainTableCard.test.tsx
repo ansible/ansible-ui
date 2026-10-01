@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { ReactNode } from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
@@ -123,6 +122,8 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     details: mockDetails,
     detailsError: undefined,
     detailsLoading: false,
+    templateIdsError: undefined,
+    isLoadingTemplateIds: false,
     costState: {
       id: 1,
       monthly_subscription_cost: 100,
@@ -142,11 +143,7 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
 function Wrapper({ children }: { children: ReactNode }) {
   return (
     <MemoryRouter>
-      <SWRConfig
-        value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}
-      >
-        <PageAlertToasterProvider>{children}</PageAlertToasterProvider>
-      </SWRConfig>
+      <PageAlertToasterProvider>{children}</PageAlertToasterProvider>
     </MemoryRouter>
   );
 }

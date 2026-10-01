@@ -54,7 +54,13 @@ export { EdaOrganization } from './edaOrganization';
 export { EdaProject } from './edaProject';
 export { EdaRulebook } from './edaRulebook';
 export { EventStream } from './eventStream';
-export { RulebookActivation } from './rulebookActivation';
+export {
+  RulebookActivation,
+  dismissOpenSelectMenus,
+  fillRulebookActivationCreateForm,
+  setRulebookActivationEnabledSwitch,
+  submitRulebookActivationForm,
+} from './rulebookActivation';
 
 // Resource modules - Automation Content (Hub)
 export { Namespace } from './namespace';

@@ -18,19 +18,25 @@ import {
 } from '@ansible/playwright/utils';
 
 test.describe('Inventory Host - Regular Inventory Tests', () => {
+  test.describe.configure({ timeout: 5 * 60 * 1000 });
+
   let organizationName: string;
   let inventoryName: string;
 
-  test.beforeEach(async ({ page }) => {
-    await setupBefore({ path: '/execution/infrastructure/inventories' })({ page });
+  test.beforeEach(async ({ page }, testInfo) => {
+    await setupBefore({ path: '/execution/infrastructure/inventories' })({ page }, testInfo);
 
-    // Create shared resources on first test (resource optimization)
+    // Create shared resources on first test (resource optimization). API create
+    // keeps isolated Currents retries inside the hook budget; UI create of org +
+    // inventory plus login does not fit the default 60s beforeEach timeout.
     if (!organizationName) {
-      organizationName = await Organization.ui.create(page);
-      inventoryName = await Inventory.ui.create(page, {
-        inventoryName: createE2EName('inventory'),
-        organizationName,
+      const organization = await Organization.api.create(page);
+      organizationName = organization.name;
+      const inventory = await Inventory.api.create(page, {
+        name: createE2EName('inventory'),
+        organization: organization.id,
       });
+      inventoryName = inventory.name;
     }
   });
 

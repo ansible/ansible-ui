@@ -78,6 +78,7 @@ export function CreateProject() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={defaultValues as Project}
+        optionsUrl={awxAPI`/projects/`}
       >
         <ProjectInputs />
       </AwxPageForm>
@@ -146,6 +147,7 @@ export function EditProject() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={project}
+        optionsUrl={awxAPI`/projects/`}
       >
         <ProjectInputs project={project} />
       </AwxPageForm>

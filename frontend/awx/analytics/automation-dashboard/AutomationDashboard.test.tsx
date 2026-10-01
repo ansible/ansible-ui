@@ -72,6 +72,19 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   };
 });
 
+vi.mock('@ansible/ansible-ui-framework/components/LoadingState', () => ({
+  LoadingState: () => <div data-testid="loading-state">Loading...</div>,
+}));
+
+vi.mock('@ansible/ansible-ui-framework/components/EmptyStateError', () => ({
+  EmptyStateError: ({ titleProp, message }: { titleProp?: string; message?: string }) => (
+    <div data-testid="empty-state-error">
+      {titleProp && <span>{titleProp}</span>}
+      {message && <span>{message}</span>}
+    </div>
+  ),
+}));
+
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
 const mockJobTemplate: IJobTemplate = {
@@ -143,6 +156,8 @@ const mockView: IAutomationDashboardView = {
   details: mockDetails,
   detailsError: undefined,
   detailsLoading: false,
+  templateIdsError: undefined,
+  isLoadingTemplateIds: false,
   costState: {
     id: 1,
     monthly_subscription_cost: 100,
@@ -282,5 +297,14 @@ describe('AutomationDashboard', () => {
     render(testWrapper(40)); // above WIDE_LAYOUT_MAX_COLUMNS (31)
 
     expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
+  });
+
+  // ─── Template IDs loading state ────────────────────────────────────────────
+
+  test('should show dashboard content when template IDs load successfully', () => {
+    render(testWrapper());
+
+    expect(screen.queryByTestId('empty-state-error')).not.toBeInTheDocument();
+    expect(screen.getByText('Successful jobs')).toBeInTheDocument();
   });
 });

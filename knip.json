@@ -1,0 +1,74 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "treatConfigHintsAsErrors": false,
+  "vite": false,
+  "vitest": false,
+  "ignore": [
+    "**/vite.config.ts",
+    "vitest.config.ts",
+    "**/vitest.setup.ts",
+    "framework/vitest.i18n.ts",
+    "framework/vitest.monaco.ts",
+    "framework/vitest.preview.ts",
+    "**/playwright.config.ts",
+    "i18next-parser.config.cjs",
+    "currents.config.ts",
+    "framework/vitest.shared.ts",
+    "framework/test-utils/testing-library.tsx",
+    "framework/test-utils/wrapWithSwrTestWrapper.tsx",
+    "frontend/hub/insights/**",
+    "frontend/hub/insights-tests/eslint.config.mjs",
+    "frontend/hub/interfaces/generated/**",
+    "frontend/hub/interfaces/expanded/**",
+    "frontend/hub/interfaces/transform.cjs"
+  ],
+  "ignoreBinaries": ["podman"],
+  "exclude": [
+    "unlisted",
+    "types",
+    "exports",
+    "nsExports",
+    "enumMembers",
+    "namespaceMembers",
+    "duplicates"
+  ],
+  "ignoreDependencies": [
+    "@types/glob",
+    "@types/json-schema",
+    "@types/styled-components",
+    "@vitejs/plugin-react",
+    "selfsigned",
+    "typescript-plugin-styled-components",
+    "v8-to-istanbul",
+    "vite-plugin-compression",
+    "vite-plugin-monaco-editor",
+    "vite-plugin-static-copy",
+    "vite-plugin-svgr"
+  ],
+  "workspaces": {
+    "framework": {
+      "entry": ["**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/common": {
+      "entry": ["**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/awx": {
+      "entry": ["main/Awx.tsx", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/eda": {
+      "entry": ["main/Eda.tsx", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "frontend/hub": {
+      "entry": ["main/Hub.tsx", "**/*.{test,spec}.{ts,tsx}", "__mocks__/**/*.ts"]
+    },
+    "frontend/chatbot": {
+      "entry": ["ChatbotPortal.tsx", "index.ts", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "platform": {
+      "entry": ["main/Platform.tsx", "**/*.{test,spec}.{ts,tsx}"]
+    },
+    "playwright": {
+      "entry": ["tests/**/*.{ts,tsx}", "commands/**/*.{ts,tsx}", "scripts/**/*.ts"]
+    }
+  }
+}

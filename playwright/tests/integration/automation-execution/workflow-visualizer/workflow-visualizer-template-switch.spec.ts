@@ -48,10 +48,38 @@ async function getNodeCredentials(page: import('@playwright/test').Page, nodeId:
 
 async function saveAndDismissToast(page: import('@playwright/test').Page) {
   await page.getByRole('button', { name: 'Fit to Screen' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-  const toast = page.getByText('Successfully saved workflow visualizer');
-  await expect(toast).toBeVisible({ timeout: 30000 });
-  const closeBtn = page.getByRole('button', { name: /Close.*alert/ });
+
+  // The toolbar Save is disabled until the visualizer registers the pending
+  // edit, so wait for it to become enabled instead of clicking a dead button.
+  const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
+  await expect(saveButton).toBeEnabled({ timeout: 30000 });
+  await saveButton.click();
+
+  // Saving issues a sequence of node and credential requests, so on a live
+  // backend the outcome regularly takes longer than the old 30s budget. Assert
+  // on the success toast or the failure alert, whichever lands first: waiting
+  // only on the toast reports a failed save as an opaque "element(s) not
+  // found" and hides the server error that explains it. Keep the budget under
+  // the per-test timeout: this helper runs several times per test, so a larger
+  // value would just trade the reported error for a generic test timeout.
+  const toaster = page.getByTestId('alert-toaster');
+  const toast = toaster.getByText('Successfully saved workflow visualizer');
+  const errorAlert = toaster.getByText('Failed to save workflow job template');
+  await expect(toast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
+
+  if (
+    await errorAlert
+      .first()
+      .isVisible()
+      .catch(() => false)
+  ) {
+    const alertText = await toaster.innerText();
+    throw new Error(`Workflow visualizer save failed: ${alertText.trim()}`);
+  }
+
+  // The success toast self-dismisses after 5s, so closing it is best effort —
+  // requiring the close button would just move the race rather than remove it.
+  const closeBtn = toaster.getByRole('button', { name: /Close.*alert/ });
   if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await closeBtn.click();
   }

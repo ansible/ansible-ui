@@ -1,5 +1,8 @@
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { RESOURCE_TYPE } from '../constants';
 import { WizardFormValues } from '../types';
+import { fetchLaunchConfigLoadResult } from './fetchLaunchConfigLoadResult';
+import { ensureLaunchConfigLoad } from './launchConfigLoad';
 
 interface CredentialType {
   id: number;
@@ -50,6 +53,63 @@ export function validateRequiredCredentialTypes(
     };
     throw new RequestError('', '', 400, '', errors);
   }
+}
+
+export async function awaitNodeLaunchConfigForWizard(
+  wizardData: Partial<WizardFormValues>,
+  previousWizardData: Partial<WizardFormValues> = {}
+): Promise<Partial<WizardFormValues> | undefined> {
+  const { node_type, resourceId } = wizardData;
+  if (
+    !resourceId ||
+    (node_type !== RESOURCE_TYPE.job && node_type !== RESOURCE_TYPE.workflow_job)
+  ) {
+    return undefined;
+  }
+
+  const loadResult = await ensureLaunchConfigLoad(node_type, resourceId, () =>
+    fetchLaunchConfigLoadResult(node_type, resourceId)
+  );
+  if (loadResult) {
+    return {
+      launch_config: loadResult.launch_config,
+      resource: loadResult.resource,
+      resourceId: loadResult.resourceId,
+    };
+  }
+
+  // Drop stale prompt flags from a previously selected template when the new
+  // template's launch config is not available yet.
+  if (previousWizardData.launch_config && previousWizardData.resourceId !== resourceId) {
+    return { launch_config: null, resourceId, resource: undefined };
+  }
+
+  return undefined;
+}
+
+export function validateNodePromptsStep(
+  t: (key: string, params?: Record<string, unknown>) => string,
+  formData: Partial<WizardFormValues>,
+  wizardData: Partial<WizardFormValues>,
+  fallbackRequiredCredentialTypes: CredentialType[] = []
+) {
+  const merged = { ...wizardData, ...formData };
+  const requiredCredentialTypes =
+    merged.prompt?.requiredCredentialTypes ||
+    wizardData.prompt?.requiredCredentialTypes ||
+    fallbackRequiredCredentialTypes;
+  validateRequiredCredentialTypes(t, merged, requiredCredentialTypes);
+}
+
+export async function validateNodeTypeStep(
+  t: (key: string) => string,
+  formData: Partial<WizardFormValues>,
+  wizardData: Partial<WizardFormValues> = {}
+): Promise<Partial<WizardFormValues> | undefined> {
+  const merged = { ...wizardData, ...formData };
+  const supplemental = await awaitNodeLaunchConfigForWizard(merged, wizardData);
+  validateJobTemplateRequirements(t, { ...merged, ...supplemental });
+  return supplemental;
 }
 
 export function validateJobTemplateRequirements(

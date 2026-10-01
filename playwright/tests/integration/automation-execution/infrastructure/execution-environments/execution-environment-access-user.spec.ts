@@ -2,6 +2,7 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import { ExecutionEnvironment, Organization, User } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
@@ -55,8 +56,11 @@ test.describe('Execution Environment User Access', () => {
       // Review and finish
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
+      await waitForBulkActionDialog(page);
+      await expect(
+        page.getByRole('heading', { name: organizationName, exact: true })
+      ).toBeVisible();
 
-      // Navigate to execution environment and assign user with role
       await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Execution Environments');
       await clickTableRow({ filterLabel: 'Name', text: executionEnvName }, page);
 
@@ -99,6 +103,7 @@ test.describe('Execution Environment User Access', () => {
       );
 
       await page.getByRole('button', { name: 'Finish' }).click();
+      await waitForBulkActionDialog(page);
 
       // Verify we're back on the execution environment page
       await expect(page.getByRole('heading', { name: executionEnvName })).toBeVisible();

@@ -1,8 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { ReactNode } from 'react';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useAwxView } from '../../../common/useAwxView';
@@ -11,12 +9,6 @@ import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 vi.mock('../../../common/useAwxConfig', () => ({
   useAwxConfigState: vi.fn(() => ({ serviceDown: false, serviceDownStatusCode: undefined })),
 }));
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}>
-    {children}
-  </SWRConfig>
-);
 
 const server = setupServer();
 
@@ -40,16 +32,14 @@ describe('GroupSelectDialog view URL construction (#3252)', () => {
       })
     );
 
-    const { result } = renderHook(
-      () =>
-        useAwxView<InventoryGroup>({
-          url: awxAPI`/groups/${groupId}/potential_children/`,
-          queryParams: {
-            not__id: groupId,
-            not__parents: groupId,
-          },
-        }),
-      { wrapper }
+    const { result } = renderHook(() =>
+      useAwxView<InventoryGroup>({
+        url: awxAPI`/groups/${groupId}/potential_children/`,
+        queryParams: {
+          not__id: groupId,
+          not__parents: groupId,
+        },
+      })
     );
 
     await waitFor(() => {
@@ -75,16 +65,14 @@ describe('GroupSelectDialog view URL construction (#3252)', () => {
       })
     );
 
-    const { result } = renderHook(
-      () =>
-        useAwxView<InventoryGroup>({
-          url: awxAPI`/groups/${groupId}/potential_children/`,
-          queryParams: {
-            not__id: groupId,
-            not__parents: groupId,
-          },
-        }),
-      { wrapper }
+    const { result } = renderHook(() =>
+      useAwxView<InventoryGroup>({
+        url: awxAPI`/groups/${groupId}/potential_children/`,
+        queryParams: {
+          not__id: groupId,
+          not__parents: groupId,
+        },
+      })
     );
 
     await waitFor(() => {

@@ -5,18 +5,13 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { CredentialTestResponse } from '../../../../interfaces/CredentialTestResponse';
 import { CredentialPluginsModal, CredentialPluginsModalProps } from './useCredentialPluginsDialog';
 
 function TestWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </SWRConfig>
-  );
+  return <MemoryRouter>{children}</MemoryRouter>;
 }
 
 const mockCredential = {

@@ -50,6 +50,7 @@ export function CreateCredentialType() {
         onSubmit={handleSubmit}
         onCancel={() => pageNavigate(AwxRoute.CredentialTypes)}
         defaultValue={getInitialFormValues()}
+        optionsUrl={awxAPI`/credential_types/`}
       >
         <CredentialTypeInputs />
       </AwxPageForm>
@@ -100,6 +101,7 @@ export function EditCredentialType() {
           onSubmit={handleSubmit}
           onCancel={() => pageNavigate(AwxRoute.CredentialTypeDetails, { params: { id } })}
           defaultValue={getInitialFormValues(credentialType)}
+          optionsUrl={awxAPI`/credential_types/`}
         >
           <CredentialTypeInputs />
         </AwxPageForm>

@@ -1,9 +1,8 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
-import { SWRConfig } from 'swr';
 import { ReactNode } from 'react';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { awxAPI } from './api/awx-utils';
 import { AwxConfigProviderInternal, useAwxConfigState } from './useAwxConfig';
 
@@ -16,15 +15,7 @@ const mockConfig = {
 };
 
 const wrapper = ({ children }: { children: ReactNode }) => (
-  <SWRConfig
-    value={{
-      dedupingInterval: 0,
-      provider: () => new Map(),
-      shouldRetryOnError: false,
-    }}
-  >
-    <AwxConfigProviderInternal>{children}</AwxConfigProviderInternal>
-  </SWRConfig>
+  <AwxConfigProviderInternal>{children}</AwxConfigProviderInternal>
 );
 
 const server = setupServer();
@@ -184,5 +175,36 @@ describe('useAwxConfig', () => {
       expect(result.current.serviceDown).toBe(true);
       expect(result.current.serviceDownStatusCode).toBe(504);
     });
+  });
+
+  test('refreshAwxConfig resolves after loading the latest config', async () => {
+    let requestCount = 0;
+    const refreshedConfig = {
+      ...mockConfig,
+      license_info: {
+        ...mockConfig.license_info,
+        time_remaining: 2000000,
+      },
+    };
+
+    server.use(
+      http.get(awxAPI`/config/`, () => {
+        requestCount += 1;
+        return HttpResponse.json(requestCount === 1 ? mockConfig : refreshedConfig);
+      })
+    );
+
+    const { result } = renderHook(() => useAwxConfigState(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.awxConfig?.license_info.time_remaining).toBe(1000000);
+    });
+
+    await result.current.refreshAwxConfig?.();
+
+    await waitFor(() => {
+      expect(result.current.awxConfig?.license_info.time_remaining).toBe(2000000);
+    });
+    expect(requestCount).toBe(2);
   });
 });

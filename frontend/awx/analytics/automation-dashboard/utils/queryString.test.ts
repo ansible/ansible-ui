@@ -11,6 +11,7 @@ import {
 import {
   filtersToSearchObj,
   getQueryString,
+  getSystemJobExclusionParams,
   hasValidRequiredFilters,
   isRequiredFilterValid,
 } from './queryString';
@@ -199,6 +200,56 @@ describe('queryString', () => {
       expect(result).toContain('page=1');
       expect(result).toContain('page_size=10');
       expect(result).not.toContain('order_by');
+    });
+
+    test('should include extraSearchParams in query string', () => {
+      const extraSearchParams: [string, string][] = [
+        ['template', '1'],
+        ['template', '2'],
+        ['template', '3'],
+      ];
+
+      const result = getQueryString(mockView, [], {}, extraSearchParams);
+
+      expect(result).toContain('template=1');
+      expect(result).toContain('template=2');
+      expect(result).toContain('template=3');
+    });
+
+    test('should not include extraSearchParams when undefined', () => {
+      const result = getQueryString(mockView, [], {});
+
+      expect(result).toContain('page=1');
+      expect(result).toContain('page_size=10');
+      expect(result).not.toContain('template');
+    });
+
+    test('should combine extraSearchParams with other parameters', () => {
+      const view: IView = {
+        ...mockView,
+        filterState: { name: ['test'] },
+      };
+      const filters: IToolbarFilter[] = [
+        {
+          type: ToolbarFilterType.SingleText,
+          key: 'name',
+          label: 'Name',
+          query: 'name__icontains',
+          placeholder: 'Filter by name',
+          comparison: 'contains',
+        },
+      ];
+      const extraSearchParams: [string, string][] = [
+        ['template', '1'],
+        ['template', '2'],
+      ];
+
+      const result = getQueryString(view, filters, { tz: 'UTC' }, extraSearchParams);
+
+      expect(result).toContain('name__icontains=test');
+      expect(result).toContain('tz=UTC');
+      expect(result).toContain('template=1');
+      expect(result).toContain('template=2');
     });
   });
 
@@ -514,6 +565,42 @@ describe('queryString', () => {
       expect(params.get('period')).toBeNull();
       expect(params.get('start_date')).toBeNull();
       expect(params.get('end_date')).toBeNull();
+    });
+  });
+
+  describe('getSystemJobExclusionParams', () => {
+    const templateIds: [string, string][] = [
+      ['template', '1'],
+      ['template', '2'],
+      ['template', '3'],
+    ];
+
+    test('should return template IDs when no user template filter is active', () => {
+      expect(getSystemJobExclusionParams({}, templateIds)).toEqual(templateIds);
+    });
+
+    test('should return template IDs when filterState is undefined', () => {
+      expect(getSystemJobExclusionParams(undefined, templateIds)).toEqual(templateIds);
+    });
+
+    test('should return undefined when user has an active template filter', () => {
+      expect(getSystemJobExclusionParams({ template: ['5'] }, templateIds)).toBeUndefined();
+    });
+
+    test('should return undefined when templateIds is undefined (still loading)', () => {
+      expect(getSystemJobExclusionParams({}, undefined)).toBeUndefined();
+    });
+
+    test('should return empty array when templateIds is empty (no templates on instance)', () => {
+      expect(getSystemJobExclusionParams({}, [])).toEqual([]);
+    });
+
+    test('should return undefined when user has template filter and templateIds is empty', () => {
+      expect(getSystemJobExclusionParams({ template: ['5'] }, [])).toBeUndefined();
+    });
+
+    test('should ignore non-template filters', () => {
+      expect(getSystemJobExclusionParams({ name: ['test'] }, templateIds)).toEqual(templateIds);
     });
   });
 

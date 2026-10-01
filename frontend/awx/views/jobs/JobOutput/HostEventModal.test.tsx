@@ -46,6 +46,21 @@ describe('HostEventModal', () => {
     expect(screen.getByText('command')).toBeInTheDocument();
   });
 
+  it('should render the host name as a link to the host details when a host id is present', () => {
+    const hostEvent = makeHostEvent({ host: 42 });
+    renderModal({ isOpen: true, hostEvent, onClose: vi.fn() });
+
+    expect(screen.getByRole('link', { name: 'host1.example.com' })).toBeInTheDocument();
+  });
+
+  it('should render the host name as plain text when no host id is present', () => {
+    const hostEvent = makeHostEvent();
+    renderModal({ isOpen: true, hostEvent, onClose: vi.fn() });
+
+    expect(screen.getByText('host1.example.com')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'host1.example.com' })).not.toBeInTheDocument();
+  });
+
   it('should hide empty detail fields via isEmpty', () => {
     const hostEvent = makeHostEvent({
       play: '',

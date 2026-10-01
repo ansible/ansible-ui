@@ -2,6 +2,7 @@ import { isSaaS } from '@ansible/playwright/commands/getTopologyType';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
 import { EdaCredential, EdaCredentialType } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
@@ -38,8 +39,10 @@ test.describe('EDA Credentials', () => {
       await page.getByRole('textbox', { name: 'Type to filter' }).click();
       await page.getByRole('textbox', { name: 'Type to filter' }).fill('Basic Analytics');
       await page.getByRole('button', { name: 'apply filter' }).click();
-      await page.waitForTimeout(2000);
-      if (await page.getByRole('heading', { name: 'No results found' }).isVisible()) {
+      const noResults = page.getByRole('heading', { name: 'No results found' });
+      const basicAnalyticsLink = page.getByRole('link', { name: 'Basic Analytics' });
+      await expect(noResults.or(basicAnalyticsLink)).toBeVisible();
+      if (await noResults.isVisible()) {
         await page.getByRole('button', { name: 'Clear all filters' }).nth(1).click();
         await EdaCredentialType.ui.create(page, {
           credentialTypeName: 'Basic Analytics',
@@ -93,10 +96,12 @@ test.describe('EDA Credentials', () => {
       await page.getByRole('button', { name: 'apply filter' }).click();
       await page.getByRole('link', { name: 'Basic Analytics' }).click();
       await page.getByRole('tab', { name: 'Credentials' }).click();
-      await page.waitForTimeout(2000);
-      if (
-        await page.getByRole('heading', { name: 'There are currently no credentials' }).isVisible()
-      ) {
+      const emptyCredentials = page.getByRole('heading', {
+        name: 'There are currently no credentials',
+      });
+      const selectAll = page.getByRole('checkbox', { name: 'Select all' });
+      await expect(emptyCredentials.or(selectAll)).toBeVisible();
+      if (await emptyCredentials.isVisible()) {
         await page.getByRole('link', { name: 'Create credential' }).click();
       } else {
         await page.getByRole('checkbox', { name: 'Select all' }).check();
@@ -110,11 +115,8 @@ test.describe('EDA Credentials', () => {
       }
       await page.getByRole('textbox', { name: 'Name' }).click();
       await page.getByRole('textbox', { name: 'Name' }).fill(credentialName);
-      await page.getByRole('button', { name: 'Organization' }).click();
-      await page.getByRole('option', { name: 'Default The default' }).click();
-      await page.getByRole('button', { name: 'Credential type' }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill('Basic Analytics');
-      await page.getByRole('option', { name: 'Basic Analytics' }).click();
+      await singleSelectByLabel('Organization', 'Default', page);
+      await singleSelectByLabel('Credential type', 'Basic Analytics', page);
       await page.getByRole('textbox', { name: 'Username' }).click();
       await page.getByRole('textbox', { name: 'Username' }).fill('test');
       await page.getByRole('textbox', { name: 'Password' }).click();

@@ -4,7 +4,7 @@ import { stringIsUUID } from '../../../../common/util/strings';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { Survey } from '../../../../interfaces/Survey';
 import { RESOURCE_TYPE } from '../constants';
-import type { AllResources, UnifiedJobType } from '../types';
+import { EdgeStatus, type AllResources, type UnifiedJobType } from '../types';
 
 export function replaceIdentifier(identifier: string, alias: string): string {
   if (stringIsUUID(identifier) && typeof alias === 'string' && alias !== '') {
@@ -51,6 +51,17 @@ export function getValueBasedOnJobType(
   workflowValue: string
 ): string {
   return nodeType === RESOURCE_TYPE.workflow_approval ? workflowValue : defaultValue;
+}
+
+export function getLinkEdgeStatus(nodeStatusType: EdgeStatus | undefined): EdgeStatus {
+  const linkStatus = nodeStatusType ?? EdgeStatus.info;
+  if (linkStatus === EdgeStatus.info) {
+    return EdgeStatus.info;
+  }
+  if (linkStatus === EdgeStatus.success) {
+    return EdgeStatus.success;
+  }
+  return EdgeStatus.danger;
 }
 
 export function getConvergenceType(convergence: boolean | null | undefined): 'any' | 'all' {

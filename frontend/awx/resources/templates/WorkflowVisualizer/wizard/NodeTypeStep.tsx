@@ -1,9 +1,14 @@
 import { PageFormSelect, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import {
+  PageFormFieldMetadataProvider,
+  usePageFormOptionsFields,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
 import {
@@ -14,7 +19,7 @@ import {
   InputGroupText,
   TextInput,
 } from '@patternfly/react-core';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Controller, FieldPath, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormManagementJobsSelect } from '../../../../administration/management-jobs/components/PageFormManagementJobsSelect';
@@ -23,6 +28,7 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import type { Credential } from '../../../../interfaces/Credential';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
 import { PageFormInventorySourceSelect } from '../../../inventories/components/PageFormInventorySourceSelect';
 import { PageFormProjectSelect } from '../../../projects/components/PageFormProjectSelect';
@@ -30,8 +36,13 @@ import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { PageFormJobTemplateSelect } from '../../components/PageFormJobTemplateSelect';
 import { RESOURCE_TYPE } from '../constants';
 import { AllResources, type PromptFormValues, type WizardFormValues } from '../types';
+import {
+  approvalOptionsToPageFormData,
+  useApprovalOptionsEndpoint,
+} from '../hooks/useApprovalOptionsEndpoint';
 import { getAggregateCredentials } from './getAggregateCredentials';
 import { getResourceURL, shouldHideOtherStep } from './helpers';
+import { LaunchConfigLoadResult, registerLaunchConfigLoad } from './launchConfigLoad';
 
 export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
@@ -45,6 +56,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
   // "initial load of the existing node's template" (no change needed) from
   // "user switched to a different template" (credentials must be reset).
   const prevResourceIdRef = useRef<WizardFormValues['resourceId']>(undefined);
+  const latestResourceIdRef = useRef<WizardFormValues['resourceId']>(undefined);
 
   // Register form fields
   register('node_type');
@@ -92,9 +104,9 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       return requestGet<AllResources>(`${nodeResourceUrl}/${resourceId?.toString() ?? ''}`);
     };
 
-    const setLaunchToWizardData = async () => {
+    const setLaunchToWizardData = async (): Promise<LaunchConfigLoadResult | undefined> => {
       let launchConfigValue = {} as PromptFormValues;
-      if (!resourceId || !nodeType) return;
+      if (!resourceId || !nodeType) return undefined;
       setValue('resourceId', resourceId);
       let launchConfigResults = {} as LaunchConfiguration;
 
@@ -156,12 +168,22 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
 
       const shouldShowPromptStep = !shouldHideOtherStep(launchConfigResults);
       const shouldShowSurveyStep = launchConfigResults.survey_enabled;
+      const launchConfig =
+        shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null;
+
+      if (latestResourceIdRef.current !== resourceId) {
+        return {
+          launch_config: launchConfig,
+          resource: nodeResource,
+          resourceId,
+        };
+      }
 
       // Always update wizard-level data so launch_config reflects the currently selected template.
       // This prevents stale prompt flags from a previously selected template being used on save.
       setWizardData((prev) => ({
         ...prev,
-        launch_config: shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null,
+        launch_config: launchConfig,
         resourceId,
         resource: nodeResource,
       }));
@@ -199,6 +221,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                 diff_mode: prompts?.diff_mode ?? launchConfigValue?.diff_mode,
                 forks: prompts?.forks ?? launchConfigValue?.forks,
                 limit: prompts?.limit ?? launchConfigValue?.limit,
+                scm_branch: prompts?.scm_branch ?? launchConfigValue?.scm_branch,
                 verbosity: prompts?.verbosity ?? launchConfigValue?.verbosity,
                 job_slice_count: prompts?.job_slice_count ?? launchConfigValue?.job_slice_count,
                 timeout: prompts?.timeout ?? launchConfigValue?.timeout,
@@ -232,8 +255,6 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       } else if (isTemplateChange) {
         // The user switched to a template that has no promptable fields. Clear the entire
         // previous prompt step state so stale values from the old template are not submitted.
-        // processCredentials, processLabels, and processInstanceGroups all check for non-empty
-        // arrays independently of ask_*_on_launch flags, so any leftover values would be sent.
         // On initial load (isTemplateChange=false) there is nothing stale to clear.
         setStepData((prev) => {
           if (!prev?.nodePromptsStep) return prev;
@@ -253,10 +274,20 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
           };
         });
       }
+
+      return {
+        launch_config: launchConfig,
+        resource: nodeResource,
+        resourceId,
+      };
     };
 
+    latestResourceIdRef.current = resourceId;
+
     if (nodeType === RESOURCE_TYPE.job || nodeType === RESOURCE_TYPE.workflow_job) {
-      void setLaunchToWizardData();
+      if (resourceId) {
+        registerLaunchConfigLoad(nodeType, resourceId, setLaunchToWizardData());
+      }
     }
   }, [resourceId, nodeType, setWizardData, setValue, setStepData]);
 
@@ -322,7 +353,6 @@ function NodeTypeInput() {
 }
 
 function NodeResourceInput() {
-  const { t } = useTranslation();
   return (
     <PageFormWatch watch="node_type">
       {(nodeType) => {
@@ -344,22 +374,7 @@ function NodeResourceInput() {
               />
             );
           case RESOURCE_TYPE.workflow_approval:
-            return (
-              <>
-                <PageFormTextInput<WizardFormValues>
-                  label={t('Name')}
-                  name="approval_name"
-                  id="approval_name"
-                  isRequired
-                />
-                <PageFormTextInput<WizardFormValues>
-                  label={t('Description')}
-                  name="approval_description"
-                  id="approval_description"
-                />
-                <TimeoutInputs />
-              </>
-            );
+            return <ApprovalNodeFields />;
           case RESOURCE_TYPE.project_update:
             return <PageFormProjectSelect<WizardFormValues> name="resourceId" isRequired />;
           case RESOURCE_TYPE.inventory_update:
@@ -376,6 +391,50 @@ function NodeResourceInput() {
         }
       }}
     </PageFormWatch>
+  );
+}
+
+function ApprovalNodeFields() {
+  const { t } = useTranslation();
+  const approvalOptionsEndpoint = useApprovalOptionsEndpoint();
+  const { data: approvalTemplateOptions } =
+    useOptions<OptionsResponse<ActionsResponse>>(approvalOptionsEndpoint);
+  // When no workflow node exists yet to probe create_approval_template, fall back to
+  // job_templates patterns (same Tier 1/Tier 2 CleanText rules for name/description).
+  const { data: jobTemplateOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    approvalOptionsEndpoint ? undefined : awxAPI`/job_templates/`
+  );
+  const approvalFields = usePageFormOptionsFields(
+    approvalOptionsToPageFormData(approvalOptionsEndpoint, approvalTemplateOptions)
+  );
+  const fallbackFields = usePageFormOptionsFields(jobTemplateOptions);
+  const fields = useMemo(() => {
+    if (Object.keys(approvalFields).length > 0) {
+      return approvalFields;
+    }
+    return {
+      ...(fallbackFields.name ? { name: fallbackFields.name } : {}),
+      ...(fallbackFields.description ? { description: fallbackFields.description } : {}),
+    };
+  }, [approvalFields, fallbackFields]);
+
+  return (
+    <PageFormFieldMetadataProvider fields={fields}>
+      <PageFormTextInput<WizardFormValues>
+        label={t('Name')}
+        name="approval_name"
+        optionsFieldName="name"
+        id="approval_name"
+        isRequired
+      />
+      <PageFormTextInput<WizardFormValues>
+        label={t('Description')}
+        name="approval_description"
+        optionsFieldName="description"
+        id="approval_description"
+      />
+      <TimeoutInputs />
+    </PageFormFieldMetadataProvider>
   );
 }
 
@@ -526,18 +585,25 @@ function AliasInput() {
     formState: { defaultValues },
   } = useFormContext<WizardFormValues>();
   const isAliasRequired = defaultValues?.node_alias !== '';
+  const { data: workflowNodeOptions } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_template_nodes/`
+  );
+  const workflowNodeFields = usePageFormOptionsFields(workflowNodeOptions);
 
   return (
-    <PageFormTextInput<WizardFormValues>
-      label={t('Node alias')}
-      name="node_alias"
-      data-cy="node-alias"
-      data-testid="node-alias"
-      labelHelpTitle={t('Node alias')}
-      labelHelp={t(
-        'If specified, this field will be shown on the node instead of the resource name when viewing the workflow'
-      )}
-      isRequired={isAliasRequired}
-    />
+    <PageFormFieldMetadataProvider fields={workflowNodeFields}>
+      <PageFormTextInput<WizardFormValues>
+        label={t('Node alias')}
+        name="node_alias"
+        optionsFieldName="identifier"
+        data-cy="node-alias"
+        data-testid="node-alias"
+        labelHelpTitle={t('Node alias')}
+        labelHelp={t(
+          'If specified, this field will be shown on the node instead of the resource name when viewing the workflow'
+        )}
+        isRequired={isAliasRequired}
+      />
+    </PageFormFieldMetadataProvider>
   );
 }

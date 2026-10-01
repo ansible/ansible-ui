@@ -57,10 +57,11 @@ test.describe('EDA Credential Types - CRUD Operations', () => {
       });
 
       await test.step('Generate extra vars and verify injectors', async () => {
+        await expect(page.getByRole('button', { name: 'Generate extra vars' })).toBeVisible({
+          timeout: 15000,
+        });
         await page.getByRole('button', { name: 'Generate extra vars' }).click();
-        await expect(
-          page.locator('#injectors').getByRole('textbox', { name: 'Editor content' })
-        ).not.toBeEmpty();
+        await expect(page.locator('#injectors .view-lines')).toContainText('extra_vars:');
       });
 
       await test.step('Submit and verify details page', async () => {

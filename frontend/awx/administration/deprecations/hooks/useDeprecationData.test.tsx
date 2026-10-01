@@ -1,16 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { ReactNode } from 'react';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useDeprecationData } from './useDeprecationData';
-
-/** Wrap each hook render in a fresh SWR cache to prevent cross-test cache sharing. */
-function swrWrapper({ children }: { children: ReactNode }) {
-  return <SWRConfig value={{ provider: () => new Map() }}>{children}</SWRConfig>;
-}
 
 const mockJobsResponse = {
   results: [
@@ -104,7 +97,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => new Promise(() => {}))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
@@ -120,7 +113,7 @@ describe('useDeprecationData', () => {
       })
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -148,7 +141,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(emptyEventsResponse))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -171,7 +164,7 @@ describe('useDeprecationData', () => {
       })
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -184,7 +177,7 @@ describe('useDeprecationData', () => {
   it('should surface an error when the initial jobs fetch fails', async () => {
     server.use(http.get(awxAPI`/jobs/`, () => new HttpResponse(null, { status: 500 })));
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -222,7 +215,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockWithDictEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -260,7 +253,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockBareVarEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -297,7 +290,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockIncludeEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -334,7 +327,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockSquashEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -371,7 +364,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockHashEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -408,7 +401,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockUnknownEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -445,7 +438,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockTaskNameEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -482,7 +475,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockTaskEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -519,7 +512,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockTaskEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -553,7 +546,7 @@ describe('useDeprecationData', () => {
       )
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -587,7 +580,7 @@ describe('useDeprecationData', () => {
       )
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -621,7 +614,7 @@ describe('useDeprecationData', () => {
       )
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -658,7 +651,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockBareEvents))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -678,7 +671,7 @@ describe('useDeprecationData', () => {
       http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEventsWithItems))
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -698,7 +691,7 @@ describe('useDeprecationData', () => {
       })
     );
 
-    const { result } = renderHook(() => useDeprecationData(), { wrapper: swrWrapper });
+    const { result } = renderHook(() => useDeprecationData());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);

@@ -14,7 +14,7 @@ import {
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { validateUrl } from '@ansible/awx-ui/administration/notifiers/NotifierFormInner';
-import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
+import { PlatformPageForm } from '../../common/PlatformPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
@@ -86,7 +86,7 @@ export function CreateOAuthApplication() {
           { label: t('Create OAuth application') },
         ]}
       />
-      <AwxPageForm<Application>
+      <PlatformPageForm<Application>
         submitText={t('Create OAuth application')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -100,7 +100,7 @@ export function CreateOAuthApplication() {
         }}
       >
         <OAuthApplicationInputs mode="create" />
-      </AwxPageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }
@@ -175,7 +175,7 @@ export function EditOAuthApplication() {
           },
         ]}
       />
-      <AwxPageForm<Application>
+      <PlatformPageForm<Application>
         submitText={t('Save OAuth application')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -183,7 +183,7 @@ export function EditOAuthApplication() {
         defaultValue={application}
       >
         <OAuthApplicationInputs mode="edit" />
-      </AwxPageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }

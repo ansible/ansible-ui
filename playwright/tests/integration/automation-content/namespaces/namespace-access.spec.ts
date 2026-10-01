@@ -49,7 +49,7 @@ test.describe('Hub - Namespace - Team and User Access', () => {
       await navigateTo(page, 'Automation Content', 'Namespaces');
       await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
       await page.locator('[data-cy="table-view"] button').click();
-      await clickTableRow({ filterLabel: 'Name', text: namespaceName }, page);
+      await clickTableRow({ filterLabel: 'Name', text: namespaceName, clearFilters: true }, page);
 
       await page.getByRole('tab', { name: 'User Access', exact: true }).click();
 
@@ -106,7 +106,7 @@ test.describe('Hub - Namespace - Team and User Access', () => {
       await navigateTo(page, 'Automation Content', 'Namespaces');
       await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
       await page.locator('[data-cy="table-view"] button').click();
-      await clickTableRow({ filterLabel: 'Name', text: namespaceName }, page);
+      await clickTableRow({ filterLabel: 'Name', text: namespaceName, clearFilters: true }, page);
 
       await page.getByRole('tab', { name: 'Team Access', exact: true }).click();
 

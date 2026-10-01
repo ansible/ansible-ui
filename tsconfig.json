@@ -4,13 +4,14 @@
     "module": "ESNext",
     "jsx": "react-jsx",
     "lib": ["ES2021", "DOM"],
-    "types": ["cypress", "cypress-react-selector", "@4tw/cypress-drag-drop", "node"],
+    "types": ["node"],
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "sourceMap": true,
     "declaration": true,
     "strict": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
+    // Parameters may be required by interface and callback signatures; locals are the enforced scope.
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
@@ -32,8 +33,6 @@
   "include": [
     "*.config.ts",
     "*.workspace.ts",
-    "cypress",
-    "cypress.d.ts",
     "framework",
     "frontend",
     "i18next-parser.config.cjs",
@@ -43,7 +42,6 @@
     "playwright-insights",
     "scripts",
     "types",
-    "webpack/environment.d.ts",
     "fix-coverage-paths.ts",
     "currents.config.ts"
   ],

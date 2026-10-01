@@ -18,6 +18,27 @@ Before reviewing the PR, read:
 - Review diff: `git diff devel...HEAD` or `devel` → current branch
 - Focus on changes introduced by the current branch, not existing code in `devel`
 
+### Identify PR Scope (CRITICAL)
+
+Review only what the PR changes. Getting the scope wrong wastes effort and
+produces misleading feedback.
+
+- When GitHub CLI is available, start with `gh pr view <N> --json
+title,body,files,additions,deletions,baseRefName,headRefName` and
+  `gh pr diff <N> --name-only`. Then use `git diff --stat devel...HEAD` and
+  scoped `git diff` hunks for the detailed review. Confirm the file list
+  matches what the PR claims to change.
+- Use three-dot `devel...HEAD` so you see only this branch's changes, not
+  unrelated commits that landed on `devel` after it forked.
+- When the diff is large or surprising, confirm scope with the author before
+  reviewing line-by-line.
+
+| Pitfall                              | Avoid by                                   |
+| ------------------------------------ | ------------------------------------------ |
+| Reviewing files the PR never touched | Diff the exact range; don't browse `devel` |
+| Stale diff after a rebase/force-push | `git fetch` and re-diff before commenting  |
+| Two-dot vs three-dot confusion       | Use `devel...HEAD` to isolate the branch   |
+
 ---
 
 ## 2. Validate Against Guidelines
@@ -36,6 +57,20 @@ Check whether the changes follow:
 
 - Components in correct package (platform vs framework)
 - No over-engineering (avoid premature abstractions, unnecessary error handling)
+- **No new `eslint:guardrails` warnings** on changed `frontend/` /
+  `platform/` / `framework/` `.ts`/`.tsx` (see §7). The CI job is advisory
+  (`continue-on-error`), but a warning-count increase vs the base branch is a
+  **review blocker**. Ask to split or flatten.
+- **No new ESLint suppressions** (`eslint-disable`, `eslint-disable-next-line`,
+  `eslint-disable-line`, file-level `/* eslint-disable */`). Review blocker;
+  fix the rule instead of silencing it (see §7).
+
+### Internationalization Safety Check
+
+- Translate static UI copy, but render dynamic or user-provided strings directly.
+- Do not pass API values such as names, labels, descriptions, or survey question text to `t()`; punctuation such as `:` can be interpreted as an i18next namespace separator.
+- Do not use translated strings for logic or comparisons; use raw API values, IDs, enums, or routes.
+- When removing translation from a dynamic value, keep nearby static UI text translated and add a regression test for punctuation-sensitive input.
 
 ---
 
@@ -67,6 +102,7 @@ When reviewing new components or logic, ask these critical questions:
 - ❌ **Flag if**: New component recreates existing framework or PF6 functionality
 
 **Examples:**
+
 - Creating a custom table → Should use PageTable from `/framework`
 - Creating a custom modal → Should use PatternFly Modal
 - Creating a custom empty state → Check if framework has a reusable pattern
@@ -81,6 +117,7 @@ When reviewing new components or logic, ask these critical questions:
 - ❌ **Flag if**: Logic is duplicated from another workspace or could be shared
 
 **Examples:**
+
 - Table selection logic → Should be extracted to hook like `useTableSelection`
 - Form validation patterns → Should be in `/frontend/common/hooks/`
 - RBAC permission checks → Should be shared utility
@@ -95,6 +132,7 @@ When reviewing new components or logic, ask these critical questions:
 - ❌ **Flag if**: PR creates new component when existing one could be extended
 
 **Examples:**
+
 - Need table with custom toolbar → Extend PageTable with toolbar prop
 - Need form with different layout → Use PageForm with layout variants
 - Need button with icon → Use PatternFly Button with icon prop
@@ -103,18 +141,48 @@ When reviewing new components or logic, ask these critical questions:
 
 **Flag these patterns for extraction:**
 
-| Pattern Detected                      | Required Action                                       |
-| ------------------------------------- | ----------------------------------------------------- |
-| **Repeated JSX structure** (2+ times) | → Extract to component in `/framework` or workspace   |
-| **Repeated logic/state** (2+ times)   | → Extract to custom hook                              |
-| **Repeated utility functions**        | → Move to `/frontend/common`                          |
-| **Similar components with variants**  | → Consolidate into single component with props        |
+| Pattern Detected                      | Required Action                                     |
+| ------------------------------------- | --------------------------------------------------- |
+| **Repeated JSX structure** (2+ times) | → Extract to component in `/framework` or workspace |
+| **Repeated logic/state** (2+ times)   | → Extract to custom hook                            |
+| **Repeated utility functions**        | → Move to `/frontend/common`                        |
+| **Similar components with variants**  | → Consolidate into single component with props      |
 
 **Where to extract:**
 
 - **Extract to `/framework`**: Used across 2+ workspaces, domain-agnostic
 - **Extract to `/frontend/common`**: Shared utilities, hooks, or types
 - **Keep in workspace**: Service-specific logic (AWX-only, EDA-only, Hub-only)
+
+### Rule Bypass Checks
+
+New code should not silence the tooling instead of fixing the problem. Grep the
+diff (`git diff devel...HEAD`) for each of these and review every hit in added
+lines:
+
+| Pattern                                       | Review expectation               | Ask for instead                                                          |
+| --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------ |
+| `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line` | **Review blocker** — new suppression | Fix the underlying issue; never silence guardrails or required rules |
+| `@ts-ignore` / `@ts-expect-error`             | Require narrow justification     | Correct the types where possible; document exceptional cases             |
+| `TODO` / `FIXME` / `HACK` / `XXX`             | Must not hide unfinished work    | Resolve, or file a tracked issue                                         |
+| Custom deep copy / query parsing / UUID       | Avoid re-inventing platform APIs | Native API (`structuredClone` / `URLSearchParams` / `crypto.randomUUID`) |
+
+Recipe: `git diff devel...HEAD | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expect-error)|TODO|FIXME|HACK|XXX'`
+
+### HTML → PatternFly 6 Component Mapping
+
+Prefer PF6 or existing framework components for standard controls and content.
+Retain semantic HTML where the framework markup requires it or no suitable
+component abstraction exists. Typical mappings:
+
+| Raw HTML          | Use       |
+| ----------------- | --------- |
+| `<button>`        | `Button`  |
+| `<p>` / free text | `Content` |
+| `<ul>` / `<ol>`   | `List`    |
+| `<h1>`…`<h6>`     | `Title`   |
+
+Keep `<span>`, `<code>`, and `<div>` where a semantic PF component does not apply.
 
 ---
 
@@ -162,8 +230,37 @@ Run these project commands:
 
 ```bash
 npm run prettier                  # Formatting
-cd platform && npm run eslint # Linting
+cd platform && npm run eslint # Linting (required)
 cd platform && npm run tsc    # Type check
+```
+
+**No new guardrail warnings (review blocker).** CI `eslint-guardrails` is
+advisory, so reviewers must compare warning counts on the PR's changed files
+against the base branch (`devel` upstream, `stable-2.7` downstream). Head must
+not be higher than base. New files must be warning-free.
+
+```bash
+BASE="${BASE:-origin/devel}"
+mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD -- frontend platform framework \
+  | rg '\.(ts|tsx)$' | rg -v '\.(test|cy|fixture)\.')
+if ((${#files[@]})); then
+  head_n=$(npx eslint --no-eslintrc --config .eslintrc.guardrails.json -f unix --no-error-on-unmatched-pattern "${files[@]}" 2>/dev/null | rg -c 'Warning/' || true)
+  base_n=0
+  for f in "${files[@]}"; do
+    git cat-file -e "$BASE:$f" 2>/dev/null || continue
+    c=$(git show "$BASE:$f" | npx eslint --no-eslintrc --config .eslintrc.guardrails.json --stdin --stdin-filename "$f" -f unix 2>/dev/null | rg -c 'Warning/' || true)
+    base_n=$((base_n + ${c:-0}))
+  done
+  echo "eslint:guardrails warnings  ${BASE}=${base_n}  head=${head_n:-0}"
+  if (( ${head_n:-0} > base_n )); then echo 'BLOCK: new guardrail warnings added'; exit 1; fi
+fi
+
+# No new ESLint suppressions in added lines (review blocker)
+if git diff "$BASE"...HEAD | rg '^\+' | rg -q 'eslint-disable'; then
+  echo 'BLOCK: new eslint-disable suppression added'
+  git diff "$BASE"...HEAD | rg '^\+' | rg 'eslint-disable'
+  exit 1
+fi
 ```
 
 Then ask the user to confirm manually:
@@ -183,3 +280,38 @@ Output should include:
 3. Recommendations for simplification
 4. Test coverage guidance
 5. A proposed `.md` explanation file for the PR
+6. `eslint:guardrails` warning count on changed files vs base (must not increase)
+7. No new `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line` in the diff
+
+---
+
+## 9. Self-Review Quality Gate
+
+Before posting, ask a fresh subagent that has not participated in the review to
+independently inspect the PR. Give it the PR URL, base branch, and head branch;
+do not provide the first review's conclusions. Compare its findings before
+posting:
+
+- Does every finding cite a file/line and a concrete reason?
+- Would the feedback still make sense to someone who did not see the diff?
+- Have you separated blocking issues from optional suggestions?
+- Did you run the validation commands (§7) rather than assuming they pass?
+- Did `eslint:guardrails` warning count on changed files stay at or below the base branch?
+- Did the diff add any `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line`? If yes, block.
+
+An independent pass from a clean context catches the assumptions the first pass
+carried in.
+
+---
+
+## 10. CI, ESLint, and agent-skill PRs
+
+Extra checks when the diff touches `.github/workflows/`, eslint config, or
+`.claude/skills/`:
+
+| Area | Review for |
+| --- | --- |
+| GitHub Actions | Third-party actions pinned to **full SHAs** or immutable versions; treat workflow edits as security-sensitive. |
+| ESLint | Prefer **flat config** (`eslint.config.mjs`). Avoid new parallel `.eslintrc.*` unless there is a documented reason (e.g. isolated guardrails). |
+| Agent skills | No private product or org names. No meta lines like “moved here from CLAUDE.md”. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
+| Lockfile | Intentional `package-lock.json` churn should be obvious in the PR description. |

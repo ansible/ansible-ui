@@ -16,6 +16,7 @@ export function PageWizardBody({
   errorAdapter,
   isVertical,
   singleColumn,
+  optionsData,
 }: PageWizardBody) {
   const navigate = useNavigate();
   const { activeStep, stepData, onNext, onBack, submitError, isSubmitting } = usePageWizard();
@@ -50,6 +51,7 @@ export function PageWizardBody({
             disableGrid={disableGrid}
             isVertical={isVertical}
             singleColumn={singleColumn}
+            optionsData={optionsData}
             isWizard
           >
             <StepErrors />

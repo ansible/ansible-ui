@@ -30,7 +30,7 @@ export function RulesList(props: {
 
   const { t } = useTranslation();
   const config = useAwxConfig();
-  const isExceptions = props.ruleType === 'exception';
+  const isExceptions = props.ruleType === 'exception' || props.ruleType === 'exceptions';
   const rowActions = useRuleRowActions(props.rules, props.setIsOpen);
   const columns = useMemo<ITableColumn<RuleListItemType>[]>(
     () => [
@@ -42,7 +42,7 @@ export function RulesList(props: {
         cell: (item: RuleListItemType) => {
           return (
             <ScheduleSummary
-              rrule={item.rule}
+              rrule={isExceptions ? item.rule.replace(/(^|\n)EXRULE:/i, '$1RRULE:') : item.rule}
               isLocal={props.isLocalForDetails !== undefined ? props.isLocalForDetails : isLocal}
               hideColumnTitle
             />
@@ -56,7 +56,7 @@ export function RulesList(props: {
         dashboard: ColumnModalOption.hidden,
       },
     ],
-    [t, props.ruleType, isLocal, props.isLocalForDetails]
+    [t, props.ruleType, isExceptions, isLocal, props.isLocalForDetails]
   );
   const view = {
     pageItems: props.rules,

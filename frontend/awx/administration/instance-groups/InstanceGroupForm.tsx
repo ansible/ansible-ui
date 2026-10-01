@@ -59,6 +59,7 @@ export function CreateInstanceGroup() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsUrl={awxAPI`/instance_groups/`}
         defaultValue={{
           name: '',
           policy_instance_minimum: 0,
@@ -127,6 +128,7 @@ export function EditInstanceGroup() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsUrl={awxAPI`/instance_groups/`}
         defaultValue={{
           name: instanceGroup.name,
           policy_instance_minimum: instanceGroup.policy_instance_minimum || 0,

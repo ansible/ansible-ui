@@ -318,6 +318,31 @@ describe('PlatformRoleForm', () => {
       expect(permissionsButton).toBeInTheDocument();
     }, 15000);
 
+    test('should show change activation in Organization permissions', async () => {
+      const user = userEvent.setup();
+
+      const { findByRole, findByText, getByText } = render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path={'/access/roles/create'} element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const resourceTypeButton = await findByRole('button', { name: 'Resource type' });
+      await user.click(resourceTypeButton);
+      await user.click(getByText('Organization'));
+
+      const permissionsButton = await findByRole(
+        'button',
+        { name: 'Permissions' },
+        { timeout: 10000 }
+      );
+      await user.click(permissionsButton);
+
+      expect(await findByText('Can change activation')).toBeInTheDocument();
+    }, 15000);
+
     test('should update resource type when option is selected', async () => {
       const user = userEvent.setup();
 

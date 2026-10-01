@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { CollectionDocumentation, CollectionVersionsContent } from './CollectionDocumentation';
 
@@ -579,11 +578,9 @@ describe('CollectionDocumentation', () => {
     );
 
     render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/changelog">
-          <CollectionDocumentation />
-        </TestWrapper>
-      </SWRConfig>
+      <TestWrapper initialPath="/collections/validated/testnamespace/testcollection/documentation/changelog">
+        <CollectionDocumentation />
+      </TestWrapper>
     );
 
     await waitFor(() => {
@@ -617,11 +614,9 @@ describe('CollectionDocumentation', () => {
     );
 
     render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <TestWrapper>
-          <CollectionDocumentation />
-        </TestWrapper>
-      </SWRConfig>
+      <TestWrapper>
+        <CollectionDocumentation />
+      </TestWrapper>
     );
 
     await waitFor(() => {
@@ -647,11 +642,9 @@ describe('CollectionDocumentation', () => {
     );
 
     render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <TestWrapper>
-          <CollectionDocumentation />
-        </TestWrapper>
-      </SWRConfig>
+      <TestWrapper>
+        <CollectionDocumentation />
+      </TestWrapper>
     );
 
     await waitFor(() => {

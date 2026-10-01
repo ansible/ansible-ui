@@ -4,6 +4,20 @@ Before writing code that uses any library listed below, fetch its `llms.txt` (if
 available) and use it as your primary reference. Do not rely on training-data
 knowledge alone — libraries evolve across major versions.
 
+## MCP-first rule
+
+When available, use the repository MCPs before implementing frontend code:
+
+- `patternfly-mcp`: query current PatternFly 6 components, props, variants,
+  tokens, and accessibility guidance before importing or styling PF components.
+- `playwright`: inspect and exercise the running UI for workflow and E2E work.
+- `chrome-devtools`: inspect browser console, network, layout, and performance
+  when diagnosing UI behavior.
+
+MCP results and the checked-in source are authoritative over model memory. If an
+MCP is unavailable, fetch the official documentation URLs below instead and
+record that fallback in the implementation handoff.
+
 ## Libraries with llms.txt
 
 Fetch the URL before writing code against that library.

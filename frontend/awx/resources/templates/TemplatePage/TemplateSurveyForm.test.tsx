@@ -19,6 +19,28 @@ import { awxAPI } from '../../../common/api/awx-utils';
 // Identity function for translation in tests
 const t = (s: string) => s;
 
+const surveySpecOptionsWithPatterns = {
+  actions: {
+    POST: {
+      spec: {
+        type: 'json',
+        question_name: {
+          pattern: '^[^<]+$',
+          pattern_description: 'No angle brackets in question text',
+        },
+        question_description: {
+          pattern: '^[^<]+$',
+          pattern_description: 'No angle brackets in description',
+        },
+        variable: {
+          pattern: String.raw`^\S+$`,
+          pattern_description: 'No whitespace in variable name',
+        },
+      },
+    },
+  },
+};
+
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
   return {
@@ -1313,6 +1335,42 @@ describe('TemplateSurveyForm', () => {
         expect(
           screen.getByText(/Survey already contains a question with variable named "existing_var"/)
         ).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('OPTIONS pattern validation', () => {
+    test('should show pattern error for invalid question text from survey_spec OPTIONS', async () => {
+      const user = userEvent.setup();
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+      const templateId = '123';
+      const apiPath = awxAPI`/job_templates/${templateId}/survey_spec/`;
+
+      server.use(
+        http.get(apiPath, () => HttpResponse.json(emptySurvey)),
+        http.options(apiPath, () => HttpResponse.json(surveySpecOptionsWithPatterns))
+      );
+
+      render(
+        <MemoryRouter initialEntries={[`/templates/job_template/${templateId}/survey/add`]}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={<TemplateSurveyForm mode="add" resourceType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: /^question$/i })).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /^question$/i }), 'bad<script>');
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.getByText('No angle brackets in question text')).toBeInTheDocument();
       });
     });
   });

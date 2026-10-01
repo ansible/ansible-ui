@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import { User, Team, Organization, Inventory, Project } from '@ansible/playwright/utils';
 
 test.describe('Platform Teams - Role Inheritance', () => {
@@ -61,6 +62,7 @@ test.describe('Platform Teams - Role Inheritance', () => {
         'Inventory Admin'
       );
       await page.getByRole('button', { name: 'Finish' }).click();
+      await waitForBulkActionDialog(page);
 
       await expect(page.getByRole('heading', { name: teamName })).toBeVisible();
       await expect(page.getByRole('link', { name: inventoryName }).first()).toBeVisible();
@@ -87,6 +89,7 @@ test.describe('Platform Teams - Role Inheritance', () => {
         'Project Admin'
       );
       await page.getByRole('button', { name: 'Finish' }).click();
+      await waitForBulkActionDialog(page);
 
       await expect(page.getByRole('heading', { name: teamName })).toBeVisible();
       await expect(page.getByRole('link', { name: projectName }).first()).toBeVisible();

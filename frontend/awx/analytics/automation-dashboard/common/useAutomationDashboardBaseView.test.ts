@@ -1,15 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
-import {
-  act,
-  renderHook as rtlRenderHook,
-  waitFor,
-  type RenderHookOptions,
-  type RenderHookResult,
-} from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { createElement, type ReactNode } from 'react';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import {
   IToolbarDateRangeFilter,
@@ -19,20 +11,6 @@ import {
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useAutomationDashboardBaseView } from './useAutomationDashboardBaseView';
 
-function SwrWrapper({ children }: Readonly<{ children: ReactNode }>) {
-  return createElement(
-    SWRConfig,
-    { value: { provider: () => new Map(), shouldRetryOnError: false } },
-    children
-  );
-}
-
-function renderHook<Result, Props>(
-  render: (initialProps: Props) => Result,
-  options?: RenderHookOptions<Props>
-): RenderHookResult<Result, Props> {
-  return rtlRenderHook(render, { ...options, wrapper: SwrWrapper });
-}
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 
 // ─── Test Data ────────────────────────────────────────────────────────────────
@@ -459,6 +437,145 @@ describe('useAutomationDashboardBaseView', () => {
     expect(result.current.setSortDirection).toBeTypeOf('function');
     expect(result.current.setFilterState).toBeTypeOf('function');
     expect(result.current.clearAllFilters).toBeTypeOf('function');
+  });
+
+  // --- System job exclusion params ---
+
+  test('should include systemJobExclusionTemplateIds when no user template filter is active', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const systemJobExclusionTemplateIds: [string, string][] = [
+      ['template', '1'],
+      ['template', '2'],
+      ['template', '3'],
+    ];
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        systemJobExclusionTemplateIds,
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    const url = new URL(capturedUrl);
+    expect(url.searchParams.getAll('template')).toEqual(['1', '2', '3']);
+  });
+
+  test('should not include systemJobExclusionTemplateIds when user has active template filter', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const systemJobExclusionTemplateIds: [string, string][] = [
+      ['template', '1'],
+      ['template', '2'],
+      ['template', '3'],
+    ];
+
+    const templateFilter: IToolbarSingleSelectFilter = {
+      type: ToolbarFilterType.SingleSelect,
+      key: 'template',
+      label: 'Template',
+      query: 'template',
+      options: [
+        { label: 'Template 5', value: '5' },
+        { label: 'Template 1', value: '1' },
+      ],
+      placeholder: 'Filter by template',
+    };
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        systemJobExclusionTemplateIds,
+        toolbarFilters: [templateFilter] as IToolbarSingleSelectFilter[],
+        defaultFilters: { template: ['5'] }, // User selected template filter
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    const url = new URL(capturedUrl);
+    // Should only have the user's template filter, not the system exclusion list
+    expect(url.searchParams.getAll('template')).toEqual(['5']);
+  });
+
+  test('should not include systemJobExclusionTemplateIds when list is empty', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        systemJobExclusionTemplateIds: [],
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    const url = new URL(capturedUrl);
+    expect(url.searchParams.getAll('template')).toEqual([]);
+  });
+
+  test('should not fetch when isLoadingSystemJobExclusionIds is true', async () => {
+    let fetchCalled = false;
+    server.use(
+      http.get(metricsAPI`/test/`, () => {
+        fetchCalled = true;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        isLoadingSystemJobExclusionIds: true,
+      })
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(fetchCalled).toBe(false);
+    expect(result.current.pageItems).toBeUndefined();
+  });
+
+  test('should not include systemJobExclusionTemplateIds when undefined', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockResponse);
+      })
+    );
+
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        systemJobExclusionTemplateIds: undefined,
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    const url = new URL(capturedUrl);
+    expect(url.searchParams.getAll('template')).toEqual([]);
   });
 
   // --- Item count persistence ---

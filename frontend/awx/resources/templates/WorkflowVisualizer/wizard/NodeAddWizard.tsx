@@ -1,20 +1,26 @@
 import { PageWizard, PageWizardStep } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { NodeModel, NodeShape, useVisualizationController } from '@patternfly/react-topology';
 import { useTranslation } from 'react-i18next';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { SurveyStep } from '../../../../common/SurveyStep';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
 import { NODE_DIAMETER, RESOURCE_TYPE, START_NODE_ID } from '../constants';
 import { useCloseSidebar, useCreateEdge, useNodeTypeStepDefaults } from '../hooks';
 import { ControllerState, EdgeStatus, PromptFormValues, type WizardFormValues } from '../types';
-import { getValueBasedOnJobType, hasDaysToKeep, shouldHideOtherStep } from './helpers';
+import { buildEffectivePrompt } from './buildEffectivePrompt';
+import {
+  getLinkEdgeStatus,
+  getValueBasedOnJobType,
+  hasDaysToKeep,
+  shouldHideOtherStep,
+} from './helpers';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
-import {
-  validateJobTemplateRequirements,
-  validateRequiredCredentialTypes,
-} from './validationHelpers';
+import { validateNodePromptsStep, validateNodeTypeStep } from './validationHelpers';
 
 interface NewGraphNode extends NodeModel {
   data: {
@@ -48,6 +54,9 @@ export function NodeAddWizard() {
   const controller = useVisualizationController();
   const state = controller.getState<ControllerState>();
   const nodeTypeStepDefaults = useNodeTypeStepDefaults();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_template_nodes/`
+  );
 
   const initialValues: { [stepId: string]: Partial<WizardFormValues> } = {
     nodeTypeStep: nodeTypeStepDefaults(),
@@ -58,9 +67,12 @@ export function NodeAddWizard() {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep hasSourceNode={Boolean(state.sourceNode)} />,
-      validate: (wizardData: Partial<WizardFormValues>) => {
-        validateJobTemplateRequirements(t, wizardData);
-      },
+      validate: async (formData: object, wizardData: object) =>
+        validateNodeTypeStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>
+        ),
     },
     {
       id: 'nodePromptsStep',
@@ -79,9 +91,12 @@ export function NodeAddWizard() {
         }
         return true;
       },
-      validate: (wizardData: Partial<WizardFormValues>) => {
-        const requiredCredentialTypes = wizardData.prompt?.requiredCredentialTypes;
-        validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes || []);
+      validate: (formData: object, wizardData: object) => {
+        validateNodePromptsStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>
+        );
       },
     },
     {
@@ -124,18 +139,16 @@ export function NodeAddWizard() {
       prompt,
       survey,
     } = formValues;
-    const promptValues = prompt;
 
-    if (promptValues) {
-      if (resource && 'organization' in resource) {
-        promptValues.organization = resource.organization ?? null;
-      }
-      if (launch_config) {
-        promptValues.original = {
-          launch_config,
-        };
-      }
-    }
+    const { effectivePrompt } = buildEffectivePrompt({
+      originalTemplateId: undefined,
+      newResourceId: resourceId ?? (resource?.id ? Number(resource.id) : undefined),
+      prompt,
+      launchConfig: launch_config,
+      nodeOriginalResources: undefined,
+      resourceOrganization:
+        resource && 'organization' in resource ? (resource.organization ?? null) : undefined,
+    });
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeLabel = node_alias === '' ? nodeName : node_alias;
@@ -170,7 +183,7 @@ export function NodeAddWizard() {
             },
           },
         },
-        launch_data: promptValues,
+        launch_data: effectivePrompt,
         survey_data: survey,
       },
     };
@@ -182,15 +195,10 @@ export function NodeAddWizard() {
       model.edges?.push(rootEdge);
     }
 
-    if (state.sourceNode) {
-      const status =
-        node_status_type === EdgeStatus.info
-          ? EdgeStatus.info
-          : node_status_type === EdgeStatus.success
-            ? EdgeStatus.success
-            : EdgeStatus.danger;
-
-      const newEdge = createEdge(state.sourceNode.getId(), nodeToCreate.id, status);
+    const sourceNodeId = state.sourceNode?.getId();
+    if (state.sourceNode && sourceNodeId) {
+      const status = getLinkEdgeStatus(node_status_type);
+      const newEdge = createEdge(sourceNodeId, nodeToCreate.id, status);
       state.sourceNode.setState({ modified: true });
       model.edges?.push(newEdge);
     }
@@ -207,6 +215,11 @@ export function NodeAddWizard() {
     model.nodes?.push(nodeToCreate);
     controller.fromModel(model, true);
     controller.getNodeById(nodeToCreate.id)?.setState({ modified: true });
+    // fromModel may replace element instances; re-mark the source so save
+    // associates the new sequential edge instead of leaving a root sibling.
+    if (sourceNodeId) {
+      controller.getNodeById(sourceNodeId)?.setState({ modified: true });
+    }
     controller.setState({ ...state, modified: true });
     closeSidebar();
     controller.getGraph().layout();
@@ -224,6 +237,7 @@ export function NodeAddWizard() {
       stepDefaults={initialValues}
       errorAdapter={awxErrorAdapter}
       title={t('Add step')}
+      optionsData={optionsData}
     />
   );
 }

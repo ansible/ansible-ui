@@ -77,6 +77,7 @@ function AwxCreateUserTokenInternal(props: { user: AwxUser; onCreate: (newToken:
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsUrl={awxAPI`/tokens/`}
       >
         <UserTokenFormInputs />
       </AwxPageForm>

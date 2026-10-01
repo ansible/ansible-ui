@@ -2,7 +2,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { InventorySourceDetails, LastJobTooltip } from './InventorySourceDetails';
 
@@ -90,16 +89,14 @@ afterAll(() => server.close());
 
 function renderInventorySourceDetails(inventorySourceId?: string) {
   return render(
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter initialEntries={['/inventories/inventory/1/sources/1/details']}>
-        <Routes>
-          <Route
-            path="/inventories/:inventory_type/:id/sources/:source_id/details"
-            element={<InventorySourceDetails inventorySourceId={inventorySourceId} />}
-          />
-        </Routes>
-      </MemoryRouter>
-    </SWRConfig>
+    <MemoryRouter initialEntries={['/inventories/inventory/1/sources/1/details']}>
+      <Routes>
+        <Route
+          path="/inventories/:inventory_type/:id/sources/:source_id/details"
+          element={<InventorySourceDetails inventorySourceId={inventorySourceId} />}
+        />
+      </Routes>
+    </MemoryRouter>
   );
 }
 

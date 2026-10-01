@@ -15,6 +15,15 @@ Default to Vitest for unit/component work (see
 and live testing. For ports, env file, and stack commands, read
 `.claude/skills/frontend-overlay/SKILL.md`.
 
+## MCP workflow
+
+Use the configured Playwright MCP to manually inspect the relevant UI workflow
+before writing or changing an E2E test. Use accessible snapshots and locators,
+and reuse the existing commands and utilities afterward. When a browser failure
+is not explained by the Playwright trace, use Chrome DevTools MCP to inspect
+console messages, network requests, layout, or performance. Record the MCP
+validation performed in the handoff; never print credentials or secret values.
+
 ---
 
 ## Writing tests
@@ -65,12 +74,12 @@ test.describe('Feature Name - Description', () => {
 
 ### Test type guidelines
 
-| Type | Meaning |
-| --- | --- |
-| **Unit** | Pure logic/functions, no DOM, mock dependencies, milliseconds (Vitest) |
-| **Component** | Units together, mocked APIs, Vitest, UI/form behavior; don't mock unless necessary |
-| **Integration** | Live API, no mocking; API interaction (RBAC, job execution, DB) |
-| **User acceptance** | Full user flows spanning resources (create template → run job → verify output) |
+| Type                | Meaning                                                                            |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| **Unit**            | Pure logic/functions, no DOM, mock dependencies, milliseconds (Vitest)             |
+| **Component**       | Units together, mocked APIs, Vitest, UI/form behavior; don't mock unless necessary |
+| **Integration**     | Live API, no mocking; API interaction (RBAC, job execution, DB)                    |
+| **User acceptance** | Full user flows spanning resources (create template → run job → verify output)     |
 
 ### Critical Playwright rules
 
@@ -142,6 +151,38 @@ Never conclude test work until all tests pass and lint/TypeScript issues are res
 
 Do not start a second UI if port 4100 is already bound. To launch a run without
 dumping secrets, use the **Running tests** wizard below.
+
+#### 6. Web-first assertions & auto-waiting
+
+`expect(locator)` assertions auto-retry until they pass or time out, and
+locator actions auto-wait for the element to be actionable. Rely on that — never
+add manual sleeps.
+
+```typescript
+// GOOD — retries until the element appears / has the text
+await expect(page.getByRole('heading', { name: 'Details' })).toBeVisible();
+await expect(page.getByTestId('status')).toHaveText('Successful');
+
+// AVOID — arbitrary sleep, flaky and slow
+await page.waitForTimeout(3000);
+expect(await page.getByTestId('status').textContent()).toBe('Successful');
+```
+
+Prefer `waitForResponse` (see rule #4) over `waitForTimeout` when you need to
+wait for data.
+
+#### Common anti-patterns
+
+- **Hard sleeps** — `waitForTimeout()` to "let things settle". Use a web-first
+  assertion or `waitForResponse` instead.
+- **Manual retry/poll loops** — re-implementing what `expect(locator)` already
+  does. Assert on the locator.
+- **Reading then asserting** — `expect(await locator.textContent())` does not
+  retry. Use `await expect(locator).toHaveText(...)`.
+- **Asserting on detached elements** — after a navigation or re-render, re-query
+  the locator; do not hold a stale handle.
+- **Acting after navigation with no wait** — follow a navigation with a
+  web-first assertion on the new page before interacting.
 
 ### Test development methodology
 

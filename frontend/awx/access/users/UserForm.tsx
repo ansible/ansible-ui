@@ -68,6 +68,7 @@ export function CreateUser() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={{ userType: UserType.NormalUser }}
+        optionsUrl={awxAPI`/users/`}
       >
         <UserInputs mode="create" />
       </AwxPageForm>
@@ -146,6 +147,7 @@ export function EditUser() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={defaultValue}
+        optionsUrl={awxAPI`/users/`}
       >
         <UserInputs mode="edit" />
       </AwxPageForm>

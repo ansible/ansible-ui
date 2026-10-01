@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { SWRConfig } from 'swr';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleDetails } from './ScheduleDetails';
 
@@ -174,5 +175,177 @@ describe('ScheduleDetails', () => {
     });
 
     expect(screen.getByText('web_servers')).toBeInTheDocument();
+  });
+
+  it('should preserve the Z suffix on UNTIL in per-rule preview calls', async () => {
+    const rruleWithUntil =
+      'DTSTART;TZID=America/New_York:20260812T170000 RRULE:FREQ=HOURLY;INTERVAL=1;UNTIL=20260813T000000Z;BYSECOND=0';
+    const capturedBodies: string[] = [];
+
+    server.use(
+      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
+        const body = (await request.json()) as { rrule: string };
+        capturedBodies.push(body.rrule);
+        return HttpResponse.json({ local: [], utc: [] });
+      }),
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({
+          ...mockSchedule,
+          rrule: rruleWithUntil,
+          timezone: 'America/New_York',
+        })
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    await waitFor(() => expect(capturedBodies.length).toBeGreaterThanOrEqual(2));
+
+    const perRuleBody = capturedBodies.find((r) => r !== rruleWithUntil);
+    expect(perRuleBody).toBeDefined();
+    expect(perRuleBody).toContain('UNTIL=20260813T000000Z');
+  });
+
+  it('should render exceptions list when schedule has an EXRULE', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({
+          ...mockSchedule,
+          rrule:
+            'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;INTERVAL=1 EXRULE:FREQ=WEEKLY;BYDAY=SA',
+        })
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    expect(await screen.findByText('Exrule')).toBeInTheDocument();
+  });
+
+  it('should transform EXRULE to RRULE only in exception preview POST bodies', async () => {
+    const rruleWithExrule =
+      'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;INTERVAL=1 EXRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20230513T000000Z';
+    const capturedBodies: string[] = [];
+
+    server.use(
+      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
+        const body = (await request.json()) as { rrule: string };
+        capturedBodies.push(body.rrule);
+        return HttpResponse.json({ local: [], utc: [] });
+      }),
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({
+          ...mockSchedule,
+          rrule: rruleWithExrule,
+          timezone: 'America/New_York',
+        })
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    await waitFor(() => {
+      expect(capturedBodies).toContain(rruleWithExrule);
+      expect(
+        capturedBodies.find(
+          (body) =>
+            body !== rruleWithExrule && body.includes('FREQ=WEEKLY') && body.includes('BYDAY=SA')
+        )
+      ).toBeDefined();
+    });
+
+    const exceptionPreviewBody = capturedBodies.find(
+      (body) =>
+        body !== rruleWithExrule && body.includes('FREQ=WEEKLY') && body.includes('BYDAY=SA')
+    );
+    expect(exceptionPreviewBody).toBeDefined();
+    expect(exceptionPreviewBody).not.toContain('EXRULE:');
+    expect(exceptionPreviewBody).toContain('DTSTART;TZID=America/New_York:20230509T105705');
+    expect(exceptionPreviewBody).toContain('RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20230513T000000Z');
+  });
+
+  it('should handle schedule rrule with no DTSTART', async () => {
+    const rruleNoDtstart = 'RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1';
+    const capturedBodies: string[] = [];
+
+    server.use(
+      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
+        const body = (await request.json()) as { rrule: string };
+        capturedBodies.push(body.rrule);
+        return HttpResponse.json({ local: [], utc: [] });
+      }),
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({ ...mockSchedule, rrule: rruleNoDtstart })
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    await waitFor(() => expect(capturedBodies.length).toBeGreaterThanOrEqual(1));
+    expect(capturedBodies.every((b) => !b.startsWith('DTSTART'))).toBe(true);
+    expect(capturedBodies.includes(rruleNoDtstart)).toBe(true);
+  });
+
+  it('should handle schedule exceptions with no DTSTART', async () => {
+    const rruleWithExruleNoDtstart =
+      'RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1 EXRULE:FREQ=WEEKLY;BYDAY=SA';
+    const capturedBodies: string[] = [];
+
+    server.use(
+      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
+        const body = (await request.json()) as { rrule: string };
+        capturedBodies.push(body.rrule);
+        return HttpResponse.json({ local: [], utc: [] });
+      }),
+      http.get(awxAPI`/schedules/1/`, () =>
+        HttpResponse.json({ ...mockSchedule, rrule: rruleWithExruleNoDtstart })
+      )
+    );
+
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+
+    expect(await screen.findByText('Exrule')).toBeInTheDocument();
+    await waitFor(() => expect(capturedBodies).toContain('RRULE:FREQ=WEEKLY;BYDAY=SA'));
+    expect(capturedBodies.every((b) => !b.startsWith('DTSTART'))).toBe(true);
   });
 });

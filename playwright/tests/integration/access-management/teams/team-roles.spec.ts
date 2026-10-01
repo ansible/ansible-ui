@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import { Team, Credential } from '@ansible/playwright/utils';
 
 test.describe('Platform Teams - Roles Tab', () => {
@@ -45,6 +46,7 @@ test.describe('Platform Teams - Roles Tab', () => {
         'Credential Admin'
       );
       await page.getByRole('button', { name: 'Finish' }).click();
+      await waitForBulkActionDialog(page);
 
       await expect(page.getByRole('heading', { name: teamName })).toBeVisible();
       await expect(page.getByRole('link', { name: credentialName }).first()).toBeVisible();

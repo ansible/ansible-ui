@@ -56,6 +56,7 @@ export function CreateExecutionEnvironment() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={defaultValue}
+        optionsUrl={awxAPI`/execution_environments/`}
       >
         <ExecutionEnvironmentInputs mode="create" />
       </AwxPageForm>
@@ -125,6 +126,7 @@ export function EditExecutionEnvironment() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={execution_env}
+        optionsUrl={awxAPI`/execution_environments/`}
       >
         <ExecutionEnvironmentInputs mode="edit" executionEnv={execution_env} />
       </AwxPageForm>

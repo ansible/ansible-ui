@@ -2,7 +2,6 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { SWRConfig } from 'swr';
 import { useRuntimeFeatureFlagsEnabled } from './useRuntimeFeatureFlagsEnabled';
 
 const server = setupServer();
@@ -10,12 +9,6 @@ const server = setupServer();
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-
-function wrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map() }}>{children}</SWRConfig>
-  );
-}
 
 describe('useRuntimeFeatureFlagsEnabled', () => {
   it('should return true when RUNTIME_FEATURE_FLAGS is true', async () => {
@@ -27,7 +20,7 @@ describe('useRuntimeFeatureFlagsEnabled', () => {
       )
     );
 
-    const { result } = renderHook(() => useRuntimeFeatureFlagsEnabled(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlagsEnabled());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -44,7 +37,7 @@ describe('useRuntimeFeatureFlagsEnabled', () => {
       )
     );
 
-    const { result } = renderHook(() => useRuntimeFeatureFlagsEnabled(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlagsEnabled());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -55,7 +48,7 @@ describe('useRuntimeFeatureFlagsEnabled', () => {
   it('should return true on API error', async () => {
     server.use(http.get('/api/gateway/v1/settings/feature_flags/', () => HttpResponse.error()));
 
-    const { result } = renderHook(() => useRuntimeFeatureFlagsEnabled(), { wrapper });
+    const { result } = renderHook(() => useRuntimeFeatureFlagsEnabled());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);

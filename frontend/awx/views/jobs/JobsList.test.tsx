@@ -305,6 +305,31 @@ describe('JobsList Component Tests', () => {
       { timeout: 10000 }
     );
   }, 15000);
+
+  test('excludes large fields (artifacts, extra_vars) from the jobs list request', async () => {
+    let fetchedExclude: string | null = null;
+    server.events.on('request:match', ({ request }) => {
+      const url = new URL(request.url);
+      if (url.pathname.includes('/unified_jobs/') && !url.searchParams.get('id__in')) {
+        fetchedExclude = url.searchParams.get('exclude');
+      }
+    });
+
+    render(
+      <MemoryRouter>
+        <Jobs />
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(fetchedExclude).toBe('artifacts,extra_vars');
+      },
+      { timeout: 10000 }
+    );
+
+    server.events.removeAllListeners();
+  }, 15000);
 });
 
 describe('getWsAction', () => {

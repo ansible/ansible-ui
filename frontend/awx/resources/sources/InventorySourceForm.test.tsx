@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { InventorySource } from '../../interfaces/InventorySource';
@@ -112,15 +111,17 @@ const restHandlers = [
   http.options(awxAPI`/credential_types/`, () => HttpResponse.json({ actions: { GET: {} } })),
   http.options(awxAPI`/credentials/`, () => HttpResponse.json({ actions: { GET: {} } })),
   http.options(awxAPI`/projects/`, () => HttpResponse.json({ actions: { GET: {} } })),
+  http.options('*', () => HttpResponse.json({ actions: { POST: {}, GET: {} } })),
   http.get(awxAPI`/inventories/2/`, () => HttpResponse.json(mockInventory)),
   http.get(awxAPI`/credential_types/`, () => HttpResponse.json(credentialTypes)),
   http.get(
     ({ request }) =>
-      request.url.includes('/api/v2/projects/123') && !request.url.includes('/inventories/'),
+      request.url.includes('/projects/123') && !request.url.includes('/inventories/'),
     () => HttpResponse.json(mockProjectWithOverride)
   ),
   http.get(
-    ({ request }) => request.url.includes('/api/v2/projects/456'),
+    ({ request }) =>
+      request.url.includes('/projects/456') && !request.url.includes('/inventories/'),
     () => HttpResponse.json(mockProjectWithoutOverride)
   ),
   http.get(
@@ -506,11 +507,9 @@ describe('EditInventorySource', () => {
 
     const user = userEvent.setup();
     render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter>
-          <EditInventorySource />
-        </MemoryRouter>
-      </SWRConfig>
+      <MemoryRouter>
+        <EditInventorySource />
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -546,16 +545,14 @@ describe('EditInventorySource', () => {
 
       const user = userEvent.setup();
       render(
-        <SWRConfig value={{ provider: () => new Map() }}>
-          <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
-            <Routes>
-              <Route
-                path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
-                element={<EditInventorySource />}
-              />
-            </Routes>
-          </MemoryRouter>
-        </SWRConfig>
+        <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
+          <Routes>
+            <Route
+              path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
+              element={<EditInventorySource />}
+            />
+          </Routes>
+        </MemoryRouter>
       );
 
       await waitFor(() => {
@@ -596,16 +593,14 @@ describe('EditInventorySource', () => {
 
       const user = userEvent.setup();
       render(
-        <SWRConfig value={{ provider: () => new Map() }}>
-          <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
-            <Routes>
-              <Route
-                path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
-                element={<EditInventorySource />}
-              />
-            </Routes>
-          </MemoryRouter>
-        </SWRConfig>
+        <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
+          <Routes>
+            <Route
+              path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
+              element={<EditInventorySource />}
+            />
+          </Routes>
+        </MemoryRouter>
       );
 
       await waitFor(() => {
@@ -649,16 +644,14 @@ describe('EditInventorySource', () => {
       // Use a fresh SWR cache so this test's GET override is not shadowed by cached data
       // from prior tests that already fetched /inventory_sources/1/.
       render(
-        <SWRConfig value={{ provider: () => new Map() }}>
-          <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
-            <Routes>
-              <Route
-                path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
-                element={<EditInventorySource />}
-              />
-            </Routes>
-          </MemoryRouter>
-        </SWRConfig>
+        <MemoryRouter initialEntries={['/infrastructure/inventories/inventory/2/sources/1/edit']}>
+          <Routes>
+            <Route
+              path="/infrastructure/inventories/inventory/:id/sources/:source_id/edit"
+              element={<EditInventorySource />}
+            />
+          </Routes>
+        </MemoryRouter>
       );
 
       await waitFor(() => {

@@ -65,7 +65,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: PreCache
         run: npm version 0.0.0 --no-git-tag-version
@@ -76,7 +76,6 @@ jobs:
         with:
           path: |
             ./node_modules
-            /home/runner/.cache/Cypress
           key: modules-${{ hashFiles('package-lock.json') }}
 
       - name: Install dependencies

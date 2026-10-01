@@ -9,7 +9,6 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { QuickStart } from '@patternfly/quickstarts';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlatformMasthead } from './PlatformMasthead';
 import { PlatformRoute } from './PlatformRoutes';
@@ -86,15 +85,13 @@ function mountMasthead(settings?: IPageSettings) {
   const pageSettings: IPageSettings = settings ?? { activeTheme: 'light', theme: 'light' };
   return render(
     <MemoryRouter>
-      <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
-        <PageSettingsContext.Provider value={[pageSettings, vi.fn()]}>
-          <PageNavSideBarProvider>
-            <PageDialogProvider>
-              <PlatformMasthead />
-            </PageDialogProvider>
-          </PageNavSideBarProvider>
-        </PageSettingsContext.Provider>
-      </SWRConfig>
+      <PageSettingsContext.Provider value={[pageSettings, vi.fn()]}>
+        <PageNavSideBarProvider>
+          <PageDialogProvider>
+            <PlatformMasthead />
+          </PageDialogProvider>
+        </PageNavSideBarProvider>
+      </PageSettingsContext.Provider>
     </MemoryRouter>
   );
 }

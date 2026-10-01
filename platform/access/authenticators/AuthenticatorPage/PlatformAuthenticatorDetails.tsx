@@ -64,6 +64,7 @@ export function PlatformAuthenticatorDetails() {
   });
   const isLegacyAuthenticator = authenticator?.type.includes('legacy') ?? false;
   const type = getAuthenticatorTypeLabel(authenticator.type, t);
+  const formatBoolean = (value: boolean) => (value ? t('On') : t('Off'));
   return (
     <Scrollable>
       <PageDetails disableScroll>
@@ -77,6 +78,13 @@ export function PlatformAuthenticatorDetails() {
           }
           isLegacy={isLegacyAuthenticator}
         />
+        <PageDetail label={t('Enabled')}>{formatBoolean(authenticator.enabled)}</PageDetail>
+        <PageDetail label={t('Create objects')}>
+          {formatBoolean(authenticator.create_objects)}
+        </PageDetail>
+        <PageDetail label={t('Remove users')}>
+          {formatBoolean(authenticator.remove_users)}
+        </PageDetail>
         {fields.map((field) => (
           <PageDetail label={field.label} key={field.label}>
             {field.value}

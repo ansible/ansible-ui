@@ -1,7 +1,7 @@
 import { ActionList, ActionListItem, Button, Flex, FlexItem, Stack } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
-import debounce from 'debounce';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDebounce } from '../hooks/useDebounce';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { SetRequired } from 'type-fest';
@@ -60,14 +60,7 @@ export function PageAsyncSingleSelect<
   const nextRef = useRef<number | string | undefined>();
   const [searchValue, setSearchValue] = useState<string>('');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const setSearch = useMemo(() => debounce((search: string) => setSearchValue(search), 200), []);
-
-  useEffect(() => {
-    return () => {
-      setSearch.clear();
-    };
-  }, [setSearch]);
+  const setSearch = useDebounce((search: string) => setSearchValue(search), 200);
 
   const onSelect = useRef(props.onSelect).current;
 

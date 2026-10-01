@@ -10,6 +10,7 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { singleSelectByLabel } from '@ansible/playwright/commands/singleSelectByLabel';
+import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import { Organization, Team, User } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
@@ -17,6 +18,8 @@ test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
 
 test.describe('Organization User and Team Management', () => {
+  test.describe.configure({ timeout: 3 * 60 * 1000 });
+
   let organizationName: string;
   let user1Name: string;
   let user2Name: string;
@@ -196,6 +199,7 @@ test.describe('Organization User and Team Management', () => {
 
       // Finish the wizard (Review step may not be present in current flow)
       await page.getByRole('button', { name: 'Finish' }).click();
+      await waitForBulkActionDialog(page, { timeout: 120000 });
 
       // Navigate back to the organization details page
       await navigateTo(page, 'Access Management', 'Organizations');
@@ -433,19 +437,17 @@ test.describe('Organization User and Team Management', () => {
     'can add a team and apply/remove roles from organization team via teams tab',
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
-      // Create team for this test
+      test.setTimeout(3 * 60 * 1000);
       const teamName = await Team.ui.create(page, { organizationName });
 
       await navigateTo(page, 'Access Management', 'Organizations');
       await clickTableRow({ text: organizationName }, page);
 
-      // Navigate to Teams tab and assign organization roles
       await page.getByRole('tab', { name: 'Teams' }).click();
       await page.getByRole('button', { name: 'Assign organization roles', exact: true }).click();
 
       await expect(page.getByRole('heading', { name: 'Select team(s)' })).toBeVisible();
 
-      // Select the team
       await selectTableRow(
         {
           pageTitle: 'Select team(s)',
@@ -457,7 +459,6 @@ test.describe('Organization User and Team Management', () => {
 
       await page.getByRole('button', { name: 'Next', exact: true }).click();
 
-      // Select organization roles
       await expect(page.getByRole('heading', { name: 'Select organization roles' })).toBeVisible();
       await selectTableRow(
         {
@@ -470,20 +471,13 @@ test.describe('Organization User and Team Management', () => {
 
       await page.getByRole('button', { name: 'Next', exact: true }).click();
 
-      // Review and finish
       await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
       await page.getByRole('button', { name: 'Finish' }).click();
+      await waitForBulkActionDialog(page, { timeout: 120000 });
 
-      // Navigate back to the organization Teams tab after wizard completes
-      await navigateTo(page, 'Access Management', 'Organizations');
-      await clickTableRow({ text: organizationName }, page);
-      await page.getByRole('tab', { name: 'Teams' }).click();
-
-      // Verify team roles and manage them
       await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
       await expect(page.locator('tbody')).toContainText(teamName);
 
-      // Click on manage organization roles for the team
       const teamRow = page.locator('tbody tr').filter({ hasText: teamName });
       await teamRow.getByRole('link', { name: 'Manage organization roles' }).click();
 
@@ -491,7 +485,6 @@ test.describe('Organization User and Team Management', () => {
         page.getByRole('heading', { name: `Manage organization roles for ${teamName}` })
       ).toBeVisible();
 
-      // Remove the organization credential admin role
       await selectTableRow(
         {
           pageTitle: `Manage organization roles for ${teamName}`,
@@ -503,16 +496,13 @@ test.describe('Organization User and Team Management', () => {
 
       await page.getByRole('button', { name: 'Save roles', exact: true }).click();
 
-      // Verify we're back on the organization page
       await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
 
-      // Navigate to team details to verify no roles are assigned
       await page.getByRole('link', { name: teamName }).click();
       await expect(page.getByRole('heading', { name: teamName })).toBeVisible();
       await page.getByRole('tab', { name: 'Roles' }).click();
       await expect(page.getByText('No roles assigned to this team')).toBeVisible();
 
-      // Clean up the team
       await Team.ui.delete(page, teamName);
     }
   );

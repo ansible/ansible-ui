@@ -1,9 +1,12 @@
 import { PageWizard, PageWizardStep, usePageAlertToaster } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { action, useVisualizationController } from '@patternfly/react-topology';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { SurveyStep } from '../../../../common/SurveyStep';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { RESOURCE_TYPE } from '../constants';
 import { useCloseSidebar, useGetInitialValues } from '../hooks';
@@ -19,10 +22,7 @@ import { buildEffectivePrompt } from './buildEffectivePrompt';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
-import {
-  validateJobTemplateRequirements,
-  validateRequiredCredentialTypes,
-} from './validationHelpers';
+import { validateNodePromptsStep, validateNodeTypeStep } from './validationHelpers';
 
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
@@ -34,6 +34,9 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   const closeSidebar = useCloseSidebar();
   const getInitialValues = useGetInitialValues();
   const [initialValues, setInitialValues] = useState<WizardStep | null>(null);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_template_nodes/`
+  );
 
   const alertToaster = usePageAlertToaster();
 
@@ -69,9 +72,12 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep />,
-      validate: (wizardData: Partial<WizardFormValues>) => {
-        validateJobTemplateRequirements(t, wizardData);
-      },
+      validate: async (formData: object, wizardData: object) =>
+        validateNodeTypeStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>
+        ),
     },
     {
       id: 'nodePromptsStep',
@@ -98,15 +104,13 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         }
         return true;
       },
-      validate: (wizardData: Partial<WizardFormValues>) => {
-        // Prefer the live wizard data's requiredCredentialTypes so that validation reflects
-        // the currently selected template, not the template that was loaded when the wizard
-        // was first opened (which is stale if the user switched templates mid-edit).
-        const requiredCredentialTypes =
-          wizardData.prompt?.requiredCredentialTypes ||
-          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes ||
-          [];
-        validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes);
+      validate: (formData: object, wizardData: object) => {
+        validateNodePromptsStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>,
+          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes || []
+        );
       },
     },
     {
@@ -154,6 +158,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       nodeOriginalResources,
       resourceOrganization:
         resource && 'organization' in resource ? (resource.organization ?? null) : undefined,
+      resourceNode: nodeData.resource,
     });
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
@@ -219,6 +224,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       stepDefaults={initialValues}
       errorAdapter={awxErrorAdapter}
       title={t('Edit step')}
+      optionsData={optionsData}
     />
   );
 }

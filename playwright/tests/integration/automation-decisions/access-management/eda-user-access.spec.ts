@@ -5,6 +5,7 @@ import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { DecisionEnvironment, EdaCredential, Organization, User } from '@ansible/playwright/utils';
+import { EdaOrganization } from '@ansible/playwright/utils/edaOrganization';
 import type { EdaCredential as EdaCredentialType } from '@ansible/eda-ui/interfaces/EdaCredential';
 import type { EdaDecisionEnvironment } from '@ansible/eda-ui/interfaces/EdaDecisionEnvironment';
 import type { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
@@ -48,10 +49,15 @@ test.describe('EDA User Access Tab - Add User', () => {
       name: createE2EName('organization'),
       description: 'Created for E2E testing',
     });
+    const ansibleId = edaOrg.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error(`Platform organization "${edaOrg.name}" missing ansible_id`);
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
 
     edaCredential = await EdaCredential.api.create(page, {
       name: createE2EName('credential'),
-      organizationName: edaOrg.name,
+      organizationId: edaOrganization.id,
       credentialTypeName: 'Container Registry',
       inputs: {
         host: 'quay.io',
@@ -62,7 +68,7 @@ test.describe('EDA User Access Tab - Add User', () => {
     });
 
     edaDecisionEnvironment = await DecisionEnvironment.api.create(page, {
-      organizationId: edaOrg.id,
+      organizationId: edaOrganization.id,
       imageUrl: 'quay.io/ansible/ansible-rulebook:main',
     });
 

@@ -57,6 +57,7 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsUrl={awxAPI`/role_definitions/`}
       >
         <AwxRoleInputs />
       </AwxPageForm>
@@ -114,6 +115,7 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
             cancelText={t('Cancel')}
             onCancel={onCancel}
             defaultValue={role}
+            optionsUrl={awxAPI`/role_definitions/`}
           >
             <AwxRoleInputs disableContentType />
           </AwxPageForm>

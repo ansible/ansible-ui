@@ -20,7 +20,7 @@ const server = setupServer(
   http.get(
     ({ request }) =>
       request.url.includes('/organizations/') &&
-      request.url.includes('role_level=notification_admin_role'),
+      request.url.includes('role_level=add_notificationtemplate'),
     () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
   )
 );

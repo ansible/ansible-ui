@@ -7,6 +7,7 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
+  getValueToObjectParseError,
   valueToObject,
 } from '@ansible/ansible-ui-framework';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
@@ -151,6 +152,11 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
         disableSubmitOnEnter={true}
         onCancel={() => pageNavigate(AwxRoute.Inventories)}
         defaultValue={defaultValue}
+        optionsUrl={
+          inventoryKind === 'constructed'
+            ? awxAPI`/constructed_inventories/`
+            : awxAPI`/inventories/`
+        }
       >
         <InventoryInputs inventoryKind={inventoryKind} />
       </AwxPageForm>
@@ -296,6 +302,11 @@ export function EditInventory() {
           })
         }
         defaultValue={defaultValue}
+        optionsUrl={
+          inventory.kind === 'constructed'
+            ? awxAPI`/constructed_inventories/`
+            : awxAPI`/inventories/`
+        }
       >
         <InventoryInputs inventoryKind={inventory.kind} />
       </AwxPageForm>
@@ -451,6 +462,10 @@ function InventoryInputs(props: { inventoryKind: string }) {
           validate={(item) => {
             if (inventoryKind !== 'constructed') {
               return undefined;
+            }
+            const parseError = getValueToObjectParseError(item);
+            if (parseError) {
+              return parseError;
             }
             const obj = valueToObject(item) as { plugin?: unknown; __preserveYamlString?: string };
             if (obj.__preserveYamlString) {

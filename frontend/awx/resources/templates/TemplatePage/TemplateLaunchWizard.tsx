@@ -9,15 +9,21 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { SurveyStep } from '../../../common/SurveyStep';
-import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import {
+  awxErrorAdapter,
+  useAwxErrorMessageParser,
+} from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
@@ -82,6 +88,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
   const { t } = useTranslation();
   const postRequest = usePostRequest<Partial<LaunchPayload>, UnifiedJob>();
   const createLabelPayload = useLabelPayload();
+  const parseErrorMessage = useAwxErrorMessageParser();
 
   const alertToaster = usePageAlertToaster();
 
@@ -193,10 +200,25 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           void navigate(getJobOutputUrl(job));
         }
       } catch (err) {
+        const failureTitle = t('Failure to launch');
+        let children: ReactNode = failureTitle;
+        if (err instanceof Error) {
+          const { parsedErrors } = parseErrorMessage(err, failureTitle);
+          children =
+            parsedErrors.length > 0 ? (
+              <>
+                {parsedErrors.map((parsedError) => (
+                  <div key={String(parsedError.message)}>{parsedError.message}</div>
+                ))}
+              </>
+            ) : (
+              err.message
+            );
+        }
         alertToaster.addAlert({
           variant: 'danger',
-          title: t('Failure to launch'),
-          children: err instanceof Error && err.message,
+          title: failureTitle,
+          children,
         });
       }
     }
@@ -224,6 +246,11 @@ export function LaunchWizard({
 }>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const launchUrl =
+    template.type === 'workflow_job_template'
+      ? awxAPI`/workflow_job_templates/${template.id}/launch/`
+      : awxAPI`/job_templates/${template.id}/launch/`;
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(launchUrl);
   const { defaults } = config;
   const readOnlyLabels = defaults?.labels?.map((label) => ({
     ...label,
@@ -336,6 +363,7 @@ export function LaunchWizard({
         stepDefaults={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
+        optionsData={optionsData}
       />
     </PageLayout>
   );

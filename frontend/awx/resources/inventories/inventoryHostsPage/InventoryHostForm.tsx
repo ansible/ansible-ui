@@ -147,6 +147,7 @@ export function CreateHost() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsUrl={awxAPI`/hosts/`}
         defaultValue={{
           name: '',
           description: '',
@@ -285,6 +286,7 @@ export function EditHost() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={defaultValue}
+        optionsUrl={awxAPI`/hosts/`}
       >
         <HostInputs edit_mode={true} inventory_host={params.inventory_host} />
       </AwxPageForm>

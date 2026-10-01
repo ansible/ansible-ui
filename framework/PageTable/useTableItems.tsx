@@ -1,4 +1,4 @@
-import debounce from 'debounce';
+import { useDebounce } from '../hooks/useDebounce';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export function useTableItems<T extends object>(
@@ -477,11 +477,7 @@ function useSearched<T extends object>(
   );
   const [searched, setSearched] = useState<T[]>([]);
   const [search, setSearchState] = useState(defaultSearch ?? '');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const setSearch = useCallback(
-    debounce((search: string) => setSearchState(search), 200),
-    []
-  );
+  const setSearch = useDebounce((search: string) => setSearchState(search), 200);
 
   useEffect(() => {
     searchMapRef.current.map = {};

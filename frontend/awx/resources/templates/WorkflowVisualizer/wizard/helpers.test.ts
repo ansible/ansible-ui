@@ -1,7 +1,20 @@
 import { describe, expect, test } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import type { Survey } from '../../../../interfaces/Survey';
-import { getConvergenceType, getResourceURL, processSurvey } from './helpers';
+import { EdgeStatus } from '../types';
+import { getConvergenceType, getLinkEdgeStatus, getResourceURL, processSurvey } from './helpers';
+
+describe('getLinkEdgeStatus', () => {
+  test('should default to always run when status is unset', () => {
+    expect(getLinkEdgeStatus(undefined)).toBe(EdgeStatus.info);
+  });
+
+  test('should map workflow link statuses to edge statuses', () => {
+    expect(getLinkEdgeStatus(EdgeStatus.info)).toBe(EdgeStatus.info);
+    expect(getLinkEdgeStatus(EdgeStatus.success)).toBe(EdgeStatus.success);
+    expect(getLinkEdgeStatus(EdgeStatus.danger)).toBe(EdgeStatus.danger);
+  });
+});
 
 describe('getConvergenceType', () => {
   test('should return "all" when convergence is true', () => {

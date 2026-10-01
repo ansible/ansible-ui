@@ -2,17 +2,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Credentials } from './Credentials';
 
 function TestWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </SWRConfig>
-  );
+  return <MemoryRouter>{children}</MemoryRouter>;
 }
 
 const mockCredentialTypes = {

@@ -72,7 +72,7 @@ test.describe('Inventory Source List', () => {
       ).toBeVisible();
 
       await expect(page.getByTestId('description')).toContainText('mock description');
-      await expect(page.getByTestId('inventory-file')).toContainText('hello_world.yml');
+      await expect(page.getByTestId('inventory-path')).toContainText('hello_world.yml');
       await expect(page.getByTestId('enabled-options')).toContainText('Overwrite');
 
       await Inventory.ui.delete(page, inventoryName);

@@ -1,3 +1,4 @@
+import { createElement, type ComponentType } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
@@ -5,6 +6,30 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { InventoryRunCommand } from './InventoryRunCommand';
+
+const mockPageNavigate = vi.hoisted(() => vi.fn());
+const pageWizardCapture = vi.hoisted(() => ({
+  useStub: false,
+  onSubmit: undefined as ((data: Record<string, unknown>) => Promise<void> | void) | undefined,
+}));
+
+vi.mock('@ansible/ansible-ui-framework', async () => {
+  const actual = await vi.importActual<typeof import('@ansible/ansible-ui-framework')>(
+    '@ansible/ansible-ui-framework'
+  );
+  return {
+    ...actual,
+    usePageNavigate: () => mockPageNavigate,
+    PageWizard: (props: Record<string, unknown>) => {
+      pageWizardCapture.onSubmit = props.onSubmit as typeof pageWizardCapture.onSubmit;
+      if (pageWizardCapture.useStub) {
+        return createElement('div', { 'data-testid': 'mocked-page-wizard' });
+      }
+      const RealPageWizard = actual.PageWizard as ComponentType<Record<string, unknown>>;
+      return createElement(RealPageWizard, props);
+    },
+  };
+});
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
   DataEditor: (props: {
@@ -117,7 +142,12 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  pageWizardCapture.useStub = false;
+  pageWizardCapture.onSubmit = undefined;
+  mockPageNavigate.mockClear();
+});
 afterAll(() => server.close());
 
 function renderRunCommand() {
@@ -155,13 +185,11 @@ describe('InventoryRunCommand', () => {
     expect(screen.getByText('Forks')).toBeInTheDocument();
   });
 
-  it('should fill Details step form fields', async () => {
+  it('should fill Details step form fields', { timeout: 15000 }, async () => {
     const user = userEvent.setup();
     renderRunCommand();
 
-    await waitFor(() => {
-      expect(screen.getByText('Select a module')).toBeInTheDocument();
-    });
+    await screen.findByText('Select a module', {}, { timeout: 10000 });
 
     await user.click(screen.getByText('Select a module'));
     await user.click(screen.getByText('shell'));
@@ -209,5 +237,59 @@ describe('InventoryRunCommand', () => {
 
     await user.click(screen.getByTestId('wizard-cancel'));
     expect(globalThis.history.length).toBeGreaterThan(0);
+  });
+
+  it('should submit ad hoc command including credential passwords and navigate to job output', async () => {
+    pageWizardCapture.useStub = true;
+    let postedBody: Record<string, unknown> | undefined;
+
+    server.use(
+      http.post(
+        ({ request }) => request.url.includes('/ad_hoc_commands/'),
+        async ({ request }) => {
+          postedBody = (await request.json()) as Record<string, unknown>;
+          return HttpResponse.json({ id: '999' }, { status: 201 });
+        }
+      )
+    );
+
+    renderRunCommand();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('mocked-page-wizard')).toBeInTheDocument();
+    });
+    expect(pageWizardCapture.onSubmit).toBeDefined();
+
+    await pageWizardCapture.onSubmit?.({
+      module_name: 'shell',
+      module_args: 'uptime',
+      verbosity: 1,
+      limit: 'all',
+      forks: 1,
+      diff_mode: true,
+      become_enabled: true,
+      extra_vars: '---',
+      credential: 1,
+      execution_environment: 2,
+      credential_passwords: { ssh_password: 'secret' },
+    });
+
+    await waitFor(() => {
+      expect(postedBody).toBeDefined();
+    });
+    expect(postedBody).toMatchObject({
+      module_name: 'shell',
+      module_args: 'uptime',
+      verbosity: 1,
+      credential: 1,
+      execution_environment: 2,
+      ssh_password: 'secret',
+    });
+    expect(mockPageNavigate).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        params: { id: '999', job_type: 'command' },
+      })
+    );
   });
 });

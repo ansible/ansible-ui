@@ -212,6 +212,14 @@ describe('usePlatformRoleMetadata', () => {
     expect(orgMeta.permissions['eda.enable_activation']).toBe('Can enable activation');
     expect(orgMeta.permissions['eda.disable_activation']).toBe('Can disable activation');
     expect(orgMeta.permissions['eda.restart_activation']).toBe('Can restart activation');
+    expect(orgMeta.permissions['eda.change_activation']).toBe('Can change activation');
+  });
+
+  it('should include change activation permission in Activation content type', () => {
+    const { result } = renderHook(() => usePlatformRoleMetadata());
+    const activationMeta = result.current.content_types[PlatformContentTypeEnum.Activation];
+
+    expect(activationMeta.permissions['eda.change_activation']).toBe('Can change activation');
   });
 
   it('should include hub permissions for containernamespace', () => {

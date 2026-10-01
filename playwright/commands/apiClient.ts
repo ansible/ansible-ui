@@ -133,6 +133,35 @@ export async function post<T = unknown>(
   }
 }
 
+export async function options<T = unknown>(
+  page: Page,
+  path: string,
+  requestOptions: RequestOptions = {}
+): Promise<T | null> {
+  const { expectStatus = 200, headers = {} } = requestOptions;
+
+  try {
+    const url = constructURL(path);
+
+    const response = await page.request.fetch(url, {
+      method: 'OPTIONS',
+      headers: {
+        Origin: origin,
+        Referer: platformUI,
+        ...headers,
+      },
+    });
+
+    expect(response.status()).toBe(expectStatus);
+    const responseBody = await parseResponse<T>(response);
+
+    return responseBody;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`OPTIONS request failed for ${path}: ${errorMessage}`);
+  }
+}
+
 export async function get<T = unknown>(
   page: Page,
   path: string,
@@ -271,6 +300,7 @@ export async function deleteFn<T = unknown>(
 export const apiClient = {
   post,
   get,
+  options,
   put,
   patch,
   delete: deleteFn,
@@ -312,6 +342,17 @@ export function createScopedClient(apiPrefix: string) {
         ? normalizedPrefix + path.slice(1)
         : normalizedPrefix + path;
       return get<T>(page, fullPath, options);
+    },
+
+    options: <T = unknown>(
+      page: Page,
+      path: string,
+      requestOptions?: RequestOptions
+    ): Promise<T | null> => {
+      const fullPath = path.startsWith('/')
+        ? normalizedPrefix + path.slice(1)
+        : normalizedPrefix + path;
+      return options<T>(page, fullPath, requestOptions);
     },
 
     put: <T = unknown>(

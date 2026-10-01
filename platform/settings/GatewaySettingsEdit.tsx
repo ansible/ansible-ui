@@ -1,5 +1,4 @@
 import {
-  PageForm,
   PageFormSelect,
   PageFormTextInput,
   PageHeader,
@@ -22,6 +21,7 @@ import { useEffect } from 'react';
 import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
+import { PlatformPageForm } from '../common/PlatformPageForm';
 import { PlatformRoute } from '../main/PlatformRoutes';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 import { GatewaySettingsOption, UrlOption } from './GatewaySettingOptions';
@@ -82,7 +82,7 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
   return (
     <PageLayout>
       <PageHeader title={category.title} description={category.description} />
-      <PageForm
+      <PlatformPageForm
         submitText={t('Save platform gateway settings')}
         onSubmit={handleSubmit}
         onCancel={() => pageNavigate(PlatformRoute.GatewaySettings)}
@@ -147,6 +147,24 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
                       enableReset
                     />
                   );
+                case 'float':
+                  return (
+                    <PageFormTextInput
+                      type="number"
+                      step="any"
+                      min={option.min_value}
+                      max={option.max_value}
+                      key={key}
+                      name={key}
+                      label={option.label}
+                      labelHelp={option.help_text}
+                      isRequired={option.required}
+                      isReadOnly={option.read_only}
+                      defaultValue={option.default}
+                      enableUndo
+                      enableReset
+                    />
+                  );
                 case 'boolean':
                   return (
                     <PageFormSelect
@@ -198,7 +216,7 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
             })}
           </PageFormSection>
         ))}
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }

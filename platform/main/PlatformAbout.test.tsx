@@ -13,7 +13,6 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import type { ComponentProps } from 'react';
 import { useEffect } from 'react';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import platformLogo from '../assets/platform-logo.svg?url';
 import platformLogoWhite from '../assets/platform-logo-white.svg?url';
@@ -40,13 +39,11 @@ function OpenPlatformAboutDialog() {
 
 function mountAbout(settings: IPageSettings) {
   return render(
-    <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
-      <PageSettingsContext.Provider value={[settings, vi.fn()]}>
-        <PageDialogProvider>
-          <OpenPlatformAboutDialog />
-        </PageDialogProvider>
-      </PageSettingsContext.Provider>
-    </SWRConfig>
+    <PageSettingsContext.Provider value={[settings, vi.fn()]}>
+      <PageDialogProvider>
+        <OpenPlatformAboutDialog />
+      </PageDialogProvider>
+    </PageSettingsContext.Provider>
   );
 }
 

@@ -2,10 +2,13 @@ import { PageHeader, PageLayout, PageWizard, usePageNavigate } from '@ansible/an
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '@ansible/ansible-ui-framework/utils/dateTimeHelpers';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { DateTime } from 'luxon';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { Schedule } from '../../../interfaces/Schedule';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetScheduleUrl } from '../hooks/useGetScheduleUrl';
@@ -37,6 +40,7 @@ export function ScheduleAddWizard(props: {
   const processSchedules = useProcessSchedule();
   const getScheduleUrl = useGetScheduleUrl();
   const steps = useScheduleSteps();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/schedules/`);
   const now = DateTime.now();
   const closestQuarterHour: DateTime = DateTime.fromMillis(
     Math.ceil(now.toMillis() / 900000) * 900000
@@ -101,6 +105,7 @@ export function ScheduleAddWizard(props: {
         stepDefaults={initialValues}
         onSubmit={handleSubmit}
         errorAdapter={awxErrorAdapter}
+        optionsData={optionsData}
       />
     </PageLayout>
   );

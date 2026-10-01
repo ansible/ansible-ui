@@ -13,7 +13,7 @@ import { Divider, Label, LabelGroup } from '@patternfly/react-core';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { RRule, RRuleSet, rrulestr } from 'rrule';
+import { parseRruleComponents } from '../hooks/ruleHelpers';
 import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { CredentialLabel } from '../../../common/CredentialLabel';
@@ -77,13 +77,15 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
   const hasDaysToKeep: boolean = JSON.stringify(schedule?.extra_data).includes('days');
   const extraData = schedule?.extra_data as string | object;
 
-  const ruleSet = rrulestr(schedule.rrule, { forceset: true }) as RRuleSet;
-  const rules = ruleSet
-    .rrules()
-    .map((rule, i) => ({ rule: RRule.optionsToString(rule.origOptions), id: i }));
-  const exceptions = ruleSet
-    .exrules()
-    .map((rule, i) => ({ rule: RRule.optionsToString(rule.origOptions), id: i }));
+  const { dtstart, rruleLines, exruleLines } = parseRruleComponents(schedule.rrule);
+  const rules = rruleLines.map((rruleLine, i) => ({
+    rule: dtstart ? `${dtstart}\n${rruleLine}` : rruleLine,
+    id: i,
+  }));
+  const exceptions = exruleLines.map((exruleLine, i) => ({
+    rule: dtstart ? `${dtstart}\n${exruleLine}` : exruleLine,
+    id: i,
+  }));
   return (
     <>
       <PageDetails numberOfColumns="multiple">

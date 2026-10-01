@@ -3,24 +3,19 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { DeprecationAffectedJobs } from './DeprecationAffectedJobs';
 
 function Wrapper({ children }: { children: ReactNode }) {
   return (
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter
-        initialEntries={[
-          `/deprecations/${encodeURIComponent('with_items on module')}/affected-jobs`,
-        ]}
-      >
-        <Routes>
-          <Route path="/deprecations/:deprecationType/affected-jobs" element={children} />
-        </Routes>
-      </MemoryRouter>
-    </SWRConfig>
+    <MemoryRouter
+      initialEntries={[`/deprecations/${encodeURIComponent('with_items on module')}/affected-jobs`]}
+    >
+      <Routes>
+        <Route path="/deprecations/:deprecationType/affected-jobs" element={children} />
+      </Routes>
+    </MemoryRouter>
   );
 }
 
@@ -211,15 +206,13 @@ describe('DeprecationAffectedJobs', () => {
 
   it('should display empty state for unrecognized deprecation type', async () => {
     const UnknownWrapper = ({ children }: { children: ReactNode }) => (
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter
-          initialEntries={[`/deprecations/${encodeURIComponent('nonexistent_type')}/affected-jobs`]}
-        >
-          <Routes>
-            <Route path="/deprecations/:deprecationType/affected-jobs" element={children} />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
+      <MemoryRouter
+        initialEntries={[`/deprecations/${encodeURIComponent('nonexistent_type')}/affected-jobs`]}
+      >
+        <Routes>
+          <Route path="/deprecations/:deprecationType/affected-jobs" element={children} />
+        </Routes>
+      </MemoryRouter>
     );
 
     server.use(

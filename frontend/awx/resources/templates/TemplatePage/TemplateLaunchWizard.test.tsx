@@ -2,8 +2,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import type { AlertProps } from '@patternfly/react-core';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import {
@@ -13,7 +13,7 @@ import {
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { LaunchTemplate, LaunchWizard } from './TemplateLaunchWizard';
 
-const mockAddAlert = vi.fn();
+const mockAddAlert = vi.fn<(alert: AlertProps) => void>();
 
 vi.mock('@ansible/ansible-ui-framework', async () => ({
   ...(await vi.importActual('@ansible/ansible-ui-framework')),
@@ -125,6 +125,12 @@ const mockWJT = {
 } as unknown as JobTemplate;
 
 const server = setupServer(
+  http.options(awxAPI`/job_templates/1/launch/`, () =>
+    HttpResponse.json({ actions: { GET: {}, POST: {} } })
+  ),
+  http.options(awxAPI`/workflow_job_templates/1/launch/`, () =>
+    HttpResponse.json({ actions: { GET: {}, POST: {} } })
+  ),
   http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json(mockTemplate)),
   http.get(awxAPI`/job_templates/1/launch/`, () => HttpResponse.json(makeConfig())),
   http.get(awxAPI`/labels/`, () => HttpResponse.json({ count: 0, results: [], next: null }))
@@ -204,7 +210,8 @@ describe('TemplateLaunchWizard', () => {
         });
 
         // With all ask_* false only Review step is visible; click Finish to submit
-        await user.click(screen.getByTestId('wizard-next'));
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
 
         await waitFor(() => {
           expect(launchPosted).toBe(true);
@@ -480,7 +487,8 @@ describe('TemplateLaunchWizard', () => {
         </MemoryRouter>
       );
       await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
-      await user.click(screen.getByTestId('wizard-next'));
+      const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+      await user.click(finishButton);
       await waitFor(() => {
         expect(wjtLaunched).toBe(true);
       });
@@ -506,12 +514,104 @@ describe('TemplateLaunchWizard', () => {
           </MemoryRouter>
         );
         await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
-        await user.click(screen.getByTestId('wizard-next'));
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
         await waitFor(() => {
           expect(mockAddAlert).toHaveBeenCalledWith(
             expect.objectContaining({ title: 'Failure to launch', variant: 'danger' })
           );
         });
+      }
+    );
+
+    it(
+      'should show the API validation error when a credential type mismatch is rejected',
+      { timeout: 15000 },
+      async () => {
+        mockAddAlert.mockClear();
+        server.use(
+          http.post(awxAPI`/job_templates/1/launch/`, () =>
+            HttpResponse.json(
+              {
+                credentials: ['Cannot assign a Credential of kind `token`'],
+              },
+              { status: 400 }
+            )
+          )
+        );
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+        await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
+        await waitFor(() => {
+          expect(mockAddAlert).toHaveBeenCalledWith(
+            expect.objectContaining({ title: 'Failure to launch', variant: 'danger' })
+          );
+        });
+
+        const alertCall = mockAddAlert.mock.calls.find(
+          ([alert]) => alert.title === 'Failure to launch'
+        );
+        render(<>{alertCall?.[0].children}</>);
+        expect(screen.getByText('Cannot assign a Credential of kind `token`')).toBeInTheDocument();
+      }
+    );
+
+    it(
+      'should show every validation message when the API rejects multiple fields',
+      { timeout: 15000 },
+      async () => {
+        mockAddAlert.mockClear();
+        server.use(
+          http.post(awxAPI`/job_templates/1/launch/`, () =>
+            HttpResponse.json(
+              {
+                credentials: ['Cannot assign a Credential of kind `token`'],
+                inventory: ['This field is required.'],
+              },
+              { status: 400 }
+            )
+          )
+        );
+        const user = userEvent.setup();
+        render(
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
+        );
+        await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        const finishButton = await screen.findByTestId('wizard-next', {}, { timeout: 5000 });
+        await user.click(finishButton);
+        await waitFor(() => {
+          expect(mockAddAlert).toHaveBeenCalledWith(
+            expect.objectContaining({ title: 'Failure to launch', variant: 'danger' })
+          );
+        });
+
+        // Regression: with two rejected fields, useAwxErrorMessageParser's
+        // `.message` collapses to the fallback title, dropping both
+        // validation strings. The toast must render every parsed message.
+        const alertCall = mockAddAlert.mock.calls.find(
+          ([alert]) => alert.title === 'Failure to launch'
+        );
+        render(<>{alertCall?.[0].children}</>);
+        expect(screen.getByText('Cannot assign a Credential of kind `token`')).toBeInTheDocument();
+        expect(screen.getByText('This field is required.')).toBeInTheDocument();
       }
     );
 
@@ -536,16 +636,14 @@ describe('TemplateLaunchWizard', () => {
 
         const user = userEvent.setup();
         render(
-          <SWRConfig value={{ provider: () => new Map() }}>
-            <MemoryRouter initialEntries={['/job-templates/1/launch']}>
-              <Routes>
-                <Route
-                  path="/job-templates/:id/launch"
-                  element={<LaunchTemplate jobType="job_templates" />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </SWRConfig>
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
         );
 
         await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
@@ -577,16 +675,14 @@ describe('TemplateLaunchWizard', () => {
 
         const user = userEvent.setup();
         render(
-          <SWRConfig value={{ provider: () => new Map() }}>
-            <MemoryRouter initialEntries={['/job-templates/1/launch']}>
-              <Routes>
-                <Route
-                  path="/job-templates/:id/launch"
-                  element={<LaunchTemplate jobType="job_templates" />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </SWRConfig>
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
         );
 
         await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
@@ -623,16 +719,14 @@ describe('TemplateLaunchWizard', () => {
 
         const user = userEvent.setup();
         render(
-          <SWRConfig value={{ provider: () => new Map() }}>
-            <MemoryRouter initialEntries={['/job-templates/1/launch']}>
-              <Routes>
-                <Route
-                  path="/job-templates/:id/launch"
-                  element={<LaunchTemplate jobType="job_templates" />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </SWRConfig>
+          <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+            <Routes>
+              <Route
+                path="/job-templates/:id/launch"
+                element={<LaunchTemplate jobType="job_templates" />}
+              />
+            </Routes>
+          </MemoryRouter>
         );
 
         await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());

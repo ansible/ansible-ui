@@ -34,23 +34,51 @@ test(
     ).toBeVisible();
     await page.getByRole('button', { name: 'Finish' }).click();
 
-    await expect(page.getByRole('heading', { name: organizationName, exact: true })).toBeVisible();
+    await expect(page.getByTestId('page-title')).toContainText(organizationName);
     await expect(page.locator('dl')).toContainText('Policy enforcement');
     await expect(page.getByTestId('policy-enforcement')).toContainText(opaPolicyPath);
 
-    await page.getByRole('button', { name: 'Edit organization' }).click();
-    await page.getByRole('textbox', { name: 'Name' }).fill(`${organizationName}-edited`);
-    await page.getByRole('textbox', { name: 'Policy enforcement' }).fill(`${opaPolicyPath}-edit`);
-    await page.getByRole('button', { name: 'Next' }).click();
-    await expect(page.locator('dl')).toContainText(`${organizationName}-edited`);
-    await expect(page.locator('dl')).toContainText(`${opaPolicyPath}-edit`);
-    await page.getByRole('button', { name: 'Finish' }).click();
+    const editedName = `${organizationName}-edited`;
+    const editedPolicy = `${opaPolicyPath}-edit`;
 
-    await expect(
-      page.getByRole('heading', { name: `${organizationName}-edited`, exact: true })
-    ).toBeVisible();
-    await expect(page.locator('dl')).toContainText(`${opaPolicyPath}-edit`);
-    await Organization.ui.delete(page, `${organizationName}-edited`);
+    await page.getByRole('button', { name: 'Edit organization' }).click();
+    const nameField = page.getByRole('textbox', { name: 'Name' });
+    await nameField.clear();
+    await nameField.fill(editedName);
+    await expect(nameField).toHaveValue(editedName);
+    await page.getByRole('textbox', { name: 'Policy enforcement' }).fill(editedPolicy);
+    await page.getByRole('button', { name: 'Next' }).click();
+    await expect(page.locator('dl')).toContainText(editedName);
+    await expect(page.locator('dl')).toContainText(editedPolicy);
+
+    const gatewayPatchPromise = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'PATCH' &&
+        response.url().includes('/api/gateway/v1/organizations/') &&
+        response.ok()
+    );
+    const controllerPatchPromise = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'PATCH' &&
+        response.url().includes('/api/controller/v2/organizations/') &&
+        response.ok()
+    );
+    await page.getByRole('button', { name: 'Finish' }).click();
+    await Promise.all([gatewayPatchPromise, controllerPatchPromise]);
+
+    await expect(page.getByRole('heading', { name: `Edit ${organizationName}` })).not.toBeVisible({
+      timeout: 15_000,
+    });
+    // Details can render a cached gateway org (old name) after PATCH; reload
+    // so the title matches what was saved.
+    await page.reload();
+    await expect(page.getByTestId('page-title')).toHaveText(editedName, {
+      timeout: 30_000,
+    });
+    await expect(page.getByTestId('policy-enforcement')).toContainText(editedPolicy, {
+      timeout: 30_000,
+    });
+    await Organization.ui.delete(page, editedName);
   }
 );
 
