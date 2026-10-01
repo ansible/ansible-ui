@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -137,11 +137,10 @@ describe('AutomationAnalyticsSettingsEdit', () => {
     await screen.findByRole('button', { name: 'Enabled' });
     await user.click(screen.getByRole('button', { name: '' }));
 
+    const popover = await screen.findByRole('dialog');
+    expect(within(popover).getByText('Automation Leaderboards')).toBeInTheDocument();
     expect(
-      await screen.findByText('Automation Leaderboards: Enabled/Disabled')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Controls whether the Automation Leaderboard is visible/)
+      within(popover).getByText(/Controls whether the Automation Leaderboard is visible/)
     ).toBeInTheDocument();
   });
 
