@@ -14,6 +14,10 @@ vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
   },
 }));
 
+vi.mock('./NodeReviewStep', () => ({ NodeReviewStep: () => null }));
+vi.mock('./NodePromptsStep', () => ({ NodePromptsStep: () => null }));
+vi.mock('../../../../common/SurveyStep', () => ({ SurveyStep: () => null }));
+
 const mockCloseSidebar = vi.fn();
 const mockCreateEdge = vi.fn((source: string, target: string, status: EdgeStatus) => ({
   id: `${source}-${target}`,
@@ -117,6 +121,10 @@ vi.mock('../hooks', () => ({
   useGetNodeTypeDetail: () => 'Approval',
   useGetTimeoutString: () => '5 min 0 sec',
   useNodeTypeStepDefaults: useNodeTypeStepDefaultsMock,
+}));
+
+vi.mock('@ansible/common-ui/crud/useOptions', () => ({
+  useOptions: () => ({ data: { actions: { POST: {} } } }),
 }));
 
 function expectFromModelCalled() {

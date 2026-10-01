@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import {
   awaitLaunchConfigLoad,
+  ensureLaunchConfigLoad,
   registerLaunchConfigLoad,
   type LaunchConfigLoadResult,
 } from './launchConfigLoad';
@@ -28,6 +29,51 @@ describe('launchConfigLoad', () => {
 
   it('resolves immediately when no load is registered', async () => {
     await expect(awaitLaunchConfigLoad('job', 99)).resolves.toBeUndefined();
+  });
+
+  it('registers and returns the loader promise when no load is pending', async () => {
+    const loadResult: LaunchConfigLoadResult = {
+      launch_config: null,
+      resource: { id: 3, name: 'JT', type: 'job_template' } as JobTemplate,
+      resourceId: 3,
+    };
+    let resolveLoader!: (value: LaunchConfigLoadResult) => void;
+    const loader = vi.fn(
+      () =>
+        new Promise<LaunchConfigLoadResult>((resolve) => {
+          resolveLoader = resolve;
+        })
+    );
+
+    const loadPromise = ensureLaunchConfigLoad('job', 3, loader);
+    const concurrentAwait = awaitLaunchConfigLoad('job', 3);
+    expect(loader).toHaveBeenCalledOnce();
+    expect(concurrentAwait).toBe(loadPromise);
+
+    resolveLoader(loadResult);
+    await expect(loadPromise).resolves.toEqual(loadResult);
+    await expect(concurrentAwait).resolves.toEqual(loadResult);
+  });
+
+  it('returns the in-flight promise when ensureLaunchConfigLoad is called again', async () => {
+    const loadResult: LaunchConfigLoadResult = {
+      launch_config: null,
+      resource: { id: 11, name: 'JT', type: 'job_template' } as JobTemplate,
+      resourceId: 11,
+    };
+    const loader = vi.fn(
+      () =>
+        new Promise<LaunchConfigLoadResult | undefined>((resolve) =>
+          setTimeout(() => resolve(loadResult), 20)
+        )
+    );
+
+    const first = ensureLaunchConfigLoad('job', 11, loader);
+    const second = ensureLaunchConfigLoad('job', 11, loader);
+
+    expect(second).toBe(first);
+    expect(loader).toHaveBeenCalledOnce();
+    await expect(first).resolves.toEqual(loadResult);
   });
 
   it('does not remove a newer registered load when an older load settles', async () => {

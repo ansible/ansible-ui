@@ -10,12 +10,8 @@ import {
 } from 'react';
 import { useURLSearchParams } from '../components/useURLSearchParams';
 import type { PageWizardState } from './PageWizardState';
-import {
-  isWizardSupplementalData,
-  type PageWizardParentStep,
-  type PageWizardStep,
-  type WizardSupplementalData,
-} from './types';
+import type { PageWizardParentStep, PageWizardStep } from './types';
+import { isWizardSupplementalData, type WizardSupplementalData } from './wizardSupplementalData';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
 
