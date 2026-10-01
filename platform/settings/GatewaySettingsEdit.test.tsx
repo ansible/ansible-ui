@@ -352,15 +352,17 @@ describe('GatewaySettingsEdit Component', () => {
     });
 
     it('should submit a decimal float value', async () => {
+      const user = userEvent.setup();
       const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
       mockRequestPut.mockResolvedValue({});
 
       renderWithContext(floatContext);
 
       const input = screen.getByLabelText('Resource Client Request Timeout');
-      fireEvent.change(input, { target: { value: '18.5' } });
+      await user.clear(input);
+      await user.type(input, '18.5');
 
-      fireEvent.click(screen.getByRole('button', { name: 'Save platform gateway settings' }));
+      await user.click(screen.getByRole('button', { name: 'Save platform gateway settings' }));
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalledWith(
