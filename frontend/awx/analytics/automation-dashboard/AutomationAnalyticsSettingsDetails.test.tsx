@@ -63,7 +63,7 @@ describe('AutomationAnalyticsSettingsDetails', () => {
 
     renderDetails();
 
-    expect(await screen.findByText('Enable Automation Leaderboard')).toBeInTheDocument();
+    expect(await screen.findByText('Automation Leaderboards')).toBeInTheDocument();
     expect(screen.getByText('Enabled')).toBeInTheDocument();
   });
 
@@ -85,7 +85,9 @@ describe('AutomationAnalyticsSettingsDetails', () => {
     server.use(http.get(collectionStatusUrl, () => HttpResponse.json(collectionStatus)));
 
     renderDetails();
-    await user.click(await screen.findByRole('button', { name: 'Edit' }));
+    await user.click(
+      await screen.findByRole('button', { name: 'Edit automation analytics settings' })
+    );
 
     expect(await screen.findByText('Edit page')).toBeInTheDocument();
   });
@@ -95,7 +97,9 @@ describe('AutomationAnalyticsSettingsDetails', () => {
 
     renderDetails(platformAuditor);
 
-    expect(await screen.findByRole('button', { name: 'Edit' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('button', { name: 'Edit automation analytics settings' })
+    ).toBeInTheDocument();
   });
 
   test('should hide the Edit button for a user who is neither superuser nor platform auditor', async () => {
@@ -104,7 +108,9 @@ describe('AutomationAnalyticsSettingsDetails', () => {
     renderDetails(regularUser);
 
     expect(await screen.findByText('Enabled')).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Edit automation analytics settings' })
+    ).not.toBeInTheDocument();
   });
 
   test('should show the leaderboard help text in a popover', async () => {
@@ -116,7 +122,7 @@ describe('AutomationAnalyticsSettingsDetails', () => {
     await user.click(screen.getByRole('button', { name: '' }));
 
     expect(
-      await screen.findByText(/Flag to control enable\/disable of Automation Leaderboard/)
+      await screen.findByText(/Controls whether the Automation Leaderboard is visible/)
     ).toBeInTheDocument();
   });
 
@@ -147,6 +153,6 @@ describe('AutomationAnalyticsSettingsDetails', () => {
     renderDetails();
 
     expect(await screen.findByText('Internal Server Error')).toBeInTheDocument();
-    expect(screen.queryByText('Enable Automation Leaderboard')).not.toBeInTheDocument();
+    expect(screen.queryByText('Automation Leaderboards')).not.toBeInTheDocument();
   });
 });

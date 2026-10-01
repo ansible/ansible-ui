@@ -4,6 +4,6 @@ import { useTranslation } from 'react-i18next';
 export function useAutomationLeaderboardHelpText() {
   const { t } = useTranslation();
   return t(
-    'Flag to control enable/disable of Automation Leaderboard within Automation Analytics Tab. If enabled, the Leaderboard will be visible to all user types. If disabled, it will not be visible to all user types.'
+    'Controls whether the Automation Leaderboard is visible to all users with access to Automation Analytics.'
   );
 }

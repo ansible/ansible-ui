@@ -50,8 +50,8 @@ export function AutomationAnalyticsSettingsEdit() {
       >
         <PageFormSelect<AutomationAnalyticsSettingsFormValues>
           name="show_leaderboard"
-          label={t('Enable Automation Leaderboard')}
-          labelHelpTitle={t('Enable/disable Automation Leaderboard')}
+          label={t('Automation Leaderboards')}
+          labelHelpTitle={t('Automation Leaderboards: Enabled/Disabled')}
           labelHelp={leaderboardHelpText}
           options={[
             { label: t('Enabled'), value: true },

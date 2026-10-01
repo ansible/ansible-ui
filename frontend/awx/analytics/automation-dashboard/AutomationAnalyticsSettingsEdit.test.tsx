@@ -137,9 +137,11 @@ describe('AutomationAnalyticsSettingsEdit', () => {
     await screen.findByRole('button', { name: 'Enabled' });
     await user.click(screen.getByRole('button', { name: '' }));
 
-    expect(await screen.findByText('Enable/disable Automation Leaderboard')).toBeInTheDocument();
     expect(
-      screen.getByText(/Flag to control enable\/disable of Automation Leaderboard/)
+      await screen.findByText('Automation Leaderboards: Enabled/Disabled')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Controls whether the Automation Leaderboard is visible/)
     ).toBeInTheDocument();
   });
 

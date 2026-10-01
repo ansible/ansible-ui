@@ -34,7 +34,7 @@ export function AutomationAnalyticsSettingsDetails() {
         selection: PageActionSelection.None,
         variant: ButtonVariant.primary,
         icon: PencilAltIcon,
-        label: t('Edit'),
+        label: t('Edit automation analytics settings'),
         onClick: () => void navigate('./edit'),
         isPinned: true,
         isHidden: () => !canEdit,
@@ -53,7 +53,7 @@ export function AutomationAnalyticsSettingsDetails() {
         headerActions={<PageActions actions={actions} position={'right'} />}
       />
       <PageDetails>
-        <PageDetail label={t('Enable Automation Leaderboard')} helpText={leaderboardHelpText}>
+        <PageDetail label={t('Automation Leaderboards')} helpText={leaderboardHelpText}>
           {data?.show_leaderboard ? t('Enabled') : t('Disabled')}
         </PageDetail>
       </PageDetails>

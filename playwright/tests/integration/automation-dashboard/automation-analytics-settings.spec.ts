@@ -3,7 +3,7 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 
 const COLLECTION_STATUS_ROUTE = '**/api/metrics/v1/dashboard_reports/collection_status/';
-const LEADERBOARD_DETAIL_TEST_ID = 'enable-automation-leaderboard';
+const LEADERBOARD_DETAIL_TEST_ID = 'automation-leaderboards';
 const LEADERBOARD_SELECT_TEST_ID = 'show-leaderboard-form-group';
 
 interface CollectionStatus {
@@ -67,7 +67,9 @@ test.describe('Automation Analytics Settings', () => {
     await setupBefore()({ page });
     await openAutomationAnalyticsSettings(page);
 
-    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await page
+      .getByRole('button', { name: 'Edit automation analytics settings', exact: true })
+      .click();
     await selectLeaderboardOption(page, 'Disabled');
 
     const postRequest = page.waitForRequest(isCollectionStatusPost);
@@ -83,7 +85,9 @@ test.describe('Automation Analytics Settings', () => {
     await openAutomationAnalyticsSettings(page);
     await expect(page.getByTestId(LEADERBOARD_DETAIL_TEST_ID)).toHaveText('Disabled');
 
-    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await page
+      .getByRole('button', { name: 'Edit automation analytics settings', exact: true })
+      .click();
     await selectLeaderboardOption(page, 'Enabled');
 
     const postRequest = page.waitForRequest(isCollectionStatusPost);
@@ -102,7 +106,9 @@ test.describe('Automation Analytics Settings', () => {
     await setupBefore()({ page });
     await openAutomationAnalyticsSettings(page);
 
-    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await page
+      .getByRole('button', { name: 'Edit automation analytics settings', exact: true })
+      .click();
     await selectLeaderboardOption(page, 'Disabled');
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 
