@@ -1,24 +1,21 @@
-import { afterEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { PageDashboardContext } from '@ansible/ansible-ui-framework';
 import { AutomationDashboardMainPage } from './AutomationDashboardMainPage';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
-import type { IAutomationDashboardCollectionStatus } from './types';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-const DEFAULT_COLLECTION_STATUS: IAutomationDashboardCollectionStatus = {
-  enabled: true,
-  next_run: null,
-  initial_collection_status: null,
-};
+vi.mock('./common/useAutomationDashboardCollectionStatus');
 
-vi.mock('./common/useAutomationDashboardCollectionStatus', () => ({
-  useAutomationDashboardCollectionStatus: vi.fn(() => ({
-    collectionStatus: DEFAULT_COLLECTION_STATUS,
-    isLoading: false,
-  })),
+vi.mock('@ansible/ansible-ui-framework/components/EmptyStateError', () => ({
+  EmptyStateError: ({ titleProp, message }: { titleProp: string; message: string }) => (
+    <div data-testid="error-state">
+      <span>{titleProp}</span>
+      <span>{message}</span>
+    </div>
+  ),
 }));
 
 vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
@@ -77,14 +74,16 @@ function mockStatus(overrides: Partial<CollectionStatusResult> = {}) {
     ...overrides,
   });
 }
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('AutomationDashboardMainPage', () => {
-  afterEach(() => {
+  beforeEach(() => {
     vi.clearAllMocks();
+    mockStatus();
   });
 
-  test('should render the page title and the Dashboard/Leaderboards tabs when not loading', () => {
+  test('should render the page title and the Dashboard/Leaderboards tabs when the user can see both', () => {
     render(<AutomationDashboardMainPage />);
 
     expect(screen.getByRole('heading', { name: 'Automation Dashboard' })).toBeInTheDocument();
@@ -108,10 +107,7 @@ describe('AutomationDashboardMainPage', () => {
   });
 
   test('should show only the loading state while the collection status is loading', () => {
-    vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValueOnce({
-      collectionStatus: DEFAULT_COLLECTION_STATUS,
-      isLoading: true,
-    });
+    mockStatus({ isLoading: true });
 
     render(<AutomationDashboardMainPage />);
 

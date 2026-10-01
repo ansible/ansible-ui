@@ -3,18 +3,25 @@ import { renderHook, act } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 vi.mock('swr');
-vi.mock('../../../../../platform/main/PlatformActiveUserProvider');
+vi.mock('../../../common/useAwxActiveUser');
+vi.mock('@ansible/platform-ui/main/PlatformActiveUserProvider');
 vi.mock('../../../common/api/metrics-utils', () => ({
   metricsAPI: (strings: TemplateStringsArray, ...values: string[]) =>
     strings.reduce((acc, str, i) => acc + str + (values[i] ?? ''), ''),
 }));
 vi.mock('../../../../common/crud/Data');
 
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { usePlatformActiveUser } from '@ansible/platform-ui/main/PlatformActiveUserProvider';
+import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 import { useFetcher } from '../../../../common/crud/Data';
+import { awxAPI } from '../../../common/api/awx-utils';
+import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
+import { RequestError } from '../../../../common/crud/RequestError';
 import { useAutomationDashboardCollectionStatus } from './useAutomationDashboardCollectionStatus';
 import { IAutomationDashboardCollectionStatus } from '../types';
+import { AwxUser } from '../../../interfaces/User';
 
 const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
   enabled: null,
@@ -25,58 +32,40 @@ const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
 
 function setupActiveUser({
   is_superuser = false,
-  is_platform_auditor = false,
+  is_system_auditor = false,
 }: {
   is_superuser?: boolean;
-  is_platform_auditor?: boolean;
+  is_system_auditor?: boolean;
 } = {}) {
-  vi.mocked(usePlatformActiveUser).mockReturnValue({
-    activePlatformUser: {
-      is_superuser,
-      is_platform_auditor,
+  vi.mocked(useAwxActiveUser).mockReturnValue({
+    activeAwxUser: {
       id: 0,
-      url: '',
-      created: '',
-      created_by: '',
-      modified: '',
-      modified_by: '',
-      related: {},
-      summary_fields: {
-        modified_by: {
-          id: 0,
-          username: '',
-          first_name: '',
-          last_name: '',
-        },
-        created_by: {
-          id: 0,
-          username: '',
-          first_name: '',
-          last_name: '',
-        },
-        resource: {
-          ansible_id: '',
-          resource_type: '',
-        },
-      },
       username: '',
-      last_login_map_results: [],
-      managed: false,
-    },
-    refreshActivePlatformUser: vi.fn(),
+      is_superuser,
+      is_system_auditor,
+      summary_fields: { user_capabilities: {} },
+    } as AwxUser,
+    refreshActiveAwxUser: vi.fn(),
   });
 }
 
-function setupActiveUserUndefined() {
+function setupPlatformUser(activePlatformUser?: Partial<PlatformUser>) {
+  vi.mocked(usePlatformActiveUser).mockReturnValue({
+    activePlatformUser: activePlatformUser as PlatformUser | undefined,
+  });
+}
+
+/** A mounted provider whose /me/ request has not settled yet (user undefined, refresh function set). */
+function setupPendingAwxUser() {
+  vi.mocked(useAwxActiveUser).mockReturnValue({
+    activeAwxUser: undefined,
+    refreshActiveAwxUser: vi.fn(),
+  });
+}
+
+function setupPendingPlatformUser() {
   vi.mocked(usePlatformActiveUser).mockReturnValue({
     activePlatformUser: undefined,
-    refreshActivePlatformUser: vi.fn(),
-  });
-}
-
-function setupActiveUserNull() {
-  vi.mocked(usePlatformActiveUser).mockReturnValue({
-    activePlatformUser: null,
     refreshActivePlatformUser: vi.fn(),
   });
 }
@@ -95,119 +84,14 @@ describe('useAutomationDashboardCollectionStatus', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useFetcher).mockReturnValue(vi.fn());
+    setupActiveUser();
+    setupPlatformUser();
+    setupSWR();
   });
 
-  describe('when user is not superuser or auditor', () => {
-    test('should return default status and not fetch', () => {
-      setupActiveUser({ is_superuser: false, is_platform_auditor: false });
-      setupSWR();
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
-      expect(result.current.isLoading).toBe(false);
-      // SWR should be called with null key (no fetch)
-      expect(vi.mocked(useSWR).mock.calls[0][0]).toBeNull();
-    });
-  });
-
-  describe('when activePlatformUser is undefined (still loading)', () => {
-    test('should return default status and not fetch', () => {
-      setupActiveUserUndefined();
-      setupSWR();
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
-      expect(result.current.isLoading).toBe(false);
-      expect(vi.mocked(useSWR).mock.calls[0][0]).toBeNull();
-    });
-  });
-
-  describe('when activePlatformUser is null (not logged in)', () => {
-    test('should return default status and not fetch', () => {
-      setupActiveUserNull();
-      setupSWR();
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
-      expect(result.current.isLoading).toBe(false);
-      expect(vi.mocked(useSWR).mock.calls[0][0]).toBeNull();
-    });
-  });
-
-  describe('when user is superuser', () => {
-    test('should return default status when data is undefined', () => {
-      setupActiveUser({ is_superuser: true });
-      setupSWR();
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
-      expect(result.current.isLoading).toBe(true);
-    });
-
-    test('should return data from API when available', () => {
-      const apiData: IAutomationDashboardCollectionStatus = {
-        enabled: true,
-        next_run: '2026-05-01T00:00:00Z',
-        initial_collection_status: 'completed',
-      };
-      setupActiveUser({ is_superuser: true });
-      setupSWR(apiData);
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current.collectionStatus).toEqual(apiData);
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    test('should pass through min_collection_timestamp from the API response', () => {
-      const apiData: IAutomationDashboardCollectionStatus = {
-        enabled: true,
-        next_run: null,
-        initial_collection_status: 'completed',
-        min_collection_timestamp: '2026-09-01T14:00:00.000Z',
-      };
-      setupActiveUser({ is_superuser: true });
-      setupSWR(apiData);
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current.collectionStatus.min_collection_timestamp).toBe(
-        '2026-09-01T14:00:00.000Z'
-      );
-    });
-
-    test('should return default status on error', () => {
-      setupActiveUser({ is_superuser: true });
-      setupSWR(undefined, new Error('Network error'));
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    test('should return default status when both data and error exist (revalidation failure)', () => {
-      const apiData: IAutomationDashboardCollectionStatus = {
-        enabled: true,
-        next_run: '2026-05-01T00:00:00Z',
-        initial_collection_status: 'completed',
-      };
-      setupActiveUser({ is_superuser: true });
-      setupSWR(apiData, new Error('Revalidation failed'));
-
-      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
-
-      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    test('should fetch using the metrics API URL', () => {
-      setupActiveUser({ is_superuser: true });
-      setupSWR();
+  describe('fetching', () => {
+    test('should fetch regardless of the active user role', () => {
+      setupActiveUser({ is_superuser: false, is_system_auditor: false });
 
       renderHook(() => useAutomationDashboardCollectionStatus());
 
@@ -219,34 +103,36 @@ describe('useAutomationDashboardCollectionStatus', () => {
     test('should pass the fetcher function as second argument to SWR', () => {
       const mockFetcherFn = vi.fn();
       vi.mocked(useFetcher).mockReturnValue(mockFetcherFn);
-      setupActiveUser({ is_superuser: true });
-      setupSWR();
 
       renderHook(() => useAutomationDashboardCollectionStatus());
 
       expect(vi.mocked(useSWR).mock.calls[0][1]).toBe(mockFetcherFn);
     });
 
-    test('should pass dedupingInterval and refreshInterval options to SWR', () => {
-      setupActiveUser({ is_superuser: true });
-      setupSWR();
-
+    test('should pass refreshInterval to SWR without overriding dedupingInterval', () => {
       renderHook(() => useAutomationDashboardCollectionStatus());
 
       const options = vi.mocked(useSWR).mock.calls[0][2];
-      expect(options).toMatchObject({ dedupingInterval: 0, refreshInterval: 10 * 1000 });
+      expect(options).toMatchObject({ refreshInterval: 10 * 1000 });
+      expect(options).not.toHaveProperty('dedupingInterval');
     });
   });
 
-  describe('when user is platform auditor', () => {
-    test('should fetch and return data', () => {
+  describe('collectionStatus', () => {
+    test('should return default status when data is undefined', () => {
+      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
+
+      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    test('should return data from API when available', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
         last_sync: '2026-09-01T14:00:00.000Z',
         show_dashboard: true,
         show_leaderboard: false,
       };
-      setupActiveUser({ is_superuser: false, is_platform_auditor: true });
       setupSWR(apiData);
 
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
@@ -608,8 +494,6 @@ describe('useAutomationDashboardCollectionStatus', () => {
         show_dashboard: true,
         show_leaderboard: true,
       };
-      setupActiveUser({ is_superuser: true });
-      setupSWR();
 
       const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
       expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
@@ -625,7 +509,7 @@ describe('useAutomationDashboardCollectionStatus', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    test('should revert to default status when error occurs after data was loaded', () => {
+    test('should keep permissions unchanged when a poll fails after data was loaded', () => {
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
         last_sync: null,
@@ -636,16 +520,18 @@ describe('useAutomationDashboardCollectionStatus', () => {
       setupSWR(apiData);
 
       const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
-      expect(result.current.collectionStatus).toEqual(apiData);
-      expect(result.current.isLoading).toBe(false);
+      expect(result.current.canSeeDashboard).toBe(true);
 
-      // Simulate error
-      setupSWR(undefined, new Error('Server error'));
+      // SWR keeps the previous data alongside the error on a failed revalidation
+      setupSWR(apiData, new Error('Server error'));
       act(() => {
         rerender();
       });
 
-      expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
+      expect(result.current.collectionStatus).toEqual(apiData);
+      expect(result.current.canSeeDashboard).toBe(true);
+      expect(result.current.canSeeLeaderboard).toBe(true);
+      expect(result.current.error).toBeUndefined();
       expect(result.current.isLoading).toBe(false);
     });
 
@@ -667,90 +553,13 @@ describe('useAutomationDashboardCollectionStatus', () => {
       });
 
       expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    test('should transition from non-superuser to superuser and start loading', () => {
-      setupActiveUser({ is_superuser: false });
-      setupSWR();
-
-      const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
-      expect(result.current.isLoading).toBe(false);
-
-      // User becomes superuser
-      setupActiveUser({ is_superuser: true });
-      vi.mocked(useSWR).mockReturnValue({
-        data: undefined,
-        error: undefined,
-        mutate: vi.fn(),
-        isValidating: true,
-        isLoading: true,
-      });
-
-      act(() => {
-        rerender();
-      });
-
-      expect(result.current.isLoading).toBe(true);
-    });
-
-    test('should track multiple loading state transitions', () => {
-      setupActiveUser({ is_superuser: true });
-
-      // Initial loading state
-      vi.mocked(useSWR).mockReturnValue({
-        data: undefined,
-        error: undefined,
-        mutate: vi.fn(),
-        isValidating: true,
-        isLoading: true,
-      });
-
-      const { result, rerender } = renderHook(() => useAutomationDashboardCollectionStatus());
-      expect(result.current.isLoading).toBe(true);
-
-      // Data arrives
-      const apiData: IAutomationDashboardCollectionStatus = {
-        enabled: true,
-        next_run: null,
-        initial_collection_status: 'completed',
-      };
-      vi.mocked(useSWR).mockReturnValue({
-        data: apiData,
-        error: undefined,
-        mutate: vi.fn(),
-        isValidating: false,
-        isLoading: false,
-      });
-
-      act(() => {
-        rerender();
-      });
-
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.collectionStatus).toEqual(apiData);
-
-      // Revalidating (but has cached data)
-      vi.mocked(useSWR).mockReturnValue({
-        data: apiData,
-        error: undefined,
-        mutate: vi.fn(),
-        isValidating: true,
-        isLoading: false,
-      });
-
-      act(() => {
-        rerender();
-      });
-
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.collectionStatus).toEqual(apiData);
+      expect(result.current.canSeeLeaderboard).toBe(false);
+      expect(result.current.error).toBeUndefined();
     });
   });
 
   describe('memoization', () => {
     test('should return stable object reference when values do not change', () => {
-      setupActiveUser({ is_superuser: true });
       const apiData: IAutomationDashboardCollectionStatus = {
         enabled: true,
         last_sync: null,
@@ -771,7 +580,6 @@ describe('useAutomationDashboardCollectionStatus', () => {
     });
 
     test('should return new object reference when isLoading changes', () => {
-      setupActiveUser({ is_superuser: true });
       vi.mocked(useSWR).mockReturnValue({
         data: undefined,
         error: undefined,
