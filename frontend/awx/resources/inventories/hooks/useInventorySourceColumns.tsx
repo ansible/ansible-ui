@@ -105,10 +105,28 @@ export function useInventorySourceColumns(options?: {
     () => ({
       header: t('Last job status'),
       cell: (inventorySource: InventorySource) => {
+<<<<<<< HEAD
         const props = buildInventorySourceStatusCellProps(
           inventorySource,
           getPageUrl,
           options?.disableLinks
+=======
+        const lastJob = inventorySource.summary_fields?.last_job;
+        return (
+          <StatusCell
+            tooltip={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
+            tooltipId={lastJob?.id}
+            status={inventorySource.status}
+            to={
+              lastJob?.id
+                ? getPageUrl(AwxRoute.JobOutput, {
+                    params: { id: lastJob.id, job_type: 'inventory' },
+                  })
+                : undefined
+            }
+            disableLinks={options?.disableLinks}
+          />
+>>>>>>> 421aa6b95 (fix: project status link missing and inventory source last job status link malformed)
         );
         return <StatusCell {...props} />;
       },
