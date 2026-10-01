@@ -98,7 +98,7 @@ describe('useAutomationAnalytics', () => {
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: { is_superuser: true, is_platform_auditor: false },
     });
-    // Dashboard feature enabled by default
+    // Dashboard feature enabled, dashboard and leaderboards both visible by default
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
       collectionStatus: {
         enabled: true,
@@ -107,6 +107,9 @@ describe('useAutomationAnalytics', () => {
         show_leaderboard: true,
       },
       isLoading: false,
+      canSeeDashboard: true,
+      canSeeLeaderboard: true,
+      error: undefined,
     });
   });
 
@@ -138,12 +141,14 @@ describe('useAutomationAnalytics', () => {
     expect(result.current.hidden).toBe(false);
   });
 
-  test('should be hidden for non-superuser non-auditor even with AWX service', () => {
+  test('should be visible for a regular non-superuser non-auditor user who can see the dashboard', () => {
+    // Not superuser/auditor-gated: Leaderboards is open to any user. useAwxNavigation drops
+    // the entry when neither view can be seen - see the describe block below.
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: { is_superuser: false, is_platform_auditor: false },
     });
     const { result } = renderHook(() => useAutomationAnalytics());
-    expect(result.current.hidden).toBe(true);
+    expect(result.current.hidden).toBe(false);
   });
 
   test('should be hidden when AWX service is unavailable even for superuser', () => {
@@ -152,10 +157,10 @@ describe('useAutomationAnalytics', () => {
     expect(result.current.hidden).toBe(true);
   });
 
-  test('should be hidden when activePlatformUser is null', () => {
+  test('should be visible when activePlatformUser is null but the dashboard can still be seen', () => {
     mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: null });
     const { result } = renderHook(() => useAutomationAnalytics());
-    expect(result.current.hidden).toBe(true);
+    expect(result.current.hidden).toBe(false);
   });
 
   // --- managed cloud install ---
@@ -307,6 +312,9 @@ describe('useAutomationAnalytics', () => {
           show_leaderboard: false,
         },
         isLoading: false,
+        canSeeDashboard: false,
+        canSeeLeaderboard: false,
+        error: undefined,
       });
     });
 
@@ -354,6 +362,9 @@ describe('useAutomationAnalytics', () => {
           show_leaderboard: true,
         },
         isLoading: false,
+        canSeeDashboard: true,
+        canSeeLeaderboard: true,
+        error: undefined,
       });
       const { result } = renderHook(() => useAutomationAnalytics());
       const { children } = asGroup(result.current);
