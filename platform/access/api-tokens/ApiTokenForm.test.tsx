@@ -7,6 +7,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 import { PlatformUser } from '../../interfaces/PlatformUser';
 import { Token } from '../../interfaces/Token';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
+import { resetTestSwrCache, SwrTestWrapper } from '../../../framework/test-utils/swrTestWrapper';
 import { ApiTokenForm } from './ApiTokenForm';
 
 // Mock usePageNavigate and related hooks
@@ -90,6 +91,20 @@ describe('ApiTokenForm', () => {
   };
 
   const server = setupServer(
+    http.get(gatewayAPI`/applications/`, () => {
+      return HttpResponse.json({ count: 0, results: [] });
+    }),
+    http.options(gatewayAPI`/tokens/`, () => {
+      return HttpResponse.json({
+        actions: {
+          POST: {
+            application: { read_only: false },
+            description: {},
+            scope: {},
+          },
+        },
+      });
+    }),
     http.get(gatewayAPI`/users/1/`, () => {
       return HttpResponse.json(mockUser);
     }),
@@ -149,6 +164,7 @@ describe('ApiTokenForm', () => {
 
   beforeEach(() => {
     server.resetHandlers();
+    resetTestSwrCache();
   });
 
   afterEach(() => {
@@ -157,11 +173,13 @@ describe('ApiTokenForm', () => {
 
   test('should render create form with correct title and fields', async () => {
     render(
-      <MemoryRouter initialEntries={['/access/api-tokens/create']}>
-        <Routes>
-          <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/api-tokens/create']}>
+          <Routes>
+            <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
 
     await waitFor(() => {
@@ -175,11 +193,13 @@ describe('ApiTokenForm', () => {
 
   test('should render edit form when token is provided', async () => {
     render(
-      <MemoryRouter initialEntries={['/access/api-tokens/1/edit']}>
-        <Routes>
-          <Route path="/access/api-tokens/:tokenid/edit" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/api-tokens/1/edit']}>
+          <Routes>
+            <Route path="/access/api-tokens/:tokenid/edit" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
 
     await waitFor(() => {
@@ -190,11 +210,13 @@ describe('ApiTokenForm', () => {
 
   test('should render form for user-specific token creation', async () => {
     render(
-      <MemoryRouter initialEntries={['/access/users/1/api-tokens/create']}>
-        <Routes>
-          <Route path="/access/users/:id/api-tokens/create" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/users/1/api-tokens/create']}>
+          <Routes>
+            <Route path="/access/users/:id/api-tokens/create" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
 
     await waitFor(() => {
@@ -208,11 +230,13 @@ describe('ApiTokenForm', () => {
     const user = userEvent.setup();
 
     render(
-      <MemoryRouter initialEntries={['/access/api-tokens/create']}>
-        <Routes>
-          <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/api-tokens/create']}>
+          <Routes>
+            <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
 
     await waitFor(() => {
@@ -244,11 +268,13 @@ describe('ApiTokenForm', () => {
     const user = userEvent.setup();
 
     render(
-      <MemoryRouter initialEntries={['/access/api-tokens/1/edit']}>
-        <Routes>
-          <Route path="/access/api-tokens/:tokenid/edit" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/api-tokens/1/edit']}>
+          <Routes>
+            <Route path="/access/api-tokens/:tokenid/edit" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
 
     await waitFor(() => {
@@ -313,11 +339,13 @@ describe('ApiTokenForm', () => {
     );
 
     render(
-      <MemoryRouter initialEntries={['/access/users/1/api-tokens/create']}>
-        <Routes>
-          <Route path="/access/users/:id/api-tokens/create" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/users/1/api-tokens/create']}>
+          <Routes>
+            <Route path="/access/users/:id/api-tokens/create" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
 
     await waitFor(() => {
@@ -394,11 +422,13 @@ describe('ApiTokenForm', () => {
     );
 
     render(
-      <MemoryRouter initialEntries={['/access/api-tokens/create']}>
-        <Routes>
-          <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/api-tokens/create']}>
+          <Routes>
+            <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
 
     await waitFor(() => {
@@ -422,23 +452,17 @@ describe('ApiTokenForm', () => {
   });
 
   test('should show permission message when OAuth applications cannot be listed', async () => {
-    const user = userEvent.setup();
-
     server.use(http.get(gatewayAPI`/applications/`, () => new HttpResponse(null, { status: 403 })));
 
     render(
-      <MemoryRouter initialEntries={['/access/api-tokens/create']}>
-        <Routes>
-          <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/api-tokens/create']}>
+          <Routes>
+            <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
-
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Select OAuth application' })).toBeInTheDocument();
-    });
-
-    await user.click(screen.getByRole('button', { name: 'Select OAuth application' }));
 
     await waitFor(() => {
       expect(
@@ -447,6 +471,40 @@ describe('ApiTokenForm', () => {
         )
       ).toBeInTheDocument();
     });
+  });
+
+  test('should hide OAuth application field when token OPTIONS marks application read-only', async () => {
+    server.use(
+      http.options(gatewayAPI`/tokens/`, () => {
+        return HttpResponse.json({
+          actions: {
+            POST: {
+              application: { read_only: true },
+              description: {},
+              scope: {},
+            },
+          },
+        });
+      })
+    );
+
+    render(
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/api-tokens/create']}>
+          <Routes>
+            <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Description')).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByRole('button', { name: 'Select OAuth application' })
+    ).not.toBeInTheDocument();
   });
 
   test('should include user field when updating user-specific token', async () => {
@@ -465,11 +523,13 @@ describe('ApiTokenForm', () => {
     );
 
     render(
-      <MemoryRouter initialEntries={['/access/users/1/api-tokens/1/edit']}>
-        <Routes>
-          <Route path="/access/users/:id/api-tokens/:tokenid/edit" element={<ApiTokenForm />} />
-        </Routes>
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/access/users/1/api-tokens/1/edit']}>
+          <Routes>
+            <Route path="/access/users/:id/api-tokens/:tokenid/edit" element={<ApiTokenForm />} />
+          </Routes>
+        </MemoryRouter>
+      </SwrTestWrapper>
     );
 
     await waitFor(() => {

@@ -79,7 +79,7 @@ describe('PageFormSingleSelectAwxResource', () => {
     });
   });
 
-  it('should show query error when the applications list request fails', async () => {
+  it('should show query error when the list request fails', async () => {
     const user = userEvent.setup();
     server.use(http.get('/api/v2/inventories/', () => new HttpResponse(null, { status: 403 })));
 
@@ -101,6 +101,39 @@ describe('PageFormSingleSelectAwxResource', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Error loading inventories')).toBeInTheDocument();
+    });
+  });
+
+  it('should show custom empty message when the list returns no results', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('/api/v2/inventories/', () =>
+        HttpResponse.json({
+          count: 0,
+          results: [],
+        })
+      )
+    );
+
+    render(
+      <TestWrapper>
+        <PageFormSingleSelectAwxResource<MockResource>
+          name="inventory"
+          label="Inventory"
+          url="/api/v2/inventories/"
+          tableColumns={[{ header: 'Name', cell: (r) => r.name }]}
+          placeholder="Select inventory"
+          queryPlaceholder="Loading..."
+          queryErrorText="Error loading inventories"
+          noResultsMessage="No options currently available."
+        />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Select inventory' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('No options currently available.')).toBeInTheDocument();
     });
   });
 });

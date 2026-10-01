@@ -47,6 +47,8 @@ export function PageFormSingleSelectAwxResource<
     labelHelp?: string;
     queryParams?: QueryParams;
     summaryFieldsPath?: string;
+    noResultsMessage?: string;
+    enableBrowse?: boolean;
   }>
 ) {
   const id = useID(props);
@@ -161,13 +163,17 @@ export function PageFormSingleSelectAwxResource<
       isDisabled={props.isDisabled}
       helperText={props.helperText}
       labelHelp={props.labelHelp}
-      onBrowse={() =>
-        openSelectDialog((resource) =>
-          setValue(props.name, resource.id as PathValue<FormData, Name>)
-        )
+      onBrowse={
+        props.enableBrowse === false
+          ? undefined
+          : () =>
+              openSelectDialog((resource) =>
+                setValue(props.name, resource.id as PathValue<FormData, Name>)
+              )
       }
       queryLabel={queryLabel}
       additionalControls={props.additionalControls}
+      noResultsMessage={props.noResultsMessage}
     />
   );
 }
