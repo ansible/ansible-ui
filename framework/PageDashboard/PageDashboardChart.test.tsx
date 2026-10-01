@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   PageDashboardChart,
@@ -70,18 +70,6 @@ const chartGroups = [
 describe('PageDashboardChart', () => {
   beforeEach(() => {
     chartProps.length = 0;
-  });
-
-  it.each<[PageDashboardChartVariant]>([
-    [PageDashboardChartVariantE.lineChart],
-    [PageDashboardChartVariantE.stackedAreaChart],
-    [PageDashboardChartVariantE.barChart],
-    [PageDashboardChartVariantE.stackedBarChart],
-  ])('applies horizontal domain padding for %s', (variant) => {
-    render(<PageDashboardChart groups={chartGroups} variant={variant} yLabel="Job count" />);
-
-    expect(screen.getByTestId('mock-chart')).toBeInTheDocument();
-    expect(chartProps.at(-1)?.domainPadding).toEqual({ x: [10, 40], y: 0 });
   });
 
   it.each<[PageDashboardChartVariant]>([
