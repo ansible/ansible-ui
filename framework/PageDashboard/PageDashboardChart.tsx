@@ -144,6 +144,7 @@ export function PageDashboardChart(props: {
             {(size) => (
               <Chart
                 padding={padding}
+                domainPadding={{ x: 20, y: 0 }}
                 colorScale={groups.map((group) => group.color)}
                 height={size.height}
                 width={size.width}
