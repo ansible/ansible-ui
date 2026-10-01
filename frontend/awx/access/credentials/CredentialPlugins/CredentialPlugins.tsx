@@ -6,10 +6,12 @@ import {
   PageLayout,
 } from '@ansible/ansible-ui-framework';
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
+import { PageFormFieldMetadataProvider } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { buildFieldMetadataMap } from '@ansible/common-ui/validation/buildFieldMetadataMap';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { AwxPageForm } from '../../../common/AwxPageForm';
 import { Credential } from '../../../interfaces/Credential';
@@ -59,62 +61,66 @@ export function CredentialPlugins({
       credentialData?.summary_fields?.credential_type?.id
     );
 
-    return credentialType?.inputs?.metadata ? (
-      <PageFormSection title={t('Metadata')}>
-        {credentialType?.inputs?.metadata.map((input) => {
-          if ('choices' in input && input.choices) {
-            return (
-              <PageFormSingleSelect
-                defaultValue={input?.default}
-                name={input.id}
-                key={input.id}
-                label={input.label}
-                placeholder={input.label}
-                labelHelp={input.help_text}
-                options={
-                  input.choices
-                    ? input.choices?.map((choice) => ({ label: choice, value: choice }))
-                    : []
-                }
-                isRequired={credentialType.inputs.required.includes(input.id)}
-              />
-            );
-          }
-          if (!input.multiline) {
-            return (
-              <PageFormTextInput
-                name={input.id}
-                key={input.id}
-                label={input.label}
-                type={'text'}
-                labelHelp={input.help_text}
-                isRequired={credentialType.inputs.required.includes(input.id)}
-              />
-            );
-          }
-          if (input.multiline) {
-            return (
-              <PageFormTextArea
-                name={input.id}
-                key={input.id}
-                label={input.label}
-                labelHelp={input.help_text}
-                isRequired={credentialType.inputs.required.includes(input.id)}
-              />
-            );
-          }
-        })}
+    const metadataFieldMetadataMap = buildFieldMetadataMap(credentialType?.inputs?.metadata);
 
-        {isOidcCredential(credentialType?.namespace) && (
-          <PageFormJobTemplateSelect
-            key="job_template_id"
-            name="job_template_id"
-            id="job-template-select"
-            label={t('Controller Job Template')}
-            isRequired
-          />
-        )}
-      </PageFormSection>
+    return credentialType?.inputs?.metadata ? (
+      <PageFormFieldMetadataProvider fields={metadataFieldMetadataMap} merge>
+        <PageFormSection title={t('Metadata')}>
+          {credentialType?.inputs?.metadata.map((input) => {
+            if ('choices' in input && input.choices) {
+              return (
+                <PageFormSingleSelect
+                  defaultValue={input?.default}
+                  name={input.id}
+                  key={input.id}
+                  label={input.label}
+                  placeholder={input.label}
+                  labelHelp={input.help_text}
+                  options={
+                    input.choices
+                      ? input.choices?.map((choice) => ({ label: choice, value: choice }))
+                      : []
+                  }
+                  isRequired={credentialType.inputs.required.includes(input.id)}
+                />
+              );
+            }
+            if (!input.multiline) {
+              return (
+                <PageFormTextInput
+                  name={input.id}
+                  key={input.id}
+                  label={input.label}
+                  type={'text'}
+                  labelHelp={input.help_text}
+                  isRequired={credentialType.inputs.required.includes(input.id)}
+                />
+              );
+            }
+            if (input.multiline) {
+              return (
+                <PageFormTextArea
+                  name={input.id}
+                  key={input.id}
+                  label={input.label}
+                  labelHelp={input.help_text}
+                  isRequired={credentialType.inputs.required.includes(input.id)}
+                />
+              );
+            }
+          })}
+
+          {isOidcCredential(credentialType?.namespace) && (
+            <PageFormJobTemplateSelect
+              key="job_template_id"
+              name="job_template_id"
+              id="job-template-select"
+              label={t('Controller Job Template')}
+              isRequired
+            />
+          )}
+        </PageFormSection>
+      </PageFormFieldMetadataProvider>
     ) : null;
   };
   return (

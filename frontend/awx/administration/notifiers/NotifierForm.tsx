@@ -13,6 +13,11 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
+import {
+  FieldMetadata,
+  PageFormFieldMetadataProvider,
+} from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
+import { buildFieldMetadataMap } from '@ansible/common-ui/validation/buildFieldMetadataMap';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
 import { useGet } from '@ansible/common-ui/crud/useGet';
@@ -20,7 +25,7 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { ExternalLink } from '@ansible/hub-ui/common/ExternalLink';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageFormSelectOrganization } from '../../access/organizations/components/PageFormOrganizationSelect';
@@ -45,7 +50,16 @@ export type NotificationTemplateOptions = {
     GET: {
       notification_configuration: Record<
         string,
-        Record<string, { label: string; type: string; default: unknown }>
+        Record<
+          string,
+          {
+            label: string;
+            type: string;
+            default: unknown;
+            pattern?: string;
+            pattern_description?: string;
+          }
+        >
       >;
     };
   };
@@ -253,9 +267,10 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
           <PageFormWatch watch="notification_type">
             {(notification_type: string) =>
               notification_type ? (
-                <PageFormSection title={t('Type Details')}>
-                  <InnerForm notification_type={notification_type} />
-                </PageFormSection>
+                <NotifierTypeDetailsSection
+                  notification_type={notification_type}
+                  optionsData={optionsRequest.data}
+                />
               ) : null
             }
           </PageFormWatch>
@@ -300,6 +315,53 @@ function NotifierForm(props: { mode: 'add' | 'edit' }) {
         </PageFormSection>
       </AwxPageForm>
     </PageLayout>
+  );
+}
+
+/**
+ * Extracts `FieldMetadata` from the notification type's OPTIONS fields so that
+ * `PageFormFieldMetadataProvider` can drive pattern validation for the dynamic
+ * sub-form rendered by `InnerForm`.
+ *
+ * Internally converts the OPTIONS record into schema fields and delegates to
+ * {@link buildFieldMetadataMap} with key `'name'`.
+ */
+export function extractNotifierFieldMetadata(
+  optionsData: NotificationTemplateOptions | undefined,
+  notificationType: string
+): Record<string, FieldMetadata> {
+  if (!optionsData?.actions?.GET?.notification_configuration) return {};
+
+  const typeFields = optionsData.actions.GET.notification_configuration[notificationType];
+  if (!typeFields) return {};
+
+  const schemaFields = Object.entries(typeFields).map(([fieldName, fieldMeta]) => ({
+    name: fieldName,
+    pattern: fieldMeta.pattern,
+    pattern_description: fieldMeta.pattern_description,
+  }));
+
+  return buildFieldMetadataMap(schemaFields, 'name');
+}
+
+function NotifierTypeDetailsSection(
+  props: Readonly<{
+    notification_type: string;
+    optionsData: NotificationTemplateOptions | undefined;
+  }>
+) {
+  const { t } = useTranslation();
+  const fieldMetadataMap = useMemo(
+    () => extractNotifierFieldMetadata(props.optionsData, props.notification_type),
+    [props.optionsData, props.notification_type]
+  );
+
+  return (
+    <PageFormFieldMetadataProvider fields={fieldMetadataMap} merge>
+      <PageFormSection title={t('Type Details')}>
+        <InnerForm notification_type={props.notification_type} />
+      </PageFormSection>
+    </PageFormFieldMetadataProvider>
   );
 }
 
