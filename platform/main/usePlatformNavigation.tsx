@@ -52,6 +52,7 @@ import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
 import { useAutomationDashboardCollectionStatus } from '../../frontend/awx/analytics/automation-dashboard/common/useAutomationDashboardCollectionStatus';
+import { useAutomationAnalyticsSettingsNavigation } from './useAutomationAnalyticsSettingsNavigation';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -426,6 +427,7 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
   const awxService = useHasAwxService();
   const { isEnabled: runtimeFeatureFlagsEnabled } = useRuntimeFeatureFlagsEnabled();
   const navigate = useNavigate();
+  const automationAnalyticsSettingsNav = useAutomationAnalyticsSettingsNavigation();
 
   settingsNav.push({
     label: t('Subscription'),
@@ -581,30 +583,31 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
     ],
   });
 
-  settingsNav.push({
-    id: PlatformRoute.DeveloperSettings,
-    label: t('Development'),
-    path: 'dev',
-    hidden: process.env.NODE_ENV !== 'development',
-    children: [
-      {
-        id: PlatformRoute.UIFlags,
-        label: t('UI Flags'),
-        path: 'flags',
-        element: <UIFlagsPage />,
-      },
-    ],
-  });
-
-  settingsNav.push({
-    path: '',
-    element: <Navigate to=".." />,
-  });
-
   return {
     id: AwxRoute.Settings,
     label: t('Settings'),
     path: 'settings',
-    children: settingsNav,
+    children: [
+      ...settingsNav,
+      automationAnalyticsSettingsNav,
+      {
+        id: PlatformRoute.DeveloperSettings,
+        label: t('Development'),
+        path: 'dev',
+        hidden: process.env.NODE_ENV !== 'development',
+        children: [
+          {
+            id: PlatformRoute.UIFlags,
+            label: t('UI Flags'),
+            path: 'flags',
+            element: <UIFlagsPage />,
+          },
+        ],
+      },
+      {
+        path: '',
+        element: <Navigate to=".." />,
+      },
+    ],
   };
 }

@@ -285,7 +285,7 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
   );
 
   return {
-    // Set by the hook from collection_status's min_collection_timestamp, not derivable here.
+    // Set by the hook from collection_status's last_sync, not derivable here.
     lastSyncedAt: null,
     atAGlance: {
       jobsRun: report.job_runs,
@@ -338,7 +338,7 @@ const EMPTY_LEADERBOARDS_DATA: AutomationLeaderboardsData = {
   earnedOrgAchievements: [],
 };
 
-/** Normalizes the API's `min_collection_timestamp` to a canonical ISO string; null if absent or unparseable. */
+/** Normalizes the API's `last_sync` to a canonical ISO string; null if absent or unparseable. */
 function toIsoString(value: string | null | undefined): string | null {
   if (!value) return null;
   const date = new Date(value);
@@ -372,10 +372,7 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
   // "couldn't fetch the sync timestamp" isn't conflated with "no data yet" or a leaderboard failure.
   const isLoading = isLeaderboardLoading || isCollectionStatusLoading;
 
-  // Temporary workaround: collection_status doesn't expose a dedicated "last sync" timestamp
-  // yet, so min_collection_timestamp is used as a stand-in. Once the backend adds a proper
-  // last-sync timestamp field to collection_status, switch to reading that field instead.
-  const lastSyncedAt = toIsoString(collectionStatus.min_collection_timestamp);
+  const lastSyncedAt = toIsoString(collectionStatus.last_sync);
 
   if (!data) {
     return { ...EMPTY_LEADERBOARDS_DATA, lastSyncedAt, isLoading, error, collectionStatusError };

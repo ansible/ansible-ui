@@ -62,14 +62,15 @@ function mockStatus(overrides: Partial<CollectionStatusResult> = {}) {
   vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValue({
     collectionStatus: {
       enabled: true,
-      min_collection_timestamp: null,
+      last_sync: null,
       show_dashboard: true,
-      show_gamification: true,
+      show_leaderboard: true,
     },
     isLoading: false,
     canSeeDashboard: true,
     canSeeLeaderboard: true,
     error: undefined,
+    isUnavailable: false,
     ...overrides,
   });
 }

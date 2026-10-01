@@ -1,13 +1,12 @@
 import { IAutomationDashboardCollectionStatus } from '../types';
 import { useEffect, useMemo, useState } from 'react';
-import { metricsAPI } from '../../../common/api/metrics-utils';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { useFetcher } from '../../../../common/crud/Data';
 import { isRequestError } from '../../../../common/crud/RequestError';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
-import useSWR, { mutate } from 'swr';
+import { mutate } from 'swr';
 import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 import { usePlatformActiveUser } from '@ansible/platform-ui/main/PlatformActiveUserProvider';
+import { useCollectionStatus } from './useCollectionStatus';
 
 function hasStatusCode(error: unknown, statusCode: number): boolean {
   return isRequestError(error) && error.statusCode === statusCode;
@@ -18,9 +17,9 @@ const UNAVAILABLE_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 const DEFAULT_STATUS: IAutomationDashboardCollectionStatus = {
   enabled: null,
-  min_collection_timestamp: null,
+  last_sync: null,
   show_dashboard: null,
-  show_gamification: null,
+  show_leaderboard: null,
 };
 
 export function useAutomationDashboardCollectionStatus(): {
@@ -32,9 +31,9 @@ export function useAutomationDashboardCollectionStatus(): {
   canSeeLeaderboard: boolean;
   /** Fetch error when there is no data to fall back on; a 404 (no metrics service) is not an error. */
   error: Error | undefined;
+  /** collection_status answered 404, i.e. there is no metrics service. */
+  isUnavailable: boolean;
 } {
-  const url = metricsAPI`/dashboard_reports/collection_status/`;
-  const fetcher = useFetcher();
   // The AWX user works in both builds; the Platform user is only set when
   // PlatformActiveUserProvider is mounted (the context defaults to {} in standalone AWX).
   // A mounted provider always supplies its refresh function, so undefined user + refresh
@@ -49,7 +48,7 @@ export function useAutomationDashboardCollectionStatus(): {
     data,
     error,
     isLoading: isSwrLoading,
-  } = useSWR<IAutomationDashboardCollectionStatus, Error>(url, fetcher, {
+  } = useCollectionStatus({
     // No dedupingInterval override: the global default lets concurrent callers share one request
     refreshInterval: isUnavailable ? UNAVAILABLE_REFRESH_INTERVAL_MS : REFRESH_INTERVAL_MS,
     shouldRetryOnError: !isUnavailable,
@@ -76,7 +75,7 @@ export function useAutomationDashboardCollectionStatus(): {
         activeAwxUser?.is_system_auditor ||
         activePlatformUser?.is_platform_auditor
       ) && !!collectionStatus.show_dashboard;
-    const canSeeLeaderboard = !!collectionStatus.show_gamification;
+    const canSeeLeaderboard = !!collectionStatus.show_leaderboard;
     // If collection_status answers before /me/, canSeeDashboard would be false for a moment and
     // superusers/auditors would briefly get the leaderboards-only page and nav; wait for the role.
     // Once either user grants access the other can't revoke it, so there is nothing to wait for.
@@ -90,6 +89,7 @@ export function useAutomationDashboardCollectionStatus(): {
       canSeeDashboard,
       canSeeLeaderboard,
       error: data || isNotFound ? undefined : error,
+      isUnavailable: isNotFound,
     };
   }, [
     data,
