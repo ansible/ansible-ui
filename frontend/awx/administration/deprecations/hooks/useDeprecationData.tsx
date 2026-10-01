@@ -56,6 +56,27 @@ function extractDeprecationType(stdout: string, task: string): string {
   if (taskLower.includes('with_items')) return 'with_items on module';
   if (taskLower.includes('with_dict')) return 'with_dict loop';
 
+  // Extract a meaningful type from the deprecation message itself
+  // Format: "[DEPRECATION WARNING]: <message text>. This feature will be removed..."
+  // Look for the ending phrase but don't stop at periods in paths/module names
+  const match = stdout.match(/\[DEPRECATION WARNING\]:\s*(.+?)(?:\s+This feature|\s+Deprecation warnings|\s+It will be removed)/i);
+  if (match && match[1]) {
+    let extracted = match[1].trim();
+    // Remove trailing period if present
+    if (extracted.endsWith('.')) {
+      extracted = extracted.slice(0, -1);
+    }
+    // Truncate to 80 chars at word boundary if needed
+    if (extracted.length > 80) {
+      extracted = extracted.slice(0, 80);
+      const lastSpace = extracted.lastIndexOf(' ');
+      if (lastSpace > 60) {
+        extracted = extracted.slice(0, lastSpace);
+      }
+    }
+    return extracted;
+  }
+
   return 'Other deprecation';
 }
 
