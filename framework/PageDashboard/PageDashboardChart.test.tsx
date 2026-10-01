@@ -81,17 +81,16 @@ describe('PageDashboardChart', () => {
     render(<PageDashboardChart groups={chartGroups} variant={variant} yLabel="Job count" />);
 
     expect(screen.getByTestId('mock-chart')).toBeInTheDocument();
-    expect(chartProps.at(-1)?.domainPadding).toEqual({ x: 20, y: 0 });
+    expect(chartProps.at(-1)?.domainPadding).toEqual({ x: [0, 20], y: 0 });
   });
 
-  it('includes the final categorical point in series data', () => {
-    render(
-      <PageDashboardChart
-        groups={chartGroups}
-        variant={PageDashboardChartVariantE.lineChart}
-        yLabel="Job count"
-      />
-    );
+  it.each<[PageDashboardChartVariant]>([
+    [PageDashboardChartVariantE.lineChart],
+    [PageDashboardChartVariantE.stackedAreaChart],
+    [PageDashboardChartVariantE.barChart],
+    [PageDashboardChartVariantE.stackedBarChart],
+  ])('includes the final categorical point in series data for %s', (variant) => {
+    render(<PageDashboardChart groups={chartGroups} variant={variant} yLabel="Job count" />);
 
     const seriesData = findChartSeriesData(chartProps.at(-1)?.children as ReactNode);
     expect(seriesData).toContainEqual({ x: '9/30', y: 11031 });

@@ -30,6 +30,9 @@ export enum PageDashboardChartVariantE {
 
 export type PageDashboardChartVariant = keyof typeof PageDashboardChartVariantE;
 
+/** Trailing padding keeps the rightmost categorical x value inside the plot (AAP-95233). */
+const categoricalChartDomainPadding = { x: [0, 20] as [number, number], y: 0 };
+
 export function PageDashboardChart(props: {
   id?: string;
   groups: {
@@ -144,7 +147,7 @@ export function PageDashboardChart(props: {
             {(size) => (
               <Chart
                 padding={padding}
-                domainPadding={{ x: 20, y: 0 }}
+                domainPadding={categoricalChartDomainPadding}
                 colorScale={groups.map((group) => group.color)}
                 height={size.height}
                 width={size.width}
