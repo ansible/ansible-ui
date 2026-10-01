@@ -56,30 +56,6 @@ async function mockReportDetailRoute(
         total_saving: 6918332.14,
         total_time_saving: 556.36,
         total_number_of_unique_hosts: 31,
-        top_users: [
-          {
-            id: 1,
-            name: 'Test user',
-            execution_count: 14,
-          },
-        ],
-        top_projects: [
-          {
-            id: 15,
-            name: 'Test Project 1',
-            execution_count: 20,
-          },
-          {
-            id: 9,
-            name: 'Test Project 2',
-            execution_count: 9,
-          },
-          {
-            id: 8,
-            name: 'Test Project 3',
-            execution_count: 2,
-          },
-        ],
         job_chart: {
           kind: 'month',
           items: [
@@ -127,14 +103,77 @@ async function mockReportDetailRoute(
   });
 }
 
+async function mockLeaderboardRoute(
+  page: import('playwright').Page,
+  status: number = 200
+): Promise<void> {
+  await page.route(`**/api/metrics/v1/dashboard_reports/leaderboard/`, async (route) => {
+    await route.fulfill({
+      status: status,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        job_runs: 1234,
+        active_organizations: 56,
+        featured_template: { id: 9, name: 'Infrastructure provisioning', run_count: 3558 },
+        enterprise_streak: {
+          streak: 16,
+          daily: [{ date: '2026-08-21', successful_runs: 167 }],
+        },
+        org_streak: {
+          streak: 8,
+          organization: { id: 1, name: 'Platform Engineering', run_count: 2840 },
+          daily: [{ date: '2026-08-21', successful_runs: 96 }],
+        },
+        organization_leaderboard: {
+          user_organization_rank: 1,
+          total_organizations: 42,
+          leaderboard: [
+            { rank: 1, name: 'Platform Engineering', runs: 2840 },
+            { rank: 2, name: 'Security Operations', runs: 1923 },
+          ],
+        },
+        org_achievements: ['sustained', 'rising'],
+        activity_levels: [
+          {
+            id: 'volume',
+            current_user_rank: 3,
+            total_users: 84,
+            leaderboard: [{ rank: 1, username: 'SL', runs: 612 }],
+          },
+          {
+            id: 'breadth',
+            current_user_rank: 1,
+            total_users: 84,
+            leaderboard: [{ rank: 1, username: 'Jamie Ortiz', runs: 12, is_current_user: true }],
+          },
+          {
+            id: 'consistency',
+            current_user_rank: 14,
+            total_users: 84,
+            leaderboard: [{ rank: 1, username: 'MC', runs: 29 }],
+          },
+        ],
+        user_achievements: ['ignition', 'week_warrior', 'explorer', 'centurion'],
+      }),
+    });
+  });
+}
+
 test.beforeEach(async ({ page }) => {
   // Register all route mocks BEFORE login/navigation so they intercept initial API calls.
   // The collection_status response controls whether the Automation Dashboard nav item appears.
+  // min_collection_timestamp must be set (not null) — the Leaderboards tab treats a null
+  // timestamp as "never synced" and renders its empty state instead of the leaderboard data.
   await page.route(`**/api/metrics/v1/dashboard_reports/collection_status/`, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ enabled: true, next_run: null, initial_collection_status: null }),
+      body: JSON.stringify({
+        enabled: true,
+        next_run: null,
+        initial_collection_status: null,
+        min_collection_timestamp: '2026-09-01T14:00:00.000Z',
+      }),
     });
   });
   await page.route(`**/api/metrics/v1/dashboard_reports/templates/*`, async (route) => {
@@ -164,6 +203,11 @@ test.describe('Automation Dashboard', () => {
     ).toBeVisible();
   });
 
+  test('should show the Dashboard and Leaderboards tabs', async ({ page }) => {
+    await expect(page.getByRole('tab', { name: 'Dashboard' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Leaderboards' })).toBeVisible();
+  });
+
   test('Should have correct link in value cards', async ({ page }) => {
     // Wait for dashboard data to load by checking for specific values from our mock
     const successfulJobsCard = page
@@ -185,5 +229,23 @@ test.describe('Automation Dashboard', () => {
 
     await failedJobsCard.getByRole('link', { name: 'See all failed jobs' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
+  });
+});
+
+test.describe('Automation Dashboard - Leaderboards tab', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockLeaderboardRoute(page);
+  });
+
+  test('should show the leaderboard sections when the Leaderboards tab is selected', async ({
+    page,
+  }) => {
+    await page.getByRole('tab', { name: 'Leaderboards' }).click();
+
+    await expect(page.getByRole('heading', { name: 'At a glance' })).toBeVisible();
+    await expect(page.getByTestId('automation-streak')).toBeVisible();
+    await expect(page.getByTestId('activity-levels')).toBeVisible();
+    await expect(page.getByTestId('highlights-leaderboard-card')).toBeVisible();
+    await expect(page.getByTestId('milestone-badges-card')).toBeVisible();
   });
 });
