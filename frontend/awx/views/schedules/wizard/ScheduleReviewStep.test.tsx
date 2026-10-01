@@ -201,4 +201,27 @@ describe('ScheduleReviewStep', () => {
       params: { source_id: 8, id: 9, inventory_type: 'constructed' },
     });
   });
+
+  it('uses the inventory route for an inventory source with the default kind', () => {
+    mocks.wizard.wizardData = {
+      ...mocks.wizard.wizardData,
+      prompt: { labels: [] },
+      exceptions: [],
+    } as never;
+    mocks.useWatch.mockReturnValue([]);
+    setResource({
+      id: 8,
+      name: 'Inventory source',
+      type: 'inventory_source',
+      inventory: 9,
+      summary_fields: { inventory: { kind: '' } },
+    });
+
+    render(<ScheduleReviewStep />);
+
+    expect(mocks.getPageUrl).toHaveBeenCalledWith(expect.anything(), {
+      params: { source_id: 8, id: 9, inventory_type: 'inventory' },
+    });
+    expect(screen.queryByText('exceptions list')).not.toBeInTheDocument();
+  });
 });

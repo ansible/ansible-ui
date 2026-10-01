@@ -21,11 +21,11 @@ const { mockAlertToaster, mockScheduleParams } = vi.hoisted(() => ({
   mockAlertToaster: {
     addAlert: vi.fn(),
   },
-  mockScheduleParams: {} as { id?: string; schedule_id?: string },
+  mockScheduleParams: {} as { id?: string; source_id?: string; schedule_id?: string },
 }));
 
-vi.mock('react-router', async () => ({
-  ...(await vi.importActual<typeof import('react-router')>('react-router')),
+vi.mock('react-router-dom', async () => ({
+  ...(await vi.importActual<typeof import('react-router-dom')>('react-router-dom')),
   useParams: () => mockScheduleParams,
 }));
 
@@ -115,6 +115,10 @@ describe('ScheduleSelectStep', () => {
         links: {},
       });
     }),
+    http.get(awxAPI`/labels/`, () => HttpResponse.json({ count: 0, results: [] })),
+    http.get(awxAPI`/schedules/:schedule_id/labels/`, () =>
+      HttpResponse.json({ count: 0, results: [] })
+    ),
     http.options(awxAPI`/system_job_templates/`, () => {
       return HttpResponse.json({});
     })
@@ -127,6 +131,7 @@ describe('ScheduleSelectStep', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockScheduleParams.id = undefined;
+    mockScheduleParams.source_id = undefined;
     mockScheduleParams.schedule_id = undefined;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     mockSetStepData.mockImplementation((fn) => (typeof fn === 'function' ? fn({}) : fn));
@@ -293,6 +298,70 @@ describe('ScheduleSelectStep', () => {
     });
   });
 
+  describe('resource loading effect', () => {
+    it('should load a resource by id and update wizard data', async () => {
+      server.use(
+        http.get(awxAPI`/job_templates/123/`, () =>
+          HttpResponse.json({ id: 123, type: 'job_template', name: 'Test Template' })
+        )
+      );
+      mockScheduleParams.id = '123';
+
+      render(
+        <TestWrapper>
+          <ScheduleSelectStep resourceEndPoint={awxAPI`/job_templates/`} />
+        </TestWrapper>
+      );
+
+      await waitFor(() => {
+        expect(mockSetWizardData).toHaveBeenCalled();
+        expect(mockSetStepData).toHaveBeenCalled();
+      });
+    });
+
+    it('should show an alert when loading the resource fails with field errors', async () => {
+      server.use(
+        http.get(awxAPI`/job_templates/123/`, () =>
+          HttpResponse.json({ name: ['Name is invalid'] }, { status: 400 })
+        )
+      );
+      mockScheduleParams.id = '123';
+
+      render(
+        <TestWrapper>
+          <ScheduleSelectStep resourceEndPoint={awxAPI`/job_templates/`} />
+        </TestWrapper>
+      );
+
+      await waitFor(() => {
+        expect(mockAlertToaster.addAlert).toHaveBeenCalledWith(
+          expect.objectContaining({ variant: 'danger', timeout: 5000 })
+        );
+      });
+    });
+
+    it('should load an inventory source when source_id is provided', async () => {
+      server.use(
+        http.get(awxAPI`/inventory_sources/456/`, () =>
+          HttpResponse.json({ id: 456, type: 'inventory_source', name: 'Test Source' })
+        )
+      );
+      mockScheduleParams.id = '123';
+      mockScheduleParams.source_id = '456';
+
+      render(
+        <TestWrapper>
+          <ScheduleSelectStep resourceEndPoint={awxAPI`/inventory_sources/`} />
+        </TestWrapper>
+      );
+
+      await waitFor(() => {
+        expect(mockSetWizardData).toHaveBeenCalled();
+        expect(mockSetStepData).toHaveBeenCalled();
+      });
+    });
+  });
+
   describe('prompt step update effect', () => {
     it('should fetch job template launch config for job_template type', async () => {
       server.use(
@@ -396,6 +465,8 @@ describe('ScheduleSelectStep', () => {
       );
 
       mockGetSchedulePromptValues.mockResolvedValue({});
+      mockScheduleParams.id = '123';
+      mockScheduleParams.schedule_id = '789';
 
       render(
         <TestWrapper
@@ -441,6 +512,8 @@ describe('ScheduleSelectStep', () => {
       );
 
       mockGetSchedulePromptValues.mockResolvedValue({});
+      mockScheduleParams.id = '123';
+      mockScheduleParams.schedule_id = '789';
 
       render(
         <TestWrapper
@@ -486,6 +559,8 @@ describe('ScheduleSelectStep', () => {
       );
 
       mockGetSchedulePromptValues.mockResolvedValue({});
+      mockScheduleParams.id = '123';
+      mockScheduleParams.schedule_id = '789';
 
       render(
         <TestWrapper
@@ -589,6 +664,8 @@ describe('ScheduleSelectStep', () => {
       );
 
       mockGetSchedulePromptValues.mockResolvedValue({});
+      mockScheduleParams.id = '123';
+      mockScheduleParams.schedule_id = '789';
 
       render(
         <TestWrapper

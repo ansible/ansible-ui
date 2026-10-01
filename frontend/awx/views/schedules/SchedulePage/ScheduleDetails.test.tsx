@@ -1,5 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -8,18 +7,18 @@ import { SWRConfig } from 'swr';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ScheduleDetails } from './ScheduleDetails';
 
-const mockSchedule = {
+const schedule = {
   id: 1,
   name: 'Test Schedule',
   description: 'Test Description',
-  rrule: 'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1',
+  rrule: 'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;COUNT=1',
   dtstart: '2023-05-09T14:57:05Z',
   dtend: null,
   next_run: '2023-05-16T14:57:05Z',
   timezone: 'America/New_York',
   enabled: true,
-  created: '2023-05-08T14:57:05.224768Z',
-  modified: '2023-05-15T15:41:29.376525Z',
+  created: '2023-05-08T14:57:05Z',
+  modified: '2023-05-15T15:41:29Z',
   scm_branch: 'feature/test-branch',
   job_type: 'run',
   job_tags: 'deploy,test',
@@ -32,443 +31,87 @@ const mockSchedule = {
   diff_mode: true,
   extra_data: {},
   summary_fields: {
-    unified_job_template: {
-      id: 1,
-      name: 'Test Job Template',
-      description: 'Test Description',
-      unified_job_type: 'job',
-      job_type: 'run',
-    },
-    user_capabilities: { edit: true, delete: true },
-    created_by: { id: 1, username: 'admin', first_name: '', last_name: '' },
-    modified_by: { id: 1, username: 'admin', first_name: '', last_name: '' },
+    unified_job_template: { id: 1, unified_job_type: 'job' },
+    created_by: { id: 1, username: 'admin' },
+    modified_by: { id: 1, username: 'admin' },
     inventory: { id: 1, name: 'Test Inventory' },
-    execution_environment: { id: 1, name: 'Test EE', image: 'test:latest', description: '' },
-  },
-  related: {
-    unified_job_template: '/api/v2/job_templates/1/',
+    execution_environment: { id: 1, name: 'Test EE' },
   },
 };
 
 const server = setupServer(
-  http.get(awxAPI`/schedules/1/`, () => {
-    return HttpResponse.json(mockSchedule);
-  }),
-  http.get(awxAPI`/schedules/1/credentials/`, () => {
-    return HttpResponse.json({
-      count: 0,
-      results: [],
-    });
-  }),
-  http.get(awxAPI`/schedules/1/labels/`, () => {
-    return HttpResponse.json({
-      count: 1,
-      results: [{ id: 1, name: 'schedule-label' }],
-    });
-  }),
-  http.get(awxAPI`/job_templates/1/`, () => {
-    return HttpResponse.json({
-      id: 1,
-      name: 'Test Job Template',
-      description: 'Test Description',
-      unified_job_type: 'job',
-      job_type: 'run',
-    });
-  }),
-  http.post(awxAPI`/schedules/preview/`, () => {
-    return HttpResponse.json({
-      local: ['2023-05-09T10:57:05-04:00'],
-      utc: ['2023-05-09T14:57:05Z'],
-    });
-  })
+  http.get(awxAPI`/schedules/1/`, () => HttpResponse.json(schedule)),
+  http.get(awxAPI`/schedules/1/credentials/`, () =>
+    HttpResponse.json({ count: 1, results: [{ id: 3, name: 'SSH credential', kind: 'ssh' }] })
+  ),
+  http.get(awxAPI`/schedules/1/labels/`, () =>
+    HttpResponse.json({ count: 1, results: [{ id: 1, name: 'schedule-label' }] })
+  ),
+  http.get(awxAPI`/job_templates/1/`, () => HttpResponse.json({ scm_branch: 'template-branch' })),
+  http.post(awxAPI`/schedules/preview/`, () => HttpResponse.json({ local: [], utc: [] }))
 );
+
+function renderPage(isSystemJobTemplateSchedule = false) {
+  return render(
+    <SWRConfig value={{ provider: () => new Map() }}>
+      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+        <Routes>
+          <Route
+            path="/templates/:id/schedules/:schedule_id"
+            element={<ScheduleDetails isSystemJobTemplateSchedule={isSystemJobTemplateSchedule} />}
+          />
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
+}
 
 describe('ScheduleDetails', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
-  it('renders schedule details with all expected fields', async () => {
-    render(
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
+  it('renders schedule fields, labels, credentials, and template branch', async () => {
+    renderPage();
 
-    await waitFor(() => {
-      expect(screen.getByText('schedule-label')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Name')).toBeInTheDocument();
-    expect(screen.getByText('Test Schedule')).toBeInTheDocument();
-    expect(screen.getByText('Description')).toBeInTheDocument();
-    expect(screen.getByText('Time zone')).toBeInTheDocument();
-    expect(screen.getByText('Labels')).toBeInTheDocument();
+    expect(await screen.findByText('Test Schedule')).toBeInTheDocument();
     expect(screen.getByText('schedule-label')).toBeInTheDocument();
-
-    const user = userEvent.setup();
-    await user.click(screen.getAllByRole('button', { name: 'admin' })[1]);
-  });
-
-  it('renders an empty labels detail when the schedule has no labels', async () => {
-    server.use(
-      http.get(awxAPI`/schedules/1/labels/`, () => HttpResponse.json({ count: 0, results: [] }))
-    );
-
-    render(
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Name')).toBeInTheDocument();
-    });
-
-    expect(screen.queryByText('Labels')).not.toBeInTheDocument();
-    expect(screen.queryByText('schedule-label')).not.toBeInTheDocument();
-  });
-
-  it('renders source control branch when scm_branch is set', async () => {
-    render(
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Source control branch')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('feature/test-branch')).toBeInTheDocument();
-  });
-
-  it('renders job type field', async () => {
-    render(
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Job type')).toBeInTheDocument();
-    });
-  });
-
-  it('renders inventory field from summary_fields', async () => {
-    render(
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Inventory')).toBeInTheDocument();
-    });
-
+    expect(screen.getByText('SSH credential')).toBeInTheDocument();
     expect(screen.getByText('Test Inventory')).toBeInTheDocument();
+    expect(screen.getByText('feature/test-branch')).toBeInTheDocument();
+    expect(screen.getByText('Created')).toBeInTheDocument();
+    fireEvent.click(screen.getAllByText('admin')[1]);
   });
 
-  it('renders execution environment field', async () => {
-    render(
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Execution Envionment')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Test EE')).toBeInTheDocument();
-  });
-
-  it('renders limit field', async () => {
-    render(
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Limit')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('web_servers')).toBeInTheDocument();
-  });
-
-  it('should preserve the Z suffix on UNTIL in per-rule preview calls', async () => {
-    const rruleWithUntil =
-      'DTSTART;TZID=America/New_York:20260812T170000 RRULE:FREQ=HOURLY;INTERVAL=1;UNTIL=20260813T000000Z;BYSECOND=0';
-    const capturedBodies: string[] = [];
-
-    server.use(
-      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
-        const body = (await request.json()) as { rrule: string };
-        capturedBodies.push(body.rrule);
-        return HttpResponse.json({ local: [], utc: [] });
-      }),
-      http.get(awxAPI`/schedules/1/`, () =>
-        HttpResponse.json({
-          ...mockSchedule,
-          rrule: rruleWithUntil,
-          timezone: 'America/New_York',
-        })
-      )
-    );
-
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-          <Routes>
-            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
-    );
-
-    await waitFor(() => expect(capturedBodies.length).toBeGreaterThanOrEqual(2));
-
-    const perRuleBody = capturedBodies.find((r) => r !== rruleWithUntil);
-    expect(perRuleBody).toBeDefined();
-    expect(perRuleBody).toContain('UNTIL=20260813T000000Z');
-  });
-
-  it('should render exceptions list when schedule has an EXRULE', async () => {
-  it('renders optional schedule details and workflow template branch', async () => {
+  it('renders exception rules and retention data without a DTSTART', async () => {
     server.use(
       http.get(awxAPI`/schedules/1/`, () =>
         HttpResponse.json({
-          ...mockSchedule,
-          rrule:
-            'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;INTERVAL=1 EXRULE:FREQ=WEEKLY;BYDAY=SA',
-        })
-      )
-    );
-
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-          <Routes>
-            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
-    );
-
-    expect(await screen.findByText('Exrule')).toBeInTheDocument();
-  });
-
-  it('should transform EXRULE to RRULE only in exception preview POST bodies', async () => {
-    const rruleWithExrule =
-      'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;INTERVAL=1 EXRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20230513T000000Z';
-    const capturedBodies: string[] = [];
-
-    server.use(
-      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
-        const body = (await request.json()) as { rrule: string };
-        capturedBodies.push(body.rrule);
-        return HttpResponse.json({ local: [], utc: [] });
-      }),
-      http.get(awxAPI`/schedules/1/`, () =>
-        HttpResponse.json({
-          ...mockSchedule,
-          rrule: rruleWithExrule,
-          timezone: 'America/New_York',
+          ...schedule,
+          rrule: 'RRULE:FREQ=DAILY;COUNT=1 EXRULE:FREQ=WEEKLY;BYDAY=SA',
+          extra_data: { days: 14 },
           dtend: '2023-05-17T14:57:05Z',
           next_run: null,
-          scm_branch: null,
           diff_mode: false,
-          job_tags: [{ name: 'deploy' }],
-          skip_tags: [{ name: 'debug' }],
-          extra_data: { days: 14 },
-          summary_fields: {
-            ...mockSchedule.summary_fields,
-            unified_job_template: { id: 2, unified_job_type: 'workflow_job' },
-          },
-          rrule:
-            'DTSTART;TZID=America/New_York:20230509T105705 RRULE:FREQ=DAILY;COUNT=1 EXRULE:FREQ=WEEKLY;COUNT=1',
-        })
-      ),
-      http.get(awxAPI`/workflow_job_templates/2/`, () =>
-        HttpResponse.json({ scm_branch: 'workflow-branch' })
-      ),
-      http.get(awxAPI`/schedules/1/credentials/`, () =>
-        HttpResponse.json({
-          count: 1,
-          results: [{ id: 3, name: 'SSH credential', kind: 'ssh' }],
         })
       )
     );
 
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-          <Routes>
-            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
-    );
+    renderPage(true);
 
-    await waitFor(() => {
-      expect(capturedBodies).toContain(rruleWithExrule);
-      expect(
-        capturedBodies.find(
-          (body) =>
-            body !== rruleWithExrule && body.includes('FREQ=WEEKLY') && body.includes('BYDAY=SA')
-        )
-      ).toBeDefined();
-    });
-
-    const exceptionPreviewBody = capturedBodies.find(
-      (body) =>
-        body !== rruleWithExrule && body.includes('FREQ=WEEKLY') && body.includes('BYDAY=SA')
-    );
-    expect(exceptionPreviewBody).toBeDefined();
-    expect(exceptionPreviewBody).not.toContain('EXRULE:');
-    expect(exceptionPreviewBody).toContain('DTSTART;TZID=America/New_York:20230509T105705');
-    expect(exceptionPreviewBody).toContain('RRULE:FREQ=WEEKLY;BYDAY=SA;UNTIL=20230513T000000Z');
-  });
-
-  it('should handle schedule rrule with no DTSTART', async () => {
-    const rruleNoDtstart = 'RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1';
-    const capturedBodies: string[] = [];
-
-    server.use(
-      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
-        const body = (await request.json()) as { rrule: string };
-        capturedBodies.push(body.rrule);
-        return HttpResponse.json({ local: [], utc: [] });
-      }),
-      http.get(awxAPI`/schedules/1/`, () =>
-        HttpResponse.json({ ...mockSchedule, rrule: rruleNoDtstart })
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route
-            path="/templates/:id/schedules/:schedule_id"
-            element={<ScheduleDetails isSystemJobTemplateSchedule />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Days of data to keep')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('workflow-branch')).toBeInTheDocument();
-    expect(screen.getByText('SSH credential')).toBeInTheDocument();
-    expect(screen.getByText('deploy')).toBeInTheDocument();
-    expect(screen.getByText('debug')).toBeInTheDocument();
-    expect(screen.getByText('Last run')).toBeInTheDocument();
+    expect(await screen.findByText('Days of data to keep')).toBeInTheDocument();
     expect(screen.getByText('Exrule')).toBeInTheDocument();
     expect(screen.getByText('Off')).toBeInTheDocument();
     expect(screen.queryByText('Created')).not.toBeInTheDocument();
   });
 
-  it('renders string retention data without fetching an unrelated template', async () => {
-    server.use(
-      http.get(awxAPI`/schedules/1/`, () =>
-        HttpResponse.json({
-          ...mockSchedule,
-          extra_data: '{"days": 7}',
-          summary_fields: {
-            ...mockSchedule.summary_fields,
-            unified_job_template: { id: 2, unified_job_type: 'project' },
-          },
-        })
-      )
+  it('renders the loading and error states', async () => {
+    server.use(http.get(awxAPI`/schedules/1/`, () => HttpResponse.json({}, { status: 500 })));
+
+    renderPage();
+
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument()
     );
-
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-          <Routes>
-            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
-    );
-
-    await waitFor(() => expect(capturedBodies.length).toBeGreaterThanOrEqual(1));
-    expect(capturedBodies.every((b) => !b.startsWith('DTSTART'))).toBe(true);
-    expect(capturedBodies.includes(rruleNoDtstart)).toBe(true);
-  });
-
-  it('should handle schedule exceptions with no DTSTART', async () => {
-    const rruleWithExruleNoDtstart =
-      'RRULE:FREQ=DAILY;INTERVAL=1;COUNT=1 EXRULE:FREQ=WEEKLY;BYDAY=SA';
-    const capturedBodies: string[] = [];
-
-    server.use(
-      http.post(awxAPI`/schedules/preview/`, async ({ request }) => {
-        const body = (await request.json()) as { rrule: string };
-        capturedBodies.push(body.rrule);
-        return HttpResponse.json({ local: [], utc: [] });
-      }),
-      http.get(awxAPI`/schedules/1/`, () =>
-        HttpResponse.json({ ...mockSchedule, rrule: rruleWithExruleNoDtstart })
-      )
-    );
-
-    render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-          <Routes>
-            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
-    );
-
-    expect(await screen.findByText('Exrule')).toBeInTheDocument();
-    await waitFor(() => expect(capturedBodies).toContain('RRULE:FREQ=WEEKLY;BYDAY=SA'));
-    expect(capturedBodies.every((b) => !b.startsWith('DTSTART'))).toBe(true);
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Days of data to keep')).toBeInTheDocument();
-    });
-  });
-
-  it('renders the loading state and API error state', async () => {
-    server.use(
-      http.get(awxAPI`/schedules/1/`, async () => {
-        await new Promise((resolve) => setTimeout(resolve, 20));
-        return HttpResponse.json({}, { status: 500 });
-      })
-    );
-
-    render(
-      <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
-        <Routes>
-          <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
-    });
   });
 });

@@ -274,6 +274,19 @@ describe('useProcessLabels', () => {
     expect(postCalls[0].body).toEqual({ name: 'schedule-label', organization: 5 });
   });
 
+  it('should use empty default labels when launch configuration has no defaults', async () => {
+    const { result } = renderHook(() => useProcessLabels());
+
+    await result.current(
+      42,
+      [{ id: 2, name: 'schedule-label' }] as Label[],
+      { ask_labels_on_launch: true } as LaunchConfiguration,
+      5
+    );
+
+    expect(postCalls[0].body).toEqual({ name: 'schedule-label', organization: 5 });
+  });
+
   it('should fall back to organization 1 when the default organization has no id', async () => {
     server.use(
       http.get(awxAPI`/organizations/`, () => HttpResponse.json({ count: 1, results: [{}] }))
