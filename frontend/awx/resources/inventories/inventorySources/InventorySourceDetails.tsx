@@ -307,7 +307,7 @@ export function InventorySourceDetails(
   );
 }
 
-export function LastJobTooltip(props: { job: { id: number; status: string; finished: string } }) {
+export function LastJobTooltip(props: { job: { id: number; status: string; finished?: string } }) {
   const job = props.job;
   const { t } = useTranslation();
 
