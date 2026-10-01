@@ -154,9 +154,11 @@ export interface ILeaderboardReport {
   /** `null` when no template ran in the window. */
   featured_template: { id: number; name: string; run_count: number } | null;
   enterprise_streak: ILeaderboardStreak;
-  org_streak: ILeaderboardOrgStreak;
+  /** `null` when the user is not associated with any organization (e.g. super-admin on a fresh instance). */
+  org_streak: ILeaderboardOrgStreak | null;
   organization_leaderboard: {
-    user_organization_rank: number;
+    /** `null` when the user's organization has no rank yet. */
+    user_organization_rank: number | null;
     total_organizations: number;
     /** Top 10, rank ascending. */
     leaderboard?: ILeaderboardOrganizationRow[] | null;
@@ -305,10 +307,12 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
       name: row.name,
       runs: row.runs,
       rank: row.rank,
+      // Numeric row rank only — avoids null === null marking a row as the user's org.
       isCurrentOrg:
         row.rank !== null && row.rank === report.organization_leaderboard.user_organization_rank,
     })),
     currentOrgStanding: {
+      // Falsy rank hides the panel header (see HighlightsLeaderboardPanel).
       rank: report.organization_leaderboard.user_organization_rank ?? 0,
       totalRuns: currentOrgRow?.runs ?? report.org_streak?.organization?.run_count ?? 0,
     },
