@@ -2,7 +2,9 @@ import { useApplicationsColumns } from '@ansible/awx-ui/administration/applicati
 import { useApplicationsFilters } from '@ansible/awx-ui/administration/applications/hooks/useApplicationsFilters';
 import { PageFormSingleSelectAwxResource } from '@ansible/awx-ui/common/PageFormSingleSelectAwxResource';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
+import { isRequestError } from '@ansible/common-ui/crud/RequestError';
 import { FieldPath, FieldValues } from 'react-hook-form';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
@@ -20,6 +22,15 @@ export function OAuthApplicationSelect<
   const { t } = useTranslation();
   const applicationColumns = useApplicationsColumns({ disableLinks: true });
   const applicationFilters = useApplicationsFilters();
+  const queryErrorText = useCallback(
+    (error: Error) =>
+      isRequestError(error) && error.statusCode === 403
+        ? t(
+            'You do not have permission to view OAuth applications. Please contact your system administrator if there is an issue with your access.'
+          )
+        : t('Error loading applications'),
+    [t]
+  );
   return (
     <PageFormSingleSelectAwxResource<Application, TFieldValues, TFieldName>
       name={props.name}
@@ -27,7 +38,7 @@ export function OAuthApplicationSelect<
       label={t('OAuth application')}
       placeholder={t('Select OAuth application')}
       queryPlaceholder={t('Loading applications...')}
-      queryErrorText={t('Error loading applications')}
+      queryErrorText={queryErrorText}
       isRequired={props.isRequired}
       isDisabled={props.isDisabled}
       helperText={props.helperText}

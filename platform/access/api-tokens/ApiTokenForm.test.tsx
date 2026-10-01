@@ -421,6 +421,34 @@ describe('ApiTokenForm', () => {
     });
   });
 
+  test('should show permission message when OAuth applications cannot be listed', async () => {
+    const user = userEvent.setup();
+
+    server.use(http.get(gatewayAPI`/applications/`, () => new HttpResponse(null, { status: 403 })));
+
+    render(
+      <MemoryRouter initialEntries={['/access/api-tokens/create']}>
+        <Routes>
+          <Route path="/access/api-tokens/create" element={<ApiTokenForm />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Select OAuth application' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Select OAuth application' }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          'You do not have permission to view OAuth applications. Please contact your system administrator if there is an issue with your access.'
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
   test('should include user field when updating user-specific token', async () => {
     const user = userEvent.setup();
     let requestBody: Record<string, unknown> | null = null;
