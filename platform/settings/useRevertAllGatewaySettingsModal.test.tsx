@@ -17,9 +17,9 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
       children: ReactNode;
       'aria-label'?: string;
     }) => (
-      <div role="dialog" aria-label={ariaLabel}>
+      <dialog open aria-label={ariaLabel}>
         {children}
-      </div>
+      </dialog>
     ),
     ModalHeader: ({ title }: { title: string }) => <h1>{title}</h1>,
     ModalBody: ({ children }: { children: ReactNode }) => <div>{children}</div>,
