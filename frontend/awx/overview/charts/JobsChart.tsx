@@ -11,6 +11,11 @@ import useSWR from 'swr';
 import { awxAPI } from '../../common/api/awx-utils';
 import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../main/AwxRoutes';
+import {
+  alignJobChartSeriesByDay,
+  mapJobChartTuples,
+  type DashboardJobPeriod,
+} from './jobsChartUtils';
 
 export type UnifiedJobSummary = Pick<UnifiedJob, 'id' | 'finished' | 'failed'>;
 
@@ -23,7 +28,7 @@ interface IJobChartData {
   };
 }
 
-export type DashboardJobPeriod = 'month' | 'two_weeks' | 'week' | 'day';
+export type { DashboardJobPeriod };
 export type DashboardJobType = 'all' | 'inv_sync' | 'scm_update' | 'playbook_run';
 
 export function JobsChart(props: {
@@ -42,23 +47,12 @@ export function JobsChart(props: {
     (url: string) => fetch(url).then((r) => r.json())
   );
 
-  const reducer = (tuple: [number, number]) => {
-    const date = new Date(tuple[0] * 1000);
-    let label: string;
-    switch (period) {
-      case 'day':
-        label = `${date.toLocaleTimeString()}`;
-        break;
-      default:
-        label = `${date.getMonth() + 1}/${date.getDate()}`;
-    }
-    return { label, value: tuple[1] };
-  };
-
-  const failed = data?.jobs?.failed.map(reducer) ?? [];
-  const successful = data?.jobs?.successful.map(reducer) ?? [];
-  const canceled = data?.jobs?.canceled?.map(reducer) ?? [];
-  const error = data?.jobs?.error?.map(reducer) ?? [];
+  const [successful, error, failed, canceled] = alignJobChartSeriesByDay([
+    mapJobChartTuples(data?.jobs?.successful, period),
+    mapJobChartTuples(data?.jobs?.error, period),
+    mapJobChartTuples(data?.jobs?.failed, period),
+    mapJobChartTuples(data?.jobs?.canceled, period),
+  ]);
 
   const { successfulColor, failedColor, errorColor, canceledColor } = usePageChartColors();
 

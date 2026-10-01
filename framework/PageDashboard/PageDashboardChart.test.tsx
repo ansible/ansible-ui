@@ -81,7 +81,7 @@ describe('PageDashboardChart', () => {
     render(<PageDashboardChart groups={chartGroups} variant={variant} yLabel="Job count" />);
 
     expect(screen.getByTestId('mock-chart')).toBeInTheDocument();
-    expect(chartProps.at(-1)?.domainPadding).toEqual({ x: [0, 20], y: 0 });
+    expect(chartProps.at(-1)?.domainPadding).toEqual({ x: [10, 40], y: 0 });
   });
 
   it.each<[PageDashboardChartVariant]>([

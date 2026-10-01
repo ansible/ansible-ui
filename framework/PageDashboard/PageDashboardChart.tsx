@@ -31,7 +31,7 @@ export enum PageDashboardChartVariantE {
 export type PageDashboardChartVariant = keyof typeof PageDashboardChartVariantE;
 
 /** Trailing padding keeps the rightmost categorical x value inside the plot (AAP-95233). */
-const categoricalChartDomainPadding = { x: [0, 20] as [number, number], y: 0 };
+const categoricalChartDomainPadding = { x: [10, 40] as [number, number], y: 0 };
 
 export function PageDashboardChart(props: {
   id?: string;
@@ -115,6 +115,20 @@ export function PageDashboardChart(props: {
     return Object.values(maxValues).reduce((max, value) => (value > max ? value : max), 0);
   }, [groups, props.variant]);
 
+  const xTickValues = useMemo(() => {
+    const labels: string[] = [];
+    const seen = new Set<string>();
+    for (const group of groups) {
+      for (const entry of group.values) {
+        if (!seen.has(entry.label)) {
+          seen.add(entry.label);
+          labels.push(entry.label);
+        }
+      }
+    }
+    return labels;
+  }, [groups]);
+
   const padding = {
     top: (props.padding?.top ?? 4) + 16,
     bottom: (props.padding?.bottom ?? 32) + 16,
@@ -170,7 +184,7 @@ export function PageDashboardChart(props: {
                   />
                 }
               >
-                <ChartAxis fixLabelOverlap />
+                <ChartAxis fixLabelOverlap tickValues={xTickValues} />
                 <ChartAxis
                   dependentAxis
                   showGrid
