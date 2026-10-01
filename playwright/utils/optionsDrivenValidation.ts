@@ -182,14 +182,14 @@ export async function requireAuthenticatorPluginFieldPattern(
     testInfo.skip(true, 'API client does not support GET for /authenticator_plugins/');
   }
 
-  const plugins = await client.get<AuthenticatorPluginsResponse>(page, '/authenticator_plugins/');
+  const plugins = await client.get!<AuthenticatorPluginsResponse>(page, '/authenticator_plugins/');
   const authenticators = plugins?.authenticators;
 
   if (!authenticators?.length) {
     testInfo.skip(true, 'GET /authenticator_plugins/ returned no authenticators');
   }
 
-  const plugin = authenticators.find((entry) => entry.type.includes(pluginTypeFragment));
+  const plugin = authenticators!.find((entry) => entry.type.includes(pluginTypeFragment));
 
   if (!plugin) {
     testInfo.skip(
@@ -198,7 +198,7 @@ export async function requireAuthenticatorPluginFieldPattern(
     );
   }
 
-  const schemaField = plugin.configuration_schema?.find(
+  const schemaField = plugin!.configuration_schema?.find(
     (field) => field.name === configurationFieldName
   );
   const field = readOptionsFieldMetadata(schemaField);
@@ -206,11 +206,11 @@ export async function requireAuthenticatorPluginFieldPattern(
   if (!field?.pattern || !field.pattern_description) {
     testInfo.skip(
       true,
-      `Plugin field "${configurationFieldName}" on ${plugin.type} has no pattern metadata`
+      `Plugin field "${configurationFieldName}" on ${plugin!.type} has no pattern metadata`
     );
   }
 
-  return field;
+  return field!;
 }
 
 /**
