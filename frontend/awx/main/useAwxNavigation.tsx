@@ -40,6 +40,10 @@ import { useAwxTemplateRoutes } from './routes/useAwxTemplateRoutes';
 import { useAwxUsersRoutes } from './routes/useAwxUsersRoutes';
 import { useAwxWorkflowApprovalRoutes } from './routes/useAwxWorkflowApprovalRoutes';
 import { AutomationDashboard } from '../analytics/automation-dashboard/AutomationDashboard';
+import { AutomationDashboardMainPage } from '../analytics/automation-dashboard/AutomationDashboardMainPage';
+import { AutomationLeaderboards } from '../analytics/automation-dashboard/AutomationLeaderboards';
+import { useAutomationDashboardCollectionStatus } from '../analytics/automation-dashboard/common/useAutomationDashboardCollectionStatus';
+import { applyAutomationDashboardNavVisibility } from '../analytics/automation-dashboard/common/applyAutomationDashboardNavVisibility';
 
 export function useAwxNavigation() {
   const { t } = useTranslation();
@@ -63,6 +67,12 @@ export function useAwxNavigation() {
   const awxExecutionEnvironmentsRoutes = useAwxExecutionEnvironmentRoutes();
   const awxCredentialTypesRoutes = useAwxCredentialTypesRoutes();
   const { activeAwxUser } = useAwxActiveUser();
+  const {
+    isLoading: isCollectionStatusLoading,
+    error: collectionStatusError,
+    canSeeDashboard,
+    canSeeLeaderboard,
+  } = useAutomationDashboardCollectionStatus();
 
   const overview: PageNavigationItem[] = [
     {
@@ -101,6 +111,8 @@ export function useAwxNavigation() {
     },
   ];
 
+  const isAwxSuperuserOrAuditor = activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor;
+
   const analyticsItems: PageNavigationItem[] = [
     {
       id: AwxRoute.Analytics,
@@ -108,32 +120,61 @@ export function useAwxNavigation() {
       path: 'analytics',
       children: [
         {
-          id: AwxRoute.AutomationDashboard,
+          id: AwxRoute.AutomationDashboardMainPage,
           label: t('Automation Dashboard'),
           path: 'automation-dashboard',
-          element: <AutomationDashboard />,
+          element: <AutomationDashboardMainPage />,
+          children: [
+            {
+              id: AwxRoute.AutomationDashboard,
+              path: 'dashboard',
+              element: <AutomationDashboard />,
+            },
+            {
+              id: AwxRoute.AutomationLeaderboards,
+              path: 'leaderboards',
+              element: <AutomationLeaderboards />,
+            },
+            {
+              id: AwxRoute.AutomationDashboardRedirect,
+              path: '',
+              element: <Navigate to={{ pathname: 'dashboard', search: location.search }} />,
+            },
+          ],
         },
-        {
-          id: AwxRoute.AutomationCalculator,
-          label: t('Automation Calculator'),
-          path: 'automation-calculator',
-          element: <Reports />,
-        },
-        {
-          id: AwxRoute.HostMetrics,
-          label: t('Host Metrics'),
-          path: 'host-metrics',
-          element: <HostMetrics />,
-        },
-        {
-          id: AwxRoute.SubscriptionUsage,
-          label: t('Subscription Usage'),
-          path: 'subscription-usage',
-          element: <SubscriptionUsage />,
-        },
+        ...(isAwxSuperuserOrAuditor
+          ? [
+              {
+                id: AwxRoute.AutomationCalculator,
+                label: t('Automation Calculator'),
+                path: 'automation-calculator',
+                element: <Reports />,
+              },
+              {
+                id: AwxRoute.HostMetrics,
+                label: t('Host Metrics'),
+                path: 'host-metrics',
+                element: <HostMetrics />,
+              },
+              {
+                id: AwxRoute.SubscriptionUsage,
+                label: t('Subscription Usage'),
+                path: 'subscription-usage',
+                element: <SubscriptionUsage />,
+              },
+            ]
+          : []),
       ],
     },
   ];
+  // Left untouched while loading or on error, so the page can show its own loading/error state
+  if (!isCollectionStatusLoading && !collectionStatusError) {
+    applyAutomationDashboardNavVisibility(analyticsItems, canSeeDashboard, canSeeLeaderboard);
+  }
+  // An empty group would otherwise render as a plain "Analytics" link to a blank page
+  for (const item of analyticsItems) {
+    if ('children' in item) item.hidden = item.children.length === 0;
+  }
 
   const administrationItems: PageNavigationItem[] = [
     {
@@ -322,7 +363,7 @@ export function useAwxNavigation() {
     awxSchedulesRoutes,
     awxProjectRoutes,
     ...infrastructureItems,
-    ...(activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor ? analyticsItems : []),
+    ...analyticsItems,
     ...administrationItems,
     ...accessItems,
     ...settingsItems,
