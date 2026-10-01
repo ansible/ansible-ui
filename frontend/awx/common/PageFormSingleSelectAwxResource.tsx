@@ -69,7 +69,7 @@ export function PageFormSingleSelectAwxResource<
           for (const [key, value] of Object.entries(props.queryParams)) {
             if (Array.isArray(value)) {
               for (const subVal of value) {
-                urlSearchParams.set(key, subVal);
+                urlSearchParams.append(key, subVal);
               }
               continue;
             }
