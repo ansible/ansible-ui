@@ -18,7 +18,9 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert, Button, ButtonVariant, Icon, Tooltip } from '@patternfly/react-core';
 import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { PageFormFieldMetadataProvider } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { buildFieldMetadataMap } from '@ansible/common-ui/validation/buildFieldMetadataMap';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -693,111 +695,115 @@ function CredentialSubForm({
 
   const hasFields = stringFields.length > 0 || choiceFields.length > 0 || booleanFields.length > 0;
 
+  const fieldMetadataMap = buildFieldMetadataMap(credentialType.inputs.fields);
+
   return hasFields ? (
-    <PageFormSection title={t('Type Details')}>
-      <PageFormSection singleColumn>
-        {credentialType?.kind === 'insights' && (
-          <Alert
-            variant="info"
-            isInline
-            title={t('Input username and password or client ID and client secret.')}
-            data-cy="credential-form-insights-alert"
-            data-testid="credential-form-insights-alert"
-          >
-            <Trans>
-              Enter your client ID and client secret to create your Insights credential. See this{' '}
-              <Link to="https://access.redhat.com/articles/7108804" target="_">
-                <strong>Knowledgebase article</strong>
-              </Link>{' '}
-              for more detail.
-            </Trans>
-          </Alert>
-        )}
-        {(credentialType?.namespace === 'hashivault-kv-oidc' ||
-          credentialType?.namespace === 'hashivault-ssh-oidc') &&
-          oidcFeatureEnabled && <HashiCorpVaultOidcInfoSection key={credentialType.namespace} />}
+    <PageFormFieldMetadataProvider fields={fieldMetadataMap} merge>
+      <PageFormSection title={t('Type Details')}>
+        <PageFormSection singleColumn>
+          {credentialType?.kind === 'insights' && (
+            <Alert
+              variant="info"
+              isInline
+              title={t('Input username and password or client ID and client secret.')}
+              data-cy="credential-form-insights-alert"
+              data-testid="credential-form-insights-alert"
+            >
+              <Trans>
+                Enter your client ID and client secret to create your Insights credential. See this{' '}
+                <Link to="https://access.redhat.com/articles/7108804" target="_">
+                  <strong>Knowledgebase article</strong>
+                </Link>{' '}
+                for more detail.
+              </Trans>
+            </Alert>
+          )}
+          {(credentialType?.namespace === 'hashivault-kv-oidc' ||
+            credentialType?.namespace === 'hashivault-ssh-oidc') &&
+            oidcFeatureEnabled && <HashiCorpVaultOidcInfoSection key={credentialType.namespace} />}
+        </PageFormSection>
+        {credentialType?.namespace === 'gce' && <GCEUploadField />}
+        {stringFields.length > 0 &&
+          stringFields.map((field) => {
+            if (field?.multiline) {
+              return (
+                <CredentialMultilineInput
+                  accumulatedPluginValues={accumulatedPluginValues}
+                  setAccumulatedPluginValues={setAccumulatedPluginValues}
+                  setPluginsToDelete={setPluginsToDelete}
+                  kind={credentialType.kind}
+                  key={field.id}
+                  field={field}
+                  requiredFields={requiredFields}
+                  handleModalToggle={() => {
+                    openCredentialPluginsModal({
+                      field,
+                      setCredentialPluginValues,
+                      accumulatedPluginValues,
+                    });
+                  }}
+                  fieldInitialValue={initialValues?.[field?.id]}
+                />
+              );
+            } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
+              return (
+                <BecomeMethodField
+                  key={field.id}
+                  fieldOptions={field}
+                  isRequired={requiredFields.includes(field.id)}
+                />
+              );
+            } else {
+              return (
+                <CredentialTextInput
+                  setFieldEncryptedID={setFieldEncryptedID}
+                  accumulatedPluginValues={accumulatedPluginValues}
+                  setAccumulatedPluginValues={setAccumulatedPluginValues}
+                  setPluginsToDelete={setPluginsToDelete}
+                  key={field.id}
+                  field={field}
+                  credentialType={credentialType}
+                  fieldInitialValue={initialValues?.[field?.id]}
+                  isDisabled={
+                    field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
+                  }
+                  isRequired={requiredFields.includes(field.id)}
+                  handleModalToggle={() =>
+                    openCredentialPluginsModal({
+                      field,
+                      setCredentialPluginValues,
+                      accumulatedPluginValues,
+                    })
+                  }
+                />
+              );
+            }
+          })}
+        {choiceFields.length > 0 &&
+          choiceFields.map((field) => (
+            <PageFormSelect<CredentialSelectProps>
+              key={field.id}
+              defaultValue={field?.default}
+              name={field?.id as keyof CredentialSelectProps}
+              label={field.label}
+              options={field?.choices?.map((choice) => ({ value: choice, label: choice })) ?? []}
+              isRequired={requiredFields.includes(field.id)}
+              labelHelp={field.help_text}
+            />
+          ))}
+        {booleanFields.length > 0 &&
+          booleanFields.map((field) => (
+            <PageFormCheckbox<CredentialType>
+              key={field.id}
+              name={field.id as keyof CredentialType}
+              label={field.label}
+              isRequired={requiredFields.includes(field.id)}
+              labelHelp={field.help_text}
+              defaultValue={Boolean(field.default)}
+            />
+          ))}
       </PageFormSection>
-      {credentialType?.namespace === 'gce' && <GCEUploadField />}
-      {stringFields.length > 0 &&
-        stringFields.map((field) => {
-          if (field?.multiline) {
-            return (
-              <CredentialMultilineInput
-                accumulatedPluginValues={accumulatedPluginValues}
-                setAccumulatedPluginValues={setAccumulatedPluginValues}
-                setPluginsToDelete={setPluginsToDelete}
-                kind={credentialType.kind}
-                key={field.id}
-                field={field}
-                requiredFields={requiredFields}
-                handleModalToggle={() => {
-                  openCredentialPluginsModal({
-                    field,
-                    setCredentialPluginValues,
-                    accumulatedPluginValues,
-                  });
-                }}
-                fieldInitialValue={initialValues?.[field?.id]}
-              />
-            );
-          } else if (credentialType.kind === 'ssh' && field.id === 'become_method') {
-            return (
-              <BecomeMethodField
-                key={field.id}
-                fieldOptions={field}
-                isRequired={requiredFields.includes(field.id)}
-              />
-            );
-          } else {
-            return (
-              <CredentialTextInput
-                setFieldEncryptedID={setFieldEncryptedID}
-                accumulatedPluginValues={accumulatedPluginValues}
-                setAccumulatedPluginValues={setAccumulatedPluginValues}
-                setPluginsToDelete={setPluginsToDelete}
-                key={field.id}
-                field={field}
-                credentialType={credentialType}
-                fieldInitialValue={initialValues?.[field?.id]}
-                isDisabled={
-                  field.id === 'vault_id' && credentialType.kind === 'vault' && isEditMode
-                }
-                isRequired={requiredFields.includes(field.id)}
-                handleModalToggle={() =>
-                  openCredentialPluginsModal({
-                    field,
-                    setCredentialPluginValues,
-                    accumulatedPluginValues,
-                  })
-                }
-              />
-            );
-          }
-        })}
-      {choiceFields.length > 0 &&
-        choiceFields.map((field) => (
-          <PageFormSelect<CredentialSelectProps>
-            key={field.id}
-            defaultValue={field?.default}
-            name={field?.id as keyof CredentialSelectProps}
-            label={field.label}
-            options={field?.choices?.map((choice) => ({ value: choice, label: choice })) ?? []}
-            isRequired={requiredFields.includes(field.id)}
-            labelHelp={field.help_text}
-          />
-        ))}
-      {booleanFields.length > 0 &&
-        booleanFields.map((field) => (
-          <PageFormCheckbox<CredentialType>
-            key={field.id}
-            name={field.id as keyof CredentialType}
-            label={field.label}
-            isRequired={requiredFields.includes(field.id)}
-            labelHelp={field.help_text}
-            defaultValue={Boolean(field.default)}
-          />
-        ))}
-    </PageFormSection>
+    </PageFormFieldMetadataProvider>
   ) : null;
 }
 function CredentialTextInput({
