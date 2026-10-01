@@ -5,6 +5,7 @@ import { navigateTo } from '../commands/navigateTo';
 /** Minimal shape of a scoped API client (awxAPI, hubAPI, gatewayAPI, ...) needed to fetch OPTIONS. */
 export type OptionsClient = {
   options: <T = unknown>(page: Page, path: string) => Promise<T | null>;
+  get?: <T = unknown>(page: Page, path: string) => Promise<T | null>;
 };
 
 /** Minimal OPTIONS shape used by Playwright validation helpers (no UI framework import). */
@@ -181,6 +182,67 @@ export async function requireOptionsFieldPattern(
   }
 
   return field!;
+}
+
+interface AuthenticatorPluginSchemaField {
+  name?: string;
+  pattern?: string;
+  pattern_description?: string;
+  patternDescription?: string;
+  flags?: string;
+}
+
+interface AuthenticatorPluginsResponse {
+  authenticators?: Array<{
+    type: string;
+    configuration_schema?: AuthenticatorPluginSchemaField[];
+  }>;
+}
+
+/**
+ * Fetch GET ``/authenticator_plugins/`` and skip when ``configurationFieldName`` on the
+ * plugin whose ``type`` contains ``pluginTypeFragment`` has no pattern metadata.
+ */
+export async function requireAuthenticatorPluginFieldPattern(
+  page: Page,
+  pluginTypeFragment: string,
+  configurationFieldName: string,
+  testInfo: TestInfo,
+  client: OptionsClient
+): Promise<FieldMetadata> {
+  if (!client.get) {
+    testInfo.skip(true, 'API client does not support GET for /authenticator_plugins/');
+  }
+
+  const plugins = await client.get<AuthenticatorPluginsResponse>(page, '/authenticator_plugins/');
+  const authenticators = plugins?.authenticators;
+
+  if (!authenticators?.length) {
+    testInfo.skip(true, 'GET /authenticator_plugins/ returned no authenticators');
+  }
+
+  const plugin = authenticators.find((entry) => entry.type.includes(pluginTypeFragment));
+
+  if (!plugin) {
+    testInfo.skip(
+      true,
+      `No authenticator plugin with type containing "${pluginTypeFragment}" in /authenticator_plugins/`
+    );
+  }
+
+  const schemaField = plugin.configuration_schema?.find(
+    (field) => field.name === configurationFieldName
+  );
+  const field = readOptionsFieldMetadata(schemaField);
+
+  if (!field?.pattern || !field.pattern_description) {
+    testInfo.skip(
+      true,
+      `Plugin field "${configurationFieldName}" on ${plugin.type} has no pattern metadata`
+    );
+  }
+
+  return field;
 }
 
 /**
