@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -75,6 +76,31 @@ describe('PageFormSingleSelectAwxResource', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Select inventory')).toBeInTheDocument();
+    });
+  });
+
+  it('should show query error when the applications list request fails', async () => {
+    const user = userEvent.setup();
+    server.use(http.get('/api/v2/inventories/', () => new HttpResponse(null, { status: 403 })));
+
+    render(
+      <TestWrapper>
+        <PageFormSingleSelectAwxResource<MockResource>
+          name="inventory"
+          label="Inventory"
+          url="/api/v2/inventories/"
+          tableColumns={[{ header: 'Name', cell: (r) => r.name }]}
+          placeholder="Select inventory"
+          queryPlaceholder="Loading..."
+          queryErrorText="Error loading inventories"
+        />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Select inventory' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Error loading inventories')).toBeInTheDocument();
     });
   });
 });

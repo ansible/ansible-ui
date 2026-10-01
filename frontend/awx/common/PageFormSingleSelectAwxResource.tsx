@@ -6,7 +6,10 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import {
+  PageAsyncQueryErrorText,
+  PageAsyncSelectOptionsFn,
+} from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
 import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
 import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
 import { requestGet } from '@ansible/common-ui/crud/Data';
@@ -38,7 +41,7 @@ export function PageFormSingleSelectAwxResource<
     defaultSelection?: Value[];
     placeholder: string;
     queryPlaceholder: string;
-    queryErrorText: string;
+    queryErrorText: PageAsyncQueryErrorText;
     helperText?: string;
     additionalControls?: React.ReactNode;
     labelHelp?: string;
@@ -88,11 +91,14 @@ export function PageFormSingleSelectAwxResource<
           next: response.results[response.results.length - 1]?.name,
         };
       } catch (error) {
-        return {
-          remaining: 0,
-          options: [],
-          next: 0,
-        };
+        if (options.signal?.aborted) {
+          return {
+            remaining: 0,
+            options: [],
+            next: 0,
+          };
+        }
+        throw error;
       }
     },
     [props.url, props.queryParams]
