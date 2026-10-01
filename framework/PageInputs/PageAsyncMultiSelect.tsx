@@ -4,7 +4,7 @@ import { SyncAltIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { SetRequired } from 'type-fest';
+import { SetRequired } from '../utils/utilityTypes';
 import { PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
 import { PageMultiSelect, PageMultiSelectProps } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';

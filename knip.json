@@ -4,6 +4,7 @@
   "vite": false,
   "vitest": false,
   "ignore": [
+    "frontend/hub/insights-tests/eslint.config.mjs",
     "**/vite.config.ts",
     "vitest.config.ts",
     "**/vitest.setup.ts",
@@ -17,7 +18,6 @@
     "framework/test-utils/testing-library.tsx",
     "framework/test-utils/wrapWithSwrTestWrapper.tsx",
     "frontend/hub/insights/**",
-    "frontend/hub/insights-tests/eslint.config.mjs",
     "frontend/hub/interfaces/generated/**",
     "frontend/hub/interfaces/expanded/**",
     "frontend/hub/interfaces/transform.cjs"
@@ -47,7 +47,7 @@
   ],
   "workspaces": {
     "framework": {
-      "entry": ["**/*.{test,spec}.{ts,tsx}"]
+      "entry": ["**/*.{test,spec}.{ts,tsx}", "**/*.test-d.ts"]
     },
     "frontend/common": {
       "entry": ["**/*.{test,spec}.{ts,tsx}"]

@@ -1,6 +1,6 @@
 import { ToolbarToggleGroup, ToolbarToggleGroupProps } from '@patternfly/react-core';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SetRequired } from 'type-fest';
+import { SetRequired } from '../utils/utilityTypes';
 
 export function PageToolbarToggleGroup(props: SetRequired<ToolbarToggleGroupProps, 'id'>) {
   const [isExpanded, setIsExpanded] = useState(false);
