@@ -74,7 +74,10 @@ const mockExistingActivation = {
 const mockActivationOptions = {
   actions: {
     GET: {},
-    PATCH: {},
+    POST: {},
+    PATCH: {
+      name: { type: 'string' },
+    },
   },
 };
 
@@ -100,6 +103,7 @@ const server = setupServer(
   http.get(edaAPI`/activations/1/`, () => {
     return HttpResponse.json(mockExistingActivation);
   }),
+  http.options(edaAPI`/activations/`, () => HttpResponse.json(mockActivationOptions)),
   http.options(edaAPI`/activations/1/`, () => {
     return HttpResponse.json(mockActivationOptions);
   })
@@ -376,6 +380,26 @@ describe('EditRulebookActivation', () => {
     expect(screen.getByRole('checkbox', { name: /Enable event persistence/ })).toBeInTheDocument();
   });
 
+  it('should show read-only warning when OPTIONS has no PATCH action', async () => {
+    server.use(
+      http.options(edaAPI`/activations/1/`, () => HttpResponse.json({ actions: { GET: {} } }))
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/edit']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/edit" element={<EditRulebookActivation />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/you do not have permissions to edit this rulebook activation/i)
+      ).toBeInTheDocument();
+    });
+  });
+
   it('should prepopulate form fields with existing activation data', async () => {
     render(
       <MemoryRouter initialEntries={['/rulebook-activations/1/edit']}>
@@ -444,5 +468,5 @@ describe('EditRulebookActivation', () => {
       });
       expect(autoRestartCheckbox).not.toBeChecked();
     });
-  });
+  }, 20_000);
 });

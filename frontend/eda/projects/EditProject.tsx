@@ -329,6 +329,7 @@ export function CreateProject() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<EdaProjectCreate, EdaProject>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/projects/`);
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
     requestGet
@@ -366,6 +367,7 @@ export function CreateProject() {
           update_revision_on_launch: false,
           scm_update_cache_timeout: 0,
         }}
+        optionsData={optionsData}
       >
         <ProjectCreateInputs />
       </EdaPageForm>
@@ -379,10 +381,10 @@ export function EditProject() {
   const pageNavigate = usePageNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/projects/${params.id ?? ''}/`
   );
-  const canEditProject = data ? Boolean(data.actions && data.actions['PATCH']) : true;
+  const canEditProject = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
 
   const { data: project } = useGet<EdaProjectRead>(edaAPI`/projects/${id.toString()}/`);
 
@@ -444,6 +446,7 @@ export function EditProject() {
               eda_credential_id: project?.eda_credential?.id,
               organization_id: project?.organization?.id,
             }}
+            optionsData={optionsData}
           >
             <ProjectEditInputs />
           </EdaPageForm>
