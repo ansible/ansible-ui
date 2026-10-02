@@ -98,7 +98,6 @@
     "rrule": "2.8.1",
     "styled-components": "6.5.1",
     "swr": "2.5.0",
-    "xml2js": "^0.6.2",
     "zustand": "^5.0.14"
   },
   "overrides": {
