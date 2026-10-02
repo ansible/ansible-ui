@@ -52,7 +52,8 @@ test.describe('Overview - Job Activity chart', () => {
 
     const platformAwx = page.locator('#platform-awx');
     if ((await platformAwx.count()) === 0) {
-      test.skip(true, 'AWX overview is not available in this deployment');
+      await expect(page.locator('#job-activity')).not.toBeVisible();
+      return;
     }
     await expect(platformAwx).toBeVisible({ timeout: 60_000 });
 
