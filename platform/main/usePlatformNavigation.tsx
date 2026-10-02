@@ -297,13 +297,13 @@ export function useAutomationAnalytics(): PageNavigationItem {
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics)!;
   const { activePlatformUser } = usePlatformActiveUser();
+  // canSeeDashboard/canSeeLeaderboard are already applied to the tree by useAwxNavigation
   const {
     collectionStatus,
     isLoading: isCollectionStatusLoading,
     error: collectionStatusError,
   } = useAutomationDashboardCollectionStatus();
   const automationDashboardEnabled = collectionStatus.enabled;
-
   if (analytics && 'children' in analytics) {
     analytics.label = t('Automation Analytics');
     if (managedCloudInstall) {
