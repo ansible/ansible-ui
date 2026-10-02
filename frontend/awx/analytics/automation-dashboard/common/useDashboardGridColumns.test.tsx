@@ -47,7 +47,7 @@ describe('useDashboardGridColumns', () => {
 
     const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
     act(() => {
-      resizeCallback({ contentRect: { width: 2400 } } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: { width: 2400 } } as ResizeObserverEntry);
     });
 
     // (2400 - 56) / 69.25 => 33
@@ -66,10 +66,10 @@ describe('useDashboardGridColumns', () => {
 
     const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
     act(() => {
-      resizeCallback({ contentRect: { width: 0 } } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: { width: 0 } } as ResizeObserverEntry);
     });
     act(() => {
-      resizeCallback({ contentRect: {} } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: {} } as ResizeObserverEntry);
     });
 
     // transient / hidden measurements are ignored — no flash to one column
