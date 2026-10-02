@@ -13,11 +13,6 @@ import {
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { DashboardToolbar } from './components/DashboardToolbar';
 import { DashboardGridRow, DashboardLayout } from './components/DashboardLayout';
-import useResizeObserver from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
-import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
-import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
-import { Scrollable } from '@ansible/ansible-ui-framework/components/Scrollable';
-import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 
 /** Breakpoint range (in grid columns) where value cards switch from 'md' to 'xs' size. */
 const WIDE_LAYOUT_MIN_COLUMNS = 16;
