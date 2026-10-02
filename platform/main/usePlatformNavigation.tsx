@@ -52,6 +52,7 @@ import { PlatformRoute } from './PlatformRoutes';
 import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
 import { useAutomationDashboardCollectionStatus } from '../../frontend/awx/analytics/automation-dashboard/common/useAutomationDashboardCollectionStatus';
+import { useAutomationAnalyticsSettingsNavigation } from './useAutomationAnalyticsSettingsNavigation';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -280,6 +281,15 @@ function useAutomationDecisionsNavigation(): PageNavigationItem {
   };
 }
 
+/** Non-superusers only ever see the Automation Dashboard entry under Analytics. */
+function removeAllButAutomationDashboard(children: PageNavigationItem[]) {
+  children
+    .filter((child) => child.id !== AwxRoute.AutomationDashboardMainPage)
+    .forEach((child) => {
+      if (child.id) removeNavigationItemById(children, child.id);
+    });
+}
+
 export function useAutomationAnalytics(): PageNavigationItem {
   const awxNav = useAwxNavigation();
   const { t } = useTranslation();
@@ -287,37 +297,30 @@ export function useAutomationAnalytics(): PageNavigationItem {
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics)!;
   const { activePlatformUser } = usePlatformActiveUser();
-  const { collectionStatus, isLoading: isCollectionStatusLoading } =
-    useAutomationDashboardCollectionStatus();
+  // canSeeDashboard/canSeeLeaderboard are already applied to the tree by useAwxNavigation
+  const {
+    collectionStatus,
+    isLoading: isCollectionStatusLoading,
+    error: collectionStatusError,
+  } = useAutomationDashboardCollectionStatus();
   const automationDashboardEnabled = collectionStatus.enabled;
-
   if (analytics && 'children' in analytics) {
     analytics.label = t('Automation Analytics');
     if (managedCloudInstall) {
       removeNavigationItemById(analytics.children, AwxRoute.SubscriptionUsage);
     }
-    const automationDashboardId = 'awx-automation-dashboard';
 
     // Only apply logic after loading is complete to prevent flicker
     if (!isCollectionStatusLoading) {
-      if (automationDashboardEnabled) {
-        if (!activePlatformUser?.is_superuser) {
-          analytics.children
-            .filter((c) => c.id !== automationDashboardId)
-            .forEach((item) => {
-              if (item.id) removeNavigationItemById(analytics.children, item.id);
-            });
-        }
-      } else {
-        // Not enabled or error - remove automation dashboard from menu
-        removeNavigationItemById(analytics.children, automationDashboardId);
+      // A first-load error keeps the route so the page can show its error state
+      if (!automationDashboardEnabled && !collectionStatusError) {
+        removeNavigationItemById(analytics.children, AwxRoute.AutomationDashboardMainPage);
+      } else if (!activePlatformUser?.is_superuser) {
+        removeAllButAutomationDashboard(analytics.children);
       }
     }
 
-    analytics.hidden =
-      !awxService ||
-      !(activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor) ||
-      !analytics.children.length;
+    analytics.hidden = !awxService || !analytics.children.length;
   }
   return analytics;
 }
@@ -424,6 +427,7 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
   const awxService = useHasAwxService();
   const { isEnabled: runtimeFeatureFlagsEnabled } = useRuntimeFeatureFlagsEnabled();
   const navigate = useNavigate();
+  const automationAnalyticsSettingsNav = useAutomationAnalyticsSettingsNavigation();
 
   settingsNav.push({
     label: t('Subscription'),
@@ -579,30 +583,31 @@ function usePlatformSettingsNavigation(): PageNavigationItem {
     ],
   });
 
-  settingsNav.push({
-    id: PlatformRoute.DeveloperSettings,
-    label: t('Development'),
-    path: 'dev',
-    hidden: process.env.NODE_ENV !== 'development',
-    children: [
-      {
-        id: PlatformRoute.UIFlags,
-        label: t('UI Flags'),
-        path: 'flags',
-        element: <UIFlagsPage />,
-      },
-    ],
-  });
-
-  settingsNav.push({
-    path: '',
-    element: <Navigate to=".." />,
-  });
-
   return {
     id: AwxRoute.Settings,
     label: t('Settings'),
     path: 'settings',
-    children: settingsNav,
+    children: [
+      ...settingsNav,
+      automationAnalyticsSettingsNav,
+      {
+        id: PlatformRoute.DeveloperSettings,
+        label: t('Development'),
+        path: 'dev',
+        hidden: process.env.NODE_ENV !== 'development',
+        children: [
+          {
+            id: PlatformRoute.UIFlags,
+            label: t('UI Flags'),
+            path: 'flags',
+            element: <UIFlagsPage />,
+          },
+        ],
+      },
+      {
+        path: '',
+        element: <Navigate to=".." />,
+      },
+    ],
   };
 }

@@ -1,9 +1,19 @@
 # Automation Dashboard
 
-The Automation Dashboard is an analytics feature of the Ansible Automation Platform (AAP). It gives users a real-time
-view of automation cost savings, job execution trends, host activity, and per-template metrics. Users can filter the
-data by time period and resource (template, label, organization, project), export results to CSV, and adjust the
-cost-calculation parameters interactively.
+The Automation Dashboard is an analytics feature of the Ansible Automation Platform (AAP). It is a
+tabbed page:
+
+- **Dashboard** — real-time view of automation cost savings, job execution trends, host activity,
+  and per-template metrics. Users can filter the data by time period and resource (template, label,
+  organization, project), export results to CSV, and adjust the cost-calculation parameters
+  interactively.
+- **Leaderboards** — enterprise "at a glance" summary, automation streaks, per-dimension user
+  leaderboards, an organizations leaderboard, and 30-day achievement badges. Data comes from
+  `/dashboard_reports/leaderboard/` via
+  [`views/useAutomationLeaderboardsView.ts`](./views/useAutomationLeaderboardsView.ts).
+
+Which tabs a user sees depends on their role and on server-side flags — see
+[Access and visibility](#access-and-visibility).
 
 ---
 
@@ -11,120 +21,256 @@ cost-calculation parameters interactively.
 
 ```text
 automation-dashboard/
-├── AutomationDashboard.tsx          # Page entry point
-├── AutomationDashboard.test.tsx
+├── AutomationDashboardMainPage.tsx  # Tabbed page shell (route entry point)
+├── AutomationDashboard.tsx          # "Dashboard" tab
+├── AutomationLeaderboards.tsx       # "Leaderboards" tab
+├── AutomationDashboard.css          # Styles for leaderboard visuals (streak strip, badges)
 ├── README.md
-├── common/
-│   ├── useAutomationDashboardToolbarFilters.tsx   # Async filter hook
-│   └── useAutomationDashboardToolbarFilters.test.tsx
+├── common/                          # Hooks: data views, toolbar filters, filter-set CRUD, grid sizing
+│   ├── applyAutomationDashboardNavVisibility.ts  # Removes / collapses the nav entry per visibility
+│   ├── leaderboardCardWidths.ts     # Leaderboards card column spans per grid width
+│   ├── useAutomationDashboardBaseView.ts
+│   ├── useAutomationDashboardCollectionStatus.tsx  # Collection status + canSeeDashboard/Leaderboard
+│   ├── useAutomationDashboardToolbarFilters.tsx
+│   ├── useAutomationDashboardToolbarActions.tsx
+│   ├── useCreateToolbarFilterSet.tsx / useUpdateToolbarFilterSet.tsx / useRemoveToolbarFilterSet.tsx
+│   ├── useCreateEditToolbarFilterSetDialog.tsx
+│   └── useDashboardGridColumns.tsx  # Measures the responsive grid column count
 ├── components/
 │   ├── index.ts
 │   ├── Toolbar.tsx                  # useAutomationDashboardToolbar hook
+│   ├── DashboardToolbar.tsx         # Filter toolbar + "Select report" filter-set control
+│   ├── DashboardLayout.tsx          # Scrollable grid wrapper + DashboardGridRow
 │   ├── DashboardValueCard.tsx       # KPI card
-│   ├── DashboardTableCard.tsx       # Top-5 ranked list card
+│   ├── DashboardDetailsCard.tsx     # KPI card rendered as a PageDetail
+│   ├── DashboardCardValue.tsx       # Shared value formatting / font-size helper
 │   ├── DashboardChartCard.tsx       # Bar / line chart card
-│   ├── DashboardMainTableCard.tsx   # Main editable table card
+│   ├── DashboardMainTableCard.tsx   # Main editable cost/savings table card
+│   ├── DashboardTableToolbarRow.tsx # Cost controls + Export CSV
 │   ├── DashboardTableInputField.tsx # Inline numeric input
-│   ├── DashboardTableToolbarRow.tsx # Cost controls toolbar
-│   └── *.test.tsx
+│   ├── DashboardExportButton.tsx    # CSV export split button
+│   └── leaderboards/                # "Leaderboards" tab components (data via the view hook)
+│       ├── AutomationAtAGlance.tsx
+│       ├── AtAGlanceKpiMetric.tsx
+│       ├── AutomationDimensions.tsx
+│       ├── AutomationStreak.tsx
+│       ├── HighlightsLeaderboardPanel.tsx
+│       ├── HighlightsSyncTimestamp.tsx
+│       ├── MilestoneBadgesCard.tsx
+│       ├── StreakDayStrip.tsx
+│       ├── LeaderboardRankCell.tsx
+│       ├── DashboardSectionHeading.tsx
+│       └── DashboardMetricsText.tsx
 ├── constants/
 │   ├── index.ts
+│   ├── common.ts                    # DEFAULT_NUMBER_LOCALE
 │   └── DateRange.ts                 # AutomationDashboardDateRangeFilterPresets enum
 ├── types/
-│   └── index.ts                     # All TypeScript interfaces and prop types
-└── views/
-    ├── useAutomationDashboardView.tsx      # Main view hook (composes all sub-hooks)
-    ├── useGetReportDetails.tsx             # Fetches aggregate dashboard data
+│   └── index.ts                     # Dashboard data models and prop types
+├── utils/
+│   ├── queryString.ts               # Filter <-> query-string helpers
+│   └── persistedFilterState.ts      # Per-user sessionStorage persistence of toolbar state
+└── views/                           # Data / state hooks
+    ├── useAutomationDashboardView.tsx      # Dashboard tab: central data + export hook
+    ├── useAutomationLeaderboardsView.ts    # Leaderboards tab: single data source (SWR)
+    ├── useFilterSetView.tsx                # "Select report" async filter-set dropdown state
+    ├── useGetReportDetails.tsx             # Fetches aggregate dashboard data (SWR)
     ├── useGetReportSubscriptionCosts.tsx   # Fetches subscription cost settings
-    ├── useSubscriptionCostState.ts         # Manages local cost state synced with server
-    ├── useExportCsv.ts                     # CSV export callback
-    └── *.test.ts / *.test.tsx
+    ├── useSubscriptionCostState.ts         # Local cost state synced with server
+    └── useExportCsv.ts                     # CSV export callback
 ```
 
-> **Type contracts** — all TypeScript interfaces and prop types live in [`types/index.ts`](./types/index.ts).  
-> **Constants** — date-range presets live in [`constants/DateRange.ts`](./constants/DateRange.ts).
+> **Type contracts** — dashboard interfaces live in [`types/index.ts`](./types/index.ts); the
+> Leaderboards data contract lives with its hook in
+> [`views/useAutomationLeaderboardsView.ts`](./views/useAutomationLeaderboardsView.ts).
+> **Constants** — date-range presets in [`constants/DateRange.ts`](./constants/DateRange.ts).
+
+---
+
+## Routing
+
+Registered in `useAwxNavigation` under `analytics/automation-dashboard`:
+
+| Route id                               | Path                                | Element                       |
+| -------------------------------------- | ----------------------------------- | ----------------------------- |
+| `AwxRoute.AutomationDashboardMainPage` | `automation-dashboard`              | `AutomationDashboardMainPage` |
+| `AwxRoute.AutomationDashboard`         | `automation-dashboard/dashboard`    | `AutomationDashboard`         |
+| `AwxRoute.AutomationLeaderboards`      | `automation-dashboard/leaderboards` | `AutomationLeaderboards`      |
+
+The index path (`AwxRoute.AutomationDashboardRedirect`) redirects to `dashboard`.
+
+These are the routes when the user can see both tabs. When only one is visible the two tab
+sub-routes and the redirect are dropped, so `automation-dashboard` renders that view directly and
+the tab URLs return 404. When neither is visible the entry is removed entirely.
+
+---
+
+## Access and visibility
+
+`useAutomationDashboardCollectionStatus` fetches `/dashboard_reports/collection_status/` and derives:
+
+| Flag                | True when                                                                                                              |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `canSeeDashboard`   | `show_dashboard` is true **and** the user is one of: AWX superuser, AWX system auditor, or platform auditor (AAP only) |
+| `canSeeLeaderboard` | `show_leaderboard` is true (any user)                                                                                  |
+
+It reads the AWX user from `useAwxActiveUser` (both builds) and the Platform user from
+`usePlatformActiveUser` (Platform build only; the context is empty in standalone AWX, so the
+platform-auditor check is simply false there).
+
+While `show_dashboard` is true, `isLoading` also stays true until each mounted `/me/` provider has
+settled. Otherwise, if collection_status answered first, `canSeeDashboard` would briefly be false
+and superusers/auditors would see the leaderboards-only page and nav. A provider that isn't mounted
+(its context is empty) doesn't count as pending, and once either user already grants access the
+hook stops waiting for the other.
+
+Where the flags are applied:
+
+- **Navigation** — `useAwxNavigation` calls `applyAutomationDashboardNavVisibility` (neither
+  visible → remove the entry; one visible → drop the tab sub-routes). It is skipped while loading
+  and on error, so the page can show its own state. An Analytics group left without children is
+  hidden. Platform's `useAutomationAnalytics` inherits this tree and additionally removes the entry
+  when collection is disabled (`enabled` falsy).
+- **Page** — `AutomationDashboardMainPage` picks what to render (see below).
+
+Request behavior:
+
+- Polls every 10 s; the global SWR `dedupingInterval` lets concurrent callers share one request.
+- A failed poll keeps the last good data, so a transient error doesn't unmount the page or change
+  the menu. `error` is only returned when there is no data at all.
+- A **404** means there is no metrics service (e.g. standalone AWX): the feature is treated as
+  unavailable (default status, no `error`) and polling slows to every 5 minutes without error
+  retries, returning to normal as soon as the endpoint answers.
+- A **401** revalidates both the gateway and the AWX `/me/` queries so the app switches to the login
+  screen right away.
 
 ---
 
 ## Architecture overview
 
 ```text
-AutomationDashboard (page)
-  └── useAutomationDashboardToolbar()   ← builds toolbar filters
-  └── useAutomationDashboardView()      ← central data + export hook
-        ├── useAwxView                  ← paginated table state
-        ├── useGetReportDetails         ← aggregate KPI fetch (SWR)
-        ├── useSubscriptionCostState    ← local/remote cost settings sync
-        └── useExportCsv                ← CSV download callback
+AutomationDashboardMainPage (page shell — stays mounted across tab switches)
+  ├── useAutomationDashboardCollectionStatus()   ← loading state + canSeeDashboard/canSeeLeaderboard
+  ├── useDashboardGridColumns()                  ← measures the grid column count once
+  └── PageDashboardContext.Provider { columns }
+        └── PageRoutedTabs                     (both visible; otherwise a single view, see below)
+              ├── AutomationDashboard        (Dashboard tab)
+              │     ├── useAutomationDashboardToolbar()   ← toolbar filters
+              │     ├── useAutomationDashboardView()      ← central data + export hook
+              │     │     ├── useAutomationDashboardBaseView   ← paginated table state (SWR)
+              │     │     ├── useGetReportDetails              ← aggregate KPI fetch (SWR)
+              │     │     ├── useSubscriptionCostState         ← local/remote cost settings sync
+              │     │     └── useExportCsv                     ← CSV download callback
+              │     ├── <DashboardToolbar>
+              │     └── <DashboardLayout> → DashboardGridRow × 3
+              └── AutomationLeaderboards     (Leaderboards tab)
+                    ├── useAutomationLeaderboardsView()   ← single data source (SWR)
+                    └── <DashboardLayout> → DashboardGridRow × 4
 ```
 
-All data fetching uses SWR via `useGet`/`useAwxView`. Mutations use `putRequest`/`postRequest` from the framework
-helpers.
+All real data fetching uses SWR via `useGet` / `useAutomationDashboardBaseView`. Mutations use
+`putRequest` / `postRequest` from the framework helpers.
+
+### Responsive grid
+
+`useDashboardGridColumns` (in the persistent page shell) measures a zero-height probe element and
+derives a column count, published through `PageDashboardContext`. Measuring in the shell rather than
+inside each tab means switching tabs never re-measures or flashes the grid. Each tab wraps its
+content in `<DashboardLayout>` (a `<Scrollable>` + CSS grid) and lays out full-width rows with
+`<DashboardGridRow>`; `PageDashboardCard` reads the same column count to pick its span.
 
 ---
 
 ## Entry point
 
-### `AutomationDashboard.tsx`
+### `AutomationDashboardMainPage.tsx`
 
-Top-level page component registered in AAP routing. Renders a `PageToolbar` and a `PageDashboard` grid containing nine
-cards:
+The page shell. Shows a `LoadingState` while the collection status is loading, otherwise a
+`PageHeader` and, depending on [access](#access-and-visibility):
 
-| Card                          | Component                   |
-| ----------------------------- | --------------------------- |
-| Successful jobs               | `DashboardValueCard`        |
-| Failed jobs                   | `DashboardValueCard`        |
-| Hosts automated               | `DashboardValueCard`        |
-| Hours of automation           | `DashboardValueCard`        |
-| Top 5 projects                | `DashboardTableCard`        |
-| Top 5 users                   | `DashboardTableCard`        |
-| Hosts jobs are running on     | `DashboardChartCard` (line) |
-| Number of times jobs were run | `DashboardChartCard` (bar)  |
-| Template cost/savings table   | `DashboardMainTableCard`    |
+| Condition                | Renders                                                |
+| ------------------------ | ------------------------------------------------------ |
+| `error` (no data at all) | `EmptyStateError`                                      |
+| can see both             | `Dashboard` / `Leaderboards` tabs via `PageRoutedTabs` |
+| only `canSeeDashboard`   | `Divider` + `AutomationDashboard`, no tabs             |
+| only `canSeeLeaderboard` | `Divider` + `AutomationLeaderboards`, no tabs          |
+| neither                  | `EmptyStateUnauthorized`                               |
+
+### `AutomationDashboard.tsx` (Dashboard tab)
+
+Renders `<DashboardToolbar>` and a `<DashboardLayout>` grid of:
+
+| Card                                | Component                   |
+| ----------------------------------- | --------------------------- |
+| Successful jobs                     | `DashboardValueCard`        |
+| Failed jobs                         | `DashboardValueCard`        |
+| Hosts automated                     | `DashboardValueCard`        |
+| Hours of automation                 | `DashboardValueCard`        |
+| Number of hosts jobs are running on | `DashboardChartCard` (line) |
+| Number of times jobs were run       | `DashboardChartCard` (bar)  |
+| Template cost/savings table         | `DashboardMainTableCard`    |
+
+### `AutomationLeaderboards.tsx` (Leaderboards tab)
+
+Renders a `<DashboardLayout>` grid of `HighlightsSyncTimestamp`, `AutomationAtAGlance`,
+`AutomationDimensions`, `HighlightsLeaderboardPanel`, and `MilestoneBadgesCard`. Card widths adapt
+to the measured grid column count.
 
 ---
 
-## Components
+## Components — Dashboard tab
 
-### `DashboardValueCard`
+### `DashboardValueCard` / `DashboardDetailsCard`
 
-Displays a single KPI number with an optional unit suffix and an optional navigation link.  
-→ See [`DashboardValueCardProps`](./types/index.ts) for the full prop contract.
-
-### `DashboardTableCard`
-
-Renders a compact two-column ranking table (name + count) inside a dashboard card. `items` is optional-chained so the
-component is safe when data is absent.  
-→ See [`DashboardTableCardProps`](./types/index.ts) and [
-`DashboardTableCard.test.tsx`](./components/DashboardTableCard.test.tsx).
+Display a single KPI number with an optional unit suffix and an optional navigation link. Value
+formatting and responsive font sizing are shared through `DashboardCardValue`.
+→ See [`DashboardValueCardProps`](./types/index.ts).
 
 ### `DashboardChartCard`
 
-Renders a bar or line chart with a large summary number above it. `data.items` is optional-chained so the component is
-safe when items are absent. Labels are formatted according to `data.kind` (`hour`, `day`, `month`, `year`).  
-→ See [`DashboardChartCardProps`](./types/index.ts) and [
-`DashboardChartCard.test.tsx`](./components/DashboardChartCard.test.tsx).
+Renders a bar or line chart with a large summary number above it. `data.items` is optional-chained
+so the component is safe when items are absent. Labels are formatted according to `data.kind`
+(`hour`, `day`, `month`, `year`).
+→ See [`DashboardChartCardProps`](./types/index.ts).
 
 ### `DashboardMainTableCard`
 
-Full-width card combining four KPI value cards, the cost-controls toolbar (`DashboardTableToolbarRow`), and a paginated,
-sortable job-template table with inline-editable time fields. Edits are saved via a PUT to the `template_metadata`
-endpoint and trigger a full refresh before showing the success alert.  
-→ See [`DashboardMainTableCard.test.tsx`](./components/DashboardMainTableCard.test.tsx) for interaction examples.
+Full-width card combining four KPI value cards, the cost-controls toolbar
+(`DashboardTableToolbarRow`), and a paginated, sortable job-template table with inline-editable time
+fields. Edits are saved via a PUT to the `template_metadata` endpoint and trigger a full refresh
+before showing the success alert.
 
-### `DashboardTableToolbarRow`
+### `DashboardTableToolbarRow` / `DashboardTableInputField` / `DashboardExportButton`
 
-Renders below the table header. Contains two numeric inputs and a toggle that control the cost-calculation parameters,
-plus the **Export as CSV** button. Changes are POSTed to the `subscription_costs` endpoint; 422 field errors are
-surfaced beneath the relevant input.  
-→ See [`DashboardTableToolbarProps`](./types/index.ts) and [
-`DashboardTableToolbarRow.test.tsx`](./components/DashboardTableToolbarRow.test.tsx).
+Cost-calculation controls (two numeric inputs + a toggle) and the **Export as CSV** split button.
+Changes are POSTed to the `subscription_costs` endpoint; 422 field errors are surfaced beneath the
+relevant input. `DashboardTableInputField` calls `onBlur` only when the value passes its inline
+validation (empty, NaN, integer checks).
 
-### `DashboardTableInputField`
+### `DashboardToolbar`
 
-Controlled numeric text input with inline validation (empty, NaN, integer checks). Calls `onBlur` only when the value
-passes all checks.  
-→ See [`DashboardTableInputFieldProps`](./types/index.ts).
+The filter toolbar plus the **Select report** control that loads, applies, creates, updates, and
+removes saved filter sets (`useFilterSetView` + the `common/use*ToolbarFilterSet` hooks).
+
+---
+
+## Components — Leaderboards tab (`components/leaderboards/`)
+
+All of these read their data from `useAutomationLeaderboardsView()` — there are no hardcoded values
+in the components themselves.
+
+| Component                                          | Shows                                                                                         |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `AutomationAtAGlance`                              | Enterprise KPI tiles (`AtAGlanceKpiMetric`) + enterprise/org streak strips (`StreakDayStrip`) |
+| `AutomationDimensions`                             | Three automation-dimension scores with a click-to-switch per-dimension top-10 leaderboard     |
+| `HighlightsLeaderboardPanel`                       | Top-10 organizations table with the current org's standing in the header                      |
+| `MilestoneBadgesCard`                              | 30-day user and org achievement badges (earned sorted first)                                  |
+| `HighlightsSyncTimestamp`                          | "last synced" line above the cards                                                            |
+| `LeaderboardRankCell`                              | Shared medal-styled rank cell (#1–#3 get a colored crown)                                     |
+| `DashboardSectionHeading` / `DashboardMetricsText` | Shared small typographic primitives                                                           |
+
+Streak-cell and badge colors that PatternFly does not tokenize live in `AutomationDashboard.css`
+(mapped to PF design tokens where a token exists).
 
 ---
 
@@ -132,57 +278,98 @@ passes all checks.
 
 ### `useAutomationDashboardView`
 
-The central view hook consumed by `AutomationDashboard`. Composes all sub-hooks and returns
-`IAutomationDashboardView`.  
-→ See [`useAutomationDashboardView.tsx`](./views/useAutomationDashboardView.tsx) and [
-`IAutomationDashboardView`](./types/index.ts).
+The central view hook consumed by the Dashboard tab. Composes the sub-hooks and returns
+`IAutomationDashboardView`. Also seeds and persists the toolbar filter state per user (see
+**Session persistence** below).
 
-### `useGetReportDetails`
+### `useAutomationLeaderboardsView`
 
-Fetches aggregate dashboard metrics via SWR. The query string is memoised to prevent redundant re-fetches.  
-→ See [`useGetReportDetails.tsx`](./views/useGetReportDetails.tsx) and [
-`useGetReportDetails.test.tsx`](./views/useGetReportDetails.test.tsx).
+**Single source of data for the Leaderboards tab.** Owns the data contract (types), fetches
+`/dashboard_reports/leaderboard/` with `useSWR` and maps the raw response through the exported
+`mapLeaderboardReport`. `lastSyncedAt` comes from the shared `useAutomationDashboardCollectionStatus`
+(`last_sync`);
+its failure is reported separately as `collectionStatusError`. The components consume only this
+hook.
 
-### `useSubscriptionCostState`
+### `useFilterSetView`
 
-Wraps `useGetReportSubscriptionCosts` and manages a local `useState` copy, syncing from the remote value only when it is
-defined (prevents undefined flashes during SWR re-fetches).  
-→ See [`useSubscriptionCostState.ts`](./views/useSubscriptionCostState.ts).
+State for the "Select report" async-select dropdown (options, selection, version). Seeds and
+persists the selected filter set per user.
 
-### `useExportCsv`
+### `useGetReportDetails` / `useGetReportSubscriptionCosts` / `useSubscriptionCostState` / `useExportCsv`
 
-Builds a CSV URL, fetches the blob, and triggers a programmatic browser download. Errors are shown via
-`usePageAlertToaster`.  
-→ See [`useExportCsv.ts`](./views/useExportCsv.ts).
+Aggregate metrics fetch (memoised query string), subscription-cost settings fetch, the local cost
+state that syncs from the remote value only when defined, and the CSV URL + programmatic download
+callback (errors surfaced via `usePageAlertToaster`).
 
 ---
 
-## Common
+## Common (hooks)
 
-### `useAutomationDashboardToolbarFilters`
+### `useDashboardGridColumns`
 
-Builds async-select toolbar filters for `template`, `label`, `organization`, and `project`. Each filter loads options
-from the corresponding `dashboard_reports/*` endpoint with debounced pagination. Search terms are URL-encoded before
-being appended.  
-→ See [`useAutomationDashboardToolbarFilters.tsx`](./common/useAutomationDashboardToolbarFilters.tsx) and its test.
+Measures a full-width, zero-height probe element and derives the responsive dashboard grid column
+count. Measurements below one column (hidden / not yet laid out) are ignored so the grid never
+collapses to one column.
 
-### `useAutomationDashboardToolbar` (`components/Toolbar.tsx`)
+### `useAutomationDashboardToolbarFilters` / `useAutomationDashboardToolbar`
 
-Thin wrapper that prepends the mandatory **Period** single-select filter before passing the rest to
-`useAutomationDashboardToolbarFilters`.
+`useAutomationDashboardToolbarFilters` builds async-select toolbar filters for `template`, `label`,
+`organization`, and `project`, each loading options from the corresponding `dashboard_reports/*`
+endpoint with debounced pagination. `useAutomationDashboardToolbar` (`components/Toolbar.tsx`)
+prepends the mandatory **Period** single-select filter.
+
+### `useAutomationDashboardCollectionStatus`
+
+Fetches the analytics collection status and returns `collectionStatus`, `isLoading`,
+`canSeeDashboard`, `canSeeLeaderboard` and `error`. Shared by the page shell, the navigation hooks
+and `useAutomationLeaderboardsView` (for the "Updated" timestamp). Error, 404 and 401 handling is
+described in [Access and visibility](#access-and-visibility).
+
+### `applyAutomationDashboardNavVisibility`
+
+Mutates a navigation tree in place: removes the `AutomationDashboardMainPage` entry when neither
+view is visible, or empties its tab children when only one is.
+
+### `use{Create,Update,Remove}ToolbarFilterSet` / `useCreateEditToolbarFilterSetDialog`
+
+CRUD for the saved "report" filter sets behind the Select report control.
+
+---
+
+## Session persistence (`utils/persistedFilterState.ts`)
+
+The dashboard toolbar state is persisted to `sessionStorage`, **keyed per active user**
+(`...:<userId>`, id from `useAwxActiveUser`), so switching to the Leaderboards tab and back keeps
+the filters while logging out and back in as a different user on the same tab does not leak them:
+
+- `awx-automation-dashboard-filter-state:<userId>` — the toolbar `filterState`. Seeded into
+  `useAutomationDashboardView`, re-seeded / reset when the active user changes, and written on every
+  change. A deep link (filter keys present in `window.location.search` at mount) wins on first seed.
+- `awx-automation-dashboard-filter-set:<userId>` — the selected "Select report" filter set. Seeded
+  into `useFilterSetView` the same way; cleared on deselect.
+
+Untrusted JSON is validated with the `isFilterStateShape` / `isDashboardFilterSetShape` guards
+before use. All writes are best-effort (wrapped in try/catch for private browsing / quota).
 
 ---
 
 ## Testing
 
-Each source file has a co-located test file (`*.test.tsx` / `*.test.ts`) using **Vitest** + **React Testing Library** +
-**MSW v2**.
+Most source files have a co-located test file (`*.test.tsx` / `*.test.ts`) using **Vitest** +
+**React Testing Library** + **MSW v2**. `useAutomationLeaderboardsView` is tested with MSW;
+components that read it mock the hook with a typed fixture instead of rendering it for real.
+`useAutomationDashboardCollectionStatus` mocks `swr` directly to drive the role / error / 404
+combinations by hand.
 
 **Key conventions**
 
-- MSW handlers use **RegExp** or string URL matchers — predicate functions are not supported in MSW v2.
-- `server.use(...)` inside individual tests overrides the default handler for that test only; `server.resetHandlers()`
-  is called in `afterEach`.
+- MSW handlers use **RegExp** or string URL matchers — predicate functions are not supported in
+  MSW v2.
+- `server.use(...)` inside a test overrides the default handler for that test only;
+  `server.resetHandlers()` runs in `afterEach`.
+- Hook tests that touch persistence mock `../../../common/useAwxActiveUser` and call
+  `sessionStorage.clear()` between tests.
 - Rejection assertions use `await expect(...).rejects.toBeInstanceOf(Error)`.
 - The AAA pattern (Arrange → Act → Assert) is followed throughout.
 

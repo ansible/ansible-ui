@@ -43,6 +43,7 @@ const {
   mockUseAutomationDashboardCollectionStatus: vi.fn(() => ({
     collectionStatus: { enabled: true },
     isLoading: false,
+    isUnavailable: false,
   })),
   mockUseRuntimeFeatureFlagsEnabled: vi.fn(() => ({ isEnabled: false })),
 }));
@@ -185,6 +186,20 @@ function buildHubNav(): PageNavigationItem[] {
   ];
 }
 
+function findNavigationItem(
+  items: PageNavigationItem[],
+  id: string
+): PageNavigationItem | undefined {
+  for (const item of items) {
+    if (item.id === id) return item;
+    if (!('children' in item)) continue;
+    const { children: childItems = [] } = item;
+    const found = findNavigationItem(childItems, id);
+    if (found) return found;
+  }
+  return undefined;
+}
+
 function renderPlatformNavigation() {
   const wrapper = ({ children }: { children: ReactNode }) => (
     <MemoryRouter>{children}</MemoryRouter>
@@ -208,6 +223,7 @@ describe('usePlatformNavigation', () => {
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
       collectionStatus: { enabled: true },
       isLoading: false,
+      isUnavailable: false,
     });
     mockUseRuntimeFeatureFlagsEnabled.mockReturnValue({ isEnabled: false });
     mockUsePlatformActiveUser.mockReturnValue({
@@ -239,6 +255,32 @@ describe('usePlatformNavigation', () => {
     const routeIds = collectPageNavigationRouteIds(result.current);
 
     expect(routeIds).not.toContain(PlatformRoute.QuickStarts);
+  });
+
+  test.each([
+    ['show', 'superuser', { is_superuser: true, is_platform_auditor: false }, false],
+    ['show', 'platform auditor', { is_superuser: false, is_platform_auditor: true }, false],
+    ['hide', 'regular user', { is_superuser: false, is_platform_auditor: false }, true],
+  ])('should %s Automation Analytics settings for a %s', (_action, _role, user, hidden) => {
+    mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: user });
+    const { result } = renderPlatformNavigation();
+
+    const item = findNavigationItem(result.current, AwxRoute.SettingsAutomationAnalytics);
+
+    expect(item).toMatchObject({ path: 'automation-analytics', hidden });
+  });
+
+  test('should hide Automation Analytics settings when there is no metrics service', () => {
+    mockUseAutomationDashboardCollectionStatus.mockReturnValue({
+      collectionStatus: { enabled: false },
+      isLoading: false,
+      isUnavailable: true,
+    });
+    const { result } = renderPlatformNavigation();
+
+    const item = findNavigationItem(result.current, AwxRoute.SettingsAutomationAnalytics);
+
+    expect(item).toMatchObject({ hidden: true });
   });
 
   test('should include access management child routes from platform route hooks', () => {

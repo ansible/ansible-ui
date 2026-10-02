@@ -19,6 +19,17 @@ import { PageDashboardContext } from './PageDashboard';
 export type PageDashboardCardWidth = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export type PageDashboardCardHeight = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
+/** The number of grid columns (out of the dashboard's 24-column grid) each card width spans. */
+export const PAGE_DASHBOARD_CARD_WIDTH_COL_SPAN: Record<PageDashboardCardWidth, number> = {
+  xxs: 3,
+  xs: 4,
+  sm: 6,
+  md: 8,
+  lg: 12,
+  xl: 16,
+  xxl: 24,
+};
+
 const heightUnit = 90;
 
 export function PageDashboardCard(props: {
@@ -71,15 +82,7 @@ export function PageDashboardCard(props: {
 
   const dashboardContext = useContext(PageDashboardContext);
 
-  let colSpan = {
-    xxs: 3,
-    xs: 4,
-    sm: 6,
-    md: 8,
-    lg: 12,
-    xl: 16,
-    xxl: 24,
-  }[props.width || 'md'];
+  let colSpan = PAGE_DASHBOARD_CARD_WIDTH_COL_SPAN[props.width || 'md'];
   if (colSpan > dashboardContext.columns) {
     colSpan = dashboardContext.columns;
   }

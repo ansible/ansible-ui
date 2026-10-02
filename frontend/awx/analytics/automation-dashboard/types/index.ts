@@ -1,18 +1,8 @@
 import { ComponentClass, Dispatch, SetStateAction } from 'react';
-import {
-  IFilterState,
-  IToolbarFilter,
-  PageDashboardCardWidth,
-} from '@ansible/ansible-ui-framework';
+import { IToolbarFilter, PageDashboardCardWidth } from '@ansible/ansible-ui-framework';
 import { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 
 // ─── Dashboard Data Models (API shapes) ──────────────────────────────────────
-
-export interface IDashboardTableItem {
-  id: number;
-  name: string;
-  execution_count: number;
-}
 
 export interface IDashboardChartItem {
   label: string;
@@ -58,8 +48,6 @@ export interface IDashboardDetails {
   total_time_saving: number | null;
   total_number_of_host_job_runs: number | null;
   total_number_of_job_runs: number | null;
-  top_projects: IDashboardTableItem[];
-  top_users: IDashboardTableItem[];
   job_chart: IDashboardChart;
   host_chart: IDashboardChart;
 }
@@ -73,8 +61,10 @@ export interface IDashboardFilterSet {
 
 export interface IAutomationDashboardCollectionStatus {
   enabled: boolean | null;
-  next_run: Date | null;
-  initial_collection_status: string | null;
+  /** ISO 8601 string as returned by the API (useFetcher applies no date reviver), or null. */
+  last_sync?: string | null;
+  show_dashboard: boolean | null;
+  show_leaderboard: boolean | null;
 }
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────────
@@ -127,16 +117,6 @@ export type DashboardDetailsCardProps = Readonly<
       formatAsCurrency?: boolean;
     }
 >;
-
-export type DashboardTableCardProps = DashboardCommonCardProps & {
-  firstColumnHeader: string;
-  items?: IDashboardTableItem[];
-  loading: boolean;
-  clearAllFilters: () => void;
-  filterState: IFilterState | undefined;
-  emptyStateTitle?: string;
-  emptyStateDescription?: string;
-};
 
 export type DashboardChartCardProps = DashboardCommonCardProps & {
   variant: 'barChart' | 'lineChart';
