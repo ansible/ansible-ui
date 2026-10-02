@@ -135,6 +135,52 @@ describe('JobTemplateInputs', () => {
     expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
   });
 
+  const optionCheckboxTestIds = [
+    'become_enabled',
+    'isProvisioningCallbackEnabled',
+    'isWebhookEnabled',
+    'allow_simultaneous',
+    'use_fact_cache',
+    'prevent_instance_group_fallback',
+  ];
+
+  function getHelpButtonForCheckbox(testId: string) {
+    const checkbox = screen.getByTestId(testId);
+    const checkboxRoot = checkbox.closest('.pf-v6-c-check') ?? checkbox.parentElement;
+    return checkboxRoot?.querySelector('button[type="button"]');
+  }
+
+  it('should render help icons for Options checkboxes', () => {
+    render(
+      <TestWrapper>
+        <JobTemplateInputs />
+      </TestWrapper>
+    );
+
+    for (const testId of optionCheckboxTestIds) {
+      expect(getHelpButtonForCheckbox(testId)).toBeInTheDocument();
+    }
+  });
+
+  it('should render help icons for Options checkboxes when editing an existing template', () => {
+    const jobtemplate = {
+      id: 1,
+      name: 'Test Template',
+      job_tags: ['tag1', 'tag2'],
+      skip_tags: ['skip1'],
+    } as unknown as JobTemplateForm;
+
+    render(
+      <TestWrapper>
+        <JobTemplateInputs jobtemplate={jobtemplate} />
+      </TestWrapper>
+    );
+
+    for (const testId of optionCheckboxTestIds) {
+      expect(getHelpButtonForCheckbox(testId)).toBeInTheDocument();
+    }
+  });
+
   it('should render with job template data', () => {
     const jobtemplate = {
       id: 1,

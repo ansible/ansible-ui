@@ -330,6 +330,38 @@ describe('TemplateForm - EditJobTemplate', () => {
     expect(screen.getByDisplayValue('120')).toBeInTheDocument();
   }, 15000);
 
+  it('should render help icons for Options checkboxes in edit mode', async () => {
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/42/edit']}>
+        <Routes>
+          <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByDisplayValue('My Job Template')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    const optionCheckboxTestIds = [
+      'become_enabled',
+      'isProvisioningCallbackEnabled',
+      'isWebhookEnabled',
+      'allow_simultaneous',
+      'use_fact_cache',
+      'prevent_instance_group_fallback',
+    ];
+
+    for (const testId of optionCheckboxTestIds) {
+      const checkbox = screen.getByTestId(testId);
+      const checkboxRoot = checkbox.closest('.pf-v6-c-check') ?? checkbox.parentElement;
+      expect(checkboxRoot?.querySelector('button[type="button"]')).toBeInTheDocument();
+    }
+  }, 15000);
+
   it(
     'should fetch /organizations/ and create label when template has no org and a label is added',
     { timeout: 30000 },
