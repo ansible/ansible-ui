@@ -51,7 +51,7 @@ export default [
       complexity: ['warn', 20],
       'max-depth': ['warn', 4],
       'max-params': ['warn', 4],
-      'max-nested-callbacks': ['warn', 4],
+      'max-nested-callbacks': ['error', 4],
       'sonarjs/cognitive-complexity': ['warn', 15],
       'sonarjs/no-nested-conditional': 'warn',
     },

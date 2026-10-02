@@ -5,7 +5,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { SetRequired } from '../utils/utilityTypes';
-import { PageAsyncQueryErrorText, PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
+import {
+  deferPageSelect,
+  mergePageSelectOptions,
+  PageAsyncQueryErrorText,
+  PageAsyncSelectOptionsFn,
+} from './PageAsyncSelectOptions';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect, PageSingleSelectProps } from './PageSingleSelect';
 
@@ -71,68 +76,45 @@ export function PageAsyncSingleSelect<
     }
     const abortController = new AbortController();
     activeAbortController.current = abortController;
-    setLoading(() => {
-      setAllLoaded(false);
-      setLoadingError(undefined);
-      setOptions((prevOptions) => {
-        if (prevOptions) {
-          return prevOptions;
-        } else {
-          return undefined;
+    setLoading(true);
+    setAllLoaded(false);
+    setLoadingError(undefined);
+    void queryOptions({
+      next: nextRef.current!,
+      signal: abortController.signal,
+      search: searchValue,
+    })
+      .then((result) => {
+        if (abortController.signal.aborted) return;
+        nextRef.current = result.next;
+        if (!result.remaining) {
+          setAllLoaded(true);
         }
-      });
-      void queryOptions({
-        next: nextRef.current!,
-        signal: abortController.signal,
-        search: searchValue,
-      })
-        .then((result) => {
-          if (abortController.signal.aborted) return;
-          nextRef.current = result.next;
-          if (!result.remaining) {
-            setAllLoaded(true);
+        setOptions((prevOptions) => {
+          const newOptions = mergePageSelectOptions(
+            prevOptions,
+            result.options,
+            !props.disableSortOptions
+          );
+          if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
+            // Defer onSelect to avoid setState during render
+            deferPageSelect(onSelect, newOptions[0].value);
           }
-          setOptions((prevOptions) => {
-            let newOptions: PageSelectOption<ValueT>[] = [
-              ...(prevOptions ?? []),
-              ...result.options,
-            ];
-            const uniqueValues = new Set<ValueT>();
-            newOptions = newOptions.filter((option) => {
-              if (uniqueValues.has(option.value)) return false;
-              uniqueValues.add(option.value);
-              return true;
-            });
-            if (!props.disableSortOptions) {
-              newOptions.sort((a, b) => {
-                const lhs = a.label.toLowerCase();
-                const rhs = b.label.toLowerCase();
-                if (lhs < rhs) return -1;
-                if (lhs > rhs) return 1;
-                return 0;
-              });
-            }
-            if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
-              // Defer onSelect to avoid setState during render
-              setTimeout(() => onSelect(newOptions[0].value), 0);
-            }
-            setTotal(result.remaining + newOptions.length);
-            if (writeInOption && result.remaining + newOptions.length === 0) {
-              newOptions.push(writeInOption(searchValue));
-            }
-            return newOptions;
-          });
-        })
-        .catch((err) => {
-          if (abortController.signal.aborted) return;
-          setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
-        })
-        .finally(() => {
-          if (abortController.signal.aborted) return;
-          setLoading(false);
+          setTotal(result.remaining + newOptions.length);
+          if (writeInOption && result.remaining + newOptions.length === 0) {
+            newOptions.push(writeInOption(searchValue));
+          }
+          return newOptions;
         });
-      return true;
-    });
+      })
+      .catch((err) => {
+        if (abortController.signal.aborted) return;
+        setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
+      })
+      .finally(() => {
+        if (abortController.signal.aborted) return;
+        setLoading(false);
+      });
     return () => abortController.abort();
   }, [onSelect, props.disableSortOptions, queryOptions, searchValue, t, writeInOption]);
 

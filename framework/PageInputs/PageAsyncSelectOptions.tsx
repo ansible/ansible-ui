@@ -40,3 +40,33 @@ export interface PageAsyncSelectQueryResult<ValueT> {
 
 /** The placeholder to show if the query fails. */
 export type PageAsyncQueryErrorText = string | ((error: Error) => string);
+
+function comparePageSelectOptions<ValueT>(
+  first: PageSelectOption<ValueT>,
+  second: PageSelectOption<ValueT>
+): number {
+  const lhs = first.label.toLowerCase();
+  const rhs = second.label.toLowerCase();
+  if (lhs < rhs) return -1;
+  if (lhs > rhs) return 1;
+  return 0;
+}
+
+export function mergePageSelectOptions<ValueT>(
+  previousOptions: PageSelectOption<ValueT>[] | null | undefined,
+  nextOptions: PageSelectOption<ValueT>[],
+  shouldSort: boolean
+): PageSelectOption<ValueT>[] {
+  const uniqueValues = new Set<ValueT>();
+  const mergedOptions = [...(previousOptions ?? []), ...nextOptions].filter((option) => {
+    if (uniqueValues.has(option.value)) return false;
+    uniqueValues.add(option.value);
+    return true;
+  });
+  if (shouldSort) mergedOptions.sort(comparePageSelectOptions);
+  return mergedOptions;
+}
+
+export function deferPageSelect<ValueT>(onSelect: (value: ValueT | null) => void, value: ValueT) {
+  setTimeout(() => onSelect(value), 0);
+}
