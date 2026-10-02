@@ -109,26 +109,24 @@ export function ScheduleResourceInputs() {
           isRequired
         />
         {asksLabelsOnLaunch !== true ? (
-          <>
-            <PageFormLabelSelect<ScheduleFormWizard>
-              name="prompt.labels"
-              shouldUnregister={false}
-              organizationId={organizationId}
-              labelHelp={t(
-                `Optional labels that describe this schedule, such as 'dev' or 'test'. Labels can be used to group and filter schedules.`
+          <PageFormLabelSelect<ScheduleFormWizard>
+            name="prompt.labels"
+            shouldUnregister={false}
+            organizationId={organizationId}
+            labelHelp={t(
+              `Optional labels that describe this schedule, such as 'dev' or 'test'. Labels can be used to group and filter schedules.`
+            )}
+          />
+        ) : null}
+        {labels && labels.length >= 100 ? (
+          <PageFormSection singleColumn>
+            <Alert variant="warning" title={t('Many labels selected')} isInline>
+              {t(
+                'This schedule has {{count}} labels. Schedules support up to 100 labels; consider removing unused labels.',
+                { count: labels.length }
               )}
-            />
-            {labels && labels.length > 80 ? (
-              <PageFormSection singleColumn>
-                <Alert variant="warning" title={t('Many labels selected')} isInline>
-                  {t(
-                    'This schedule has {{count}} labels. Schedules support up to 100 labels; consider removing unused labels.',
-                    { count: labels.length }
-                  )}
-                </Alert>
-              </PageFormSection>
-            ) : null}
-          </>
+            </Alert>
+          </PageFormSection>
         ) : null}
         {hasDaysToKeepField ? (
           <PageFormTextInput<ScheduleFormWizard>

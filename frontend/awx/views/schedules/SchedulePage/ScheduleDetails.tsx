@@ -18,6 +18,7 @@ import { AwxError } from '../../../common/AwxError';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
@@ -51,7 +52,7 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
   const { data: credentialResponse } = useGet<AwxItemsResponse<Credential>>(
     awxAPI`/schedules/${params.schedule_id || ''}/credentials/`
   );
-  const { data: labelResponse } = useGet<AwxItemsResponse<AwxLabel>>(
+  const { results: labels } = useAwxGetAllPages<AwxLabel>(
     awxAPI`/schedules/${params.schedule_id || ''}/labels/`
   );
 
@@ -140,9 +141,9 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
             ))}
           </LabelGroup>
         </PageDetail>
-        <PageDetail label={t('Labels')} isEmpty={!labelResponse?.results?.length}>
+        <PageDetail label={t('Labels')} isEmpty={!labels?.length}>
           <LabelGroup>
-            {labelResponse?.results?.map((label) => <Label key={label.id}>{label.name}</Label>)}
+            {labels?.map((label) => <Label key={label.id}>{label.name}</Label>)}
           </LabelGroup>
         </PageDetail>
         <PageDetail label={t('Inventory')}>{schedule.summary_fields.inventory?.name}</PageDetail>

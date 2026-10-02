@@ -185,12 +185,9 @@ export function PromptReviewDetails(props: Readonly<{ labels?: { name: string; i
       <PageDetail label={t('Timeout')}>{timeout ?? 0}</PageDetail>
       <PageDetail label={t('Show changes')}>{diff_mode ? t`On` : t`Off`}</PageDetail>
       <PageDetail label={t('Job slicing')}>{job_slice_count}</PageDetail>
-      <PageDetail
-        label={t('Labels')}
-        isEmpty={isEmpty(props.labels?.length ? props.labels : promptLabels)}
-      >
+      <PageDetail label={t('Labels')} isEmpty={isEmpty(props.labels ?? promptLabels)}>
         <LabelGroup>
-          {(props.labels?.length ? props.labels : promptLabels)?.map((label) => (
+          {(props.labels ?? promptLabels)?.map((label) => (
             <Label key={label.id ?? label.name}>{label.name}</Label>
           ))}
         </LabelGroup>

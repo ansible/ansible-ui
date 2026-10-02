@@ -221,8 +221,8 @@ describe('useGetSchedulePromptValues', () => {
       };
       const promptValues = await hookFunction(testConfig, [], [], []);
 
-      // Should fall back to provided schedule labels (empty array)
-      expect(promptValues.labels).toEqual([{ id: 1, name: 'alex label' }]);
+      // An empty schedule label relationship must not fall back to template defaults.
+      expect(promptValues.labels).toEqual([]);
     });
 
     it('should handle empty objects in schedule values', async () => {

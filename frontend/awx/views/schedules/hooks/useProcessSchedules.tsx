@@ -1,11 +1,8 @@
-import { requestGet } from '@ansible/common-ui/crud/Data';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { Label } from '../../../interfaces/Label';
 import { Schedule } from '../../../interfaces/Schedule';
 import { BaseSchedulePayload, ScheduleAccessoriesPayload, ScheduleFormWizard } from '../types';
 import { ensureUntilZSuffix, mungePromptData, mungeSurveyAndExtraVarsData } from './ruleHelpers';
@@ -25,14 +22,17 @@ export const useProcessSchedule = () => {
   const getRuleSet = useSetRRuleItemToRuleSet();
   return useCallback(
     async (payloadData: ScheduleFormWizard) => {
-      const { resourceId, resource, prompt, survey, rules, exceptions, ...rest } = payloadData;
+      const { resource, prompt, survey, rules, exceptions } = payloadData;
       const ruleset = getRuleSet(rules, exceptions);
 
       const rrule = ensureUntilZSuffix(ruleset.toString().replaceAll('\n', ' '));
 
       const payload = {
-        ...rest,
+        name: payloadData.name,
+        description: payloadData.description,
+        timezone: payloadData.timezone,
         rrule,
+        enabled: payloadData.enabled,
       };
 
       function request(
@@ -63,20 +63,10 @@ export const useProcessSchedule = () => {
         ) {
           return;
         }
-        const scheduleLabels = await requestGet<AwxItemsResponse<Label>>(
-          awxAPI`/schedules/${params.schedule_id}/labels/?page_size=200`
-        );
-        const launchConfig = {
-          ...payloadData.launch_config,
-          defaults: {
-            ...payloadData.launch_config.defaults,
-            labels: scheduleLabels.results,
-          },
-        };
         await processLabels(
           Number(params.schedule_id),
           prompt.labels,
-          launchConfig,
+          payloadData.launch_config,
           labelOrganization,
           'disassociate'
         );
@@ -143,12 +133,12 @@ export const useProcessSchedule = () => {
             awxAPI`/job_templates/${id.toString()}/schedules/`,
             requestPayload
           );
-          if (prompt !== undefined && payloadData.launch_config !== undefined) {
+          if (payloadData.launch_config !== undefined) {
             await postAccessories(schedule, {
               launch_config: payloadData.launch_config,
-              credentials: prompt.credentials,
-              instance_groups: prompt.instance_groups,
-              labels: prompt.labels,
+              credentials: prompt?.credentials,
+              instance_groups: prompt?.instance_groups,
+              labels: prompt?.labels ?? [],
               organization: labelOrganization,
             });
           }

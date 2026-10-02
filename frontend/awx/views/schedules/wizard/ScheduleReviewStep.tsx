@@ -5,7 +5,6 @@ import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWiza
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Label, LabelGroup } from '@patternfly/react-core';
 import { useEffect, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
@@ -15,7 +14,6 @@ import { PromptReviewDetails } from '../../../resources/templates/WorkflowVisual
 import { RulesList } from '../components/RulesList';
 import { TimezoneToggle } from '../SchedulePage/TimezoneToggle';
 import { ScheduleFormWizard, ScheduleResources } from '../types';
-import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 
 const ResourceLink: { [key: string]: string } = {
   inventory_update: AwxRoute.InventorySourceDetail,
@@ -31,17 +29,8 @@ export function ScheduleReviewStep() {
   const getPageUrl = useGetPageUrl();
   const [isLocal, setIsLocal] = useState(true);
 
-  const { wizardData, stepData, visibleSteps, setWizardData } = usePageWizard<ScheduleFormWizard>();
-  const { control } = useFormContext<ScheduleFormWizard>();
-  const formLabels = useWatch({ control, name: 'prompt.labels' });
-  const promptStepLabels = (
-    wizardData as Partial<ScheduleFormWizard> & {
-      promptStep?: { prompt?: Partial<PromptFormValues> };
-    }
-  ).promptStep?.prompt?.labels;
-  const detailsLabels = stepData.details?.prompt?.labels;
-  const labelsForWizard = formLabels ?? detailsLabels;
-  const reviewLabels = labelsForWizard ?? promptStepLabels ?? wizardData.prompt?.labels;
+  const { wizardData, visibleSteps, setWizardData } = usePageWizard<ScheduleFormWizard>();
+  const reviewLabels = wizardData.prompt?.labels;
   const {
     schedule_type,
     resourceId,
@@ -53,7 +42,6 @@ export function ScheduleReviewStep() {
     timezone,
     exceptions,
     rules,
-    prompt,
   } = wizardData;
   const url = getResourceURL(schedule_type);
   const resourceTypeDetail = useGetScheduleTypeDetail(schedule_type);
@@ -67,13 +55,6 @@ export function ScheduleReviewStep() {
     if (!resource) return;
     setWizardData((prev) => ({ ...prev, resource, resourceId: resource.id }));
   }, [setWizardData, resource]);
-  useEffect(() => {
-    if (labelsForWizard === undefined) return;
-    setWizardData((prev) => ({
-      ...prev,
-      prompt: { ...prev.prompt, labels: labelsForWizard },
-    }));
-  }, [labelsForWizard, setWizardData]);
   if (isLoading || !resource) {
     return <LoadingState />;
   }
@@ -124,9 +105,11 @@ export function ScheduleReviewStep() {
               <PageDetail label={t('Source control branch')}>
                 {resource && 'scm_branch' in resource ? resource.scm_branch : undefined}
               </PageDetail>
-              <PageDetail label={t('Labels')} isEmpty={!prompt?.labels?.length}>
+              <PageDetail label={t('Labels')} isEmpty={!reviewLabels?.length}>
                 <LabelGroup>
-                  {prompt?.labels?.map((label) => <Label key={label.id}>{label.name}</Label>)}
+                  {reviewLabels?.map((label) => (
+                    <Label key={label.id || label.name}>{label.name}</Label>
+                  ))}
                 </LabelGroup>
               </PageDetail>
             </>

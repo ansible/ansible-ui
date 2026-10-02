@@ -135,6 +135,134 @@ function makePayload(
 }
 
 describe('useProcessSchedule', () => {
+  it.each([
+    ['job_template', false],
+    ['job_template', true],
+    ['workflow_job_template', false],
+    ['workflow_job_template', true],
+  ] as const)(
+    'preserves survey data and other accessories while replacing %s labels (prompted: %s)',
+    async (resourceType, askLabels) => {
+      const events: { accessory: string; body: unknown }[] = [];
+      let existingLabels = [{ id: 1, name: 'old-label' }];
+      server.use(
+        http.get(awxAPI`/schedules/99/labels/`, () =>
+          HttpResponse.json({ count: existingLabels.length, results: existingLabels })
+        ),
+        http.get(awxAPI`/schedules/99/credentials/`, () =>
+          HttpResponse.json({ count: 1, results: [{ id: 11 }] })
+        ),
+        http.get(awxAPI`/schedules/99/instance_groups/`, () =>
+          HttpResponse.json({ count: 1, results: [{ id: 21 }] })
+        ),
+        http.patch(awxAPI`/schedules/99/`, async ({ request }) => {
+          events.push({ accessory: 'schedule', body: await request.json() });
+          return HttpResponse.json(mockScheduleResponse);
+        }),
+        http.post(awxAPI`/schedules/99/:accessory/`, async ({ request, params }) => {
+          const body = (await request.json()) as { id?: number; disassociate?: boolean };
+          events.push({ accessory: String(params.accessory), body });
+          if (params.accessory === 'labels' && body.disassociate) existingLabels = [];
+          return new HttpResponse(null, { status: 204 });
+        })
+      );
+      const { result } = renderHook(() => useProcessSchedule(), {
+        wrapper: wrapper(
+          '/templates/:id/schedules/:schedule_id/edit',
+          '/templates/10/schedules/99/edit'
+        ),
+      });
+
+      await result.current(
+        makePayload(resourceType, {
+          resource: {
+            id: 10,
+            type: resourceType,
+            summary_fields: { organization: { id: 12 } },
+          } as ScheduleFormWizard['resource'],
+          launch_config: {
+            ask_labels_on_launch: askLabels,
+            ask_credential_on_launch: true,
+            ask_instance_groups_on_launch: true,
+            defaults: { labels: [], credentials: [] },
+          } as unknown as LaunchConfiguration,
+          prompt: {
+            labels: [{ id: 2, name: 'replacement-label' }],
+            credentials: [{ id: 12 }],
+            instance_groups: [{ id: 22 }],
+            extra_vars: '{"extra": "unchanged"}',
+          } as unknown as PromptFormValues,
+          survey: { answer: 'updated answer' },
+        })
+      );
+
+      const scheduleEvents = events.filter(({ accessory }) => accessory === 'schedule');
+      expect(scheduleEvents).toHaveLength(1);
+      expect(scheduleEvents[0].body).toMatchObject({
+        extra_data: { answer: 'updated answer', extra: 'unchanged' },
+        unified_job_template: 10,
+      });
+      expect(events.filter(({ accessory }) => accessory === 'credentials')).toEqual([
+        { accessory: 'credentials', body: { id: 11, disassociate: true } },
+        { accessory: 'credentials', body: { id: 12 } },
+      ]);
+      expect(events.filter(({ accessory }) => accessory === 'instance_groups')).toEqual([
+        { accessory: 'instance_groups', body: { id: 21, disassociate: true } },
+        { accessory: 'instance_groups', body: { id: 22 } },
+      ]);
+      expect(events.filter(({ accessory }) => accessory === 'labels')).toEqual([
+        { accessory: 'labels', body: { id: 1, disassociate: true } },
+        { accessory: 'labels', body: { name: 'replacement-label', organization: 12 } },
+      ]);
+      expect(events.map(({ accessory }) => accessory)).toEqual(
+        askLabels
+          ? [
+              'schedule',
+              'credentials',
+              'credentials',
+              'instance_groups',
+              'instance_groups',
+              'labels',
+              'labels',
+            ]
+          : [
+              'labels',
+              'schedule',
+              'credentials',
+              'credentials',
+              'instance_groups',
+              'instance_groups',
+              'labels',
+            ]
+      );
+      const savedBody = events.find(({ accessory }) => accessory === 'schedule')?.body;
+      expect(savedBody).not.toHaveProperty('labels');
+      expect(savedBody).not.toHaveProperty('credentials');
+      expect(savedBody).not.toHaveProperty('instance_groups');
+    }
+  );
+
+  it.each(['project', 'inventory_source', 'system_job_template'])(
+    'does not save stale template labels for a %s schedule',
+    async (resourceType) => {
+      const { result } = renderHook(() => useProcessSchedule(), {
+        wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+      });
+
+      await result.current(
+        makePayload(resourceType, {
+          prompt: {
+            labels: [{ id: 3, name: 'stale template label' }],
+          } as unknown as PromptFormValues,
+        })
+      );
+
+      expect(postCalls).toHaveLength(1);
+      expect(postCalls[0].body).not.toHaveProperty('labels');
+      expect(labelPostCalls).toHaveLength(0);
+    }
+  );
+
   it('should POST to inventory_sources endpoint for inventory_source type', async () => {
     const { result } = renderHook(() => useProcessSchedule(), {
       wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
@@ -368,6 +496,8 @@ describe('useProcessSchedule', () => {
     );
 
     expect(postCalls[0].method).toBe('PATCH');
+    expect(postCalls[0].body).not.toHaveProperty('launch_config');
+    expect(postCalls[0].body).not.toHaveProperty('labels');
     expect(labelPostCalls).toHaveLength(0);
   });
 });

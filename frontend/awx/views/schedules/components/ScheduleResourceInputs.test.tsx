@@ -114,12 +114,12 @@ describe('ScheduleResourceInputs', () => {
     expect(screen.queryByText('Labels')).not.toBeInTheDocument();
   });
 
-  it('updates wizard data and warns when many labels are selected', async () => {
+  it('updates wizard data and warns when more than 100 labels are selected', async () => {
     render(
       <TestWrapper
         defaultValues={{
           prompt: {
-            labels: Array.from({ length: 81 }, (_, index) => ({
+            labels: Array.from({ length: 101 }, (_, index) => ({
               id: index,
               name: `label-${index}`,
             })),
@@ -139,7 +139,30 @@ describe('ScheduleResourceInputs', () => {
     await waitFor(() => {
       expect(screen.getByText('Many labels selected')).toBeInTheDocument();
     });
-    expect(screen.getByText(/This schedule has 81 labels/)).toBeInTheDocument();
+    expect(screen.getByText(/This schedule has 101 labels/)).toBeInTheDocument();
+  });
+
+  it('warns when 100 labels are assigned and the resource prompts for labels', async () => {
+    render(
+      <TestWrapper
+        defaultValues={{
+          prompt: {
+            labels: Array.from({ length: 100 }, (_, index) => ({
+              id: index,
+              name: `label-${index}`,
+            })),
+          } as never,
+          launch_config: { ask_labels_on_launch: true } as never,
+        }}
+      >
+        <ScheduleResourceInputs />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Many labels selected')).toBeInTheDocument();
+    });
+    expect(screen.getByText(/This schedule has 100 labels/)).toBeInTheDocument();
   });
 
   it('clears the timezone warning when timezone links are unavailable', () => {

@@ -157,7 +157,7 @@ function refinePromptValues(
       accumulator['instance_groups'] = instanceGroups;
       return accumulator;
     }
-    if (key === 'labels' && scheduleLabels?.length) {
+    if (key === 'labels' && scheduleLabels !== undefined) {
       accumulator['labels'] = scheduleLabels;
       return accumulator;
     }

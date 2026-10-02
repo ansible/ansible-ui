@@ -1,6 +1,6 @@
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { requestGet } from '@ansible/common-ui/crud/Data';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -56,10 +56,27 @@ export function ScheduleSelectStep(props: {
     schedule_id?: string;
   }>();
   const { setValue } = useFormContext();
-  const { setStepData, setWizardData } = usePageWizard<ScheduleFormWizard>();
+  const { stepData, setStepData, setWizardData } = usePageWizard<ScheduleFormWizard>();
   const getSchedulePromptValues = useGetSchedulePromptValues();
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
+  const handleErrors = useCallback(
+    (error: Error) => {
+      const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Failed to fetch the template for this schedule'),
+        timeout: 5000,
+        children: (
+          <>
+            {genericErrors?.map((err) => <div key={err.message as string}>{err.message}</div>)}
+            {fieldErrors?.map((err) => <div key={err.message as string}>{err.message}</div>)}
+          </>
+        ),
+      });
+    },
+    [alertToaster, t]
+  );
 
   // When the resource changes,
   // we need to set the promptStep default values to the launch configuration defaults
@@ -97,13 +114,13 @@ export function ScheduleSelectStep(props: {
         setValue('resourceId', scheduleResource.id);
         setValue('schedule_type', scheduleResource.type);
       } catch (error) {
-        HandleErrors(error as Error);
+        handleErrors(error as Error);
       }
     };
 
     void getResource();
   }, [
-    alertToaster,
+    handleErrors,
     id,
     props.resourceEndPoint,
     resourceId,
@@ -111,7 +128,6 @@ export function ScheduleSelectStep(props: {
     setWizardData,
     setValue,
     source_id,
-    t,
   ]);
 
   useEffect(() => {
@@ -119,6 +135,14 @@ export function ScheduleSelectStep(props: {
       if (
         !resourceId ||
         (scheduleType !== 'job_template' && scheduleType !== 'workflow_job_template')
+      ) {
+        return;
+      }
+      const loadedPrompts = stepData?.promptStep;
+      if (
+        loadedPrompts?.launch_config &&
+        loadedPrompts.resource?.id === resourceId &&
+        loadedPrompts.resource?.type === scheduleType
       ) {
         return;
       }
@@ -210,26 +234,27 @@ export function ScheduleSelectStep(props: {
         setWizardData((prev) => ({
           ...prev,
           launch_config: scheduleLaunchConfig,
+          prompt: { ...prev.prompt, ...promptValues },
         }));
         setValue('schedule_type', scheduleType);
         setValue('launch_config', scheduleLaunchConfig);
         setValue('prompt.labels', promptValues.labels);
       } catch (error) {
-        HandleErrors(error as Error);
+        handleErrors(error as Error);
       }
     }
     void updatePromptStep();
   }, [
-    alertToaster,
+    handleErrors,
     getSchedulePromptValues,
     id,
     props.resourceEndPoint,
     resourceId,
     scheduleType,
     schedule_id,
+    stepData,
     setStepData,
     setValue,
-    t,
     setWizardData,
   ]);
   if (isTopLevelScheduleForm) {
@@ -241,21 +266,4 @@ export function ScheduleSelectStep(props: {
     );
   }
   return resourceId || resource?.id ? <ScheduleResourceInputs /> : <LoadingState />;
-}
-
-export function HandleErrors(error: Error) {
-  const alertToaster = usePageAlertToaster();
-  const { t } = useTranslation();
-  const { genericErrors, fieldErrors } = awxErrorAdapter(error);
-  alertToaster.addAlert({
-    variant: 'danger',
-    title: t('Failed to fetch the template for this schedule'),
-    timeout: 5000,
-    children: (
-      <>
-        {genericErrors?.map((err) => <div key={err.message as string}>{err.message}</div>)}
-        {fieldErrors?.map((err) => <div key={err.message as string}>{err.message}</div>)}
-      </>
-    ),
-  });
 }

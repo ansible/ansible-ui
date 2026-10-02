@@ -70,7 +70,7 @@ function renderReview(
   template: JobTemplate | WorkflowJobTemplate | null,
   prompt: Partial<WizardFormValues['prompt']> = {},
   survey?: WizardFormValues['survey'],
-  labels: { name: string; id?: number }[] = [{ name: 'prop label' }]
+  labels?: { name: string; id?: number }[]
 ) {
   mockUsePageWizard.mockReturnValue({ wizardData: { resource: template, prompt, survey } });
   return render(
@@ -171,7 +171,7 @@ describe('PromptReviewDetails', () => {
         verbosity: undefined,
       },
       undefined,
-      []
+      undefined
     );
 
     expect(screen.queryByText('site.yml')).not.toBeInTheDocument();
@@ -190,9 +190,15 @@ describe('PromptReviewDetails', () => {
         labels: [{ name: 'prompt label', id: 3 }],
       },
       undefined,
-      []
+      undefined
     );
 
     expect(screen.getByText('prompt label')).toBeInTheDocument();
+  });
+
+  it('does not fall back to stale prompt labels when selected labels are empty', () => {
+    renderReview(jobTemplate, { labels: [{ name: 'stale label', id: 3 }] }, undefined, []);
+
+    expect(screen.queryByText('stale label')).not.toBeInTheDocument();
   });
 });

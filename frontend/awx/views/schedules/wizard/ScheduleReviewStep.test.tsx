@@ -16,7 +16,6 @@ const mocks = vi.hoisted(() => ({
       `${route}/${JSON.stringify(options?.params ?? {})}`
   ),
   setWizardData: vi.fn(),
-  useWatch: vi.fn(),
   wizard: {
     wizardData: {
       schedule_type: 'job',
@@ -31,12 +30,18 @@ const mocks = vi.hoisted(() => ({
       rules: [{ id: 1, rule: 'RRULE:FREQ=DAILY' }],
       prompt: { labels: [{ id: 1, name: 'wizard label' }] },
     },
-    stepData: { details: { prompt: { labels: [{ id: 2, name: 'details label' }] } } },
+    stepData: {
+      details: { prompt: { labels: [{ id: 2, name: 'details label' }] } },
+      promptStep: { prompt: { labels: [{ id: 4, name: 'prompt-step label' }] } },
+    },
     visibleSteps: [] as { id: string }[],
     setWizardData: vi.fn(),
   } as {
     wizardData: WizardDataMock;
-    stepData: { details?: { prompt?: Partial<PromptFormValues> } };
+    stepData: {
+      details?: { prompt?: Partial<PromptFormValues> };
+      promptStep?: { prompt?: Partial<PromptFormValues> };
+    };
     visibleSteps: { id: string }[];
     setWizardData: ReturnType<typeof vi.fn>;
   },
@@ -76,10 +81,6 @@ vi.mock('@patternfly/react-core', () => ({
   Label: ({ children }: Readonly<{ children?: React.ReactNode }>) => <span>{children}</span>,
   LabelGroup: ({ children }: Readonly<{ children?: React.ReactNode }>) => <div>{children}</div>,
 }));
-vi.mock('react-hook-form', () => ({
-  useFormContext: () => ({ control: {} }),
-  useWatch: mocks.useWatch,
-}));
 vi.mock('react-router-dom', () => ({
   Link: ({ to, children }: Readonly<{ to: string; children?: React.ReactNode }>) => (
     <a href={to}>{children}</a>
@@ -112,7 +113,6 @@ function setResource(resource: Record<string, unknown>, error?: unknown) {
 describe('ScheduleReviewStep', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.useWatch.mockReturnValue(undefined);
     mocks.wizard.wizardData = {
       schedule_type: 'job',
       resourceId: 42,
@@ -144,7 +144,6 @@ describe('ScheduleReviewStep', () => {
   });
 
   it('renders the review without prompt details', () => {
-    mocks.useWatch.mockReturnValue([{ id: 3, name: 'form label' }]);
     render(<ScheduleReviewStep />);
     expect(screen.getByText('Review')).toBeInTheDocument();
     expect(screen.getByText('Job Template')).toBeInTheDocument();
@@ -152,12 +151,48 @@ describe('ScheduleReviewStep', () => {
     expect(screen.getByText('2025-01-01, 01:00')).toBeInTheDocument();
     expect(screen.getByText('main')).toBeInTheDocument();
     expect(screen.getByText('wizard label')).toBeInTheDocument();
+    expect(screen.queryByText('details label')).not.toBeInTheDocument();
     expect(screen.getByText('rules list')).toBeInTheDocument();
     expect(screen.getByText('exceptions list')).toBeInTheDocument();
     expect(mocks.setWizardData).toHaveBeenCalled();
   });
 
-  it('skips label synchronization when no labels are available', () => {
+  it('renders labels collected by the Prompts step', () => {
+    mocks.wizard.wizardData = {
+      ...mocks.wizard.wizardData,
+      prompt: { labels: [{ id: 4, name: 'prompt-step label' }] },
+    };
+    mocks.wizard.stepData = {
+      details: { prompt: { labels: [{ id: 2, name: 'details label' }] } },
+      promptStep: { prompt: { labels: [{ id: 4, name: 'prompt-step label' }] } },
+    };
+    render(<ScheduleReviewStep />);
+
+    expect(screen.getByText('prompt-step label')).toBeInTheDocument();
+  });
+
+  it('does not restore removed prompt-step labels', () => {
+    mocks.wizard.wizardData = { ...mocks.wizard.wizardData, prompt: { labels: [] } } as never;
+    mocks.wizard.stepData = {
+      promptStep: { prompt: { labels: [{ id: 4, name: 'old label' }] } },
+    };
+    render(<ScheduleReviewStep />);
+
+    expect(screen.queryByText('old label')).not.toBeInTheDocument();
+  });
+
+  it('does not restore prompt-step labels after removing details labels', () => {
+    mocks.wizard.wizardData = { ...mocks.wizard.wizardData, prompt: { labels: [] } };
+    mocks.wizard.stepData = {
+      details: { prompt: { labels: [] } },
+      promptStep: { prompt: { labels: [{ id: 4, name: 'old label' }] } },
+    };
+    render(<ScheduleReviewStep />);
+
+    expect(screen.queryByText('old label')).not.toBeInTheDocument();
+  });
+
+  it('renders schedules without labels', () => {
     mocks.wizard.wizardData = { ...mocks.wizard.wizardData, prompt: {} } as never;
     mocks.wizard.stepData = { details: {} };
     render(<ScheduleReviewStep />);
@@ -186,7 +221,6 @@ describe('ScheduleReviewStep', () => {
     } as never;
     mocks.wizard.visibleSteps = [{ id: 'promptStep' }];
     mocks.wizard.stepData = { details: { prompt: { labels: [{ id: 2, name: 'details label' }] } } };
-    mocks.useWatch.mockReturnValue(null);
     setResource({
       id: 8,
       name: 'Inventory source',
@@ -195,7 +229,8 @@ describe('ScheduleReviewStep', () => {
       summary_fields: { inventory: { kind: 'constructed' } },
     });
     render(<ScheduleReviewStep />);
-    expect(screen.getByText('Prompt details: details label')).toBeInTheDocument();
+    expect(screen.getByText('Prompt details:')).toBeInTheDocument();
+    expect(screen.queryByText('details label')).not.toBeInTheDocument();
     expect(screen.getByText('Inventory source')).toBeInTheDocument();
     expect(mocks.getPageUrl).toHaveBeenCalledWith(expect.anything(), {
       params: { source_id: 8, id: 9, inventory_type: 'constructed' },
@@ -208,7 +243,6 @@ describe('ScheduleReviewStep', () => {
       prompt: { labels: [] },
       exceptions: [],
     } as never;
-    mocks.useWatch.mockReturnValue([]);
     setResource({
       id: 8,
       name: 'Inventory source',
