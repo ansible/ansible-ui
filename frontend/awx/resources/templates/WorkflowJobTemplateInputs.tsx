@@ -13,6 +13,7 @@ import { PageFormSelectOrganization } from '../../access/organizations/component
 import { PageFormLabelSelect } from '../../common/PageFormLabelSelect';
 import { WorkflowJobTemplateForm } from '../../interfaces/WorkflowJobTemplate';
 import { PageFormInventorySelect } from '../inventories/components/PageFormInventorySelect';
+import { PageFormLimitInput } from './components/PageFormLimitInput';
 import { WebhookSubForm } from './components/WebhookSubForm';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 
@@ -24,6 +25,7 @@ export function WorkflowJobTemplateInputs(
   const { workflowJobTemplate } = props;
   const { setValue } = useFormContext<WorkflowJobTemplateForm>();
   const isWebhookEnabled = useWatch<WorkflowJobTemplateForm>({ name: 'isWebhookEnabled' });
+  const inventoryId = useWatch<WorkflowJobTemplateForm, 'inventory.id'>({ name: 'inventory.id' });
   useEffect(() => {
     if (!isWebhookEnabled) {
       setValue('webhook_service', undefined);
@@ -53,16 +55,17 @@ export function WorkflowJobTemplateInputs(
         }
         name="inventory.id"
       />
-      <PageFormTextInput<WorkflowJobTemplateForm>
+      <PageFormLimitInput<WorkflowJobTemplateForm>
         id="limit"
         placeholder={t('Enter limit to reduce number of hosts')}
         additionalControls={
           <PageFormCheckbox label={t('Prompt on launch')} name="ask_limit_on_launch" />
         }
         name="limit"
+        inventoryId={inventoryId}
         labelHelpTitle={t('Limit')}
         labelHelp={t(
-          'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. See the Ansible documentation for details and examples of patterns.'
+          'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. See the Ansible documentation for details and examples of patterns. Use the search button to browse and select hosts and groups from the selected inventory. You can still type patterns such as wildcards or negations.'
         )}
         label={t('Limit')}
       />

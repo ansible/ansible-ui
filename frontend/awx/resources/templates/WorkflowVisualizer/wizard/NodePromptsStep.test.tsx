@@ -200,6 +200,52 @@ describe('NodePromptsStep', () => {
     expect(screen.getByText('Limit')).toBeInTheDocument();
   });
 
+  it('disables the limit browser until an inventory is available', () => {
+    render(
+      <TestWrapper
+        defaultValues={{
+          resource: baseTemplate,
+          launch_config: createLaunchConfig({
+            ask_limit_on_launch: true,
+          }),
+        }}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Browse hosts and groups' })).toBeDisabled();
+  });
+
+  it('enables the limit browser from the template inventory', () => {
+    render(
+      <TestWrapper
+        defaultValues={{
+          resource: { ...baseTemplate, inventory: 7 },
+          launch_config: createLaunchConfig({
+            ask_limit_on_launch: true,
+          }),
+        }}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Browse hosts and groups' })).toBeEnabled();
+  });
+
+  it('enables the limit browser from the prompt inventory', () => {
+    render(
+      <TestWrapper
+        defaultValues={{
+          resource: baseTemplate,
+          prompt: { inventory: { id: 9, name: 'Demo' } } as WizardFormValues['prompt'],
+          launch_config: createLaunchConfig({
+            ask_limit_on_launch: true,
+          }),
+        }}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Browse hosts and groups' })).toBeEnabled();
+  });
+
   it('should show scm_branch field when ask_scm_branch_on_launch is true', () => {
     render(
       <TestWrapper
