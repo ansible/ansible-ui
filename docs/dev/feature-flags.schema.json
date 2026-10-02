@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ansible/ansible-ui/blob/devel/docs/dev/feature-flags.schema.json",
+  "title": "Client-only feature flag catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["flags"],
+  "properties": {
+    "flags": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/flag"
+      }
+    }
+  },
+  "$defs": {
+    "flag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "status",
+        "defaultValue",
+        "scope",
+        "kind",
+        "description",
+        "owner",
+        "removalDate"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["proposed", "alpha", "beta", "production", "deprecated"]
+        },
+        "defaultValue": {
+          "type": "boolean"
+        },
+        "scope": {
+          "const": "client-only"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["release", "experiment", "operational", "kill-switch"]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "removalDate": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "proposed"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "defaultValue": {
+                "const": false
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
