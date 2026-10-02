@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { useUserInteraction } from './useUserInteraction';
 
@@ -11,19 +12,20 @@ describe('useUserInteraction', () => {
     vi.useRealTimers();
   });
 
-  test('should invoke callback on pointer movement and throttle subsequent events', () => {
+  test('should invoke callback on pointer movement and throttle subsequent events', async () => {
     vi.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const callback = vi.fn();
 
     renderHook(() => useUserInteraction(500, callback));
 
-    dispatchPointerMove();
-    dispatchPointerMove();
+    await user.pointer({ keys: '[MouseMove]' });
+    await user.pointer({ keys: '[MouseMove]' });
 
     expect(callback).toHaveBeenCalledTimes(1);
 
     vi.advanceTimersByTime(500);
-    dispatchPointerMove();
+    await user.pointer({ keys: '[MouseMove]' });
 
     expect(callback).toHaveBeenCalledTimes(2);
   });
