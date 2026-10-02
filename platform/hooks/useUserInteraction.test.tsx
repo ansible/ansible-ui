@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { useUserInteraction } from './useUserInteraction';
 
@@ -7,20 +8,48 @@ describe('useUserInteraction', () => {
     vi.useRealTimers();
   });
 
-  test('should invoke callback on pointer movement and throttle subsequent events', () => {
+  test('should invoke callback on pointer movement and throttle subsequent events', async () => {
     vi.useFakeTimers();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const callback = vi.fn();
 
     renderHook(() => useUserInteraction(500, callback));
 
-    document.dispatchEvent(new Event('pointermove'));
-    document.dispatchEvent(new Event('pointermove'));
+    await user.pointer({ target: document.body, coords: { x: 0, y: 0 } });
+    await user.pointer({ target: document.body, coords: { x: 1, y: 1 } });
 
     expect(callback).toHaveBeenCalledTimes(1);
 
     vi.advanceTimersByTime(500);
-    document.dispatchEvent(new Event('pointermove'));
+    await user.pointer({ target: document.body, coords: { x: 2, y: 2 } });
 
     expect(callback).toHaveBeenCalledTimes(2);
+  });
+
+  test('clears the throttle timer when unmounted', () => {
+    vi.useFakeTimers();
+    const callback = vi.fn();
+    const { unmount } = renderHook(() => useUserInteraction(1000, callback));
+
+    dispatchPointerMove();
+    expect(callback).toHaveBeenCalledTimes(1);
+
+    unmount();
+    vi.advanceTimersByTime(1000);
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  test('should call the latest callback after rerender', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender } = renderHook(({ cb }) => useUserInteraction(0, cb), {
+      initialProps: { cb: first },
+    });
+
+    rerender({ cb: second });
+    dispatchPointerMove();
+
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
   });
 });
