@@ -116,4 +116,36 @@ describe('PageAsyncMultiSelect', () => {
       expect(screen.getByText('Option 2')).toBeInTheDocument();
     });
   });
+
+  it('does not show Load all by default', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} />);
+
+    await user.click(container.querySelector('#test')!);
+    await waitFor(() => {
+      expect(screen.getByText('Option 1')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Load more' })).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('load-all')).not.toBeInTheDocument();
+  });
+
+  it('Load all fetches every remaining page when enabled', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} showLoadAll />
+    );
+
+    await user.click(container.querySelector('#test')!);
+    await waitFor(() => {
+      expect(screen.getByText('Option 1')).toBeInTheDocument();
+      expect(screen.queryByText('Option 50')).not.toBeInTheDocument();
+    });
+
+    await user.click(await screen.findByTestId('load-all'));
+    await waitFor(() => {
+      expect(screen.getByText('Option 50')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument();
+      expect(screen.queryByTestId('load-all')).not.toBeInTheDocument();
+    });
+  });
 });

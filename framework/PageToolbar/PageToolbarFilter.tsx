@@ -483,6 +483,7 @@ function ToolbarFilterComponent(props: {
           disableSortOptions={filter.disableSortOptions}
           disableMaxDropdownWidth
           showSelectAll={filter.showSelectAll}
+          showLoadAll={filter.showLoadAll}
         />
       );
 

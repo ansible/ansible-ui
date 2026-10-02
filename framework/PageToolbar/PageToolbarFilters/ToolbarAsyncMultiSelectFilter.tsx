@@ -47,6 +47,12 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
    * Off by default.
    */
   showSelectAll?: boolean;
+
+  /**
+   * Show a "Load all" button below "Load more" that fetches every remaining page.
+   * Off by default.
+   */
+  showLoadAll?: boolean;
 }
 
 /**

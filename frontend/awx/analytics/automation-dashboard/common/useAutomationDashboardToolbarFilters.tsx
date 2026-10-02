@@ -127,6 +127,7 @@ export function useAutomationDashboardToolbarFilters(
         queryLabel: (value: string) => queryResourceLabel(value, filterKey),
         queryOptions: (options) => queryResource(options, filterKey),
         showSelectAll: true,
+        showLoadAll: true,
       });
     });
 

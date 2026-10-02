@@ -23,6 +23,12 @@ export interface PageAsyncMultiSelectProps<ValueT>
   onBrowse?: () => void;
 
   compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
+
+  /**
+   * Show a "Load all" button below "Load more" that fetches every remaining page.
+   * Off by default.
+   */
+  showLoadAll?: boolean;
 }
 
 /**
@@ -48,6 +54,7 @@ export function PageAsyncMultiSelect<
   ValueT,
 >(props: PageAsyncMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
+  const showLoadAll = props.showLoadAll === true;
 
   const [loading, setLoading] = useState(false);
   const [allLoaded, setAllLoaded] = useState(false);
@@ -63,68 +70,75 @@ export function PageAsyncMultiSelect<
   const queryOptions = useRef(props.queryOptions).current;
 
   const activeAbortController = useRef<AbortController | null>(null);
-  const queryHandler = useCallback(() => {
-    if (activeAbortController.current) {
-      activeAbortController.current.abort();
-    }
-    const abortController = new AbortController();
-    activeAbortController.current = abortController;
-    setLoading(() => {
+
+  const fetchPage = useCallback(
+    async (options?: { keepLoading?: boolean }): Promise<{ remaining: number; aborted: boolean }> => {
+      if (activeAbortController.current) {
+        activeAbortController.current.abort();
+      }
+      const abortController = new AbortController();
+      activeAbortController.current = abortController;
+
+      setLoading(true);
       setAllLoaded(false);
       setLoadingError(undefined);
-      setOptions((prevOptions) => {
-        if (prevOptions) {
-          return prevOptions;
-        } else {
-          return undefined;
-        }
-      });
-      void queryOptions({
-        next: nextRef.current!,
-        signal: abortController.signal,
-        search: searchValue,
-      })
-        .then((result) => {
-          if (abortController.signal.aborted) return;
-          nextRef.current = result.next;
-          if (!result.remaining) {
-            setAllLoaded(true);
-          }
-          setOptions((prevOptions) => {
-            if (abortController.signal.aborted) return prevOptions;
-            let newOptions: PageSelectOption<ValueT>[] = [
-              ...(prevOptions ?? []),
-              ...result.options,
-            ];
-            const uniqueValues = new Set<ValueT>();
-            newOptions = newOptions.filter((option) => {
-              if (uniqueValues.has(option.value)) return false;
-              uniqueValues.add(option.value);
-              return true;
-            });
-            newOptions.sort((a, b) => {
-              const lhs = a.label.toLowerCase();
-              const rhs = b.label.toLowerCase();
-              if (lhs < rhs) return -1;
-              if (lhs > rhs) return 1;
-              return 0;
-            });
-            setTotal(result.remaining + newOptions.length);
-            return newOptions;
-          });
-        })
-        .catch((err) => {
-          if (abortController.signal.aborted) return;
-          setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
-        })
-        .finally(() => {
-          if (abortController.signal.aborted) return;
-          setLoading(false);
+      setOptions((prevOptions) => prevOptions ?? undefined);
+
+      try {
+        const result = await queryOptions({
+          next: nextRef.current!,
+          signal: abortController.signal,
+          search: searchValue,
         });
-      return true;
-    });
-    return () => abortController.abort();
-  }, [queryOptions, searchValue, t]);
+        if (abortController.signal.aborted) {
+          return { remaining: 0, aborted: true };
+        }
+
+        nextRef.current = result.next;
+        const remaining = result.remaining;
+        if (!remaining) {
+          setAllLoaded(true);
+        }
+
+        setOptions((prevOptions) => {
+          if (abortController.signal.aborted) return prevOptions;
+          let newOptions: PageSelectOption<ValueT>[] = [...(prevOptions ?? []), ...result.options];
+          const uniqueValues = new Set<ValueT>();
+          newOptions = newOptions.filter((option) => {
+            if (uniqueValues.has(option.value)) return false;
+            uniqueValues.add(option.value);
+            return true;
+          });
+          newOptions.sort((a, b) => {
+            const lhs = a.label.toLowerCase();
+            const rhs = b.label.toLowerCase();
+            if (lhs < rhs) return -1;
+            if (lhs > rhs) return 1;
+            return 0;
+          });
+          setTotal(remaining + newOptions.length);
+          return newOptions;
+        });
+
+        return { remaining, aborted: false };
+      } catch (err) {
+        if (abortController.signal.aborted) {
+          return { remaining: 0, aborted: true };
+        }
+        setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
+        return { remaining: 0, aborted: true };
+      } finally {
+        if (!abortController.signal.aborted && !options?.keepLoading) {
+          setLoading(false);
+        }
+      }
+    },
+    [queryOptions, searchValue, t]
+  );
+
+  const queryHandler = useCallback(() => {
+    void fetchPage();
+  }, [fetchPage]);
 
   const onLoadMore = useCallback(
     (e: React.MouseEvent) => {
@@ -133,6 +147,26 @@ export function PageAsyncMultiSelect<
       queryHandler();
     },
     [queryHandler]
+  );
+
+  const onLoadAll = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setLoading(true);
+      try {
+        // Keep fetching pages until nothing remains (same paging as Load more).
+        for (;;) {
+          const { remaining, aborted } = await fetchPage({ keepLoading: true });
+          if (aborted || remaining <= 0) {
+            break;
+          }
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchPage]
   );
 
   const onReset = useCallback(
@@ -199,6 +233,22 @@ export function PageAsyncMultiSelect<
           </FlexItem>
         )}
       </Flex>
+      {!allLoaded && showLoadAll && (
+        <ActionList>
+          <ActionListItem>
+            <Button
+              id="load-all"
+              data-cy="load-all"
+              data-testid="load-all"
+              isLoading={loading}
+              onClick={(e) => void onLoadAll(e)}
+              isDisabled={loading}
+            >
+              {loading ? t('Loading...') : t('Load all')}
+            </Button>
+          </ActionListItem>
+        </ActionList>
+      )}
       {props.footer}
     </Stack>
   );
