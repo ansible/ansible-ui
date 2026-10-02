@@ -29,4 +29,11 @@ describe('moveReorderItem', () => {
 
     expect(reordered).toEqual([]);
   });
+
+  it('moves falsy items instead of treating them as missing', () => {
+    const items = [0, 1];
+    const reordered = moveReorderItem(items, 0, 1, (item) => item);
+
+    expect(reordered).toEqual([1, 0]);
+  });
 });
