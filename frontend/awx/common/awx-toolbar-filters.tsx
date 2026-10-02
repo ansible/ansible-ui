@@ -292,35 +292,6 @@ export function useSearchToolbarFilter() {
   }, [t]);
 }
 
-export function useHostFailedStatusFilter() {
-  const { t } = useTranslation();
-  return useMemo<IToolbarFilter>(
-    () => ({
-      key: 'failed_status',
-      label: t('Failed Status'),
-      type: ToolbarFilterType.SingleSelect,
-      query: 'last_job_host_summary__failed',
-      options: [{ label: t('Show only failed hosts'), value: 'True' }],
-      placeholder: t('Select'),
-    }),
-    [t]
-  );
-}
-export function useHostReadyStatusFilter() {
-  const { t } = useTranslation();
-  return useMemo<IToolbarFilter>(
-    () => ({
-      key: 'ready_status',
-      label: t('Ready Status'),
-      type: ToolbarFilterType.SingleSelect,
-      query: 'not__last_job_host_summary__failed',
-      options: [{ label: t('Show only ready hosts'), value: 'True' }],
-      placeholder: t('Select'),
-    }),
-    [t]
-  );
-}
-
 export function useLimitToolbarFilter() {
   const { t } = useTranslation();
   return useMemo<IToolbarFilter>(
