@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -22,6 +23,14 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
 
 vi.mock('../../../main/GatewayServices', () => ({
   useHasAwxService: () => true,
+}));
+
+vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
+  useAwxConfig: () => ({
+    license_info: {
+      license_type: 'enterprise',
+    },
+  }),
 }));
 
 const mockPlatformOrganization: Partial<PlatformOrganization> = {
@@ -55,15 +64,9 @@ const mockControllerOrganization = {
   max_hosts: 100,
 };
 
-const mockInstanceGroups = [
-  { id: 1, name: 'Instance Group 1' },
-  { id: 2, name: 'Instance Group 2' },
-];
+const mockInstanceGroups = [{ id: 1, name: 'Instance Group 1' }];
 
-const mockGalaxyCredentials = [
-  { id: 10, name: 'Galaxy Cred 1' },
-  { id: 20, name: 'Galaxy Cred 2' },
-];
+const mockGalaxyCredentials = [{ id: 10, name: 'Galaxy Cred 1' }];
 
 const server = setupServer(
   http.get(gatewayAPI`/organizations/1/`, () => HttpResponse.json(mockPlatformOrganization)),
@@ -88,7 +91,43 @@ const server = setupServer(
   http.patch(gatewayAPI`/organizations/1/`, () => HttpResponse.json(mockPlatformOrganization)),
   http.patch(awxAPI`/organizations/100/`, () => HttpResponse.json(mockControllerOrganization)),
   http.post(awxAPI`/organizations/100/instance_groups/`, () => HttpResponse.json({ id: 1 })),
-  http.post(awxAPI`/organizations/100/galaxy_credentials/`, () => HttpResponse.json({ id: 10 }))
+  http.post(awxAPI`/organizations/100/galaxy_credentials/`, () => HttpResponse.json({ id: 10 })),
+  http.options(gatewayAPI`/organizations/`, () =>
+    HttpResponse.json({
+      actions: {
+        POST: {
+          name: {
+            type: 'string',
+            required: true,
+            read_only: false,
+            label: 'Name',
+          },
+        },
+      },
+    })
+  ),
+  http.options(awxAPI`/organizations/`, () =>
+    HttpResponse.json({
+      actions: {
+        POST: {
+          max_hosts: {
+            type: 'integer',
+            required: false,
+            read_only: false,
+            label: 'Max Hosts',
+          },
+          opa_query_path: {
+            type: 'string',
+            required: false,
+            read_only: false,
+            label: 'OPA Query Path',
+            pattern: '^[a-z0-9_./]*$',
+            pattern_description: 'Policy enforcement path must be lowercase alphanumeric.',
+          },
+        },
+      },
+    })
+  )
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -191,5 +230,58 @@ describe('EditPlatformOrganization', () => {
     });
 
     expect(screen.getByText('Review')).toBeInTheDocument();
+  });
+
+  it('should patch controller organization when form is submitted', async () => {
+    vi.fn(() => HttpResponse.json(mockControllerOrganization));
+    server.use(
+      http.patch(awxAPI`/organizations/100/`, () => HttpResponse.json(mockControllerOrganization))
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/organizations/1/edit']}>
+        <Routes>
+          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
+    });
+  });
+
+  it('should handle opa_query_path field in controller organization', async () => {
+    const user = userEvent.setup({ delay: null });
+    let patchPayload: Record<string, unknown> | undefined;
+    server.use(
+      http.patch(awxAPI`/organizations/100/`, async ({ request }) => {
+        patchPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(mockControllerOrganization);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/organizations/1/edit']}>
+        <Routes>
+          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
+    });
+
+    const nextButton = await screen.findByRole('button', { name: /next/i });
+    await user.click(nextButton);
+
+    const finishButton = await screen.findByRole('button', { name: /finish/i });
+    await user.click(finishButton);
+
+    await waitFor(() => {
+      expect(patchPayload).toBeDefined();
+      expect(patchPayload).toHaveProperty('opa_query_path');
+    });
   });
 });

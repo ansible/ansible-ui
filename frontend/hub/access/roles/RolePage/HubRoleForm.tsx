@@ -13,6 +13,7 @@ import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/Pag
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { HubRoute } from '../../../main/HubRoutes';
 import { useHubRoleMetadata } from '../hooks/useHubRoleMetadata';
 import { useIsValidRoleName } from '../hooks/useIsValidRoleName';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   const { t } = useTranslation();
@@ -33,6 +35,9 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
   useInvalidateCacheOnUnmount();
 
   const postRequest = usePostRequest<Partial<HubRbacRole>, HubRbacRole>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    hubAPI`/_ui/v2/role_definitions/`
+  );
 
   const onSubmit: PageFormSubmitHandler<HubRbacRole> = async (Role) => {
     const createdRole = {
@@ -62,6 +67,7 @@ export function CreateRole(props: { breadcrumbLabelForPreviousPage?: string }) {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsData={optionsData}
       >
         <HubRoleInputs />
       </HubPageForm>
@@ -81,6 +87,9 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
 
   const postRequest = usePostRequest<Partial<HubRbacRole>, HubRbacRole>();
   const patchRequest = usePatchRequest<Partial<HubRbacRole>, HubRbacRole>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    hubAPI`/_ui/v2/role_definitions/`
+  );
 
   const onSubmit: PageFormSubmitHandler<HubRbacRole> = async (Role) => {
     if (Number.isInteger(id)) {
@@ -124,6 +133,7 @@ export function EditRole(props: { breadcrumbLabelForPreviousPage?: string }) {
             onSubmit={onSubmit}
             cancelText={t('Cancel')}
             onCancel={onCancel}
+            optionsData={optionsData}
             defaultValue={{
               ...Role,
               content_type:

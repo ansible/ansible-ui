@@ -2,6 +2,12 @@ import { expect, type Page, type TestInfo } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
 import { navigateTo } from '../commands/navigateTo';
 
+/** Minimal shape of a scoped API client (awxAPI, hubAPI, gatewayAPI, ...) needed to fetch OPTIONS. */
+export type OptionsClient = {
+  options: <T = unknown>(page: Page, path: string) => Promise<T | null>;
+  get?: <T = unknown>(page: Page, path: string) => Promise<T | null>;
+};
+
 /** Minimal OPTIONS shape used by Playwright validation helpers (no UI framework import). */
 export type FieldMetadata = {
   pattern?: string;
@@ -110,26 +116,98 @@ export function getOptionsFieldMetadata(
   return undefined;
 }
 
-export async function fetchAwxOptions(page: Page, path: string): Promise<PageFormOptionsData> {
-  const response = await awxAPI.options<PageFormOptionsData>(page, path);
+export async function fetchProductOptions(
+  page: Page,
+  path: string,
+  client: OptionsClient = awxAPI
+): Promise<PageFormOptionsData> {
+  const response = await client.options<PageFormOptionsData>(page, path);
   return response ?? {};
+}
+
+/** @deprecated use {@link fetchProductOptions} with an explicit client (defaults to awxAPI). */
+export async function fetchAwxOptions(page: Page, path: string): Promise<PageFormOptionsData> {
+  return fetchProductOptions(page, path, awxAPI);
 }
 
 /**
  * Fetch OPTIONS for ``path`` and skip when ``fieldName`` has no ``pattern`` /
  * ``pattern_description`` (enhanced validation off or backend without injection).
+ * ``client`` defaults to ``awxAPI``; pass ``hubAPI``/``gatewayAPI`` for Hub/Platform forms.
  */
 export async function requireOptionsFieldPattern(
   page: Page,
   path: string,
   fieldName: string,
-  testInfo: TestInfo
+  testInfo: TestInfo,
+  client: OptionsClient = awxAPI
 ): Promise<FieldMetadata> {
-  const options = await fetchAwxOptions(page, path);
+  const options = await fetchProductOptions(page, path, client);
   const field = getOptionsFieldMetadata(options, fieldName);
 
   if (!field?.pattern || !field.pattern_description) {
     testInfo.skip(true, `OPTIONS ${path} does not advertise pattern metadata for "${fieldName}"`);
+  }
+
+  return field!;
+}
+
+interface AuthenticatorPluginSchemaField {
+  name?: string;
+  pattern?: string;
+  pattern_description?: string;
+  patternDescription?: string;
+  flags?: string;
+}
+
+interface AuthenticatorPluginsResponse {
+  authenticators?: Array<{
+    type: string;
+    configuration_schema?: AuthenticatorPluginSchemaField[];
+  }>;
+}
+
+/**
+ * Fetch GET ``/authenticator_plugins/`` and skip when ``configurationFieldName`` on the
+ * plugin whose ``type`` contains ``pluginTypeFragment`` has no pattern metadata.
+ */
+export async function requireAuthenticatorPluginFieldPattern(
+  page: Page,
+  pluginTypeFragment: string,
+  configurationFieldName: string,
+  testInfo: TestInfo,
+  client: OptionsClient
+): Promise<FieldMetadata> {
+  if (!client.get) {
+    testInfo.skip(true, 'API client does not support GET for /authenticator_plugins/');
+  }
+
+  const plugins = await client.get!<AuthenticatorPluginsResponse>(page, '/authenticator_plugins/');
+  const authenticators = plugins?.authenticators;
+
+  if (!authenticators?.length) {
+    testInfo.skip(true, 'GET /authenticator_plugins/ returned no authenticators');
+  }
+
+  const plugin = authenticators!.find((entry) => entry.type.includes(pluginTypeFragment));
+
+  if (!plugin) {
+    testInfo.skip(
+      true,
+      `No authenticator plugin with type containing "${pluginTypeFragment}" in /authenticator_plugins/`
+    );
+  }
+
+  const schemaField = plugin!.configuration_schema?.find(
+    (field) => field.name === configurationFieldName
+  );
+  const field = readOptionsFieldMetadata(schemaField);
+
+  if (!field?.pattern || !field.pattern_description) {
+    testInfo.skip(
+      true,
+      `Plugin field "${configurationFieldName}" on ${plugin!.type} has no pattern metadata`
+    );
   }
 
   return field!;

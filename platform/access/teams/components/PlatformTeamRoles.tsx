@@ -1,6 +1,6 @@
 import { LoadingPage, PageTable } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 import { TeamAssignment } from '@ansible/common-ui/access/interfaces/TeamAssignment';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CubesIcon } from '@patternfly/react-icons';
