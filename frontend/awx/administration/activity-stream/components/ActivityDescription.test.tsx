@@ -11,8 +11,12 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     useGetPageUrl:
       () => (routeId: string, opts?: { params?: Record<string, string | number | undefined> }) => {
         const id = opts?.params?.id;
-        if (id !== undefined) return `/test/${routeId}/${id}`;
-        return `/test/${routeId}`;
+        const inventoryType = opts?.params?.inventory_type;
+        let url = id !== undefined ? `/test/${routeId}/${id}` : `/test/${routeId}`;
+        if (inventoryType !== undefined) {
+          url += `/${inventoryType}`;
+        }
+        return url;
       },
   };
 });
@@ -90,5 +94,213 @@ describe('ActivityDescription', () => {
     expect(
       screen.getByText((content) => content.includes('disassociated user'))
     ).toBeInTheDocument();
+  });
+
+  it('should include the role name from changes.role_definition when summary_fields.role is absent', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: 'inventory',
+      object2: 'user',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'prod-inventory' }],
+        user: [{ id: '3', username: 'johndoe' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'prod-inventory',
+        role_definition: 'Inventory Admin',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('Inventory Admin role'))
+    ).toBeInTheDocument();
+  });
+
+  it('should include the role name when a role is associated to a team rather than a user', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: 'inventory',
+      object2: 'team',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'prod-inventory' }],
+        team: [{ id: '3', name: 'Engineering' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'prod-inventory',
+        role_definition: 'inventory-custom-role',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('inventory-custom-role role'))
+    ).toBeInTheDocument();
+    expect(screen.getByText('Engineering')).toBeInTheDocument();
+  });
+
+  it('should include the role name when a role is disassociated from a team rather than a user', () => {
+    const activity = createActivity({
+      operation: 'disassociate',
+      object1: 'inventory',
+      object2: 'team',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'prod-inventory' }],
+        team: [{ id: '3', name: 'Engineering' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'prod-inventory',
+        role_definition: 'inventory-custom-role',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('inventory-custom-role role'))
+    ).toBeInTheDocument();
+    expect(screen.getByText('Engineering')).toBeInTheDocument();
+  });
+
+  it('should link the target user for a global role assignment with no source object', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: '',
+      object2: 'user',
+      summary_fields: {
+        user: [{ id: '7', username: 'rando' }],
+      },
+      changes: {
+        inventory: '',
+        id: 0,
+        object1_pk: 0,
+        name: '',
+        role_definition: 'global-view-role',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('global-view-role role'))
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'rando' })).toBeInTheDocument();
+    expect(screen.getByTestId('target-resource-detail')).toBeInTheDocument();
+  });
+
+  it('should link the source and target for a global role removal with no source object', () => {
+    const activity = createActivity({
+      operation: 'disassociate',
+      object1: '',
+      object2: 'user',
+      summary_fields: {
+        user: [{ id: '7', username: 'rando' }],
+      },
+      changes: {
+        inventory: '',
+        id: 0,
+        object1_pk: 0,
+        name: '',
+        role_definition: 'global-view-role',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByText((content) => content.includes('global-view-role role'))
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'rando' })).toBeInTheDocument();
+  });
+
+  it('should include the inventory_type route param when linking a regular inventory', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: 'inventory',
+      object2: 'user',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'prod-inventory', kind: '' }],
+        user: [{ id: '3', username: 'johndoe' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'prod-inventory',
+        role_definition: 'Inventory Admin',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: 'prod-inventory' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('/inventory')
+    );
+  });
+
+  it('should include the inventory_type route param when linking a smart inventory', () => {
+    const activity = createActivity({
+      operation: 'associate',
+      object1: 'inventory',
+      object2: 'user',
+      summary_fields: {
+        inventory: [{ id: '5', name: 'smart-inventory', kind: 'smart' }],
+        user: [{ id: '3', username: 'johndoe' }],
+      },
+      changes: {
+        inventory: '',
+        id: 5,
+        object1_pk: 5,
+        name: 'smart-inventory',
+        role_definition: 'Inventory Admin',
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: 'smart-inventory' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('/smart_inventory')
+    );
   });
 });

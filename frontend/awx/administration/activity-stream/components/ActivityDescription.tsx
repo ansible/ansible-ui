@@ -42,6 +42,26 @@ function getResourceObject(activity: ActivityStream, resourceKey: ResourceKey) {
   return null;
 }
 
+function getInventoryTypeParam(
+  objectKey: string,
+  resourceObj: Record<string, string> | null
+): string | undefined {
+  if (objectKey !== 'inventory' || !resourceObj) {
+    return undefined;
+  }
+
+  return INVENTORYURLPATHS[resourceObj.kind ?? ''];
+}
+
+function getRoleName(activity: ActivityStream): string {
+  const roleResource = getResourceObject(activity, 'role');
+  if (roleResource && typeof roleResource.role_field === 'string') {
+    return roleResource.role_field;
+  }
+
+  return activity.changes?.role_definition ?? '';
+}
+
 const getOperationText = (operation: string) => {
   switch (operation) {
     case 'associate':
@@ -72,7 +92,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
   const targetResourceName = getResourceName(activity, activity.object2);
   const targetResourceObj = getResourceObject(activity, activity.object2);
   const sourceResourceObj = getResourceObject(activity, activity.object1);
-  const roleResource = getResourceObject(activity, 'role');
+  const roleName = getRoleName(activity);
   const eventText = generateEventText(activity);
 
   function generateEventText(activity: ActivityStream): JSX.Element | string {
@@ -154,89 +174,47 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
             : ''
         }`;
       }
-      case 'disassociate': {
-        if (targetResourceRoute && sourceResourceRoute && sourceResourceObj) {
-          return (
-            <span>
-              {`${operationText} ${object1} `}
-              {sourceResourceRoute && (
-                <Link
-                  to={getPageUrl(sourceResourceRoute, {
-                    params: { id: sourceResourceObj.id },
-                  })}
-                  data-cy="source-resource-detail"
-                  data-testid="source-resource-detail"
-                >
-                  {sourceResourceName}
-                </Link>
-              )}
-              {roleResource && ` ${roleResource.role_field} `}
-              {!sourceResourceRoute && <span>{sourceResourceName}</span>}
-              {` from ${object2} `}
-              {targetResourceRoute && targetResourceObj && (
-                <Link
-                  to={getPageUrl(targetResourceRoute, {
-                    params: {
-                      id: targetResourceObj.id,
-                    },
-                  })}
-                  data-cy="target-resource-detail"
-                  data-testid="target-resource-detail"
-                >
-                  {targetResourceName}
-                </Link>
-              )}
-              {!targetResourceRoute && <span>{targetResourceName}</span>}
-            </span>
-          );
-        }
-        return (
-          <span>
-            {`${operationText} ${object1} ${sourceResourceName}`}
-            {roleResource && `${roleResource.role_field}`} {`from ${object2} ${targetResourceName}`}
-          </span>
-        );
-      }
+      case 'disassociate':
       case 'associate': {
-        if (targetResourceRoute && sourceResourceRoute && sourceResourceObj) {
-          return (
-            <span>
-              {`${operationText} ${object1} `}
-              {sourceResourceRoute && (
-                <Link
-                  to={getPageUrl(sourceResourceRoute, {
-                    params: { id: sourceResourceObj.id },
-                  })}
-                  data-cy="source-resource-detail"
-                  data-testid="source-resource-detail"
-                >
-                  {sourceResourceName}
-                </Link>
-              )}
-              {roleResource && ` ${roleResource.role_field} `}
-              {!sourceResourceRoute && <span>{sourceResourceName}</span>}
-              {` to ${object2} `}
-              {targetResourceRoute && targetResourceObj && (
-                <Link
-                  to={getPageUrl(targetResourceRoute, {
-                    params: {
-                      id: targetResourceObj.id,
-                    },
-                  })}
-                  data-cy="target-resource-detail"
-                  data-testid="target-resource-detail"
-                >
-                  {targetResourceName}
-                </Link>
-              )}
-              {!targetResourceRoute && <span>{targetResourceName}</span>}
-            </span>
-          );
-        }
+        const preposition = operation === 'associate' ? 'to' : 'from';
         return (
           <span>
-            {`${operationText} ${object1} ${sourceResourceName}`}
-            {roleResource && `${roleResource.role_field}`} {`to ${object2} ${targetResourceName}`}
+            {object1 && `${operationText} ${object1} `}
+            {!object1 && `${operationText} `}
+            {sourceResourceRoute && sourceResourceObj ? (
+              <Link
+                to={getPageUrl(sourceResourceRoute, {
+                  params: {
+                    id: sourceResourceObj.id,
+                    inventory_type: getInventoryTypeParam(String(object1), sourceResourceObj),
+                  },
+                })}
+                data-cy="source-resource-detail"
+                data-testid="source-resource-detail"
+              >
+                {sourceResourceName}
+              </Link>
+            ) : (
+              sourceResourceName && <span>{sourceResourceName}</span>
+            )}
+            {roleName && ` ${roleName} role `}
+            {` ${preposition} ${object2} `}
+            {targetResourceRoute && targetResourceObj ? (
+              <Link
+                to={getPageUrl(targetResourceRoute, {
+                  params: {
+                    id: targetResourceObj.id,
+                    inventory_type: getInventoryTypeParam(String(object2), targetResourceObj),
+                  },
+                })}
+                data-cy="target-resource-detail"
+                data-testid="target-resource-detail"
+              >
+                {targetResourceName}
+              </Link>
+            ) : (
+              <span>{targetResourceName}</span>
+            )}
           </span>
         );
       }
