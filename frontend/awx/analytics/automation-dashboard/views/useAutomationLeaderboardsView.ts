@@ -55,7 +55,7 @@ export interface LeaderboardItem {
   name: string;
   runs: number;
   rank: number;
-  isCurrentOrg?: boolean;
+  isUserOrg?: boolean;
 }
 
 export interface AtAGlanceSummary {
@@ -131,6 +131,8 @@ interface ILeaderboardOrganizationRow {
   rank: number;
   name: string;
   runs: number;
+  /** `true` only on the requesting user's organization row. */
+  user_organization: boolean;
 }
 
 interface ILeaderboardActivityRow {
@@ -282,9 +284,7 @@ function mapAchievements<T extends string>(
 
 export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLeaderboardsData {
   const orgRows = orEmpty(report.organization_leaderboard.leaderboard);
-  const currentOrgRow = orgRows.find(
-    (row) => row.rank === report.organization_leaderboard.user_organization_rank
-  );
+  const currentOrgRow = orgRows.find((row) => row.user_organization);
 
   return {
     // Set by the hook from collection_status's last_sync, not derivable here.
@@ -307,9 +307,7 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
       name: row.name,
       runs: row.runs,
       rank: row.rank,
-      // Numeric row rank only — avoids null === null marking a row as the user's org.
-      isCurrentOrg:
-        row.rank !== null && row.rank === report.organization_leaderboard.user_organization_rank,
+      isUserOrg: row.user_organization,
     })),
     currentOrgStanding: {
       // Falsy rank hides the panel header (see HighlightsLeaderboardPanel).

@@ -30,9 +30,9 @@ export const MOCK_LEADERBOARD_REPORT: ILeaderboardReport = {
     user_organization_rank: 1,
     total_organizations: 42,
     leaderboard: [
-      { rank: 1, name: 'Platform Engineering', runs: 2840 },
-      { rank: 2, name: 'Security Operations', runs: 1923 },
-      { rank: 3, name: 'Cloud Infrastructure', runs: 1654 },
+      { rank: 1, name: 'Platform Engineering', runs: 2840, user_organization: true },
+      { rank: 2, name: 'Security Operations', runs: 1923, user_organization: false },
+      { rank: 3, name: 'Cloud Infrastructure', runs: 1654, user_organization: false },
     ],
   },
   org_achievements: ['sustained', 'rising', 'not_a_real_badge'],

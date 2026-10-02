@@ -50,7 +50,7 @@ export function HighlightsLeaderboardPanel(props: Readonly<{ width?: PageDashboa
       style={{ gap: 8, whiteSpace: 'nowrap' }}
     >
       <Truncate content={item.name} style={item.rank <= 3 ? { fontWeight: 700 } : undefined} />
-      {item.isCurrentOrg && (
+      {item.isUserOrg && (
         <Label isCompact color="purple" style={{ flexShrink: 0 }}>
           {t('Your organization')}
         </Label>
