@@ -56,7 +56,7 @@ export type IAwxView<T extends { id: number }> = IView &
 
 export function useAwxView<T extends { id: number }>(options: {
   /** The base url for the view. */
-    url: string | undefined;
+  url: string | undefined;
 
   /** The filters for the view. Used to manage the keys used in the browser querystrings which store the filter results. */
   toolbarFilters?: IToolbarFilter[];
@@ -78,7 +78,7 @@ export function useAwxView<T extends { id: number }>(options: {
   defaultFilters?: { [key: string]: string[] };
   ignoreQueryStringKeys?: string[];
 }): IAwxView<T> {
-  let { url } = options;
+  const { url } = options;
   const { toolbarFilters, tableColumns, disableQueryString, queryParams } = options;
 
   let defaultSort: string | undefined = options.defaultSort;
@@ -207,7 +207,7 @@ export function useAwxView<T extends { id: number }>(options: {
       limitFiltersToOneOrOperation: true,
       updateItem,
       upsertItem,
-    listUrl: listUrl ?? '',
+      listUrl: listUrl ?? '',
     };
   }, [
     error,
@@ -218,7 +218,7 @@ export function useAwxView<T extends { id: number }>(options: {
     unselectItemsAndRefresh,
     updateItem,
     upsertItem,
-    url,
+    listUrl,
     view,
   ]);
 }
