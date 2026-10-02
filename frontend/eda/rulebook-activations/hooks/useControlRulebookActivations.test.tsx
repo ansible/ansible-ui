@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { renderHook, act, screen, fireEvent } from '@testing-library/react';
+import { renderHook, act, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeAll, beforeEach, afterAll, afterEach, Mock } from 'vitest';
 import {
   useRestartRulebookActivationsWithWarning,
@@ -126,6 +127,7 @@ describe('useControlRulebookActivations hooks', () => {
   });
 
   it('useEnableRulebookActivationsWithWarning should call actionFn on confirm', async () => {
+    const user = userEvent.setup();
     server.use(
       http.post(edaAPI`/activations/1/enable/`, () => {
         return HttpResponse.json({});
@@ -140,13 +142,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await user.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Enable rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
       await Promise.resolve();
     });
 
@@ -159,6 +161,7 @@ describe('useControlRulebookActivations hooks', () => {
   });
 
   it('useRestartRulebookActivationsWithWarning should call actionFn on confirm', async () => {
+    const user = userEvent.setup();
     server.use(
       http.post(edaAPI`/activations/1/restart/`, () => {
         return HttpResponse.json({});
@@ -173,13 +176,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await user.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Restart rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
       await Promise.resolve();
     });
 
@@ -264,6 +267,7 @@ describe('useControlRulebookActivations hooks', () => {
   });
 
   it('useDisableRulebookActivations should call actionFn on confirm', async () => {
+    const user = userEvent.setup();
     server.use(
       http.post(edaAPI`/activations/1/disable/`, () => {
         return HttpResponse.json({});
@@ -276,13 +280,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await user.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Disable rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
       await Promise.resolve();
     });
 
@@ -294,6 +298,7 @@ describe('useControlRulebookActivations hooks', () => {
   });
 
   it('useRestartRulebookActivations should call actionFn on confirm', async () => {
+    const user = userEvent.setup();
     server.use(
       http.get(edaAPI`/projects/1/`, () => {
         return HttpResponse.json({ id: 1, name: 'Test Project', update_revision_on_launch: false });
@@ -309,13 +314,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await user.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Restart rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
       await Promise.resolve();
     });
 
@@ -367,6 +372,7 @@ describe('useControlRulebookActivations hooks', () => {
   });
 
   it('useDisableRulebookActivationsWithWarning should call actionFn on confirm', async () => {
+    const user = userEvent.setup();
     server.use(
       http.post(edaAPI`/activations/1/disable/`, () => {
         return HttpResponse.json({});
@@ -381,13 +387,13 @@ describe('useControlRulebookActivations hooks', () => {
     });
 
     const checkbox = screen.getByRole('checkbox');
-    act(() => {
-      fireEvent.click(checkbox);
+    await act(async () => {
+      await user.click(checkbox);
     });
 
     const submitButton = screen.getByRole('button', { name: 'Disable rulebook activations' });
     await act(async () => {
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
       await Promise.resolve();
     });
 

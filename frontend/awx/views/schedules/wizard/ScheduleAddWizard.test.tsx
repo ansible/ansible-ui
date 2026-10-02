@@ -1,6 +1,7 @@
 import { SwrTestWrapper } from '@ansible/ansible-ui-framework/test-utils/swrTestWrapper';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -96,6 +97,7 @@ describe('ScheduleAddWizard', () => {
   });
 
   it('should apply schedule name pattern validation from OPTIONS metadata', async () => {
+    const user = userEvent.setup();
     renderJobTemplateNestedAddWizard();
 
     await waitFor(() => {
@@ -103,8 +105,9 @@ describe('ScheduleAddWizard', () => {
     });
 
     const nameInput = await screen.findByRole('textbox', { name: 'Schedule name' });
-    fireEvent.change(nameInput, { target: { value: 'invalid@name' } });
-    fireEvent.blur(nameInput);
+    await user.clear(nameInput);
+    await user.type(nameInput, 'invalid@name');
+    await user.tab();
 
     await waitFor(() => {
       expect(screen.getByText('Valid schedule name')).toBeInTheDocument();
