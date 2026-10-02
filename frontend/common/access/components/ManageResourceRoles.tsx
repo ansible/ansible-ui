@@ -33,6 +33,21 @@ export interface ResourceType {
   };
 }
 
+function OrganizationLink(props: {
+  organizationName?: string;
+  organizationId?: string | number;
+  fallback: string;
+}) {
+  return props.organizationName ? (
+    <OrganizationUsersLink
+      organizationName={props.organizationName}
+      organizationId={props.organizationId}
+    />
+  ) : (
+    <>{props.fallback}</>
+  );
+}
+
 export function ManageResourceRoles(props: { resource?: ResourceType; user?: PlatformUser }) {
   const toolbarFilters = usePlatformRolesFilters();
   const { resource } = props;
@@ -196,17 +211,17 @@ export function ManageResourceRoles(props: { resource?: ResourceType; user?: Pla
             }
           ),
           alertDescription: (
-            <>
-              {t(
-                "To view these indirectly assigned roles click the button below. To modify indirect assignments manage the team's assignments, to modify directly assigned organization roles, manage"
-              )}{' '}
-              {orgName ? (
-                <OrganizationUsersLink organizationName={orgName} organizationId={orgId} />
-              ) : (
-                t('organization')
-              )}{' '}
-              {t('role assignments for this user.')}
-            </>
+            <Trans>
+              To view these indirectly assigned roles click the button below. To modify indirect
+              assignments manage the team&apos;s assignments, to modify directly assigned
+              organization roles, manage{' '}
+              <OrganizationLink
+                organizationName={orgName}
+                organizationId={orgId}
+                fallback={t('organization')}
+              />{' '}
+              role assignments for this user.
+            </Trans>
           ),
           modalDescription: t(
             `Below is a list of roles indirectly assigned to this user through a team assignment for {{resourceName}}. To modify roles assigned to this user from a team assignment manage the team's assignments.`,

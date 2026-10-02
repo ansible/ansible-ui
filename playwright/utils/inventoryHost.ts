@@ -152,7 +152,7 @@ export const InventoryHost = {
       await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
 
       await clearTableFilters(page);
-      const rowCheckboxes = page.getByRole('checkbox', { name: /Select row \d+/ });
+      const rowCheckboxes = page.getByRole('checkbox', { name: 'Select row' });
       await expect(rowCheckboxes).not.toHaveCount(0);
       for (const checkbox of await rowCheckboxes.all()) {
         await checkbox.check();
