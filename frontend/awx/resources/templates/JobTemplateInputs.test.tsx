@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -149,6 +150,23 @@ describe('JobTemplateInputs', () => {
     for (const testId of jobTemplateOptionCheckboxTestIds) {
       expect(getHelpButtonForOptionCheckbox(testId)).toBeInTheDocument();
     }
+  });
+
+  it('should show labelHelpTitle in Options checkbox popovers', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <JobTemplateInputs />
+      </TestWrapper>
+    );
+
+    const helpButton = getHelpButtonForOptionCheckbox('become_enabled');
+    expect(helpButton).toBeInTheDocument();
+    await user.click(helpButton as HTMLElement);
+
+    expect(
+      await screen.findByText('Select to enable this playbook to run as an administrator.')
+    ).toBeInTheDocument();
   });
 
   it('should render help icons for Options checkboxes when editing an existing template', () => {
