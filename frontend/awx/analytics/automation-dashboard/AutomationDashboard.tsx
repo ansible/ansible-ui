@@ -45,6 +45,7 @@ export function AutomationDashboard() {
     const isWideLayout =
       WIDE_LAYOUT_MIN_COLUMNS <= gridColumns && gridColumns <= WIDE_LAYOUT_MAX_COLUMNS;
     const valueCardWidth = isWideLayout ? 'xs' : ('md' as const);
+    const chartCardWidth = gridColumns <= WIDE_LAYOUT_MAX_COLUMNS ? 'md' : ('xl' as const);
 
     return (
       <>
@@ -112,6 +113,7 @@ export function AutomationDashboard() {
             error={view.detailsError}
             errorStateTitle={t('Error loading host chart')}
             legendLabel={t('Hosts')}
+            width={chartCardWidth}
           ></DashboardChartCard>
           <DashboardChartCard
             id="job-chart-card"
@@ -125,6 +127,7 @@ export function AutomationDashboard() {
             errorStateTitle={t('Error loading job chart')}
             error={view.detailsError}
             legendLabel={t('Job runs')}
+            width={chartCardWidth}
           ></DashboardChartCard>
         </DashboardGridRow>
         <DashboardGridRow>
