@@ -23,6 +23,19 @@ export interface PageAsyncMultiSelectProps<ValueT>
   onBrowse?: () => void;
 
   compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
+
+  /**
+   * Show a "Load all" button that fetches remaining options using `loadAllPageSize`.
+   * Off by default.
+   */
+  showLoadAll?: boolean;
+
+  /**
+   * Page size used when Load all is clicked. Must match what the API allows
+   * (e.g. 200). Required for efficient Load all; without it, Load all reuses
+   * the filter's normal page size.
+   */
+  loadAllPageSize?: number;
 }
 
 /**
@@ -48,6 +61,7 @@ export function PageAsyncMultiSelect<
   ValueT,
 >(props: PageAsyncMultiSelectProps<ValueT>) {
   const { t } = useTranslation();
+  const showLoadAll = props.showLoadAll === true;
 
   const [loading, setLoading] = useState(false);
   const [allLoaded, setAllLoaded] = useState(false);
@@ -63,68 +77,79 @@ export function PageAsyncMultiSelect<
   const queryOptions = useRef(props.queryOptions).current;
 
   const activeAbortController = useRef<AbortController | null>(null);
-  const queryHandler = useCallback(() => {
-    if (activeAbortController.current) {
-      activeAbortController.current.abort();
-    }
-    const abortController = new AbortController();
-    activeAbortController.current = abortController;
-    setLoading(() => {
+
+  const fetchPage = useCallback(
+    async (options?: {
+      keepLoading?: boolean;
+      pageSize?: number;
+    }): Promise<{ remaining: number; aborted: boolean }> => {
+      if (activeAbortController.current) {
+        activeAbortController.current.abort();
+      }
+      const abortController = new AbortController();
+      activeAbortController.current = abortController;
+
+      setLoading(true);
       setAllLoaded(false);
       setLoadingError(undefined);
-      setOptions((prevOptions) => {
-        if (prevOptions) {
-          return prevOptions;
-        } else {
-          return undefined;
-        }
-      });
-      void queryOptions({
-        next: nextRef.current!,
-        signal: abortController.signal,
-        search: searchValue,
-      })
-        .then((result) => {
-          if (abortController.signal.aborted) return;
-          nextRef.current = result.next;
-          if (!result.remaining) {
-            setAllLoaded(true);
-          }
-          setOptions((prevOptions) => {
-            if (abortController.signal.aborted) return prevOptions;
-            let newOptions: PageSelectOption<ValueT>[] = [
-              ...(prevOptions ?? []),
-              ...result.options,
-            ];
-            const uniqueValues = new Set<ValueT>();
-            newOptions = newOptions.filter((option) => {
-              if (uniqueValues.has(option.value)) return false;
-              uniqueValues.add(option.value);
-              return true;
-            });
-            newOptions.sort((a, b) => {
-              const lhs = a.label.toLowerCase();
-              const rhs = b.label.toLowerCase();
-              if (lhs < rhs) return -1;
-              if (lhs > rhs) return 1;
-              return 0;
-            });
-            setTotal(result.remaining + newOptions.length);
-            return newOptions;
-          });
-        })
-        .catch((err) => {
-          if (abortController.signal.aborted) return;
-          setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
-        })
-        .finally(() => {
-          if (abortController.signal.aborted) return;
-          setLoading(false);
+      setOptions((prevOptions) => prevOptions ?? undefined);
+
+      try {
+        const result = await queryOptions({
+          next: nextRef.current!,
+          signal: abortController.signal,
+          search: searchValue,
+          pageSize: options?.pageSize,
         });
-      return true;
-    });
-    return () => abortController.abort();
-  }, [queryOptions, searchValue, t]);
+        if (abortController.signal.aborted) {
+          return { remaining: 0, aborted: true };
+        }
+
+        nextRef.current = result.next;
+        const remaining = result.remaining;
+        if (!remaining) {
+          setAllLoaded(true);
+        }
+
+        setOptions((prevOptions) => {
+          if (abortController.signal.aborted) return prevOptions;
+          let newOptions: PageSelectOption<ValueT>[] = [...(prevOptions ?? []), ...result.options];
+          const uniqueValues = new Set<ValueT>();
+          newOptions = newOptions.filter((option) => {
+            if (uniqueValues.has(option.value)) return false;
+            uniqueValues.add(option.value);
+            return true;
+          });
+          newOptions.sort((a, b) => {
+            const lhs = a.label.toLowerCase();
+            const rhs = b.label.toLowerCase();
+            if (lhs < rhs) return -1;
+            if (lhs > rhs) return 1;
+            return 0;
+          });
+          setTotal(remaining + newOptions.length);
+          return newOptions;
+        });
+
+        return { remaining, aborted: false };
+      } catch (err) {
+        if (abortController.signal.aborted) {
+          return { remaining: 0, aborted: true };
+        }
+        setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
+        return { remaining: 0, aborted: true };
+      } finally {
+        if (!abortController.signal.aborted && !options?.keepLoading) {
+          setLoading(false);
+        }
+      }
+    },
+    [queryOptions, searchValue, t]
+  );
+
+  const queryHandler = useCallback(() => {
+    void fetchPage();
+  }, [fetchPage]);
 
   const onLoadMore = useCallback(
     (e: React.MouseEvent) => {
@@ -133,6 +158,33 @@ export function PageAsyncMultiSelect<
       queryHandler();
     },
     [queryHandler]
+  );
+
+  const onLoadAll = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setLoading(true);
+      // Restart from the first page with the larger page size so pagination math
+      // stays consistent (mixing page sizes mid-stream would skip/duplicate rows).
+      setOptions([]);
+      nextRef.current = undefined;
+      setTotal(0);
+      try {
+        for (;;) {
+          const { remaining, aborted } = await fetchPage({
+            keepLoading: true,
+            pageSize: props.loadAllPageSize,
+          });
+          if (aborted || remaining <= 0) {
+            break;
+          }
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchPage, props.loadAllPageSize]
   );
 
   const onReset = useCallback(
@@ -158,8 +210,8 @@ export function PageAsyncMultiSelect<
 
   const footer = (
     <Stack hasGutter>
-      <Flex>
-        <FlexItem grow={{ default: 'grow' }}>
+      <Flex alignItems={{ default: 'alignItemsCenter' }}>
+        <FlexItem>
           <ActionList>
             {props.onBrowse && (
               <ActionListItem>
@@ -196,6 +248,20 @@ export function PageAsyncMultiSelect<
               count: options?.length ?? 0,
               total: total,
             })}
+          </FlexItem>
+        )}
+        {!allLoaded && showLoadAll && (
+          <FlexItem align={{ default: 'alignRight' }}>
+            <Button
+              id="load-all"
+              data-cy="load-all"
+              data-testid="load-all"
+              isLoading={loading}
+              onClick={(e) => void onLoadAll(e)}
+              isDisabled={loading}
+            >
+              {loading ? t('Loading...') : t('Load all')}
+            </Button>
           </FlexItem>
         )}
       </Flex>
@@ -240,6 +306,7 @@ export function PageAsyncMultiSelect<
       queryLabel={props.queryLabel}
       compareOptionValues={props.compareOptionValues}
       disableMaxDropdownWidth={props.disableMaxDropdownWidth}
+      showSelectAll={props.showSelectAll}
     />
   );
 }
