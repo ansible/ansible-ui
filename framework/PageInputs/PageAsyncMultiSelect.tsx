@@ -25,10 +25,17 @@ export interface PageAsyncMultiSelectProps<ValueT>
   compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
 
   /**
-   * Show a "Load all" button below "Load more" that fetches every remaining page.
+   * Show a "Load all" button that fetches remaining options using `loadAllPageSize`.
    * Off by default.
    */
   showLoadAll?: boolean;
+
+  /**
+   * Page size used when Load all is clicked. Must match what the API allows
+   * (e.g. 200). Required for efficient Load all; without it, Load all reuses
+   * the filter's normal page size.
+   */
+  loadAllPageSize?: number;
 }
 
 /**
@@ -72,7 +79,10 @@ export function PageAsyncMultiSelect<
   const activeAbortController = useRef<AbortController | null>(null);
 
   const fetchPage = useCallback(
-    async (options?: { keepLoading?: boolean }): Promise<{ remaining: number; aborted: boolean }> => {
+    async (options?: {
+      keepLoading?: boolean;
+      pageSize?: number;
+    }): Promise<{ remaining: number; aborted: boolean }> => {
       if (activeAbortController.current) {
         activeAbortController.current.abort();
       }
@@ -89,6 +99,7 @@ export function PageAsyncMultiSelect<
           next: nextRef.current!,
           signal: abortController.signal,
           search: searchValue,
+          pageSize: options?.pageSize,
         });
         if (abortController.signal.aborted) {
           return { remaining: 0, aborted: true };
@@ -154,10 +165,17 @@ export function PageAsyncMultiSelect<
       e.preventDefault();
       e.stopPropagation();
       setLoading(true);
+      // Restart from the first page with the larger page size so pagination math
+      // stays consistent (mixing page sizes mid-stream would skip/duplicate rows).
+      setOptions([]);
+      nextRef.current = undefined;
+      setTotal(0);
       try {
-        // Keep fetching pages until nothing remains (same paging as Load more).
         for (;;) {
-          const { remaining, aborted } = await fetchPage({ keepLoading: true });
+          const { remaining, aborted } = await fetchPage({
+            keepLoading: true,
+            pageSize: props.loadAllPageSize,
+          });
           if (aborted || remaining <= 0) {
             break;
           }
@@ -166,7 +184,7 @@ export function PageAsyncMultiSelect<
         setLoading(false);
       }
     },
-    [fetchPage]
+    [fetchPage, props.loadAllPageSize]
   );
 
   const onReset = useCallback(
@@ -192,8 +210,8 @@ export function PageAsyncMultiSelect<
 
   const footer = (
     <Stack hasGutter>
-      <Flex>
-        <FlexItem grow={{ default: 'grow' }}>
+      <Flex alignItems={{ default: 'alignItemsCenter' }}>
+        <FlexItem>
           <ActionList>
             {props.onBrowse && (
               <ActionListItem>
@@ -232,10 +250,8 @@ export function PageAsyncMultiSelect<
             })}
           </FlexItem>
         )}
-      </Flex>
-      {!allLoaded && showLoadAll && (
-        <ActionList>
-          <ActionListItem>
+        {!allLoaded && showLoadAll && (
+          <FlexItem align={{ default: 'alignRight' }}>
             <Button
               id="load-all"
               data-cy="load-all"
@@ -246,9 +262,9 @@ export function PageAsyncMultiSelect<
             >
               {loading ? t('Loading...') : t('Load all')}
             </Button>
-          </ActionListItem>
-        </ActionList>
-      )}
+          </FlexItem>
+        )}
+      </Flex>
       {props.footer}
     </Stack>
   );

@@ -53,6 +53,12 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
    * Off by default.
    */
   showLoadAll?: boolean;
+
+  /**
+   * Page size sent when Load all is clicked. Set per endpoint to the API max
+   * (e.g. 200). Used only when `showLoadAll` is enabled.
+   */
+  loadAllPageSize?: number;
 }
 
 /**

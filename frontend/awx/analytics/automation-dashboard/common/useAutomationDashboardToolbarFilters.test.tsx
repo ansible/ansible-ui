@@ -31,6 +31,7 @@ type AsyncFilter = IToolbarFilter & {
   queryLabel: (value: string) => React.ReactElement;
   showSelectAll?: boolean;
   showLoadAll?: boolean;
+  loadAllPageSize?: number;
 };
 
 function renderFilters(filterableFields: string[], additionalFilters?: IToolbarFilter[]) {
@@ -101,6 +102,7 @@ describe('useAutomationDashboardToolbarFilters', () => {
   test('dashboard async filters opt into load-all', () => {
     const filters = renderFilters(['template', 'label', 'organization', 'project']);
     expect(filters.every((filter) => filter.showLoadAll === true)).toBe(true);
+    expect(filters.every((filter) => filter.loadAllPageSize === 200)).toBe(true);
   });
 
   test('includes additionalFilters after dynamic filters', () => {
@@ -203,6 +205,17 @@ describe('useAutomationDashboardToolbarFilters', () => {
 
     await filters[0].queryOptions({ next: '2' });
     expect(mockRequestGet).toHaveBeenCalledWith(expect.stringContaining('page=2'), undefined);
+  });
+
+  test('queryOptions uses pageSize override when provided', async () => {
+    const filters = renderFilters(['label']);
+    mockRequestGet.mockResolvedValueOnce(emptyResponse);
+
+    await filters[0].queryOptions({ pageSize: 200 });
+    expect(mockRequestGet).toHaveBeenCalledWith(
+      expect.stringContaining('page_size=200'),
+      undefined
+    );
   });
 
   test('queryOptions appends search to URL when search is provided', async () => {

@@ -16,7 +16,7 @@ const asyncSelectTestOptions = new Array(50).fill(0).map((_, index) => ({
 function asyncSelectTestQuery(
   queryOptions: PageAsyncSelectQueryOptions
 ): Promise<PageAsyncSelectQueryResult<number>> {
-  const pageSize = 10;
+  const pageSize = queryOptions.pageSize ?? 10;
   const searchedOptions = asyncSelectTestOptions.filter((option) => {
     if (!queryOptions.search) return true;
     return option.label.includes(queryOptions.search);
@@ -27,7 +27,7 @@ function asyncSelectTestQuery(
   const options = searchedOptions.slice(start, end);
   return Promise.resolve({
     options,
-    remaining: searchedOptions.length - end,
+    remaining: Math.max(0, searchedOptions.length - end),
     next: page + 1,
   });
 }
@@ -147,5 +147,33 @@ describe('PageAsyncMultiSelect', () => {
       expect(screen.queryByRole('button', { name: 'Load more' })).not.toBeInTheDocument();
       expect(screen.queryByTestId('load-all')).not.toBeInTheDocument();
     });
+  });
+
+  it('Load all uses loadAllPageSize for each request', async () => {
+    const user = userEvent.setup();
+    const queryOptions = vi.fn(asyncSelectTestQuery);
+    const { container } = render(
+      <PageAsyncMultiSelectTest
+        queryOptions={queryOptions}
+        showLoadAll
+        loadAllPageSize={50}
+      />
+    );
+
+    await user.click(container.querySelector('#test')!);
+    await waitFor(() => {
+      expect(screen.getByText('Option 1')).toBeInTheDocument();
+    });
+
+    queryOptions.mockClear();
+    await user.click(await screen.findByTestId('load-all'));
+    await waitFor(() => {
+      expect(screen.getByText('Option 50')).toBeInTheDocument();
+    });
+
+    expect(queryOptions).toHaveBeenCalled();
+    expect(queryOptions.mock.calls.every((call) => call[0].pageSize === 50)).toBe(true);
+    // One request is enough when page size covers the full set.
+    expect(queryOptions).toHaveBeenCalledTimes(1);
   });
 });

@@ -484,6 +484,7 @@ function ToolbarFilterComponent(props: {
           disableMaxDropdownWidth
           showSelectAll={filter.showSelectAll}
           showLoadAll={filter.showLoadAll}
+          loadAllPageSize={filter.loadAllPageSize}
         />
       );
 
