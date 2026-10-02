@@ -340,6 +340,12 @@ export function PageMultiSelect<
     visibleOptions.every((option) => isOptionSelected(option));
   const someVisibleSelected =
     showSelectAll && visibleOptions.some((option) => isOptionSelected(option));
+  let selectAllChecked: boolean | null = false;
+  if (allVisibleSelected) {
+    selectAllChecked = true;
+  } else if (someVisibleSelected) {
+    selectAllChecked = null;
+  }
 
   /**
    * Same semantics as table BulkSelector checkbox:
@@ -450,7 +456,7 @@ export function PageMultiSelect<
                   data-cy="select-all"
                   data-testid="select-all"
                   label={t('Select all')}
-                  isChecked={allVisibleSelected ? true : someVisibleSelected ? null : false}
+                  isChecked={selectAllChecked}
                   onChange={onSelectAllToggle}
                   aria-label={t('Select all')}
                 />

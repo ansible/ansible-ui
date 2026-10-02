@@ -266,4 +266,24 @@ describe('PageMultiSelect', () => {
       expect(screen.getByText('3 selected')).toBeInTheDocument();
     });
   });
+
+  it('select-all is indeterminate when only some visible options are selected', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <PageMultiSelectTest
+        variant="count"
+        placeholder={placeholderText}
+        options={options}
+        defaultValues={[testObjects[0]]}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+        showSelectAll
+      />
+    );
+
+    await user.click(container.querySelector('#test')!);
+    const selectAll = await screen.findByTestId('select-all');
+    await waitFor(() => {
+      expect(selectAll).toHaveProperty('indeterminate', true);
+    });
+  });
 });

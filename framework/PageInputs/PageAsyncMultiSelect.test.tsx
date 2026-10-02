@@ -153,11 +153,7 @@ describe('PageAsyncMultiSelect', () => {
     const user = userEvent.setup();
     const queryOptions = vi.fn(asyncSelectTestQuery);
     const { container } = render(
-      <PageAsyncMultiSelectTest
-        queryOptions={queryOptions}
-        showLoadAll
-        loadAllPageSize={50}
-      />
+      <PageAsyncMultiSelectTest queryOptions={queryOptions} showLoadAll loadAllPageSize={50} />
     );
 
     await user.click(container.querySelector('#test')!);
