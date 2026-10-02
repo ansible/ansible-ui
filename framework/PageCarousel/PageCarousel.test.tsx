@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { PageCarousel, useCarouselContext } from './PageCarousel';
 
-vi.mock('@react-hook/resize-observer', () => ({
-  default: vi.fn(),
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
 }));
 
 function ContextReader() {

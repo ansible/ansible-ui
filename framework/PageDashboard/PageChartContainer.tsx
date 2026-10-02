@@ -1,4 +1,4 @@
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '../hooks/useResizeObserver';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
