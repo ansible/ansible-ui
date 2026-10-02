@@ -1,10 +1,19 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ManageResourceRoles } from './ManageResourceRoles';
+
+vi.mock(
+  '@ansible/common-ui/access/indirect-roles/hooks/useIndirectTeamRolesOnResourceView',
+  () => ({
+    useIndirectTeamRolesOnResourceView: vi.fn(() => ({
+      view: { itemCount: 1, pageItems: [{ id: 1 }] },
+      tableColumns: [],
+    })),
+  })
+);
 
 const mockRoleDefinitions = {
   count: 2,
@@ -81,7 +90,17 @@ const mockResource = {
 describe('ManageResourceRoles', () => {
   const server = setupServer();
 
-  beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+  beforeAll(() => {
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+      clear: vi.fn(),
+      key: vi.fn(),
+      length: 0,
+    });
+    server.listen({ onUnhandledRequest: 'warn' });
+  });
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
@@ -176,6 +195,26 @@ describe('ManageResourceRoles', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Selected roles')).toBeInTheDocument();
+    });
+  });
+
+  it('should render organization link in indirect roles alert description', async () => {
+    server.use(
+      http.get('*/role_definitions/*', () => HttpResponse.json(mockRoleDefinitions)),
+      http.get('*/role_user_assignments/*', () => HttpResponse.json(mockRoleAssignments)),
+      http.get('*/role_user_access/*', () =>
+        HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
+      ),
+      http.get('*/users/*/teams/*', () => HttpResponse.json({ count: 0, results: [] })),
+      http.get('*/role_team_assignments/*', () =>
+        HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
+      )
+    );
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByRole('link', { name: 'Default' })).toBeInTheDocument();
     });
   });
 });
