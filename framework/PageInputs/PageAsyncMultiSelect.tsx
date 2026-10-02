@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { SetRequired } from '../utils/utilityTypes';
-import { PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
+import { mergePageSelectOptions, PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
 import { PageMultiSelect, PageMultiSelectProps } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -85,20 +85,7 @@ export function PageAsyncMultiSelect<
         }
         setOptions((prevOptions) => {
           if (abortController.signal.aborted) return prevOptions;
-          let newOptions: PageSelectOption<ValueT>[] = [...(prevOptions ?? []), ...result.options];
-          const uniqueValues = new Set<ValueT>();
-          newOptions = newOptions.filter((option) => {
-            if (uniqueValues.has(option.value)) return false;
-            uniqueValues.add(option.value);
-            return true;
-          });
-          newOptions.sort((a, b) => {
-            const lhs = a.label.toLowerCase();
-            const rhs = b.label.toLowerCase();
-            if (lhs < rhs) return -1;
-            if (lhs > rhs) return 1;
-            return 0;
-          });
+          const newOptions = mergePageSelectOptions(prevOptions, result.options, true);
           setTotal(result.remaining + newOptions.length);
           return newOptions;
         });

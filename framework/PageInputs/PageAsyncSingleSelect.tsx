@@ -5,7 +5,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { SetRequired } from '../utils/utilityTypes';
-import { PageAsyncQueryErrorText, PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
+import {
+  deferPageSelect,
+  mergePageSelectOptions,
+  PageAsyncQueryErrorText,
+  PageAsyncSelectOptionsFn,
+} from './PageAsyncSelectOptions';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect, PageSingleSelectProps } from './PageSingleSelect';
 
@@ -86,25 +91,14 @@ export function PageAsyncSingleSelect<
           setAllLoaded(true);
         }
         setOptions((prevOptions) => {
-          let newOptions: PageSelectOption<ValueT>[] = [...(prevOptions ?? []), ...result.options];
-          const uniqueValues = new Set<ValueT>();
-          newOptions = newOptions.filter((option) => {
-            if (uniqueValues.has(option.value)) return false;
-            uniqueValues.add(option.value);
-            return true;
-          });
-          if (!props.disableSortOptions) {
-            newOptions.sort((a, b) => {
-              const lhs = a.label.toLowerCase();
-              const rhs = b.label.toLowerCase();
-              if (lhs < rhs) return -1;
-              if (lhs > rhs) return 1;
-              return 0;
-            });
-          }
+          const newOptions = mergePageSelectOptions(
+            prevOptions,
+            result.options,
+            !props.disableSortOptions
+          );
           if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
             // Defer onSelect to avoid setState during render
-            setTimeout(() => onSelect(newOptions[0].value), 0);
+            deferPageSelect(onSelect, newOptions[0].value);
           }
           setTotal(result.remaining + newOptions.length);
           if (writeInOption && result.remaining + newOptions.length === 0) {
