@@ -159,11 +159,9 @@ export function useJobOutput(
       jobEventCount
     );
     setJobEvents((jobEvents) => {
-      batchedEvents.current.forEach((message: JobEvent) => {
-        jobEvents[message.counter] = message;
-      });
+      const updated = applyBatchedEvents(jobEvents, batchedEvents.current);
       batchedEvents.current = [];
-      return jobEvents;
+      return updated;
     });
     setJobEventCount(maxCounter);
   }, [isFiltered, jobEventCount]);
@@ -273,6 +271,17 @@ function getQueryParamsForDateRangeFilters(toolbarFilter: IToolbarFilter, value:
     }
   }
   return [queryParamName, queryParamValue];
+}
+
+export function applyBatchedEvents(
+  currentEvents: Record<number, JobEvent>,
+  newEvents: JobEvent[]
+): Record<number, JobEvent> {
+  const result = { ...currentEvents };
+  newEvents.forEach((event) => {
+    result[event.counter] = event;
+  });
+  return result;
 }
 
 function paginateFetch(

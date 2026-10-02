@@ -82,6 +82,7 @@ export function CreateContainerGroup() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsUrl={awxAPI`/instance_groups/`}
         defaultValue={{
           name: '',
           override: false,
@@ -164,6 +165,7 @@ export function EditContainerGroup() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsUrl={awxAPI`/instance_groups/`}
         defaultValue={{
           name: containerGroup.name,
           credential: containerGroup.credential ?? null,

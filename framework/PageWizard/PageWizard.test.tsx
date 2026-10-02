@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { PageFormTextInput } from '../PageForm/Inputs/PageFormTextInput';
 import { PageWizard } from './PageWizard';
+import { PageWizardBasicStep } from './types';
 
 describe('PageWizard', () => {
   const Review = () => {
@@ -174,6 +175,180 @@ describe('PageWizard', () => {
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledOnce();
+    });
+  });
+
+  it('should forward optionsData through to step inputs for pattern validation', async () => {
+    const user = userEvent.setup();
+
+    const optionsSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        inputs: <PageFormTextInput name="name" label="Name" />,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={optionsSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn()}
+          stepDefaults={{ details: { name: '' } }}
+          optionsData={{
+            actions: {
+              POST: { name: { pattern: '^[a-z]+$', pattern_description: 'lowercase only' } },
+            },
+          }}
+        />
+      </MemoryRouter>
+    );
+
+    const input = screen.getByLabelText('Name');
+    await user.type(input, 'Invalid123');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(screen.getByText('lowercase only')).toBeInTheDocument();
+    });
+  });
+
+  it('uses supplemental wizard data returned from validate when choosing the next step', async () => {
+    const user = userEvent.setup();
+    const dynamicSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        element: <h1>Details</h1>,
+        validate: () => ({ showPrompts: true }),
+      },
+      {
+        id: 'prompts',
+        label: 'Prompts',
+        element: <h1>Prompts</h1>,
+        hidden: (wizardData: { showPrompts?: boolean }) => !wizardData.showPrompts,
+      },
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={dynamicSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn().mockResolvedValue(undefined)}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-section-prompts')).toHaveTextContent('Prompts');
+    });
+  });
+
+  it('continues when validate resolves without supplemental data', async () => {
+    const user = userEvent.setup();
+    const dynamicSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        element: <h1>Details</h1>,
+        validate: () => undefined,
+      },
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={dynamicSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn().mockResolvedValue(undefined)}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-section-review')).toHaveTextContent('Review');
+    });
+  });
+
+  it('ignores non-object validate results when choosing the next step', async () => {
+    const user = userEvent.setup();
+    const dynamicSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        element: <h1>Details</h1>,
+        validate: (() => ['ignored']) as unknown as NonNullable<PageWizardBasicStep['validate']>,
+      },
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={dynamicSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn().mockResolvedValue(undefined)}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-section-review')).toHaveTextContent('Review');
+    });
+  });
+
+  it('submits merged form and supplemental data from the last step', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const lastStepSteps = [
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+        validate: () => ({ confirmed: true }),
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={lastStepSteps}
+          onCancel={vi.fn()}
+          onSubmit={onSubmit}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({ confirmed: true });
     });
   });
 

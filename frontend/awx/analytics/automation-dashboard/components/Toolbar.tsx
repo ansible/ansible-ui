@@ -8,7 +8,7 @@ export function useAutomationDashboardToolbar() {
   const { t } = useTranslation();
   const periodToolbarFilter: IToolbarFilter = useMemo<IToolbarFilter>(
     () => ({
-      type: ToolbarFilterType.SingleSelect,
+      type: ToolbarFilterType.DateRange,
       key: 'period',
       label: t('Period'),
       query: 'period',
@@ -27,11 +27,17 @@ export function useAutomationDashboardToolbar() {
           label: t('Last 90 days'),
           value: AutomationDashboardDateRangeFilterPresets.last_90_days,
         },
+        {
+          label: t('Custom'),
+          value: AutomationDashboardDateRangeFilterPresets.custom,
+          isCustom: true,
+        },
       ],
       placeholder: t('Filter by period'),
       isPinned: true,
       isRequired: true,
       disableSortOptions: true,
+      defaultValue: AutomationDashboardDateRangeFilterPresets.last_7_days,
     }),
     [t]
   );

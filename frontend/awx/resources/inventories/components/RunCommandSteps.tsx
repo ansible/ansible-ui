@@ -162,7 +162,7 @@ export function RunCommandExecutionEnvionment(props: { orgId: string }) {
       <PageFormSelectExecutionEnvironment
         name="execution_environment"
         label={t('Execution Environment')}
-        organizationId={Number(props.orgId) ?? ''}
+        organizationId={Number(props.orgId)}
       />
     </PageFormSection>
   );

@@ -127,7 +127,7 @@ describe('AuthenticatorMappingForm', () => {
     await user.click(getByRole('option', { name: 'Always' }));
 
     expect(nameField.value).toBe('Always mapping');
-    expect(triggerSelect.innerText).toBe('Alwaysundefined');
+    expect(triggerSelect.innerText).toBe('Always');
     await user.click(submitButton);
   });
 
@@ -159,7 +159,7 @@ describe('AuthenticatorMappingForm', () => {
     await user.click(getByRole('option', { name: 'Never' }));
 
     expect(nameField.value).toBe('Never mapping');
-    expect(triggerSelect.innerText).toBe('Neverundefined');
+    expect(triggerSelect.innerText).toBe('Never');
     await user.click(submitButton);
   });
 
@@ -295,7 +295,7 @@ describe('AuthenticatorMappingForm', () => {
     const valueOneField = container.querySelector('[id="attributes-0-value"]') as HTMLInputElement;
     const valueTwoField = container.querySelector('[id="attributes-1-value"]') as HTMLInputElement;
 
-    expect(conditionaField.innerText).toBe('at least oneundefined');
+    expect(conditionaField.innerText).toBe('at least one');
     expect(nameField.value).toBe('mapping one');
     expect(attributeOneField.value).toBe('attribute one');
     expect(valueOneField.value).toBe('value one');

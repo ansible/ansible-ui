@@ -33,7 +33,7 @@ describe('PageFormInventoryFileSelect', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Inventory file')).toBeInTheDocument();
+      expect(screen.getByText('Inventory path')).toBeInTheDocument();
     });
   });
 
@@ -45,7 +45,7 @@ describe('PageFormInventoryFileSelect', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByPlaceholderText('Select inventory file')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Select inventory path')).toBeInTheDocument();
     });
   });
 });

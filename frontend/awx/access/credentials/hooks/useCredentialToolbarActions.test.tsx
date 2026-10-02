@@ -41,6 +41,8 @@ describe('useCredentialToolbarActions', () => {
     keyFn: (item: { id: number }) => item.id,
     limitFiltersToOneOrOperation: true as const,
     updateItem: vi.fn(),
+    upsertItem: vi.fn(),
+    listUrl: '',
   };
 
   const mockPageNavigate = vi.fn();

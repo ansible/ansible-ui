@@ -20,7 +20,7 @@ test.describe('EDA Credentials Type - Tabs', () => {
     organization = await Organization.api.create(page);
     const ansibleId = organization.summary_fields?.resource?.ansible_id;
     if (!ansibleId) {
-      throw new Error('Platform organization missing ansible_id');
+      throw new Error(`Platform organization "${organization.name}" missing ansible_id`);
     }
     const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
     edaOrgId = edaOrganization.id;
@@ -121,7 +121,7 @@ test.describe('EDA Credentials Type - Tabs', () => {
 
         const credential = (await edaAPI.post(page, '/eda-credentials/', {
           name: credentialName,
-          organization_id: organization.id,
+          organization_id: edaOrgId,
           credential_type_id: credType.id,
           description: 'This is a Credential with custom credential type',
           inputs: {

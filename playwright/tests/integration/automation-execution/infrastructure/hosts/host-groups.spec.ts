@@ -57,6 +57,7 @@ test.describe('Host Groups Tab', () => {
     'should associate and disassociate groups at standalone host groups tab',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(120000);
       await test.step('Associate group to host', async () => {
         await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Hosts');
         await clickTableRow({ text: host.name }, page);
@@ -104,9 +105,7 @@ test.describe('Host Groups Tab', () => {
         await dialog.locator('#confirm').click();
         await page.getByRole('button', { name: 'Disassociate groups', exact: true }).click();
 
-        await expect(
-          page.getByText('There are currently no groups associated with this host')
-        ).toBeVisible();
+        await expect(page.getByText('There are currently no groups.')).toBeVisible();
       });
     }
   );

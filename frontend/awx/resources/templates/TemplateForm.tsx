@@ -126,6 +126,7 @@ export function EditJobTemplate() {
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(AwxRoute.JobTemplateDetails, { params: { id } })}
         defaultValue={defaultValues}
+        optionsUrl={awxAPI`/job_templates/`}
       >
         <JobTemplateInputs jobtemplate={defaultValues} />
       </AwxPageForm>
@@ -189,6 +190,7 @@ export function CreateJobTemplate() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={defaultValues}
+        optionsUrl={awxAPI`/job_templates/`}
       >
         <JobTemplateInputs />
       </AwxPageForm>
@@ -228,14 +230,11 @@ async function submitLabels(template: JobTemplate, labels: Label[]) {
     labels ?? ([] as Label[])
   );
 
-  let orgId = template.summary_fields?.organization?.id;
-  if (!template.summary_fields?.organization?.id) {
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const data = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
+  let orgId: number | undefined = template.summary_fields?.organization?.id;
+  if (!orgId && added.length > 0) {
+    const data = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
+    if (data.results.length > 0) {
       orgId = data.results[0].id;
-    } catch (err) {
-      throw err;
     }
   }
   const disassociationPromises = removed.map((label: { id: number }) =>

@@ -9,6 +9,7 @@ import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
 
@@ -207,8 +208,7 @@ export const Inventory = {
 
       // Variables
       if (options.variables) {
-        await page.locator('.view-line').click();
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(options.variables);
+        await fillMonacoEditor(page, options.variables);
       }
 
       // Prevent instance group fallback
@@ -298,8 +298,7 @@ export const Inventory = {
 
       // source vars
       if (options.sourceVars) {
-        await page.locator('.view-line').click();
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(options.sourceVars);
+        await fillMonacoEditor(page, options.sourceVars);
       }
 
       // label
@@ -343,9 +342,13 @@ export const Inventory = {
       await page.getByRole('button', { name: 'Select source' }).click();
       await page.getByRole('option', { name: 'Sourced from a Project' }).click();
       await page.locator('#project-select').click();
+      const inventoryPathsResponsePromise = page.waitForResponse((response) =>
+        /\/projects\/\d+\/inventories\//.test(response.url())
+      );
       await page.getByRole('option', { name: projectName }).click();
-      await page.getByPlaceholder('Select inventory file').click();
-      await page.getByRole('option', { name: '/ (project root)' }).click();
+      await inventoryPathsResponsePromise;
+      await page.getByPlaceholder('Select inventory path').click();
+      await page.getByRole('option', { name: '. (project root)' }).click();
       await page.getByRole('button', { name: 'Create source' }).click();
       await expect(
         page.getByRole('heading', { name: inventorySourceName, exact: true })
@@ -385,7 +388,8 @@ export const Inventory = {
       await clickTableRow({ text: inventoryName }, page);
       await clickPageAction('Delete inventory', page);
       await confirmAndAssertDeletion(page);
-      await expect(page.getByRole('heading', { name: 'Inventories', exact: true })).toBeVisible();
+      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+      await expect(page.getByTestId('page-title')).toHaveText('Inventories', { timeout: 15000 });
     },
 
     deleteSource: async (

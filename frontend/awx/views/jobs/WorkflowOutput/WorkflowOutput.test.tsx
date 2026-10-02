@@ -24,12 +24,14 @@ vi.mock('@patternfly/react-topology', () => ({
   ModelKind: { graph: 'graph', node: 'node', edge: 'edge' },
   NodeShape: { circle: 'circle' },
   NodeStatus: { default: 'default', danger: 'danger', success: 'success', info: 'info' },
-  Visualization: vi.fn().mockImplementation(() => ({
-    setFitToScreenOnLayout: vi.fn(),
-    registerComponentFactory: vi.fn(),
-    registerLayoutFactory: vi.fn(),
-    fromModel: mockFromModel,
-  })),
+  Visualization: vi.fn().mockImplementation(function () {
+    return {
+      setFitToScreenOnLayout: vi.fn(),
+      registerComponentFactory: vi.fn(),
+      registerLayoutFactory: vi.fn(),
+      fromModel: mockFromModel,
+    };
+  }),
   VisualizationProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   withPanZoom: (c: unknown) => c,
   withSelection: (c: unknown) => c,

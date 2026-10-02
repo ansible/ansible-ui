@@ -55,4 +55,26 @@ describe('Projects', () => {
       expect(screen.getByText('Test Project')).toBeInTheDocument();
     });
   });
+
+  it('should display empty state when no projects exist', async () => {
+    server.use(
+      http.options(awxAPI`/projects/`, () => HttpResponse.json({ actions: { POST: {} } })),
+      http.get(awxAPI`/projects/`, () =>
+        HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
+      )
+    );
+
+    render(
+      <MemoryRouter>
+        <Projects />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('There are currently no projects created for your organization.')
+      ).toBeInTheDocument();
+    });
+    expect(screen.getByText('Create a project to populate this list.')).toBeInTheDocument();
+  });
 });

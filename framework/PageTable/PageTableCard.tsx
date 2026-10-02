@@ -46,6 +46,7 @@ export interface IPageTableCard {
     color?: LabelColor;
     icon?: ReactNode;
     variant?: 'outline' | 'filled' | undefined;
+    status?: 'success' | 'warning' | 'danger' | 'info' | 'custom';
   }[]; // TODO - disable/enable auto generated filters
   badge?: string;
   badgeColor?: LabelColor;
@@ -72,6 +73,7 @@ const CardTopDiv = styled.div`
   align-items: center;
   gap: 16px;
   max-width: 100%;
+  flex: 1;
 `;
 
 const CardDiv = styled.div`
@@ -87,10 +89,6 @@ const CardFooterDiv = styled.div`
   align-items: end;
   gap: 16px;
   flex-wrap: wrap;
-`;
-
-const CardFooterLabelsDiv = styled.div`
-  flex-grow: 1;
 `;
 
 export const PageDetailDiv = styled.div`
@@ -190,6 +188,26 @@ export function PageTableCard<T extends object>(props: {
                 )
               )}
             </CardDiv>
+            {card.labels && (
+              <>
+                <div style={{ flexGrow: 1 }} />
+                <div style={{ alignSelf: 'flex-start', marginTop: 2 }}>
+                  <LabelGroup numLabels={999}>
+                    {card.labels.map((item) => (
+                      <Label
+                        key={item.label}
+                        color={item.status ? undefined : item.color}
+                        icon={item.icon}
+                        variant={item.variant}
+                        status={item.status}
+                      >
+                        <Truncate content={item.label} style={{ minWidth: 0 }} />
+                      </Label>
+                    ))}
+                  </LabelGroup>
+                </div>
+              </>
+            )}
           </CardTopDiv>
           {card.badge && card.badgeTooltip && (
             <FlexItem>
@@ -218,37 +236,14 @@ export function PageTableCard<T extends object>(props: {
       >
         <Scrollable>{card.cardBody}</Scrollable>
       </div>
-      {card.labels || (itemActions && itemActions.length) ? (
+      {itemActions && itemActions.length ? (
         <CardFooter>
           <CardFooterDiv>
-            <CardFooterLabelsDiv>
-              {card.labels && (
-                <LabelGroup numLabels={999}>
-                  {card.labels.map((item) => (
-                    <Label
-                      key={item.label}
-                      color={item.color}
-                      icon={item.icon}
-                      variant={item.variant}
-                    >
-                      <Truncate content={item.label} style={{ minWidth: 0 }} />
-                    </Label>
-                  ))}
-                </LabelGroup>
-              )}
-            </CardFooterLabelsDiv>
-            {itemActions && itemActions.length ? (
-              <div
-                style={{ marginRight: -16, alignSelf: 'end', justifySelf: 'flex-end', flexGrow: 1 }}
-              >
-                <PageActions
-                  actions={itemActions}
-                  position={'right'}
-                  selectedItem={item}
-                  iconOnly
-                />
-              </div>
-            ) : null}
+            <div
+              style={{ marginRight: -16, alignSelf: 'end', justifySelf: 'flex-end', flexGrow: 1 }}
+            >
+              <PageActions actions={itemActions} position={'right'} selectedItem={item} iconOnly />
+            </div>
           </CardFooterDiv>
         </CardFooter>
       ) : null}
@@ -329,7 +324,9 @@ export function useColumnsToTableCardFn<T extends object>(
 
       const to = nameColumn && 'to' in nameColumn ? nameColumn.to : undefined;
       let value: CellFn<T, ReactNode> | undefined =
-        nameColumn && 'value' in nameColumn ? nameColumn.value : undefined;
+        nameColumn && 'value' in nameColumn
+          ? (nameColumn.value as CellFn<T, ReactNode>)
+          : undefined;
       if (!value) {
         value = nameColumn && 'cell' in nameColumn ? nameColumn.cell : undefined;
       }
@@ -389,7 +386,9 @@ export function useColumnsToTableCardFn<T extends object>(
             )}
           </DescriptionList>
         ),
-        labels: labelColumn && labelColumn.value(item)?.map((label) => ({ label })),
+        labels: labelColumn
+          ?.value(item)
+          ?.map((label) => (typeof label === 'string' ? { label } : label)),
       };
       if (!hasDescription && visibleCardColumns.length === 0 && countColumns.length === 0) {
         pageTableCard.cardBody = <div style={{ flexGrow: 1 }} />;

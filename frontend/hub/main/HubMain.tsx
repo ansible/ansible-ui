@@ -1,5 +1,5 @@
-import '@patternfly/patternfly/patternfly-base.css';
-import '@patternfly/patternfly/patternfly-charts.css';
+import '@patternfly/patternfly/dist/patternfly-base.css';
+import '@patternfly/patternfly/dist/patternfly-charts.css';
 
 import { PageFramework } from '@ansible/ansible-ui-framework';
 import '@ansible/common-ui/i18n';
@@ -12,7 +12,7 @@ import { HubLogin } from './HubLogin';
 export default function HubMain() {
   return (
     <BrowserRouter>
-      <PageFramework defaultRefreshInterval={10}>
+      <PageFramework>
         <HubActiveUserProvider>
           <HubLogin>
             <HubApp />

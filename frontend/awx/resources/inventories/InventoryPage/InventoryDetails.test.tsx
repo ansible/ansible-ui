@@ -46,6 +46,16 @@ const baseInventory: Inventory = {
   modified: '2023-02-08T21:10:41.447067Z',
 };
 
+const inputInventoriesResponse = {
+  count: 2,
+  next: null,
+  previous: null,
+  results: [
+    { id: 10, name: 'source-inventory-1', type: 'inventory' },
+    { id: 11, name: 'source-inventory-2', type: 'inventory' },
+  ],
+};
+
 const server = setupServer(
   http.get(
     ({ request }) => request.url.includes('/instance_groups/'),
@@ -53,7 +63,7 @@ const server = setupServer(
   ),
   http.get(
     ({ request }) => request.url.includes('/input_inventories/'),
-    () => HttpResponse.json({ count: 0, results: [] })
+    () => HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
   )
 );
 
@@ -124,5 +134,83 @@ describe('InventoryDetails', () => {
 
     expect(screen.getByText('Constructed inventory')).toBeInTheDocument();
     expect(screen.getByText(/0 \(Normal\)/)).toBeInTheDocument();
+  });
+
+  it('should render input inventory labels for constructed inventory', async () => {
+    // Use id: 99 so the SWR cache from the previous constructed-inventory test (id: 9)
+    // does not bleed into this one. The page-aware handler ensures that only page=1
+    // returns items; pages 2-200 (all fetched by initialSize: 200) return empty.
+    server.use(
+      http.get(
+        ({ request }) => {
+          const url = new URL(request.url);
+          return (
+            url.pathname.includes('/input_inventories/') && url.searchParams.get('page') === '1'
+          );
+        },
+        () => HttpResponse.json(inputInventoriesResponse)
+      )
+    );
+
+    const constructedInventory: Inventory = {
+      ...baseInventory,
+      id: 99,
+      kind: 'constructed',
+      hosts_with_active_failures: 0,
+      total_groups: 0,
+      total_inventory_sources: 0,
+      inventory_sources_with_failures: 0,
+      update_cache_timeout: 0,
+      verbosity: 0,
+      source_vars: '',
+      limit: '',
+    };
+    renderInventoryDetails(constructedInventory);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('source-inventory-1')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    expect(screen.getByText('source-inventory-2')).toBeInTheDocument();
+  });
+
+  it('should render prevent instance group fallback when flag is set', async () => {
+    const inventory: Inventory = { ...baseInventory, prevent_instance_group_fallback: true };
+    renderInventoryDetails(inventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('test inventory')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
+  });
+
+  it('should render last job status when inventory source has a last job', async () => {
+    // Use id: 77 to avoid SWR cache conflicts with other constructed-inventory tests.
+    const inventory = {
+      ...baseInventory,
+      id: 77,
+      kind: 'constructed',
+      update_cache_timeout: 0,
+      verbosity: 0,
+      source_vars: '',
+      limit: '',
+      source: {
+        summary_fields: {
+          last_job: { id: 42 },
+        },
+      },
+    } as unknown as Inventory;
+
+    renderInventoryDetails(inventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('test inventory')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Last job status')).toBeInTheDocument();
   });
 });

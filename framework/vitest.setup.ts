@@ -1,6 +1,13 @@
 // vitest.setup.ts
 import '@testing-library/jest-dom/vitest';
-import { mockI18n, enablePreview } from './vitest.common';
+import { beforeEach } from 'vitest';
+import './vitest.i18n';
+import './vitest.monaco';
+import { enablePreview } from './vitest.preview';
+import { resetTestSwrCache } from './test-utils/swrTestWrapper';
 
-mockI18n();
 enablePreview();
+
+beforeEach(() => {
+  resetTestSwrCache();
+});

@@ -155,7 +155,7 @@ test.describe('Hub Collections - List View', () => {
         await tableContainer.waitFor({ state: 'visible', timeout: 30000 });
 
         // Wait for loading to complete
-        const skeleton = tableContainer.locator('.pf-v5-c-skeleton');
+        const skeleton = tableContainer.locator('.pf-v6-c-skeleton');
         await expect(skeleton).toHaveCount(0, { timeout: 30000 });
 
         // Clear any existing filters in the modal that might have been inherited

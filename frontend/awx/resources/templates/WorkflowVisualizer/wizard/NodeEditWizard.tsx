@@ -1,9 +1,12 @@
 import { PageWizard, PageWizardStep, usePageAlertToaster } from '@ansible/ansible-ui-framework';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { action, useVisualizationController } from '@patternfly/react-topology';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
+import { awxAPI } from '../../../../common/api/awx-utils';
 import { SurveyStep } from '../../../../common/SurveyStep';
+import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { RESOURCE_TYPE } from '../constants';
 import { useCloseSidebar, useGetInitialValues } from '../hooks';
@@ -15,13 +18,11 @@ import {
   replaceIdentifier,
   shouldHideOtherStep,
 } from './helpers';
+import { buildEffectivePrompt } from './buildEffectivePrompt';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
-import {
-  validateJobTemplateRequirements,
-  validateRequiredCredentialTypes,
-} from './validationHelpers';
+import { validateNodePromptsStep, validateNodeTypeStep } from './validationHelpers';
 
 type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValues> };
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
@@ -33,6 +34,9 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   const closeSidebar = useCloseSidebar();
   const getInitialValues = useGetInitialValues();
   const [initialValues, setInitialValues] = useState<WizardStep | null>(null);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    awxAPI`/workflow_job_template_nodes/`
+  );
 
   const alertToaster = usePageAlertToaster();
 
@@ -68,9 +72,12 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       id: 'nodeTypeStep',
       label: t('Node details'),
       inputs: <NodeTypeStep />,
-      validate: (wizardData: Partial<WizardFormValues>) => {
-        validateJobTemplateRequirements(t, wizardData);
-      },
+      validate: async (formData: object, wizardData: object) =>
+        validateNodeTypeStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>
+        ),
     },
     {
       id: 'nodePromptsStep',
@@ -88,15 +95,22 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
         ) {
           return shouldHideOtherStep(launch_config);
         }
-        if ('nodePromptsStep' in initialValues) {
+        // nodePromptsStep is always present in initialValues (it carries original
+        // node resources for save cleanup). Only show the step if the original
+        // template actually had prompts, which is indicated by launch_config being
+        // stored in the initial prompt values.
+        if (initialValues.nodePromptsStep?.prompt?.launch_config) {
           return false;
         }
         return true;
       },
-      validate: (wizardData: Partial<WizardFormValues>) => {
-        const requiredCredentialTypes =
-          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes || [];
-        validateRequiredCredentialTypes(t, wizardData, requiredCredentialTypes);
+      validate: (formData: object, wizardData: object) => {
+        validateNodePromptsStep(
+          t,
+          formData as Partial<WizardFormValues>,
+          wizardData as Partial<WizardFormValues>,
+          initialValues?.nodePromptsStep?.prompt?.requiredCredentialTypes || []
+        );
       },
     },
     {
@@ -120,6 +134,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   const handleSubmit = async (formValues: WizardFormValues) => {
     const nodeData = node.getData() as { resource: WorkflowNode };
     const nodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
+    const originalTemplateId = nodeData.resource.summary_fields?.unified_job_template?.id;
 
     const {
       approval_name,
@@ -135,24 +150,16 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       survey,
     } = formValues;
 
-    const promptValues = prompt;
-
-    if (promptValues) {
-      if (resource && 'organization' in resource) {
-        promptValues.organization = resource.organization ?? null;
-      }
-      if (launch_config) {
-        promptValues.original = {
-          launch_config,
-        };
-      }
-      if (nodeOriginalResources) {
-        promptValues.original = {
-          ...promptValues.original,
-          ...nodeOriginalResources,
-        };
-      }
-    }
+    const { effectivePrompt } = buildEffectivePrompt({
+      originalTemplateId,
+      newResourceId: resource?.id ? Number(resource.id) : undefined,
+      prompt,
+      launchConfig: launch_config,
+      nodeOriginalResources,
+      resourceOrganization:
+        resource && 'organization' in resource ? (resource.organization ?? null) : undefined,
+      resourceNode: nodeData.resource,
+    });
 
     const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
     const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);
@@ -180,7 +187,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
           },
         },
       },
-      launch_data: promptValues,
+      launch_data: effectivePrompt,
       survey_data: survey,
     };
 
@@ -217,6 +224,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
       stepDefaults={initialValues}
       errorAdapter={awxErrorAdapter}
       title={t('Edit step')}
+      optionsData={optionsData}
     />
   );
 }

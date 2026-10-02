@@ -1,9 +1,10 @@
 import { type IFilterState, type IToolbarFilter } from '@ansible/ansible-ui-framework';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { PageControls } from '../../../../common/PageControls';
 import { useVirtualizedList } from '../../../../common/utils/useVirtualized';
 import { Job } from '../../../interfaces/Job';
+import { JobEvent } from '../../../interfaces/JobEvent';
 import { HostEventModal } from './HostEventModal';
 import './JobOutput.css';
 import { JobOutputLoadingRow } from './JobOutputLoadingRow';
@@ -49,9 +50,16 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   const [hostModalData, setHostModalData] = useState<IJobOutputRow | null>(null);
   const isFiltered = Object.keys(filterState).length > 0;
 
+  const wasRunningOnMount = useRef(isJobRunning(job.status));
+  useEffect(() => {
+    if (isJobRunning(job.status)) {
+      wasRunningOnMount.current = true;
+    }
+  }, [job.status]);
+
   const { childrenSummary, isFlatMode } = useJobOutputChildrenSummary(
     job,
-    isJobRunning(job.status) || isFiltered
+    wasRunningOnMount.current || isFiltered
   );
   const { jobEventCount, getJobOutputEvent, queryJobOutputEvent, jobEvents } = useJobOutput(
     job,
@@ -60,6 +68,23 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
     filterState,
     200
   );
+
+  const eventRowsCache = useRef(new Map<number, { event: JobEvent; rows: IJobOutputRow[] }>());
+  const prevFilterState = useRef(filterState);
+
+  const getCachedEventRows = useCallback((counter: number, jobEvent: JobEvent) => {
+    const entry = eventRowsCache.current.get(counter);
+    if (entry?.event === jobEvent) return entry.rows;
+    const rows = jobEventToRows(jobEvent);
+    eventRowsCache.current.set(counter, { event: jobEvent, rows });
+    return rows;
+  }, []);
+
+  // Safe to mutate refs during render — React's recommended pattern for derived state
+  if (prevFilterState.current !== filterState) {
+    eventRowsCache.current = new Map();
+    prevFilterState.current = filterState;
+  }
 
   const jobOutputRows = useMemo(() => {
     const jobOutputRows: (IJobOutputRow | number)[] = [];
@@ -72,12 +97,12 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
       const jobEvent = jobEvents[counter];
       if (!jobEvent) jobOutputRows.push(counter);
       else
-        for (const row of jobEventToRows(jobEvent)) {
+        for (const row of getCachedEventRows(counter, jobEvent)) {
           jobOutputRows.push(row);
         }
     }
     return jobOutputRows;
-  }, [jobEventCount, job.result_traceback, jobEvents]);
+  }, [jobEventCount, job.result_traceback, jobEvents, getCachedEventRows]);
 
   const [collapsed, setCollapsedState] = useState<ICollapsed>({});
   const setCollapsed = (uuid: string, counter: number, collapsed: boolean) => {
@@ -119,21 +144,24 @@ export function JobOutputEvents(props: IJobOutputEventsProps) {
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(
-    containerRef,
-    nonCollapsedRows
-  );
 
   const canCollapseEvents = childrenSummary?.event_processing_finished && childrenSummary.is_tree;
   const estimatedMaxLines = jobOutputRows.length * 5;
   const outputLineChars = String(estimatedMaxLines).length;
 
-  const { scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } = useScrollControls(
+  const { handleScroll, scrollToTop, scrollToBottom, scrollPageDown, scrollPageUp } =
+    useScrollControls(
+      containerRef,
+      isFollowModeEnabled,
+      setIsFollowModeEnabled,
+      jobOutputRows.length,
+      isJobRunning(job.status)
+    );
+
+  const { beforeRowsHeight, visibleItems, setRowHeight, afterRowsHeight } = useVirtualizedList(
     containerRef,
-    isFollowModeEnabled,
-    setIsFollowModeEnabled,
-    jobOutputRows.length,
-    isJobRunning(job.status)
+    nonCollapsedRows,
+    handleScroll
   );
 
   const visibleHostIndex = visibleItems.findIndex(

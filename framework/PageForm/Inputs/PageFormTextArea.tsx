@@ -1,12 +1,22 @@
-import { Button, InputGroup, InputGroupItem, TextArea } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon, SearchIcon } from '@patternfly/react-icons';
+import { InputGroup, InputGroupItem, TextArea } from '@patternfly/react-core';
+import getValue from 'get-value';
 import { useState } from 'react';
-import { Controller, FieldPath, FieldValues, PathValue, useFormContext } from 'react-hook-form';
+import { Controller, FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
+import { createFieldValidate } from '../PageFormOptionsValidation';
+import { usePageFormOptionsContext } from '../PageFormOptionsContext';
 import { PageFormGroup } from './PageFormGroup';
 import { PageFormTextInputProps } from './PageFormTextInput';
+import {
+  createPatternBlurHandler,
+  PasswordRevealButton,
+  resolveAutoComplete,
+  resolveHelperTextInvalid,
+  resolveInputType,
+  SelectLookupButton,
+} from './PageFormTextInputHelpers';
 import { useRequiredValidationRule } from './validation-hooks';
 
 export function PageFormTextArea<
@@ -50,7 +60,8 @@ export function PageFormTextArea<
   const {
     control,
     setValue,
-    formState: { isSubmitting, isValidating },
+    trigger,
+    formState: { isSubmitting, isValidating, defaultValues },
   } = useFormContext<TFieldValues>();
 
   const [showSecret, setShowSecret] = useState(false);
@@ -58,17 +69,21 @@ export function PageFormTextArea<
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
+  // Auto-discover field metadata from OPTIONS context
+  const fieldMetadata = usePageFormOptionsContext(name, props.optionsFieldName);
+
   return (
     <Controller<TFieldValues, TFieldName>
       name={name}
       control={control}
       shouldUnregister
-      render={({ field: { onChange, value, name }, fieldState: { error } }) => {
-        const helperTextInvalid = error?.message
-          ? validate && isValidating
-            ? translations.validating
-            : error?.message
-          : undefined;
+      render={({ field: { onChange, value, name, onBlur }, fieldState: { error } }) => {
+        const helperTextInvalid = resolveHelperTextInvalid(
+          error?.message,
+          Boolean(validate),
+          isValidating,
+          translations.validating
+        );
 
         function onChangeHandler(value: string) {
           onChange(value.trimStart());
@@ -91,14 +106,20 @@ export function PageFormTextArea<
                   id={id}
                   placeholder={placeholder}
                   onChange={(_event, value: string) => onChangeHandler(value)}
+                  onBlur={createPatternBlurHandler(
+                    Boolean(fieldMetadata?.pattern),
+                    onBlur,
+                    trigger,
+                    name
+                  )}
                   value={value ?? ''}
                   aria-describedby={id ? `${id}-form-group` : undefined}
                   validated={helperTextInvalid ? 'error' : undefined}
-                  type={type === 'password' ? (showSecret ? 'text' : 'password') : type}
+                  type={resolveInputType(type, showSecret)}
                   readOnlyVariant={isReadOnly ? 'default' : undefined}
                   isDisabled={isDisabled}
                   autoFocus={autoFocus}
-                  autoComplete={autoComplete || (type === 'password' ? 'new-password' : 'off')}
+                  autoComplete={resolveAutoComplete(autoComplete, type)}
                   data-cy={id}
                   data-testid={id}
                   autoResize={disableAutoResize === undefined ? true : !disableAutoResize}
@@ -107,32 +128,23 @@ export function PageFormTextArea<
                 />
               </InputGroupItem>
               {type === 'password' && (
-                <Button
-                  variant="control"
-                  onClick={() => setShowSecret(!showSecret)}
-                  isDisabled={isDisabled || isReadOnly}
-                >
-                  {showSecret ? <EyeIcon /> : <EyeSlashIcon />}
-                </Button>
+                <PasswordRevealButton
+                  isDisabled={isDisabled}
+                  isReadOnly={isReadOnly}
+                  showSecret={showSecret}
+                  onToggle={() => setShowSecret(!showSecret)}
+                />
               )}
               {selectTitle && (
-                <Button
-                  icon={<SearchIcon />}
-                  ouiaId={`lookup-${name}-button`}
-                  variant="control"
-                  onClick={() =>
-                    selectOpen?.((item: TSelection) => {
-                      if (selectValue) {
-                        const value = selectValue(item);
-                        setValue(name, value as unknown as PathValue<TFieldValues, TFieldName>, {
-                          shouldValidate: true,
-                        });
-                      }
-                    }, selectTitle)
-                  }
-                  aria-label="Options menu"
-                  isDisabled={isDisabled || isSubmitting}
-                ></Button>
+                <SelectLookupButton
+                  selectTitle={selectTitle}
+                  selectOpen={selectOpen}
+                  selectValue={selectValue}
+                  setValue={setValue}
+                  name={name}
+                  isDisabled={isDisabled}
+                  isSubmitting={isSubmitting}
+                />
               )}
               {button}
             </InputGroup>
@@ -141,7 +153,9 @@ export function PageFormTextArea<
       }}
       rules={{
         required,
-        validate,
+        validate: createFieldValidate(fieldMetadata, validate, () =>
+          getValue(defaultValues as object, name)
+        ),
 
         minLength:
           typeof label === 'string' && typeof minLength === 'number'

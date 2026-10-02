@@ -10,15 +10,23 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { hubAPI } from '../../common/api/formatPath';
 import { collectionKeyFn } from '../../common/api/hub-api-utils';
-import { isInsightsMode } from '../../common/isInsights';
+import { getCollectionBadge } from '../../common/collectionBadgeUtils';
 import { useHubView } from '../../common/useHubView';
 import { CollectionVersionSearch } from '../Collection';
 import { useCollectionFilters } from './useCollectionFilters';
 
-const CERTIFIED_REPO = isInsightsMode() ? 'published' : 'rh-certified';
+function CollectionRepositoryCell(props: Readonly<{ collection: CollectionVersionSearch }>) {
+  const { t } = useTranslation();
+  const badge = getCollectionBadge(props.collection.repository?.name, t);
+  return (
+    <Label color={badge.color} icon={badge.icon} variant={badge.variant}>
+      <Truncate content={badge.label} style={{ minWidth: 0 }} />
+    </Label>
+  );
+}
 
-function CertifiedIcon() {
-  return <i className="fas fa-certificate"></i>;
+function repositoryCell(collection: CollectionVersionSearch) {
+  return <CollectionRepositoryCell collection={collection} />;
 }
 
 export function CollectionMultiSelectDialog(props: {
@@ -57,16 +65,7 @@ export function CollectionMultiSelectDialog(props: {
       },
       {
         header: t('Repository'),
-        cell: (collection: CollectionVersionSearch) =>
-          collection.repository?.name === CERTIFIED_REPO ? (
-            <Label color="blue" icon={<CertifiedIcon />} variant="outline">
-              <Truncate content={t('Certified')} style={{ minWidth: 0 }} />
-            </Label>
-          ) : (
-            <Label color="blue" variant="outline">
-              <Truncate content={collection.repository?.name || ''} style={{ minWidth: 0 }} />
-            </Label>
-          ),
+        cell: repositoryCell,
       },
     ],
     [t]

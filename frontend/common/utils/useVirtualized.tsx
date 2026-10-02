@@ -1,26 +1,43 @@
 import useResizeObserver from '@react-hook/resize-observer';
-import { RefObject, useCallback, useEffect, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 
-export function useVirtualizedList<T>(containerRef: RefObject<HTMLElement>, items: T[]) {
+export function useVirtualizedList<T>(
+  containerRef: RefObject<HTMLElement>,
+  items: T[],
+  onScrollCallback?: (el: HTMLElement) => void
+) {
   const scrollBuffer = containerRef.current?.clientHeight
     ? containerRef.current.clientHeight + 100
     : 400;
   const [scrollTop, setScrollTop] = useState(0);
   const [containerHeight, setContainerHeight] = useState(0);
+  const rafRef = useRef(0);
+  const onScrollCallbackRef = useRef(onScrollCallback);
+  onScrollCallbackRef.current = onScrollCallback;
 
   const onScroll = useCallback(() => {
     if (!containerRef.current) return;
-    setScrollTop(containerRef.current.scrollTop);
-    setContainerHeight(containerRef.current.clientHeight);
+    if (rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = 0;
+      if (!containerRef.current) return;
+      setScrollTop(containerRef.current.scrollTop);
+      setContainerHeight(containerRef.current.clientHeight);
+      onScrollCallbackRef.current?.(containerRef.current);
+    });
   }, [containerRef]);
 
   useEffect(() => {
     if (!containerRef.current) return;
     const el = containerRef.current;
-    el.addEventListener('scroll', onScroll);
+    el.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
       el.removeEventListener('scroll', onScroll);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+      }
     };
   }, [containerRef, onScroll, items.length]);
 

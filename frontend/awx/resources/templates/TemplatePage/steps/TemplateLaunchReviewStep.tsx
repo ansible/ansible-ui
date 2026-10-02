@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
-import { pruneSurveyByConditions } from '../../../../common/useSurveyConditions';
+import { pruneSurveyByConditions } from '../../../../common/surveyConditions';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
@@ -75,14 +75,22 @@ function processSurvey(
 }
 
 export function TemplateLaunchReviewStep(
-  props: Readonly<{ template: JobTemplate | WorkflowJobTemplate }>
+  props: Readonly<{
+    template: JobTemplate | WorkflowJobTemplate;
+    /** Survey spec already loaded by the launch wizard; avoids fetching it again. */
+    surveySpec?: Survey;
+  }>
 ) {
-  const { template } = props;
+  const { template, surveySpec } = props;
   const { t } = useTranslation();
   const { wizardData } = usePageWizard();
   const getPageUrl = useGetPageUrl();
   const { prompt = undefined, survey } = wizardData as TemplateLaunch;
-  const { data: surveyConfig } = useGet<Survey>(getSurveySpecUrl(template));
+  // Only fetch the spec when there are survey answers to show and the wizard didn't pass it.
+  const { data: fetchedSurveyConfig } = useGet<Survey>(
+    !surveySpec && survey ? getSurveySpecUrl(template) : undefined
+  );
+  const surveyConfig = surveySpec ?? fetchedSurveyConfig;
 
   const { data: ee } = useGetItem<ExecutionEnvironment>(
     awxAPI`/execution_environments/`,

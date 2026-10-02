@@ -13,7 +13,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
-import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
@@ -25,6 +25,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
+import { getEventPersistenceHelpText } from './constants/eventPersistenceHelpText';
 import { PageFormCredentialSelect } from '../access/credentials/components/PageFormCredentialsSelect';
 import { PageFormRuleEngineCredentialSelect } from '../access/credentials/components/PageFormRuleEngineCredentialSelect';
 import { PageFormSelectOrganization } from '../access/organizations/components/PageFormOrganizationSelect';
@@ -57,8 +58,7 @@ export function CreateRulebookActivation() {
   const postEdaRulebookActivation = usePostRequest<object, EdaRulebookActivation>();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const defaultOrganization =
     organizations && organizations?.results && organizations.results.length > 0
@@ -120,7 +120,7 @@ export function RulebookActivationInputs() {
 
   const [sourceMappings, setSourceMappings] = useState<EdaSourceEventMapping[] | undefined>(() => {
     return defaultValues?.source_mappings
-      ? (jsyaml.load(defaultValues?.source_mappings as string) as EdaSourceEventMapping[])
+      ? (jsyaml.load(defaultValues?.source_mappings) as EdaSourceEventMapping[])
       : undefined;
   });
   const restartPolicyHelpBlock = (
@@ -152,7 +152,9 @@ export function RulebookActivationInputs() {
     edaAPI`/event-streams/?test_mode=false`
   );
 
-  const { data: config } = useGet<{ deployment_type?: string }>(edaAPI`/config/`);
+  const { data: config } = useGet<{ deployment_type?: string; managed_cloud_install?: boolean }>(
+    edaAPI`/config/`
+  );
 
   const RESTART_OPTIONS = [
     { label: t('On failure'), value: 'on-failure' },
@@ -215,10 +217,10 @@ export function RulebookActivationInputs() {
   }, [getFieldState, projectId, setValue]);
 
   useEffect(() => {
-    if (!enablePersistence) {
+    if (!enablePersistence || config?.managed_cloud_install) {
       setValue('rule_engine_credential_id', null);
     }
-  }, [enablePersistence, setValue]);
+  }, [enablePersistence, config?.managed_cloud_install, setValue]);
 
   return (
     <>
@@ -330,16 +332,17 @@ export function RulebookActivationInputs() {
           <PageFormCheckbox
             label={t`Enable event persistence`}
             labelHelpTitle={t('Enable event persistence')}
-            labelHelp={t(
-              'When enabled you can select the Event-Driven Ansible Rule Engine credential to allow event persistence so that events are not lost if the rulebook activation is down or restarted. If one is not selected it will default to use the System Event-Driven Ansible Rule Engine Credential.'
-            )}
+            labelHelp={getEventPersistenceHelpText(t)}
             name="enable_persistence"
           />
         </PageFormGroup>
       </PageFormSection>
-      {enablePersistence && (
+      {enablePersistence && config && !config.managed_cloud_install && (
         <PageFormSection title={t('Option Details')}>
-          <PageFormRuleEngineCredentialSelect<IEdaRulebookActivationInputs> name="rule_engine_credential_id" />
+          <PageFormRuleEngineCredentialSelect<IEdaRulebookActivationInputs>
+            name="rule_engine_credential_id"
+            isRequired
+          />
         </PageFormSection>
       )}
     </>
@@ -443,13 +446,16 @@ export function EditRulebookActivation() {
   }
 }
 
-export type IEdaRulebookActivationInputs = Omit<EdaRulebookActivationCreate, 'event_streams'> & {
+export type IEdaRulebookActivationInputs = Omit<
+  EdaRulebookActivationCreate,
+  'event_streams' | 'source_mappings'
+> & {
   rulebook: EdaRulebook;
   event_streams?: string[];
   project_id: string;
   eda_credentials?: number[] | EdaCredential[] | null;
   enable_persistence?: boolean;
   rule_engine_credential_id?: number | null;
-  source_mappings: EdaSourceEventMapping[];
+  source_mappings?: string;
   restart_on_project_update: boolean;
 };

@@ -1,9 +1,10 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import { describe, expect, it } from 'vitest';
 import { PageFormFileUpload } from './PageFormFileUpload';
+import { PageFormOptionsContext, PageFormOptionsContextValue } from '../PageFormOptionsContext';
 
 interface Form {
   file: string;
@@ -101,5 +102,99 @@ describe('PageFormFileUpload', () => {
 
     await user.click(screen.getByRole('button', { name: /clear/i }));
     expect(textarea).toHaveValue('');
+  });
+
+  it('Should display helper text', () => {
+    render(
+      <TestWrapper defaultValue={{ file: '' }}>
+        <PageFormFileUpload
+          name="file"
+          label="File upload"
+          helperText="Supported formats: YAML, JSON"
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Supported formats: YAML, JSON')).toBeInTheDocument();
+  });
+
+  it('Should render with icon prop', () => {
+    render(
+      <TestWrapper defaultValue={{ file: '' }}>
+        <PageFormFileUpload
+          name="file"
+          label="File upload"
+          icon={<span data-testid="custom-icon">Icon</span>}
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
+  });
+
+  it('Should render with additionalHelperText', () => {
+    render(
+      <TestWrapper defaultValue={{ file: '' }}>
+        <PageFormFileUpload
+          name="file"
+          label="File upload"
+          additionalHelperText={<span>Extra helper info</span>}
+        />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Extra helper info')).toBeInTheDocument();
+  });
+});
+
+describe('PageFormFileUpload — metadata-validation contract', () => {
+  const FILE_PATTERN_METADATA: PageFormOptionsContextValue = {
+    fields: {
+      file: {
+        pattern: '^---',
+        pattern_description: 'Must start with YAML document marker',
+      },
+    },
+  };
+
+  function MetadataTestWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+    const methods = useForm<Form>({ defaultValues: { file: '' } });
+    return (
+      <PageFormOptionsContext.Provider value={FILE_PATTERN_METADATA}>
+        <FormProvider {...methods}>
+          <form>{children}</form>
+        </FormProvider>
+      </PageFormOptionsContext.Provider>
+    );
+  }
+
+  it('does not apply pattern validation from context metadata', async () => {
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <MetadataTestWrapper>
+        <PageFormFileUpload
+          name="file"
+          type="text"
+          label="File upload"
+          isClearButtonDisabled={false}
+          allowEditingUploadedText
+        />
+      </MetadataTestWrapper>
+    );
+
+    // Type a value that would violate the pattern (doesn't start with '---')
+    const textarea = container.querySelector('textarea[aria-label="File upload"]');
+    expect(textarea).toBeInTheDocument();
+    await user.type(textarea!, 'no yaml marker here');
+    await user.tab();
+
+    // The pattern error from metadata should never appear
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Must start with YAML document marker')).not.toBeInTheDocument();
+      },
+      { timeout: 1000 }
+    );
   });
 });

@@ -1,5 +1,5 @@
 import {
-  ANSIBLE_LIGHTSPEED_PRODUCT_NAME,
+  getProductName,
   LIGHTSPEED_LOGO,
   LIGHTSPEED_LOGO_DARK,
 } from '@ansible/ansible-ai-connect-chatbot';
@@ -31,7 +31,7 @@ const ChatbotSideBarHeader = () => {
         src={activeTheme === 'dark' ? String(LIGHTSPEED_LOGO_DARK) : String(LIGHTSPEED_LOGO)}
         alt="Lightspeed Logo"
       />
-      <HeaderTitle>{ANSIBLE_LIGHTSPEED_PRODUCT_NAME}</HeaderTitle>
+      <HeaderTitle>{getProductName()}</HeaderTitle>
     </HeaderContainer>
   );
 };

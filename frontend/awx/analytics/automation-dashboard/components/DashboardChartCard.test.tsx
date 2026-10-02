@@ -13,7 +13,7 @@ const defaultProps: DashboardChartCardProps = {
   errorStateTitle: 'Chart Error',
 };
 
-const expectedFormatted = (12345).toLocaleString();
+const expectedFormatted = (12345).toLocaleString('en-US');
 
 describe('DashboardChartCard', () => {
   test('should render summary value in locale format', () => {
@@ -41,6 +41,90 @@ describe('DashboardChartCard', () => {
   test('should not render error state when error is not provided', () => {
     render(<DashboardChartCard {...defaultProps} />);
     expect(screen.queryByText('Chart Error')).not.toBeInTheDocument();
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should format year labels correctly', () => {
+    const yearData = {
+      kind: 'year' as const,
+      items: [{ label: '2024-01-01T00:00:00', value: 100 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={yearData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should format month labels correctly', () => {
+    const monthData = {
+      kind: 'month' as const,
+      items: [{ label: '2024-06-01T00:00:00', value: 50 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={monthData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should format hour labels correctly', () => {
+    const hourData = {
+      kind: 'hour' as const,
+      items: [{ label: '2024-06-15T14:00:00', value: 25 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={hourData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should handle invalid date labels gracefully', () => {
+    const invalidData = {
+      kind: 'day' as const,
+      items: [{ label: 'invalid-date', value: 10 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={invalidData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should render with empty items array', () => {
+    const emptyData = {
+      kind: 'day' as const,
+      items: [],
+    };
+    render(<DashboardChartCard {...defaultProps} data={emptyData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should render lineChart variant', () => {
+    render(<DashboardChartCard {...defaultProps} variant="lineChart" />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should render "Count" legend label for chart data', () => {
+    render(<DashboardChartCard {...defaultProps} />);
+    expect(screen.getByText('Count')).toBeInTheDocument();
+  });
+
+  test('should not render "Count" legend label when error is provided', () => {
+    render(<DashboardChartCard {...defaultProps} error={new Error('Chart failed')} />);
+    expect(screen.queryByText('Count')).not.toBeInTheDocument();
+  });
+
+  test('should render custom legendLabel instead of default "Count" when provided', () => {
+    render(<DashboardChartCard {...defaultProps} legendLabel="Hosts" />);
+    expect(screen.getByText('Hosts')).toBeInTheDocument();
+    expect(screen.queryByText('Count')).not.toBeInTheDocument();
+  });
+
+  test('should format label with default locale string for an unrecognized kind', () => {
+    const unknownKindData = {
+      kind: 'week' as unknown as DashboardChartCardProps['data']['kind'],
+      items: [{ label: '2024-06-15T00:00:00', value: 10 }],
+    };
+    render(<DashboardChartCard {...defaultProps} data={unknownKindData} />);
+    expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
+  });
+
+  test('should render with no crash when items is missing from data', () => {
+    const dataWithoutItems = {
+      kind: 'day' as const,
+      items: undefined as unknown as DashboardChartCardProps['data']['items'],
+    };
+    render(<DashboardChartCard {...defaultProps} data={dataWithoutItems} />);
     expect(screen.getByText(expectedFormatted)).toBeInTheDocument();
   });
 });

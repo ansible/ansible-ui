@@ -32,7 +32,7 @@ describe('download-file', () => {
       downloadBlobFile('test-file', 'csv', blob);
 
       expect(clickSpy).toHaveBeenCalledOnce();
-      const capturedLink = clickSpy.mock.instances[0] as unknown as HTMLAnchorElement;
+      const capturedLink = clickSpy.mock.instances[0] as HTMLAnchorElement;
       expect(capturedLink.download).toBe('test-file.csv');
       expect(capturedLink.href).toContain('blob:mock-url');
     });
@@ -51,14 +51,14 @@ describe('download-file', () => {
       downloadTextFile('test-file', 'hello/nworld');
 
       expect(createObjectUrlSpy).toHaveBeenCalledWith(expect.any(Blob));
-      const capturedLink = clickSpy.mock.instances[0] as unknown as HTMLAnchorElement;
+      const capturedLink = clickSpy.mock.instances[0] as HTMLAnchorElement;
       expect(capturedLink.download).toBe('test-file.txt');
     });
 
     test('should use the provided extension', () => {
       downloadTextFile('test-file', 'content', 'yaml');
 
-      const capturedLink = clickSpy.mock.instances[0] as unknown as HTMLAnchorElement;
+      const capturedLink = clickSpy.mock.instances[0] as HTMLAnchorElement;
       expect(capturedLink.download).toBe('test-file.yaml');
     });
 
@@ -74,7 +74,7 @@ describe('download-file', () => {
       downloadCvsFile('test-file', ['col1,col2', 'a,b']);
 
       expect(createObjectUrlSpy).toHaveBeenCalledWith(expect.any(Blob));
-      const capturedLink = clickSpy.mock.instances[0] as unknown as HTMLAnchorElement;
+      const capturedLink = clickSpy.mock.instances[0] as HTMLAnchorElement;
       expect(capturedLink.download).toBe('test-file.csv');
     });
 

@@ -1,6 +1,5 @@
 import {
   LoadingPage,
-  PageForm,
   PageFormSubmitHandler,
   PageHeader,
   PageLayout,
@@ -25,6 +24,7 @@ import { PlatformItemsResponse } from '../../../interfaces/PlatformItemsResponse
 import { PlatformRole } from '../../../interfaces/PlatformRole';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
+import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { MappingFields } from './MappingFields';
 
@@ -108,7 +108,7 @@ export function CreateAuthenticatorMapping() {
           { label: t('Create mapping') },
         ]}
       />
-      <PageForm
+      <PlatformPageForm
         submitText={t('Create mapping')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -116,7 +116,7 @@ export function CreateAuthenticatorMapping() {
         defaultValue={{ map_type: AuthenticatorMapType.allow }}
       >
         <MappingInputs />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }
@@ -183,14 +183,14 @@ export function EditAuthenticatorMapping() {
           },
         ]}
       />
-      <PageForm
+      <PlatformPageForm
         submitText={t('Save mapping')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={initialValues as AuthenticatorMapValues}
       >
         <MappingInputs />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }

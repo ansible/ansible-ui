@@ -14,6 +14,10 @@ const mockOrganizations = {
 
 const server = setupServer(
   http.options(
+    ({ request }) => request.url.includes('/users/'),
+    () => HttpResponse.json({ actions: { POST: {} } })
+  ),
+  http.options(
     ({ request }) => request.url.includes('/organizations/'),
     () => HttpResponse.json({ actions: { GET: {}, POST: {} } })
   ),

@@ -1,9 +1,114 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { useForm, FormProvider } from 'react-hook-form';
-import { PageFormTextInput } from './PageFormTextInput';
+import {
+  createChangeHandler,
+  handleNumberChange,
+  PageFormTextInput,
+  resolveParsedValue,
+} from './PageFormTextInput';
+
+describe('resolveParsedValue', () => {
+  test('returns non-datetime values unchanged', () => {
+    expect(resolveParsedValue('text', 'hello')).toBe('hello');
+  });
+
+  test('returns an empty datetime-local value unchanged', () => {
+    expect(resolveParsedValue('datetime-local', '')).toBe('');
+  });
+
+  test('converts a stored UTC datetime-local value to local time', () => {
+    const utc = '2024-01-01T00:00:00.000Z';
+    const result = resolveParsedValue('datetime-local', utc);
+    const expected = new Date(new Date(utc).getTime() - new Date(utc).getTimezoneOffset() * 60000)
+      .toISOString()
+      .slice(0, 16);
+    expect(result).toBe(expected);
+  });
+});
+
+describe('handleNumberChange', () => {
+  test('sets value to null when input is empty', () => {
+    const setValue = vi.fn();
+    const onChange = vi.fn();
+    handleNumberChange('', { name: 'field', setValue, onChange });
+    expect(setValue).toHaveBeenCalledWith('field', null);
+    expect(onChange).toHaveBeenCalledWith(null);
+  });
+
+  test('sets value to null when input is not a number', () => {
+    const setValue = vi.fn();
+    const onChange = vi.fn();
+    handleNumberChange('abc', { name: 'field', setValue, onChange });
+    expect(onChange).toHaveBeenCalledWith(null);
+  });
+
+  test('clamps to max when the value exceeds it', () => {
+    const setValue = vi.fn();
+    const onChange = vi.fn();
+    handleNumberChange('999', { name: 'field', max: 10, setValue, onChange });
+    expect(setValue).toHaveBeenCalledWith('field', 10);
+    expect(onChange).toHaveBeenCalledWith(10);
+  });
+
+  test('clamps to min when the value is below it', () => {
+    const setValue = vi.fn();
+    const onChange = vi.fn();
+    handleNumberChange('1', { name: 'field', min: 10, setValue, onChange });
+    expect(setValue).toHaveBeenCalledWith('field', 10);
+    expect(onChange).toHaveBeenCalledWith(10);
+  });
+
+  test('passes through a value already within range', () => {
+    const setValue = vi.fn();
+    const onChange = vi.fn();
+    handleNumberChange('5', { name: 'field', min: 0, max: 10, setValue, onChange });
+    expect(setValue).toHaveBeenCalledWith('field', 5);
+    expect(onChange).toHaveBeenCalledWith(5);
+  });
+});
+
+describe('createChangeHandler', () => {
+  test('converts a datetime-local value to an ISO string', () => {
+    const onChange = vi.fn();
+    const handler = createChangeHandler({
+      type: 'datetime-local',
+      name: 'field',
+      setValue: vi.fn(),
+      onChange,
+    });
+    handler('2024-01-01T00:00');
+    expect(onChange).toHaveBeenCalledWith(new Date('2024-01-01T00:00').toISOString());
+  });
+
+  test('delegates to handleNumberChange for number fields', () => {
+    const setValue = vi.fn();
+    const onChange = vi.fn();
+    const handler = createChangeHandler({
+      type: 'number',
+      name: 'field',
+      max: 10,
+      setValue,
+      onChange,
+    });
+    handler('999');
+    expect(setValue).toHaveBeenCalledWith('field', 10);
+  });
+
+  test('trims leading whitespace for other field types', () => {
+    const onChange = vi.fn();
+    const handler = createChangeHandler({
+      type: 'text',
+      name: 'field',
+      setValue: vi.fn(),
+      onChange,
+    });
+    handler('  hello');
+    expect(onChange).toHaveBeenCalledWith('hello');
+  });
+});
 
 describe('PageFormTextInput', () => {
   describe('min/max value clamping for number type', () => {
@@ -326,6 +431,69 @@ describe('PageFormTextInput', () => {
 
       expect(input).toBeInTheDocument();
       expect(input).toHaveAttribute('autocomplete', 'off');
+    });
+  });
+
+  describe('password reveal button', () => {
+    test('should reveal and re-hide the password when the toggle button is clicked', async () => {
+      const user = userEvent.setup();
+
+      function Wrapper() {
+        const methods = useForm({ defaultValues: { password: 'secret' } });
+        return (
+          <FormProvider {...methods}>
+            <form>
+              <PageFormTextInput name="password" label="Password" type="password" />
+            </form>
+          </FormProvider>
+        );
+      }
+
+      const { container } = render(<Wrapper />);
+      const getInput = () => container.querySelector('input') as HTMLInputElement;
+      expect(getInput()).toHaveAttribute('type', 'password');
+
+      await user.click(screen.getByRole('button'));
+      expect(getInput()).toHaveAttribute('type', 'text');
+
+      await user.click(screen.getByRole('button'));
+      expect(getInput()).toHaveAttribute('type', 'password');
+    });
+  });
+
+  describe('select lookup button', () => {
+    test('should call selectOpen and apply the selected value when clicked', async () => {
+      const user = userEvent.setup();
+      const selectOpen = vi.fn((callback: (item: { value: string }) => void) => {
+        callback({ value: 'picked-value' });
+      });
+      const selectValue = (item: { value: string }) => item.value;
+
+      function Wrapper() {
+        const methods = useForm({ defaultValues: { field: '' } });
+        return (
+          <FormProvider {...methods}>
+            <form>
+              <PageFormTextInput
+                name="field"
+                label="Field"
+                selectTitle="Browse"
+                selectOpen={selectOpen}
+                selectValue={selectValue}
+              />
+            </form>
+          </FormProvider>
+        );
+      }
+
+      const { container } = render(<Wrapper />);
+      await user.click(screen.getByRole('button', { name: 'Options menu' }));
+
+      expect(selectOpen).toHaveBeenCalledWith(expect.any(Function), 'Browse');
+      const input = container.querySelector('input') as HTMLInputElement;
+      await waitFor(() => {
+        expect(input).toHaveValue('picked-value');
+      });
     });
   });
 });

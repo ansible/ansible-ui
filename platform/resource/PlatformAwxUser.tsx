@@ -20,12 +20,14 @@ export function PlatformAwxUser(props: Readonly<{ route?: string }>) {
   }
 
   if (platformResponse.error) {
-    <Page>
-      <EmptyStateCustom
-        title={t('Error')}
-        description={t('An error occurred while loading the resource.')}
-      />
-    </Page>;
+    return (
+      <Page>
+        <EmptyStateCustom
+          title={t('Error')}
+          description={t('An error occurred while loading the resource.')}
+        />
+      </Page>
+    );
   }
 
   if (!platformResponse.data?.summary_fields.resource.resource_type) {

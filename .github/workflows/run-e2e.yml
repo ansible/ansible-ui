@@ -1,4 +1,4 @@
-name: Run E2E
+name: Run Legacy Cypress E2E
 
 on:
   workflow_dispatch:

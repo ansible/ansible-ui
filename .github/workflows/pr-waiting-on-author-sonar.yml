@@ -1,0 +1,78 @@
+name: PR Waiting on Author (SonarQube)
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  label-on-sonar-failure:
+    name: Label on SonarQube Failure
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.issue.pull_request
+      && (github.event.comment.user.login == 'sonarqubecloud[bot]'
+          || github.event.comment.user.login == 'sonarcloud[bot]')
+    steps:
+      - name: Ensure labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "waiting-on-author" --repo "$REPO" --color "E4E669" --description "PR requires author attention" --force 2>/dev/null || true
+
+      - name: Check quality gate and label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+
+          # Skip waiting-on-author for bot PRs
+          if [[ "$AUTHOR" == "dependabot[bot]" || "$AUTHOR" == "app/red-hat-konflux" || "$AUTHOR" == "red-hat-konflux[bot]" ]]; then
+            echo "Skipping — bot PR (author: $AUTHOR)"
+            exit 0
+          fi
+
+          GATE_PASSED=$(echo "$COMMENT_BODY" | grep -ci 'Quality Gate passed' || true)
+
+          if [ "$GATE_PASSED" -ge 1 ]; then
+            # Quality gate passed — delete any existing sonar comment
+            EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+              --jq '.[] | select(.body | contains("<!-- waiting-on-author-sonar -->")) | .id' | tail -1)
+            if [ -n "$EXISTING_ID" ]; then
+              gh api "repos/$REPO/issues/comments/$EXISTING_ID" -X DELETE
+            fi
+            exit 0
+          fi
+
+          # Quality gate failed — extract details from the comment
+          NEW_ISSUES=$(echo "$COMMENT_BODY" | grep -oP '\d+(?=\s+New issue)' || echo "unknown")
+          HOTSPOTS=$(echo "$COMMENT_BODY" | grep -oP '\d+(?=\s+Security Hotspot)' || echo "unknown")
+          COVERAGE=$(echo "$COMMENT_BODY" | grep -oP '[\d.]+%(?=\s+Coverage)' || echo "unknown")
+          DUPLICATION=$(echo "$COMMENT_BODY" | grep -oP '[\d.]+%(?=\s+Duplication)' || echo "unknown")
+
+          BODY="<!-- waiting-on-author-sonar -->"$'\n'
+          BODY+="@${AUTHOR} — SonarQube Quality Gate failed:"$'\n'
+          [ "$NEW_ISSUES" != "unknown" ]  && BODY+="- New issues: ${NEW_ISSUES}"$'\n'
+          [ "$HOTSPOTS" != "unknown" ]    && BODY+="- Security Hotspots: ${HOTSPOTS}"$'\n'
+          [ "$COVERAGE" != "unknown" ]    && BODY+="- Coverage on New Code: ${COVERAGE}"$'\n'
+          [ "$DUPLICATION" != "unknown" ] && BODY+="- Duplication on New Code: ${DUPLICATION}"$'\n'
+          BODY+=$'\n'"Please address the SonarQube findings."
+
+          EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '.[] | select(.body | contains("<!-- waiting-on-author-sonar -->")) | .id' | tail -1)
+
+          if [ -n "$EXISTING_ID" ]; then
+            gh api "repos/$REPO/issues/comments/$EXISTING_ID" -X PATCH -f body="$BODY"
+          else
+            gh pr comment "$PR_NUMBER" --repo "$REPO" --body "$BODY"
+          fi
+
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"

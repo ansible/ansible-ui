@@ -1,10 +1,10 @@
 import { ActionList, ActionListItem, Button, Flex, FlexItem, Stack } from '@patternfly/react-core';
 import { SyncAltIcon } from '@patternfly/react-icons';
-import debounce from 'debounce';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDebounce } from '../hooks/useDebounce';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { SetRequired } from 'type-fest';
+import { SetRequired } from '../utils/utilityTypes';
 import { PageAsyncQueryErrorText, PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect, PageSingleSelectProps } from './PageSingleSelect';
@@ -60,14 +60,7 @@ export function PageAsyncSingleSelect<
   const nextRef = useRef<number | string | undefined>();
   const [searchValue, setSearchValue] = useState<string>('');
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const setSearch = useMemo(() => debounce((search: string) => setSearchValue(search), 200), []);
-
-  useEffect(() => {
-    return () => {
-      setSearch.clear();
-    };
-  }, [setSearch]);
+  const setSearch = useDebounce((search: string) => setSearchValue(search), 200);
 
   const onSelect = useRef(props.onSelect).current;
 
@@ -110,13 +103,15 @@ export function PageAsyncSingleSelect<
               uniqueValues.add(option.value);
               return true;
             });
-            newOptions.sort((a, b) => {
-              const lhs = a.label.toLowerCase();
-              const rhs = b.label.toLowerCase();
-              if (lhs < rhs) return -1;
-              if (lhs > rhs) return 1;
-              return 0;
-            });
+            if (!props.disableSortOptions) {
+              newOptions.sort((a, b) => {
+                const lhs = a.label.toLowerCase();
+                const rhs = b.label.toLowerCase();
+                if (lhs < rhs) return -1;
+                if (lhs > rhs) return 1;
+                return 0;
+              });
+            }
             if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
               // Defer onSelect to avoid setState during render
               setTimeout(() => onSelect(newOptions[0].value), 0);
@@ -139,7 +134,7 @@ export function PageAsyncSingleSelect<
       return true;
     });
     return () => abortController.abort();
-  }, [onSelect, queryOptions, searchValue, t, writeInOption]);
+  }, [onSelect, props.disableSortOptions, queryOptions, searchValue, t, writeInOption]);
 
   const onLoadMore = useCallback(
     (e: React.MouseEvent) => {
@@ -243,6 +238,7 @@ export function PageAsyncSingleSelect<
       isLoading={loading}
       queryLabel={props.queryLabel}
       disableAutoSelect
+      disableSortOptions={props.disableSortOptions}
       isRequired={props.isRequired}
       toggle={
         loadingError

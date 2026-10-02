@@ -2,7 +2,6 @@ import { render, screen, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { edaAPI } from '../common/eda-utils';
 import { Projects } from './Projects';
@@ -10,11 +9,7 @@ import mockProjects from './fixtures/edaProjects.fixture.json';
 import mockProjectsOptions from './fixtures/edaProjectsOptions.fixture.json';
 
 function TestWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </SWRConfig>
-  );
+  return <MemoryRouter>{children}</MemoryRouter>;
 }
 
 describe('Projects List Component', () => {

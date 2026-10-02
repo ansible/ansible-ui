@@ -10,7 +10,7 @@ export function useTasksFilters() {
         key: 'name',
         label: t('Task name'),
         type: ToolbarFilterType.SingleText,
-        query: 'name__contains',
+        query: 'name__icontains',
         comparison: 'contains',
       },
       {

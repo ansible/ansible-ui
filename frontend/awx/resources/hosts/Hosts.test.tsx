@@ -56,7 +56,7 @@ describe('Hosts - Standalone Route', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByText(/there are currently no hosts added/i)).toBeInTheDocument();
+    expect(await screen.findByText(/There are currently no hosts/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /create host/i })).toBeInTheDocument();
   });
 
@@ -126,9 +126,7 @@ describe('InventoryHosts - Regular Inventory Route', () => {
       </MemoryRouter>
     );
 
-    expect(
-      await screen.findByText(/there are currently no hosts added to this inventory/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/No hosts are assigned to this inventory/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /create host/i })).toBeInTheDocument();
   });
 

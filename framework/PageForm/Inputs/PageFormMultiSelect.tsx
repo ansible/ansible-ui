@@ -75,8 +75,8 @@ export function PageFormMultiSelect<
           >
             <PageMultiSelect
               id={id}
-              data-cy={id ?? name}
-              data-testid={id ?? name}
+              data-cy={id ?? props.name}
+              data-testid={id ?? props.name}
               placeholder={props.placeholder}
               options={props.options}
               aria-describedby={id ? `${id}-form-group` : undefined}

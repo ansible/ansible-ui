@@ -1,27 +1,13 @@
 // vitest.setup.ts
-import { enablePreview, mockI18n } from '@ansible/ansible-ui-framework/vitest.common';
 import '@testing-library/jest-dom/vitest';
-import { vi } from 'vitest';
+import { beforeEach } from 'vitest';
+import '@ansible/ansible-ui-framework/vitest.i18n';
+import '@ansible/ansible-ui-framework/vitest.monaco';
+import { enablePreview } from '@ansible/ansible-ui-framework/vitest.preview';
+import { resetTestSwrCache } from '@ansible/ansible-ui-framework/test-utils/swrTestWrapper';
 
-// Mock monaco-editor to avoid resolution issues in tests
-vi.mock('monaco-editor', () => ({
-  languages: {
-    json: {
-      jsonDefaults: {
-        setDiagnosticsOptions: vi.fn(),
-      },
-    },
-    register: vi.fn(),
-    setMonarchTokensProvider: vi.fn(),
-  },
-  editor: {
-    create: vi.fn(),
-    defineTheme: vi.fn(),
-  },
-}));
-vi.mock('monaco-yaml', () => ({
-  configureMonacoYaml: vi.fn(),
-}));
-
-mockI18n();
 enablePreview();
+
+beforeEach(() => {
+  resetTestSwrCache();
+});

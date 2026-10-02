@@ -1,10 +1,17 @@
 coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 2%
+        flags:
+          - unit-tests
   ignore:
     - "**/*.test.ts"
     - "**/*.test.tsx"
     - "**/*.spec.ts"
     - "**/*.spec.tsx"
-    - "**/vitest.setup.ts"
+    - "**/vitest.*.ts"
     - "**/webpack.config.cjs"
     - "**/vite.config.ts"
     - "**/interfaces/generated/**"
@@ -12,3 +19,12 @@ coverage:
     - "**/swagger.json"
     - "**/openapi.json"
     - "**/package-lock.json"
+    - "**/platform/interfaces/**"
+    - "**/platform/main/Platform.tsx"
+    - "**/platform/**/__mocks__/**"
+
+flags:
+  unit-tests:
+    carryforward: true
+  e2e-tests:
+    carryforward: true

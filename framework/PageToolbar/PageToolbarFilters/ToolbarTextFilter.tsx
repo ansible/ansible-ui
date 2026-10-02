@@ -7,8 +7,8 @@ import {
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
 import { ArrowRightIcon, TimesIcon } from '@patternfly/react-icons';
-import debounce from 'debounce';
-import { useCallback, useEffect, useState } from 'react';
+import { useDebounce } from '../../hooks/useDebounce';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ToolbarFilterType } from '../PageToolbarFilter';
 import { ToolbarFilterCommon } from './ToolbarFilterCommon';
@@ -153,11 +153,7 @@ export function ToolbarSingleTextFilter(props: {
     }
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const setValueDebounced = useCallback(
-    debounce((value: string) => props.setValue(value), 200),
-    []
-  );
+  const setValueDebounced = useDebounce((value: string) => props.setValue(value), 200);
 
   useEffect(() => {
     if (!props.hasKey) {

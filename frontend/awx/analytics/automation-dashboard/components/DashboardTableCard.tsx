@@ -1,9 +1,18 @@
 import { ITableColumn, PageDashboardCard, PageTable } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { PlusCircleIcon } from '@patternfly/react-icons';
 import { DashboardTableCardProps, IDashboardTableItem } from '../types';
 import { PageLoadingTable } from '../../../../../framework/PageTable/PageLoadingTable';
+import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
+
+const TRUNCATED_NAME_CELL_MAX_WIDTH = 320;
+
+const truncatedNameCellStyle: React.CSSProperties = {
+  maxWidth: `${TRUNCATED_NAME_CELL_MAX_WIDTH}px`,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
 
 export function DashboardTableCard(props: DashboardTableCardProps) {
   const {
@@ -11,30 +20,52 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
     title,
     help,
     firstColumnHeader,
-    emptyStateTitle,
     items,
     errorStateTitle,
     error,
     loading,
+    clearAllFilters,
+    filterState,
+    emptyStateDescription,
+    emptyStateTitle,
   } = props;
   const keyFn = (item: IDashboardTableItem) => item.id;
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const { t } = useTranslation();
 
+  const nameCell = (item: IDashboardTableItem) => {
+    return <div style={truncatedNameCellStyle}>{item.name}</div>;
+  };
+
+  const valueCell = (item: IDashboardTableItem) =>
+    item?.execution_count || item.execution_count === 0
+      ? item.execution_count.toLocaleString(DEFAULT_NUMBER_LOCALE)
+      : '';
+
   const tableColumns: ITableColumn<IDashboardTableItem>[] = [
     {
       header: firstColumnHeader,
-      cell: (item) => item.name,
+      cell: nameCell,
+      fullWidth: true,
     },
     {
       header: t('Total no. of jobs'),
-      cell: (item) => item.execution_count,
+      cell: valueCell,
+      maxWidth: 128,
     },
   ];
 
   return (
-    <PageDashboardCard id={id} title={title} helpTitle={title} help={help} width="lg" height="md">
+    <PageDashboardCard
+      id={id}
+      title={title}
+      helpTitle={title}
+      help={help}
+      width="md"
+      height="md"
+      disableBodyPadding
+    >
       {loading && <PageLoadingTable rows={5}></PageLoadingTable>}
       {!loading && (
         <PageTable
@@ -51,10 +82,11 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
           perPage={perPage}
           setPage={setPage}
           setPerPage={setPerPage}
-          emptyStateIcon={PlusCircleIcon}
-          emptyStateTitle={emptyStateTitle}
-          emptyStateDescription={t('There is currently no data available.')}
           disableLastRowBorder
+          clearAllFilters={clearAllFilters}
+          filterState={filterState}
+          emptyStateDescription={emptyStateDescription}
+          emptyStateTitle={emptyStateTitle}
         ></PageTable>
       )}
     </PageDashboardCard>

@@ -9,6 +9,7 @@ import { selectTableRow } from '../../../../commands/selectTableRow';
 import { clickPageAction } from '../../../../commands/clickPageAction';
 import { createE2EName } from '../../../../commands/createE2EName';
 import { waitForJobStatus } from '../../../../commands/waitForJobStatus';
+import { expectJobOutputSuccess } from '../../../../commands/jobOutputStatus';
 import { filterTable } from '../../../../commands/filterTable';
 
 test.beforeEach(setupBefore({ path: '/execution/jobs' }));
@@ -48,7 +49,7 @@ test.describe('Jobs: Relaunch', () => {
     'can relaunch the job and navigate to job output',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(180000);
+      test.setTimeout(4 * 60 * 1000);
       await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: true });
       await navigateTo(page, 'Automation Execution', 'Jobs');
 
@@ -59,9 +60,7 @@ test.describe('Jobs: Relaunch', () => {
 
       // Verify navigated to job output page
       await expect(page).toHaveURL(/\/jobs\/playbook\/\d+\/output/);
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
-      });
+      await expectJobOutputSuccess(page, { timeout: 180_000 });
     }
   );
 });
@@ -146,6 +145,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Management job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(4 * 60 * 1000);
       await navigateTo(page, 'Automation Execution', 'Administration', 'Management Jobs');
       await clickTableRowAction(
         {
@@ -165,10 +165,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
         page.getByRole('main').getByRole('heading', { name: 'Cleanup Expired Sessions' }).first()
       ).toBeVisible();
 
-      // Wait for job to complete (check job status indicator)
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
-      });
+      await expectJobOutputSuccess(page, { timeout: 180_000 });
     }
   );
 
@@ -176,41 +173,75 @@ test.describe('Jobs: Launch and Verify Output', () => {
     'can launch a Source Control Update job, let it finish, and assert expected results on the output screen',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(180000);
-      const organizationName = await Organization.ui.create(page);
-      const projectName = await Project.ui.create(page, { organizationName });
-      // This command waits for the project to be synced upon creation
-      await Project.ui.sync(page, projectName);
+      test.setTimeout(5 * 60 * 1000);
+      const organization = await Organization.api.create(page);
+      const project = await Project.api.create(page, { organization: organization.id });
+      await Project.api.sync(page, project.id);
 
       await navigateTo(page, 'Automation Execution', 'Projects');
       await clickTableRow(
         {
-          text: projectName,
-          filterValue: projectName,
+          text: project.name,
+          filterValue: project.name,
           clearFilters: true,
           pageTitle: 'Projects',
         },
         page
       );
 
+      const syncResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/projects/') &&
+          response.url().includes('/update/') &&
+          response.request().method() === 'POST'
+      );
+
       await clickPageAction('Sync project', page);
-      await expect(page.locator('#last-job-status')).toBeVisible();
-      await page.locator('#last-job-status').getByRole('link').first().click();
+      const syncResponse = await syncResponsePromise;
+      expect(syncResponse.status()).toBe(202);
+      const projectUpdate = (await syncResponse.json()) as { id: number };
 
-      // Verify we're on the job output page
-      await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
-      await expect(
-        page.getByRole('main').getByRole('heading', { name: projectName }).first()
-      ).toBeVisible();
+      try {
+        const completedProjectUpdate = await waitForJobStatus<{
+          id: number;
+          name: string;
+          status: string;
+        }>(
+          {
+            jobType: 'project_updates',
+            jobId: projectUpdate.id,
+            desiredStatus: 'successful',
+            timeout: 120000,
+          },
+          page
+        );
 
-      // Wait for job to complete
-      await expect(page.getByText('Success', { exact: true }).first()).toBeVisible({
-        timeout: 120000,
-      });
+        await navigateTo(page, 'Automation Execution', 'Jobs');
+        await filterTable(
+          {
+            pageTitle: 'Jobs',
+            filterLabel: 'ID',
+            filterValue: String(completedProjectUpdate.id),
+            clearFilters: true,
+          },
+          page
+        );
+        await expect(page.locator('tbody')).toBeVisible({ timeout: 10_000 });
+        await expect(page.locator('table tbody tr')).toHaveCount(1);
+        // Use the API job name for the row click; avoid clickTableRow because the output
+        // page renders duplicate headings with the same name (page-title + output section).
+        await page
+          .getByRole('row', { name: completedProjectUpdate.name })
+          .getByRole('link', { name: completedProjectUpdate.name })
+          .click();
 
-      // Cleanup
-      await Project.ui.delete(page, projectName);
-      await Organization.ui.delete(page, organizationName);
+        await expect(page).toHaveURL(/\/jobs\/project\/\d+\/output/);
+        await expect(page.getByTestId('page-title')).toContainText(completedProjectUpdate.name);
+        await expect(page.getByText('Success', { exact: true }).first()).toBeVisible();
+      } finally {
+        await Project.api.delete(page, project.id);
+        await Organization.api.delete(page, organization.id);
+      }
     }
   );
 

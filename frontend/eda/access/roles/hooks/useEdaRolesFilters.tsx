@@ -10,7 +10,7 @@ export function useEdaRolesFilters() {
         key: 'name',
         label: t('Name'),
         type: ToolbarFilterType.MultiText,
-        query: 'name__contains',
+        query: 'name__icontains',
         comparison: 'contains',
       },
     ],

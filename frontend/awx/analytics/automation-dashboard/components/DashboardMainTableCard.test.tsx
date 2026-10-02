@@ -4,10 +4,13 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { ReactNode } from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
+import {
+  IToolbarFilter,
+  PageAlertToasterProvider,
+  ToolbarFilterType,
+} from '@ansible/ansible-ui-framework';
 import { DashboardMainTableCard } from './DashboardMainTableCard';
 import type { IAutomationDashboardView, IDashboardDetails, IJobTemplate } from '../types';
 
@@ -46,10 +49,13 @@ const mockItem: IJobTemplate = {
   num_hosts: 3,
   time_taken_manually_execute_minutes: 30,
   time_taken_create_automation_minutes: 60,
-  elapsed: '00:30:00',
+  elapsed: '1800',
+  elapsed_str: '00:30:00',
   automated_costs: 100,
   manual_costs: 200,
   savings: 100,
+  time_savings: 3600,
+  time_savings_str: '01:00:00',
 };
 
 const mockDetails: IDashboardDetails = {
@@ -71,6 +77,21 @@ const mockDetails: IDashboardDetails = {
 
 const mockRefresh = vi.fn();
 
+const mockToolbarFilters: IToolbarFilter[] = [
+  {
+    type: ToolbarFilterType.DateRange,
+    key: 'period',
+    label: 'Period',
+    query: 'period',
+    options: [
+      { label: 'Last 7 days', value: 'last_7_days' },
+      { label: 'Custom', value: 'custom', isCustom: true },
+    ],
+    placeholder: 'Filter by period',
+    isRequired: true,
+  },
+];
+
 type MainTableView = IAutomationDashboardView['mainTableView'];
 
 function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableView {
@@ -83,26 +104,15 @@ function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableVi
     setSort: vi.fn(),
     sortDirection: 'asc',
     setSortDirection: vi.fn(),
-    filterState: {},
+    filterState: { period: ['last_7_days'] },
     setFilterState: vi.fn(),
     clearAllFilters: vi.fn(),
-    selectedItems: [],
-    selectItem: vi.fn(),
-    selectItems: vi.fn(),
-    unselectItem: vi.fn(),
-    unselectItems: vi.fn(),
-    isSelected: vi.fn(() => false),
-    selectAll: vi.fn(),
-    unselectAll: vi.fn(),
-    allSelected: false,
-    keyFn: (item: IJobTemplate) => item.id,
     itemCount: 1,
     pageItems: [mockItem],
     refresh: vi.fn(),
-    selectItemsAndRefresh: vi.fn(),
-    unselectItemsAndRefresh: vi.fn(),
     limitFiltersToOneOrOperation: true,
     updateItem: vi.fn(),
+    error: undefined,
   };
   return { ...base, ...overrides } as MainTableView;
 }
@@ -110,9 +120,12 @@ function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableVi
 function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomationDashboardView {
   return {
     mainTableView: buildMainTableView(),
+    toolbarFilters: mockToolbarFilters,
     details: mockDetails,
     detailsError: undefined,
     detailsLoading: false,
+    templateIdsError: undefined,
+    isLoadingTemplateIds: false,
     costState: {
       id: 1,
       monthly_subscription_cost: 100,
@@ -123,7 +136,8 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     loading: false,
     refresh: mockRefresh,
     exportCsv: vi.fn(),
-    exportPdf: vi.fn(),
+    isFilterStateDefault: true,
+    registerClearCallback: vi.fn(),
     ...overrides,
   };
 }
@@ -131,11 +145,7 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
 function Wrapper({ children }: { children: ReactNode }) {
   return (
     <MemoryRouter>
-      <SWRConfig
-        value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}
-      >
-        <PageAlertToasterProvider>{children}</PageAlertToasterProvider>
-      </SWRConfig>
+      <PageAlertToasterProvider>{children}</PageAlertToasterProvider>
     </MemoryRouter>
   );
 }
@@ -192,6 +202,18 @@ describe('DashboardMainTableCard', () => {
     ).toBeInTheDocument();
   });
 
+  test('should render parent title in the card header at xl size', () => {
+    renderCard();
+    expect(screen.getByText('Cost calculation')).toHaveClass('pf-m-xl');
+  });
+
+  test('should render nested KPI titles as description list labels rather than card headers', () => {
+    renderCard();
+    // Only the parent card renders a PageDashboardCard header title.
+    expect(screen.getAllByTestId('card-title')).toHaveLength(1);
+    expect(screen.getByText('Cost of manual automation')).not.toHaveClass('pf-m-xl');
+  });
+
   test('should display 0 in value cards when details has zero values', () => {
     renderCard(
       buildProps({
@@ -217,9 +239,24 @@ describe('DashboardMainTableCard', () => {
       within(screen.getByTestId('cost-automated-execution-card')).getByText('-')
     ).toBeInTheDocument();
     expect(within(screen.getByTestId('total-savings-card')).getByText('-')).toBeInTheDocument();
+    expect(within(screen.getByTestId('total-hours-saved-card')).getByText('-')).toBeInTheDocument();
+  });
+
+  test('should not render "h" suffix when total_time_saving is 0', () => {
+    renderCard(
+      buildProps({
+        details: {
+          ...mockDetails,
+          total_time_saving: 0,
+        },
+      })
+    );
     expect(
-      within(screen.getByTestId('total-hours-saved-card')).getByText(/- h/)
+      within(screen.getByTestId('total-hours-saved-card')).getByText('0', { exact: true })
     ).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId('total-hours-saved-card')).queryByText(/0\s*h/)
+    ).not.toBeInTheDocument();
   });
 
   test('should show table columns when loading is false', () => {
@@ -240,9 +277,10 @@ describe('DashboardMainTableCard', () => {
       screen.getByRole('columnheader', { name: /Time taken to manually execute/i })
     ).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /Running time/i })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: /Time savings/i })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /Automated cost/i })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: /Manual cost/i })).toBeInTheDocument();
-    expect(screen.getByRole('columnheader', { name: /Savings/i })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: /^Savings$/i })).toBeInTheDocument();
   });
 
   test('should show "time taken to create automation" column when include_template_creation_time_in_costs is true', () => {
@@ -310,6 +348,25 @@ describe('DashboardMainTableCard', () => {
     expect(screen.getByText('00:30:00')).toBeInTheDocument();
   });
 
+  test('should render elapsed_str (not raw elapsed) in the Running time column', () => {
+    renderCard();
+    expect(screen.getByText('00:30:00')).toBeInTheDocument();
+    expect(screen.queryByText('1800')).not.toBeInTheDocument();
+  });
+
+  test('should render time_savings_str (not raw time_savings) in the Time savings column', () => {
+    renderCard();
+    expect(screen.getByText('01:00:00')).toBeInTheDocument();
+    expect(screen.queryByText('3600')).not.toBeInTheDocument();
+  });
+
+  test('should format automated_costs, manual_costs and savings as currency', () => {
+    renderCard();
+    // automated_costs (100) and savings (100) both render as $100.00
+    expect(screen.getAllByText('$100.00')).toHaveLength(2);
+    expect(screen.getByText('$200.00')).toBeInTheDocument();
+  });
+
   test('should render input for time_taken_manually_execute_minutes column', () => {
     renderCard();
     expect(screen.getByTestId('time_taken_manually_execute_minutes_1')).toBeInTheDocument();
@@ -354,32 +411,26 @@ describe('DashboardMainTableCard', () => {
     expect(screen.getByText('60')).toBeInTheDocument();
   });
 
-  // --- Input readOnly ---
-
-  test('should disable table inputs when loading is true', () => {
-    renderCard(
-      buildProps({ loading: true, mainTableView: buildMainTableView({ pageItems: [mockItem] }) })
-    );
-    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
-    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-  });
+  // --- Toolbar row ---
 
   test('should disable export CSV button when loading is true', () => {
     renderCard(buildProps({ loading: true }));
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
   });
 
-  // TODO: Update to `not.toBeDisabled()` once `|| true` is removed from controlsDisabled in DashboardTableToolbarRow.
-  test('should disable export CSV button while BE is not yet implemented', () => {
+  test('should enable export CSV button for superuser with data', () => {
     renderCard();
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('export-as-csv')).not.toBeDisabled();
   });
-
-  // --- Toolbar row ---
 
   test('should disable export CSV when itemCount is 0', () => {
     renderCard(buildProps({ mainTableView: buildMainTableView({ itemCount: 0, pageItems: [] }) }));
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
+  });
+
+  test('should disable export CSV when a required toolbar filter is missing a value', () => {
+    renderCard(buildProps({ mainTableView: buildMainTableView({ filterState: {} }) }));
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
   });
 
   test('should disable export CSV when mainTableView itemCount is undefined', () => {
@@ -388,23 +439,57 @@ describe('DashboardMainTableCard', () => {
         mainTableView: buildMainTableView({ itemCount: undefined as unknown as number }),
       })
     );
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
+    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
   });
 
-  // TODO: Re-enable once `|| true` is removed from controlsDisabled in DashboardTableToolbarRow.
-  test.skip('should call onExportCsv when export button is clicked', async () => {
+  test('should call exportCsv with reportType when dropdown option is selected', async () => {
     const user = userEvent.setup();
-    const exportCsv = vi.fn();
+    const exportCsv = vi.fn().mockResolvedValue(undefined);
     renderCard(buildProps({ exportCsv }));
-    await user.click(screen.getByTestId('btn-export-csv'));
-    expect(exportCsv).toHaveBeenCalled();
+
+    await user.click(screen.getByTestId('export-as-csv'));
+    await user.click(screen.getByRole('menuitem', { name: 'Summary' }));
+
+    await waitFor(() => expect(exportCsv).toHaveBeenCalledWith('summary'));
   });
 
   // --- Empty state ---
 
   test('should render empty state when pageItems is empty', () => {
     renderCard(buildProps({ mainTableView: buildMainTableView({ itemCount: 0, pageItems: [] }) }));
-    expect(screen.getByText('No data')).toBeInTheDocument();
+    expect(screen.getByText('No automation data yet')).toBeInTheDocument();
+  });
+
+  test('should show default empty state when isFilterStateDefault is true, even if a filter is set', () => {
+    renderCard(
+      buildProps({
+        isFilterStateDefault: true,
+        mainTableView: buildMainTableView({
+          itemCount: 0,
+          pageItems: [],
+          filterState: { template_name: ['Test'] },
+        }),
+      })
+    );
+    expect(screen.getByText('No automation data yet')).toBeInTheDocument();
+    expect(screen.queryByText('No results found')).not.toBeInTheDocument();
+  });
+
+  test('should show filtered no-results state instead of default empty state when isFilterStateDefault is false', () => {
+    const clearAllFilters = vi.fn();
+    renderCard(
+      buildProps({
+        isFilterStateDefault: false,
+        mainTableView: buildMainTableView({
+          itemCount: 0,
+          pageItems: [],
+          filterState: { template_name: ['Test'] },
+          clearAllFilters,
+        }),
+      })
+    );
+    expect(screen.queryByText('No automation data yet')).not.toBeInTheDocument();
+    expect(screen.getByText('No results found')).toBeInTheDocument();
   });
 
   // --- onTableInputChange: success ---

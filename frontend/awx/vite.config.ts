@@ -2,11 +2,13 @@
 /* eslint-disable no-restricted-exports */
 /* eslint-disable no-console */
 import react from '@vitejs/plugin-react';
-import { defineConfig, PluginOption } from 'vite';
+import { type PluginOption } from 'vite';
+import { defineConfig } from 'vitest/config';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
+import { getVitestAliases } from '../../framework/vitest.shared';
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
@@ -32,8 +34,12 @@ export default defineConfig({
     svgr(),
     monacoEditorPluginDefault({
       publicPath: '/',
-      languageWorkers: ['json', 'editorWorkerService'],
-      customWorkers: [{ label: 'yaml', entry: 'monaco-yaml' }],
+      languageWorkers: [],
+      customWorkers: [
+        { label: 'editorWorkerService', entry: 'monaco-editor/editor/editor.worker' },
+        { label: 'json', entry: 'monaco-editor/language/json/json.worker' },
+        { label: 'yaml', entry: 'monaco-yaml' },
+      ],
     }),
     viteStaticCopy({ targets: [{ src: '../../locales', dest: '' }] }) as PluginOption,
     compression(),
@@ -82,12 +88,11 @@ export default defineConfig({
   },
   test: {
     coverage: {
-      all: true,
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**'],
+      exclude: ['node_modules/**', '**/vitest.*.ts'],
     },
     css: !process.env.CI,
     environment: 'happy-dom',
@@ -102,11 +107,6 @@ export default defineConfig({
       },
     },
     // found at: https://github.com/vitest-dev/vitest/discussions/1806
-    alias: [
-      {
-        find: /^monaco-editor$/,
-        replacement: __dirname + '/../../node_modules/monaco-editor/esm/vs/editor/editor.api',
-      },
-    ],
+    alias: getVitestAliases(),
   },
 });

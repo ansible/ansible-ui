@@ -390,7 +390,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
       for (const descriptionColumn of descriptionColumns) {
         if ('value' in descriptionColumn) {
           expandedRowFunctions.push((item) => {
-            const value = descriptionColumn.value?.(item);
+            const value = descriptionColumn.value?.(item) as ReactNode;
             if (value) {
               return <div key={descriptionColumn.id ?? descriptionColumn.header}>{value}</div>;
             }
@@ -485,6 +485,10 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
           isStickyHeader
           style={{
             borderCollapse: 'separate',
+            minHeight: 0,
+            // workaround Safari render bug
+            // https://github.com/ansible/ansible-ui/pull/3541#issuecomment-5736509183
+            transform: 'translateZ(0)',
           }}
         >
           <TableHead
@@ -496,7 +500,7 @@ function PageTableView<T extends object>(props: PageTableProps<T>) {
             expandColumnWidth={expandColumnWidth}
             setExpandColumnWidth={setExpandColumnWidth}
           />
-          <Tbody>
+          <Tbody style={{ transform: 'translateZ(0)' }}>
             {pageItems.map((item, rowIndex) => (
               <TableRow<T>
                 key={keyFn ? keyFn(item) : rowIndex}

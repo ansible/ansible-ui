@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "rules": [
+      {
+        "matcher": "mcp__currents__*",
+        "mode": "allow",
+        "patterns": ["*"]
+      },
+      {
+        "matcher": "mcp__atlassian__*",
+        "mode": "allow",
+        "patterns": ["*"]
+      }
+    ]
+  }
+}

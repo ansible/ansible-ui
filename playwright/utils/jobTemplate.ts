@@ -6,6 +6,7 @@ import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
 import { filterTable } from '../commands/filterTable';
 import { navigateTo } from '../commands/navigateTo';
+import { expectJobOutputSuccess } from '../commands/jobOutputStatus';
 import { waitForJobStatus } from '../commands/waitForJobStatus';
 
 export interface CreateJobTemplateOptions {
@@ -47,6 +48,24 @@ export interface CreateJobTemplateAPIOptions {
   labels?: string[];
 }
 
+async function lookupDemoProjectId(page: Page): Promise<number> {
+  const result = await awxAPI.get<{ results: { id: number; name: string }[] }>(page, 'projects/', {
+    params: { name: 'Demo Project' },
+  });
+  const match = result?.results?.find((p) => p.name === 'Demo Project');
+  if (!match) {
+    throw new Error('Demo Project not found on this server — specify a projectId explicitly');
+  }
+  return match.id;
+}
+
+async function selectTypeaheadOption(page: Page, name: string): Promise<void> {
+  // Accessible name includes the option description (e.g. API-created resources).
+  const option = page.getByRole('option', { name });
+  await expect(option).toBeVisible({ timeout: 15_000 });
+  await option.click();
+}
+
 export const JobTemplate = {
   api: {
     create: async (
@@ -55,12 +74,13 @@ export const JobTemplate = {
     ): Promise<JobTemplateType> => {
       const name = options.name ?? `e2e-job-template-${Date.now()}`;
       const playbook = options.playbook ?? 'hello_world.yml';
+      const projectId = options.projectId ?? (await lookupDemoProjectId(page));
 
       const jobTemplate = await awxAPI.post<JobTemplateType>(page, 'job_templates/', {
         name,
         job_type: 'run',
         inventory: options.inventoryId ?? 1,
-        project: options.projectId ?? 6,
+        project: projectId,
         playbook,
         ask_inventory_on_launch: options.ask_inventory_on_launch ?? false,
         ask_credential_on_launch: options.ask_credential_on_launch ?? false,
@@ -208,7 +228,7 @@ export const JobTemplate = {
       } else {
         await page.getByRole('button', { name: 'Inventory' }).click();
         await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
-        await page.getByRole('option', { name: inventoryName, exact: true }).click();
+        await selectTypeaheadOption(page, inventoryName);
       }
       const projectName = options.projectName ?? 'Demo Project';
       await page.locator('#project-select').click();
@@ -299,7 +319,7 @@ export const JobTemplate = {
         });
         await page.getByRole('button', { name: 'Inventory' }).click();
         await page.getByRole('textbox', { name: 'Search input' }).fill(inventoryName);
-        await page.getByRole('option', { name: inventoryName, exact: true }).click();
+        await selectTypeaheadOption(page, inventoryName);
         await page.getByLabel('Execution environment').click();
         await page.getByRole('option', { name: 'Control Plane Execution' }).click();
         await page.getByLabel('Instance groups').click();
@@ -324,7 +344,7 @@ export const JobTemplate = {
       }
       await expect(page.getByRole('main')).toContainText('Output');
       if (!options?.doNotWait) {
-        await expect(page.getByText('Success', { exact: true })).toBeVisible({ timeout: 120000 });
+        await expectJobOutputSuccess(page);
       }
       await page.getByRole('tab', { name: 'Details' }).click();
       await expect(page.locator('#name')).toContainText(jobTemplateName);

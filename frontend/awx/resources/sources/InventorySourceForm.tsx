@@ -65,7 +65,7 @@ export function CreateInventorySource() {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
       source_path:
-        values?.source_path?.name === '/ (project root)' ? '' : values?.source_path?.name,
+        values?.source_path?.name === '. (project root)' ? '' : values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
     };
@@ -110,6 +110,7 @@ export function CreateInventorySource() {
         submitText={t('Create source')}
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
+        optionsUrl={awxAPI`/inventory_sources/`}
         defaultValue={{
           name: '',
           description: '',
@@ -147,7 +148,7 @@ export function EditInventorySource() {
         ? { id: inventorySource?.summary_fields?.source_project?.id }
         : undefined,
       source_path: {
-        name: inventorySource?.source_path ? inventorySource?.source_path : '/ (project root)',
+        name: inventorySource?.source_path ? inventorySource?.source_path : '. (project root)',
       },
       verbosity: inventorySource?.verbosity,
       host_filter: inventorySource?.host_filter,
@@ -166,7 +167,7 @@ export function EditInventorySource() {
       ...values,
       execution_environment: values?.execution_environment ? values.execution_environment : null,
       source_path:
-        values?.source_path?.name === '/ (project root)' ? '' : values?.source_path?.name,
+        values?.source_path?.name === '. (project root)' ? '' : values?.source_path?.name,
       inventory: parseInt(params.id ?? ''),
       source_project: values?.source_project?.id,
     };
@@ -219,6 +220,7 @@ export function EditInventorySource() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={defaultValue}
+        optionsUrl={awxAPI`/inventory_sources/`}
       >
         <InventorySourceInputs />
       </AwxPageForm>

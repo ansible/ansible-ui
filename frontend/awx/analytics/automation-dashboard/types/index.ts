@@ -1,6 +1,10 @@
-import { Dispatch, SetStateAction } from 'react';
-import { IToolbarFilter } from '@ansible/ansible-ui-framework';
-import { IAwxView } from '../../../common/useAwxView';
+import { ComponentClass, Dispatch, SetStateAction } from 'react';
+import {
+  IFilterState,
+  IToolbarFilter,
+  PageDashboardCardWidth,
+} from '@ansible/ansible-ui-framework';
+import { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
 
 // ─── Dashboard Data Models (API shapes) ──────────────────────────────────────
 
@@ -28,9 +32,12 @@ export interface IJobTemplate {
   time_taken_manually_execute_minutes: number;
   time_taken_create_automation_minutes: number;
   elapsed: string;
+  elapsed_str: string;
   automated_costs: number;
   manual_costs: number;
   savings: number;
+  time_savings: number;
+  time_savings_str: string;
 }
 
 export interface ISubscriptionCosts {
@@ -72,11 +79,12 @@ export interface IAutomationDashboardCollectionStatus {
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────────
 
-export interface AutomationDashboardToolbarFiltersProps {
-  filterableFields: string[];
-  /** Additional filters appended after the dynamic filters. */
-  additionalFilters?: IToolbarFilter[];
-}
+export interface AutomationDashboardToolbarFiltersProps
+  extends Readonly<{
+    filterableFields: string[];
+    /** Additional filters appended after the dynamic filters. */
+    additionalFilters?: IToolbarFilter[];
+  }> {}
 
 export interface AsyncKeyOptions {
   /** Display label for the filter (also used as an i18n key). */
@@ -97,27 +105,45 @@ type DashboardCommonCardProps = {
   help?: string;
   error?: Error;
   errorStateTitle: string;
+  width?: PageDashboardCardWidth;
 };
 
-export type DashboardValueCardProps = DashboardCommonCardProps & {
+type DashboardCardValueProps = {
   value: string | number;
   valueSuffix?: string;
-  formatAsCurrency?: boolean;
-  linkText?: string;
-  to?: string;
 };
+
+export type DashboardValueCardProps = Readonly<
+  DashboardCommonCardProps &
+    DashboardCardValueProps & {
+      linkText?: string;
+      to?: string;
+    }
+>;
+
+export type DashboardDetailsCardProps = Readonly<
+  DashboardCommonCardProps &
+    DashboardCardValueProps & {
+      formatAsCurrency?: boolean;
+    }
+>;
 
 export type DashboardTableCardProps = DashboardCommonCardProps & {
   firstColumnHeader: string;
   items?: IDashboardTableItem[];
-  emptyStateTitle: string;
   loading: boolean;
+  clearAllFilters: () => void;
+  filterState: IFilterState | undefined;
+  emptyStateTitle?: string;
+  emptyStateDescription?: string;
 };
 
 export type DashboardChartCardProps = DashboardCommonCardProps & {
   variant: 'barChart' | 'lineChart';
   summaryValue?: number;
   data: IDashboardChart;
+  /** Label shown in the chart legend for the data series. Defaults to a generic "Count" label. */
+  legendLabel?: string;
 };
 
 export type DashboardTableInputFieldProps = {
@@ -135,25 +161,40 @@ export type DashboardTableInputFieldProps = {
 };
 
 export type DashboardTableToolbarProps = {
-  isLoading: boolean;
-  itemCount: number | undefined;
   costState: ISubscriptionCosts | undefined;
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>> | undefined;
   refresh: () => Promise<void>;
-  onExportCsv?: () => void;
 };
 
 // ─── View Type ────────────────────────────────────────────────────────────────
 
 export type IAutomationDashboardView = {
-  mainTableView: IAwxView<IJobTemplate>;
+  mainTableView: IAutomationDashboardBaseView<IJobTemplate>;
   details: IDashboardDetails | undefined;
   detailsError: Error | undefined;
   detailsLoading: boolean;
+  templateIdsError: Error | undefined;
+  isLoadingTemplateIds: boolean;
   costState: ISubscriptionCosts | undefined;
   setCostState: Dispatch<SetStateAction<ISubscriptionCosts | undefined>>;
   loading: boolean;
   refresh: () => Promise<void>;
-  exportCsv: () => Promise<void>;
-  exportPdf: () => Promise<void>;
+  exportCsv: (reportType: ReportType) => Promise<void>;
+  isFilterStateDefault: boolean;
+  registerClearCallback: (callback: () => void) => void;
+  toolbarFilters?: IToolbarFilter[];
+  topCardsWidth?: PageDashboardCardWidth;
+};
+
+// ─── Export Types ─────────────────────────────────────────────────────────────
+
+export type ReportType = 'summary' | 'roi' | 'trends';
+
+// ─── Export Button Type ───────────────────────────────────────────────────────────
+export type IAutomationDashboardExportButton = {
+  exportType: 'csv' | 'html';
+  title: string;
+  icon: ComponentClass;
+  isDisabled?: boolean;
+  onExport: (reportType: ReportType) => Promise<void>;
 };

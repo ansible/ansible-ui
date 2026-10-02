@@ -22,6 +22,7 @@ const mockInstanceGroup = {
 };
 
 const server = setupServer(
+  http.options(awxAPI`/instance_groups/`, () => HttpResponse.json({ actions: { POST: {} } })),
   http.get(awxAPI`/instance_groups/1/`, () => HttpResponse.json(mockInstanceGroup)),
   http.post(awxAPI`/instance_groups/`, async ({ request }) => {
     const body = (await request.json()) as Record<string, unknown>;

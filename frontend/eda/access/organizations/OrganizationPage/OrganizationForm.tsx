@@ -7,7 +7,7 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
@@ -59,8 +59,7 @@ export function EditOrganization() {
 
   const { data: organization } = useSWR<EdaOrganization>(
     edaAPI`/organizations/${id.toString()}/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
 
   useInvalidateCacheOnUnmount();

@@ -148,6 +148,8 @@ export interface PromptFormValues {
   verbosity: 0 | 1 | 2 | 3 | 4 | 5;
   organization?: number | null;
   requiredCredentialTypes?: RequiredCredentialType[];
+  /** Stored by useGetInitialValues alongside prompt values; indicates the original template had prompts. */
+  launch_config?: LaunchConfiguration;
   original?: {
     credentials?:
       | {
@@ -160,6 +162,9 @@ export interface PromptFormValues {
       | Credential[];
     instance_groups?: { id: number; name: string }[];
     labels?: { name: string; id: number }[];
+    /** True when the user changed the job template during editing, used to clear
+     *  prompt fields (skip_tags, job_tags) that may not be valid for the new template. */
+    isTemplateChange?: boolean;
     launch_config?: LaunchConfiguration;
   };
 }

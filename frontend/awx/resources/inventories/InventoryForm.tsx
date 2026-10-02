@@ -7,6 +7,7 @@ import {
   PageLayout,
   useGetPageUrl,
   usePageNavigate,
+  getValueToObjectParseError,
   valueToObject,
 } from '@ansible/ansible-ui-framework';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
@@ -17,6 +18,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { postRequest, requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useAwxGetAllPages } from '../../common/useAwxGetAllPages';
 import { TFunction } from 'i18next';
 import { Trans, useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -150,6 +152,11 @@ export function CreateInventory(props: { inventoryKind: '' | 'constructed' | 'sm
         disableSubmitOnEnter={true}
         onCancel={() => pageNavigate(AwxRoute.Inventories)}
         defaultValue={defaultValue}
+        optionsUrl={
+          inventoryKind === 'constructed'
+            ? awxAPI`/constructed_inventories/`
+            : awxAPI`/inventories/`
+        }
       >
         <InventoryInputs inventoryKind={inventoryKind} />
       </AwxPageForm>
@@ -177,9 +184,11 @@ export function EditInventory() {
     params.inventory_type === 'constructed_inventory'
       ? awxAPI`/inventories/${id.toString()}/input_inventories/`
       : '';
-  const inputInventoriesRequest = useGet<AwxItemsResponse<InputInventory>>(inputInventoriesUrl);
-
-  const inputInventoriesResponse = inputInventoriesRequest.data;
+  const {
+    results: inputInventoriesResults,
+    error: inputInventoriesError,
+    isLoading: inputInventoriesLoading,
+  } = useAwxGetAllPages<InputInventory>(inputInventoriesUrl);
 
   // Fetch instance groups associated with the inventory
   const originalInstanceGroups = igResponse?.results;
@@ -215,11 +224,7 @@ export function EditInventory() {
       data.inventories.length > 0
     ) {
       promises.push(
-        submitInputInventories(
-          data,
-          inputInventories || [],
-          inputInventoriesResponse?.results || []
-        )
+        submitInputInventories(data, inputInventories || [], inputInventoriesResults || [])
       );
     }
 
@@ -232,14 +237,11 @@ export function EditInventory() {
 
   const getPageUrl = useGetPageUrl();
 
-  const isLoaded =
-    inventory &&
-    igResponse &&
-    (params.inventory_type === 'constructed_inventory' ? inputInventoriesResponse : true)
-      ? true
-      : false;
+  const inputInventoriesReady =
+    params.inventory_type === 'constructed_inventory' ? !inputInventoriesLoading : true;
+  const isLoaded = !!(inventory && igResponse && inputInventoriesReady);
 
-  const isError = inventoryRequest.error || iGroupsRequest.error || inputInventoriesRequest.error;
+  const isError = inventoryRequest.error || iGroupsRequest.error || inputInventoriesError;
 
   if (!isLoaded || !inventory || isError) {
     return (
@@ -253,7 +255,7 @@ export function EditInventory() {
         {!isLoaded && !isError && <LoadingPage></LoadingPage>}
         {inventoryRequest.error && <AwxError error={inventoryRequest.error} />}
         {iGroupsRequest.error && <AwxError error={iGroupsRequest.error} />}
-        {inputInventoriesRequest.error && <AwxError error={inputInventoriesRequest.error} />}
+        {inputInventoriesError && <AwxError error={inputInventoriesError} />}
       </PageLayout>
     );
   }
@@ -265,7 +267,7 @@ export function EditInventory() {
         ? {
             ...inventory,
             instanceGroups: originalInstanceGroups,
-            inventories: inputInventoriesResponse?.results as Inventory[],
+            inventories: (inputInventoriesResults ?? []) as Inventory[],
           }
         : {
             ...inventory,
@@ -300,6 +302,11 @@ export function EditInventory() {
           })
         }
         defaultValue={defaultValue}
+        optionsUrl={
+          inventory.kind === 'constructed'
+            ? awxAPI`/constructed_inventories/`
+            : awxAPI`/inventories/`
+        }
       >
         <InventoryInputs inventoryKind={inventory.kind} />
       </AwxPageForm>
@@ -456,6 +463,10 @@ function InventoryInputs(props: { inventoryKind: string }) {
             if (inventoryKind !== 'constructed') {
               return undefined;
             }
+            const parseError = getValueToObjectParseError(item);
+            if (parseError) {
+              return parseError;
+            }
             const obj = valueToObject(item) as { plugin?: unknown; __preserveYamlString?: string };
             if (obj.__preserveYamlString) {
               // check if yaml string has plugin parameter
@@ -543,7 +554,7 @@ async function submitInstanceGroups(
   return results;
 }
 
-async function submitInputInventories(
+export async function submitInputInventories(
   inventory: Inventory,
   currentInputInventories: InputInventory[],
   originalInputInventories: InputInventory[]
@@ -564,7 +575,7 @@ async function submitInputInventories(
 
 type InputInventory = { id: number; url: string; type: string; name: string };
 
-async function loadInputInventories(
+export async function loadInputInventories(
   inventories: Inventory[],
   t: TFunction<'translation', undefined>
 ) {

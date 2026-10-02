@@ -1,7 +1,19 @@
-import { IFilterState, PageToolbar, PageToolbarProps } from '@ansible/ansible-ui-framework';
+import {
+  IFilterState,
+  PageActions,
+  PageToolbarFilters,
+  PageToolbarProps,
+  useBreakpoint,
+} from '@ansible/ansible-ui-framework';
 import { PageAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSingleSelect';
-import { Flex, FlexItem } from '@patternfly/react-core';
-import { useCallback } from 'react';
+import {
+  Toolbar,
+  ToolbarContent,
+  ToolbarGroup,
+  ToolbarItem,
+  yyyyMMddFormat,
+} from '@patternfly/react-core';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAutomationDashboardToolbarActions } from '../common/useAutomationDashboardToolbarActions';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
@@ -11,6 +23,14 @@ import { useFilterSetView } from '../views/useFilterSetView';
 const DEFAULT_FILTER_STATE: IFilterState = {
   period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
 };
+
+const CUSTOM_RANGE_DEFAULT_FROM_DAYS = 7;
+
+function getDefaultCustomFrom(): string {
+  const date = new Date();
+  date.setDate(date.getDate() - CUSTOM_RANGE_DEFAULT_FROM_DAYS);
+  return yyyyMMddFormat(date);
+}
 
 function parseFilterState(raw: string): IFilterState {
   try {
@@ -31,7 +51,13 @@ function parseFilterState(raw: string): IFilterState {
   return DEFAULT_FILTER_STATE;
 }
 
-export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
+export function DashboardToolbar(
+  props: Readonly<
+    PageToolbarProps<IJobTemplate> & {
+      registerClearCallback?: (callback: () => void) => void;
+    }
+  >
+) {
   const { t } = useTranslation();
   const {
     value,
@@ -44,7 +70,38 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
     removeFilterSet,
     upsertFilterSet,
   } = useFilterSetView();
-  const { setFilterState, filterState } = props;
+
+  const { setFilterState, filterState, registerClearCallback, clearAllFilters, toolbarFilters } =
+    props;
+
+  // Register callback to reset dropdown when clearAllFilters is called
+  useEffect(() => {
+    registerClearCallback?.(() => {
+      setValue(undefined);
+      setSelectedFilterSet(undefined);
+    });
+  }, [registerClearCallback, setValue, setSelectedFilterSet]);
+
+  // When the user switches the period filter to Custom with no dates yet, seed the
+  // start date to 7 days ago (matching "Last 7 days") instead of leaving it empty.
+  // Only fires on the transition into Custom, so manually clearing the start date
+  // afterwards isn't immediately overwritten.
+  const previousPeriodPresetRef = useRef<string | undefined>(filterState?.period?.[0]);
+  useEffect(() => {
+    const period = filterState?.period;
+    const currentPreset = period?.[0];
+    const enteringCustom =
+      currentPreset === AutomationDashboardDateRangeFilterPresets.custom &&
+      previousPeriodPresetRef.current !== AutomationDashboardDateRangeFilterPresets.custom;
+    previousPeriodPresetRef.current = currentPreset;
+
+    if (enteringCustom && period?.length === 1) {
+      setFilterState?.((prev) => ({
+        ...prev,
+        period: [AutomationDashboardDateRangeFilterPresets.custom, getDefaultCustomFrom()],
+      }));
+    }
+  }, [filterState?.period, setFilterState]);
 
   const applyFilterSet = useCallback(
     (filterSet: IDashboardFilterSet) => {
@@ -72,6 +129,7 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
 
   const toolbarActions = useAutomationDashboardToolbarActions({
     filterState,
+    toolbarFilters,
     selectedFilterSet,
     onDelete: onFilterSetDelete,
     onSave,
@@ -96,32 +154,59 @@ export function DashboardToolbar(props: PageToolbarProps<IJobTemplate>) {
     },
     [filterSets]
   );
+  const isMdOrLarger = useBreakpoint('md');
 
   return (
-    <Flex
-      alignItems={{ default: 'alignItemsFlexStart' }}
-      gap={{ default: 'gapSm' }}
-      style={{ marginLeft: 'var(--pf-t--global--spacer--lg)' }}
+    <Toolbar
+      ouiaId="page-toolbar"
+      data-testid="page-toolbar"
+      clearAllFilters={clearAllFilters}
+      className="page-table-toolbar"
+      style={{
+        paddingBottom: isMdOrLarger ? undefined : 8,
+        paddingTop: isMdOrLarger ? undefined : 8,
+      }}
+      inset={{
+        default: 'insetMd',
+        sm: 'insetMd',
+        md: 'insetMd',
+        lg: 'insetMd',
+        xl: 'insetLg',
+        '2xl': 'insetLg',
+      }}
     >
-      <FlexItem
-        style={{
-          minWidth: '180px',
-        }}
-      >
-        <PageAsyncSingleSelect
-          key={String(version)}
-          id={'filterset-select'}
-          placeholder={t('Select report')}
-          value={value}
-          queryLabel={queryLabel}
-          queryOptions={queryOptions}
-          onSelect={onSelect}
-          queryErrorText={t('Error loading report options')}
-        />
-      </FlexItem>
-      <FlexItem>
-        <PageToolbar {...props} toolbarActions={toolbarActions} />
-      </FlexItem>
-    </Flex>
+      <ToolbarContent>
+        <div
+          style={{
+            minWidth: '180px',
+          }}
+        >
+          <PageAsyncSingleSelect
+            key={String(version)}
+            id={'filterset-select'}
+            placeholder={t('Select report')}
+            value={value}
+            queryLabel={queryLabel}
+            queryOptions={queryOptions}
+            onSelect={onSelect}
+            queryErrorText={t('Error loading report options')}
+          />
+        </div>
+        {filterState && setFilterState && (
+          <PageToolbarFilters
+            toolbarFilters={props.toolbarFilters}
+            filterState={filterState}
+            setFilterState={setFilterState}
+          />
+        )}
+        <ToolbarGroup variant="action-group">
+          <PageActions
+            dropDownAriaLabel="toolbar actions"
+            actions={toolbarActions}
+            wrapper={ToolbarItem}
+          />
+        </ToolbarGroup>
+      </ToolbarContent>
+    </Toolbar>
   );
 }

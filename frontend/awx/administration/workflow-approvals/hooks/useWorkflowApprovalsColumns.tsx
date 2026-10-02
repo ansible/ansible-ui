@@ -14,6 +14,7 @@ import { WorkflowApprovalStatusCell } from '../components/WorkflowApprovalStatus
 export function useWorkflowApprovalsColumns(options?: {
   disableSort?: boolean;
   disableLinks?: boolean;
+  includeDescription?: boolean;
 }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -27,10 +28,20 @@ export function useWorkflowApprovalsColumns(options?: {
     ...options,
     to: nameTo,
   });
+  const descriptionColumn = useMemo<ITableColumn<WorkflowApproval>>(
+    () => ({
+      id: 'description',
+      header: t('Description'),
+      type: 'description',
+      value: (workflow_approval) => workflow_approval.description,
+    }),
+    [t]
+  );
   const tableColumns = useMemo<ITableColumn<WorkflowApproval>[]>(
     () => [
       idColumn,
       nameColumn,
+      ...(options?.includeDescription ? [descriptionColumn] : []),
       {
         header: t('Started'),
         cell: (workflow_approval: WorkflowApproval) =>
@@ -49,7 +60,7 @@ export function useWorkflowApprovalsColumns(options?: {
         defaultSortDirection: 'desc',
       },
     ],
-    [idColumn, nameColumn, t]
+    [descriptionColumn, idColumn, nameColumn, options?.includeDescription, t]
   );
   return tableColumns;
 }

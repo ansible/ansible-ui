@@ -349,6 +349,183 @@ test.describe('Schedules - Complex Workflows', () => {
   );
 });
 
+// AAP-77222: https://issues.redhat.com/browse/AAP-77222
+test.describe('Schedules UNTIL behavior', () => {
+  test(
+    'should preserve UNTIL time when creating hourly schedule with non-UTC timezone',
+    { tag: ['@not_mock'] },
+    async ({ page }) => {
+      test.setTimeout(120000);
+
+      const inventoryName = await Inventory.ui.create(page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
+
+      await navigateTo(page, 'Automation Execution', 'Schedules');
+      await page.getByRole('link', { name: 'Create schedule' }).click();
+      await expect(page.getByRole('heading', { name: 'Create schedule' })).toBeVisible();
+
+      const scheduleName = createE2EName();
+      await page.getByRole('button', { name: 'Select resource type' }).click();
+      await page.getByRole('option', { name: 'Job template', exact: true }).click();
+      await page.getByLabel('Job template *').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(jobTemplateName);
+      await page.getByRole('option', { name: jobTemplateName }).click();
+      await page.getByRole('textbox', { name: 'Schedule name' }).fill(scheduleName);
+
+      await page.getByLabel('Time zone').click();
+      await page.getByRole('option', { name: 'America/New_York', exact: true }).click();
+
+      await page.getByRole('button', { name: 'Next' }).click();
+
+      // Rules step: set Hourly frequency and Until ending type with a specific time
+      await page.getByRole('button', { name: 'Yearly' }).click();
+      await page.getByRole('option', { name: 'Hourly', exact: true }).click();
+
+      await page.getByRole('button', { name: 'Schedule ending type' }).click();
+      await page.waitForSelector('role=listbox');
+      await page.getByRole('option', { name: 'Until Stop on a specific date' }).click();
+
+      // Set until date to 3 days from now to ensure occurrences exist
+      const untilDate = new Date();
+      untilDate.setDate(untilDate.getDate() + 3);
+      const untilDateStr = untilDate.toISOString().split('T')[0];
+
+      await page.getByRole('textbox', { name: 'Date picker' }).fill(untilDateStr);
+      await page.getByRole('textbox', { name: 'Time picker' }).fill('3:00 PM');
+
+      // Intercept the schedule creation API to capture the saved rrule
+      const scheduleResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/schedules/') &&
+          response.request().method() === 'POST' &&
+          response.status() === 201
+      );
+
+      await page.getByRole('button', { name: 'Save rule' }).click();
+      await expect(page.getByRole('heading', { name: 'Schedule Rules' })).toBeVisible();
+      await page.getByRole('button', { name: 'Next' }).click();
+      // Exceptions step
+      await page.getByRole('button', { name: 'Next' }).click();
+      // Review step
+      await expect(page.getByTestId('Review')).toBeVisible();
+      await page.getByRole('button', { name: 'Finish' }).click();
+
+      const scheduleResponse = await scheduleResponsePromise;
+      const scheduleData = (await scheduleResponse.json()) as { rrule: string };
+
+      // Verify the saved rrule has the Z suffix on UNTIL
+      expect(scheduleData.rrule).toMatch(/UNTIL=\d{8}T\d{6}Z/);
+
+      // Verify the UNTIL time is NOT midnight UTC (the original bug behavior)
+      // 3:00 PM America/New_York = 19:00 or 20:00 UTC depending on DST
+      // It should NEVER be T000000Z (midnight UTC) or T040000Z/T050000Z (midnight Eastern)
+      const untilMatch = scheduleData.rrule.match(/UNTIL=\d{8}T(\d{6})Z/);
+      expect(untilMatch).not.toBeNull();
+      const untilTimeComponent = untilMatch![1];
+      expect(untilTimeComponent).not.toBe('000000');
+      expect(untilTimeComponent).not.toBe('040000');
+      expect(untilTimeComponent).not.toBe('050000');
+
+      // Verify on the details page
+      await expect(
+        page.getByRole('heading', { name: scheduleName, exact: true }).first()
+      ).toBeVisible({ timeout: 15000 });
+
+      // Verify the rruleset on the details page also has the Z suffix
+      await expect(page.getByTestId('rruleset')).toBeVisible();
+      const rruleText = await page.getByTestId('rruleset').textContent();
+      expect(rruleText).toMatch(/UNTIL=\d{8}T\d{6}Z/);
+      expect(rruleText).toMatch(/FREQ=HOURLY/);
+
+      // Cleanup
+      await Schedule.ui.delete(page, scheduleName);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Inventory.ui.delete(page, inventoryName);
+    }
+  );
+
+  test(
+    'should not show schedule occurrences beyond the UNTIL time',
+    { tag: ['@not_mock'] },
+    async ({ page }) => {
+      test.setTimeout(120000);
+
+      const inventoryName = await Inventory.ui.create(page);
+      const jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
+
+      await navigateTo(page, 'Automation Execution', 'Schedules');
+      await page.getByRole('link', { name: 'Create schedule' }).click();
+      await expect(page.getByRole('heading', { name: 'Create schedule' })).toBeVisible();
+
+      const scheduleName = createE2EName();
+      await page.getByRole('button', { name: 'Select resource type' }).click();
+      await page.getByRole('option', { name: 'Job template', exact: true }).click();
+      await page.getByLabel('Job template *').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(jobTemplateName);
+      await page.getByRole('option', { name: jobTemplateName }).click();
+      await page.getByRole('textbox', { name: 'Schedule name' }).fill(scheduleName);
+
+      await page.getByLabel('Time zone').click();
+      await page.getByRole('option', { name: 'America/New_York', exact: true }).click();
+
+      // Set start time to 1:00 PM tomorrow to avoid past-time issues
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const startDateStr = tomorrow.toISOString().split('T')[0];
+      await page.getByRole('textbox', { name: 'Date picker' }).clear();
+      await page.getByRole('textbox', { name: 'Date picker' }).fill(startDateStr);
+      await page.getByRole('textbox', { name: 'Time picker' }).clear();
+      await page.getByRole('textbox', { name: 'Time picker' }).fill('1:00 PM');
+
+      await page.getByRole('button', { name: 'Next' }).click();
+
+      // Rules step: Hourly, ending Until at 4:00 PM same day
+      // With the fix: 3 occurrences max (2 PM, 3 PM, 4 PM)
+      // With the bug: 11 occurrences (2 PM through midnight = continuing until 00:00)
+      await page.getByRole('button', { name: 'Yearly' }).click();
+      await page.getByRole('option', { name: 'Hourly', exact: true }).click();
+
+      await page.getByRole('button', { name: 'Schedule ending type' }).click();
+      await page.waitForSelector('role=listbox');
+      await page.getByRole('option', { name: 'Until Stop on a specific date' }).click();
+
+      await page.getByRole('textbox', { name: 'Date picker' }).fill(startDateStr);
+      await page.getByRole('textbox', { name: 'Time picker' }).fill('4:00 PM');
+
+      // Intercept preview API to verify occurrences are bounded
+      const previewResponsePromise = page.waitForResponse(
+        (response) => response.url().includes('/schedules/preview/') && response.status() === 200
+      );
+
+      await page.getByRole('button', { name: 'Save rule' }).click();
+      await expect(page.getByRole('heading', { name: 'Schedule Rules' })).toBeVisible();
+
+      const previewResponse = await previewResponsePromise;
+      const previewData = (await previewResponse.json()) as { local: string[]; utc: string[] };
+
+      // Verify the preview returns occurrences
+      expect(previewData.local.length).toBeGreaterThan(0);
+
+      // Key assertion: with the bug, UNTIL defaults to midnight causing ~11 occurrences
+      // (1 PM → midnight = 11 hours of hourly runs). With the fix, UNTIL at 4 PM
+      // means at most 3-4 occurrences (2 PM, 3 PM, 4 PM, possibly including start).
+      expect(previewData.local.length).toBeLessThanOrEqual(5);
+
+      // Cleanup: finish saving and delete
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
+      await expect(
+        page.getByRole('heading', { name: scheduleName, exact: true }).first()
+      ).toBeVisible({ timeout: 15000 });
+
+      await Schedule.ui.delete(page, scheduleName);
+      await JobTemplate.ui.delete(page, jobTemplateName);
+      await Inventory.ui.delete(page, inventoryName);
+    }
+  );
+});
+
 test.describe('Schedules - Bulk Operations', () => {
   test('bulk deletion', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 20 * 1000);

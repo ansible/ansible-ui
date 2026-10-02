@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { SetOptional } from 'type-fest';
+import { SetOptional } from '../../framework/utils/utilityTypes';
 import { clearTableFilters } from './clearTableFilters';
 import { filterTable, FilterTableOptions } from './filterTable';
 

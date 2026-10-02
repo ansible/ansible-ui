@@ -14,7 +14,7 @@ export function useGetFn<T>(
       fetcher(signal ?? abortController.signal).catch((error) => {
         throw error;
       }),
-    { dedupingInterval: 0, ...swrConfiguration }
+    { dedupingInterval: 0, ...swrConfiguration } // Default no-dedup; callers can override
   );
   const refresh = useCallback(() => void response.mutate(), [response]);
 

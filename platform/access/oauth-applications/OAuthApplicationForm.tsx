@@ -3,7 +3,7 @@ import {
   CopyCell,
   PageFormSelect,
   PageFormSubmitHandler,
-  PageFormSwitch,
+  PageFormCheckbox,
   PageFormTextArea,
   PageHeader,
   PageLayout,
@@ -14,9 +14,9 @@ import {
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { validateUrl } from '@ansible/awx-ui/administration/notifiers/NotifierFormInner';
-import { AwxPageForm } from '@ansible/awx-ui/common/AwxPageForm';
+import { PlatformPageForm } from '../../common/PlatformPageForm';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
@@ -86,7 +86,7 @@ export function CreateOAuthApplication() {
           { label: t('Create OAuth application') },
         ]}
       />
-      <AwxPageForm<Application>
+      <PlatformPageForm<Application>
         submitText={t('Create OAuth application')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -96,10 +96,11 @@ export function CreateOAuthApplication() {
           client_type: 'confidential',
           algorithm: '',
           skip_authorization: false,
+          pkce_required: true,
         }}
       >
         <OAuthApplicationInputs mode="create" />
-      </AwxPageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }
@@ -113,8 +114,7 @@ export function EditOAuthApplication() {
   const id = Number(params.id);
   const { data: application } = useSWR<Application>(
     gatewayAPI`/applications/${id.toString()}/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
 
   const onSubmit: PageFormSubmitHandler<Application> = async (
@@ -175,7 +175,7 @@ export function EditOAuthApplication() {
           },
         ]}
       />
-      <AwxPageForm<Application>
+      <PlatformPageForm<Application>
         submitText={t('Save OAuth application')}
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
@@ -183,7 +183,7 @@ export function EditOAuthApplication() {
         defaultValue={application}
       >
         <OAuthApplicationInputs mode="edit" />
-      </AwxPageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }
@@ -203,8 +203,7 @@ function OAuthApplicationInputs(props: Readonly<{ mode: 'create' | 'edit' }>) {
   });
   const { data: gatewaySettings } = useSWR<{ gateway_proxy_url: string }>(
     gatewayAPI`/settings/all/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const { data: options } = useOptions<ApplicationOptionsResponse>(gatewayAPI`/applications/`);
   const fields = options?.actions?.POST;
@@ -324,10 +323,15 @@ function OAuthApplicationInputs(props: Readonly<{ mode: 'create' | 'edit' }>) {
           )
         }
       />
-      <PageFormSwitch<Application>
+      <PageFormCheckbox<Application>
         name="skip_authorization"
         label={t('Skip Authorization')}
         labelHelp={fields?.skip_authorization?.help_text}
+      />
+      <PageFormCheckbox<Application>
+        name="pkce_required"
+        label={t('PKCE Required')}
+        labelHelp={fields?.pkce_required?.help_text}
       />
       <PageFormTextInput<Application>
         name="redirect_uris"

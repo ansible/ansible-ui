@@ -38,6 +38,22 @@ table tbody tr td.expanded {
   background: var(--pf-topology-visualization-surface--BackgroundColor);
 }
 
+/* CRC sticky-header fix: some PF6 builds render the thead ::before pseudo
+   with a background that overlays column titles. Setting z-index: -1 pushes
+   it behind cell content. The ::before's border-block-end is removed and
+   moved to the header cells directly so sticky-column backgrounds (which
+   paint above the z-index: -1 pseudo) do not clip the header border. */
+.pf-v6-c-table.pf-m-sticky-header > thead::before,
+.pf-v6-c-table.pf-m-sticky-header > .pf-v6-c-table__thead::before {
+  z-index: -1;
+  border-block-end: none;
+}
+
+.pf-v6-c-table.pf-m-sticky-header > thead th,
+.pf-v6-c-table.pf-m-sticky-header > .pf-v6-c-table__thead th {
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
 /* Ansible UI override for PF Tabs that contain a Toolbar */
 .pf-v6-c-page__main-section:has(> .pf-v6-c-page__main-body:only-child > .pf-v6-c-tabs:only-child)
   + .pf-v6-c-toolbar {

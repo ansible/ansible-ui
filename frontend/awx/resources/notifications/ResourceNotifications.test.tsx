@@ -9,27 +9,27 @@ const emptyNotifications = { count: 0, next: null, previous: null, results: [] }
 
 const server = setupServer(
   http.get(
-    ({ request }) => request.url.includes('notification_templates_started'),
+    ({ request }: { request: Request }) => request.url.includes('notification_templates_started'),
     () => HttpResponse.json(emptyNotifications)
   ),
   http.get(
-    ({ request }) => request.url.includes('notification_templates_success'),
+    ({ request }: { request: Request }) => request.url.includes('notification_templates_success'),
     () => HttpResponse.json(emptyNotifications)
   ),
   http.get(
-    ({ request }) => request.url.includes('notification_templates_error'),
+    ({ request }: { request: Request }) => request.url.includes('notification_templates_error'),
     () => HttpResponse.json(emptyNotifications)
   ),
   http.get(
-    ({ request }) => request.url.includes('notification_templates_approvals'),
+    ({ request }: { request: Request }) => request.url.includes('notification_templates_approvals'),
     () => HttpResponse.json(emptyNotifications)
   ),
   http.options(
-    ({ request }) => request.url.includes('notification_templates'),
+    ({ request }: { request: Request }) => request.url.includes('notification_templates'),
     () => HttpResponse.json({ actions: {} })
   ),
   http.get(
-    ({ request }) =>
+    ({ request }: { request: Request }) =>
       request.url.includes('/notification_templates') &&
       !request.url.includes('_started') &&
       !request.url.includes('_success') &&
@@ -52,7 +52,7 @@ describe('ResourceNotifications', () => {
     );
     await waitFor(() => {
       expect(
-        screen.getByText('There are currently no notifications added to this project.')
+        screen.getByText('There are currently no notifications associated with this project.')
       ).toBeInTheDocument();
     });
   });

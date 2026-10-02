@@ -1,7 +1,9 @@
 import { Page, expect } from '@playwright/test';
 import { awxAPI } from '../commands/apiClient';
+import { clearTableFilters } from '../commands/clearTableFilters';
 import { clickTableRow } from '../commands/clickTableRow';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { getTableRow } from '../commands/getTableRow';
 import { navigateTo } from '../commands/navigateTo';
 import { InventoryGroup as InventoryGroupType } from '@ansible/awx-ui/interfaces/InventoryGroup';
@@ -62,7 +64,7 @@ export const InventoryGroup = {
         await page.getByRole('textbox', { name: 'Description' }).fill(options.description);
       }
       if (options.variables) {
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(options.variables);
+        await fillMonacoEditor(page, options.variables);
       }
       await page.getByRole('button', { name: 'Create group' }).click();
       await expect(page.getByRole('heading', { name: groupName, exact: true })).toBeVisible();
@@ -89,13 +91,26 @@ export const InventoryGroup = {
       await groupRow.getByRole('checkbox').check();
       await page.getByLabel('kebab dropdown toggle').click();
       await page.getByRole('menuitem', { name: 'Delete groups' }).click();
+      await InventoryGroup.ui.confirmDeleteDialog(page);
+      await InventoryGroup.ui.expectEmptyList(page);
+    },
+
+    confirmDeleteDialog: async (page: Page): Promise<void> => {
+      const dialog = page.getByRole('dialog');
+      await expect(dialog).toBeVisible();
       await page.getByTestId('delete-groups-dialog-radio-delete').check();
       await page.getByTestId('delete-group-modal-delete-button').click();
-      await expect(
-        page.getByRole('heading', {
-          name: 'There are currently no groups added to this inventory.',
-        })
-      ).toBeVisible();
+      // handleDelete awaits each group DELETE before closing the dialog
+      await expect(dialog).toBeHidden({ timeout: 30000 });
+    },
+
+    expectEmptyList: async (page: Page): Promise<void> => {
+      await clearTableFilters(page);
+      const emptyState = page.getByText('No groups are assigned to this inventory.');
+      const noResults = page.getByText('No results found', { exact: true });
+      await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
+      await clearTableFilters(page);
+      await expect(emptyState).toBeVisible({ timeout: 15000 });
     },
   },
 } as const;

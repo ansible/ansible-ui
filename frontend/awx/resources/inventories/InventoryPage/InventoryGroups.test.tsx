@@ -9,11 +9,13 @@ import { InventoryGroups } from './InventoryGroups';
 const server = setupServer(
   http.options(awxAPI`/groups/`, () => HttpResponse.json({ actions: { POST: {}, GET: {} } })),
   http.options(
-    ({ request }) => request.url.includes('/inventories/') && request.url.includes('/groups/'),
+    ({ request }: { request: Request }) =>
+      request.url.includes('/inventories/') && request.url.includes('/groups/'),
     () => HttpResponse.json({ actions: { GET: {} } })
   ),
   http.get(
-    ({ request }) => request.url.includes('/inventories/') && request.url.includes('/groups/'),
+    ({ request }: { request: Request }) =>
+      request.url.includes('/inventories/') && request.url.includes('/groups/'),
     () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
   )
 );
@@ -34,7 +36,7 @@ describe('InventoryGroups', () => {
 
     await waitFor(() => {
       const emptyText =
-        screen.queryByText('There are currently no groups added to this inventory.') ??
+        screen.queryByText('No groups are assigned to this inventory.') ??
         screen.queryByText('Create group');
       expect(emptyText).toBeInTheDocument();
     });

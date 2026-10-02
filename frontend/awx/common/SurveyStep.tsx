@@ -1,17 +1,49 @@
 import { PageFormSelect, PageFormTextArea, PageFormTextInput } from '@ansible/ansible-ui-framework';
 import { PageFormMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiSelect';
+import { PageFormFieldMetadataProvider } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useGet } from '@ansible/common-ui/crud/useGet';
-import { useEffect } from 'react';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { Card, CardBody, CardTitle, Stack } from '@patternfly/react-core';
+import { CSSProperties, useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Card, CardBody, CardTitle } from '@patternfly/react-core';
+import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
 import { Spec, Survey } from '../interfaces/Survey';
 import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
 import { awxAPI } from './api/awx-utils';
-import { evaluateConditions } from './useSurveyConditions';
+import { evaluateConditions } from './surveyConditions';
+import {
+  SURVEY_LAUNCH_TEXT_OPTIONS_FIELD,
+  extractSurveySpecOptionsFields,
+} from './surveySpecOptions';
+
+type SurveyValue = string | string[] | number;
+
+/** Category cards span the full width of the wizard step grid. */
+const fullWidthStyle: CSSProperties = { gridColumn: '1 / -1' };
+
+function getJobType(resource: WizardFormValues['resource']) {
+  if (!resource) return;
+
+  if ('type' in resource) {
+    if (resource?.type === 'job_template') {
+      return 'job_templates';
+    } else if (resource?.type === 'workflow_job_template') {
+      return 'workflow_job_templates';
+    }
+  }
+
+  if ('unified_job_type' in resource) {
+    if (resource?.unified_job_type === 'job') {
+      return 'job_templates';
+    } else if (resource?.unified_job_type === 'workflow_job') {
+      return 'workflow_job_templates';
+    }
+  }
+}
 
 /**
  * Read a survey variable's value from the wizard step that owns it. Each survey
@@ -34,24 +66,171 @@ function getOwnedSurveyValue(
   return undefined;
 }
 
-function getJobType(resource: WizardFormValues['resource']) {
-  if (!resource) return;
+function hasValue(value: unknown) {
+  return value !== undefined && value !== null && value !== '';
+}
 
-  if ('type' in resource) {
-    if (resource?.type === 'job_template') {
-      return 'job_templates';
-    } else if (resource?.type === 'workflow_job_template') {
-      return 'workflow_job_templates';
+/**
+ * Resolve the value of every survey variable for condition evaluation.
+ * Live form values win for the current page; every other variable is read from
+ * the step that owns it, then from the merged wizard data, then from its default.
+ */
+export function buildSurveyConditionData(
+  spec: Spec[],
+  options: {
+    pageNumber?: number;
+    liveValues?: Record<string, unknown>;
+    stepData: Record<string, unknown>;
+    wizardSurvey?: Record<string, unknown>;
+  }
+): Record<string, unknown> {
+  const { pageNumber, liveValues, stepData, wizardSurvey } = options;
+  const data: Record<string, unknown> = {};
+  for (const item of spec) {
+    const itemPage = item.page ?? 1;
+    const isCurrentPage = pageNumber === undefined || itemPage === pageNumber;
+
+    if (isCurrentPage && liveValues && item.variable in liveValues) {
+      data[item.variable] = liveValues[item.variable];
+      continue;
+    }
+    const owned = getOwnedSurveyValue(item.variable, itemPage, stepData);
+    if (owned !== undefined) {
+      data[item.variable] = owned;
+      continue;
+    }
+    if (wizardSurvey && item.variable in wizardSurvey) {
+      data[item.variable] = wizardSurvey[item.variable];
+      continue;
+    }
+    if (hasValue(item.default)) {
+      data[item.variable] = item.default;
     }
   }
+  return data;
+}
 
-  if ('unified_job_type' in resource) {
-    if (resource?.unified_job_type === 'job') {
-      return 'job_templates';
-    } else if (resource?.unified_job_type === 'workflow_job') {
-      return 'workflow_job_templates';
+function getChoiceOptions(element: Spec): PageSelectOption<string>[] {
+  let choices: string[] = [];
+  if (Array.isArray(element.choices)) {
+    choices = element.choices;
+  } else if (typeof element.choices === 'string') {
+    choices = element.choices.split('\n');
+  }
+  return choices.map((choice) => ({ value: choice, label: choice }));
+}
+
+/**
+ * Renders a single survey question.
+ *
+ * `question_name` comes from the API and is rendered as-is (not passed through `t()`),
+ * because i18next would treat a `:` in the label as a namespace separator.
+ */
+function SurveyField({ element }: Readonly<{ element: Spec }>) {
+  const { t } = useTranslation();
+  const name = `survey.${element.variable}`;
+  const choiceOptions = useMemo(() => getChoiceOptions(element), [element]);
+
+  switch (element.type) {
+    case 'text':
+      return (
+        <PageFormTextInput
+          name={name}
+          optionsFieldName={SURVEY_LAUNCH_TEXT_OPTIONS_FIELD}
+          label={element.question_name}
+          labelHelp={element.question_description}
+          labelHelpTitle=""
+          isRequired={element.required}
+          type="text"
+          maxLength={element.max}
+          minLength={element.min}
+        />
+      );
+    case 'integer':
+    case 'float':
+      return (
+        <PageFormTextInput
+          name={name}
+          label={element.question_name}
+          labelHelp={element.question_description}
+          labelHelpTitle=""
+          isRequired={element.required}
+          type="number"
+          max={element.max}
+          min={element.min}
+        />
+      );
+    case 'password':
+      return (
+        <PageFormTextInput
+          name={name}
+          label={element.question_name}
+          labelHelp={element.question_description}
+          labelHelpTitle=""
+          isRequired={element.required}
+          type="password"
+          maxLength={element.max}
+          minLength={element.min}
+        />
+      );
+    case 'textarea':
+      return (
+        <PageFormTextArea
+          name={name}
+          optionsFieldName={SURVEY_LAUNCH_TEXT_OPTIONS_FIELD}
+          label={element.question_name}
+          labelHelp={element.question_description}
+          labelHelpTitle=""
+          isRequired={element.required}
+          maxLength={element.max}
+          minLength={element.min}
+        />
+      );
+    case 'multiplechoice':
+      return (
+        <PageFormSelect
+          name={name}
+          placeholderText={t('Select option')}
+          label={element.question_name}
+          labelHelp={element.question_description}
+          labelHelpTitle=""
+          options={choiceOptions}
+          isRequired={element.required}
+        />
+      );
+    case 'multiselect':
+      return (
+        <PageFormMultiSelect
+          name={name}
+          placeholder={t('Select option(s)')}
+          label={element.question_name}
+          labelHelp={element.question_description}
+          labelHelpTitle=""
+          options={choiceOptions}
+          isRequired={element.required}
+        />
+      );
+    default:
+      return null;
+  }
+}
+
+/** Group questions by category, preserving the order in which categories first appear. */
+function groupByCategory(elements: Spec[]): { category: string; elements: Spec[] }[] {
+  const groups = new Map<string, Spec[]>();
+  for (const element of elements) {
+    const category = element.category ?? '';
+    const group = groups.get(category);
+    if (group) {
+      group.push(element);
+    } else {
+      groups.set(category, [element]);
     }
   }
+  return Array.from(groups, ([category, groupElements]) => ({
+    category,
+    elements: groupElements,
+  }));
 }
 
 export function SurveyStep({
@@ -64,13 +243,13 @@ export function SurveyStep({
   templateId?: string;
   jobType?: string;
   singleColumn?: boolean;
+  /** When set, only questions on this survey page are rendered. */
   pageNumber?: number;
+  /** Survey spec that was already loaded by the caller; skips fetching it again. */
   surveySpecData?: Survey;
 }) {
-  const { t } = useTranslation();
   const { wizardData, stepData } = usePageWizard();
-  const { reset } = useFormContext();
-  const stepDataRecord = stepData as Record<string, unknown>;
+  const { reset, unregister } = useFormContext();
 
   let { resource } = wizardData as WizardFormValues;
   if (!resource && stepData?.nodePromptsStep) {
@@ -80,24 +259,30 @@ export function SurveyStep({
 
   jobType = jobType ?? getJobType(resource);
 
-  const { data: fetchedSpec } = useGet<Survey>(
-    !surveySpecData ? awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/` : ''
-  );
+  const surveySpecUrl = awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`;
+
+  const { data: fetchedSpec } = useGet<Survey>(surveySpecData ? undefined : surveySpecUrl);
   const survey_spec = surveySpecData ?? fetchedSpec;
+
+  const { data: surveySpecOptions } = useOptions<OptionsResponse<ActionsResponse>>(surveySpecUrl);
+  const surveyFieldMetadata = useMemo(
+    () => extractSurveySpecOptionsFields(surveySpecOptions),
+    [surveySpecOptions]
+  );
 
   useEffect(() => {
     if (!survey_spec?.spec) return;
-    const survey: { [key: string]: string | string[] | number } = {};
+    const survey: Record<string, SurveyValue> = {};
 
     survey_spec.spec.forEach((obj: Spec) => {
       // Read the prior value from the step that owns this variable (by page),
       // not from a stale duplicate copied into another page's step snapshot.
-      const prev = getOwnedSurveyValue(obj.variable, obj.page ?? 1, stepDataRecord);
+      const prev = getOwnedSurveyValue(obj.variable, obj.page ?? 1, stepData);
       if (prev !== undefined) {
-        survey[obj.variable] = prev as string | string[] | number;
+        survey[obj.variable] = prev as SurveyValue;
         return;
       }
-      if (obj.default === '' || obj.default === undefined || obj.default === null) return;
+      if (!hasValue(obj.default)) return;
       if (obj.type === 'multiselect') {
         survey[obj.variable] = String(obj.default).split('\n');
         return;
@@ -106,140 +291,92 @@ export function SurveyStep({
     });
 
     reset({ survey });
-  }, [survey_spec, reset, stepDataRecord]);
+  }, [survey_spec, reset, stepData]);
 
-  // Watch current form values for condition evaluation
-  const surveyValues = useWatch({ name: 'survey' }) as Record<string, unknown> | undefined;
+  const liveValues = useWatch({ name: 'survey' }) as Record<string, unknown> | undefined;
+  const wizardSurvey = (wizardData as { survey?: Record<string, unknown> } | undefined)?.survey;
 
-  // Build condition data: resolve each variable from a single source of truth.
-  // Live form values win for the current page; every other variable is read from
-  // the step that owns it (by page), so a stale copy lingering in another page's
-  // snapshot can no longer override an updated value.
-  const wizardSurvey = (wizardData as Record<string, unknown>)?.survey as
-    | Record<string, unknown>
-    | undefined;
-  const conditionData: Record<string, unknown> = {};
-  if (survey_spec?.spec) {
-    for (const item of survey_spec.spec) {
-      const itemPage = item.page ?? 1;
-      const isCurrentPage = pageNumber === undefined || itemPage === pageNumber;
+  const conditionData = useMemo(
+    () =>
+      buildSurveyConditionData(survey_spec?.spec ?? [], {
+        pageNumber,
+        liveValues,
+        stepData,
+        wizardSurvey,
+      }),
+    [survey_spec, pageNumber, liveValues, stepData, wizardSurvey]
+  );
 
-      let value: unknown;
-      let found = false;
-      if (isCurrentPage && surveyValues && item.variable in surveyValues) {
-        value = surveyValues[item.variable];
-        found = true;
-      } else {
-        const owned = getOwnedSurveyValue(item.variable, itemPage, stepDataRecord);
-        if (owned !== undefined) {
-          value = owned;
-          found = true;
-        }
-      }
-      if (!found && wizardSurvey && item.variable in wizardSurvey) {
-        value = wizardSurvey[item.variable];
-        found = true;
-      }
-      if (!found && item.default !== undefined && item.default !== null && item.default !== '') {
-        value = item.default;
-        found = true;
-      }
-      if (found) {
-        conditionData[item.variable] = value;
-      }
-    }
-  }
+  const pageElements = useMemo(() => {
+    const spec = survey_spec?.spec ?? [];
+    return pageNumber === undefined ? spec : spec.filter((el) => (el.page ?? 1) === pageNumber);
+  }, [survey_spec, pageNumber]);
 
-  const getChoices = (name: string): PageSelectOption<string>[] => {
-    const choices: PageSelectOption<string>[] = [];
-    survey_spec?.spec.forEach((element: Spec) => {
-      if (element.type === 'multiplechoice' || element.type === 'multiselect') {
-        let choicesArray: string[] = [];
+  const visibleElements = useMemo(
+    () => pageElements.filter((el) => evaluateConditions(el, conditionData)),
+    [pageElements, conditionData]
+  );
 
-        if (Array.isArray(element.choices)) {
-          choicesArray = element.choices;
-        } else if (typeof element.choices === 'string') {
-          choicesArray = element.choices.split('\n');
-        }
+  // Hidden questions are not rendered, but their seeded value would still be registered
+  // in the form. Unregister them so a hidden `required` question can never block the step;
+  // the value is removed from the step data as well, so it is not submitted.
+  // A newline-joined key keeps the effect from re-running on every render.
+  const hiddenFieldsKey = useMemo(() => {
+    const visible = new Set(visibleElements.map((el) => el.variable));
+    return pageElements
+      .filter((el) => !visible.has(el.variable))
+      .map((el) => `survey.${el.variable}`)
+      .join('\n');
+  }, [pageElements, visibleElements]);
 
-        if (element.question_name === name) {
-          choicesArray?.forEach((choice: string) => {
-            choices.push({ value: choice, label: choice });
-          });
-        }
-      }
-    });
-    return choices;
-  };
+  useEffect(() => {
+    if (!hiddenFieldsKey) return;
+    // Keep the default so the question is seeded again if it becomes visible later.
+    unregister(hiddenFieldsKey.split('\n'), { keepDefaultValue: true });
+  }, [hiddenFieldsKey, unregister]);
 
-  // Filter to this page's elements (or all if no pageNumber)
-  const pageElements = survey_spec?.spec
-    ? (pageNumber === undefined ? survey_spec.spec : survey_spec.spec.filter((el) => (el.page ?? 1) === pageNumber))
-    : [];
-
-  // Apply conditions
-  const visibleElements = pageElements.filter((el) => evaluateConditions(el, conditionData));
-
-  // Group by category
-  const categories: string[] = [];
-  const seen = new Set<string>();
-  for (const el of visibleElements) {
-    const cat = el.category ?? '';
-    if (!seen.has(cat)) { seen.add(cat); categories.push(cat); }
-  }
-
-  const renderField = (element: Spec) => {
-    if (element.type === 'text') return (
-      <PageFormTextInput key={element.variable} name={`survey.${element.variable}`} label={t(element.question_name)} labelHelp={element.question_description} labelHelpTitle="" isRequired={element.required} type="text" maxLength={element.max} minLength={element.min} />
-    );
-    if (element.type === 'integer' || element.type === 'float') return (
-      <PageFormTextInput key={element.variable} name={`survey.${element.variable}`} label={t(element.question_name)} labelHelp={element.question_description} labelHelpTitle="" isRequired={element.required} type="number" max={element.max} min={element.min} />
-    );
-    if (element.type === 'password') return (
-      <PageFormTextInput key={element.variable} name={`survey.${element.variable}`} label={t(element.question_name)} labelHelp={element.question_description} labelHelpTitle="" isRequired={element.required} type="password" maxLength={element.max} minLength={element.min} />
-    );
-    if (element.type === 'textarea') return (
-      <PageFormTextArea key={element.variable} name={`survey.${element.variable}`} label={t(element.question_name)} labelHelp={element.question_description} labelHelpTitle="" isRequired={element.required} maxLength={element.max} minLength={element.min} />
-    );
-    if (element.type === 'multiplechoice') return (
-      <PageFormSelect key={element.variable} name={`survey.${element.variable}`} placeholderText={t('Select option')} label={t(element.question_name)} labelHelp={element.question_description} labelHelpTitle="" options={getChoices(element.question_name)} isRequired={element.required} />
-    );
-    if (element.type === 'multiselect') return (
-      <PageFormMultiSelect key={element.variable} name={`survey.${element.variable}`} placeholder={t('Select option(s)')} label={t(element.question_name)} labelHelp={element.question_description} labelHelpTitle="" options={getChoices(element.question_name)} isRequired={element.required} />
-    );
-    return null;
-  };
+  const groups = useMemo(() => groupByCategory(visibleElements), [visibleElements]);
+  const hasCategories = groups.some((group) => group.category !== '');
 
   return (
-    <div style={{ gridColumn: '1 / -1' }}>
-      {categories.map((category) => {
-        const categoryElements = visibleElements.filter((el) => (el.category ?? '') === category);
-        if (categoryElements.length === 0) return null;
-
-        if (!category) {
-          return (
-            <PageFormSection key="__uncategorized" singleColumn={singleColumn}>
-              {categoryElements.map(renderField)}
-            </PageFormSection>
-          );
-        }
-
-        return (
-          <Card key={category} isFlat style={{ marginBottom: '16px' }}>
-            <CardTitle>{category}</CardTitle>
-            <CardBody>
-              <PageFormSection singleColumn={singleColumn}>
-                {categoryElements.map(renderField)}
-              </PageFormSection>
-            </CardBody>
-          </Card>
-        );
-      })}
-    </div>
+    <PageFormFieldMetadataProvider fields={surveyFieldMetadata}>
+      {hasCategories ? (
+        <div style={fullWidthStyle}>
+          <Stack hasGutter>
+            {groups.map((group) =>
+              group.category ? (
+                <Card key={`category-${group.category}`}>
+                  <CardTitle>{group.category}</CardTitle>
+                  <CardBody>
+                    <PageFormSection singleColumn={singleColumn}>
+                      {group.elements.map((element) => (
+                        <SurveyField key={element.variable} element={element} />
+                      ))}
+                    </PageFormSection>
+                  </CardBody>
+                </Card>
+              ) : (
+                <PageFormSection key="uncategorized" singleColumn={singleColumn}>
+                  {group.elements.map((element) => (
+                    <SurveyField key={element.variable} element={element} />
+                  ))}
+                </PageFormSection>
+              )
+            )}
+          </Stack>
+        </div>
+      ) : (
+        <PageFormSection singleColumn={singleColumn}>
+          {visibleElements.map((element) => (
+            <SurveyField key={element.variable} element={element} />
+          ))}
+        </PageFormSection>
+      )}
+    </PageFormFieldMetadataProvider>
   );
 }
 
-/** Extract unique page numbers from a survey spec. */
+/** Extract the unique, sorted page numbers used in a survey spec. */
 export function getSurveyPages(spec: Spec[]): number[] {
   const pageSet = new Set<number>();
   for (const element of spec) {
@@ -248,15 +385,17 @@ export function getSurveyPages(spec: Spec[]): number[] {
   return Array.from(pageSet).sort((a, b) => a - b);
 }
 
-/** Build a label for a survey page based on its categories. */
-export function getSurveyPageLabel(spec: Spec[], pageNum: number): string {
-  const pageElements = spec.filter((el) => (el.page ?? 1) === pageNum);
+/**
+ * Build a label for a survey page from the categories used on that page.
+ * Returns `undefined` when the page has no categories, so the caller can fall back
+ * to a translated default label.
+ */
+export function getSurveyPageLabel(spec: Spec[], pageNum: number): string | undefined {
   const categories = new Set<string>();
-  for (const el of pageElements) {
-    if (el.category) categories.add(el.category);
+  for (const element of spec) {
+    if ((element.page ?? 1) === pageNum && element.category) {
+      categories.add(element.category);
+    }
   }
-  if (categories.size > 0) {
-    return Array.from(categories).join(', ');
-  }
-  return `Survey (${pageNum})`;
+  return categories.size > 0 ? Array.from(categories).join(', ') : undefined;
 }

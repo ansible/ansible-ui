@@ -1,6 +1,5 @@
 import {
   LoadingPage,
-  PageForm,
   PageHeader,
   PageLayout,
   useBulkActionDialog,
@@ -23,6 +22,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { usePlatformRoleColumns } from '../../roles/hooks/usePlatformRoleColumns';
 import { usePlatformRolesFilters } from '../../roles/hooks/usePlatformRolesFilters';
 import { useGetOrganizationRolesForUser } from '../hooks/useGetOrganizationRolesForUser';
+import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { getAddedAndRemovedPlatformRoles } from '../utils/getAddedAndRemovedPlatformRoles';
 import { ResourceUserIndirectRolesPanel } from '@ansible/common-ui/access/indirect-roles/components/ResourceUserIndirectRolesPanel';
 
@@ -207,7 +207,7 @@ export function PlatformOrganizationManageUserRoles() {
           },
         ]}
       />
-      <PageForm
+      <PlatformPageForm
         submitText={t`Save roles`}
         onSubmit={onSubmit}
         cancelText={t`Cancel`}
@@ -253,7 +253,7 @@ export function PlatformOrganizationManageUserRoles() {
           labelForSelectedItems={t('Selected roles')}
           errorStateTitle={t('Error loading roles')}
         />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }

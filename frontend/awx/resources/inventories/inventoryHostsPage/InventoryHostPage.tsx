@@ -38,7 +38,7 @@ export function InventoryHostPage() {
 
   let tabs: Array<{ label: string; page: string }> = [];
 
-  if (params.inventory_type === 'inventory') {
+  if (params.inventory_type === 'inventory' || params.inventory_type === 'constructed_inventory') {
     tabs = [
       { label: t('Details'), page: AwxRoute.InventoryHostDetails },
       { label: t('Facts'), page: AwxRoute.InventoryHostFacts },

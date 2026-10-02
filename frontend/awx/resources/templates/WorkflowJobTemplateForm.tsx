@@ -128,6 +128,7 @@ export function EditWorkflowJobTemplate() {
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(AwxRoute.WorkflowJobTemplateDetails, { params: { id } })}
         defaultValue={defaultValues}
+        optionsUrl={awxAPI`/workflow_job_templates/`}
       >
         <WorkflowJobTemplateInputs workflowJobTemplate={defaultValues} />
       </AwxPageForm>
@@ -190,6 +191,7 @@ export function CreateWorkflowJobTemplate() {
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(AwxRoute.Templates)}
         defaultValue={defaultValues}
+        optionsUrl={awxAPI`/workflow_job_templates/`}
       >
         <WorkflowJobTemplateInputs />
       </AwxPageForm>
@@ -206,14 +208,12 @@ async function submitLabels(
     labels ?? ([] as Label[])
   );
 
-  let orgId = template?.organization;
-  if (!template.summary_fields?.organization?.id) {
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const data = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
+  let orgId: number | undefined =
+    (template?.organization as number | undefined) ?? template.summary_fields?.organization?.id;
+  if (!orgId && added.length > 0) {
+    const data = await requestGet<AwxItemsResponse<Organization>>(awxAPI`/organizations/`);
+    if (data.results.length > 0) {
       orgId = data.results[0].id;
-    } catch (err) {
-      throw err;
     }
   }
   const disassociationPromises = removed.map((label: { id: number }) =>

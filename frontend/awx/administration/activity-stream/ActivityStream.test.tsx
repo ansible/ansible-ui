@@ -3,10 +3,13 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { ActivityStreams } from './ActivityStream';
+
+function TestWrapper({ children }: { children: React.ReactNode }) {
+  return <MemoryRouter>{children}</MemoryRouter>;
+}
 
 const emptyListFixture = {
   count: 0,
@@ -80,14 +83,6 @@ const activityStreamFixture = {
     },
   ],
 };
-
-function TestWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <SWRConfig value={{ provider: () => new Map() }}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </SWRConfig>
-  );
-}
 
 const server = setupServer(
   http.options(awxAPI`/activity_stream/`, () => HttpResponse.json(mockActivityStreamOptions)),

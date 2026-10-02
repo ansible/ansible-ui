@@ -9,6 +9,8 @@ import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxGetAllPages } from '../../../../common/useAwxGetAllPages';
 import { getAddedAndRemoved } from '../../../../common/util/getAddedAndRemoved';
+import { clearStaleNodeFields } from './clearStaleNodeFields';
+import { getAddedAndRemovedCredentials } from './getAddedAndRemovedCredentials';
 import { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { Label } from '../../../../interfaces/Label';
 import { Organization } from '../../../../interfaces/Organization';
@@ -24,18 +26,18 @@ interface WorkflowApprovalNode {
 
 interface CreateWorkflowNodePayload {
   extra_data?: object;
-  inventory?: number;
-  scm_branch?: string;
-  job_type?: string;
-  job_tags?: string;
-  skip_tags?: string;
-  limit?: string;
-  diff_mode?: boolean;
-  verbosity?: number;
+  inventory?: number | null;
+  scm_branch?: string | null;
+  job_type?: string | null;
+  job_tags?: string | null;
+  skip_tags?: string | null;
+  limit?: string | null;
+  diff_mode?: boolean | null;
+  verbosity?: number | null;
   execution_environment?: number | null;
-  forks?: number;
-  job_slice_count?: number;
-  timeout?: number;
+  forks?: number | null;
+  job_slice_count?: number | null;
+  timeout?: number | null;
   unified_job_template: number;
   all_parents_must_converge: boolean;
   identifier?: string;
@@ -198,7 +200,15 @@ export function useSaveVisualizer(templateId: string) {
             }
           }
 
-          if (typeof value === 'undefined' || value === null || value === '') {
+          if (value === undefined) {
+            return;
+          }
+          if (value === null || value === '') {
+            if (!isPrompt) {
+              return;
+            }
+            // Prompt field explicitly cleared; send null to the API to remove the node override
+            createNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
             return;
           }
 
@@ -250,9 +260,11 @@ export function useSaveVisualizer(templateId: string) {
 
         if (!newNode.id) return;
         const newNodeId = newNode.id.toString();
-        await processLabels(newNodeId, launch_data);
-        await processInstanceGroups(newNodeId, launch_data);
-        await processCredentials(newNodeId, launch_data);
+        // For new nodes the node already exists on the correct template, so
+        // only associations are needed (nothing to disassociate on a brand new node).
+        await processLabels(newNodeId, launch_data, 'associate');
+        await processInstanceGroups(newNodeId, launch_data, 'associate');
+        await processCredentials(newNodeId, launch_data, 'associate');
         setCreatedNodeId(node, newNodeId.toString());
       });
       await Promise.all(promises);
@@ -297,7 +309,15 @@ export function useSaveVisualizer(templateId: string) {
               }
             }
 
-            if (typeof value === 'undefined' || value === null || value === '') {
+            if (value === undefined) {
+              return;
+            }
+            if (value === null || value === '') {
+              if (!isPrompt) {
+                return;
+              }
+              // Prompt field explicitly cleared; send null to the API to remove the node override
+              updatedNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
               return;
             }
 
@@ -337,13 +357,42 @@ export function useSaveVisualizer(templateId: string) {
             });
           }
 
-          await processLabels(nodeId, launch_data);
-          await processInstanceGroups(nodeId, launch_data);
-          await processCredentials(nodeId, launch_data);
+          if (launch_data?.original?.isTemplateChange) {
+            clearStaleNodeFields(updatedNodePayload);
+          }
+
+          // Disassociate stale resources BEFORE patching the template. AWX validates the
+          // node's full DB state when unified_job_template changes, so credentials/labels/
+          // instance_groups must be removed first when the new template does not accept them.
+          await processLabels(nodeId, launch_data, 'disassociate');
+          await processInstanceGroups(nodeId, launch_data, 'disassociate');
+          await processCredentials(nodeId, launch_data, 'disassociate');
+
+          // Clear extra_data in a separate PATCH before changing the template.
+          // AWX ignores extra_data updates when unified_job_template changes in
+          // the same request because the old template's ask_variables_on_launch
+          // flag governs field writability during validation.
+          if (
+            launch_data?.original?.isTemplateChange &&
+            'extra_data' in updatedNodePayload &&
+            Object.keys(updatedNodePayload.extra_data as object).length === 0
+          ) {
+            await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${nodeId}/`, {
+              extra_data: {},
+            });
+            delete updatedNodePayload.extra_data;
+          }
+
           await patchWorkflowNode(
             awxAPI`/workflow_job_template_nodes/${nodeId}/`,
             updatedNodePayload
           );
+
+          // Associate new resources AFTER patching the template. The new template must be
+          // in place before AWX will accept associations (e.g. ask_credential_on_launch=true).
+          await processLabels(nodeId, launch_data, 'associate');
+          await processInstanceGroups(nodeId, launch_data, 'associate');
+          await processCredentials(nodeId, launch_data, 'associate');
         })
       );
 
@@ -576,7 +625,7 @@ export function toKeyedObject(
   key: string,
   value: string | number | undefined | null
 ): { [key: string]: string | number } | object {
-  if ((typeof value === 'string' && value !== '') || typeof value === 'number') {
+  if (value !== null && value !== undefined && value !== '') {
     return { [key]: value };
   } else {
     return {};
@@ -588,49 +637,57 @@ async function getDefaultOrganization(): Promise<number> {
   return itemsResponse.results[0].id || 1;
 }
 
+// Controls which half of a process function runs relative to the node PATCH.
+// Removals (disassociate) must happen BEFORE the PATCH so AWX accepts the
+// unified_job_template change when the new template does not accept the field.
+// Additions (associate) must happen AFTER the PATCH so the new template is
+// already in place and AWX allows the association.
+type ProcessPhase = 'disassociate' | 'associate';
+
 const useProcessLabels = () => {
   const postDisassociate = usePostRequest<{ id: number; disassociate: boolean }>();
   const postAssociateLabel = usePostRequest<{ name: string; organization: number }>();
 
   return useCallback(
-    async (nodeId: string, launch_data: GraphNodeData['launch_data']) => {
-      const hasLabelsPrompt =
-        launch_data?.original?.launch_config?.ask_labels_on_launch ||
-        (launch_data?.labels && launch_data?.labels?.length > 0);
+    async (nodeId: string, launch_data: GraphNodeData['launch_data'], phase: ProcessPhase) => {
+      const askLabelsOnLaunch = Boolean(launch_data?.original?.launch_config?.ask_labels_on_launch);
       const existingLabels = launch_data?.original?.labels;
 
-      if (hasLabelsPrompt) {
-        const defaultOrganization = launch_data.organization ?? (await getDefaultOrganization());
-
+      if (askLabelsOnLaunch) {
         const { added, removed } = getAddedAndRemoved(
           launch_data?.original?.labels || [],
           launch_data?.labels || ([] as Label[])
         );
 
-        const disassociationPromises = removed.map((label: { id: number }) =>
-          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
-            id: label.id,
-            disassociate: true,
-          })
-        );
-
-        const associationPromises = added.map(
-          (label: { name: string; id?: number; organization?: number }) =>
-            postAssociateLabel(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
-              name: label.name,
-              organization: label?.organization ?? defaultOrganization,
+        if (phase === 'disassociate') {
+          await Promise.all(
+            removed.map((label: { id: number }) =>
+              postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+                id: label.id,
+                disassociate: true,
+              })
+            )
+          );
+        } else {
+          const defaultOrganization = launch_data.organization ?? (await getDefaultOrganization());
+          await Promise.all(
+            added.map((label: { name: string; id?: number; organization?: number }) =>
+              postAssociateLabel(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+                name: label.name,
+                organization: label?.organization ?? defaultOrganization,
+              })
+            )
+          );
+        }
+      } else if (existingLabels && phase === 'disassociate') {
+        await Promise.all(
+          existingLabels.map((label: { id: number }) =>
+            postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
+              id: label.id,
+              disassociate: true,
             })
+          )
         );
-
-        await Promise.all([...disassociationPromises, ...associationPromises]);
-      } else if (existingLabels) {
-        const disassociationPromises = existingLabels.map((label: { id: number }) =>
-          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/labels/`, {
-            id: label.id,
-            disassociate: true,
-          })
-        );
-        await Promise.all(disassociationPromises);
       }
     },
     [postDisassociate, postAssociateLabel]
@@ -642,43 +699,46 @@ const useProcessInstanceGroups = () => {
   const postAssociateInstanceGroup = usePostRequest<{ id: number }, InstanceGroup>();
 
   return useCallback(
-    async (nodeId: string, launch_data: GraphNodeData['launch_data']) => {
-      const hasInstanceGroupsPrompt =
-        launch_data?.original?.launch_config?.ask_instance_groups_on_launch ||
-        (launch_data?.instance_groups && launch_data?.instance_groups?.length > 0);
+    async (nodeId: string, launch_data: GraphNodeData['launch_data'], phase: ProcessPhase) => {
+      const askInstanceGroupsOnLaunch = Boolean(
+        launch_data?.original?.launch_config?.ask_instance_groups_on_launch
+      );
       const existingInstanceGroups = launch_data?.original?.instance_groups;
 
-      if (hasInstanceGroupsPrompt) {
+      if (askInstanceGroupsOnLaunch) {
         const { added, removed } = getAddedAndRemoved(
           launch_data?.original?.instance_groups || [],
           launch_data?.instance_groups ? launch_data.instance_groups : ([] as { id: number }[])
         );
 
-        const disassociationPromises = removed.map((group: { id: number }) =>
-          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`, {
-            id: group.id,
-            disassociate: true,
-          })
-        );
-
-        const associationPromises = added.map((group) =>
-          postAssociateInstanceGroup(
-            awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`,
-            {
+        if (phase === 'disassociate') {
+          await Promise.all(
+            removed.map((group: { id: number }) =>
+              postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`, {
+                id: group.id,
+                disassociate: true,
+              })
+            )
+          );
+        } else {
+          await Promise.all(
+            added.map((group) =>
+              postAssociateInstanceGroup(
+                awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`,
+                { id: group.id }
+              )
+            )
+          );
+        }
+      } else if (existingInstanceGroups && phase === 'disassociate') {
+        await Promise.all(
+          existingInstanceGroups.map((group: { id: number }) =>
+            postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`, {
               id: group.id,
-            }
+              disassociate: true,
+            })
           )
         );
-
-        await Promise.all([...disassociationPromises, ...associationPromises]);
-      } else if (existingInstanceGroups) {
-        const disassociationPromises = existingInstanceGroups.map((group: { id: number }) =>
-          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/instance_groups/`, {
-            id: group.id,
-            disassociate: true,
-          })
-        );
-        await Promise.all(disassociationPromises);
       }
     },
     [postDisassociate, postAssociateInstanceGroup]
@@ -690,65 +750,50 @@ const useProcessCredentials = () => {
   const postAssociateCredential = usePostRequest<{ id: number }, Credential>();
 
   return useCallback(
-    async (nodeId: string, launch_data: GraphNodeData['launch_data']) => {
+    async (nodeId: string, launch_data: GraphNodeData['launch_data'], phase: ProcessPhase) => {
+      const askCredentialOnLaunch = Boolean(
+        launch_data?.original?.launch_config?.ask_credential_on_launch
+      );
       const promptCredentials = launch_data?.credentials || [];
       const templateCredentials = launch_data?.original?.launch_config?.defaults?.credentials || [];
       const nodeCredentials = launch_data?.original?.credentials || [];
 
-      if (launch_data?.credentials) {
+      if (askCredentialOnLaunch && launch_data?.credentials) {
         const { added, removed } = getAddedAndRemovedCredentials(
           nodeCredentials,
           promptCredentials,
           templateCredentials
         );
-        const disassociationPromises = removed.map((credential: { id: number }) =>
-          postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
-            id: credential.id,
-            disassociate: true,
-          })
-        );
 
-        const associationPromises = added.map((credential) =>
-          postAssociateCredential(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
-            id: credential.id,
-          })
+        if (phase === 'disassociate') {
+          await Promise.all(
+            removed.map((credential: { id: number }) =>
+              postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
+                id: credential.id,
+                disassociate: true,
+              })
+            )
+          );
+        } else {
+          await Promise.all(
+            added.map((credential) =>
+              postAssociateCredential(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
+                id: credential.id,
+              })
+            )
+          );
+        }
+      } else if (!askCredentialOnLaunch && nodeCredentials.length > 0 && phase === 'disassociate') {
+        await Promise.all(
+          nodeCredentials.map((credential: { id: number }) =>
+            postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
+              id: credential.id,
+              disassociate: true,
+            })
+          )
         );
-
-        await Promise.all([...disassociationPromises, ...associationPromises]);
       }
     },
     [postDisassociate, postAssociateCredential]
   );
-};
-
-interface Credential {
-  id: number;
-  name: string;
-  credential_type: number;
-}
-const getAddedAndRemovedCredentials = (
-  nodeCredentials: Credential[],
-  promptCredentials: Credential[],
-  templateCredentials: Credential[]
-) => {
-  // Step 1: Get the aggregate credentials from the template and node
-  const aggregateCredentials = [...nodeCredentials, ...templateCredentials];
-
-  // Missing step - vault ids are not being compared
-
-  // Step 2: Add credentials from prompt that are not in the aggregate
-  const added = promptCredentials.filter(
-    (promptCredential) =>
-      !aggregateCredentials.find(
-        (aggregateCredential) => aggregateCredential.id === promptCredential.id
-      )
-  );
-
-  // Step 3: Remove credentials from the aggregate that are not in the prompt
-  const removed = nodeCredentials.filter(
-    (nodeCredential) =>
-      !promptCredentials.find((promptCredential) => promptCredential.id === nodeCredential.id)
-  );
-
-  return { added, removed };
 };

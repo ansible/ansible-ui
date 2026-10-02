@@ -23,9 +23,6 @@ export function PageApp(props: {
    */
   basename?: string;
 
-  /** The default refresh interval for the page in seconds. */
-  defaultRefreshInterval: number;
-
   banner?: ReactNode;
 
   contextSwitcher?: ReactNode;

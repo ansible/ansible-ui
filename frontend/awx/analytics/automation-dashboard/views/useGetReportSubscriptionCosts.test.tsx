@@ -2,8 +2,6 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
-import { SWRConfig } from 'swr';
-import { ReactNode } from 'react';
 import { useGetReportSubscriptionCosts } from './useGetReportSubscriptionCosts';
 import type { ISubscriptionCosts } from '../types';
 import { metricsAPI } from '../../../common/api/metrics-utils';
@@ -20,12 +18,6 @@ const subscriptionCostsFixture: ISubscriptionCosts[] = [
 ];
 
 // ─── Wrapper ──────────────────────────────────────────────────────────────────
-
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <SWRConfig value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}>
-    {children}
-  </SWRConfig>
-);
 
 // ─── MSW server ───────────────────────────────────────────────────────────────
 
@@ -47,7 +39,7 @@ describe('useGetReportSubscriptionCosts', () => {
         })
       );
 
-      const { result } = renderHook(() => useGetReportSubscriptionCosts(), { wrapper });
+      const { result } = renderHook(() => useGetReportSubscriptionCosts());
 
       expect(result.current.isLoading).toBe(true);
       await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -62,7 +54,7 @@ describe('useGetReportSubscriptionCosts', () => {
         )
       );
 
-      const { result } = renderHook(() => useGetReportSubscriptionCosts(), { wrapper });
+      const { result } = renderHook(() => useGetReportSubscriptionCosts());
 
       await waitFor(() => expect(result.current.subscriptionCosts).toBeDefined());
 
@@ -78,7 +70,7 @@ describe('useGetReportSubscriptionCosts', () => {
         )
       );
 
-      const { result } = renderHook(() => useGetReportSubscriptionCosts(), { wrapper });
+      const { result } = renderHook(() => useGetReportSubscriptionCosts());
 
       await waitFor(() => expect(result.current.subscriptionCosts).toBeDefined());
 
@@ -94,7 +86,7 @@ describe('useGetReportSubscriptionCosts', () => {
         )
       );
 
-      const { result } = renderHook(() => useGetReportSubscriptionCosts(), { wrapper });
+      const { result } = renderHook(() => useGetReportSubscriptionCosts());
 
       await waitFor(() => expect(result.current.error).toBeDefined());
 

@@ -72,6 +72,9 @@ describe('Projects', () => {
     server.use(
       http.get('*/projects/*', () => {
         return HttpResponse.json({ count: 0, results: [] });
+      }),
+      http.options('*/projects/', () => {
+        return HttpResponse.json({ actions: {} });
       })
     );
 

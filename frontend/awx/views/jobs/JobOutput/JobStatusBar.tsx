@@ -18,7 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, ProjectDiagramIcon } from '@patternfly/react-icons';
 import { DateTime, Duration } from 'luxon';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Job } from '../../../interfaces/Job';
@@ -45,26 +45,27 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
   const [activeJobElapsedTime, setActiveJobElapsedTime] = useState('00:00:00');
   const [playbookStarted, setPlaybookStarted] = useState(false);
 
-  const eventsSlug = job.type === 'job' ? 'job_events' : 'events';
+  const isPlaybookJob = job.type === 'job';
+  const shouldPoll = isPlaybookJob && !playbookStarted && !job.finished;
+
+  const refreshInterval = useCallback((latestData: AwxItemsResponse<JobEvent>) => {
+    if (latestData?.results.length) {
+      const latestEvent = latestData.results[0];
+      if (latestEvent.event === 'playbook_on_start') {
+        return 0;
+      }
+    }
+    return 5000;
+  }, []);
 
   const { data: jobEvents } = useGet<AwxItemsResponse<JobEvent>>(
-    awxAPI`/${job.type}s/${job.id.toString()}/${eventsSlug}/`,
+    shouldPoll ? awxAPI`/jobs/${job.id.toString()}/job_events/` : undefined,
     {
       page_size: 1,
       counter: 1,
       count_disabled: 1,
     },
-    {
-      refreshInterval: (latestData: AwxItemsResponse<JobEvent>) => {
-        if (latestData?.results.length) {
-          const latestEvent = latestData.results[0];
-          if (latestEvent.event === 'playbook_on_start') {
-            return 0;
-          }
-        }
-        return 5000;
-      },
-    }
+    { refreshInterval }
   );
 
   const event = jobEvents?.results[0]?.event;
@@ -91,11 +92,9 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
 
   const playCount = job.playbook_counts?.play_count;
   const taskCount = job.playbook_counts?.task_count;
-  const darkCount = job.host_status_counts?.dark;
-  const failureCount = job.host_status_counts?.failures;
-  const totalHostCount = job.host_status_counts
-    ? Object.keys(job.host_status_counts || {}).reduce(
-        (sum, key) => sum + (job.host_status_counts[key as 'ok' | 'failures' | 'dark'] as number),
+  const totalHostCount: number = job.host_status_counts
+    ? (Object.values(job.host_status_counts) as (number | undefined)[]).reduce<number>(
+        (sum, count) => sum + (count ?? 0),
         0
       )
     : 0;
@@ -123,11 +122,11 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
     <Split hasGutter>
       <SplitItem isFilled>
         <Flex>
-          <HeaderTitle>
+          <HeaderTitle data-testid="job-status-bar">
             <h1>{job.name}</h1>
             <StatusCell status={job.status} />
           </HeaderTitle>
-          {!playbookStarted && job?.status === 'running' && (
+          {isPlaybookJob && !playbookStarted && job?.status === 'running' && (
             <Tooltip
               content={t(
                 'Setting up the job now. This involves retrieving the execution environment image' +
@@ -153,8 +152,6 @@ export function JobStatusBar(props: Readonly<{ job: Job }>) {
           <Count label={t('Plays')} count={playCount} />
           <Count label={t('Tasks')} count={taskCount} />
           <Count label={t('Hosts')} count={totalHostCount} />
-          <Count label={t('Unreachable')} count={darkCount} />
-          <Count label={t('Failed')} count={failureCount} />
           <FlexItem>
             {t('Elapsed')} <Badge isRead>{elapsed}</Badge>
           </FlexItem>

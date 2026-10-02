@@ -6,7 +6,7 @@ on console.redhat.com (Insights/CRC).
 ## Prerequisites
 
 - **insights-chrome** repository cloned (e.g., `~/code/RedHatInsights/insights-chrome`)
-- Node.js 20.x+ installed
+- Node.js 24.x+ installed
 - Add to `/etc/hosts`: `127.0.0.1 stage.foo.redhat.com prod.foo.redhat.com`
 
 ## Why Isolated?

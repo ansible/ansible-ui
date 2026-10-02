@@ -8,7 +8,7 @@
     "dump-nyc-pw": "mkdir -p ../.nyc_output && npx playwright test --config ../playwright/playwright.config.ts playwright/tests/framework --project='live chromium' && mv coverage/playwright/coverage-final.json ../.nyc_output/framework-playwright.json",
     "clean": "rm -rf publish",
     "build": "npm run clean && vite build && NODE_OPTIONS=--max-old-space-size=8192 tsc --project tsconfig.production.json",
-    "test": "npm run eslint && npm run prettier && npm run tsc && npm run vitest",
+    "test": "npm run eslint && npm run prettier && npm run tsc && npm run vitest && npm run vitest:types",
     "tsc": "tsc --noEmit",
     "eslint": "eslint --max-warnings=0 .",
     "eslint:fix": "eslint --fix .",
@@ -16,6 +16,7 @@
     "prettier:fix": "prettier --write .",
     "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
     "vitest": "vitest --run",
+    "vitest:types": "vitest --run --typecheck.only --typecheck.tsconfig tsconfig.utility-types.json --coverage.enabled=false utils/utilityTypes.test-d.ts",
     "vitest:watch": "vitest watch",
     "vitest:coverage": "vitest --run --coverage"
   }

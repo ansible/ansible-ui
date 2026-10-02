@@ -8,7 +8,7 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
-import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
@@ -182,8 +182,7 @@ export function CreateEventStream() {
   const postRequest = usePostRequest<EdaEventStreamCreate, EdaEventStream>();
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const defaultOrganization =
     organizations && organizations?.results && organizations.results.length > 0

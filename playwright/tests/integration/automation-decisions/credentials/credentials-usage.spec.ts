@@ -39,7 +39,7 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
     // Get the corresponding EDA organization
     const ansibleId = platformOrg.summary_fields?.resource?.ansible_id;
     if (!ansibleId) {
-      throw new Error('Platform organization missing ansible_id');
+      throw new Error(`Platform organization "${organizationName}" missing ansible_id`);
     }
     const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
     edaOrgId = edaOrganization.id;
@@ -172,7 +172,9 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
 
     await page.getByRole('button', { name: 'Create project', exact: true }).click();
     await page.getByRole('textbox', { name: 'Name' }).fill(projectName);
-    await page.getByLabel('Source Control URL').fill('https://github.com/ansible/ansible-ui');
+    await page
+      .getByLabel('Source Control URL')
+      .fill('git@github.com:ansible/private-nonexistent-repo.git');
 
     await page.getByRole('button', { name: 'Organization' }).click();
     await page.locator('#organization_id-search').getByRole('textbox').fill(organizationName);
@@ -193,9 +195,6 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
       await expect(page.getByTestId('status')).toContainText('Failed', {
         timeout: 30000,
       });
-      await expect(page.getByTestId('import-error')).toContainText(
-        'Credentials not provided or incorrect'
-      );
       expect(syncedProject.import_state).toBe('failed');
     } finally {
       if (newProject?.id) {

@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Schedule } from '../../../interfaces/Schedule';
 import { BaseSchedulePayload, ScheduleAccessoriesPayload, ScheduleFormWizard } from '../types';
-import { mungePromptData, mungeSurveyAndExtraVarsData } from './ruleHelpers';
+import { ensureUntilZSuffix, mungePromptData, mungeSurveyAndExtraVarsData } from './ruleHelpers';
 import { usePostAccessories } from './usePostScheduleAccessories';
 import { useSetRRuleItemToRuleSet } from './useSetRRuleItemToRuleSet';
 
@@ -23,9 +23,11 @@ export const useProcessSchedule = () => {
       const { resourceId, resource, prompt, survey, rules, exceptions, ...rest } = payloadData;
       const ruleset = getRuleSet(rules, exceptions);
 
+      const rrule = ensureUntilZSuffix(ruleset.toString().replaceAll('\n', ' '));
+
       const payload = {
         ...rest,
-        rrule: ruleset.toString().split('\n').join(' '),
+        rrule,
       };
 
       function request(

@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InsightsSelectGroup } from './InsightsSelectGroup';
 
@@ -53,12 +52,9 @@ describe('InsightsSelectGroup', () => {
 
   const renderComponent = (props = {}) => {
     return render(
-      // Fresh SWRConfig per test prevents cache from previous tests polluting responses
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter>
-          <InsightsSelectGroup {...defaultProps} {...props} />
-        </MemoryRouter>
-      </SWRConfig>
+      <MemoryRouter>
+        <InsightsSelectGroup {...defaultProps} {...props} />
+      </MemoryRouter>
     );
   };
 

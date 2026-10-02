@@ -4,17 +4,42 @@ import {
   isLengthType,
   ValidateMinMaxOptions,
   TemplateSurveyForm,
+  EditTemplateSurveyForm,
+  AddTemplateSurveyForm,
 } from './TemplateSurveyForm';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { userEvent } from '@testing-library/user-event';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { Survey, Spec } from '../../../interfaces/Survey';
 import { awxAPI } from '../../../common/api/awx-utils';
 
 // Identity function for translation in tests
 const t = (s: string) => s;
+
+const surveySpecOptionsWithPatterns = {
+  actions: {
+    POST: {
+      spec: {
+        type: 'json',
+        question_name: {
+          pattern: '^[^<]+$',
+          pattern_description: 'No angle brackets in question text',
+        },
+        question_description: {
+          pattern: '^[^<]+$',
+          pattern_description: 'No angle brackets in description',
+        },
+        variable: {
+          pattern: String.raw`^\S+$`,
+          pattern_description: 'No whitespace in variable name',
+        },
+      },
+    },
+  },
+};
 
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
@@ -81,6 +106,32 @@ const createSurveyWithTextQuestion = (
     name: 'Test Survey',
     description: 'Test Survey Description',
     spec: [baseSpec as Spec],
+  };
+};
+
+const DEFAULT_NUMERIC_OPTIONS = { type: 'integer' as const };
+const createSurveyWithNumericQuestion = (
+  options: { type: 'integer' | 'float'; defaultValue?: number } = DEFAULT_NUMERIC_OPTIONS
+): Survey => {
+  const { type, defaultValue = 42 } = options;
+
+  return {
+    name: 'Test Survey',
+    description: 'Test Survey Description',
+    spec: [
+      {
+        question_name: `Test ${type} Question`,
+        question_description: `A ${type} question`,
+        required: false,
+        type,
+        variable: 'int_variable',
+        min: 0,
+        max: 100,
+        default: defaultValue,
+        choices: '',
+        new_question: false,
+      },
+    ],
   };
 };
 
@@ -505,5 +556,1177 @@ describe('TemplateSurveyForm', () => {
       expect(screen.getByRole('textbox', { name: /question/i })).toHaveValue('');
       expect(screen.getByRole('button', { name: /create survey question/i })).toBeInTheDocument();
     });
+
+    test('should render answer variable name and description fields in add mode', async () => {
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      renderSurveyForm(server, emptySurvey, { mode: 'add' });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: /answer variable name/i })).toBeInTheDocument();
+    });
+
+    test('should render answer type selector with all options', async () => {
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      renderSurveyForm(server, emptySurvey, { mode: 'add' });
+
+      await waitFor(() => {
+        expect(screen.getByText('Answer type')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Answer type')).toBeInTheDocument();
+    });
+
+    test('should render required checkbox in add mode', async () => {
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      renderSurveyForm(server, emptySurvey, { mode: 'add' });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Required')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Text question', () => {
+    test('should render min/max length fields for text type', async () => {
+      const textSurvey = createSurveyWithTextQuestion({
+        withDefault: true,
+        defaultValue: 'hello',
+      });
+
+      renderSurveyForm(server, textSurvey, {
+        mode: 'edit',
+        questionVariable: 'text_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum length')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum length')).toBeInTheDocument();
+      expect(screen.getByText('Default answer')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Integer question', () => {
+    test('should render min/max fields for integer type', async () => {
+      const intSurvey = createSurveyWithNumericQuestion({ type: 'integer' });
+
+      renderSurveyForm(server, intSurvey, {
+        mode: 'edit',
+        questionVariable: 'int_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum')).toBeInTheDocument();
+      expect(screen.getByText('Default answer')).toBeInTheDocument();
+    });
+
+    test('should show validation error for non-integer value in default answer', async () => {
+      const user = userEvent.setup();
+      // Use workflow_job_templates as the resourceType so the GET URL is distinct from
+      // the job_templates URL cached by the preceding tests in this describe block.
+      // This avoids the 2-second SWR dedupingInterval returning stale data.
+      //
+      // Pre-populate the default with a decimal string — avoids typing decimals into a
+      // number input (happy-dom may reject the intermediate "1." state).  The number
+      // input accepts "1.5" as a valid float, so RHF stores it as-is.  On submit,
+      // validate("1.5") fires and returns the integer error.
+      const survey: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'Test Question',
+            question_description: '',
+            required: false,
+            type: 'integer',
+            variable: 'int_variable',
+            min: 0,
+            max: 100,
+            choices: '',
+            default: '1.5',
+            new_question: false,
+          },
+        ],
+      };
+
+      renderSurveyForm(server, survey, {
+        mode: 'edit',
+        questionVariable: 'int_variable',
+        resourceType: 'workflow_job_templates',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/default answer/i)).toBeInTheDocument();
+      });
+
+      // Submit without changing anything — validate('1.5') blocks submission and
+      // shows the error.  No POST mock needed because onSubmit is never reached.
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText('This field must be an integer.')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Edit Mode - Float question', () => {
+    test('should render min/max fields for float type', async () => {
+      const floatSurvey = createSurveyWithNumericQuestion({ type: 'float' });
+
+      renderSurveyForm(server, floatSurvey, {
+        mode: 'edit',
+        questionVariable: 'int_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Textarea question', () => {
+    test('should render textarea default answer for textarea type', async () => {
+      const textareaSurvey: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'Textarea Question',
+            question_description: 'Enter notes',
+            required: false,
+            type: 'textarea',
+            variable: 'textarea_var',
+            min: 0,
+            max: 4096,
+            default: 'default notes',
+            choices: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      renderSurveyForm(server, textareaSurvey, {
+        mode: 'edit',
+        questionVariable: 'textarea_var',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum length')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum length')).toBeInTheDocument();
+      expect(screen.getByText('Default answer')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit Mode - Password question', () => {
+    test('should render password default answer for password type', async () => {
+      const passwordSurvey: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'Password Question',
+            question_description: 'Enter secret',
+            required: true,
+            type: 'password',
+            variable: 'password_var',
+            min: 0,
+            max: 256,
+            default: '',
+            choices: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      renderSurveyForm(server, passwordSurvey, {
+        mode: 'edit',
+        questionVariable: 'password_var',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Minimum length')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Maximum length')).toBeInTheDocument();
+      expect(screen.getByText('Default answer')).toBeInTheDocument();
+    });
+  });
+
+  describe('Error and Loading states', () => {
+    test('should render error when survey API fails', async () => {
+      const templateId = '123';
+      server.use(
+        http.get(awxAPI`/job_templates/${templateId}/survey_spec/`, () =>
+          HttpResponse.json({ detail: 'Server Error' }, { status: 500 })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={[`/templates/job_template/${templateId}/survey/add`]}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={<TemplateSurveyForm mode="add" resourceType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(/detail: Server Error/)).toBeInTheDocument();
+      });
+    });
+
+    test('should render loading state while fetching survey', async () => {
+      const templateId = '123';
+      server.use(
+        http.get(awxAPI`/job_templates/${templateId}/survey_spec/`, async () => {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          return HttpResponse.json({ name: '', description: '', spec: [] });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={[`/templates/job_template/${templateId}/survey/add`]}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={<TemplateSurveyForm mode="add" resourceType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      expect(screen.queryByText('Question')).not.toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Edit Mode - Workflow job template resource type', () => {
+    test('should render edit form for workflow job template survey', async () => {
+      const textSurvey = createSurveyWithTextQuestion({ withDefault: true });
+
+      renderSurveyForm(server, textSurvey, {
+        mode: 'edit',
+        questionVariable: 'text_variable',
+        resourceType: 'workflow_job_templates',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('textbox', { name: /question/i })).toHaveValue('Test Text Question');
+      expect(screen.getByRole('button', { name: /save survey question/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('Integer/Float Default Value of 0 Bug Fix', () => {
+    test('should preserve integer default value of 0', async () => {
+      server.use(
+        http.get(awxAPI`/job_templates/890/survey_spec/`, () =>
+          HttpResponse.json(createSurveyWithNumericQuestion({ type: 'integer', defaultValue: 0 }))
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/890/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable="int_variable"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByLabelText(/default answer/i)).toHaveValue(0);
+    });
+
+    test('should preserve float default value of 0', async () => {
+      server.use(
+        http.get(awxAPI`/job_templates/891/survey_spec/`, () =>
+          HttpResponse.json(createSurveyWithNumericQuestion({ type: 'float', defaultValue: 0 }))
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/891/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable="int_variable"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByLabelText(/default answer/i)).toHaveValue(0);
+    });
+  });
+
+  describe('Edit Mode - Answer type change', () => {
+    test('should reset min/max to defaults when answer type is changed', async () => {
+      const user = userEvent.setup();
+      const surveyWithCustomMinMax: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'Test Integer Question',
+            question_description: '',
+            required: false,
+            type: 'integer',
+            variable: 'int_variable',
+            min: 5,
+            max: 500,
+            choices: '',
+            default: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      renderSurveyForm(server, surveyWithCustomMinMax, {
+        mode: 'edit',
+        questionVariable: 'int_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/^minimum$/i)).toBeInTheDocument();
+      });
+      expect(screen.getByLabelText(/^minimum$/i)).toHaveValue(5);
+      expect(screen.getByLabelText(/^maximum$/i)).toHaveValue(500);
+
+      // Change answer type to Float (marks the 'type' field as dirty).
+      // The toggle button's accessible name matches the current selected label ("Integer").
+      await user.click(screen.getByRole('button', { name: 'Integer' }));
+      const listbox = await screen.findByRole('listbox');
+      await user.click(within(listbox).getByText('Float'));
+
+      // isDirty branch resets min/max to their defaults
+      await waitFor(() => {
+        expect(screen.getByLabelText(/^minimum$/i)).toHaveValue(0);
+      });
+      expect(screen.getByLabelText(/^maximum$/i)).toHaveValue(1024);
+    });
+  });
+
+  describe('Submit behavior - Edit mode', () => {
+    test('should submit successfully with valid integer default value', async () => {
+      const user = userEvent.setup();
+      const survey = createSurveyWithNumericQuestion({ type: 'integer' });
+
+      let postCalled = false;
+      server.use(
+        http.post(awxAPI`/job_templates/123/survey_spec/`, () => {
+          postCalled = true;
+          return HttpResponse.json({});
+        })
+      );
+
+      renderSurveyForm(server, survey, {
+        mode: 'edit',
+        questionVariable: 'int_variable',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/default answer/i)).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => {
+        expect(postCalled).toBe(true);
+      });
+    });
+
+    test('should show duplicate error when renaming variable to existing one', async () => {
+      const user = userEvent.setup();
+      const surveyWithTwo: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'Question 1',
+            question_description: '',
+            required: false,
+            type: 'text',
+            variable: 'var1',
+            min: 0,
+            max: 1024,
+            choices: '',
+            default: '',
+            new_question: false,
+          },
+          {
+            question_name: 'Question 2',
+            question_description: '',
+            required: false,
+            type: 'text',
+            variable: 'var2',
+            min: 0,
+            max: 1024,
+            choices: '',
+            default: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      renderSurveyForm(server, surveyWithTwo, {
+        mode: 'edit',
+        questionVariable: 'var1',
+        resourceType: 'workflow_job_templates',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: /answer variable name/i })).toHaveValue('var1');
+      });
+
+      await user.clear(screen.getByRole('textbox', { name: /answer variable name/i }));
+      await user.type(screen.getByRole('textbox', { name: /answer variable name/i }), 'var2');
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Survey already contains a question with variable named "var2"/)
+        ).toBeInTheDocument();
+      });
+    });
+
+    test('should submit integer question with typed non-empty default', async () => {
+      const user = userEvent.setup();
+      const intSurvey = createSurveyWithNumericQuestion({ type: 'integer' });
+
+      let postBody: unknown;
+      server.use(
+        http.get(awxAPI`/job_templates/886/survey_spec/`, () => HttpResponse.json(intSurvey)),
+        http.post(awxAPI`/job_templates/886/survey_spec/`, async ({ request }) => {
+          postBody = await request.json();
+          return HttpResponse.json({});
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/886/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable="int_variable"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/default answer/i)).toBeInTheDocument();
+      });
+
+      const defaultInput = screen.getByLabelText(/default answer/i);
+      await user.clear(defaultInput);
+      await user.type(defaultInput, '42');
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => {
+        expect(postBody).toBeDefined();
+      });
+    });
+
+    test('should show error message when POST request fails', async () => {
+      const user = userEvent.setup();
+      const floatSurvey = createSurveyWithNumericQuestion({ type: 'float' });
+
+      server.use(
+        http.get(awxAPI`/job_templates/888/survey_spec/`, () => HttpResponse.json(floatSurvey)),
+        http.post(awxAPI`/job_templates/888/survey_spec/`, () =>
+          HttpResponse.json({ detail: 'Server Error' }, { status: 500 })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/888/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable="int_variable"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText('Failed to create new survey question.')).toBeInTheDocument();
+      });
+    });
+
+    test('should submit float question and convert default to float', async () => {
+      const user = userEvent.setup();
+      const floatSurvey = createSurveyWithNumericQuestion({ type: 'float', defaultValue: 5 });
+
+      let postBody: unknown;
+      server.use(
+        http.post(awxAPI`/job_templates/887/survey_spec/`, async ({ request }) => {
+          postBody = await request.json();
+          return HttpResponse.json({});
+        }),
+        http.get(awxAPI`/job_templates/887/survey_spec/`, () => HttpResponse.json(floatSurvey))
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/887/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable="int_variable"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/default answer/i)).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => {
+        expect(postBody).toBeDefined();
+      });
+    });
+
+    test('should submit multiplechoice question with choices', async () => {
+      const user = userEvent.setup();
+      const mcSurvey = createSurveyWithMultiselectQuestion({ type: 'multiplechoice' });
+
+      let postCalled = false;
+      server.use(
+        http.post(awxAPI`/job_templates/456/survey_spec/`, () => {
+          postCalled = true;
+          return HttpResponse.json({});
+        }),
+        http.get(awxAPI`/job_templates/456/survey_spec/`, () => HttpResponse.json(mcSurvey))
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/456/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable="test_variable"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => {
+        expect(postCalled).toBe(true);
+      });
+    });
+
+    test('should process multiplechoice question with no choices and block submit', async () => {
+      const user = userEvent.setup();
+      const emptyChoicesSurvey: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'MC Question',
+            question_description: '',
+            required: false,
+            type: 'multiplechoice',
+            variable: 'mc_variable',
+            min: 0,
+            max: 1024,
+            choices: [],
+            default: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      server.use(
+        http.get(awxAPI`/job_templates/789/survey_spec/`, () =>
+          HttpResponse.json(emptyChoicesSurvey)
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/789/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable="mc_variable"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /save survey question/i })).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Submit behavior - Add mode', () => {
+    test('should submit new question in add mode', async () => {
+      const user = userEvent.setup();
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      let postCalled = false;
+      server.use(
+        http.post(awxAPI`/workflow_job_templates/123/survey_spec/`, () => {
+          postCalled = true;
+          return HttpResponse.json({});
+        })
+      );
+
+      renderSurveyForm(server, emptySurvey, {
+        mode: 'add',
+        resourceType: 'workflow_job_templates',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /^question$/i }), 'New Question');
+      await user.type(
+        screen.getByRole('textbox', { name: /answer variable name/i }),
+        'new_variable'
+      );
+
+      await user.click(screen.getByRole('button', { name: /create survey question/i }));
+
+      await waitFor(() => {
+        expect(postCalled).toBe(true);
+      });
+    });
+
+    test('should show duplicate error in add mode when variable already exists', async () => {
+      const user = userEvent.setup();
+      const surveyWithExisting: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'Existing Question',
+            question_description: '',
+            required: false,
+            type: 'text',
+            variable: 'existing_var',
+            min: 0,
+            max: 1024,
+            choices: '',
+            default: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      renderSurveyForm(server, surveyWithExisting, {
+        mode: 'add',
+        resourceType: 'job_templates',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /^question$/i }), 'Duplicate Question');
+      await user.type(
+        screen.getByRole('textbox', { name: /answer variable name/i }),
+        'existing_var'
+      );
+
+      await user.click(screen.getByRole('button', { name: /create survey question/i }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Survey already contains a question with variable named "existing_var"/)
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('OPTIONS pattern validation', () => {
+    test('should show pattern error for invalid question text from survey_spec OPTIONS', async () => {
+      const user = userEvent.setup();
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+      const templateId = '123';
+      const apiPath = awxAPI`/job_templates/${templateId}/survey_spec/`;
+
+      server.use(
+        http.get(apiPath, () => HttpResponse.json(emptySurvey)),
+        http.options(apiPath, () => HttpResponse.json(surveySpecOptionsWithPatterns))
+      );
+
+      render(
+        <MemoryRouter initialEntries={[`/templates/job_template/${templateId}/survey/add`]}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={<TemplateSurveyForm mode="add" resourceType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: /^question$/i })).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /^question$/i }), 'bad<script>');
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.getByText('No angle brackets in question text')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Variable validation', () => {
+    test('should show validation error for variable name with spaces', async () => {
+      const user = userEvent.setup();
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      renderSurveyForm(server, emptySurvey, {
+        mode: 'add',
+        resourceType: 'workflow_job_templates',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /^question$/i }), 'My Question');
+      await user.type(
+        screen.getByRole('textbox', { name: /answer variable name/i }),
+        'my variable'
+      );
+
+      await user.click(screen.getByRole('button', { name: /create survey question/i }));
+
+      await waitFor(() => {
+        expect(screen.getByText('This field must not contain spaces.')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Navigation behavior', () => {
+    test('should not render form in edit mode when questionVariable is null', async () => {
+      server.use(
+        http.get(awxAPI`/job_templates/321/survey_spec/`, () =>
+          HttpResponse.json({ name: '', description: '', spec: [] })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/321/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable={null}
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByRole('textbox', { name: /^question$/i })).not.toBeInTheDocument();
+      });
+    });
+
+    test('should not render form when question variable is not found in survey', async () => {
+      server.use(
+        http.get(awxAPI`/job_templates/321/survey_spec/`, () =>
+          HttpResponse.json({ name: '', description: '', spec: [] })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/job_template/321/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="job_templates"
+                  questionVariable="nonexistent_var"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByRole('textbox', { name: /^question$/i })).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Wrapper components', () => {
+    test('should render AddTemplateSurveyForm with add mode form', async () => {
+      server.use(
+        http.get(awxAPI`/workflow_job_templates/555/survey_spec/`, () =>
+          HttpResponse.json({ name: '', description: '', spec: [] })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/workflow_job_template/555/survey/add']}>
+          <Routes>
+            <Route
+              path="/templates/workflow_job_template/:id/survey/:mode"
+              element={<AddTemplateSurveyForm resourceType="workflow_job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /create survey question/i })).toBeInTheDocument();
+      });
+    });
+
+    test('should render EditTemplateSurveyForm reading questionVariable from URL', async () => {
+      const textSurvey = createSurveyWithTextQuestion({ withDefault: true });
+
+      server.use(
+        http.get(awxAPI`/workflow_job_templates/556/survey_spec/`, () =>
+          HttpResponse.json(textSurvey)
+        )
+      );
+
+      // useURLSearchParams reads window.location (not MemoryRouter) — set it explicitly
+      window.history.replaceState(null, '', '?question_variable=text_variable');
+
+      render(
+        <MemoryRouter initialEntries={['/templates/workflow_job_template/556/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/workflow_job_template/:id/survey/:mode"
+              element={<EditTemplateSurveyForm resourceType="workflow_job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      window.history.replaceState(null, '', '/');
+    });
+  });
+
+  describe('Choices in string format', () => {
+    test('should handle multiplechoice question where choices is a string', async () => {
+      const surveyWithStringChoices: Survey = {
+        name: 'Test Survey',
+        description: '',
+        spec: [
+          {
+            question_name: 'String Choices Question',
+            question_description: '',
+            required: false,
+            type: 'multiplechoice',
+            variable: 'mc_str_variable',
+            min: 0,
+            max: 1024,
+            choices: 'option1\noption2',
+            default: '',
+            new_question: false,
+          },
+        ],
+      };
+
+      server.use(
+        http.get(awxAPI`/workflow_job_templates/777/survey_spec/`, () =>
+          HttpResponse.json(surveyWithStringChoices)
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/templates/workflow_job_template/777/survey/edit']}>
+          <Routes>
+            <Route
+              path="/templates/workflow_job_template/:id/survey/:mode"
+              element={
+                <TemplateSurveyForm
+                  mode="edit"
+                  resourceType="workflow_job_templates"
+                  questionVariable="mc_str_variable"
+                />
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Question')).toBeInTheDocument();
+      });
+
+      expect(screen.getByRole('textbox', { name: /^question$/i })).toHaveValue(
+        'String Choices Question'
+      );
+    });
+  });
+
+  describe('Conditions, category and page', () => {
+    const baseQuestion: Spec = {
+      question_name: 'Environment',
+      question_description: '',
+      required: false,
+      type: 'text',
+      variable: 'env',
+      min: 0,
+      max: 1024,
+      default: '',
+      choices: '',
+      new_question: false,
+    };
+
+    const conditionalSurvey: Survey = {
+      name: 'Conditional survey',
+      description: '',
+      spec: [
+        baseQuestion,
+        { ...baseQuestion, question_name: 'Debug', variable: 'debug' },
+        {
+          ...baseQuestion,
+          question_name: 'Database host',
+          variable: 'db_host',
+          category: 'Database',
+          page: 2,
+          conditions: [
+            { variable: 'env', operator: 'in', value: ['dev', 'staging'] },
+            { variable: 'debug', operator: 'is_set' },
+          ],
+          condition_logic: 'or',
+        },
+      ],
+    };
+
+    beforeEach(() => {
+      server.use(
+        http.options(awxAPI`/job_templates/123/survey_spec/`, () =>
+          HttpResponse.json({ actions: { POST: {} } })
+        )
+      );
+    });
+
+    function capturePost() {
+      const captured: { body?: Survey } = {};
+      server.use(
+        http.post(awxAPI`/job_templates/123/survey_spec/`, async ({ request }) => {
+          captured.body = (await request.json()) as Survey;
+          return HttpResponse.json({});
+        })
+      );
+      return captured;
+    }
+
+    test(
+      'loads existing conditions, category and page into the editor',
+      { timeout: 20000 },
+      async () => {
+        renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'db_host' });
+
+        await waitFor(() => {
+          expect(screen.getAllByText('Only show when')).toHaveLength(2);
+        });
+        expect(screen.getByLabelText('Category')).toHaveValue('Database');
+        expect(screen.getByLabelText('Page')).toHaveValue(2);
+        expect(screen.getByText('Match conditions')).toBeInTheDocument();
+        // List values are shown comma-separated; is_set has no value input.
+        expect(screen.getAllByLabelText('Value')).toHaveLength(1);
+        expect(screen.getByLabelText('Value')).toHaveValue('dev, staging');
+      }
+    );
+
+    test('saves conditions, category and page with the question', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      const captured = capturePost();
+      renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'db_host' });
+
+      await waitFor(() => expect(screen.getByLabelText('Value')).toBeInTheDocument());
+      await user.clear(screen.getByLabelText('Value'));
+      await user.type(screen.getByLabelText('Value'), 'dev, prod');
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => expect(captured.body).toBeDefined());
+      const saved = captured.body?.spec.find((q) => q.variable === 'db_host');
+      expect(saved?.category).toBe('Database');
+      expect(saved?.page).toBe(2);
+      expect(saved?.condition_logic).toBe('or');
+      expect(saved?.conditions).toEqual([
+        { variable: 'env', operator: 'in', value: ['dev', 'prod'] },
+        { variable: 'debug', operator: 'is_set' },
+      ]);
+    });
+
+    test('removes a condition row', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      const captured = capturePost();
+      renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'db_host' });
+
+      await waitFor(() => expect(screen.getAllByText('Only show when')).toHaveLength(2));
+      await user.click(screen.getAllByRole('button', { name: 'Remove condition' })[1]);
+
+      await waitFor(() => expect(screen.getAllByText('Only show when')).toHaveLength(1));
+      // The AND/OR selector only appears with more than one condition.
+      expect(screen.queryByText('Match conditions')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+      await waitFor(() => expect(captured.body).toBeDefined());
+      const saved = captured.body?.spec.find((q) => q.variable === 'db_host');
+      expect(saved?.conditions).toEqual([
+        { variable: 'env', operator: 'in', value: ['dev', 'staging'] },
+      ]);
+    });
+
+    test('adds a condition row', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'env' });
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Add condition' })).toBeInTheDocument();
+      });
+      expect(screen.queryByText('Only show when')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: 'Add condition' }));
+
+      await waitFor(() => expect(screen.getByText('Only show when')).toBeInTheDocument());
+      expect(screen.getByLabelText('Value')).toBeInTheDocument();
+    });
+
+    test('does not store conditions for a question without them', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      const captured = capturePost();
+      renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'env' });
+
+      await waitFor(() => expect(screen.getByLabelText('Category')).toBeInTheDocument());
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => expect(captured.body).toBeDefined());
+      const saved = captured.body?.spec.find((q) => q.variable === 'env');
+      expect(saved?.conditions).toBeUndefined();
+      expect(saved?.condition_logic).toBeUndefined();
+      expect(saved?.category).toBeUndefined();
+    });
+
+    test(
+      'hides the conditions editor when there are no other questions',
+      { timeout: 20000 },
+      async () => {
+        renderSurveyForm(server, createSurveyWithTextQuestion(), {
+          mode: 'edit',
+          questionVariable: 'text_variable',
+        });
+
+        await waitFor(() => expect(screen.getByLabelText('Category')).toBeInTheDocument());
+        expect(screen.queryByRole('button', { name: 'Add condition' })).not.toBeInTheDocument();
+      }
+    );
   });
 });

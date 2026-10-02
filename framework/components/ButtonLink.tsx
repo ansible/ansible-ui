@@ -1,7 +1,7 @@
 import { Button, ButtonProps } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import { SetRequired } from 'type-fest';
+import { SetRequired } from '../utils/utilityTypes';
 
 /**
  * A button that is a link, using the `Link` component from `react-router`.

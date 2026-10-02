@@ -1,10 +1,11 @@
-import { expect, test } from '@playwright/test';
+import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
+import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { fillMonacoEditor } from '@ansible/playwright/commands/fillMonacoEditor';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Namespace } from '@ansible/playwright/utils';
-import { createE2EName } from '@ansible/playwright/commands/createE2EName';
-import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
-import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
+import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
@@ -15,7 +16,7 @@ test.describe('Hub - Namespaces', () => {
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Content', 'Namespaces');
-      await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+      await expect(page.getByTestId('page-title')).toBeVisible();
 
       const namespaceName = createE2EName('namespace').toLowerCase().replace(/\s+/g, '_');
       await page.getByText('Create namespace', { exact: true }).click();
@@ -23,8 +24,7 @@ test.describe('Hub - Namespaces', () => {
       await expect(page).toHaveURL(/\/namespaces\/create/);
       await page.getByTestId('name').fill(namespaceName);
       await page.getByTestId('company').fill('test company');
-      await page.locator('.view-lines').click();
-      await page.keyboard.type('name: example_namespace');
+      await fillMonacoEditor(page, 'name: example_namespace');
       await page.getByText('Preview', { exact: true }).click();
       await expect(page.getByTestId('resources-form-group')).toContainText(
         'name: example_namespace'
@@ -53,7 +53,7 @@ test.describe('Hub - Namespaces', () => {
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Content', 'Namespaces');
-      await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+      await expect(page.getByTestId('page-title')).toBeVisible();
 
       const namespaceName = createE2EName('namespace').toLowerCase().replace(/\s+/g, '_');
       await page.getByText('Create namespace', { exact: true }).click();
@@ -143,7 +143,7 @@ test.describe('Hub - Namespaces - Bulk Delete', () => {
     const namespace2 = await Namespace.api.create(page);
 
     await navigateTo(page, 'Automation Content', 'Namespaces');
-    await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+    await expect(page.getByTestId('page-title')).toBeVisible();
 
     await page.locator('[data-cy="table-view"] button').click();
     await selectTableRow(
@@ -169,6 +169,6 @@ test.describe('Hub - Namespaces - Bulk Delete', () => {
     await page.getByRole('button', { name: 'Delete namespaces' }).click();
 
     await expect(page).toHaveURL(/\/namespaces/);
-    await expect(page.getByRole('heading', { name: 'Namespaces' })).toBeVisible();
+    await expect(page.getByTestId('page-title')).toBeVisible();
   });
 });

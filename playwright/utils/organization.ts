@@ -8,6 +8,36 @@ import { navigateTo } from '../commands/navigateTo';
 import { selectTableRow } from '../commands/selectTableRow';
 
 const TERMINAL_STATUSES = new Set(['successful', 'failed', 'error', 'canceled']);
+const ORGANIZATION_PROPAGATION_MAX_ATTEMPTS = 90;
+
+/**
+ * Wait until the organization exists in Automation Execution (Controller).
+ * EDA propagation is handled in automation-decisions tests via edaOrganization.ts.
+ */
+async function waitForOrganizationPropagation(
+  page: Page,
+  organizationName: string
+): Promise<{ id: number }> {
+  for (let attempt = 0; attempt < ORGANIZATION_PROPAGATION_MAX_ATTEMPTS; attempt++) {
+    const awxOrganizations = await awxAPI
+      .get<{ results: { id: number; name: string }[] }>(page, '/organizations/', {
+        params: { name: organizationName },
+      })
+      .catch(() => null);
+
+    const controllerOrganization = awxOrganizations?.results?.[0];
+    if (controllerOrganization) {
+      return controllerOrganization;
+    }
+
+    // Gateway -> Controller resource sync; no UI signal to await.
+    await page.waitForTimeout(1000);
+  }
+
+  throw new Error(
+    `Organization '${organizationName}' was not propagated to Automation Execution within ${ORGANIZATION_PROPAGATION_MAX_ATTEMPTS} seconds`
+  );
+}
 
 async function cancelInventoryJobs(page: Page, inventoryId: number): Promise<void> {
   const jobs = await awxAPI
@@ -74,24 +104,9 @@ export const Organization = {
         throw new Error('Failed to create organization: API returned null');
       }
 
-      // Wait for organization to sync to AWX (gateway -> controller sync)
-      // Look up by name since Gateway and AWX IDs may differ
-      const maxAttempts = 20;
-      for (let i = 0; i < maxAttempts; i++) {
-        const awxOrgs = await awxAPI
-          .get<{ results: { id: number; name: string }[] }>(page, '/organizations/', {
-            params: { name: organization.name },
-          })
-          .catch(() => null);
-        if (awxOrgs?.results?.[0]) {
-          // Return organization with AWX ID for use with AWX APIs
-          return { ...organization, id: awxOrgs.results[0].id };
-        }
-        await page.waitForTimeout(1000);
-      }
-
-      // If sync didn't complete, return original (may cause issues)
-      return organization;
+      // Look up by name since Gateway and downstream service IDs may differ.
+      const downstreamOrganization = await waitForOrganizationPropagation(page, organization.name);
+      return { ...organization, id: downstreamOrganization.id };
     },
 
     delete: async (page: Page, organizationId: number): Promise<void> => {
@@ -176,6 +191,8 @@ export const Organization = {
       await expect(
         page.getByRole('heading', { name: organizationName, exact: true })
       ).toBeVisible();
+
+      await waitForOrganizationPropagation(page, organizationName);
 
       return organizationName;
     },

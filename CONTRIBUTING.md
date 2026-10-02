@@ -4,6 +4,14 @@ Refer to the [Ansible community guide](https://docs.ansible.com/projects/ansible
 
 To get an overview of the project, read the [README](README.md).
 
+## AI-assisted contributions
+
+Contributors may use AI tools. You are responsible for your contributions and
+must follow the [Ansible community AI policy](https://docs.ansible.com/projects/ansible/latest/community/ai_policy.html).
+This repository's [`AI_POLICY.md`](AI_POLICY.md) summarizes how that policy
+applies here. For agent skills and local agent settings, see
+[`AI_AGENT_POLICY.md`](AI_AGENT_POLICY.md).
+
 ## Issues
 
 If you find a problem with the project, search if an issue already exists. If a related issue doesn't exist, you can open a new issue.
@@ -11,6 +19,14 @@ If you find a problem with the project, search if an issue already exists. If a 
 ## Code changes
 
 If you have forked the project and created a branch with changes you would like to see added to the project, create a pull request and your request will be reviewed.
+
+### Signed commits
+
+All commits in a pull request must be signed before the PR can be merged. Configure
+commit signing in your local Git setup and add your signing key to your GitHub
+account. See GitHub's documentation on
+[signing commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits)
+and [commit signature verification](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification).
 
 ## Text and Internationalization
 

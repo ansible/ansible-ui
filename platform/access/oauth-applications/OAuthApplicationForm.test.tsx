@@ -94,6 +94,7 @@ describe('OAuthApplicationForm', () => {
     client_secret: 'test-client-secret',
     authorization_grant_type: 'authorization-code',
     skip_authorization: false,
+    pkce_required: true,
     summary_fields: {
       user_capabilities: {
         edit: true,
@@ -141,6 +142,11 @@ describe('OAuthApplicationForm', () => {
         skip_authorization: {
           type: 'boolean',
           help_text: 'Set True to skip authorization step for completely trusted applications.',
+        },
+        pkce_required: {
+          type: 'boolean',
+          help_text:
+            'When True, clients must use PKCE (send code_challenge) when requesting authorization codes for this application.',
         },
         redirect_uris: {
           type: 'string',
@@ -255,6 +261,7 @@ describe('OAuthApplicationForm', () => {
       expect(screen.getByText('Client type')).toBeInTheDocument();
       expect(screen.getByText('Algorithm')).toBeInTheDocument();
       expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
+      expect(screen.getByText('PKCE Required')).toBeInTheDocument();
       expect(screen.getByText('Organization')).toBeInTheDocument();
     });
 
@@ -414,9 +421,15 @@ describe('OAuthApplicationForm', () => {
       });
     });
 
-    test('should display skip authorization switch with default off', async () => {
+    test('should display skip authorization checkbox with default off', async () => {
       await waitFor(() => {
         expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
+      });
+    });
+
+    test('should display PKCE required checkbox', async () => {
+      await waitFor(() => {
+        expect(screen.getByText('PKCE Required')).toBeInTheDocument();
       });
     });
 
@@ -611,7 +624,7 @@ describe('OAuthApplicationForm', () => {
       server.resetHandlers();
     });
 
-    test('should display skip authorization switch when application has it enabled', async () => {
+    test('should display skip authorization checkbox when application has it enabled', async () => {
       server.use(
         http.get(gatewayAPI`/applications/4/`, () => {
           return HttpResponse.json({
@@ -635,7 +648,7 @@ describe('OAuthApplicationForm', () => {
       });
     });
 
-    test('should display skip authorization switch when application has it disabled', async () => {
+    test('should display skip authorization checkbox when application has it disabled', async () => {
       render(
         <MemoryRouter initialEntries={['/access/oauth-applications/1/edit']}>
           <Routes>
@@ -649,6 +662,61 @@ describe('OAuthApplicationForm', () => {
       });
 
       expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
+    });
+  });
+
+  describe('EditOAuthApplication - PKCE Required field', () => {
+    afterEach(() => {
+      cleanup();
+      server.resetHandlers();
+    });
+
+    test('should display PKCE required checkbox when application has it enabled', async () => {
+      server.use(
+        http.get(gatewayAPI`/applications/5/`, () => {
+          return HttpResponse.json({
+            ...mockApplication,
+            id: 5,
+            pkce_required: true,
+          });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/5/edit']}>
+          <Routes>
+            <Route path="/access/oauth-applications/:id/edit" element={<EditOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('PKCE Required')).toBeInTheDocument();
+      });
+    });
+
+    test('should display PKCE required checkbox when application has it disabled', async () => {
+      server.use(
+        http.get(gatewayAPI`/applications/6/`, () => {
+          return HttpResponse.json({
+            ...mockApplication,
+            id: 6,
+            pkce_required: false,
+          });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/6/edit']}>
+          <Routes>
+            <Route path="/access/oauth-applications/:id/edit" element={<EditOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('PKCE Required')).toBeInTheDocument();
+      });
     });
   });
 
@@ -747,6 +815,7 @@ describe('OAuthApplicationForm', () => {
       expect(screen.getByText('Client type')).toBeInTheDocument();
       expect(screen.getByText('Algorithm')).toBeInTheDocument();
       expect(screen.getByText('Skip Authorization')).toBeInTheDocument();
+      expect(screen.getByText('PKCE Required')).toBeInTheDocument();
       expect(screen.getByText('Organization')).toBeInTheDocument();
     });
 

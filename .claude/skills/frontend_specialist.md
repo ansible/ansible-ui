@@ -11,13 +11,33 @@ Load this skill before implementing, reviewing, or refactoring any frontend code
 
 Before writing any code, read these skills in order:
 
-1. **`.claude/skills/coding_standards.md`** — API helpers, PageForm wrappers,
+1. **`.claude/skills/frontend-overlay/SKILL.md`** — this repo’s wrappers, API
+   helpers, E2E paths
+2. **`.claude/skills/coding_standards.md`** — API helpers, PageForm wrappers,
    view hooks, error adapters, CRUD hooks, framework component inventory,
    RBAC helpers, ESLint rules
-2. **`.claude/skills/testing_guidelines.md`** — Vitest + MSW patterns, accessible
+3. **`.claude/skills/testing_guidelines.md`** — Vitest + MSW patterns, accessible
    queries, userEvent, FormProvider wrappers, hook testing, mock fixtures
-3. **`.claude/skills/library_references.md`** — Fetch llms.txt for any library
+4. **`.claude/skills/library_references.md`** — Fetch llms.txt for any library
    you are about to use (React, Vitest, Vite, Zustand)
+
+## Step 1.5: Consult MCPs Before Implementation
+
+For any UI implementation, consult the MCPs configured in `.mcp.json` before
+choosing a component or validating behavior:
+
+- **PatternFly MCP**: search the official PF6 component, prop, variant, token,
+  and accessibility documentation. Never invent PatternFly props.
+- **Playwright MCP**: inspect the running UI when changing a user workflow,
+  selector, or E2E behavior. Prefer accessible locators and existing test
+  utilities.
+- **Chrome DevTools MCP**: inspect console errors, network failures, layout, or
+  performance when the browser behavior is unclear or regression-prone.
+
+Use the repository wrappers and existing components together with MCP results;
+MCP documentation does not replace searching `framework/` and the relevant
+workspace. If an MCP is unavailable, use the official fallback URLs in
+`library_references.md` and mention the fallback in the handoff.
 
 ---
 
@@ -42,6 +62,11 @@ Key differences:
 - **EDA** supports `T extends { id: number | string }`
 - **Hub** requires an explicit `keyFn` prop and handles two response formats
 - **Platform** reuses AWX error adapter by default but accepts overrides
+
+Workspace purpose: **Platform** = unified gateway UI (AAP main entry point);
+**AWX** = Ansible Controller UI; **EDA** = Event-Driven Ansible UI; **Hub** =
+Automation Hub UI; **Chatbot** = Ansible Virtual Assistant UI; **Framework** =
+shared PatternFly-based UI framework; **Common** = shared components and utilities.
 
 ---
 
@@ -126,6 +151,7 @@ Only create new components as a last resort.
 - No nested component declarations (SonarCloud S6478) — extract to module scope
 
 ### TypeScript
+- Follow TypeScript strict mode (enabled in `tsconfig`)
 - Never use `any` — use `unknown` and narrow with type guards
 - Leverage type inference; explicit types where clarity demands
 - `as const` for literal narrowing
@@ -136,10 +162,11 @@ Only create new components as a last resort.
 - Use PF6 components as foundation — never recreate existing PF components
 - Use PF6 layout components (Stack, Flex, Grid) for spacing
 - Use PF6 design tokens where available, not hardcoded px values
+- Prefer the PF6 design system first; for custom styling use CSS modules or styled-components
 
 ### SWR
 - Use `useSWR` with workspace API helpers for all data fetching
-- Import `swrOptions` from `@ansible/common-ui/crud/Data` (sets `dedupingInterval: 0`)
+- Global `SWRConfig` in `PageSettingsProvider` sets `dedupingInterval: 2000`
 - Use hook-based CRUD (`usePostRequest`, etc.) — they auto-invalidate cache
 - Use `useAwxGetAllPages` when you need all items across pages
 
@@ -147,7 +174,7 @@ Only create new components as a last resort.
 - All user-facing strings wrapped in `t()` from `useTranslation`
 - Never compare translated display strings in logic — compare raw API values
 - ESLint enforces `i18next/no-literal-string` on JSX attributes
-- See CLAUDE.md i18n section for full patterns
+- Full patterns: coding_standards § Internationalization
 
 ### ESLint Rules
 - `eqeqeq: "error"` — strict equality always
@@ -156,6 +183,10 @@ Only create new components as a last resort.
 - No default exports — use named exports
 - Hardcoded API paths are ESLint errors — use tagged template helpers
 - `jsx-a11y/recommended` — accessibility enforced
+- Advisory guardrails: `npm run eslint:guardrails`. Rules and thresholds live
+  in `.eslintrc.guardrails.json` (source of truth — do not hardcode limits
+  here). Do **not** introduce new warnings. Extract helpers instead of
+  disabling rules. See coding_standards §15.
 
 ---
 
@@ -195,10 +226,12 @@ Only create new components as a last resort.
 - [ ] All user-facing strings wrapped in `t()`
 - [ ] No default exports
 - [ ] Named route enum values used for navigation
+- [ ] Comments only for complex logic — no obvious or redundant comments
 
 ### Quality Gates
 - [ ] TypeScript passes: `npm run tsc`
 - [ ] ESLint passes: `npm run eslint`
+- [ ] Guardrails: `npm run eslint:guardrails` — no new warnings on files you touched
 - [ ] Prettier applied: `npm run prettier:fix`
 - [ ] Tests pass: `npm run vitest`
 
@@ -209,9 +242,10 @@ Only create new components as a last resort.
 1. Read the skills (coding_standards, testing_guidelines, library_references)
 2. Identify the correct workspace for the work
 3. Search for existing framework/PF/common components before creating new ones
+   — prefer editing existing files over creating new ones
 4. Implement incrementally — happy path first, then edge cases
 5. Write tests alongside implementation (not after)
-6. Run quality checks: `npm run tsc && npm run eslint && npm run vitest`
+6. Run quality checks: `npm run tsc && npm run eslint && npm run eslint:guardrails && npm run vitest`
 
 ---
 

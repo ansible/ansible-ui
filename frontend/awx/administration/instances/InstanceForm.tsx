@@ -48,6 +48,7 @@ export function AddInstance() {
         onSubmit={onSubmit}
         cancelText={t('Cancel')}
         onCancel={onCancel}
+        optionsUrl={awxAPI`/instances/`}
         defaultValue={{
           node_type: 'execution',
           node_state: 'installed',
@@ -104,6 +105,7 @@ export function EditInstance() {
           cancelText={t('Cancel')}
           onCancel={onCancel}
           defaultValue={instance}
+          optionsUrl={awxAPI`/instances/`}
         >
           <InstanceInputs mode="edit" />
         </AwxPageForm>

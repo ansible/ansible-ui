@@ -2,6 +2,7 @@ import { TOPOLOGY_AZURE, TOPOLOGY_SAAS } from '@ansible/playwright/commands/cons
 import { isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { clearTableFilters } from '@ansible/playwright/commands/clearTableFilters';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { fillMonacoEditor } from '@ansible/playwright/commands/fillMonacoEditor';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -45,7 +46,7 @@ test.describe('Hub - Remotes', () => {
 
       await test.step('Select all and bulk delete', async () => {
         // Select all remotes
-        await page.locator('input[name="check-all"]').check();
+        await page.getByTestId('selections-column-header').getByRole('checkbox').check();
 
         // Open toolbar actions and click delete
         const toolbar = page.locator('[data-ouia-component-id="page-toolbar"]');
@@ -223,10 +224,7 @@ test.describe('Hub - Remotes', () => {
           await page.getByTestId('tls_validation').uncheck();
 
           // Update requirements file (using the code editor textbox)
-          const requirementsEditor = page.getByRole('textbox', { name: 'Editor content' });
-          await requirementsEditor.click({ force: true });
-          await requirementsEditor.clear();
-          await requirementsEditor.fill('collections:\n  - name: community.general');
+          await fillMonacoEditor(page, 'collections:\n  - name: community.general');
 
           await page.getByRole('button', { name: 'Save remote', exact: true }).click();
 
@@ -285,9 +283,7 @@ test.describe('Hub - Remotes', () => {
           await page.getByTestId('sync_dependencies').check();
 
           // Clear requirements file (using the code editor textbox)
-          const requirementsEditor = page.getByRole('textbox', { name: 'Editor content' });
-          await requirementsEditor.click({ force: true });
-          await requirementsEditor.clear();
+          await fillMonacoEditor(page, '');
 
           await page.getByTestId('Submit').click();
 

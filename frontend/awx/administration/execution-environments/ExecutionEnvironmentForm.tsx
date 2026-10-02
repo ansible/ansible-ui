@@ -9,7 +9,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { useURLSearchParams } from '@ansible/ansible-ui-framework/components/useURLSearchParams';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -56,6 +56,7 @@ export function CreateExecutionEnvironment() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={defaultValue}
+        optionsUrl={awxAPI`/execution_environments/`}
       >
         <ExecutionEnvironmentInputs mode="create" />
       </AwxPageForm>
@@ -70,8 +71,7 @@ export function EditExecutionEnvironment() {
   const params = useParams<{ id?: string }>();
   const { data: execution_env } = useSWR<ExecutionEnvironment>(
     awxAPI`/execution_environments/${params.id ?? ''}/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const onSubmit: PageFormSubmitHandler<ExecutionEnvironment> = async (
     executionEnvInput: ExecutionEnvironment
@@ -126,6 +126,7 @@ export function EditExecutionEnvironment() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={execution_env}
+        optionsUrl={awxAPI`/execution_environments/`}
       >
         <ExecutionEnvironmentInputs mode="edit" executionEnv={execution_env} />
       </AwxPageForm>

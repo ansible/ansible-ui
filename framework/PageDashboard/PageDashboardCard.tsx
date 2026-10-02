@@ -180,11 +180,13 @@ export function PageDashboardCard(props: {
               )}
             </FlexItem>
             {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
-            <FlexItem>
-              <Content data-cy="card-link-text" data-testid="card-link-text" component="small">
-                {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
-              </Content>
-            </FlexItem>
+            {props.linkText && (
+              <FlexItem>
+                <Content data-cy="card-link-text" data-testid="card-link-text" component="small">
+                  {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
+                </Content>
+              </FlexItem>
+            )}
             {props.canCollapse && (
               <FlexItem>
                 <AngleRightIcon

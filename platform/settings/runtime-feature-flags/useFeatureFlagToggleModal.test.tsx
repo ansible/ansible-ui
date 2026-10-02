@@ -72,7 +72,7 @@ function createFlag(overrides: Partial<IFeatureFlag> = {}): IFeatureFlag {
 async function renderAndClickModal(options: {
   flag?: IFeatureFlag;
   enable: boolean;
-  onComplete?: ReturnType<typeof vi.fn>;
+  onComplete?: () => void;
 }) {
   const { useFeatureFlagToggleModal } = await import('./useFeatureFlagToggleModal');
   const flag = options.flag ?? createFlag();

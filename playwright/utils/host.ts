@@ -4,6 +4,7 @@ import { clickPageAction } from '../commands/clickPageAction';
 import { clickTableRow } from '../commands/clickTableRow';
 import { confirmAndAssertDeletion } from '../commands/confirmAndAssertDeletion';
 import { createE2EName } from '../commands/createE2EName';
+import { fillMonacoEditor } from '../commands/fillMonacoEditor';
 import { navigateTo } from '../commands/navigateTo';
 import { AwxHost as HostType } from '@ansible/awx-ui/interfaces/AwxHost';
 
@@ -58,8 +59,7 @@ export const Host = {
         await page.getByRole('textbox', { name: 'Description' }).fill(options.description);
       }
       if (options.variables) {
-        await page.locator('.view-line').click();
-        await page.getByRole('textbox', { name: 'Editor content' }).fill(options.variables);
+        await fillMonacoEditor(page, options.variables);
       }
       await page.getByRole('button', { name: 'Create host' }).click();
 

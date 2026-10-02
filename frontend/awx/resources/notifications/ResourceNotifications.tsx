@@ -108,12 +108,12 @@ export function ResourceNotifications({ resourceType, id }: { resourceType: stri
           } notifications`
         )}
         emptyStateTitle={t(
-          `There are currently no notifications added to this ${
+          `There are currently no notifications associated with this ${
             resourceToErrorMsg[resourceType as keyof ResourceTypeMapper]
           }.`
         )}
         emptyStateDescription={t(
-          'Please contact your organization administrator if there is an issue with your access.'
+          'Contact your organization administrator if there is an issue with your access.'
         )}
         emptyStateIcon={CubesIcon}
         {...view}

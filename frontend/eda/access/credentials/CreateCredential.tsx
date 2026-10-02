@@ -5,7 +5,7 @@ import {
   useGetPageUrl,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
-import { requestGet, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Button } from '@patternfly/react-core';
@@ -66,8 +66,7 @@ export function CreateCredential() {
 
   const { data: organizations } = useSWR<EdaResult<EdaOrganization>>(
     edaAPI`/organizations/?name=Default`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const defaultOrganization = organizations?.results?.[0];
 

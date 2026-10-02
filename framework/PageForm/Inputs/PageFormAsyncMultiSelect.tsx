@@ -89,8 +89,8 @@ export function PageFormAsyncMultiSelect<
           >
             <PageAsyncMultiSelect
               id={id}
-              data-cy={id ?? name}
-              data-testid={id ?? name}
+              data-cy={id ?? props.name}
+              data-testid={id ?? props.name}
               placeholder={props.placeholder}
               queryOptions={props.queryOptions}
               queryPlaceholder={props.queryPlaceholder}

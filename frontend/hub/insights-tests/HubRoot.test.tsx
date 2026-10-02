@@ -16,7 +16,7 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 }));
 
 // Mock PageFramework
-vi.mock('@ansible/ansible-ui-framework', () => ({
+vi.mock('@ansible/ansible-ui-framework/PageFramework', () => ({
   PageFramework: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="page-framework">{children}</div>
   ),

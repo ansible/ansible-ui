@@ -1,5 +1,5 @@
 import { ISelected, IView, useSelected, useView } from '@ansible/ansible-ui-framework';
-import { swrOptions, useFetcher } from '@ansible/common-ui/crud/Data';
+import { useFetcher } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useSWR from 'swr';
@@ -28,12 +28,12 @@ export function useSurveyView(options: { url: string }): ISurveyView {
   const itemCountRef = useRef<{ itemCount: number | undefined }>({ itemCount: undefined });
 
   const fetcher = useFetcher();
-  const response = useSWR<SurveySpecResponse>(url, fetcher, swrOptions);
+  const response = useSWR<SurveySpecResponse>(url, fetcher);
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate().finally(() => {});
   }, [mutate]);
-  useSWR<SurveySpecResponse>(url, fetcher, swrOptions);
+  useSWR<SurveySpecResponse>(url, fetcher);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;

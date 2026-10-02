@@ -1,10 +1,10 @@
 # Testing Guidelines
 
 Testing standards for this project. Read this skill before writing or reviewing
-any test file.
+any **Vitest** unit/component test file.
 
-For Playwright E2E testing, see the comprehensive section in CLAUDE.md — this
-skill covers **Vitest unit and component tests** only.
+For **Playwright E2E** (write, run, or debug), read
+`.claude/skills/frontend-playwright-e2e/SKILL.md` instead.
 
 ---
 
@@ -26,7 +26,7 @@ Each workspace has a `vitest.setup.ts` that calls:
 ```typescript
 import '@testing-library/jest-dom/vitest';
 import { mockI18n, enablePreview } from './vitest.common';
-mockI18n();     // Mocks react-i18next globally — t() returns the key string
+mockI18n(); // Mocks react-i18next globally — t() returns the key string
 enablePreview(); // Captures DOM snapshot on test failure via vitest-preview
 ```
 
@@ -56,9 +56,7 @@ const server = setupServer(
   ),
 
   // GET — return single item
-  http.get(awxAPI`/feature_flags_state/`, () =>
-    HttpResponse.json({ MY_FLAG: true })
-  ),
+  http.get(awxAPI`/feature_flags_state/`, () => HttpResponse.json({ MY_FLAG: true })),
 
   // POST — create
   http.post(awxAPI`/users/`, async ({ request }) => {
@@ -79,19 +77,17 @@ afterAll(() => server.close());
 
 ### `onUnhandledRequest` options
 
-| Value     | Use when                                                |
-| --------- | ------------------------------------------------------- |
-| `'warn'`  | Default — logs unhandled requests but doesn't fail      |
-| `'error'` | Strict — fails test on any unmocked API call            |
-| `'bypass'`| Permissive — silently passes through unhandled requests |
+| Value      | Use when                                                |
+| ---------- | ------------------------------------------------------- |
+| `'warn'`   | Default — logs unhandled requests but doesn't fail      |
+| `'error'`  | Strict — fails test on any unmocked API call            |
+| `'bypass'` | Permissive — silently passes through unhandled requests |
 
 ### Override handlers in individual tests
 
 ```typescript
 it('should show error on API failure', async () => {
-  server.use(
-    http.get(awxAPI`/users/`, () => HttpResponse.json({}, { status: 500 }))
-  );
+  server.use(http.get(awxAPI`/users/`, () => HttpResponse.json({}, { status: 500 })));
   // ... render and assert error state
 });
 ```
@@ -156,6 +152,9 @@ Source: `frontend/awx/resources/sources/component/PageFormInventoryFileSelect.te
 
 ## Testing Hooks
 
+For validation logic, prefer hook-level tests with `renderHook` over rendering a
+full form.
+
 ### Basic hook test with MSW
 
 ```typescript
@@ -175,9 +174,12 @@ it('should return feature flags from API', async () => {
 ### Hook test with timeout (for slow or complex hooks)
 
 ```typescript
-await waitFor(() => {
-  expect(result.current).toBeDefined();
-}, { timeout: 10000 });
+await waitFor(
+  () => {
+    expect(result.current).toBeDefined();
+  },
+  { timeout: 10000 }
+);
 ```
 
 ### Hooks that read OPTIONS response
@@ -186,16 +188,19 @@ await waitFor(() => {
 const server = setupServer(
   http.options(awxAPI`/credentials/`, () =>
     HttpResponse.json({
-      actions: { GET: { credential_type: { filterable: true, type: 'field' } } }
+      actions: { GET: { credential_type: { filterable: true, type: 'field' } } },
     })
   )
 );
 
 it('should generate filters from OPTIONS', async () => {
   const { result } = renderHook(() => useCredentialTypesFilters());
-  await waitFor(() => {
-    expect(result.current.length).toBeGreaterThan(0);
-  }, { timeout: 10000 });
+  await waitFor(
+    () => {
+      expect(result.current.length).toBeGreaterThan(0);
+    },
+    { timeout: 10000 }
+  );
 });
 ```
 
@@ -316,9 +321,12 @@ await waitFor(() => {
 });
 
 // With custom timeout for slow operations
-await waitFor(() => {
-  expect(result.current.data).toBeDefined();
-}, { timeout: 15000 });
+await waitFor(
+  () => {
+    expect(result.current.data).toBeDefined();
+  },
+  { timeout: 15000 }
+);
 ```
 
 ---
@@ -341,7 +349,30 @@ it('should increment counter when button clicked', async () => {
 });
 ```
 
-See CLAUDE.md for the full AAA pattern reference.
+---
+
+## Accessibility Testing
+
+Accessibility is part of every UI change, so assert it in the unit test using
+the tools already in the stack — no extra dependency required.
+
+**1. Role/name queries as the default** — writing assertions with `getByRole`
+
+- accessible name (see **Query Priority**) proves elements are reachable by
+  assistive tech. If a query needs `getByTestId`, that is usually a missing
+  label, not a test problem — fix the component.
+
+**2. Keyboard and focus** — for interactive flows, assert with the keyboard,
+not just the mouse (reuse `userEvent.setup()` from **User Interaction**):
+
+```typescript
+const user = userEvent.setup();
+render(<MyForm />);
+
+await user.tab();
+expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+await user.keyboard('{Enter}');
+```
 
 ---
 
@@ -361,12 +392,15 @@ Never commit `test.only()` — ESLint rule `no-only-tests` will catch it.
 
 ## What to Test
 
-| Type          | Focus on                                            |
-| ------------- | --------------------------------------------------- |
+| Type          | Focus on                                             |
+| ------------- | ---------------------------------------------------- |
 | **Component** | User interactions, conditional rendering, edge cases |
 | **Hook**      | Return values, state transitions, error handling     |
 | **Utility**   | Input/output transformations, boundary conditions    |
 | **Form**      | Validation, field interactions, submit behavior      |
+
+Cover the happy path, error states, edge cases, and user interactions. Remove
+obvious comments from test files.
 
 ### What NOT to test
 
@@ -375,7 +409,23 @@ Never commit `test.only()` — ESLint rule `no-only-tests` will catch it.
 - Static content that never changes
 - React rendering lifecycle
 
-See CLAUDE.md for the complete testing tables.
+---
+
+## TypeScript utility types
+
+Utility types in `framework/utils/` (and similar) can and should have tests.
+Vitest supports **type tests** with `expectTypeOf` so refactors cannot silently
+widen or narrow types.
+
+```typescript
+import { expectTypeOf } from 'vitest';
+import type { Example } from './utilityTypes';
+
+expectTypeOf<Example>().toEqualTypeOf<{ id: number }>();
+```
+
+See [Vitest type testing](https://vitest.dev/guide/testing-types.html). Keep type
+tests beside the types they guard or in an adjacent `*.test.ts` file.
 
 ---
 

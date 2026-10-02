@@ -3,40 +3,22 @@ import { Content, Flex, FlexItem } from '@patternfly/react-core';
 import { DashboardValueCardProps } from '../types';
 import { Link } from 'react-router-dom';
 import { EmptyStateError } from '../../../../../framework/components/EmptyStateError';
-import { currencyFormatter } from '../../utilities/currencyFormatter';
+import { DashboardCardValueDisplay, getDashboardCardValueFontSize } from './DashboardCardValue';
 
 export function DashboardValueCard(props: DashboardValueCardProps) {
-  const {
-    id,
-    title,
-    help,
-    value,
-    linkText,
-    to,
-    valueSuffix,
-    error,
-    errorStateTitle,
-    formatAsCurrency,
-  } = props;
+  const { id, title, help, value, linkText, to, valueSuffix, error, errorStateTitle, width } =
+    props;
 
-  const usFormat = 'en-US';
-
-  const contentValue =
-    typeof value === 'number' ? (
-      <span style={{ fontSize: 'xx-large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
-        {formatAsCurrency ? currencyFormatter(value) : value.toLocaleString(usFormat)}
-        {valueSuffix ? ` ${valueSuffix}` : ''}
-      </span>
-    ) : (
-      <span style={{ fontSize: 'large', fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
-        {value}
-        {valueSuffix ? ` ${valueSuffix}` : ''}
-      </span>
-    );
+  const fontSize = getDashboardCardValueFontSize(value, width, {
+    compact: 'x-large',
+    expanded: 'xx-large',
+  });
 
   const content = (
     <Flex
-      style={{ height: '100%' }}
+      style={{
+        height: '100%',
+      }}
       spaceItems={{ default: 'spaceItemsLg' }}
       alignItems={{ default: 'alignItemsFlexStart' }}
       justifyContent={{ default: 'justifyContentFlexStart' }}
@@ -49,8 +31,7 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
           </Content>
         </FlexItem>
       )}
-
-      {contentValue}
+      <DashboardCardValueDisplay value={value} valueSuffix={valueSuffix} fontSize={fontSize} />
     </Flex>
   );
   return (
@@ -59,8 +40,7 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
       title={title}
       helpTitle={help ? title : undefined}
       help={help}
-      width="sm"
-      height="xs"
+      width={width ?? 'md'}
     >
       {error ? <EmptyStateError titleProp={errorStateTitle} message={error.message} /> : content}
     </PageDashboardCard>

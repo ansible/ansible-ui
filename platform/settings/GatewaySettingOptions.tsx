@@ -4,7 +4,8 @@ export type GatewaySettingsOption =
   | BooleanOption
   | UrlOption
   | FieldOption
-  | StringArrayOption;
+  | StringArrayOption
+  | FloatOption;
 
 interface StringOption {
   type: 'string';
@@ -57,4 +58,15 @@ interface FieldOption {
   read_only: false;
   label: string;
   help_text: string;
+}
+
+interface FloatOption {
+  type: 'float';
+  required: boolean;
+  read_only: boolean;
+  label: string;
+  help_text: string;
+  default: number;
+  min_value?: number;
+  max_value?: number;
 }

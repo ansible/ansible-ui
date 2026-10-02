@@ -81,7 +81,7 @@ export function Notifiers() {
           canAddNotificationTemplate ? (
             <PageTableEmptyState
               title={t('No notifiers found.')}
-              description={t('Please create notifiers to populate this list.')}
+              description={t('Create a notifier to populate this list.')}
             >
               <ButtonLink
                 icon={<PlusCircleIcon />}

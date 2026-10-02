@@ -57,4 +57,49 @@ describe('InventoryHostPage', () => {
       { timeout: 10000 }
     );
   }, 15000);
+
+  test('should show Facts, Groups, and Jobs tabs for constructed inventory hosts', async () => {
+    render(
+      <MemoryRouter initialEntries={['/inventories/constructed_inventory/1/hosts/42/details']}>
+        <Routes>
+          <Route
+            path="/inventories/:inventory_type/:id/hosts/:host_id/*"
+            element={<InventoryHostPage />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByRole('tab', { name: 'Facts' })).toBeInTheDocument();
+        expect(screen.getByRole('tab', { name: 'Groups' })).toBeInTheDocument();
+        expect(screen.getByRole('tab', { name: 'Jobs' })).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
+
+  test('should show only Details tab for smart inventory hosts', async () => {
+    render(
+      <MemoryRouter initialEntries={['/inventories/smart_inventory/1/hosts/42/details']}>
+        <Routes>
+          <Route
+            path="/inventories/:inventory_type/:id/hosts/:host_id/*"
+            element={<InventoryHostPage />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByRole('tab', { name: 'Details' })).toBeInTheDocument();
+        expect(screen.queryByRole('tab', { name: 'Facts' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('tab', { name: 'Groups' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('tab', { name: 'Jobs' })).not.toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });

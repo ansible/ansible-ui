@@ -77,8 +77,8 @@ export function CredentialsExternalTestModal(
       inputs: props.credentialType.inputs.fields.reduce(
         (filteredInputs, field, idx) => {
           filteredInputs[field.id] =
-            props.watchedSubFormFields[idx] ||
-            props.credentialType.inputs.fields[idx].default ||
+            props.watchedSubFormFields[idx] ??
+            props.credentialType.inputs.fields[idx].default ??
             '';
           return filteredInputs;
         },

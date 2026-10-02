@@ -6,8 +6,9 @@ import {
   IPageActionDropdown,
   PageActionSelection,
   PageActionType,
+  ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
-import type { IFilterState } from '@ansible/ansible-ui-framework';
+import type { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import type { IDashboardFilterSet, IJobTemplate } from '../types';
 import { useAutomationDashboardToolbarActions } from './useAutomationDashboardToolbarActions';
@@ -49,6 +50,29 @@ const nonDefaultFilterState: IFilterState = {
   period: [AutomationDashboardDateRangeFilterPresets.last_30_days],
 };
 
+const invalidCustomRangeFilterState: IFilterState = {
+  period: ['custom'],
+};
+
+const validCustomRangeFilterState: IFilterState = {
+  period: ['custom', '2024-01-01'],
+};
+
+const requiredDateRangeToolbarFilters: IToolbarFilter[] = [
+  {
+    type: ToolbarFilterType.DateRange,
+    key: 'period',
+    label: 'Period',
+    query: 'period',
+    options: [
+      { label: 'Last 7 days', value: AutomationDashboardDateRangeFilterPresets.last_7_days },
+      { label: 'Custom', value: 'custom', isCustom: true },
+    ],
+    placeholder: 'Filter by period',
+    isRequired: true,
+  },
+];
+
 const filterSet: IDashboardFilterSet = {
   id: 1,
   name: 'Report A',
@@ -61,11 +85,13 @@ const mockOnSave = vi.fn();
 
 function renderActions(
   filterState: IFilterState | undefined,
-  selectedFilterSet: IDashboardFilterSet | undefined
+  selectedFilterSet: IDashboardFilterSet | undefined,
+  toolbarFilters?: IToolbarFilter[]
 ) {
   return renderHook(() =>
     useAutomationDashboardToolbarActions({
       filterState,
+      toolbarFilters,
       selectedFilterSet,
       onDelete: mockOnDelete,
       onSave: mockOnSave,
@@ -98,10 +124,10 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(actions[0].type).toBe(PageActionType.Button);
     });
 
-    test('should label the button "Save as report"', () => {
+    test('should label the button "Create new report"', () => {
       const action = renderActions(defaultFilterState, undefined)[0] as IPageActionButton;
 
-      expect(action.label).toBe('Save as report');
+      expect(action.label).toBe('Create new report');
     });
 
     test('should have None selection', () => {
@@ -143,6 +169,26 @@ describe('useAutomationDashboardToolbarActions', () => {
       action.onClick();
       expect(mockCreateFn).toHaveBeenCalledWith(nonDefaultFilterState);
     });
+
+    test('should disable the button with an invalid-filter message when a required custom date range has no start date', () => {
+      const action = renderActions(
+        invalidCustomRangeFilterState,
+        undefined,
+        requiredDateRangeToolbarFilters
+      )[0] as IPageActionButton;
+
+      expect(action.isDisabled).toBe('Enter a valid custom date range before saving');
+    });
+
+    test('should enable the button when the required custom date range has a valid start date', () => {
+      const action = renderActions(
+        validCustomRangeFilterState,
+        undefined,
+        requiredDateRangeToolbarFilters
+      )[0] as IPageActionButton;
+
+      expect(action.isDisabled).toBeFalsy();
+    });
   });
 
   describe('when selectedFilterSet is defined', () => {
@@ -153,10 +199,10 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(actions[0].type).toBe(PageActionType.Dropdown);
     });
 
-    test('should label the dropdown "Save as report"', () => {
+    test('should label the dropdown "Report actions"', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
 
-      expect(action.label).toBe('Save as report');
+      expect(action.label).toBe('Report actions');
     });
 
     test('should never disable the dropdown itself', () => {
@@ -171,34 +217,64 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(subAction?.isDisabled).toBeTruthy();
     });
 
-    test('should disable "Edit current report" when filter state equals the default', () => {
-      const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Edit current report');
-      expect(subAction?.isDisabled).toBeTruthy();
-    });
-
     test('should enable "Create new report" when filter state differs from the default', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
       const subAction = getDropdownSubAction(action, 'Create new report');
       expect(subAction?.isDisabled).toBeFalsy();
     });
 
-    test('should enable "Edit current report" when filter state differs from the default', () => {
-      const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Edit current report');
+    test('should keep "Update report" enabled when filter state equals the default', () => {
+      const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Update report');
       expect(subAction?.isDisabled).toBeFalsy();
     });
 
-    test('should disable "Delete current report" with admin-only message when user is not a superuser', () => {
+    test('should keep "Update report" enabled when filter state differs from the default', () => {
+      const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Update report');
+      expect(subAction?.isDisabled).toBeFalsy();
+    });
+
+    test('should disable "Update report" with an invalid-filter message when a required custom date range is invalid', () => {
+      const action = renderActions(
+        invalidCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Update report');
+      expect(subAction?.isDisabled).toBe('Enter a valid custom date range before updating');
+    });
+
+    test('should enable "Update report" once the required custom date range becomes valid', () => {
+      const action = renderActions(
+        validCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Update report');
+      expect(subAction?.isDisabled).toBeFalsy();
+    });
+
+    test('should disable "Delete report" with admin-only message when user is not a superuser', () => {
       mockActiveAwxUser.is_superuser = false;
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Delete current report');
+      const subAction = getDropdownSubAction(action, 'Delete report');
       expect(subAction?.isDisabled).toBe('Only administrators can delete reports');
     });
 
-    test('should enable "Delete current report" for superusers', () => {
+    test('should enable "Delete report" for superusers', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Delete current report');
+      const subAction = getDropdownSubAction(action, 'Delete report');
+      expect(subAction?.isDisabled).toBeFalsy();
+    });
+
+    test('should keep "Delete report" enabled when a required custom date range is invalid', () => {
+      const action = renderActions(
+        invalidCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Delete report');
       expect(subAction?.isDisabled).toBeFalsy();
     });
 
@@ -209,10 +285,17 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(subAction?.isDisabled).toBe('Only administrators can save reports');
     });
 
-    test('should disable "Edit current report" with admin-only message when user is not a superuser', () => {
+    test('should disable "Update report" with admin-only message when user is not a superuser', () => {
       mockActiveAwxUser.is_superuser = false;
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Edit current report');
+      const subAction = getDropdownSubAction(action, 'Update report');
+      expect(subAction?.isDisabled).toBe('Only administrators can save reports');
+    });
+
+    test('should disable "Update report" with admin-only message even when the filter state is default', () => {
+      mockActiveAwxUser.is_superuser = false;
+      const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Update report');
       expect(subAction?.isDisabled).toBe('Only administrators can save reports');
     });
 
@@ -222,7 +305,7 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(action.actions).toHaveLength(3);
     });
 
-    test('should include "Create new report", "Edit current report", "Delete current report" sub-actions', () => {
+    test('should include "Create new report", "Update report", "Delete report" sub-actions', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
       expect(action.type).toBe(PageActionType.Dropdown);
 
@@ -230,8 +313,8 @@ describe('useAutomationDashboardToolbarActions', () => {
         a.type === PageActionType.Seperator ? [] : [a.label]
       );
       expect(labels).toContain('Create new report');
-      expect(labels).toContain('Edit current report');
-      expect(labels).toContain('Delete current report');
+      expect(labels).toContain('Update report');
+      expect(labels).toContain('Delete report');
     });
 
     test('should call createToolbarFilterSet when "Create new report" is clicked', () => {
@@ -241,18 +324,57 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(mockCreateFn).toHaveBeenCalledWith(nonDefaultFilterState);
     });
 
-    test('should call updateToolbarFilterSet when "Edit current report" is clicked', () => {
+    test('should call updateToolbarFilterSet when "Update report" is clicked', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Edit current report');
+      const subAction = getDropdownSubAction(action, 'Update report');
       subAction?.onClick();
       expect(mockUpdateFn).toHaveBeenCalledWith(filterSet, nonDefaultFilterState);
     });
 
-    test('should call removeToolbarFilterSet when "Delete current report" is clicked', () => {
+    test('should call updateToolbarFilterSet when "Update report" is clicked on the default filter state', () => {
+      const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Update report');
+      subAction?.onClick();
+      expect(mockUpdateFn).toHaveBeenCalledWith(filterSet, defaultFilterState);
+    });
+
+    test('should call removeToolbarFilterSet when "Delete report" is clicked', () => {
       const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
-      const subAction = getDropdownSubAction(action, 'Delete current report');
+      const subAction = getDropdownSubAction(action, 'Delete report');
       subAction?.onClick();
       expect(mockRemoveFn).toHaveBeenCalledWith(filterSet);
+    });
+
+    test('should still return the Dropdown (not fall back to a single Button) when the required custom date range is invalid', () => {
+      const action = renderActions(
+        invalidCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0];
+
+      expect(action.type).toBe(PageActionType.Dropdown);
+    });
+
+    test('should disable "Create new report" with an invalid-filter message when the required custom date range is invalid', () => {
+      const action = renderActions(
+        invalidCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Create new report');
+
+      expect(subAction?.isDisabled).toBe('Enter a valid custom date range before saving');
+    });
+
+    test('should enable "Create new report" once the required custom date range becomes valid', () => {
+      const action = renderActions(
+        validCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters
+      )[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Create new report');
+
+      expect(subAction?.isDisabled).toBeFalsy();
     });
   });
 });

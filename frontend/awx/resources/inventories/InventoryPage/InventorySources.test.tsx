@@ -11,12 +11,12 @@ const emptySources = { count: 0, next: null, previous: null, results: [] };
 const server = setupServer(
   http.options(awxAPI`/inventory_sources/`, () => HttpResponse.json({ actions: { POST: {} } })),
   http.options(
-    ({ request }) =>
+    ({ request }: { request: Request }) =>
       request.url.includes('/inventories/') && request.url.includes('inventory_sources'),
     () => HttpResponse.json({ actions: { GET: {} } })
   ),
   http.get(
-    ({ request }) =>
+    ({ request }: { request: Request }) =>
       request.url.includes('/inventories/') && request.url.includes('inventory_sources'),
     () => HttpResponse.json(emptySources)
   )
@@ -37,7 +37,7 @@ describe('InventorySources', () => {
     );
     await waitFor(() => {
       expect(
-        screen.getByText('There are currently no sources added to this inventory.')
+        screen.getByText('There are currently no sources assigned to this inventory.')
       ).toBeInTheDocument();
     });
   });

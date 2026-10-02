@@ -1,7 +1,33 @@
-import { render, screen } from '@testing-library/react';
+import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { awxAPI } from '../common/api/awx-utils';
 import { AwxPageForm } from './AwxPageForm';
+
+const inventoriesOptionsHandler = vi.fn(() =>
+  HttpResponse.json({
+    actions: {
+      POST: {
+        name: {
+          pattern: '^[a-zA-Z0-9_-]+$',
+          pattern_description: 'Letters, numbers, underscores, and hyphens only',
+        },
+      },
+    },
+  })
+);
+
+const server = setupServer(http.options(awxAPI`/inventories/`, inventoriesOptionsHandler));
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => {
+  server.resetHandlers();
+  inventoriesOptionsHandler.mockClear();
+});
+afterAll(() => server.close());
 
 describe('AwxPageForm', () => {
   it('should render with minimal props', () => {
@@ -46,5 +72,71 @@ describe('AwxPageForm', () => {
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
     expect(onCancel).toHaveBeenCalled();
+  });
+
+  it('should fetch OPTIONS from optionsUrl and apply pattern validation', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <AwxPageForm
+        submitText="Save"
+        onSubmit={onSubmit}
+        onCancel={() => {}}
+        defaultValue={{ name: '' }}
+        optionsUrl={awxAPI`/inventories/`}
+      >
+        <PageFormTextInput name="name" label="Name" />
+      </AwxPageForm>
+    );
+
+    const input = screen.getByLabelText('Name');
+    await user.type(input, 'invalid@name');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Letters, numbers, underscores, and hyphens only')
+      ).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('should prefer explicit optionsData over optionsUrl', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <AwxPageForm
+        submitText="Save"
+        onSubmit={onSubmit}
+        onCancel={() => {}}
+        defaultValue={{ name: '' }}
+        optionsUrl={awxAPI`/inventories/`}
+        optionsData={{
+          actions: {
+            POST: {
+              name: {
+                pattern: '^[a-z]+$',
+                pattern_description: 'Lowercase letters only',
+              },
+            },
+          },
+        }}
+      >
+        <PageFormTextInput name="name" label="Name" />
+      </AwxPageForm>
+    );
+
+    expect(inventoriesOptionsHandler).not.toHaveBeenCalled();
+
+    const input = screen.getByLabelText('Name');
+    await user.type(input, 'INVALID');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(screen.getByText('Lowercase letters only')).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 });

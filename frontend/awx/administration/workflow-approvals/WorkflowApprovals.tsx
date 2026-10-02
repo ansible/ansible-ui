@@ -1,12 +1,13 @@
 import { PageHeader, PageLayout, PageTable } from '@ansible/ansible-ui-framework';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityStreamIcon } from '../../common/ActivityStreamIcon';
 import { awxAPI } from '../../common/api/awx-utils';
 import { useAwxConfig } from '../../common/useAwxConfig';
 import { useAwxView } from '../../common/useAwxView';
 import { useAwxWebSocketSubscription } from '../../common/useAwxWebSocket';
+import { createThrottle } from '../../common/util/createThrottle';
 import { useGetDocsUrl } from '@ansible/common-ui/utils/useGetDocsUrl';
 import { WorkflowApproval } from '../../interfaces/WorkflowApproval';
 import { useWorkflowApprovalToolbarActions } from './hooks/useWorkflowApprovalToolbarActions';
@@ -30,19 +31,28 @@ export function WorkflowApprovals() {
   const config = useAwxConfig();
 
   const { refresh } = view;
+  const throttledRefresh = useMemo(
+    () =>
+      createThrottle(() => {
+        refresh().catch(() => {});
+      }, 5000),
+    [refresh]
+  );
+  useEffect(() => () => throttledRefresh.cancel(), [throttledRefresh]);
+
   const handleWebSocketMessage = useCallback(
     (message?: { group_name?: string; type?: string }) => {
       switch (message?.group_name) {
         case 'jobs':
           switch (message?.type) {
             case 'workflow_approval':
-              void refresh();
+              throttledRefresh();
               break;
           }
           break;
       }
     },
-    [refresh]
+    [throttledRefresh]
   );
 
   useAwxWebSocketSubscription(

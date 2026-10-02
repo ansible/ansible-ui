@@ -7,7 +7,7 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +59,12 @@ export function CreateOrganization() {
           { label: t('Create organization') },
         ]}
       />
-      <AwxPageForm submitText={t('Create organization')} onSubmit={onSubmit} onCancel={onCancel}>
+      <AwxPageForm
+        submitText={t('Create organization')}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
+        optionsUrl={awxAPI`/organizations/`}
+      >
         <OrganizationInputs />
       </AwxPageForm>
     </PageLayout>
@@ -77,13 +82,11 @@ export function EditOrganization() {
 
   const { data: organization } = useSWR<Organization>(
     awxAPI`/organizations/${id.toString()}/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const { data: igResponse } = useSWR<{ results: InstanceGroup[] }>(
     awxAPI`/organizations/${id.toString()}/instance_groups/`,
-    requestGet,
-    swrOptions
+    requestGet
   );
   const originalInstanceGroups = igResponse?.results;
 
@@ -144,6 +147,7 @@ export function EditOrganization() {
           submitText={t('Save organization')}
           onSubmit={onSubmit}
           onCancel={onCancel}
+          optionsUrl={awxAPI`/organizations/`}
           defaultValue={{
             ...organization,
             instanceGroups: originalInstanceGroups ?? [],

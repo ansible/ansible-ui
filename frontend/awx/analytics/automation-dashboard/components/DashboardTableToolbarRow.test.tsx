@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { ReactNode } from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
@@ -47,12 +46,9 @@ function buildProps(
   overrides: Partial<DashboardTableToolbarProps> = {}
 ): DashboardTableToolbarProps {
   return {
-    isLoading: false,
-    itemCount: 1,
     costState: defaultCostState,
     setCostState: mockSetCostState,
     refresh: mockRefresh,
-    onExportCsv: vi.fn(),
     ...overrides,
   };
 }
@@ -60,11 +56,7 @@ function buildProps(
 function Wrapper({ children }: { children: ReactNode }) {
   return (
     <MemoryRouter>
-      <SWRConfig
-        value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}
-      >
-        <PageAlertToasterProvider>{children}</PageAlertToasterProvider>
-      </SWRConfig>
+      <PageAlertToasterProvider>{children}</PageAlertToasterProvider>
     </MemoryRouter>
   );
 }
@@ -93,12 +85,11 @@ describe('DashboardTableToolbarRow', () => {
 
   // --- Rendering ---
 
-  test('should render all inputs, switch, and export button', () => {
+  test('should render all inputs and switch', () => {
     renderRow();
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeInTheDocument();
     expect(screen.getByTestId('monthly_subscription_cost')).toBeInTheDocument();
     expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeInTheDocument();
-    expect(screen.getByTestId('btn-export-csv')).toBeInTheDocument();
   });
 
   test('should display initial values from costState', () => {
@@ -123,50 +114,16 @@ describe('DashboardTableToolbarRow', () => {
 
   test('should render without crashing when costState is undefined', () => {
     renderRow(buildProps({ costState: undefined }));
-    expect(screen.getByTestId('btn-export-csv')).toBeInTheDocument();
-  });
-
-  // --- Export CSV button ---
-
-  // TODO: Update to `not.toBeDisabled()` once `|| true` is removed from controlsDisabled.
-  test('should disable export button while BE is not yet implemented', () => {
-    renderRow();
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
-  });
-
-  test('should disable export button when isLoading is true', () => {
-    renderRow(buildProps({ isLoading: true }));
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
-  });
-
-  test('should disable export button when itemCount is 0', () => {
-    renderRow(buildProps({ itemCount: 0 }));
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
-  });
-
-  // TODO: Re-enable once `|| true` is removed from controlsDisabled.
-  test.skip('should call onExportCsv when export button is clicked', async () => {
-    const user = userEvent.setup();
-    const onExportCsv = vi.fn();
-    renderRow(buildProps({ onExportCsv }));
-    await user.click(screen.getByTestId('btn-export-csv'));
-    expect(onExportCsv).toHaveBeenCalled();
+    expect(screen.getByTestId('monthly_subscription_cost')).toBeInTheDocument();
   });
 
   // --- Inputs disabled ---
-  test('should disable inputs when isLoading is true', () => {
-    renderRow(buildProps({ isLoading: true }));
-    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
-    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-  });
-
-  test('should disable all controls when not superuser', () => {
+  test('should disable cost inputs and switch when not superuser', () => {
     mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
     renderRow();
     expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
     expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
     expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
-    expect(screen.getByTestId('btn-export-csv')).toBeDisabled();
   });
 
   test('should not call put when not superuser', async () => {
@@ -194,7 +151,6 @@ describe('DashboardTableToolbarRow', () => {
   });
 
   // --- toolbarChangeHandler: success ---
-  // TODO: Re-enable the following tests once `|| true` is removed from controlsDisabled.
 
   test('should show success alert, call setCostState and refresh on engineer_avg_hourly_rate change', async () => {
     renderRow();

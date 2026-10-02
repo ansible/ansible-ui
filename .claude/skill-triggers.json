@@ -2,7 +2,10 @@
   "categories": {
     "e2e": {
       "patterns": ["*playwright/tests/*.spec.ts", "*playwright/tests/**/*.spec.ts"],
-      "skills": [".claude/skills/testing_guidelines.md"]
+      "skills": [
+        ".claude/skills/frontend-playwright-e2e/SKILL.md",
+        ".claude/skills/frontend-overlay/SKILL.md"
+      ]
     },
     "test": {
       "patterns": ["*.test.tsx", "*.test.ts"],

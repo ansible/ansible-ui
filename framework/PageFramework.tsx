@@ -15,17 +15,10 @@ import { FrameworkTranslationsProvider } from './useFrameworkTranslations';
  * @example
  * <PageFramework>...</PageFramework>
  */
-export function PageFramework(props: {
-  children: ReactNode;
-  defaultRefreshInterval: number;
-  disableThemeManagement?: boolean;
-}) {
+export function PageFramework(props: { children: ReactNode; disableThemeManagement?: boolean }) {
   return (
     <FrameworkTranslationsProvider>
-      <PageSettingsProvider
-        defaultRefreshInterval={props.defaultRefreshInterval}
-        disableThemeManagement={props.disableThemeManagement}
-      >
+      <PageSettingsProvider disableThemeManagement={props.disableThemeManagement}>
         <PageNavigationRoutesProvider>
           <PageDialogProvider>
             <PageAlertToasterProvider>

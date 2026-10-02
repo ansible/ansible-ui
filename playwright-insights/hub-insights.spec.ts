@@ -206,6 +206,40 @@ test.describe('Hub Insights navigation and routing', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Create namespace form — validates lazy-loaded DataEditor renders
+// ---------------------------------------------------------------------------
+test.describe('Hub Insights create namespace form', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAndNavigateToHub(page);
+  });
+
+  test('should render the create namespace form with DataEditor', async ({ page }) => {
+    await test.step('Navigate to create namespace page', async () => {
+      await navigateToHubRoute(page, '/partners/create');
+    });
+
+    await test.step('Verify no error state', async () => {
+      await assertNoPageError(page);
+    });
+
+    await test.step('Verify form fields are visible', async () => {
+      await expect(page.getByTestId('name')).toBeVisible({ timeout: 15_000 });
+      await expect(page.getByTestId('company')).toBeVisible();
+      await expect(page.getByTestId('description')).toBeVisible();
+    });
+
+    await test.step('Verify DataEditor (Monaco) loaded via lazy import', async () => {
+      await expect(page.locator('.monaco-editor')).toBeVisible({ timeout: 30_000 });
+      await expect(page.locator('.view-lines')).toBeVisible();
+    });
+
+    await test.step('Verify submit button is present', async () => {
+      await expect(page.getByTestId('Submit')).toBeVisible();
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Features excluded from the Insights build
 // ---------------------------------------------------------------------------
 test.describe('Hub Insights excluded features', () => {

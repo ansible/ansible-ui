@@ -1,11 +1,32 @@
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
-import { describe, expect, it } from 'vitest';
-import { validateRequiredCredentialTypes } from './validationHelpers';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { awxAPI } from '../../../../common/api/awx-utils';
+import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
+import type { JobTemplate } from '../../../../interfaces/JobTemplate';
+import type { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import { RESOURCE_TYPE } from '../constants';
 import { WizardFormValues } from '../types';
+import * as fetchLaunchConfigLoadResultModule from './fetchLaunchConfigLoadResult';
+import { getResourceURL } from './helpers';
+import { type LaunchConfigLoadResult } from './launchConfigLoad';
+import {
+  awaitNodeLaunchConfigForWizard,
+  validateJobTemplateRequirements,
+  validateNodePromptsStep,
+  validateNodeTypeStep,
+  validateRequiredCredentialTypes,
+} from './validationHelpers';
+
+vi.spyOn(fetchLaunchConfigLoadResultModule, 'fetchLaunchConfigLoadResult');
 
 type WizardData = Partial<WizardFormValues>;
 
 describe('validationHelpers', () => {
+  beforeEach(() => {
+    vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockReset();
+  });
   const mockT = (key: string, params?: Record<string, unknown>) => {
     if (params) {
       return key.replace(
@@ -51,6 +72,14 @@ describe('validationHelpers', () => {
       expect(() =>
         validateRequiredCredentialTypes(mockT, wizardData as WizardData, requiredCredentialTypes)
       ).toThrow(RequestError);
+
+      try {
+        validateRequiredCredentialTypes(mockT, wizardData as WizardData, requiredCredentialTypes);
+      } catch (error) {
+        expect((error as RequestError).json).toEqual({
+          __all__: [expect.stringContaining('Please select only credentials')],
+        });
+      }
     });
 
     it('should fail validation when required credential types are missing', () => {
@@ -135,6 +164,399 @@ describe('validationHelpers', () => {
         expect(errorMessage).not.toContain('5'); // Should not contain raw IDs
         expect(errorMessage).not.toContain('6');
       }
+    });
+  });
+
+  describe('validateNodePromptsStep', () => {
+    const machineType = { id: 1, name: 'Machine' };
+    const vaultType = { id: 2, name: 'Vault' };
+
+    it('should validate credentials from merged formData instead of stale wizardData', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [],
+          requiredCredentialTypes: [machineType],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+          requiredCredentialTypes: [machineType],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fail when merged credentials do not satisfy the required types', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+          requiredCredentialTypes: [machineType, vaultType],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 10, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).toThrow(RequestError);
+    });
+
+    it('should prefer requiredCredentialTypes from the merged prompt', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [vaultType],
+          credentials: [{ id: 2, name: 'Vault', credential_type: 2, passwords_needed: [] }],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [machineType],
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fall back to wizardData.prompt.requiredCredentialTypes when form prompt omits them', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          requiredCredentialTypes: [machineType],
+          credentials: [],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        },
+      };
+
+      expect(() => validateNodePromptsStep(mockT, formData, wizardData)).not.toThrow();
+    });
+
+    it('should fall back to fallbackRequiredCredentialTypes when prompt metadata is missing', () => {
+      const wizardData: WizardData = {
+        prompt: {
+          credentials: [],
+        },
+      };
+      const formData: WizardData = {
+        prompt: {
+          credentials: [{ id: 1, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        },
+      };
+
+      expect(() =>
+        validateNodePromptsStep(mockT, formData, wizardData, [machineType])
+      ).not.toThrow();
+    });
+  });
+
+  describe('awaitNodeLaunchConfigForWizard', () => {
+    it('should return undefined when resourceId is missing', async () => {
+      await expect(
+        awaitNodeLaunchConfigForWizard({ node_type: RESOURCE_TYPE.job })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should return undefined for node types that do not load launch config', async () => {
+      await expect(
+        awaitNodeLaunchConfigForWizard({
+          node_type: RESOURCE_TYPE.workflow_approval,
+          resourceId: 1,
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should return undefined when the launch config fetch returns nothing', async () => {
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        undefined
+      );
+
+      await expect(
+        awaitNodeLaunchConfigForWizard({
+          node_type: RESOURCE_TYPE.job,
+          resourceId: 999,
+        })
+      ).resolves.toBeUndefined();
+    });
+
+    it('should return launch config data when the fetch completes', async () => {
+      const loadResult: LaunchConfigLoadResult = {
+        launch_config: { survey_enabled: true } as LaunchConfiguration,
+        resource: { id: 5, name: 'Deploy', type: 'job_template' } as JobTemplate,
+        resourceId: 5,
+      };
+
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        loadResult
+      );
+
+      await expect(
+        awaitNodeLaunchConfigForWizard({
+          node_type: RESOURCE_TYPE.job,
+          resourceId: 5,
+        })
+      ).resolves.toEqual({
+        launch_config: loadResult.launch_config,
+        resource: loadResult.resource,
+        resourceId: 5,
+      });
+    });
+
+    it('should return launch config data for workflow job templates', async () => {
+      const loadResult: LaunchConfigLoadResult = {
+        launch_config: { survey_enabled: false } as LaunchConfiguration,
+        resource: { id: 8, name: 'Workflow', type: 'workflow_job_template' } as WorkflowJobTemplate,
+        resourceId: 8,
+      };
+
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        loadResult
+      );
+
+      await expect(
+        awaitNodeLaunchConfigForWizard({
+          node_type: RESOURCE_TYPE.workflow_job,
+          resourceId: 8,
+        })
+      ).resolves.toEqual({
+        launch_config: loadResult.launch_config,
+        resource: loadResult.resource,
+        resourceId: 8,
+      });
+    });
+
+    it('should return undefined when the fetch returns nothing and the resource id is unchanged', async () => {
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        undefined
+      );
+
+      await expect(
+        awaitNodeLaunchConfigForWizard(
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 1,
+          },
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 1,
+            launch_config: { survey_enabled: true } as LaunchConfiguration,
+            resource: { id: 1, name: 'Old', type: 'job_template' } as JobTemplate,
+          }
+        )
+      ).resolves.toBeUndefined();
+    });
+
+    it('should clear stale launch_config and resource when the fetch returns nothing', async () => {
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        undefined
+      );
+
+      await expect(
+        awaitNodeLaunchConfigForWizard(
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 2,
+          },
+          {
+            node_type: RESOURCE_TYPE.job,
+            resourceId: 1,
+            launch_config: { survey_enabled: true } as LaunchConfiguration,
+            resource: { id: 1, name: 'Old', type: 'job_template' } as JobTemplate,
+          }
+        )
+      ).resolves.toEqual({
+        launch_config: null,
+        resourceId: 2,
+        resource: undefined,
+      });
+    });
+  });
+
+  describe('validateNodeTypeStep', () => {
+    const mockSimpleT = (key: string) => key;
+
+    it('should validate the loaded resource rather than form-only values', async () => {
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue({
+        launch_config: null,
+        resource: {
+          type: 'job_template',
+          project: null,
+          inventory: 1,
+          ask_inventory_on_launch: false,
+        } as unknown as JobTemplate,
+        resourceId: 5,
+      });
+
+      await expect(
+        validateNodeTypeStep(
+          mockSimpleT,
+          { node_type: RESOURCE_TYPE.job, resourceId: 5 },
+          { launch_config: { survey_enabled: true } as LaunchConfiguration, resourceId: 1 }
+        )
+      ).rejects.toBeInstanceOf(RequestError);
+    });
+
+    it('should merge form resourceId over stale wizard launch_config when a load completes', async () => {
+      const loadResult: LaunchConfigLoadResult = {
+        launch_config: { survey_enabled: false } as LaunchConfiguration,
+        resource: { id: 5, name: 'Deploy', type: 'job_template' } as JobTemplate,
+        resourceId: 5,
+      };
+      vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockResolvedValue(
+        loadResult
+      );
+
+      await expect(
+        validateNodeTypeStep(
+          mockSimpleT,
+          { node_type: RESOURCE_TYPE.job, resourceId: 5 },
+          { launch_config: { survey_enabled: true } as LaunchConfiguration, resourceId: 1 }
+        )
+      ).resolves.toEqual({
+        launch_config: loadResult.launch_config,
+        resource: loadResult.resource,
+        resourceId: 5,
+      });
+    });
+  });
+
+  describe('validateJobTemplateRequirements', () => {
+    const mockSimpleT = (key: string) => key;
+
+    it('should not throw when resource is not a job template', () => {
+      expect(() =>
+        validateJobTemplateRequirements(mockSimpleT, {
+          resource: { type: 'workflow_job_template' } as WizardFormValues['resource'],
+        })
+      ).not.toThrow();
+    });
+
+    it('should not throw when job template resource lacks project and inventory fields', () => {
+      expect(() =>
+        validateJobTemplateRequirements(mockSimpleT, {
+          resource: {
+            type: 'job_template',
+            name: 'Partial template',
+          } as WizardFormValues['resource'],
+        })
+      ).not.toThrow();
+    });
+
+    it('should throw when job template is missing project', () => {
+      expect(() =>
+        validateJobTemplateRequirements(mockSimpleT, {
+          resource: {
+            type: 'job_template',
+            project: null,
+            inventory: 1,
+            ask_inventory_on_launch: false,
+          } as unknown as WizardFormValues['resource'],
+        })
+      ).toThrow(RequestError);
+    });
+  });
+});
+
+const mswJobTemplateResource = {
+  id: 20,
+  name: 'Deploy',
+  type: 'job_template',
+  project: 1,
+  inventory: 1,
+  ask_inventory_on_launch: false,
+} as JobTemplate;
+
+const mswWorkflowJobTemplateResource = {
+  id: 21,
+  name: 'Nested WF',
+  type: 'workflow_job_template',
+};
+
+const launchConfigMswServer = setupServer(
+  http.get(`${getResourceURL(RESOURCE_TYPE.job)}/${20}`, () =>
+    HttpResponse.json(mswJobTemplateResource)
+  ),
+  http.get(awxAPI`/job_templates/20/launch/`, () =>
+    HttpResponse.json({
+      ask_inventory_on_launch: true,
+      survey_enabled: false,
+      defaults: {},
+    })
+  ),
+  http.get(`${getResourceURL(RESOURCE_TYPE.workflow_job)}/${21}`, () =>
+    HttpResponse.json(mswWorkflowJobTemplateResource)
+  ),
+  http.get(awxAPI`/workflow_job_templates/21/launch/`, () =>
+    HttpResponse.json({
+      survey_enabled: true,
+      defaults: {},
+    })
+  )
+);
+
+describe('validationHelpers launch config (MSW)', () => {
+  const mockT = (key: string) => key;
+
+  beforeAll(() => launchConfigMswServer.listen({ onUnhandledRequest: 'error' }));
+  afterEach(() => {
+    launchConfigMswServer.resetHandlers();
+    vi.mocked(fetchLaunchConfigLoadResultModule.fetchLaunchConfigLoadResult).mockReset();
+  });
+  afterAll(() => launchConfigMswServer.close());
+
+  it('should load job template launch config through ensureLaunchConfigLoad', async () => {
+    await expect(
+      awaitNodeLaunchConfigForWizard({
+        node_type: RESOURCE_TYPE.job,
+        resourceId: 20,
+      })
+    ).resolves.toEqual({
+      launch_config: {
+        ask_inventory_on_launch: true,
+        survey_enabled: false,
+        defaults: {},
+      },
+      resource: mswJobTemplateResource,
+      resourceId: 20,
+    });
+  });
+
+  it('should load workflow job template launch config through ensureLaunchConfigLoad', async () => {
+    await expect(
+      awaitNodeLaunchConfigForWizard({
+        node_type: RESOURCE_TYPE.workflow_job,
+        resourceId: 21,
+      })
+    ).resolves.toEqual({
+      launch_config: {
+        survey_enabled: true,
+        defaults: {},
+      },
+      resource: mswWorkflowJobTemplateResource,
+      resourceId: 21,
+    });
+  });
+
+  it('should return supplemental wizard data from validateNodeTypeStep when the load completes', async () => {
+    await expect(
+      validateNodeTypeStep(
+        mockT,
+        { node_type: RESOURCE_TYPE.job, resourceId: 20 },
+        { launch_config: null, resourceId: 1 }
+      )
+    ).resolves.toEqual({
+      launch_config: {
+        ask_inventory_on_launch: true,
+        survey_enabled: false,
+        defaults: {},
+      },
+      resource: mswJobTemplateResource,
+      resourceId: 20,
     });
   });
 });

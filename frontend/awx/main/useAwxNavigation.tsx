@@ -21,6 +21,7 @@ import { AwxOverview } from '../overview/AwxOverview';
 import { HostMetrics } from '../views/jobs/HostMetrics';
 import { AwxRoute } from './AwxRoutes';
 import { useAwxActivityStreamRoutes } from './routes/useAwxActivityStreamRoutes';
+import { useAwxDeprecationsRoutes } from './routes/useAwxDeprecationsRoutes';
 import { useAwxCredentialRoutes } from './routes/useAwxCredentialRoutes';
 import { useAwxCredentialTypesRoutes } from './routes/useAwxCredentialTypesRoutes';
 import { useAwxExecutionEnvironmentRoutes } from './routes/useAwxExecutionEnironmentRoutes';
@@ -51,6 +52,7 @@ export function useAwxNavigation() {
   const awxSchedulesRoutes = useAwxSchedulesRoutes();
   const awxJobsRoutes = useAwxJobsRoutes();
   const awxActivityStreamRoutes = useAwxActivityStreamRoutes();
+  const awxDeprecationsRoutes = useAwxDeprecationsRoutes();
   const awxOrganizationRoutes = useAwxOrganizationRoutes();
   const awxTeamsRoutes = useAwxTeamsRoutes();
   const awxUsersRoutes = useAwxUsersRoutes();
@@ -138,14 +140,23 @@ export function useAwxNavigation() {
       id: AwxRoute.Administration,
       label: t('Administration'),
       path: 'administration',
+      // Deprecations is intentionally visible to all users (not gated to superusers).
+      // This aligns with product requirements: visibility should be broad so any user
+      // can identify and act on deprecation warnings in their jobs.
       children: activeAwxUser?.is_superuser
         ? [
             awxActivityStreamRoutes,
+            awxDeprecationsRoutes,
             awxWorkflowApprovalRoutes,
             awxNotificationsRoutes,
             awxManagementJobsRoutes,
           ]
-        : [awxActivityStreamRoutes, awxWorkflowApprovalRoutes, awxNotificationsRoutes],
+        : [
+            awxActivityStreamRoutes,
+            awxDeprecationsRoutes,
+            awxWorkflowApprovalRoutes,
+            awxNotificationsRoutes,
+          ],
     },
   ];
   const accessItems: PageNavigationItem[] = [

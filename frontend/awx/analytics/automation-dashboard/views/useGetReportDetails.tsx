@@ -2,14 +2,14 @@ import { useCallback, useMemo } from 'react';
 import { IDashboardDetails } from '../types';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import {
-  filtersToSearchObj,
   paramsToSearchObj,
   IFilterState,
   IToolbarFilter,
   QueryParams,
 } from '../../../../../framework';
-import { swrOptions, useFetcher } from '../../../../common/crud/Data';
+import { useFetcher } from '../../../../common/crud/Data';
 import useSWR from 'swr';
+import { filtersToSearchObj, hasValidRequiredFilters } from '../utils/queryString';
 
 const DETAILS_PATH = 'dashboard_reports/report/details/';
 
@@ -26,21 +26,33 @@ interface IGetReportDetailsResult {
 export function useGetReportDetails(
   toolbarFilters: IToolbarFilter[],
   filterState: IFilterState,
-  queryParams: QueryParams = EMPTY_PARAMS
+  queryParams: QueryParams = EMPTY_PARAMS,
+  extraSearchParams?: [string, string][],
+  isLoadingExclusionIds?: boolean
 ): IGetReportDetailsResult {
+  // Check if all required filters are valid
+  const filtersValid = useMemo(
+    () => hasValidRequiredFilters(toolbarFilters, filterState),
+    [toolbarFilters, filterState]
+  );
+
   // Memoize the query string to prevent unnecessary re-fetches on every render.
   const queryString = useMemo(() => {
     const params = new URLSearchParams([
       ...paramsToSearchObj(queryParams),
       ...filtersToSearchObj(toolbarFilters, filterState),
+      ...(extraSearchParams ?? []),
     ]);
     return params.toString();
-  }, [toolbarFilters, filterState, queryParams]);
+  }, [toolbarFilters, filterState, queryParams, extraSearchParams]);
 
-  const url = metricsAPI`/${DETAILS_PATH}?${queryString}`;
+  // Defer fetch until required filters are valid and exclusion IDs have loaded
+  const url =
+    filtersValid && !isLoadingExclusionIds ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;
   const fetcher = useFetcher();
-  const response = useSWR<IDashboardDetails>(url, fetcher, swrOptions);
+  const response = useSWR<IDashboardDetails>(url, fetcher, { keepPreviousData: true });
   const { data, mutate, isLoading } = response;
+
   const refreshDetails = useCallback(async () => {
     await mutate();
   }, [mutate]);

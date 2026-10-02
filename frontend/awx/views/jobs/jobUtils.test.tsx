@@ -136,11 +136,11 @@ describe('jobUtils', () => {
       expect(getFilteredExtraVars('')).toBe('');
     });
 
-    it('should filter out empty string values', () => {
+    it('should preserve empty string values', () => {
       const input = JSON.stringify({ name: 'test', empty: '', value: 123 });
       const result = getFilteredExtraVars(input);
       const parsed = JSON.parse(result!) as Record<string, unknown>;
-      expect(parsed).toEqual({ name: 'test', value: 123 });
+      expect(parsed).toEqual({ name: 'test', empty: '', value: 123 });
     });
 
     it('should preserve non-empty values', () => {

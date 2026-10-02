@@ -168,7 +168,9 @@ describe('PlatformRoleForm', () => {
         </MemoryRouter>
       );
 
-      expect(getByRole('textbox', { name: 'Name' })).toHaveValue('Demo role');
+      await waitFor(() => {
+        expect(getByRole('textbox', { name: 'Name' })).toHaveValue('Demo role');
+      });
       expect(getByRole('textbox', { name: 'Description' })).toHaveValue('This is a demo role');
       expect(await findByText('Rulebook Activation')).toBeInTheDocument();
       expect(await findByText('Can view activation')).toBeInTheDocument();
@@ -314,6 +316,31 @@ describe('PlatformRoleForm', () => {
         { timeout: 10000 }
       );
       expect(permissionsButton).toBeInTheDocument();
+    }, 15000);
+
+    test('should show change activation in Organization permissions', async () => {
+      const user = userEvent.setup();
+
+      const { findByRole, findByText, getByText } = render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path={'/access/roles/create'} element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const resourceTypeButton = await findByRole('button', { name: 'Resource type' });
+      await user.click(resourceTypeButton);
+      await user.click(getByText('Organization'));
+
+      const permissionsButton = await findByRole(
+        'button',
+        { name: 'Permissions' },
+        { timeout: 10000 }
+      );
+      await user.click(permissionsButton);
+
+      expect(await findByText('Can change activation')).toBeInTheDocument();
     }, 15000);
 
     test('should update resource type when option is selected', async () => {

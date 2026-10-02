@@ -96,7 +96,7 @@ describe('PlatformRoleDetails', () => {
     expect(componentsDetail).toHaveTextContent('Automation Content');
   });
 
-  it('should render with custom breadcrumb label', () => {
+  it('should render with custom breadcrumb label', async () => {
     render(
       <MemoryRouter initialEntries={['/access/roles/1/details']}>
         <Routes>
@@ -107,7 +107,9 @@ describe('PlatformRoleDetails', () => {
         </Routes>
       </MemoryRouter>
     );
-    expectBreadcrumbs(['Custom Roles', 'Organization Admin']);
+    await waitFor(() => {
+      expectBreadcrumbs(['Custom Roles', 'Organization Admin']);
+    });
   });
 
   it('should render role with minimal data', async () => {

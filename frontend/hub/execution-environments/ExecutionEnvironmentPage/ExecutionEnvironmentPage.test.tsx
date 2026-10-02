@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { SWRConfig } from 'swr';
 import { ExecutionEnvironment } from '../ExecutionEnvironment';
 import { ExecutionEnvironmentPage } from './ExecutionEnvironmentPage';
 
@@ -76,15 +75,11 @@ describe('ExecutionEnvironmentPage', () => {
 
   test('should render all tabs correctly', async () => {
     render(
-      <SWRConfig value={{ provider: () => new Map() }}>
-        <MemoryRouter
-          initialEntries={['/execution-environments/test-execution-environment/details']}
-        >
-          <Routes>
-            <Route path="/execution-environments/:id/*" element={<ExecutionEnvironmentPage />} />
-          </Routes>
-        </MemoryRouter>
-      </SWRConfig>
+      <MemoryRouter initialEntries={['/execution-environments/test-execution-environment/details']}>
+        <Routes>
+          <Route path="/execution-environments/:id/*" element={<ExecutionEnvironmentPage />} />
+        </Routes>
+      </MemoryRouter>
     );
 
     await waitFor(

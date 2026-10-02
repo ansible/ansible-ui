@@ -1,6 +1,5 @@
 import {
   LoadingPage,
-  PageForm,
   PageHeader,
   PageLayout,
   useGetPageUrl,
@@ -24,6 +23,7 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { usePlatformRoleColumns } from '../../roles/hooks/usePlatformRoleColumns';
 import { usePlatformRolesFilters } from '../../roles/hooks/usePlatformRolesFilters';
 import { useGetOrganizationRolesForTeam } from '../hooks/useGetOrganizationRolesForTeam';
+import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { getAddedAndRemovedPlatformRoles } from '../utils/getAddedAndRemovedPlatformRoles';
 
 interface RemoveRole {
@@ -211,7 +211,7 @@ export function PlatformOrganizationManageTeamRoles() {
           { label: t('Manage {{teamName}} roles', { teamName: team?.name }) },
         ]}
       />
-      <PageForm
+      <PlatformPageForm
         submitText={t`Save roles`}
         onSubmit={onSubmit}
         cancelText={t`Cancel`}
@@ -238,7 +238,7 @@ export function PlatformOrganizationManageTeamRoles() {
           labelForSelectedItems={t('Selected roles')}
           errorStateTitle={t('Error loading roles')}
         />
-      </PageForm>
+      </PlatformPageForm>
     </PageLayout>
   );
 }

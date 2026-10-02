@@ -1,0 +1,138 @@
+---
+name: frontend-overlay
+description: >
+  Product-specific frontend wrappers, API clients, and paths for ansible-ui.
+  Use when implementing or reviewing UI in this monorepo.
+---
+
+# Overlay — ansible-ui
+
+## Stack
+
+- React 18, not 19 — no `ref`-as-prop, no `use(Context)` (exact version in `package.json`)
+- PatternFly 6 (exact version in `package.json`)
+- Node version from `.nvmrc` and `engines` in root `package.json` (CI uses Node 24;
+  some jobs still use Node 20). Use the npm that ships with that Node — do not
+  cite stale npm major versions in skills or comments.
+- Monorepo/build tooling: Nx
+- Server state: SWR
+- Router: react-router
+
+## Paths
+
+- UI package root: repo root (npm workspaces)
+- Components: `framework/` (shared), `frontend/{awx,eda,hub,chatbot}/`, `platform/`
+- Hooks: workspace `hooks/` or `frontend/common/hooks/`
+- API helpers: `awxAPI` / `edaAPI` / `hubAPI` / `gatewayAPI` (not a generated typed client)
+- Mock API handlers: MSW in Vitest. Playwright also has a mock project
+- E2E: `playwright/` (`playwright.config.ts`, `commands/`, `tests/`, `utils/`)
+- Storybook command and port: N/A — no Storybook
+- Check command: `npm test` (eslint + tsc + prettier + vitest). There is no `npm run check`
+- Also `npm run eslint:guardrails` on touched `frontend/` / `platform/` / `framework/` `.ts`/`.tsx`. Advisory in CI; thresholds in `.eslintrc.guardrails.json`; do not add new warnings (see coding_standards §15)
+- Test command: `npm run vitest` (unit); Playwright from `playwright/`
+- Dev server: `npm start` (from `platform/`)
+- Build all workspaces: `npm run build`
+- Fix lint + formatting: `npm run fix` (`npm run prettier:fix` for formatting only)
+- Instruction files: `CLAUDE.md` (symlink `AGENTS.md`)
+
+## MCP-assisted implementation
+
+Before implementing UI, consult `patternfly-mcp` for the official PF6 API and
+accessibility guidance, then search `framework/` and the relevant workspace for
+an existing wrapper. For workflow or browser changes, use `playwright` to
+inspect the running UI; use `chrome-devtools` for console, network, layout, and
+performance diagnosis. Do not invent component props when an MCP or official
+documentation lookup can answer the question.
+
+## Wrappers (use these, not raw PatternFly)
+
+Global/shared components live in the `framework/` package — search there first
+before reaching for raw PatternFly or writing a new component.
+
+| Pattern                             | Component / hook                                                   | Notes                                                                                                   |
+| ----------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Page shell                          | `PageLayout`                                                       | `framework/`                                                                                            |
+| Page header                         | `PageHeader`                                                       | `framework/`                                                                                            |
+| Content panel                       | `Page` helpers in `framework/`                                     | Search `framework/` before new components                                                               |
+| List + table + pagination           | `PageTable` + `useAwxView` / `useEdaView` / `useHubView`           | Workspace view hook                                                                                     |
+| Empty (no data / no filter / error) | framework empty states                                             |                                                                                                         |
+| Confirmation                        | framework dialog / PF Modal                                        | Reversible vs destructive                                                                               |
+| Error with retry                    | workspace error adapter                                            | See coding_standards                                                                                    |
+| Forms                               | `AwxPageForm` / `EdaPageForm` / `HubPageForm` / `PlatformPageForm` | See `framework/PageForm/` for shared primitives; use the workspace wrapper, not raw `PageForm`          |
+| Toast / alert helper                | framework alerts                                                   | `addAlert({ variant, title, children? })` — body is `children`, not `description`; always set `variant` |
+
+## API
+
+- Call the backend with workspace tagged templates + SWR / CRUD hooks (`useGet`, `usePostRequest`, …)
+- Forbidden: hardcoded `/api/...` paths (ESLint-enforced — custom rule); mocking `requestGet` instead of MSW
+- Error shape: per-workspace adapters (not RFC 9457 everywhere)
+
+## Permissions
+
+- Hook names: workspace RBAC helpers in coding_standards
+- Disabled-with-tooltip: existing page action patterns
+- Nav / route guards: workspace routing
+
+## Icons
+
+- PatternFly icons or existing framework icons in `framework/`
+
+## Router
+
+- `react-router`. Use `<Link>` for in-app navigation, `<Button>` for actions
+
+## Docs links
+
+- N/A as a single helper — follow existing `docsLinks` patterns in-tree
+
+## Visual regression
+
+- Page registry path: `playwright/tests/visual/` (one spec per representative page)
+- Check-baselines command: `npx playwright test tests/visual/ --project "live chromium"` from `playwright/`
+- Never block PRs on full-page screenshots (on-demand + weekly; live-only `@not_mock`)
+- Snapshot directory: `playwright/tests/visual/` Linux `-linux.png` suffix
+- Overlay module (`vr.overlay.ts`): N/A
+
+## E2E (see testing_guidelines for write rules)
+
+- Playwright config path: `playwright/playwright.config.ts`
+- Default mode: live (`npm run live` in `playwright/`) or mock (`npx playwright test --project 'mock chromium'`)
+- UI URL: `PLATFORM_UI` in `playwright/.env` (typically `https://localhost:4100`, HTTPS in browser)
+- Extra env (shell): `PLATFORM_SERVER=https://localhost:443`; optional `AWX_SERVER`, `EDA_SERVER`, `HUB_SERVER`
+- Secret file path: `playwright/.env` (`PLATFORM_USERNAME`, `PLATFORM_PASSWORD`). Never print values
+- How to check the stack is up: UI listens on 4100; do not start a second copy
+- Commands (from `playwright/`):
+  - `npm run live` — live chromium
+  - `npx playwright test --project 'mock chromium'`
+  - `npx playwright test tests/path/to/test.spec.ts --project 'live chromium'`
+  - Fail-fast: add `--max-failures=1 --retries=0`
+  - Debug: `--debug`; traces: `npx playwright show-trace trace.zip`
+- Write rules, table helpers, MCP SSL bypass (`thisisunsafe`): `.claude/skills/testing_guidelines.md`
+- Unique-name helper: `createE2EName()` in `playwright/commands/`
+- Cleanup helper: `setupAfter`, resource `*.api.delete`, `confirmAndAssertDeletion`
+
+## Troubleshooting
+
+- Build errors: `npm run clean` then `npm ci`
+- Type errors: check the TypeScript config in the relevant workspace
+- Logs: platform → platform server logs; dev → browser console + terminal
+  output; tests → Playwright reports and traces
+
+## Review remainder (not currently linted)
+
+| Miss                                                                 | Grep / check                                                                                                                                                                            |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raw `PageForm` in a workspace UI                                     | `PageForm` import from framework in `frontend/` or `platform/`                                                                                                                          |
+| `fireEvent` in tests                                                 | `fireEvent` in `*.test.tsx`                                                                                                                                                             |
+| Translated string used in logic                                      | `if (t(` or `=== t(`                                                                                                                                                                    |
+| Alert body in `description`, or `addAlert` without `variant`         | `rg "addAlert\(\{" -A8 --glob '!*.test.*' \| rg "description:"` (any hit) — body goes in `children`; every `addAlert` sets `variant` (`title:` may push `children:` several lines down) |
+| Resource `use*Actions/Filters/Columns` hook not under a `hooks/` dir | `fd "use.*(Actions\|Filters\|Columns)\.tsx$" \| rg -v "/hooks/"` (≈95% live under `hooks/`)                                                                                             |
+| Test placed in a `__tests__/` dir instead of colocated `*.test.tsx`  | `fd -t d "__tests__"` (repo has none; unit tests colocate beside source)                                                                                                                |
+| `userEvent` used without a `userEvent.setup()` handle                | test uses `userEvent.click/type` but has no `const user = userEvent.setup()` (≈94% use `setup()`)                                                                                       |
+| Raw string path in `navigate('/...')`                                | `rg "navigate\('/" -g '*.tsx' -g '!*.test.tsx'` — use `usePageNavigate` + route enum, or `<Link>`                                                                                       |
+
+## Review harvest
+
+- Default GitHub repos: `ansible/ansible-ui`
+- Default `--since` window: 90 days
+- Recurring reviewer logins: N/A

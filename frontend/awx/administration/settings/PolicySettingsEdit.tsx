@@ -1,6 +1,7 @@
 import { LoadingPage, PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
 import { PageFormHidden } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormHidden';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
+import { PageFormOptionsData } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import {
   AwxSettingsOptionsAction,
   OptionActionsFormInput,
@@ -151,6 +152,7 @@ export function PolicySettingsForm(props: {
       submitText={t('Save')}
       onCancel={() => void navigate('..')}
       onSubmit={onSubmit}
+      optionsData={{ actions: { PUT: props.options } } as PageFormOptionsData}
       additionalActions={
         <Button
           variant="secondary"

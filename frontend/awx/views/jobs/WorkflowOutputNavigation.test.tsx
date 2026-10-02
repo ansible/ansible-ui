@@ -188,4 +188,76 @@ describe('WorkflowOutputNavigation', () => {
 
     expect(screen.getByText(/Workflow Job 1\/0/)).toBeInTheDocument();
   });
+
+  it('should display job name for sliced job nodes with UUID identifiers', async () => {
+    const user = userEvent.setup();
+    const slicedNode = createWorkflowNode({
+      id: 10,
+      identifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+      job: '200',
+      summary_fields: {
+        ...createWorkflowNode().summary_fields,
+        job: {
+          id: 200,
+          name: 'Slice Job [1/3]',
+          type: 'job',
+          status: 'successful',
+          description: '',
+          elapsed: 30,
+          failed: false,
+        },
+        unified_job_template:
+          undefined as unknown as WorkflowJobNode['summary_fields']['unified_job_template'],
+      },
+    });
+
+    renderWithRouter([slicedNode]);
+    await user.click(screen.getByRole('button', { name: /Workflow Job 1\/1/ }));
+
+    expect(screen.getByText('Slice Job [1/3]')).toBeInTheDocument();
+  });
+
+  it('should fallback to unified_job_template name when job name is missing on sliced nodes', async () => {
+    const user = userEvent.setup();
+    const slicedNode = createWorkflowNode({
+      id: 11,
+      identifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+      job: '201',
+      summary_fields: {
+        ...createWorkflowNode().summary_fields,
+        job: undefined,
+        unified_job_template: {
+          id: 7,
+          name: 'Demo Job Template',
+          description: '',
+          unified_job_type: 'job',
+        },
+      },
+    });
+
+    renderWithRouter([slicedNode]);
+    await user.click(screen.getByRole('button', { name: /Workflow Job 1\/1/ }));
+
+    expect(screen.getByText('Demo Job Template')).toBeInTheDocument();
+  });
+
+  it('should fallback to node id when both job and template names are missing', async () => {
+    const user = userEvent.setup();
+    const slicedNode = createWorkflowNode({
+      id: 12,
+      identifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+      job: '202',
+      summary_fields: {
+        ...createWorkflowNode().summary_fields,
+        job: undefined,
+        unified_job_template:
+          undefined as unknown as WorkflowJobNode['summary_fields']['unified_job_template'],
+      },
+    });
+
+    renderWithRouter([slicedNode]);
+    await user.click(screen.getByRole('button', { name: /Workflow Job 1\/1/ }));
+
+    expect(screen.getByText('Node 12')).toBeInTheDocument();
+  });
 });

@@ -3,27 +3,29 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { QUERY_PARAMS, useAutomationDashboardView } from './useAutomationDashboardView';
+import { useAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
+import type { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
+import { useExportCsv } from './useExportCsv';
+import { useJobTemplateIds } from '../common/useJobTemplateIds';
 
 // ─── Hoisted mocks (run before vi.mock factories) ─────────────────────────────
 
-const {
-  mockSetFilterState,
-  mockAwxViewRefresh,
-  mockRefreshDetails,
-  mockExportCsvBase,
-  mockExportPdfBase,
-} = vi.hoisted(() => ({
-  mockSetFilterState: vi.fn(),
-  mockAwxViewRefresh: vi.fn(),
-  mockRefreshDetails: vi.fn(),
-  mockExportCsvBase: vi.fn(),
-  mockExportPdfBase: vi.fn(),
-}));
+const { mockSetFilterState, mockBaseViewRefresh, mockRefreshDetails, mockExportCsvBase } =
+  vi.hoisted(() => ({
+    mockSetFilterState: vi.fn(),
+    mockBaseViewRefresh: vi.fn(),
+    mockRefreshDetails: vi.fn(),
+    mockExportCsvBase: vi.fn(),
+  }));
 
 // ─── Dependency mocks ─────────────────────────────────────────────────────────
 
-vi.mock('../../../common/useAwxView', () => ({
-  useAwxView: vi.fn(() => ({
+// Calculate default dates to match the source code's DEFAULT_FILTERS
+const DEFAULT_END_DATE = new Date(Date.now());
+const DEFAULT_START_DATE = new Date(DEFAULT_END_DATE.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+vi.mock('../common/useAutomationDashboardBaseView', () => ({
+  useAutomationDashboardBaseView: vi.fn(() => ({
     page: 1,
     setPage: vi.fn(),
     perPage: 10,
@@ -32,26 +34,22 @@ vi.mock('../../../common/useAwxView', () => ({
     setSort: vi.fn(),
     sortDirection: 'asc',
     setSortDirection: vi.fn(),
-    filterState: { period: [AutomationDashboardDateRangeFilterPresets.last_7_days] },
+    filterState: {
+      period: [
+        AutomationDashboardDateRangeFilterPresets.last_7_days,
+        DEFAULT_START_DATE.toISOString().split('T')[0],
+        DEFAULT_END_DATE.toISOString().split('T')[0],
+      ],
+    },
     setFilterState: mockSetFilterState,
     clearAllFilters: vi.fn(),
     itemCount: 0,
     pageItems: [],
-    refresh: mockAwxViewRefresh,
-    selectItem: vi.fn(),
-    selectItems: vi.fn(),
-    unselectItem: vi.fn(),
-    unselectItems: vi.fn(),
-    isSelected: vi.fn(() => false),
-    selectAll: vi.fn(),
-    unselectAll: vi.fn(),
-    allSelected: false,
-    selectedItems: [],
-    keyFn: vi.fn(),
-    selectItemsAndRefresh: vi.fn(),
-    unselectItemsAndRefresh: vi.fn(),
+    refresh: mockBaseViewRefresh,
     limitFiltersToOneOrOperation: true,
     updateItem: vi.fn(),
+    upsertItem: vi.fn(),
+    listUrl: '',
   })),
 }));
 
@@ -75,8 +73,16 @@ vi.mock('./useExportCsv', () => ({
   useExportCsv: vi.fn(() => mockExportCsvBase),
 }));
 
-vi.mock('./useExportPdf', () => ({
-  useExportPdf: vi.fn(() => mockExportPdfBase),
+vi.mock('../common/useJobTemplateIds', () => ({
+  useJobTemplateIds: vi.fn(() => ({
+    templateIds: [
+      ['template', '1'],
+      ['template', '2'],
+      ['template', '3'],
+    ],
+    isLoading: false,
+    error: undefined,
+  })),
 }));
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -84,9 +90,8 @@ vi.mock('./useExportPdf', () => ({
 describe('useAutomationDashboardView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockAwxViewRefresh.mockResolvedValue(undefined);
+    mockBaseViewRefresh.mockResolvedValue(undefined);
     mockExportCsvBase.mockResolvedValue(undefined);
-    mockExportPdfBase.mockResolvedValue(undefined);
   });
 
   // --- QUERY_PARAMS ---
@@ -108,8 +113,9 @@ describe('useAutomationDashboardView', () => {
     expect(view.costState).toBeUndefined();
     expect(view.loading).toBe(false);
     expect(view.refresh).toBeTypeOf('function');
-    expect(view.exportPdf).toBeTypeOf('function');
     expect(view.setCostState).toBeTypeOf('function');
+    expect(view.isFilterStateDefault).toBe(true);
+    expect(view.registerClearCallback).toBeTypeOf('function');
   });
 
   // --- clearAllFilters override ---
@@ -119,6 +125,61 @@ describe('useAutomationDashboardView', () => {
     act(() => {
       result.current.mainTableView.clearAllFilters();
     });
+    // Note: clearAllFilters only resets to the preset, not including dates
+    // The dates are calculated in DEFAULT_FILTERS on module load
+    expect(mockSetFilterState).toHaveBeenCalledWith({
+      period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
+    });
+  });
+
+  // --- isFilterStateDefault ---
+
+  test('should return true for isFilterStateDefault when filter state is default', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.isFilterStateDefault).toBe(true);
+  });
+
+  test('should return true for isFilterStateDefault when filter state is undefined', () => {
+    vi.mocked(useAutomationDashboardBaseView).mockReturnValueOnce({
+      page: 1,
+      setPage: vi.fn(),
+      perPage: 10,
+      setPerPage: vi.fn(),
+      sort: 'template_name',
+      setSort: vi.fn(),
+      sortDirection: 'asc',
+      setSortDirection: vi.fn(),
+      filterState: undefined,
+      setFilterState: mockSetFilterState,
+      clearAllFilters: vi.fn(),
+      itemCount: 0,
+      pageItems: [],
+      refresh: mockBaseViewRefresh,
+      limitFiltersToOneOrOperation: true,
+      updateItem: vi.fn(),
+      error: undefined,
+    } as unknown as IAutomationDashboardBaseView<{ id: number }>);
+
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(result.current.isFilterStateDefault).toBe(true);
+  });
+
+  // --- registerClearCallback ---
+
+  test('should call registered callback when clearAllFilters is invoked', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    const mockCallback = vi.fn();
+
+    act(() => {
+      result.current.registerClearCallback(mockCallback);
+    });
+
+    act(() => {
+      result.current.mainTableView.clearAllFilters();
+    });
+
+    expect(mockCallback).toHaveBeenCalled();
     expect(mockSetFilterState).toHaveBeenCalledWith({
       period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
     });
@@ -134,12 +195,12 @@ describe('useAutomationDashboardView', () => {
     });
 
     expect(mockRefreshDetails).toHaveBeenCalled();
-    expect(mockAwxViewRefresh).toHaveBeenCalled();
+    expect(mockBaseViewRefresh).toHaveBeenCalled();
     expect(result.current.loading).toBe(false);
   });
 
   test('should set loading to false after refresh even when mainTableView.refresh throws', async () => {
-    mockAwxViewRefresh.mockRejectedValue(new Error('Network error'));
+    mockBaseViewRefresh.mockRejectedValue(new Error('Network error'));
     const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
 
     await act(async () => {
@@ -155,14 +216,14 @@ describe('useAutomationDashboardView', () => {
 
   // --- exportCsv ---
 
-  test('should call exportCsvBase and manage loading on exportCsv', async () => {
+  test('should call exportCsvBase with reportType and manage loading on exportCsv', async () => {
     const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
 
     await act(async () => {
-      await result.current.exportCsv();
+      await result.current.exportCsv('summary');
     });
 
-    expect(mockExportCsvBase).toHaveBeenCalled();
+    expect(mockExportCsvBase).toHaveBeenCalledWith('summary');
     expect(result.current.loading).toBe(false);
   });
 
@@ -172,7 +233,7 @@ describe('useAutomationDashboardView', () => {
 
     await act(async () => {
       try {
-        await result.current.exportCsv();
+        await result.current.exportCsv('summary');
       } catch {
         // expected
       }
@@ -181,31 +242,98 @@ describe('useAutomationDashboardView', () => {
     expect(result.current.loading).toBe(false);
   });
 
-  // --- exportPdf ---
+  // --- System job exclusion wiring ---
 
-  test('should call exportPdfBase and manage loading on exportPdf', async () => {
-    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+  test('should pass systemJobExclusionParams to useExportCsv', () => {
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
 
-    await act(async () => {
-      await result.current.exportPdf();
-    });
-
-    expect(mockExportPdfBase).toHaveBeenCalled();
-    expect(result.current.loading).toBe(false);
+    expect(vi.mocked(useExportCsv)).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      expect.arrayContaining([['template', '1']])
+    );
   });
 
-  test('should set loading to false after exportPdf even when exportPdfBase throws', async () => {
-    mockExportPdfBase.mockRejectedValue(new Error('PDF error'));
-    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+  test('should pass isLoadingSystemJobExclusionIds as false when templates loaded successfully', () => {
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
 
-    await act(async () => {
-      try {
-        await result.current.exportPdf();
-      } catch {
-        // expected
-      }
+    expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
+      expect.objectContaining({ isLoadingSystemJobExclusionIds: false })
+    );
+  });
+
+  test('should pass isLoadingSystemJobExclusionIds as true when template IDs are loading', () => {
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: undefined,
+      isLoading: true,
+      error: undefined,
     });
 
-    expect(result.current.loading).toBe(false);
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
+      expect.objectContaining({ isLoadingSystemJobExclusionIds: true })
+    );
+  });
+
+  test('should pass isLoadingSystemJobExclusionIds as true when template IDs have an error', () => {
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: undefined,
+      isLoading: false,
+      error: new Error('Failed to fetch templates'),
+    });
+
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
+      expect.objectContaining({ isLoadingSystemJobExclusionIds: true })
+    );
+  });
+
+  test('should pass isLoadingSystemJobExclusionIds as true when template IDs are empty (no templates on instance)', () => {
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: [],
+      isLoading: false,
+      error: undefined,
+    });
+
+    renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    expect(vi.mocked(useAutomationDashboardBaseView)).toHaveBeenCalledWith(
+      expect.objectContaining({ isLoadingSystemJobExclusionIds: true })
+    );
+  });
+
+  test('should expose isLoadingTemplateIds as false when templates loaded', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.isLoadingTemplateIds).toBe(false);
+  });
+
+  test('should expose isLoadingTemplateIds as true when templates are loading', () => {
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: undefined,
+      isLoading: true,
+      error: undefined,
+    });
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.isLoadingTemplateIds).toBe(true);
+  });
+
+  test('should expose templateIdsError as undefined when template IDs load successfully', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.templateIdsError).toBeUndefined();
+  });
+
+  test('should expose templateIdsError when template IDs fail to load', () => {
+    const templateError = new Error('Failed to fetch templates');
+    vi.mocked(useJobTemplateIds).mockReturnValueOnce({
+      templateIds: undefined,
+      isLoading: false,
+      error: templateError,
+    });
+
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+    expect(result.current.templateIdsError).toBe(templateError);
   });
 });

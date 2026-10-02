@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { CreateGroup, EditGroup } from './InventoryGroupForm';
+import { CreateGroup, EditGroup, CreateRelatedGroup } from './InventoryGroupForm';
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
   DataEditor: (props: {
@@ -141,6 +141,61 @@ describe('InventoryGroupForm', () => {
 
       expect(screen.getByRole('button', { name: /save group/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('CreateRelatedGroup', () => {
+    it('should render create related group page', async () => {
+      render(
+        <MemoryRouter initialEntries={['/inventories/inventory/1/group/433/related-groups/add']}>
+          <Routes>
+            <Route
+              path="/inventories/:inventory_type/:id/group/:group_id/related-groups/add"
+              element={<CreateRelatedGroup />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Create group');
+      });
+    });
+
+    it('should show breadcrumbs including Related Groups', async () => {
+      render(
+        <MemoryRouter initialEntries={['/inventories/inventory/1/group/433/related-groups/add']}>
+          <Routes>
+            <Route
+              path="/inventories/:inventory_type/:id/group/:group_id/related-groups/add"
+              element={<CreateRelatedGroup />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('Related Groups')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('EditGroup - breadcrumbs', () => {
+    it('should display edit page title with group name', async () => {
+      render(
+        <MemoryRouter initialEntries={['/inventories/inventory/12141/group/433/edit']}>
+          <Routes>
+            <Route
+              path="/inventories/:inventory_type/:id/group/:group_id/edit"
+              element={<EditGroup />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Related to group 1');
+      });
     });
   });
 });

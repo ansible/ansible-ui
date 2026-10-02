@@ -2,10 +2,12 @@
 /* eslint-disable no-restricted-exports */
 /* eslint-disable no-console */
 import react from '@vitejs/plugin-react';
-import { defineConfig, PluginOption } from 'vite';
+import { type PluginOption } from 'vite';
+import { defineConfig } from 'vitest/config';
 import compression from 'vite-plugin-compression';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
+import { getVitestAliases } from '../../framework/vitest.shared';
 
 const PLATFORM_SERVER = process.env.PLATFORM_SERVER as string;
 
@@ -56,12 +58,11 @@ export default defineConfig({
   test: {
     globals: true,
     coverage: {
-      all: true,
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**'],
+      exclude: ['node_modules/**', '**/vitest.*.ts'],
     },
     css: !process.env.CI,
     environment: 'happy-dom',
@@ -71,5 +72,6 @@ export default defineConfig({
         inline: ['@patternfly/react-styles'],
       },
     },
+    alias: getVitestAliases(),
   },
 });

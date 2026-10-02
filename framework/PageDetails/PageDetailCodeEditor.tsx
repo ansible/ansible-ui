@@ -10,10 +10,18 @@ import React, { ReactNode, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { usePageSettings } from '..';
-import { objectToString, valueToObject } from '../PageForm/Inputs/PageFormDataEditor';
+import { formatEditorDisplayValue } from '../PageForm/Inputs/PageFormDataEditor';
 import { DataEditorLanguages } from '../components/DataEditor';
 import { useClipboard } from '../hooks/useClipboard';
 import { PageDetail } from './PageDetail';
+
+export function formatDetailCodeEditorValue(
+  value: string,
+  language: DataEditorLanguages,
+  isArray: boolean
+): string {
+  return formatEditorDisplayValue(value, language, isArray);
+}
 
 export function PageDetailCodeEditor(props: {
   label?: string;
@@ -51,8 +59,7 @@ export function PageDetailCodeEditor(props: {
 
   useLayoutEffect(() => {
     if (toggleLanguage) {
-      const translatedVal = objectToString(valueToObject(value, isArray), language);
-      setCodeEditorValue(translatedVal);
+      setCodeEditorValue(formatEditorDisplayValue(value, language, isArray));
     }
   }, [language, toggleLanguage, value, isArray]);
 

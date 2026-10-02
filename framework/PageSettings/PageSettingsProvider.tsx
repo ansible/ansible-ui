@@ -11,6 +11,18 @@ import {
 import { SWRConfig } from 'swr';
 import { isRequestError } from '@ansible/common-ui/crud/RequestError';
 
+/** Default SWR refresh interval in milliseconds. Overridden by __SWR_REFRESH_INTERVAL__ in tests. */
+export const SWR_REFRESH_INTERVAL_MS =
+  ((globalThis as unknown as Record<string, number>).__SWR_REFRESH_INTERVAL__ as
+    | number
+    | undefined) ?? 60000;
+
+/** Default SWR deduping interval in milliseconds. Overridden by __SWR_DEDUPING_INTERVAL__ in tests. */
+export const SWR_DEDUPING_INTERVAL_MS =
+  ((globalThis as unknown as Record<string, number>).__SWR_DEDUPING_INTERVAL__ as
+    | number
+    | undefined) ?? 2000;
+
 // Exported for testing
 export function createSWRErrorRetryHandler() {
   return (
@@ -29,6 +41,7 @@ export function createSWRErrorRetryHandler() {
     if (opts.retryCount >= 3) return;
 
     // Add jitter to prevent thundering herd
+    // Math.random is sufficient for retry timing - not security-sensitive (SonarCloud S2245)
     const timeout = Math.trunc((Math.random() + 0.5) * (1 << opts.retryCount)) * 1000;
 
     setTimeout(() => {
@@ -61,7 +74,6 @@ export function usePageSettings() {
 
 export function PageSettingsProvider(props: {
   children?: ReactNode;
-  defaultRefreshInterval: number;
   disableThemeManagement?: boolean;
 }) {
   const [settings, setSettingsState] = useState<IPageSettings>(() => {
@@ -76,7 +88,7 @@ export function PageSettingsProvider(props: {
     }
     // defaults
     settings = {
-      refreshInterval: props.defaultRefreshInterval,
+      refreshInterval: SWR_REFRESH_INTERVAL_MS / 1000,
       theme: 'system',
       tableLayout: 'comfortable',
       formColumns: 'multiple',
@@ -118,7 +130,9 @@ export function PageSettingsProvider(props: {
   return (
     <SWRConfig
       value={{
+        dedupingInterval: SWR_DEDUPING_INTERVAL_MS,
         refreshInterval: settings.refreshInterval ? settings.refreshInterval * 1000 : 0,
+        revalidateOnFocus: false,
         onErrorRetry: swrErrorRetryHandler,
       }}
     >

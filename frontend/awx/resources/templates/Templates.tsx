@@ -36,7 +36,7 @@ export function Templates() {
         ]}
         titleDocLink={useGetDocsUrl(config, 'templates')}
         description={t(
-          'Job Templates and Workflow Templates for automating and orchestrating IT tasks efficiently.'
+          'Job Templates and Workflow Templates automate and orchestrate IT tasks efficiently.'
         )}
         headerActions={
           <ActivityStreamIcon

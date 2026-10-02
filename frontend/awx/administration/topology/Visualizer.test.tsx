@@ -43,17 +43,19 @@ vi.mock('@patternfly/react-topology', () => ({
   TopologyQuadrant: { upperLeft: 'upperLeft' },
   DEFAULT_DECORATOR_RADIUS: 6,
   Decorator: () => null,
-  Visualization: vi.fn().mockImplementation(() => ({
-    registerComponentFactory: vi.fn(),
-    addEventListener: vi.fn(),
-    fromModel: vi.fn(),
-    getGraph: vi.fn().mockReturnValue({
-      fit: vi.fn(),
-      scaleBy: vi.fn(),
-      reset: vi.fn(),
-      layout: vi.fn(),
-    }),
-  })),
+  Visualization: vi.fn().mockImplementation(function () {
+    return {
+      registerComponentFactory: vi.fn(),
+      addEventListener: vi.fn(),
+      fromModel: vi.fn(),
+      getGraph: vi.fn().mockReturnValue({
+        fit: vi.fn(),
+        scaleBy: vi.fn(),
+        reset: vi.fn(),
+        layout: vi.fn(),
+      }),
+    };
+  }),
   VisualizationProvider: (props: { children?: unknown }) => props.children,
   VisualizationSurface: () => null,
   action: (fn: () => void) => fn,

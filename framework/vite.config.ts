@@ -1,7 +1,7 @@
-// vite.config.js
 /* eslint-disable no-restricted-exports */
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
+import { getVitestAliases } from './vitest.shared';
 
 export default defineConfig({
   plugins: [react()],
@@ -41,12 +41,19 @@ export default defineConfig({
   },
   test: {
     coverage: {
-      all: true,
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**'],
+      exclude: [
+        'node_modules/**',
+        '**/vitest.*.ts',
+        '**/types.ts',
+        '**/typesErrorAdapter.ts',
+        'PageWizard/PageWizardState.ts',
+        'utils/compare.ts',
+        'utils/random-string.ts',
+      ],
     },
     css: !process.env.CI,
     environment: 'happy-dom',
@@ -57,11 +64,6 @@ export default defineConfig({
       },
     },
     // found at: https://github.com/vitest-dev/vitest/discussions/1806
-    alias: [
-      {
-        find: /^monaco-editor$/,
-        replacement: __dirname + '/../node_modules/monaco-editor/esm/vs/editor/editor.api',
-      },
-    ],
+    alias: getVitestAliases(),
   },
 });

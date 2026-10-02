@@ -6,9 +6,11 @@ import {
   PageFormTextInput,
 } from '@ansible/ansible-ui-framework';
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
+import { PageFormFieldMetadataProvider } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
+import { buildFieldMetadataMap } from '@ansible/common-ui/validation/buildFieldMetadataMap';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../../interfaces/Authenticator';
 import {
   AuthenticatorPlugin,
@@ -83,113 +85,117 @@ export function AuthenticatorSubForm(props: {
     }
   });
 
+  const fieldMetadataMap = buildFieldMetadataMap(schema, 'name');
+
   return (
     <PageFormHidden watch="type" hidden={(type: AuthenticatorTypeEnum) => !type}>
-      <PageFormSection title={t('Authentication details')}>
-        {textFields.map((field) =>
-          field.type === 'ChoiceField' ? (
-            <PageFormSelect
-              id={`configuration-input-${field.name}`}
-              name={`configuration.${field.name}`}
-              key={field.name}
-              label={field.ui_field_label ?? field.name}
-              labelHelpTitle={field.ui_field_label ?? field.name}
-              labelHelp={field.help_text}
-              options={Object.keys(field.choices ?? {}).map((option) => ({
-                value: option,
-                label: (field.choices as { [k: string]: string })[option] ?? option,
-              }))}
-              placeholderText={t('Select a value')}
-              isRequired={field.required}
-            />
-          ) : (
-            <PageFormTextInput
-              id={`configuration-input-${field.name}`}
-              name={`configuration.${field.name}`}
-              key={field.name}
-              label={field.ui_field_label ?? field.name}
-              labelHelpTitle={field.ui_field_label ?? field.name}
-              labelHelp={field.help_text}
-              isRequired={field.required}
-              type={field.name === 'BIND_PASSWORD' ? 'password' : undefined}
-              placeholder={t(`Enter ${field.ui_field_label ?? field.name}`)}
-            />
-          )
-        )}
-        {textareaFields.length > 0 && (
-          <PageFormSection singleColumn>
-            {textareaFields.map((field) => (
-              <PageFormTextArea
-                id={`configuration-textarea-${field.name}`}
-                name={`configuration.${field.name}`}
-                key={field.name}
-                label={field.ui_field_label ?? field.name}
-                labelHelpTitle={field.ui_field_label ?? field.name}
-                labelHelp={field.help_text}
-                isRequired={field.required}
-                placeholder={`Enter ${field.ui_field_label ?? field.name}`}
-              />
-            ))}
-          </PageFormSection>
-        )}
-        {boolFields.length > 0 && (
-          <PageFormSection singleColumn>
-            {boolFields.map((field) => (
-              <PageFormCheckbox
+      <PageFormFieldMetadataProvider fields={fieldMetadataMap} merge>
+        <PageFormSection title={t('Authentication details')}>
+          {textFields.map((field) =>
+            field.type === 'ChoiceField' ? (
+              <PageFormSelect
                 id={`configuration-input-${field.name}`}
                 name={`configuration.${field.name}`}
                 key={field.name}
                 label={field.ui_field_label ?? field.name}
-                isRequired={field.required}
                 labelHelpTitle={field.ui_field_label ?? field.name}
                 labelHelp={field.help_text}
+                options={Object.keys(field.choices ?? {}).map((option) => ({
+                  value: option,
+                  label: (field.choices as { [k: string]: string })[option] ?? option,
+                }))}
+                placeholderText={t('Select a value')}
+                isRequired={field.required}
               />
-            ))}
-          </PageFormSection>
-        )}
-      </PageFormSection>
-      <PageFormSection singleColumn>
-        {dataFields.map((field) => {
-          const fieldType = schema.find((fieldDef) => fieldDef.name === field.name)?.type;
-          return (
-            <PageFormDataEditor
-              id={`configuration-editor-${field.name}`}
-              name={`configuration.${field.name}`}
-              key={field.name}
-              label={field.ui_field_label ?? field.name}
-              labelHelpTitle={field.ui_field_label ?? field.name}
-              labelHelp={field.help_text}
-              isRequired={field.required}
-              format="json"
-              isArray={!!fieldType && ['ListField', 'LDAPSearchField'].includes(fieldType)}
+            ) : (
+              <PageFormTextInput
+                id={`configuration-input-${field.name}`}
+                name={`configuration.${field.name}`}
+                key={field.name}
+                label={field.ui_field_label ?? field.name}
+                labelHelpTitle={field.ui_field_label ?? field.name}
+                labelHelp={field.help_text}
+                isRequired={field.required}
+                type={field.name === 'BIND_PASSWORD' ? 'password' : undefined}
+                placeholder={t(`Enter ${field.ui_field_label ?? field.name}`)}
+              />
+            )
+          )}
+          {textareaFields.length > 0 && (
+            <PageFormSection singleColumn>
+              {textareaFields.map((field) => (
+                <PageFormTextArea
+                  id={`configuration-textarea-${field.name}`}
+                  name={`configuration.${field.name}`}
+                  key={field.name}
+                  label={field.ui_field_label ?? field.name}
+                  labelHelpTitle={field.ui_field_label ?? field.name}
+                  labelHelp={field.help_text}
+                  isRequired={field.required}
+                  placeholder={`Enter ${field.ui_field_label ?? field.name}`}
+                />
+              ))}
+            </PageFormSection>
+          )}
+          {boolFields.length > 0 && (
+            <PageFormSection singleColumn>
+              {boolFields.map((field) => (
+                <PageFormCheckbox
+                  id={`configuration-input-${field.name}`}
+                  name={`configuration.${field.name}`}
+                  key={field.name}
+                  label={field.ui_field_label ?? field.name}
+                  isRequired={field.required}
+                  labelHelpTitle={field.ui_field_label ?? field.name}
+                  labelHelp={field.help_text}
+                />
+              ))}
+            </PageFormSection>
+          )}
+        </PageFormSection>
+        <PageFormSection singleColumn>
+          {dataFields.map((field) => {
+            const fieldType = schema.find((fieldDef) => fieldDef.name === field.name)?.type;
+            return (
+              <PageFormDataEditor
+                id={`configuration-editor-${field.name}`}
+                name={`configuration.${field.name}`}
+                key={field.name}
+                label={field.ui_field_label ?? field.name}
+                labelHelpTitle={field.ui_field_label ?? field.name}
+                labelHelp={field.help_text}
+                isRequired={field.required}
+                format="json"
+                isArray={!!fieldType && ['ListField', 'LDAPSearchField'].includes(fieldType)}
+              />
+            );
+          })}
+        </PageFormSection>
+        <PageFormSection>
+          <PageFormGroup label={t('Options')}>
+            <PageFormCheckbox
+              name="enabled"
+              label={t('Enabled')}
+              labelHelpTitle={t('Enabled')}
+              labelHelp={t('Should this authenticator be enabled.')}
             />
-          );
-        })}
-      </PageFormSection>
-      <PageFormSection>
-        <PageFormGroup label={t('Options')}>
-          <PageFormCheckbox
-            name="enabled"
-            label={t('Enabled')}
-            labelHelpTitle={t('Enabled')}
-            labelHelp={t('Should this authenticator be enabled.')}
-          />
-          <PageFormCheckbox
-            name="create_objects"
-            label={t('Create objects')}
-            labelHelpTitle={t('Create objects')}
-            labelHelp={t('Allow authenticator to create objects (users, teams, organizations).')}
-          />
-          <PageFormCheckbox
-            name="remove_users"
-            label={t('Remove users')}
-            labelHelpTitle={t('Remove users')}
-            labelHelp={t(
-              'When a user authenticates from this source should they be removed from any other groups they were previously added to.'
-            )}
-          />
-        </PageFormGroup>
-      </PageFormSection>
+            <PageFormCheckbox
+              name="create_objects"
+              label={t('Create objects')}
+              labelHelpTitle={t('Create objects')}
+              labelHelp={t('Allow authenticator to create objects (users, teams, organizations).')}
+            />
+            <PageFormCheckbox
+              name="remove_users"
+              label={t('Remove users')}
+              labelHelpTitle={t('Remove users')}
+              labelHelp={t(
+                'When a user authenticates from this source should they be removed from any other groups they were previously added to.'
+              )}
+            />
+          </PageFormGroup>
+        </PageFormSection>
+      </PageFormFieldMetadataProvider>
     </PageFormHidden>
   );
 }

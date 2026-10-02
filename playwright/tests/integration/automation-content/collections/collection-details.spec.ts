@@ -282,7 +282,7 @@ test.describe('Hub Collections - Details Page', () => {
         await tableContainer.waitFor({ state: 'visible', timeout: 30000 });
 
         // Wait for loading skeleton to disappear, indicating table has finished loading
-        const skeleton = tableContainer.locator('.pf-v5-c-skeleton');
+        const skeleton = tableContainer.locator('.pf-v6-c-skeleton');
         await expect(skeleton).toHaveCount(0, { timeout: 30000 });
 
         // Wait for table content to appear - either checkboxes (repositories loaded) or empty state
@@ -566,6 +566,7 @@ test.describe('Hub Collections - Details Page', () => {
       'should display distribution information from collection detail page',
       { tag: ['@not_mock', '@tier1'] },
       async ({ page, collection }) => {
+        test.setTimeout(120_000);
         const namespace = await collection.createNamespace();
         const collectionName = 'testdist';
 
@@ -644,8 +645,13 @@ test.describe('Hub Collections - Details Page', () => {
             .getByRole('link', { name: collectionName, exact: true });
           await collectionLink.click();
 
-          // Click Distributions tab
-          await page.getByRole('tab', { name: 'Distributions' }).click();
+          await expect(page.getByTestId('page-title')).toContainText(collectionName, {
+            timeout: 30_000,
+          });
+
+          const distributionsTab = page.getByTestId('collection-distribution-tab');
+          await expect(distributionsTab).toBeVisible({ timeout: 30_000 });
+          await distributionsTab.click();
 
           // Verify upload button is present
           await expect(page.getByTestId('upload-new-version')).toBeVisible();

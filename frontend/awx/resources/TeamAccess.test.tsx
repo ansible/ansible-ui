@@ -45,9 +45,9 @@ describe('Resource Team Access', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/No teams assigned to credential/)).toBeInTheDocument();
+      expect(screen.getByText(/No teams are assigned to this credentials/)).toBeInTheDocument();
       expect(
-        screen.getByText(/To get started, assign teams to this credential./)
+        screen.getByText(/To get started, assign a team to this credentials./)
       ).toBeInTheDocument();
       expect(screen.getByText(/Assign teams/)).toBeInTheDocument();
     });

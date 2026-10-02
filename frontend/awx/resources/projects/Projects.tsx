@@ -95,8 +95,8 @@ export function Projects() {
           emptyState={
             canCreateProject ? (
               <PageTableEmptyState
-                title={t('There are currently no projects added to your organization.')}
-                description={t('Please create a project by using the button below.')}
+                title={t('There are currently no projects created for your organization.')}
+                description={t('Create a project to populate this list.')}
               >
                 <ButtonLink
                   icon={<PlusCircleIcon />}

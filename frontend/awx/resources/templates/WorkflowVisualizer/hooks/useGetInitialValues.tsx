@@ -15,10 +15,33 @@ import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus, GraphNode, NodeResource, PromptFormValues, WizardFormValues } from '../types';
 import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from '../wizard/helpers';
+import { resolvePromptField } from './resolvePromptField';
+
+/**
+ * Resolves job_tags or skip_tags with prompt-first precedence.
+ * Prompt-first: prefer defined prompt (including empty array), fall back to parsing resource.
+ *
+ * The parseStringToTagArray output type includes label and value, while the prompt type
+ * only has name. We return parseStringToTagArray's type since that's what the form expects.
+ */
+function resolveTagField(
+  promptTags: { name: string }[] | undefined,
+  resourceTags: string | null | undefined
+): Array<{ name: string; label: string; value: string }> {
+  if (promptTags !== undefined) {
+    // Convert prompt format to full tag array format
+    return promptTags.map((tag) => ({ name: tag.name, label: tag.name, value: tag.name }));
+  }
+  if (resourceTags !== undefined) {
+    return parseStringToTagArray(resourceTags ?? '');
+  }
+  return parseStringToTagArray('');
+}
 
 interface WizardStepState {
   nodeTypeStep: Partial<WizardFormValues>;
   nodePromptsStep?: { prompt: Partial<PromptFormValues> };
+  survey?: { survey: unknown };
 }
 
 export function useNodeTypeStepDefaults(): (node?: GraphNode) => CommonNodeValues {
@@ -68,6 +91,77 @@ const defaultMapper: CommonNodeValues = {
   node_status_type: EdgeStatus.info,
 };
 
+/**
+ * Fetches node-level resources (credentials, labels, instance groups) for saved nodes.
+ */
+async function fetchNodeResources(nodeId: string, isNewNode: boolean) {
+  if (isNewNode) {
+    return {
+      credentials: [],
+      labels: [],
+      instanceGroups: [],
+    };
+  }
+
+  const [credentials, labels, instanceGroups] = await Promise.all([
+    getCredentialData(nodeId),
+    getLabelData(nodeId),
+    getInstanceGroupData(nodeId),
+  ]);
+
+  return { credentials, labels, instanceGroups };
+}
+
+/**
+ * Processes credentials for a job template node.
+ */
+async function processCredentials(
+  ujt: NodeResource | undefined,
+  nodeCredentials: Credential[],
+  promptCredentials: PromptFormValues['credentials'] | undefined
+) {
+  if (!ujt?.id || ujt?.unified_job_type !== RESOURCE_TYPE.job) {
+    return { templateCredentials: [], aggregateCredentials: undefined };
+  }
+
+  const templateCredentials = await getTemplateCredentialData(ujt.id.toString());
+  const aggregateCredentials = getAggregateCredentials(
+    nodeCredentials,
+    promptCredentials,
+    templateCredentials
+  );
+
+  return { templateCredentials, aggregateCredentials };
+}
+
+/**
+ * Processes survey data if enabled.
+ */
+async function processSurveyData(
+  launch: LaunchConfiguration | undefined,
+  nodeData: ReturnType<GraphNode['getData']>,
+  defaultExtraData: WorkflowNode['extra_data']
+) {
+  let extraVarsWithoutSurvey = { ...defaultExtraData };
+  let surveyValues = nodeData?.resource?.extra_data;
+
+  if (launch?.ask_variables_on_launch && launch.survey_enabled) {
+    const surveySpec = await getSurveySpec(
+      nodeData?.resource?.summary_fields?.unified_job_template
+    );
+    if (surveySpec?.spec) {
+      const { extraVars, surveyData } = extractSurveyDataFromExtraVars(
+        extraVarsWithoutSurvey,
+        surveySpec
+      );
+      extraVarsWithoutSurvey = extraVars;
+      surveyValues = surveyData;
+    }
+  }
+
+  return { extraVarsWithoutSurvey, surveyValues };
+}
+
 export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepState> {
   const nodeTypeStepDefaults = useNodeTypeStepDefaults();
   return useCallback(
@@ -81,14 +175,12 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       const hidePromptStep = launch ? shouldHideOtherStep(launch) : true;
       const hideSurveyStep = launch?.survey_enabled === false;
 
-      const nodeCredentials =
-        launch?.ask_credential_on_launch && !isNewNode ? await getCredentialData(nodeId) : [];
-      const nodeLabels =
-        launch?.ask_labels_on_launch && !isNewNode ? await getLabelData(nodeId) : [];
-      const nodeInstanceGroups =
-        launch?.ask_instance_groups_on_launch && !isNewNode
-          ? await getInstanceGroupData(nodeId)
-          : [];
+      // Fetch node-level resources for saved nodes
+      const {
+        credentials: nodeCredentials,
+        labels: nodeLabels,
+        instanceGroups: nodeInstanceGroups,
+      } = await fetchNodeResources(nodeId, isNewNode);
 
       const prompt = nodeData?.launch_data;
       const defaults = nodeData?.resource;
@@ -98,55 +190,67 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         labels: nodeLabels,
       };
 
-      let aggregateCredentials;
-      let templateCredentials: Credential[] = [];
+      // Process credentials for job templates
+      const { templateCredentials, aggregateCredentials } = await processCredentials(
+        defaults?.summary_fields?.unified_job_template,
+        nodeCredentials,
+        prompt?.credentials
+      );
 
-      const UJT = defaults?.summary_fields?.unified_job_template;
-      if (UJT?.id && UJT?.unified_job_type === RESOURCE_TYPE.job) {
-        templateCredentials = await getTemplateCredentialData(UJT.id.toString());
+      // Process survey data if enabled
+      const { extraVarsWithoutSurvey, surveyValues } = await processSurveyData(
+        launch,
+        nodeData,
+        defaults?.extra_data || {}
+      );
 
-        aggregateCredentials = getAggregateCredentials(
-          nodeCredentials,
-          prompt?.credentials,
-          templateCredentials
-        );
-      }
-
-      let extraVarsWithoutSurvey = { ...(defaults?.extra_data || {}) };
-      let surveyValues = nodeData?.resource?.extra_data;
-
-      if (launch?.ask_variables_on_launch && launch.survey_enabled) {
-        const surveySpec = await getSurveySpec(
-          nodeData?.resource?.summary_fields?.unified_job_template
-        );
-        if (surveySpec?.spec) {
-          const { extraVars, surveyData } = extractSurveyDataFromExtraVars(
-            extraVarsWithoutSurvey,
-            surveySpec
-          );
-          extraVarsWithoutSurvey = extraVars;
-          surveyValues = surveyData;
-        }
-      }
-
+      // A null node field means no override was stored. That happens when prompt-on-launch
+      // is enabled after the node was added. Prefill from the job template launch defaults
+      // so the editor does not show a hardcoded 0 or blank value. On submit, unchanged
+      // values that match the template default are omitted from launch_data (see buildEffectivePrompt).
+      const templateDefaults = launch?.defaults;
       const nodePromptsValues = {
         credentials: aggregateCredentials ?? (nodeCredentials || []),
-        diff_mode: prompt?.diff_mode ?? (defaults?.diff_mode || false),
+        diff_mode: resolvePromptField(
+          defaults?.diff_mode,
+          prompt?.diff_mode,
+          templateDefaults?.diff_mode ?? false
+        ),
         execution_environment:
           prompt?.execution_environment ?? (defaults?.execution_environment || undefined),
         extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(extraVarsWithoutSurvey)),
-        forks: prompt?.forks ?? (defaults?.forks || 0),
+        forks: resolvePromptField(defaults?.forks, prompt?.forks, templateDefaults?.forks ?? 0),
         instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
         inventory: prompt?.inventory ?? (nodeData?.resource?.summary_fields?.inventory || null),
-        job_slice_count: prompt?.job_slice_count ?? (defaults?.job_slice_count || 0),
-        job_tags: prompt?.job_tags ?? parseStringToTagArray(defaults?.job_tags || ''),
-        job_type: prompt?.job_type ?? (defaults?.job_type || 'run'),
+        job_slice_count: resolvePromptField(
+          defaults?.job_slice_count,
+          prompt?.job_slice_count,
+          templateDefaults?.job_slice_count ?? 0
+        ),
+        job_tags: resolveTagField(prompt?.job_tags, defaults?.job_tags),
+        job_type: resolvePromptField(
+          defaults?.job_type,
+          prompt?.job_type,
+          templateDefaults?.job_type ?? 'run'
+        ),
         labels: prompt?.labels ?? (nodeLabels || []),
-        limit: prompt?.limit ?? (defaults?.limit || ''),
-        scm_branch: prompt?.scm_branch ?? (defaults?.scm_branch || ''),
-        skip_tags: prompt?.skip_tags ?? parseStringToTagArray(defaults?.skip_tags || ''),
-        timeout: prompt?.timeout ?? (defaults?.timeout || 0),
-        verbosity: prompt?.verbosity ?? (defaults?.verbosity || 0),
+        limit: resolvePromptField(defaults?.limit, prompt?.limit, templateDefaults?.limit ?? ''),
+        scm_branch: resolvePromptField(
+          defaults?.scm_branch,
+          prompt?.scm_branch,
+          templateDefaults?.scm_branch ?? ''
+        ),
+        skip_tags: resolveTagField(prompt?.skip_tags, defaults?.skip_tags),
+        timeout: resolvePromptField(
+          defaults?.timeout,
+          prompt?.timeout,
+          templateDefaults?.timeout ?? 0
+        ),
+        verbosity: resolvePromptField(
+          defaults?.verbosity,
+          prompt?.verbosity,
+          templateDefaults?.verbosity ?? 0
+        ),
         launch_config: launch,
         original,
         requiredCredentialTypes: templateCredentials.map((cred) => {
@@ -157,9 +261,25 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
         }),
       };
 
+      // nodePromptsStep is always included even when the prompt step is hidden.
+      // When hidden, a minimal prompt is used so that handleSubmit can access
+      // original.credentials/labels/instance_groups for disassociation cleanup when
+      // switching to a template that does not accept those fields on launch.
+      // Without this, original.* is undefined and processCredentials finds nothing
+      // to remove, causing the PATCH to fail with "Field is not configured to prompt
+      // on launch" because the node still has associated credentials in the DB.
+      const nodePromptsStepPrompt = hidePromptStep
+        ? {
+            credentials: [] as typeof nodePromptsValues.credentials,
+            labels: [] as typeof nodePromptsValues.labels,
+            instance_groups: [] as typeof nodePromptsValues.instance_groups,
+            original,
+          }
+        : nodePromptsValues;
+
       return {
         nodeTypeStep,
-        ...(hidePromptStep ? {} : { nodePromptsStep: { prompt: nodePromptsValues } }),
+        nodePromptsStep: { prompt: nodePromptsStepPrompt },
         ...(hideSurveyStep ? {} : { survey: { survey: nodeData?.survey_data ?? surveyValues } }),
       };
     },

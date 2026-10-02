@@ -6,7 +6,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormSlider } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSlider';
 import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
-import { requestGet, requestPatch, swrOptions } from '@ansible/common-ui/crud/Data';
+import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -21,11 +21,7 @@ export function EditInstance() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
 
-  const { data: instance } = useSWR<Instance>(
-    awxAPI`/instances/${id.toString()}/`,
-    requestGet,
-    swrOptions
-  );
+  const { data: instance } = useSWR<Instance>(awxAPI`/instances/${id.toString()}/`, requestGet);
 
   const onSubmit: PageFormSubmitHandler<Instance> = async (editedInstance) => {
     editedInstance.capacity_adjustment = (Math.round(

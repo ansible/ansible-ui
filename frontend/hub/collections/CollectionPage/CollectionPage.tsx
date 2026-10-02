@@ -176,7 +176,7 @@ export function CollectionPage() {
   }
 
   const { data: versions } = useGet<HubItemsResponse<CollectionVersionSearch>>(
-    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}`,
+    hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}&order_by=-version`,
     undefined,
     { refreshInterval: 1000 }
   );
@@ -350,6 +350,7 @@ export function CollectionPage() {
             <PageAsyncSingleSelect<Partial<CollectionVersionSearch>>
               id="version-selector"
               isRequired
+              disableSortOptions
               queryOptions={queryOptions}
               onSelect={(value) => {
                 setCollection(value);

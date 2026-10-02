@@ -8,7 +8,7 @@ import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
 import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { TFunction } from 'i18next';
-import pDebounce from 'p-debounce';
+import { useDebounce } from '@ansible/ansible-ui-framework/hooks/useDebounce';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -66,7 +66,7 @@ export function useInstanceActions(instanceId: string) {
   ) {
     return ((maxAllowed - minAllowed) * (currentVal - min)) / (max - min) + minAllowed;
   }
-  const handleInstanceForksSlider = pDebounce(async (value: number) => {
+  const handleInstanceForksSlider = useDebounce(async (value: number) => {
     const adjustedMin = Math.min(instance.mem_capacity, instance.cpu_capacity);
     const adjustedMax = Math.max(instance.mem_capacity, instance.cpu_capacity);
     const computedVal = mapBetween(value, 0, 1, adjustedMin, adjustedMax);

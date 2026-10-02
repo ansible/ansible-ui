@@ -37,6 +37,7 @@ export function AwxSettings() {
     <PageLayout>
       <PageHeader
         title={t('Authentication Methods')}
+        description={t("Set up and manage your organization's authentication methods.")}
         headerActions={<ActivityStreamIcon type={'setting'} />}
       />
       <Scrollable>

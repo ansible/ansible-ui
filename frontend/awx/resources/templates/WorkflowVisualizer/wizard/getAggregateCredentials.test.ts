@@ -237,6 +237,65 @@ describe('getAggregateCredentials', () => {
     });
   });
 
+  describe('template change behavior', () => {
+    it('should return only new template defaults when prompt credentials are cleared on template switch', () => {
+      const newTemplateCredentials = [
+        createMockCredential(20, 1, 'New Template SSH'),
+        createMockCredential(21, 3, 'New Template SCM'),
+      ];
+
+      const result = getAggregateCredentials([], [], newTemplateCredentials);
+
+      expect(result).toHaveLength(2);
+      expect(result).toEqual([
+        expect.objectContaining({ id: 20, name: 'New Template SSH', credential_type: 1 }),
+        expect.objectContaining({ id: 21, name: 'New Template SCM', credential_type: 3 }),
+      ]);
+    });
+
+    it('should preserve prompt values on initial load (no template change)', () => {
+      const templateCredentials = [createMockCredential(1, 1, 'Template SSH')];
+      const existingPromptCredentials = [
+        createMockCredential(5, 1, 'User SSH Override'),
+        createMockCredential(6, 2, 'User Vault'),
+      ];
+
+      const result = getAggregateCredentials([], existingPromptCredentials, templateCredentials);
+
+      expect(result).toHaveLength(2);
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 5, name: 'User SSH Override', credential_type: 1 }),
+          expect.objectContaining({ id: 6, name: 'User Vault', credential_type: 2 }),
+        ])
+      );
+    });
+
+    it('should discard stale node credentials when both node and prompt are cleared on template switch', () => {
+      const staleNodeCredentials = [
+        createMockCredential(3, 1, 'Old Node SSH'),
+        createMockCredential(4, 2, 'Old Node Vault'),
+      ];
+      const newTemplateCredentials = [createMockCredential(20, 3, 'New Template SCM')];
+
+      const result = getAggregateCredentials(staleNodeCredentials, [], newTemplateCredentials);
+
+      expect(result).toHaveLength(3);
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: 3, credential_type: 1 }),
+          expect.objectContaining({ id: 4, credential_type: 2 }),
+          expect.objectContaining({ id: 20, credential_type: 3 }),
+        ])
+      );
+    });
+
+    it('should produce clean state when called with all empty arrays (template switch to no-prompts template)', () => {
+      const result = getAggregateCredentials([], [], []);
+      expect(result).toEqual([]);
+    });
+  });
+
   describe('real-world scenarios', () => {
     it('should handle the original bug scenario: same credential ID in template and user selection', () => {
       // This represents the bug scenario where user selected the same credential that was already
