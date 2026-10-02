@@ -61,7 +61,7 @@ export function filtersToSearchObj(toolbarFilters: IToolbarFilter[], filterState
     }
     // Support for Activity Stream needing two values
     if (param === 'or__object1__in' && value) {
-      params.append('or__object2__in', value);
+      params.append('or__object2__in', Array.isArray(value) ? value[0] : value);
     }
   }
 
