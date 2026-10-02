@@ -3,10 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { useUserInteraction } from './useUserInteraction';
 
-function dispatchPointerMove() {
-  document.dispatchEvent(new Event('pointermove', { bubbles: true }));
-}
-
 describe('useUserInteraction', () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -19,13 +15,13 @@ describe('useUserInteraction', () => {
 
     renderHook(() => useUserInteraction(500, callback));
 
-    await user.pointer({ keys: '[MouseMove]' });
-    await user.pointer({ keys: '[MouseMove]' });
+    await user.pointer({ target: document.body, coords: { x: 0, y: 0 } });
+    await user.pointer({ target: document.body, coords: { x: 1, y: 1 } });
 
     expect(callback).toHaveBeenCalledTimes(1);
 
     vi.advanceTimersByTime(500);
-    await user.pointer({ keys: '[MouseMove]' });
+    await user.pointer({ target: document.body, coords: { x: 2, y: 2 } });
 
     expect(callback).toHaveBeenCalledTimes(2);
   });
