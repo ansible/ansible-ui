@@ -1,10 +1,11 @@
 import '@testing-library/jest-dom/vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { edaAPI } from '../../common/eda-utils';
 import {
@@ -23,6 +24,24 @@ const mockBulkAction = vi.fn<(options: BulkActionOptions) => void>();
 vi.mock('../../common/useEdaBulkConfirmation', () => ({
   useEdaBulkConfirmation: () => mockBulkAction,
 }));
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({
+      children,
+      'aria-label': ariaLabel,
+    }: {
+      children: React.ReactNode;
+      'aria-label': string;
+    }) => (
+      <dialog open aria-label={ariaLabel}>
+        {children}
+      </dialog>
+    ),
+  };
+});
 
 const mockWorkersOfflineActivation: EdaRulebookActivation = {
   id: 9,
@@ -158,6 +177,35 @@ describe('RulebookActivationPage', () => {
     await waitFor(() => {
       expect(mockBulkAction).toHaveBeenCalled();
     });
+  });
+
+  it('should open delete logs from the activation details kebab menu', async () => {
+    const user = userEvent.setup();
+    render(
+      <PageDialogProvider>
+        <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+          <Routes>
+            <Route path="/rulebook-activations/:id/details" element={<RulebookActivationPage />} />
+          </Routes>
+        </MemoryRouter>
+      </PageDialogProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Demo Activation' })).toBeInTheDocument();
+    });
+
+    const kebabButton = screen.getByRole('button', { name: 'kebab dropdown toggle' });
+    await user.click(kebabButton);
+    await waitFor(() => {
+      expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    await user.click(screen.getByText('Delete logs'));
+
+    const dialog = screen.getByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByText('Demo Activation')).toBeInTheDocument();
   });
 
   it('should call enableActivationsWithWarning when enabling an activation with a copy name pattern', async () => {

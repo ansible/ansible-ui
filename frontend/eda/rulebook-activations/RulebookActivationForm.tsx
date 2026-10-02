@@ -18,11 +18,11 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
-import { Alert } from '@patternfly/react-core';
+import { Alert, GridItem } from '@patternfly/react-core';
 import jsyaml from 'js-yaml';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 import { getEventPersistenceHelpText } from './constants/eventPersistenceHelpText';
@@ -197,6 +197,10 @@ export function RulebookActivationInputs() {
     name: 'enable_persistence',
   }) as boolean;
 
+  const logLevel = useWatch<IEdaRulebookActivationInputs>({
+    name: 'log_level',
+  }) as string;
+
   useEffect(() => {
     setValue('source_mappings', jsyaml.dump(sourceMappings));
   }, [setValue, sourceMappings]);
@@ -221,6 +225,12 @@ export function RulebookActivationInputs() {
       setValue('rule_engine_credential_id', null);
     }
   }, [enablePersistence, config?.managed_cloud_install, setValue]);
+
+  useEffect(() => {
+    if (logLevel !== 'debug') {
+      setValue('store_debug_logs', false);
+    }
+  }, [logLevel, setValue]);
 
   return (
     <>
@@ -273,15 +283,6 @@ export function RulebookActivationInputs() {
         labelHelp={restartPolicyHelpBlock}
         labelHelpTitle={t('Restart policy')}
       />
-      <PageFormSelect<IEdaRulebookActivationInputs>
-        name="log_level"
-        label={t('Log level')}
-        placeholderText={t('Select log level')}
-        isRequired
-        options={LOG_LEVEL_OPTIONS}
-        labelHelp={logLevelHelpBlock}
-        labelHelpTitle={t('Log level')}
-      />
       {config?.deployment_type === 'k8s' && (
         <PageFormTextInput<IEdaRulebookActivationInputs>
           name="k8s_service_name"
@@ -299,6 +300,41 @@ export function RulebookActivationInputs() {
         labelHelp={t('Automatically enable this rulebook activation to run.')}
         labelHelpTitle={t('Rulebook activation enabled')}
       />
+      <PageFormSelect<IEdaRulebookActivationInputs>
+        name="log_level"
+        label={t('Log level')}
+        placeholderText={t('Select log level')}
+        isRequired
+        options={LOG_LEVEL_OPTIONS}
+        labelHelp={logLevelHelpBlock}
+        labelHelpTitle={t('Log level')}
+      />
+      {logLevel === 'debug' && (
+        <>
+          <GridItem span={12}>
+            <Alert
+              variant="warning"
+              isInline
+              title={t('Debug logging generates significantly more data.')}
+            >
+              <Trans>
+                By default, debug logs are written to system logs on activation workers, but are not
+                saved to the database. Enabling <strong>Store debug logs in database</strong> lets
+                you view them in the activation history, but can significantly increase database
+                storage.
+              </Trans>
+            </Alert>
+          </GridItem>
+          <PageFormSwitch<IEdaRulebookActivationInputs>
+            label={t('Store debug logs in database')}
+            labelHelpTitle={t('Store debug logs in database')}
+            labelHelp={t(
+              'When enabled, debug logs are retained in the activation history and can significantly increase database storage.'
+            )}
+            name="store_debug_logs"
+          />
+        </>
+      )}
       <PageFormSection singleColumn>
         <PageFormDataEditor<IEdaRulebookActivationInputs>
           name="extra_var"
