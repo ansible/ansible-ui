@@ -232,6 +232,13 @@ test.describe('Automation Dashboard', () => {
     await failedJobsCard.getByRole('link', { name: 'See all failed jobs' }).click();
     await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
   });
+
+  test('should keep dashboard cards visible at a narrower viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 900 });
+
+    await expect(page.getByTestId('successful-jobs-card')).toBeVisible();
+    await expect(page.getByTestId('failed-jobs-card')).toBeVisible();
+  });
 });
 
 test.describe('Automation Dashboard - Leaderboards tab', () => {

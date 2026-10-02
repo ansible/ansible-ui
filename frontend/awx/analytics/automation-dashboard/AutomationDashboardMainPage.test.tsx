@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { PageDashboardContext } from '@ansible/ansible-ui-framework';
+import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { AutomationDashboardMainPage } from './AutomationDashboardMainPage';
 import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
 
@@ -18,7 +19,9 @@ vi.mock('@ansible/ansible-ui-framework/components/EmptyStateError', () => ({
   ),
 }));
 
-vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
+}));
 
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
@@ -102,6 +105,25 @@ describe('AutomationDashboardMainPage', () => {
 
     // (1600 - 56 inset) / (1662 / 24) => 22 columns
     expect(screen.getByTestId('routed-tabs')).toHaveAttribute('data-grid-columns', '22');
+
+    clientWidthSpy.mockRestore();
+  });
+
+  test('should update the dashboard context when the grid width changes', () => {
+    const clientWidthSpy = vi
+      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
+      .mockReturnValue(600);
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(screen.getByTestId('routed-tabs')).toHaveAttribute('data-grid-columns', '7');
+
+    const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
+    act(() => {
+      resizeCallback({ contentRect: { width: 2400 } } as ResizeObserverEntry, {} as ResizeObserver);
+    });
+
+    expect(screen.getByTestId('routed-tabs')).toHaveAttribute('data-grid-columns', '33');
 
     clientWidthSpy.mockRestore();
   });
