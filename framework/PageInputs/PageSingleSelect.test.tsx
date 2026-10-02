@@ -2,10 +2,10 @@
 import { PageSection } from '@patternfly/react-core';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ReactNode, useState } from 'react';
+import { createRef, ReactNode, useState } from 'react';
 import { describe, expect, it } from 'vitest';
 import { PageSelectOption } from './PageSelectOption';
-import { PageSingleSelect } from './PageSingleSelect';
+import { PageSingleSelect, PageSingleSelectList } from './PageSingleSelect';
 
 interface ITestObject {
   name: string;
@@ -30,6 +30,10 @@ function PageSingleSelectTest<T>(props: {
   defaultValue?: T | null;
   options: PageSelectOption<T>[];
   footer?: ReactNode;
+  isLoading?: boolean;
+  isRequired?: boolean;
+  isDisabled?: string;
+  queryLabel?: (value: T) => ReactNode;
 }) {
   const { placeholder, defaultValue, options } = props;
   const [value, setValue] = useState(() => defaultValue);
@@ -42,6 +46,10 @@ function PageSingleSelectTest<T>(props: {
         options={options}
         onSelect={setValue}
         footer={props.footer}
+        isLoading={props.isLoading}
+        isRequired={props.isRequired}
+        isDisabled={props.isDisabled}
+        queryLabel={props.queryLabel}
       />
     </PageSection>
   );
@@ -133,6 +141,152 @@ describe('PageSingleSelect', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Footer')).toBeInTheDocument();
+    });
+  });
+
+  it('should render dividers and support tabbing back to the search input', async () => {
+    const user = userEvent.setup();
+    const searchRef = createRef<HTMLInputElement>();
+    render(
+      <PageSingleSelectList
+        searchRef={searchRef}
+        options={[{ label: 'Divided', value: 'divided', dividerAfter: true }]}
+      />
+    );
+
+    expect(screen.getByRole('separator')).toBeInTheDocument();
+    const list = screen.getByRole('menu');
+    list.focus();
+    await user.keyboard('{Tab}');
+  });
+
+  it('should display a queried label for a value not in the options', () => {
+    const value = { name: 'Remote option' };
+    render(
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValue={value}
+        queryLabel={(selectedValue) => selectedValue.name}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Remote option' })).toBeInTheDocument();
+  });
+
+  it('should show no results after filtering', async () => {
+    const user = userEvent.setup();
+    render(<PageSingleSelectTest placeholder={placeholderText} options={options} />);
+
+    await user.click(screen.getByRole('button', { name: placeholderText }));
+    const input = (await screen.findByTestId('search-input')).querySelector('input');
+    await user.type(input!, 'does not exist');
+
+    expect(await screen.findByText('No results found')).toBeInTheDocument();
+  });
+
+  it('should show a loading indicator when no filtered options are available', async () => {
+    const user = userEvent.setup();
+    render(<PageSingleSelectTest placeholder={placeholderText} options={options} isLoading />);
+
+    await user.click(screen.getByRole('button', { name: placeholderText }));
+    const input = (await screen.findByTestId('search-input')).querySelector('input');
+    await user.type(input!, 'does not exist');
+
+    expect(await screen.findByRole('progressbar')).toBeInTheDocument();
+  });
+
+  it('should group options and clear a selected value', async () => {
+    const user = userEvent.setup();
+    const groupedOptions = [
+      { label: 'First', value: 'first', group: 'Group A', dividerAfter: true },
+      { label: 'Second', value: 'second', group: 'Group B' },
+    ];
+    render(
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={groupedOptions}
+        defaultValue={groupedOptions[0].value}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'First' })).toBeInTheDocument();
+    await user.click(screen.getByTestId('reset'));
+
+    expect(screen.getByRole('button', { name: placeholderText })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: placeholderText }));
+    expect(await screen.findByText('Group A')).toBeInTheDocument();
+    expect(screen.getByText('Group B')).toBeInTheDocument();
+  });
+
+  it('should support keyboard navigation from the search input', async () => {
+    const user = userEvent.setup();
+    render(<PageSingleSelectTest placeholder={placeholderText} options={options} />);
+
+    await user.click(screen.getByRole('button', { name: placeholderText }));
+    const searchInput = (await screen.findByTestId('search-input')).querySelector('input');
+    await user.click(searchInput!);
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{Tab}');
+
+    expect(screen.getByText('Option 0')).toBeInTheDocument();
+  });
+
+  it('should not render a reset control for required or disabled selects', () => {
+    const { rerender } = render(
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValue={testObjects[0]}
+        isRequired
+      />
+    );
+
+    expect(screen.queryByTestId('reset')).not.toBeInTheDocument();
+    rerender(
+      <PageSingleSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValue={testObjects[0]}
+        isDisabled="Disabled"
+      />
+    );
+    expect(screen.queryByTestId('reset')).not.toBeInTheDocument();
+  });
+
+  it('should auto-select the only required option', async () => {
+    const user = userEvent.setup();
+    const singleOption = [options[0]];
+    render(
+      <PageSingleSelectTest placeholder={placeholderText} options={singleOption} isRequired />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Option 0' })).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'Option 0' }));
+  });
+
+  it('should select options using explicit keys, including zero', async () => {
+    const user = userEvent.setup();
+    const keyedOptions = [
+      { label: 'String key', value: 'string', key: 'string-key' },
+      { label: 'Zero key', value: 'zero', key: 0 },
+      { label: 'String key', value: 'duplicate', key: 'duplicate-key' },
+    ];
+    render(<PageSingleSelectTest placeholder={placeholderText} options={keyedOptions} />);
+
+    await user.click(screen.getByRole('button', { name: placeholderText }));
+    await user.click(screen.getByText('Zero key'));
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Zero key' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Zero key' }));
+    await user.click(screen.getAllByText('String key')[0]);
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'String key' })).toBeInTheDocument();
     });
   });
 });

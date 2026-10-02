@@ -42,6 +42,7 @@ export function PageSettingsForm() {
             label={option.label}
             placeholder={t('Select {{label}}', { label: option.label })}
             options={option.options}
+            disableSortOptions={option.disableSortOptions}
             labelHelp={option.helpText}
             isRequired
             defaultValue={option.defaultValue}
