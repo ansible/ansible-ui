@@ -174,21 +174,22 @@ function getPoints({
       x: targetGapped.x + targetGapOffset.x,
       y: targetGapped.y + targetGapOffset.y,
     };
+    const firstPoint = points[0] ?? sourceGapPoint;
     const maxXDistance = Math.max(
-      Math.abs(sourceGapPoint.x - points[0].x),
-      Math.abs(targetGapPoint.x - points[0].x)
+      Math.abs(sourceGapPoint.x - firstPoint.x),
+      Math.abs(targetGapPoint.x - firstPoint.x)
     );
     const maxYDistance = Math.max(
-      Math.abs(sourceGapPoint.y - points[0].y),
-      Math.abs(targetGapPoint.y - points[0].y)
+      Math.abs(sourceGapPoint.y - firstPoint.y),
+      Math.abs(targetGapPoint.y - firstPoint.y)
     );
 
     // we want to place the label on the longest segment of the edge
     if (maxXDistance >= maxYDistance) {
       centerX = (sourceGapPoint.x + targetGapPoint.x) / 2;
-      centerY = points[0].y;
+      centerY = firstPoint.y;
     } else {
-      centerX = points[0].x;
+      centerX = firstPoint.x;
       centerY = (sourceGapPoint.y + targetGapPoint.y) / 2;
     }
   }
@@ -242,9 +243,16 @@ function getSmoothStepPath({
     let segment = '';
 
     if (i > 0 && i < points.length - 1) {
-      segment = getBend(points[i - 1], p, points[i + 1], borderRadius);
+      const previousPoint = points[i - 1];
+      const nextPoint = points[i + 1];
+      const pathPrefix = i === 0 ? 'M' : 'L';
+      segment =
+        previousPoint && nextPoint
+          ? getBend(previousPoint, p, nextPoint, borderRadius)
+          : `${pathPrefix}${p.x} ${p.y}`;
     } else {
-      segment = `${i === 0 ? 'M' : 'L'}${p.x} ${p.y}`;
+      const pathPrefix = i === 0 ? 'M' : 'L';
+      segment = `${pathPrefix}${p.x} ${p.y}`;
     }
 
     res += segment;
