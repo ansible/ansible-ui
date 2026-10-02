@@ -63,6 +63,11 @@ export function removeNavigationItemById(
 ): PageNavigationItem | undefined {
   for (let i = 0; i < navigationItems.length; i++) {
     const item = navigationItems[i];
+    if (
+      /* v8 ignore next */
+      !item
+    )
+      continue;
     if ('id' in item && item.id === id) {
       navigationItems.splice(i, 1);
       return item;
@@ -106,6 +111,11 @@ export function addNavigationItemAfter(
 ) {
   for (let i = 0; i < navigationItems.length; i++) {
     const item = navigationItems[i];
+    if (
+      /* v8 ignore next */
+      !item
+    )
+      continue;
     if ('id' in item && item.id === afterId) {
       navigationItems.splice(i + 1, 0, newItem);
       return;
@@ -123,6 +133,11 @@ export function addNavigationItemBefore(
 ) {
   for (let i = 0; i < navigationItems.length; i++) {
     const item = navigationItems[i];
+    if (
+      /* v8 ignore next */
+      !item
+    )
+      continue;
     if ('id' in item && item.id === beforeId) {
       navigationItems.splice(i, 0, newItem);
       return;

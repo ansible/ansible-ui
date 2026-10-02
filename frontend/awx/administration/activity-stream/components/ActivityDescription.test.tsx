@@ -11,6 +11,10 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     useGetPageUrl:
       () => (routeId: string, opts?: { params?: Record<string, string | number | undefined> }) => {
         const id = opts?.params?.id;
+        const inventoryType = opts?.params?.inventory_type;
+        if (id !== undefined && inventoryType !== undefined) {
+          return `/test/${routeId}/${id}?inventory_type=${inventoryType}`;
+        }
         if (id !== undefined) return `/test/${routeId}/${id}`;
         return `/test/${routeId}`;
       },
@@ -90,5 +94,27 @@ describe('ActivityDescription', () => {
     expect(
       screen.getByText((content) => content.includes('disassociated user'))
     ).toBeInTheDocument();
+  });
+
+  it('should render inventory activity when the inventory kind is missing', () => {
+    const activity = createActivity({
+      operation: 'update',
+      object1: 'inventory',
+      summary_fields: {
+        inventory: [{ id: '3', name: 'Demo Inventory' }],
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Demo Inventory')).toBeInTheDocument();
+    expect(screen.getByTestId('source-resource-detail')).toHaveAttribute(
+      'href',
+      '/test/awx-inventory-details/3?inventory_type=inventory'
+    );
   });
 });

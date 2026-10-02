@@ -48,6 +48,30 @@ type ReorderItemsProps<T extends object> = {
  * Component to reorder items in a list by dragging items to a desired position.
  * [Optionally allows selecting items from the list using checkboxes.]
  */
+
+export function moveReorderItem<T>(
+  arr: T[],
+  itemId: string | number,
+  toIndex: number,
+  keyFn: (item: T) => string | number
+): T[] {
+  const fromIndex = arr.findIndex((item) => keyFn(item) === itemId);
+
+  if (fromIndex === toIndex) {
+    return arr;
+  }
+  if (fromIndex < 0) {
+    return arr;
+  }
+  const temp = arr.splice(fromIndex, 1);
+  const item = temp[0];
+  if (item) {
+    arr.splice(toIndex, 0, item);
+  }
+
+  return arr;
+}
+
 export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
   const { t } = useTranslation();
 
@@ -126,17 +150,8 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     return null;
   };
 
-  const moveItem = (arr: T[], itemId: string, toIndex: number) => {
-    const fromIndex = arr.findIndex((item) => keyFn(item) === itemId);
-
-    if (fromIndex === toIndex) {
-      return arr;
-    }
-    const temp = arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, temp[0]);
-
-    return arr;
-  };
+  const moveItem = (arr: T[], itemId: string, toIndex: number) =>
+    moveReorderItem(arr, itemId, toIndex, keyFn);
 
   const onDragLeave: TbodyProps['onDragLeave'] = (evt) => {
     if (!isValidDrop(evt)) {
