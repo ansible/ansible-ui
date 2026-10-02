@@ -6,6 +6,7 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { getCopyResourceName } from '@ansible/common-ui/utils/copyResourceName';
 import {
   cannotCopyResource,
   cannotDeleteResource,
@@ -60,7 +61,7 @@ export function useExecutionEnvRowActions({ onDelete, onCopy }: ExecutionEnviron
             timeout: 2000,
           };
           postRequest(awxAPI`/execution_environments/${ee?.id.toString() ?? ''}/copy/`, {
-            name: `${ee.name} @ ${new Date().toTimeString()}`,
+            name: getCopyResourceName(ee.name),
           })
             .then(async (res) => {
               alertToaster.addAlert(alert);
