@@ -128,8 +128,8 @@ async function mockLeaderboardRoute(
           user_organization_rank: 1,
           total_organizations: 42,
           leaderboard: [
-            { rank: 1, name: 'Platform Engineering', runs: 2840 },
-            { rank: 2, name: 'Security Operations', runs: 1923 },
+            { rank: 1, name: 'Platform Engineering', runs: 2840, user_organization: true },
+            { rank: 2, name: 'Security Operations', runs: 1923, user_organization: false },
           ],
         },
         org_achievements: ['sustained', 'rising'],
@@ -249,5 +249,17 @@ test.describe('Automation Dashboard - Leaderboards tab', () => {
     await expect(page.getByTestId('activity-levels')).toBeVisible();
     await expect(page.getByTestId('highlights-leaderboard-card')).toBeVisible();
     await expect(page.getByTestId('milestone-badges-card')).toBeVisible();
+  });
+
+  test('should tag only the user organization row with the "Your organization" label', async ({
+    page,
+  }) => {
+    await page.getByRole('tab', { name: 'Leaderboards' }).click();
+
+    const card = page.getByTestId('highlights-leaderboard-card');
+    const userOrgRow = card.getByRole('row').filter({ hasText: 'Platform Engineering' });
+
+    await expect(userOrgRow.getByText('Your organization', { exact: true })).toBeVisible();
+    await expect(card.getByText('Your organization', { exact: true })).toHaveCount(1);
   });
 });

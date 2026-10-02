@@ -78,14 +78,14 @@ function assertLeaderboardsContract(data: AutomationLeaderboardsData): void {
     expect(rows.filter((row) => row.isCurrentUser).length).toBeLessThanOrEqual(1);
   });
 
-  // ── organization leaderboard: dense ranking from 1, one "current" org ──
+  // ── organization leaderboard: dense ranking from 1, one user org ──
   const ranks = data.organizationLeaderboard.map((org) => org.rank);
   expect(ranks).toEqual(data.organizationLeaderboard.map((_, i) => i + 1));
-  const currentOrgs = data.organizationLeaderboard.filter((org) => org.isCurrentOrg);
-  expect(currentOrgs.length).toBeLessThanOrEqual(1);
-  if (currentOrgs.length === 1) {
-    expect(data.currentOrgStanding.rank).toBe(currentOrgs[0].rank);
-    expect(data.currentOrgStanding.totalRuns).toBe(currentOrgs[0].runs);
+  const userOrgs = data.organizationLeaderboard.filter((org) => org.isUserOrg);
+  expect(userOrgs.length).toBeLessThanOrEqual(1);
+  if (userOrgs.length === 1) {
+    expect(data.currentOrgStanding.rank).toBe(userOrgs[0].rank);
+    expect(data.currentOrgStanding.totalRuns).toBe(userOrgs[0].runs);
   }
 
   // ── achievements: known ids, no duplicates ──
@@ -197,14 +197,38 @@ describe('mapLeaderboardReport', () => {
   });
 
   describe('organization leaderboard', () => {
-    test('should map every row and flag only the one matching user_organization_rank as current', () => {
+    test('should map every row and flag only the one marked user_organization as the user org', () => {
       const data = mapLeaderboardReport(MOCK_LEADERBOARD_REPORT);
 
       expect(data.organizationLeaderboard).toEqual([
-        { id: '1', name: 'Platform Engineering', runs: 2840, rank: 1, isCurrentOrg: true },
-        { id: '2', name: 'Security Operations', runs: 1923, rank: 2, isCurrentOrg: false },
-        { id: '3', name: 'Cloud Infrastructure', runs: 1654, rank: 3, isCurrentOrg: false },
+        { id: '1', name: 'Platform Engineering', runs: 2840, rank: 1, isUserOrg: true },
+        { id: '2', name: 'Security Operations', runs: 1923, rank: 2, isUserOrg: false },
+        { id: '3', name: 'Cloud Infrastructure', runs: 1654, rank: 3, isUserOrg: false },
       ]);
+    });
+
+    test('should take the user org flag from user_organization, not from user_organization_rank', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        organization_leaderboard: {
+          user_organization_rank: 2,
+          total_organizations: 42,
+          leaderboard: [
+            { rank: 1, name: 'Platform Engineering', runs: 2840, user_organization: false },
+            { rank: 2, name: 'Security Operations', runs: 1923, user_organization: false },
+            { rank: 3, name: 'Cloud Infrastructure', runs: 1654, user_organization: true },
+          ],
+        },
+      };
+
+      const data = mapLeaderboardReport(report);
+
+      expect(data.organizationLeaderboard.map((org) => org.isUserOrg)).toEqual([
+        false,
+        false,
+        true,
+      ]);
+      expect(data.currentOrgStanding.totalRuns).toBe(1654);
     });
 
     test('should take currentOrgStanding.totalRuns from the matching top-10 row when present', () => {
@@ -219,13 +243,17 @@ describe('mapLeaderboardReport', () => {
         organization_leaderboard: {
           ...MOCK_LEADERBOARD_REPORT.organization_leaderboard,
           user_organization_rank: 27,
+          leaderboard: [
+            { rank: 1, name: 'Platform Engineering', runs: 2840, user_organization: false },
+            { rank: 2, name: 'Security Operations', runs: 1923, user_organization: false },
+          ],
         },
       };
 
       const data = mapLeaderboardReport(report);
 
       expect(data.currentOrgStanding).toEqual({ rank: 27, totalRuns: 2840 });
-      expect(data.organizationLeaderboard.every((org) => !org.isCurrentOrg)).toBe(true);
+      expect(data.organizationLeaderboard.every((org) => !org.isUserOrg)).toBe(true);
     });
   });
 
