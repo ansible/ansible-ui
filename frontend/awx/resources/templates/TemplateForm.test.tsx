@@ -5,6 +5,10 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
+import {
+  getHelpButtonForOptionCheckbox,
+  jobTemplateOptionCheckboxTestIds,
+} from './jobTemplateOptionsTestHelpers';
 import { CreateJobTemplate, EditJobTemplate } from './TemplateForm';
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
@@ -346,19 +350,8 @@ describe('TemplateForm - EditJobTemplate', () => {
       { timeout: 10000 }
     );
 
-    const optionCheckboxTestIds = [
-      'become_enabled',
-      'isProvisioningCallbackEnabled',
-      'isWebhookEnabled',
-      'allow_simultaneous',
-      'use_fact_cache',
-      'prevent_instance_group_fallback',
-    ];
-
-    for (const testId of optionCheckboxTestIds) {
-      const checkbox = screen.getByTestId(testId);
-      const checkboxRoot = checkbox.closest('.pf-v6-c-check') ?? checkbox.parentElement;
-      expect(checkboxRoot?.querySelector('button[type="button"]')).toBeInTheDocument();
+    for (const testId of jobTemplateOptionCheckboxTestIds) {
+      expect(getHelpButtonForOptionCheckbox(testId)).toBeInTheDocument();
     }
   }, 15000);
 

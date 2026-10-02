@@ -7,6 +7,10 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Project } from '../../interfaces/Project';
 import { JobTemplateInputs } from './JobTemplateInputs';
+import {
+  getHelpButtonForOptionCheckbox,
+  jobTemplateOptionCheckboxTestIds,
+} from './jobTemplateOptionsTestHelpers';
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
   DataEditor: (props: {
@@ -135,21 +139,6 @@ describe('JobTemplateInputs', () => {
     expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
   });
 
-  const optionCheckboxTestIds = [
-    'become_enabled',
-    'isProvisioningCallbackEnabled',
-    'isWebhookEnabled',
-    'allow_simultaneous',
-    'use_fact_cache',
-    'prevent_instance_group_fallback',
-  ];
-
-  function getHelpButtonForCheckbox(testId: string) {
-    const checkbox = screen.getByTestId(testId);
-    const checkboxRoot = checkbox.closest('.pf-v6-c-check') ?? checkbox.parentElement;
-    return checkboxRoot?.querySelector('button[type="button"]');
-  }
-
   it('should render help icons for Options checkboxes', () => {
     render(
       <TestWrapper>
@@ -157,8 +146,8 @@ describe('JobTemplateInputs', () => {
       </TestWrapper>
     );
 
-    for (const testId of optionCheckboxTestIds) {
-      expect(getHelpButtonForCheckbox(testId)).toBeInTheDocument();
+    for (const testId of jobTemplateOptionCheckboxTestIds) {
+      expect(getHelpButtonForOptionCheckbox(testId)).toBeInTheDocument();
     }
   });
 
@@ -176,8 +165,8 @@ describe('JobTemplateInputs', () => {
       </TestWrapper>
     );
 
-    for (const testId of optionCheckboxTestIds) {
-      expect(getHelpButtonForCheckbox(testId)).toBeInTheDocument();
+    for (const testId of jobTemplateOptionCheckboxTestIds) {
+      expect(getHelpButtonForOptionCheckbox(testId)).toBeInTheDocument();
     }
   });
 
