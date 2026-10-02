@@ -1,5 +1,5 @@
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 function buildJobsGraphFixture() {
   const now = new Date();
@@ -28,6 +28,48 @@ function buildJobsGraphFixture() {
   };
 }
 
+async function waitForOverviewAwxSection(page: Page): Promise<'present' | 'absent'> {
+  const platformAwx = page.locator('#platform-awx');
+  const jobActivity = page.locator('#job-activity');
+  const resourceCounts = page.locator('#resource-counts');
+  const platformEda = page.locator('#platform-eda');
+  let state: 'present' | 'absent' = 'absent';
+
+  await expect
+    .poll(
+      async () => {
+        if (await platformAwx.isVisible()) {
+          state = 'present';
+          return 'present';
+        }
+        if (await jobActivity.isVisible()) {
+          state = 'present';
+          return 'present';
+        }
+        if (await resourceCounts.isVisible()) {
+          state = 'present';
+          return 'present';
+        }
+        if (await platformEda.isVisible()) {
+          const awxMounted =
+            (await platformAwx.count()) > 0 ||
+            (await jobActivity.count()) > 0 ||
+            (await resourceCounts.count()) > 0;
+          if (!awxMounted) {
+            state = 'absent';
+            return 'absent';
+          }
+          return 'pending';
+        }
+        return 'pending';
+      },
+      { timeout: 60_000, intervals: [250, 500, 1000] }
+    )
+    .toMatch(/^(present|absent)$/);
+
+  return state;
+}
+
 test.describe('Overview - Job Activity chart', () => {
   let jobsGraphFixture: ReturnType<typeof buildJobsGraphFixture>;
 
@@ -50,12 +92,13 @@ test.describe('Overview - Job Activity chart', () => {
       page.getByRole('heading', { name: /Welcome to (?:the )?Ansible/, level: 1 })
     ).toBeVisible({ timeout: 60_000 });
 
-    const platformAwx = page.locator('#platform-awx');
-    if ((await platformAwx.count()) === 0) {
+    const awxSectionState = await waitForOverviewAwxSection(page);
+    if (awxSectionState === 'absent') {
       await expect(page.locator('#job-activity')).not.toBeVisible();
       return;
     }
-    await expect(platformAwx).toBeVisible({ timeout: 60_000 });
+
+    await expect(page.locator('#platform-awx')).toBeVisible({ timeout: 60_000 });
 
     const jobActivityChart = page.locator('#job-activity .page-chart');
     await expect(jobActivityChart).toBeVisible({ timeout: 60_000 });
