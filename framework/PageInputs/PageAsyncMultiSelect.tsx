@@ -69,60 +69,48 @@ export function PageAsyncMultiSelect<
     }
     const abortController = new AbortController();
     activeAbortController.current = abortController;
-    setLoading(() => {
-      setAllLoaded(false);
-      setLoadingError(undefined);
-      setOptions((prevOptions) => {
-        if (prevOptions) {
-          return prevOptions;
-        } else {
-          return undefined;
+    setLoading(true);
+    setAllLoaded(false);
+    setLoadingError(undefined);
+    void queryOptions({
+      next: nextRef.current!,
+      signal: abortController.signal,
+      search: searchValue,
+    })
+      .then((result) => {
+        if (abortController.signal.aborted) return;
+        nextRef.current = result.next;
+        if (!result.remaining) {
+          setAllLoaded(true);
         }
-      });
-      void queryOptions({
-        next: nextRef.current!,
-        signal: abortController.signal,
-        search: searchValue,
-      })
-        .then((result) => {
-          if (abortController.signal.aborted) return;
-          nextRef.current = result.next;
-          if (!result.remaining) {
-            setAllLoaded(true);
-          }
-          setOptions((prevOptions) => {
-            if (abortController.signal.aborted) return prevOptions;
-            let newOptions: PageSelectOption<ValueT>[] = [
-              ...(prevOptions ?? []),
-              ...result.options,
-            ];
-            const uniqueValues = new Set<ValueT>();
-            newOptions = newOptions.filter((option) => {
-              if (uniqueValues.has(option.value)) return false;
-              uniqueValues.add(option.value);
-              return true;
-            });
-            newOptions.sort((a, b) => {
-              const lhs = a.label.toLowerCase();
-              const rhs = b.label.toLowerCase();
-              if (lhs < rhs) return -1;
-              if (lhs > rhs) return 1;
-              return 0;
-            });
-            setTotal(result.remaining + newOptions.length);
-            return newOptions;
+        setOptions((prevOptions) => {
+          if (abortController.signal.aborted) return prevOptions;
+          let newOptions: PageSelectOption<ValueT>[] = [...(prevOptions ?? []), ...result.options];
+          const uniqueValues = new Set<ValueT>();
+          newOptions = newOptions.filter((option) => {
+            if (uniqueValues.has(option.value)) return false;
+            uniqueValues.add(option.value);
+            return true;
           });
-        })
-        .catch((err) => {
-          if (abortController.signal.aborted) return;
-          setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
-        })
-        .finally(() => {
-          if (abortController.signal.aborted) return;
-          setLoading(false);
+          newOptions.sort((a, b) => {
+            const lhs = a.label.toLowerCase();
+            const rhs = b.label.toLowerCase();
+            if (lhs < rhs) return -1;
+            if (lhs > rhs) return 1;
+            return 0;
+          });
+          setTotal(result.remaining + newOptions.length);
+          return newOptions;
         });
-      return true;
-    });
+      })
+      .catch((err) => {
+        if (abortController.signal.aborted) return;
+        setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
+      })
+      .finally(() => {
+        if (abortController.signal.aborted) return;
+        setLoading(false);
+      });
     return () => abortController.abort();
   }, [queryOptions, searchValue, t]);
 

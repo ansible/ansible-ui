@@ -89,6 +89,40 @@ describe('PageAsyncMultiSelect', () => {
     });
   });
 
+  it('should show Load more button and load additional options', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} />);
+
+    await user.click(container.querySelector('#test')!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Option 1')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Load more' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Option 11')).toBeInTheDocument();
+    });
+  });
+
+  it('should show Browse button and invoke onBrowse', async () => {
+    const user = userEvent.setup();
+    const onBrowse = vi.fn();
+    const { container } = render(
+      <PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} onBrowse={onBrowse} />
+    );
+
+    await user.click(container.querySelector('#test')!);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Browse' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Browse' }));
+    expect(onBrowse).toHaveBeenCalledOnce();
+  });
+
   it('should show query error', async () => {
     const user = userEvent.setup();
     const { container } = render(
