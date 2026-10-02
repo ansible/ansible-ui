@@ -217,6 +217,18 @@ describe('queryString', () => {
       expect(filtersToSearchObj([filter], { name: [''] }).toString()).to.equal('');
     });
 
+    it('should not derive an activity stream object2 filter from multiple values', () => {
+      const filter: IToolbarFilter = {
+        type: ToolbarFilterType.MultiText,
+        comparison: 'contains',
+        key: 'name',
+        label: 'Name',
+        query: 'object1__in',
+      };
+
+      expect(filtersToSearchObj([filter], { name: ['job', 'schedule'] }).toString()).to.equal('');
+    });
+
     it('should url encode string', () => {
       const filters = [nameFilter];
       const state: IFilterState = {
