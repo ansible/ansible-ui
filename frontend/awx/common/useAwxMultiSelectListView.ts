@@ -13,7 +13,7 @@ import { useAwxView } from './useAwxView';
  */
 export function useAwxMultiSelectListView<T extends { id: number }>(
   viewOptions: {
-    url: string;
+    url: string | undefined;
     viewPage?: number;
     viewPerPage?: number;
     toolbarFilters?: IToolbarFilter[];

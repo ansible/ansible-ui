@@ -1,0 +1,38 @@
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { AwxSelectResourcesStep } from './AwxSelectResourcesStep';
+
+const usePageWizard = vi.hoisted(() => vi.fn());
+const useAwxMultiSelectListView = vi.hoisted(() =>
+  vi.fn<(options: { url: string }, field: string) => { pageItems: never[] }>(() => ({
+    pageItems: [],
+  }))
+);
+
+vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({ usePageWizard }));
+vi.mock('../../../common/useAwxMultiSelectListView', () => ({ useAwxMultiSelectListView }));
+vi.mock('@ansible/ansible-ui-framework/PageTable/PageMultiSelectList', () => ({
+  PageMultiSelectList: () => null,
+}));
+
+describe('AwxSelectResourcesStep', () => {
+  it('uses the selected resource type endpoint', () => {
+    usePageWizard.mockReturnValue({ wizardData: { resourceType: 'awx.inventory' } });
+
+    render(<AwxSelectResourcesStep userOrTeamName="Alex" />);
+
+    expect(screen.getByRole('heading', { name: 'Select inventories' })).toBeInTheDocument();
+    const viewCall = useAwxMultiSelectListView.mock.calls.at(-1);
+    expect(viewCall?.[0]?.url).toContain('/inventories/');
+    expect(viewCall?.[1]).toBe('resources');
+  });
+
+  it('uses an empty endpoint for an unknown resource type', () => {
+    usePageWizard.mockReturnValue({ wizardData: { resourceType: 'awx.unknown' } });
+
+    render(<AwxSelectResourcesStep userOrTeamName="Alex" />);
+
+    const viewCall = useAwxMultiSelectListView.mock.calls.at(-1);
+    expect(viewCall?.[0]?.url).toBe('');
+  });
+});
