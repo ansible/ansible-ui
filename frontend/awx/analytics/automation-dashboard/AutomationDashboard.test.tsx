@@ -9,7 +9,6 @@ import {
   PageDashboardContext,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
-import useResizeObserver from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardToolbar } from './components';
 import { DEFAULT_NUMBER_LOCALE } from './constants/common';
@@ -22,9 +21,6 @@ import type {
   DashboardValueCardProps,
 } from './types';
 
-vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
-  useResizeObserver: vi.fn(),
-}));
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock('./components', () => ({
