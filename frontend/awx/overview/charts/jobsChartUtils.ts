@@ -25,7 +25,7 @@ export function mapJobChartTuples(
   }));
 }
 
-/** Align every status series to the same ordered x categories (AAP-95233). */
+/** Align every status series to the same ordered day categories. */
 export function alignJobChartSeriesByDay(
   series: JobChartSeriesPoint[][]
 ): Array<Array<{ label: string; value: number }>> {
