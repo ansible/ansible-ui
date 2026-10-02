@@ -56,7 +56,7 @@ export type IAwxView<T extends { id: number }> = IView &
 
 export function useAwxView<T extends { id: number }>(options: {
   /** The base url for the view. */
-  url: string;
+    url: string | undefined;
 
   /** The filters for the view. Used to manage the keys used in the browser querystrings which store the filter results. */
   toolbarFilters?: IToolbarFilter[];
@@ -114,9 +114,9 @@ export function useAwxView<T extends { id: number }>(options: {
 
   const queryString = buildQueryString(view, toolbarFilters || [], queryParams || {});
 
-  url += queryString;
+  const listUrl = url ? `${url}${queryString}` : undefined;
   const fetcher = useFetcher();
-  const response = useSWR<AwxItemsResponse<T>>(serviceDown ? null : url, fetcher);
+  const response = useSWR<AwxItemsResponse<T>>(serviceDown ? null : listUrl, fetcher);
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate().finally(() => {});
@@ -207,7 +207,7 @@ export function useAwxView<T extends { id: number }>(options: {
       limitFiltersToOneOrOperation: true,
       updateItem,
       upsertItem,
-      listUrl: url,
+    listUrl: listUrl ?? '',
     };
   }, [
     error,
