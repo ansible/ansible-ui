@@ -1,10 +1,12 @@
 /* eslint-disable i18next/no-literal-string */
 import { act, render } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { useDashboardGridColumns } from './useDashboardGridColumns';
 
-vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
+}));
 
 function Probe() {
   const { ref, gridColumns } = useDashboardGridColumns();
