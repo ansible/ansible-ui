@@ -34,6 +34,7 @@ function PageMultiSelectTest<T>(props: {
   footer?: ReactNode;
   variant?: 'chips' | 'count';
   compareOptionValues?: (a: T, b: T) => boolean;
+  showSelectAll?: boolean;
 }) {
   const {
     placeholder,
@@ -42,6 +43,7 @@ function PageMultiSelectTest<T>(props: {
     footer,
     compareOptionValues,
     variant,
+    showSelectAll,
   } = props;
   const [values, setValues] = useState<T[] | undefined>(() => defaultValue);
   return (
@@ -55,6 +57,7 @@ function PageMultiSelectTest<T>(props: {
         footer={footer}
         compareOptionValues={compareOptionValues}
         variant={variant}
+        showSelectAll={showSelectAll}
       />
     </PageSection>
   );
@@ -187,5 +190,80 @@ describe('PageMultiSelect', () => {
       />
     );
     expect(screen.getByText('12 selected')).toBeInTheDocument();
+  });
+
+  it('does not show select-all by default', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <PageMultiSelectTest
+        variant="count"
+        placeholder={placeholderText}
+        options={options}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
+
+    await user.click(container.querySelector('#test')!);
+    await waitFor(() => {
+      expect(screen.getByText('Option 0')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('select-all')).not.toBeInTheDocument();
+  });
+
+  it('select-all checkbox selects all visible options then clears all on second click', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <PageMultiSelectTest
+        variant="count"
+        placeholder={placeholderText}
+        options={options}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+        showSelectAll
+      />
+    );
+
+    await user.click(container.querySelector('#test')!);
+    const selectAll = await screen.findByTestId('select-all');
+    expect(selectAll).not.toBeChecked();
+
+    await user.click(selectAll);
+    await waitFor(() => {
+      expect(screen.getByText('12 selected')).toBeInTheDocument();
+    });
+    expect(selectAll).toBeChecked();
+
+    await user.click(selectAll);
+    await waitFor(() => {
+      expect(screen.getByText(placeholderText)).toBeInTheDocument();
+    });
+    expect(selectAll).not.toBeChecked();
+  });
+
+  it('select-all only selects options matching the current search', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <PageMultiSelectTest
+        variant="count"
+        placeholder={placeholderText}
+        options={options}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+        showSelectAll
+      />
+    );
+
+    await user.click(container.querySelector('#test')!);
+    const searchInput = await screen.findByTestId('search-input');
+    await user.type(searchInput.querySelector('input')!, 'Option 1');
+
+    await waitFor(() => {
+      expect(screen.getByText('Option 1')).toBeInTheDocument();
+      expect(screen.getByText('Option 10')).toBeInTheDocument();
+      expect(screen.queryByText('Option 2')).not.toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId('select-all'));
+    await waitFor(() => {
+      expect(screen.getByText('3 selected')).toBeInTheDocument();
+    });
   });
 });

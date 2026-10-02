@@ -41,6 +41,12 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
   disableSortOptions?: boolean;
 
   useAndOperator?: boolean; // default is OR
+
+  /**
+   * Show a "Select all" checkbox in the dropdown header for visible options.
+   * Off by default.
+   */
+  showSelectAll?: boolean;
 }
 
 /**

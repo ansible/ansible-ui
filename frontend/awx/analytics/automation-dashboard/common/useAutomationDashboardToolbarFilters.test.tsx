@@ -29,6 +29,7 @@ type AsyncFilter = IToolbarFilter & {
     remaining: number;
   }>;
   queryLabel: (value: string) => React.ReactElement;
+  showSelectAll?: boolean;
 };
 
 function renderFilters(filterableFields: string[], additionalFilters?: IToolbarFilter[]) {
@@ -89,6 +90,11 @@ describe('useAutomationDashboardToolbarFilters', () => {
     const filters = renderFilters(['label']);
     expect(filters[0].type).toBe(ToolbarFilterType.AsyncMultiSelect);
     expect(filters[0].query).toBe('label');
+  });
+
+  test('dashboard async filters opt into dropdown select-all', () => {
+    const filters = renderFilters(['template', 'label', 'organization', 'project']);
+    expect(filters.every((filter) => filter.showSelectAll === true)).toBe(true);
   });
 
   test('includes additionalFilters after dynamic filters', () => {

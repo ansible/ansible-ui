@@ -240,6 +240,7 @@ export function PageAsyncMultiSelect<
       queryLabel={props.queryLabel}
       compareOptionValues={props.compareOptionValues}
       disableMaxDropdownWidth={props.disableMaxDropdownWidth}
+      showSelectAll={props.showSelectAll}
     />
   );
 }

@@ -126,6 +126,7 @@ export function useAutomationDashboardToolbarFilters(
         queryErrorText: t('Failed to load options.'),
         queryLabel: (value: string) => queryResourceLabel(value, filterKey),
         queryOptions: (options) => queryResource(options, filterKey),
+        showSelectAll: true,
       });
     });
 
