@@ -13,7 +13,7 @@
 import useSWR from 'swr';
 import { useFetcher } from '../../../../common/crud/Data';
 import { metricsAPI } from '../../../common/api/metrics-utils';
-import { IAutomationDashboardCollectionStatus } from '../types';
+import { useAutomationDashboardCollectionStatus } from '../common/useAutomationDashboardCollectionStatus';
 
 // ─── Data contract ───────────────────────────────────────────────────────────
 
@@ -362,16 +362,14 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
     isLoading: isLeaderboardLoading,
   } = useSWR<ILeaderboardReport, Error>(leaderboardUrl, fetcher);
 
-  // Unlike useAutomationDashboardCollectionStatus (gated to superuser/auditor, drives nav-item
-  // visibility), every viewer needs their own "Updated: …" timestamp here, so this fetch isn't
-  // gated. Same URL as that hook, so both read one SWR cache entry (that hook still polls with
-  // dedupingInterval 0, so requests are not guaranteed to be shared).
-  const collectionStatusUrl = metricsAPI`/dashboard_reports/collection_status/`;
+  // Every viewer needs their own "Updated: …" timestamp here, regardless of whether they can
+  // see the Dashboard/Leaderboards tabs, so this reuses the shared collection_status fetch
+  // rather than gating on canSeeDashboard/canSeeLeaderboard.
   const {
-    data: collectionStatus,
+    collectionStatus,
     error: collectionStatusError,
     isLoading: isCollectionStatusLoading,
-  } = useSWR<IAutomationDashboardCollectionStatus, Error>(collectionStatusUrl, fetcher);
+  } = useAutomationDashboardCollectionStatus();
 
   // A null lastSyncedAt means "never synced" to the consumer, so it must not be reported until
   // collection_status has settled, otherwise the empty state flashes while it is in flight.
@@ -379,7 +377,7 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
   // "couldn't fetch the sync timestamp" isn't conflated with "no data yet" or a leaderboard failure.
   const isLoading = isLeaderboardLoading || isCollectionStatusLoading;
 
-  const lastSyncedAt = toIsoString(collectionStatus?.last_sync);
+  const lastSyncedAt = toIsoString(collectionStatus.last_sync);
 
   if (!data) {
     return { ...EMPTY_LEADERBOARDS_DATA, lastSyncedAt, isLoading, error, collectionStatusError };

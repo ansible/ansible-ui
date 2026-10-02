@@ -289,6 +289,7 @@ export enum AwxRoute {
   AutomationDashboardMainPage = 'awx-automation-dashboard-main-page',
   AutomationDashboard = 'awx-automation-dashboard',
   AutomationLeaderboards = 'awx-automation-leaderboards',
+  AutomationDashboardRedirect = 'awx-automation-dashboard-redirect',
   // Settings
   Settings = 'awx-settings',
   SettingsPreferences = 'awx-settings-preferences',

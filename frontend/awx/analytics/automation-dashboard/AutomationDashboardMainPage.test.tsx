@@ -115,4 +115,50 @@ describe('AutomationDashboardMainPage', () => {
     expect(screen.queryByRole('heading', { name: 'Automation Dashboard' })).not.toBeInTheDocument();
     expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
   });
+
+  test('should render only the dashboard, without tabs, when the user cannot see leaderboards', () => {
+    mockStatus({ canSeeLeaderboard: false });
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(screen.getByTestId('automation-dashboard')).toBeInTheDocument();
+    expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('automation-leaderboards')).not.toBeInTheDocument();
+  });
+
+  test('should render only the leaderboards, without tabs, when the user cannot see the dashboard', () => {
+    mockStatus({ canSeeDashboard: false });
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(screen.getByTestId('automation-leaderboards')).toBeInTheDocument();
+    expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('automation-dashboard')).not.toBeInTheDocument();
+  });
+
+  test('should show the unauthorized empty state when the user can see neither view', () => {
+    mockStatus({ canSeeDashboard: false, canSeeLeaderboard: false });
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'You do not have permission to view the Automation Dashboard or Leaderboards.',
+      })
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
+  });
+
+  test('should show an error state with a descriptive message when collection status fails', () => {
+    mockStatus({
+      error: new Error('Request failed with status 500'),
+    });
+
+    render(<AutomationDashboardMainPage />);
+
+    expect(screen.getByTestId('error-state')).toBeInTheDocument();
+    expect(screen.getByText('Unable to load dashboard data')).toBeInTheDocument();
+    expect(screen.getByText('Request failed with status 500')).toBeInTheDocument();
+    expect(screen.queryByTestId('routed-tabs')).not.toBeInTheDocument();
+  });
 });

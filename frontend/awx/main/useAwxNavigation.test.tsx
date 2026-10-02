@@ -212,6 +212,7 @@ describe('useAwxNavigation - Analytics', () => {
     expect(mainPage.children.map((child) => [child.id, child.path])).toEqual([
       [AwxRoute.AutomationDashboard, 'dashboard'],
       [AwxRoute.AutomationLeaderboards, 'leaderboards'],
+      [AwxRoute.AutomationDashboardRedirect, ''],
     ]);
   });
 
