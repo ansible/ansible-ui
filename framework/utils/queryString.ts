@@ -61,7 +61,7 @@ export function filtersToSearchObj(toolbarFilters: IToolbarFilter[], filterState
     }
     // Support for Activity Stream needing two values
     if (param === 'or__object1__in' && value) {
-      params.append('or__object2__in', Array.isArray(value) ? value[0] : value);
+      params.append('or__object2__in', value);
     }
   }
 
@@ -86,6 +86,7 @@ function getFilterParam(
 
   const activityStreamParam = getActivityStreamParam(filter, values, firstValue);
   if (activityStreamParam) return activityStreamParam;
+  if (filter.query === 'object1__in') return [undefined, undefined];
 
   if (filter.query === 'search') {
     return [filter.query, values];
@@ -140,7 +141,9 @@ function getDateRangeParam(
     [DateRangeFilterPresets.LastWeek]: 7 * 24 * 60 * 60 * 1000,
     [DateRangeFilterPresets.LastMonth]: 30 * 24 * 60 * 60 * 1000,
   };
-  const offset = offsets[values[0] as DateRangeFilterPresets];
+  const offset = Object.prototype.hasOwnProperty.call(offsets, values[0])
+    ? offsets[values[0] as DateRangeFilterPresets]
+    : undefined;
   return offset === undefined
     ? [undefined, undefined]
     : [name, new Date(date.getTime() - offset).toISOString()];
