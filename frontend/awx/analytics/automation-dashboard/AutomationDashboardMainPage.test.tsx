@@ -120,7 +120,7 @@ describe('AutomationDashboardMainPage', () => {
 
     const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
     act(() => {
-      resizeCallback({ contentRect: { width: 2400 } } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: { width: 2400 } } as ResizeObserverEntry);
     });
 
     expect(screen.getByTestId('routed-tabs')).toHaveAttribute('data-grid-columns', '33');
