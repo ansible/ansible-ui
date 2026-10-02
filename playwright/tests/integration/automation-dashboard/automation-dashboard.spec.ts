@@ -221,7 +221,8 @@ test.describe('Automation Dashboard', () => {
 
     // Now the link should be visible since data loaded without error
     await successfulJobsCard.getByRole('link', { name: 'See all successful jobs' }).click();
-    await expect(page).toHaveURL(new RegExp('/jobs\\?status=successful$'));
+    await expect(page).toHaveURL(/\/execution\/jobs\?/);
+    expect(new URL(page.url()).searchParams.get('status')).toBe('successful');
 
     await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
 
@@ -230,7 +231,8 @@ test.describe('Automation Dashboard', () => {
     await expect(failedJobsCard.getByText('3')).toBeVisible();
 
     await failedJobsCard.getByRole('link', { name: 'See all failed jobs' }).click();
-    await expect(page).toHaveURL(new RegExp('/jobs\\?status=failed$'));
+    await expect(page).toHaveURL(/\/execution\/jobs\?/);
+    expect(new URL(page.url()).searchParams.get('status')).toBe('failed');
   });
 
   test('should keep dashboard cards visible at a narrower viewport', async ({ page }) => {
