@@ -5,6 +5,10 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
+import {
+  getHelpButtonForOptionCheckbox,
+  jobTemplateOptionCheckboxTestIds,
+} from './jobTemplateOptionsTestHelpers';
 import { CreateJobTemplate, EditJobTemplate } from './TemplateForm';
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
@@ -328,6 +332,27 @@ describe('TemplateForm - EditJobTemplate', () => {
 
     expect(screen.getByDisplayValue('5')).toBeInTheDocument();
     expect(screen.getByDisplayValue('120')).toBeInTheDocument();
+  }, 15000);
+
+  it('should render help icons for Options checkboxes in edit mode', async () => {
+    render(
+      <MemoryRouter initialEntries={['/templates/job_template/42/edit']}>
+        <Routes>
+          <Route path="/templates/job_template/:id/edit" element={<EditJobTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByDisplayValue('My Job Template')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+
+    for (const testId of jobTemplateOptionCheckboxTestIds) {
+      expect(getHelpButtonForOptionCheckbox(testId)).toBeInTheDocument();
+    }
   }, 15000);
 
   it(

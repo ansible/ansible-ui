@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -7,6 +8,10 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { JobTemplateForm } from '../../interfaces/JobTemplateForm';
 import { Project } from '../../interfaces/Project';
 import { JobTemplateInputs } from './JobTemplateInputs';
+import {
+  getHelpButtonForOptionCheckbox,
+  jobTemplateOptionCheckboxTestIds,
+} from './jobTemplateOptionsTestHelpers';
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
   DataEditor: (props: {
@@ -133,6 +138,54 @@ describe('JobTemplateInputs', () => {
     expect(screen.getByText('Concurrent jobs')).toBeInTheDocument();
     expect(screen.getByText('Enable fact storage')).toBeInTheDocument();
     expect(screen.getByText('Prevent instance group fallback')).toBeInTheDocument();
+  });
+
+  it('should render help icons for Options checkboxes', () => {
+    render(
+      <TestWrapper>
+        <JobTemplateInputs />
+      </TestWrapper>
+    );
+
+    for (const testId of jobTemplateOptionCheckboxTestIds) {
+      expect(getHelpButtonForOptionCheckbox(testId)).toBeInTheDocument();
+    }
+  });
+
+  it('should show labelHelpTitle in Options checkbox popovers', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <JobTemplateInputs />
+      </TestWrapper>
+    );
+
+    const helpButton = getHelpButtonForOptionCheckbox('become_enabled');
+    expect(helpButton).toBeInTheDocument();
+    await user.click(helpButton as HTMLElement);
+
+    expect(
+      await screen.findByText('Select to enable this playbook to run as an administrator.')
+    ).toBeInTheDocument();
+  });
+
+  it('should render help icons for Options checkboxes when editing an existing template', () => {
+    const jobtemplate = {
+      id: 1,
+      name: 'Test Template',
+      job_tags: ['tag1', 'tag2'],
+      skip_tags: ['skip1'],
+    } as unknown as JobTemplateForm;
+
+    render(
+      <TestWrapper>
+        <JobTemplateInputs jobtemplate={jobtemplate} />
+      </TestWrapper>
+    );
+
+    for (const testId of jobTemplateOptionCheckboxTestIds) {
+      expect(getHelpButtonForOptionCheckbox(testId)).toBeInTheDocument();
+    }
   });
 
   it('should render with job template data', () => {

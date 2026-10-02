@@ -329,11 +329,13 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       <PageFormCheckbox<JobTemplateForm>
         label={t('Privilege escalation')}
         name="become_enabled"
+        labelHelpTitle={t('Privilege escalation')}
         labelHelp={t('Select to enable this playbook to run as an administrator.')}
       />
       <PageFormCheckbox<JobTemplateForm>
         label={t('Provisioning callback')}
         name="isProvisioningCallbackEnabled"
+        labelHelpTitle={t('Provisioning callback')}
         labelHelp={t(
           'Select to enable a host to call back to automation controller through the REST API and start a job from this job template.'
         )}
@@ -341,6 +343,7 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       <PageFormCheckbox<{ isWebhookEnabled: boolean }>
         label={t('Enable webhook')}
         name="isWebhookEnabled"
+        labelHelpTitle={t('Enable webhook')}
         labelHelp={t(
           'Select to interface with a predefined SCM system web service that is used to launch a job template. GitHub and GitLab are the supported SCM systems.'
         )}
@@ -348,16 +351,19 @@ export function JobTemplateInputs(props: Readonly<{ jobtemplate?: JobTemplateFor
       <PageFormCheckbox<JobTemplateForm>
         label={t('Concurrent jobs')}
         name="allow_simultaneous"
+        labelHelpTitle={t('Concurrent jobs')}
         labelHelp={t('Select to run job slices simultaneously.')}
       />
       <PageFormCheckbox<JobTemplateForm>
         label={t('Enable fact storage')}
         name="use_fact_cache"
+        labelHelpTitle={t('Enable fact storage')}
         labelHelp={t('Select to allow gathered facts to be stored.')}
       />
       <PageFormCheckbox<JobTemplateForm>
         label={t('Prevent instance group fallback')}
         name="prevent_instance_group_fallback"
+        labelHelpTitle={t('Prevent instance group fallback')}
         labelHelp={t(
           'Select to allow only the instance groups listed in the Instance Groups field to run the job.'
         )}
