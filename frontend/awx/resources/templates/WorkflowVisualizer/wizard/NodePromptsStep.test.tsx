@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
@@ -13,12 +14,27 @@ vi.mock('../../JobTemplateFormHelpers', () => ({
 }));
 
 vi.mock('@ansible/ansible-ui-framework/utils/codeEditorUtils', () => ({
-  yamlToJson: vi.fn((val: string) => val),
+  yamlToJson: vi.fn((val: string) => {
+    if (val === 'invalid') throw new Error('Invalid YAML syntax');
+    if (val === 'invalid-non-error') throw 'Invalid YAML value';
+    return val;
+  }),
 }));
 
-vi.mock('../../../../../../framework/components/DataEditor', () => ({
-  DataEditor: ({ name }: Readonly<{ name: string }>) => (
-    <div data-testid={`mock-data-editor-${name}`}>DataEditor</div>
+vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
+  DataEditor: ({
+    name,
+    validate,
+  }: Readonly<{ name: string; validate?: (value: string) => boolean | string }>) => (
+    <div data-testid={`mock-data-editor-${name}`}>
+      DataEditor
+      {validate && (
+        <>
+          <span data-testid="yaml-error">{String(validate('invalid'))}</span>
+          <span data-testid="yaml-non-error">{String(validate('invalid-non-error'))}</span>
+        </>
+      )}
+    </div>
   ),
 }));
 
@@ -94,17 +110,28 @@ function createLaunchConfig(overrides: Partial<LaunchConfiguration> = {}): Launc
   };
 }
 
+function TriggerValidation() {
+  const { trigger } = useFormContext<WizardFormValues>();
+  useEffect(() => {
+    void trigger('prompt.extra_vars');
+  }, [trigger]);
+  return null;
+}
+
 function TestWrapper({
   defaultValues,
   preventCredentialsThatNeedPasswordsOnLaunch,
+  triggerValidation = false,
 }: Readonly<{
   defaultValues: Partial<WizardFormValues>;
   preventCredentialsThatNeedPasswordsOnLaunch?: boolean;
+  triggerValidation?: boolean;
 }>) {
   const methods = useForm<WizardFormValues>({ defaultValues });
   return (
     <MemoryRouter>
       <FormProvider {...methods}>
+        {triggerValidation && <TriggerValidation />}
         <NodePromptsStep
           preventCredentialsThatNeedPasswordsOnLaunch={preventCredentialsThatNeedPasswordsOnLaunch}
         />
@@ -335,7 +362,7 @@ describe('NodePromptsStep', () => {
     expect(screen.getByTestId('mock-label-select')).toBeInTheDocument();
   });
 
-  it('should show variables editor when ask_variables_on_launch is true', () => {
+  it('should show variables editor and validate YAML values', () => {
     render(
       <TestWrapper
         defaultValues={{
@@ -343,7 +370,9 @@ describe('NodePromptsStep', () => {
           launch_config: createLaunchConfig({
             ask_variables_on_launch: true,
           }),
+          prompt: { extra_vars: 'invalid' },
         }}
+        triggerValidation
       />
     );
 
