@@ -58,11 +58,18 @@ afterEach(() => {
 });
 afterAll(() => server.close());
 
-function TestWizard(props: Readonly<{ onSubmit: (data: ScheduleFormWizard) => Promise<void> }>) {
+function TestWizard(
+  props: Readonly<{
+    onSubmit: (data: ScheduleFormWizard) => Promise<void>;
+    resourceEndPoint?: string;
+  }>
+) {
   const getSteps = useScheduleSteps();
   return (
     <PageWizard<ScheduleFormWizard>
-      steps={getSteps().filter((step) => ['details', 'promptStep', 'review'].includes(step.id))}
+      steps={getSteps(props.resourceEndPoint).filter((step) =>
+        ['details', 'promptStep', 'review'].includes(step.id)
+      )}
       stepDefaults={{
         details: {
           name: 'Schedule',
@@ -79,7 +86,11 @@ function TestWizard(props: Readonly<{ onSubmit: (data: ScheduleFormWizard) => Pr
   );
 }
 
-function renderWizard(askLabels: boolean, edit = false) {
+function renderWizard(
+  askLabels: boolean,
+  edit = false,
+  launchOverrides: Record<string, unknown> = {}
+) {
   server.use(
     http.get(awxAPI`/job_templates/123/launch/`, () =>
       HttpResponse.json({
@@ -93,6 +104,7 @@ function renderWizard(askLabels: boolean, edit = false) {
           skip_tags: '',
           extra_vars: '{}',
         },
+        ...launchOverrides,
       })
     )
   );
@@ -142,6 +154,91 @@ async function backToLabels(user: ReturnType<typeof userEvent.setup>, askLabels:
   if (!askLabels) await user.click(screen.getByRole('button', { name: 'Back' }));
   await screen.findByPlaceholderText('Select or create labels');
 }
+
+it('loads schedule accessories and supported survey answers while editing', async () => {
+  server.use(
+    http.get(awxAPI`/job_templates/123/launch/`, () =>
+      HttpResponse.json({
+        ask_labels_on_launch: false,
+        ask_credential_on_launch: true,
+        ask_instance_groups_on_launch: true,
+        survey_enabled: true,
+        defaults: { labels: [], job_tags: '', skip_tags: '', extra_vars: '{}' },
+      })
+    ),
+    http.get(awxAPI`/schedules/789/`, () =>
+      HttpResponse.json({
+        id: 789,
+        extra_data: { text_answer: 'answer', number_answer: 3, list_answer: ['one'] },
+        summary_fields: {},
+      })
+    ),
+    http.get(awxAPI`/schedules/789/credentials/`, () =>
+      HttpResponse.json({ count: 1, results: [], next: null, previous: null })
+    ),
+    http.get(awxAPI`/schedules/789/instance_groups/`, () =>
+      HttpResponse.json({ count: 1, results: [], next: null, previous: null })
+    ),
+    http.get(awxAPI`/job_templates/123/survey_spec/`, () =>
+      HttpResponse.json({
+        spec: [
+          { variable: 'text_answer' },
+          { variable: 'number_answer' },
+          { variable: 'list_answer' },
+          { variable: 'missing_answer' },
+        ],
+      })
+    )
+  );
+
+  renderWizard(false, true, {
+    ask_credential_on_launch: true,
+    ask_instance_groups_on_launch: true,
+    survey_enabled: true,
+  });
+  await screen.findByRole('button', { name: /Prompts/ });
+});
+
+it('loads the resource when editing through a resource endpoint', async () => {
+  const onSubmit = vi.fn<(data: ScheduleFormWizard) => Promise<void>>().mockResolvedValue();
+  render(
+    <SWRConfig value={{ provider: () => new Map(), shouldRetryOnError: false }}>
+      <MemoryRouter initialEntries={['/templates/job-template/123/schedules/789/edit']}>
+        <Routes>
+          <Route
+            path="/templates/job-template/:id/schedules/:schedule_id/edit"
+            element={<TestWizard onSubmit={onSubmit} resourceEndPoint={awxAPI`/job_templates/`} />}
+          />
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
+
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled());
+});
+
+it('shows an alert when the resource endpoint fails', async () => {
+  server.use(
+    http.get(awxAPI`/job_templates/123/`, () =>
+      HttpResponse.json({ detail: 'Permission denied' }, { status: 403 })
+    )
+  );
+  const onSubmit = vi.fn<(data: ScheduleFormWizard) => Promise<void>>().mockResolvedValue();
+  render(
+    <SWRConfig value={{ provider: () => new Map(), shouldRetryOnError: false }}>
+      <MemoryRouter initialEntries={['/templates/job-template/123/schedules/789/edit']}>
+        <Routes>
+          <Route
+            path="/templates/job-template/:id/schedules/:schedule_id/edit"
+            element={<TestWizard onSubmit={onSubmit} resourceEndPoint={awxAPI`/job_templates/`} />}
+          />
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
+
+  expect(await screen.findByText('Forbidden')).toBeInTheDocument();
+});
 
 describe.each([false, true])('canonical schedule labels (ask_labels_on_launch=%s)', (askLabels) => {
   it('starts creation empty and preserves selected identities through Review, Back and submission', async () => {
