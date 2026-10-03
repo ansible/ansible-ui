@@ -18,10 +18,8 @@ async function getLabelPages(url: string, signal?: AbortSignal): Promise<Label[]
 }
 
 export function getScheduleLabels(scheduleId: number, signal?: AbortSignal): Promise<Label[]> {
-  return getLabelPages(
-    `${awxAPI`/schedules/${scheduleId.toString()}/labels/`}?page_size=200`,
-    signal
-  );
+  const labelsUrl = awxAPI`/schedules/${scheduleId.toString()}/labels/`;
+  return getLabelPages(`${labelsUrl}?page_size=200`, signal);
 }
 
 const nameKey = (label: ScheduleLabel) => JSON.stringify([label.name, label.organization]);
