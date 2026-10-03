@@ -45,8 +45,8 @@ function getLabelDelta(current: Label[], selected: ScheduleLabel[], organization
   };
 }
 
-function labelRequestError(title: string, detail: string, statusCode = 400) {
-  const json = { detail };
+function labelRequestError(title: string, detail: string, statusCode = 400, includeTitle = false) {
+  const json = { detail: includeTitle ? `${title}: ${detail}` : detail };
   return new RequestError(title, detail, statusCode, json, json);
 }
 
@@ -116,7 +116,7 @@ export const useProcessLabels = () => {
       );
       const failedRemovals = getFailedLabels(removals);
       if (failedRemovals) {
-        throw labelRequestError(t('Failed to remove labels'), failedRemovals);
+        throw labelRequestError(t('Failed to remove labels'), failedRemovals, 400, true);
       }
       const additions = await Promise.allSettled(
         added.map((label) =>
@@ -129,7 +129,7 @@ export const useProcessLabels = () => {
       );
       const failedAdditions = getFailedLabels(additions);
       if (failedAdditions) {
-        throw labelRequestError(t('Failed to add labels'), failedAdditions);
+        throw labelRequestError(t('Failed to add labels'), failedAdditions, 400, true);
       }
     },
     [postLabel, abortController, t]
