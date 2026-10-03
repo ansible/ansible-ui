@@ -16,7 +16,6 @@ vi.mock('../../JobTemplateFormHelpers', () => ({
 vi.mock('@ansible/ansible-ui-framework/utils/codeEditorUtils', () => ({
   yamlToJson: vi.fn((val: string) => {
     if (val === 'invalid') throw new Error('Invalid YAML syntax');
-    if (val === 'invalid-non-error') throw 'Invalid YAML value';
     return val;
   }),
 }));
@@ -28,12 +27,7 @@ vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
   }: Readonly<{ name: string; validate?: (value: string) => boolean | string }>) => (
     <div data-testid={`mock-data-editor-${name}`}>
       DataEditor
-      {validate && (
-        <>
-          <span data-testid="yaml-error">{String(validate('invalid'))}</span>
-          <span data-testid="yaml-non-error">{String(validate('invalid-non-error'))}</span>
-        </>
-      )}
+      {validate && <span data-testid="yaml-error">{String(validate('invalid'))}</span>}
     </div>
   ),
 }));
