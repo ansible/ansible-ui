@@ -56,7 +56,7 @@ const server = setupServer(
       results: secondPage
         ? [{ id: 2, name: 'Second page label', organization: 7 }]
         : [{ id: 1, name: 'Saved label', organization: 7 }],
-      next: secondPage ? null : `${awxAPI`/schedules/1/labels/`}?page=2`,
+      next: secondPage ? null : awxAPI`/schedules/1/labels/?page=2`,
     });
   }),
   http.get(awxAPI`/schedules/1/`, () => {
