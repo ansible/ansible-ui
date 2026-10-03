@@ -177,7 +177,7 @@ describe('ScheduleLabelSelect', () => {
       http.get(awxAPI`/labels/`, async ({ request }) => {
         const page = new URL(request.url).searchParams.get('page');
         if (page === '1')
-          return HttpResponse.json({ results: [uniqueLabel], next: `${awxAPI`/labels/`}?page=2` });
+          return HttpResponse.json({ results: [uniqueLabel], next: awxAPI`/labels/?page=2` });
         await delay(150);
         return HttpResponse.json({ results: [orgLabel], next: null });
       })
