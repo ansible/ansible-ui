@@ -108,11 +108,18 @@ function RequestErrorAlert(props: { error?: unknown }) {
     return <Alert variant="danger" title={props.error.message} />;
   }
   if (error.json) {
+    const messages = Object.values(error.json).flatMap((value: string) => value.split('\n'));
     return (
       <Alert variant="danger" title={error.message} isInline>
-        {Object.values(error.json).map((value: string, index) => (
-          <div key={index}>{value}</div>
-        ))}
+        {messages.length > 1 ? (
+          <ul>
+            {messages.map((value, index) => (
+              <li key={index}>{value}</li>
+            ))}
+          </ul>
+        ) : (
+          messages.map((value, index) => <div key={index}>{value}</div>)
+        )}
       </Alert>
     );
   }

@@ -1,778 +1,212 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { PageWizard } from '@ansible/ansible-ui-framework';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SWRConfig } from 'swr';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useScheduleSteps } from '../hooks/useScheduleSteps';
 import { ScheduleFormWizard } from '../types';
-import { ScheduleSelectStep } from './ScheduleSelectStep';
 
-const { mockSetStepData, mockSetWizardData } = vi.hoisted(() => ({
-  mockSetStepData: vi.fn(),
-  mockSetWizardData: vi.fn(),
-}));
+// ponytail: Vitest resolves router entrypoints separately; share the real DOM router context until test aliases unify them.
+vi.mock('react-router', async () => vi.importActual('react-router-dom'));
 
-const { mockGetSchedulePromptValues } = vi.hoisted(() => ({
-  mockGetSchedulePromptValues: vi.fn(),
-}));
+const templateLabel = { id: 1, name: 'Template default', organization: 7 };
+const scheduleLabel = { id: 2, name: 'Schedule label', organization: 7 };
+const resource = {
+  id: 123,
+  type: 'job_template',
+  name: 'Template',
+  organization: 7,
+  summary_fields: {},
+};
+const server = setupServer(
+  http.get(awxAPI`/job_templates/123/`, () => HttpResponse.json(resource)),
+  http.get(awxAPI`/job_templates/123/launch/`, () =>
+    HttpResponse.json({
+      ask_labels_on_launch: false,
+      defaults: { labels: [templateLabel], job_tags: '', skip_tags: '', extra_vars: '{}' },
+    })
+  ),
+  http.get(awxAPI`/schedules/789/`, () =>
+    HttpResponse.json({ id: 789, extra_data: {}, summary_fields: {} })
+  ),
+  http.get(awxAPI`/schedules/789/labels/`, () =>
+    HttpResponse.json({ count: 0, results: [], next: null, previous: null })
+  ),
+  http.get(awxAPI`/labels/`, () =>
+    HttpResponse.json({
+      count: 2,
+      results: [templateLabel, scheduleLabel],
+      next: null,
+      previous: null,
+    })
+  ),
+  http.get(awxAPI`/schedules/zoneinfo/`, () => HttpResponse.json({ zones: ['UTC'], links: {} })),
+  http.get(awxAPI`/job_templates/123/survey_spec/`, () => HttpResponse.json({ spec: [] })),
+  http.post(awxAPI`/schedules/preview/`, () =>
+    HttpResponse.json({ utc: ['2030-01-01T12:00:00Z'], local: ['2030-01-01T12:00:00'] })
+  )
+);
 
-const { mockAlertToaster } = vi.hoisted(() => ({
-  mockAlertToaster: {
-    addAlert: vi.fn(),
-  },
-}));
-
-vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
-  usePageWizard: () => ({
-    setStepData: mockSetStepData,
-    setWizardData: mockSetWizardData,
-  }),
-}));
-
-vi.mock('@ansible/ansible-ui-framework', async () => {
-  const actual = await vi.importActual('@ansible/ansible-ui-framework');
-  return {
-    ...actual,
-    usePageAlertToaster: () => mockAlertToaster,
-  };
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+afterEach(() => {
+  cleanup();
+  server.resetHandlers();
 });
+afterAll(() => server.close());
 
-vi.mock('../hooks/useGetSchedulePromptValues', () => ({
-  useGetSchedulePromptValues: () => mockGetSchedulePromptValues,
-}));
-
-function TestWrapper({
-  children,
-  defaultValues,
-  route = '/schedules/add',
-  path = '/schedules/add',
-}: {
-  children: React.ReactNode;
-  defaultValues?: Partial<ScheduleFormWizard>;
-  route?: string;
-  path?: string;
-}) {
-  const methods = useForm<ScheduleFormWizard>({
-    defaultValues: {
-      schedule_type: '',
-      resourceId: null,
-      name: '',
-      description: '',
-      timezone: 'UTC',
-      startDateTime: { date: '', time: '' },
-      rules: [],
-      exceptions: [],
-      launch_config: null,
-      prompt: {} as never,
-      schedule_days_to_keep: 0,
-      survey: {},
-      enabled: true,
-      resource: {} as never,
-      ...defaultValues,
-    },
-  });
-
+function TestWizard(props: Readonly<{ onSubmit: (data: ScheduleFormWizard) => Promise<void> }>) {
+  const getSteps = useScheduleSteps();
   return (
-    <MemoryRouter initialEntries={[route]}>
-      <Routes>
-        <Route path={path} element={<FormProvider {...methods}>{children}</FormProvider>} />
-      </Routes>
-    </MemoryRouter>
+    <PageWizard<ScheduleFormWizard>
+      steps={getSteps().filter((step) => ['details', 'promptStep', 'review'].includes(step.id))}
+      stepDefaults={{
+        details: {
+          name: 'Schedule',
+          schedule_type: 'job_template',
+          resourceId: 123,
+          startDateTime: { date: '2030-01-01', time: '12:00:00' },
+          timezone: 'UTC',
+          rules: [{ id: 1, rule: 'DTSTART:20300101T120000Z\nRRULE:FREQ=DAILY;INTERVAL=1' }],
+          exceptions: [],
+        },
+      }}
+      onSubmit={props.onSubmit}
+    />
   );
 }
 
-describe('ScheduleSelectStep', () => {
-  const server = setupServer(
-    // Default handler for launch endpoints that may be called by useEffect
-    http.get(awxAPI`/job_templates/:id/launch/`, () => {
-      return HttpResponse.json({
-        ask_credential_on_launch: false,
-        ask_instance_groups_on_launch: false,
-        ask_labels_on_launch: false,
-        survey_enabled: false,
-        defaults: {},
-      });
-    }),
-    http.get(awxAPI`/workflow_job_templates/:id/launch/`, () => {
-      return HttpResponse.json({
-        ask_credential_on_launch: false,
-        ask_instance_groups_on_launch: false,
-        ask_labels_on_launch: false,
-        survey_enabled: false,
-        defaults: {},
-      });
-    }),
-    http.get(awxAPI`/schedules/zoneinfo/`, () => {
-      return HttpResponse.json({
-        zones: ['UTC', 'America/New_York', 'Europe/London'],
-        links: {},
-      });
-    }),
-    http.options(awxAPI`/system_job_templates/`, () => {
-      return HttpResponse.json({});
-    })
+function renderWizard(askLabels: boolean, edit = false) {
+  server.use(
+    http.get(awxAPI`/job_templates/123/launch/`, () =>
+      HttpResponse.json({
+        ask_labels_on_launch: askLabels,
+        // Keep Prompts visible to exercise its supplemental merge even when labels live in Details.
+        ask_limit_on_launch: true,
+        defaults: {
+          labels: [templateLabel],
+          limit: '',
+          job_tags: '',
+          skip_tags: '',
+          extra_vars: '{}',
+        },
+      })
+    )
   );
-
-  beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-  afterEach(() => server.resetHandlers());
-  afterAll(() => server.close());
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-    mockSetStepData.mockImplementation((fn) => (typeof fn === 'function' ? fn({}) : fn));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-    mockSetWizardData.mockImplementation((fn) => (typeof fn === 'function' ? fn({}) : fn));
-  });
-
-  describe('when isTopLevelSchedule is true', () => {
-    it('should render ScheduleTypeInputs', () => {
-      render(
-        <TestWrapper>
-          <ScheduleSelectStep isTopLevelSchedule={true} />
-        </TestWrapper>
-      );
-
-      expect(screen.getByRole('button', { name: /resource type/i })).toBeInTheDocument();
-    });
-
-    it('should not render ScheduleResourceInputs when no resourceId is set', () => {
-      render(
-        <TestWrapper>
-          <ScheduleSelectStep isTopLevelSchedule={true} />
-        </TestWrapper>
-      );
-
-      expect(screen.getByRole('button', { name: /resource type/i })).toBeInTheDocument();
-      expect(screen.queryByRole('textbox', { name: /schedule name/i })).not.toBeInTheDocument();
-    });
-
-    it('should render ScheduleResourceInputs when resourceId is set', () => {
-      render(
-        <TestWrapper defaultValues={{ resourceId: 123 }}>
-          <ScheduleSelectStep isTopLevelSchedule={true} />
-        </TestWrapper>
-      );
-
-      expect(screen.getByRole('button', { name: /resource type/i })).toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: /schedule name/i })).toBeInTheDocument();
-    });
-
-    it('should render ScheduleResourceInputs when resource.id is set', () => {
-      render(
-        <TestWrapper defaultValues={{ resource: { id: 456 } as never }}>
-          <ScheduleSelectStep isTopLevelSchedule={true} />
-        </TestWrapper>
-      );
-
-      expect(screen.getByRole('button', { name: /resource type/i })).toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: /schedule name/i })).toBeInTheDocument();
-    });
-
-    it('should render days to keep field when resource is cleanup_activitystream management job', async () => {
-      server.use(
-        http.get(awxAPI`/system_job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            job_type: 'cleanup_activitystream',
-          });
-        })
-      );
-
-      render(
-        <TestWrapper
-          defaultValues={{
-            resourceId: 123,
-            resource: { id: 123, job_type: 'cleanup_activitystream' } as never,
-            schedule_type: 'system_job_template',
-          }}
-        >
-          <ScheduleSelectStep isTopLevelSchedule={true} />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole('spinbutton', { name: /days of data to keep/i })
-        ).toBeInTheDocument();
-      });
-    });
-
-    it('should render days to keep field when resource is cleanup_jobs management job', async () => {
-      server.use(
-        http.get(awxAPI`/system_job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            job_type: 'cleanup_jobs',
-          });
-        })
-      );
-
-      render(
-        <TestWrapper
-          defaultValues={{
-            resourceId: 123,
-            resource: { id: 123, job_type: 'cleanup_jobs' } as never,
-            schedule_type: 'system_job_template',
-          }}
-        >
-          <ScheduleSelectStep isTopLevelSchedule={true} />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole('spinbutton', { name: /days of data to keep/i })
-        ).toBeInTheDocument();
-      });
-    });
-
-    it('should not render days to keep field for non-management jobs', async () => {
-      server.use(
-        http.get(awxAPI`/system_job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            job_type: 'run',
-          });
-        })
-      );
-
-      render(
-        <TestWrapper
-          defaultValues={{
-            resourceId: 123,
-            resource: { id: 123, job_type: 'run' } as never,
-            schedule_type: 'system_job_template',
-          }}
-        >
-          <ScheduleSelectStep isTopLevelSchedule={true} />
-        </TestWrapper>
-      );
-
-      // Wait a bit to ensure the component has rendered
-      await waitFor(() => {
-        expect(screen.getByRole('textbox', { name: /schedule name/i })).toBeInTheDocument();
-      });
-
-      expect(
-        screen.queryByRole('spinbutton', { name: /days of data to keep/i })
-      ).not.toBeInTheDocument();
-    });
-  });
-
-  describe('when isTopLevelSchedule is false or undefined', () => {
-    it('should render ScheduleResourceInputs when resourceId is set', () => {
-      render(
-        <TestWrapper defaultValues={{ resourceId: 123 }}>
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      expect(screen.queryByRole('button', { name: /resource type/i })).not.toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: /schedule name/i })).toBeInTheDocument();
-    });
-
-    it('should render ScheduleResourceInputs when resource.id is set', () => {
-      render(
-        <TestWrapper defaultValues={{ resource: { id: 456 } as never }}>
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      expect(screen.queryByRole('button', { name: /resource type/i })).not.toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: /schedule name/i })).toBeInTheDocument();
-    });
-  });
-
-  describe('prompt step update effect', () => {
-    it('should fetch job template launch config for job_template type', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: false,
-            defaults: {},
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockSetStepData).toHaveBeenCalled();
-      });
-    });
-
-    it('should fetch workflow job template launch config for workflow_job_template type', async () => {
-      server.use(
-        http.get(awxAPI`/workflow_job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'workflow_job_template',
-            name: 'Test Workflow',
-          });
-        }),
-        http.get(awxAPI`/workflow_job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: false,
-            defaults: {},
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'workflow_job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockSetStepData).toHaveBeenCalled();
-      });
-    });
-
-    it('should fetch schedule credentials when schedule_id is provided and ask_credential_on_launch is true', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: true,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: false,
-            defaults: {},
-          });
-        }),
-        http.get(awxAPI`/schedules/789/credentials/`, () => {
-          return HttpResponse.json({
-            results: [{ id: 1, name: 'Test Credential' }],
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          route="/job-templates/123/schedules/789/edit"
-          path="/job-templates/:id/schedules/:schedule_id/edit"
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockGetSchedulePromptValues).toHaveBeenCalled();
-      });
-    });
-
-    it('should fetch schedule instance groups when schedule_id is provided and ask_instance_groups_on_launch is true', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: true,
-            ask_labels_on_launch: false,
-            survey_enabled: false,
-            defaults: {},
-          });
-        }),
-        http.get(awxAPI`/schedules/789/instance_groups/`, () => {
-          return HttpResponse.json({
-            results: [{ id: 1, name: 'Test Instance Group' }],
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          route="/job-templates/123/schedules/789/edit"
-          path="/job-templates/:id/schedules/:schedule_id/edit"
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockGetSchedulePromptValues).toHaveBeenCalled();
-      });
-    });
-
-    it('should fetch schedule labels when schedule_id is provided and ask_labels_on_launch is true', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: true,
-            survey_enabled: false,
-            defaults: {},
-          });
-        }),
-        http.get(awxAPI`/schedules/789/labels/`, () => {
-          return HttpResponse.json({
-            results: [{ id: 1, name: 'Test Label' }],
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          route="/job-templates/123/schedules/789/edit"
-          path="/job-templates/:id/schedules/:schedule_id/edit"
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockGetSchedulePromptValues).toHaveBeenCalled();
-      });
-    });
-
-    it('should fetch survey spec and schedule data when schedule_id is provided and survey_enabled is true', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: true,
-            defaults: {},
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/survey_spec/`, () => {
-          return HttpResponse.json({
-            spec: [{ variable: 'test_var' }],
-          });
-        }),
-        http.get(awxAPI`/schedules/789/`, () => {
-          return HttpResponse.json({
-            id: 789,
-            extra_data: { test_var: 'test_value' },
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          route="/job-templates/123/schedules/789/edit"
-          path="/job-templates/:id/schedules/:schedule_id/edit"
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockGetSchedulePromptValues).toHaveBeenCalled();
-      });
-    });
-
-    it('should call getSchedulePromptValues with correct parameters', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: false,
-            defaults: {},
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockGetSchedulePromptValues).toHaveBeenCalledWith(
-          expect.objectContaining({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: false,
-          }),
-          [],
-          [],
-          [],
-          undefined
-        );
-      });
-    });
-
-    it('should update step data with prompt values and launch config', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: false,
-            defaults: { verbosity: 2 },
-          });
-        })
-      );
-
-      const mockPromptValues = { verbosity: 2 };
-      mockGetSchedulePromptValues.mockResolvedValue(mockPromptValues);
-
-      render(
-        <TestWrapper
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockSetStepData).toHaveBeenCalled();
-      });
-    });
-
-    it('should show error alert when prompt step update fails', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({ detail: 'Network error' }, { status: 500 });
-        })
-      );
-
-      render(
-        <TestWrapper
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockAlertToaster.addAlert).toHaveBeenCalledWith(
-          expect.objectContaining({
-            variant: 'danger',
-            timeout: 5000,
-          })
-        );
-      });
-    });
-
-    it('should extract survey answers from extra_data when survey is enabled', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: true,
-            defaults: {},
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/survey_spec/`, () => {
-          return HttpResponse.json({
-            spec: [
-              { variable: 'string_var' },
-              { variable: 'number_var' },
-              { variable: 'array_var' },
-            ],
-          });
-        }),
-        http.get(awxAPI`/schedules/789/`, () => {
-          return HttpResponse.json({
-            id: 789,
-            extra_data: {
-              string_var: 'test_string',
-              number_var: 42,
-              array_var: ['item1', 'item2'],
-              other_var: 'should_be_ignored',
-            },
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          route="/job-templates/123/schedules/789/edit"
-          path="/job-templates/:id/schedules/:schedule_id/edit"
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockSetStepData).toHaveBeenCalled();
-      });
-    });
-
-    it('should not include survey answers when survey spec is empty', async () => {
-      server.use(
-        http.get(awxAPI`/job_templates/123/`, () => {
-          return HttpResponse.json({
-            id: 123,
-            type: 'job_template',
-            name: 'Test Template',
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/launch/`, () => {
-          return HttpResponse.json({
-            ask_credential_on_launch: false,
-            ask_instance_groups_on_launch: false,
-            ask_labels_on_launch: false,
-            survey_enabled: true,
-            defaults: {},
-          });
-        }),
-        http.get(awxAPI`/job_templates/123/survey_spec/`, () => {
-          return HttpResponse.json({
-            spec: [],
-          });
-        }),
-        http.get(awxAPI`/schedules/789/`, () => {
-          return HttpResponse.json({
-            id: 789,
-            extra_data: {},
-          });
-        })
-      );
-
-      mockGetSchedulePromptValues.mockResolvedValue({});
-
-      render(
-        <TestWrapper
-          route="/job-templates/123/schedules/789/edit"
-          path="/job-templates/:id/schedules/:schedule_id/edit"
-          defaultValues={{
-            resourceId: 123,
-            schedule_type: 'job_template',
-          }}
-        >
-          <ScheduleSelectStep />
-        </TestWrapper>
-      );
-
-      await waitFor(() => {
-        expect(mockSetStepData).toHaveBeenCalled();
-      });
-    });
-  });
+  const onSubmit = vi.fn<(data: ScheduleFormWizard) => Promise<void>>().mockResolvedValue();
+  render(
+    <SWRConfig value={{ provider: () => new Map(), shouldRetryOnError: false }}>
+      <MemoryRouter initialEntries={[edit ? '/schedules/789' : '/schedules/add']}>
+        <Routes>
+          <Route
+            path={edit ? '/schedules/:schedule_id' : '/schedules/add'}
+            element={<TestWizard onSubmit={onSubmit} />}
+          />
+        </Routes>
+      </MemoryRouter>
+    </SWRConfig>
+  );
+  return { user: userEvent.setup(), onSubmit };
+}
+
+async function openLabels(user: ReturnType<typeof userEvent.setup>, askLabels: boolean) {
+  if (askLabels) {
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled());
+    // The visible Prompts navigation entry indicates that initialization has finished.
+    await screen.findByRole('button', { name: /Prompts/ });
+    expect(screen.queryByPlaceholderText('Select or create labels')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+  }
+  const input = await screen.findByPlaceholderText('Select or create labels');
+  await waitFor(() => expect(input).toBeEnabled());
+  expect(screen.getAllByPlaceholderText('Select or create labels')).toHaveLength(1);
+  return input;
+}
+
+async function goToReview(user: ReturnType<typeof userEvent.setup>, askLabels: boolean) {
+  await user.click(screen.getByRole('button', { name: 'Next' }));
+  if (!askLabels) {
+    await screen.findByRole('textbox', { name: 'Limit' });
+    expect(screen.queryByPlaceholderText('Select or create labels')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+  }
+  await screen.findByRole('button', { name: 'Finish' });
+  await screen.findByRole('link', { name: 'Template' });
+}
+
+async function backToLabels(user: ReturnType<typeof userEvent.setup>, askLabels: boolean) {
+  await user.click(screen.getByRole('button', { name: 'Back' }));
+  if (!askLabels) await user.click(screen.getByRole('button', { name: 'Back' }));
+  await screen.findByPlaceholderText('Select or create labels');
+}
+
+describe.each([false, true])('canonical schedule labels (ask_labels_on_launch=%s)', (askLabels) => {
+  it('starts creation empty and preserves selected identities through Review, Back and submission', async () => {
+    const { user, onSubmit } = renderWizard(askLabels);
+    const input = await openLabels(user, askLabels);
+    expect(
+      screen.queryByRole('button', { name: 'Close Template default' })
+    ).not.toBeInTheDocument();
+
+    await user.type(input, 'Schedule label');
+    await user.click(await screen.findByRole('option', { name: 'Schedule label' }));
+    await user.type(input, 'Global label');
+    await user.keyboard('{Enter}');
+    await goToReview(user, askLabels);
+    expect(screen.getByText('Schedule label', { exact: true })).toBeVisible();
+    expect(screen.getByText('Global label', { exact: true })).toBeVisible();
+    expect(screen.queryByText('Template default', { exact: true })).not.toBeInTheDocument();
+
+    await backToLabels(user, askLabels);
+    expect(screen.getByRole('button', { name: 'Close Schedule label' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Close Global label' })).toBeVisible();
+    await goToReview(user, askLabels);
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(onSubmit.mock.calls[0][0].prompt.labels).toEqual([
+      scheduleLabel,
+      { name: 'Global label', organization: 7 },
+    ]);
+  }, 30000);
+
+  it('keeps an empty edit relationship explicit rather than inheriting template defaults', async () => {
+    const { user, onSubmit } = renderWizard(askLabels, true);
+    await openLabels(user, askLabels);
+    expect(
+      screen.queryByRole('button', { name: 'Close Template default' })
+    ).not.toBeInTheDocument();
+    await goToReview(user, askLabels);
+    expect(screen.queryByText('Template default', { exact: true })).not.toBeInTheDocument();
+    await backToLabels(user, askLabels);
+    expect(
+      screen.queryByRole('button', { name: 'Close Template default' })
+    ).not.toBeInTheDocument();
+    await goToReview(user, askLabels);
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(onSubmit.mock.calls[0][0].prompt.labels).toEqual([]);
+  }, 30000);
+
+  it('preserves clearing edit labels through Review and remounting Details or Prompts', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/789/labels/`, () =>
+        HttpResponse.json({ count: 1, results: [scheduleLabel], next: null, previous: null })
+      )
+    );
+    const { user, onSubmit } = renderWizard(askLabels, true);
+    await openLabels(user, askLabels);
+    expect(await screen.findByText('Schedule label', { exact: true })).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Close label group' }));
+    await goToReview(user, askLabels);
+    expect(screen.queryByText('Schedule label', { exact: true })).not.toBeInTheDocument();
+    await backToLabels(user, askLabels);
+    expect(screen.queryByRole('button', { name: 'Close Schedule label' })).not.toBeInTheDocument();
+    await goToReview(user, askLabels);
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(onSubmit.mock.calls[0][0].prompt.labels).toEqual([]);
+  }, 30000);
 });

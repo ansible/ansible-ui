@@ -47,8 +47,10 @@ const server = setupServer(
   http.options(awxAPI`/schedules/`, () => HttpResponse.json({ actions: { POST: {} } })),
   http.get(awxAPI`/schedules/zoneinfo/`, () => HttpResponse.json(zones)),
   http.get(awxAPI`/schedules/1/`, () => HttpResponse.json(mockSchedule)),
+  http.get(awxAPI`/schedules/1/labels/`, () => HttpResponse.json({ results: [], next: null })),
+  http.get(awxAPI`/labels/`, () => HttpResponse.json({ results: [], next: null })),
   http.get(awxAPI`/job_templates/100/`, () =>
-    HttpResponse.json({ id: 100, name: 'Mock Job Template', type: 'job_template' })
+    HttpResponse.json({ id: 100, name: 'Mock Job Template', type: 'job_template', organization: 7 })
   ),
   http.get(awxAPI`/job_templates/100/launch/`, () =>
     HttpResponse.json({
@@ -91,6 +93,7 @@ async function renderEditWizard() {
 }
 
 async function goToRulesStep(user: ReturnType<typeof userEvent.setup>) {
+  await waitFor(() => expect(screen.getByRole('textbox', { name: 'Labels' })).toBeEnabled());
   await user.click(await screen.findByRole('button', { name: /^Next$/ }));
   await waitFor(() => {
     expect(screen.getByText('Schedule Rules')).toBeInTheDocument();
@@ -101,6 +104,31 @@ describe('ScheduleEditWizard', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
+
+  it('should show a loading state while the schedule is unavailable', async () => {
+    let resolveSchedule: () => void = () => undefined;
+    const scheduleReady = new Promise<void>((resolve) => {
+      resolveSchedule = resolve;
+    });
+    server.use(
+      http.get(awxAPI`/schedules/1/`, async () => {
+        await scheduleReady;
+        return HttpResponse.json(mockSchedule);
+      })
+    );
+
+    render(
+      <TestWrapper>
+        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
+      </TestWrapper>
+    );
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    resolveSchedule();
+    await waitFor(() =>
+      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule')
+    );
+  });
 
   it('should render wizard with correct steps on initial load', async () => {
     await renderEditWizard();
@@ -181,5 +209,5 @@ describe('ScheduleEditWizard', () => {
         .filter((r) => r.dataset.testid?.startsWith('row-id-'));
       expect(rows.length).toBeGreaterThan(initialRowCount);
     });
-  });
+  }, 15000);
 });

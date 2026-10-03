@@ -159,7 +159,9 @@ describe('survey step hidden', () => {
   });
 
   it('should be visible when launch_config.survey_enabled is true', () => {
-    expect(hidden({ launch_config: { survey_enabled: true } })).toBe(false);
+    expect(hidden({ schedule_type: 'job_template', launch_config: { survey_enabled: true } })).toBe(
+      false
+    );
   });
 });
 

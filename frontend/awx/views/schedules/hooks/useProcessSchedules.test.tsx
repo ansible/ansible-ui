@@ -8,8 +8,9 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import type { Schedule } from '../../../interfaces/Schedule';
 import type { ScheduleFormWizard } from '../types';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
-import type { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
+import type { SchedulePromptValues as PromptFormValues } from '../types';
 import { useProcessSchedule } from './useProcessSchedules';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 
 const mockScheduleResponse: Schedule = {
   id: 99,
@@ -115,6 +116,7 @@ function makePayload(
       id: 10,
       type: resourceType,
       name: 'Resource',
+      organization: 5,
     } as unknown as ScheduleFormWizard['resource'],
     resourceId: 10,
     rules: [{ id: 1, rule: rruleString }],
@@ -128,7 +130,159 @@ function makePayload(
   };
 }
 
+function makePrompt(overrides: Partial<PromptFormValues>): PromptFormValues {
+  return {
+    credentials: [],
+    instance_groups: [],
+    execution_environment: {},
+    diff_mode: false,
+    extra_vars: '',
+    forks: 0,
+    job_slice_count: 1,
+    job_tags: [],
+    job_type: 'run',
+    labels: [],
+    limit: '',
+    scm_branch: '',
+    skip_tags: [],
+    timeout: 0,
+    verbosity: 0,
+    ...overrides,
+  };
+}
+
 describe('useProcessSchedule', () => {
+  it.each([
+    ['job_template', false],
+    ['job_template', true],
+    ['workflow_job_template', false],
+    ['workflow_job_template', true],
+  ] as const)('reconciles labels once after saving %s (edit: %s)', async (type, edit) => {
+    const events: string[] = [];
+    const labelPosts: unknown[] = [];
+    server.use(
+      http.get(awxAPI`/schedules/99/labels/`, () => {
+        expect(postCalls).toHaveLength(1);
+        events.push('labels');
+        return HttpResponse.json({
+          results: [{ id: 1, name: 'retained', organization: 5 }],
+          next: null,
+        });
+      }),
+      http.post(awxAPI`/schedules/99/labels/`, async ({ request }) => {
+        labelPosts.push(await request.json());
+        return new HttpResponse(null, { status: 204 });
+      }),
+      http.post(awxAPI`/schedules/99/credentials/`, () => {
+        events.push('credentials');
+        return new HttpResponse(null, { status: 204 });
+      }),
+      http.post(awxAPI`/schedules/99/instance_groups/`, () => {
+        events.push('instance_groups');
+        return new HttpResponse(null, { status: 204 });
+      })
+    );
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: edit
+        ? wrapper('/templates/:id/schedules/:schedule_id/edit', '/templates/10/schedules/99/edit')
+        : wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+    });
+    const payload = makePayload(type, {
+      prompt: makePrompt({
+        labels: [{ id: 1, name: 'retained' }, { name: 'new' }],
+        organization: 99,
+        credentials: [{ id: 7, name: 'SSH', credential_type: 1, passwords_needed: [] }],
+        instance_groups: [{ id: 8, name: 'group' }] as PromptFormValues['instance_groups'],
+      }),
+      launch_config: {
+        ask_labels_on_launch: false,
+        ask_instance_groups_on_launch: true,
+        defaults: { credentials: [], labels: [{ id: 12, name: 'not-schedule-state' }] },
+      } as unknown as LaunchConfiguration,
+    });
+
+    const response = await result.current(payload);
+
+    expect(response.schedule.id).toBe(99);
+    expect(postCalls[0].method).toBe(edit ? 'PATCH' : 'POST');
+    expect(postCalls[0].body).not.toHaveProperty('launch_config');
+    expect(postCalls[0].body).not.toHaveProperty('unified_job_template');
+    expect(labelPosts).toEqual([{ name: 'new', organization: 5 }]);
+    expect(events).toEqual(['labels', 'credentials', 'instance_groups']);
+  });
+
+  it('rejects the save through the form error adapter when reconciliation fails', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/99/labels/`, () => HttpResponse.json({ results: [], next: null })),
+      http.post(awxAPI`/schedules/99/labels/`, () =>
+        HttpResponse.json({ detail: 'Permission denied' }, { status: 403 })
+      )
+    );
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+    });
+    const payload = makePayload('job_template', {
+      prompt: { labels: [{ id: 2, name: 'rejected' }] } as PromptFormValues,
+      launch_config: { ask_labels_on_launch: false } as LaunchConfiguration,
+    });
+
+    const error = await result.current(payload).catch((error: unknown) => error);
+
+    expect(postCalls).toHaveLength(1);
+    expect(awxErrorAdapter(error).genericErrors[0].message).toContain('Failed to add');
+    expect(awxErrorAdapter(error).genericErrors[0].message).toContain('rejected');
+    expect(awxErrorAdapter(error).genericErrors[0].message).toContain('Permission denied');
+  });
+
+  it('retries a partially created schedule without creating another schedule', async () => {
+    let fail = true;
+    let labelReads = 0;
+    server.use(
+      http.get(awxAPI`/schedules/99/labels/`, () => {
+        labelReads++;
+        return HttpResponse.json({ results: [], next: null });
+      }),
+      http.post(awxAPI`/schedules/99/labels/`, () =>
+        fail
+          ? HttpResponse.json({ detail: 'Unavailable' }, { status: 503 })
+          : new HttpResponse(null, { status: 204 })
+      )
+    );
+    const { result } = renderHook(() => useProcessSchedule(), {
+      wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+    });
+    const payload = makePayload('job_template', {
+      prompt: makePrompt({ labels: [{ id: 2, name: 'retry' }] }),
+    });
+    await expect(result.current(payload)).rejects.toThrow('Failed to add');
+    fail = false;
+    await expect(result.current(payload)).resolves.toMatchObject({ schedule: { id: 99 } });
+    expect(postCalls.map(({ method }) => method)).toEqual(['POST', 'PATCH']);
+    expect(labelReads).toBe(2);
+  });
+
+  it.each(['inventory_source', 'project', 'system_job_template'])(
+    'does not reconcile labels for %s',
+    async (type) => {
+      let labelReads = 0;
+      server.use(
+        http.get(awxAPI`/schedules/99/labels/`, () => {
+          labelReads++;
+          return HttpResponse.json({ results: [], next: null });
+        })
+      );
+      const { result } = renderHook(() => useProcessSchedule(), {
+        wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),
+      });
+
+      await result.current(
+        makePayload(type, { prompt: { labels: [] } as unknown as PromptFormValues })
+      );
+
+      expect(labelReads).toBe(0);
+    }
+  );
+
   it('should POST to inventory_sources endpoint for inventory_source type', async () => {
     const { result } = renderHook(() => useProcessSchedule(), {
       wrapper: wrapper('/templates/:id/schedules/create', '/templates/10/schedules/create'),

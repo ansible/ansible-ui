@@ -187,7 +187,7 @@ export function PromptReviewDetails() {
       <PageDetail label={t('Job slicing')}>{job_slice_count}</PageDetail>
       <PageDetail label={t('Labels')} isEmpty={isEmpty(labels)}>
         <LabelGroup>
-          {labels?.map((label) => <Label key={label.id}>{label.name}</Label>)}
+          {labels?.map((label) => <Label key={`${label.id}:${label.name}`}>{label.name}</Label>)}
         </LabelGroup>
       </PageDetail>
       <PageDetail label={t('Job tags')} isEmpty={isEmpty(jobTags)}>

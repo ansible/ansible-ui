@@ -50,6 +50,15 @@ const mockSchedule = {
 };
 
 const server = setupServer(
+  http.get(awxAPI`/schedules/1/labels/`, ({ request }) => {
+    const secondPage = new URL(request.url).searchParams.get('page') === '2';
+    return HttpResponse.json({
+      results: secondPage
+        ? [{ id: 2, name: 'Second page label', organization: 7 }]
+        : [{ id: 1, name: 'Saved label', organization: 7 }],
+      next: secondPage ? null : `${awxAPI`/schedules/1/labels/`}?page=2`,
+    });
+  }),
   http.get(awxAPI`/schedules/1/`, () => {
     return HttpResponse.json(mockSchedule);
   }),
@@ -97,6 +106,20 @@ describe('ScheduleDetails', () => {
     expect(screen.getByText('Test Schedule')).toBeInTheDocument();
     expect(screen.getByText('Description')).toBeInTheDocument();
     expect(screen.getByText('Time zone')).toBeInTheDocument();
+  });
+
+  it('displays saved labels from every relationship page', async () => {
+    render(
+      <SWRConfig value={{ provider: () => new Map() }}>
+        <MemoryRouter initialEntries={['/templates/1/schedules/1']}>
+          <Routes>
+            <Route path="/templates/:id/schedules/:schedule_id" element={<ScheduleDetails />} />
+          </Routes>
+        </MemoryRouter>
+      </SWRConfig>
+    );
+    expect(await screen.findByText('Saved label')).toBeVisible();
+    expect(await screen.findByText('Second page label')).toBeVisible();
   });
 
   it('renders source control branch when scm_branch is set', async () => {

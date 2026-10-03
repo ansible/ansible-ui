@@ -209,7 +209,7 @@ describe('useGetSchedulePromptValues', () => {
   });
 
   describe('Edge Cases and Error Handling', () => {
-    it('should handle empty arrays in schedule values', async () => {
+    it('should preserve an explicit empty edit label relationship instead of template defaults', async () => {
       mockRequestGet.mockResolvedValue(schedule);
 
       const { result } = renderHook(() => useGetSchedulePromptValues());
@@ -221,8 +221,7 @@ describe('useGetSchedulePromptValues', () => {
       };
       const promptValues = await hookFunction(testConfig, [], [], []);
 
-      // Should fall back to provided schedule labels (empty array)
-      expect(promptValues.labels).toEqual([{ id: 1, name: 'alex label' }]);
+      expect(promptValues.labels).toEqual([]);
     });
 
     it('should handle empty objects in schedule values', async () => {
@@ -280,7 +279,7 @@ describe('useGetSchedulePromptValues', () => {
 
       const promptValues = await hookFunction(templateWithPrompts, [], [], []);
 
-      // Should use all defaults from template launch config
+      // Labels are schedule-owned; other fields use template defaults.
       expect(promptValues.extra_vars).toBe(templateLaunch.defaults.extra_vars);
       expect(promptValues.job_tags).toEqual([]);
       expect(promptValues.skip_tags).toEqual([]);
@@ -294,12 +293,7 @@ describe('useGetSchedulePromptValues', () => {
         },
       ]);
       expect(promptValues.instance_groups).toEqual([]);
-      expect(promptValues.labels).toEqual([
-        {
-          id: 1,
-          name: 'alex label',
-        },
-      ]);
+      expect(promptValues.labels).toEqual([]);
     });
 
     it('should not make any API calls when creating new schedule', async () => {
@@ -359,7 +353,7 @@ describe('useGetSchedulePromptValues', () => {
       expect(promptValues.instance_groups).toHaveLength(0);
     });
 
-    it('should use provided labels when creating new schedule', async () => {
+    it('should start creation with empty labels regardless of template defaults or supplied relationships', async () => {
       const templateWithLabelsPrompt: LaunchConfiguration = {
         ...templateLaunch,
         ask_labels_on_launch: true,
@@ -375,9 +369,7 @@ describe('useGetSchedulePromptValues', () => {
         labels.results as unknown as Label[]
       );
 
-      // Should use provided labels, not template defaults
-      expect(promptValues.labels).toEqual(templateLaunch.defaults.labels);
-      expect(promptValues.labels).toHaveLength(templateLaunch.defaults.labels.length);
+      expect(promptValues.labels).toEqual([]);
     });
 
     it('should handle string tag parsing from template defaults during creation', async () => {
@@ -538,10 +530,7 @@ describe('useGetSchedulePromptValues', () => {
       });
       expect(promptValues.limit).toBe('web_servers:db_servers');
       expect(promptValues.scm_branch).toBe('feature/deployment');
-      expect(promptValues.labels).toEqual([
-        { id: 10, name: 'production' },
-        { id: 11, name: 'critical' },
-      ]);
+      expect(promptValues.labels).toEqual([]);
 
       // Tags should be parsed into arrays
       expect(promptValues.job_tags).toEqual([
