@@ -1,101 +1,80 @@
+import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
+import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
-import { Credential } from '../../../interfaces/Credential';
-import { InventorySource } from '../../../interfaces/InventorySource';
-import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
-import { Schedule } from '../../../interfaces/Schedule';
-
+import { AwxError } from '../../../common/AwxError';
+import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
+import { ScheduleLabelsInput } from '../components/ScheduleLabelsInput';
 import { ScheduleResourceInputs } from '../components/ScheduleResourceInputs';
 import { ScheduleTypeInputs } from '../components/ScheduleTypeInputs';
-import { useGetSchedulePromptValues } from '../hooks/useGetSchedulePromptValues';
+import { useSchedulePromptDefaults } from '../hooks/useSchedulePromptDefaults';
 import { ScheduleFormWizard, ScheduleResources } from '../types';
-import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
-import { useTranslation } from 'react-i18next';
-import { Survey } from '../../../interfaces/Survey';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
-import { Label } from '../../../interfaces/Label';
-import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
-import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 
-/**
- *
- * @param {string}[resourceEndPoint] This used to fetch the resource to which the schedule belongs
- * @param {boolean}[isTopLevelSchedule] This is used to determine if we need to render the scheduleType
- * field and the resourceSelect field on the form.  If we did not get to the schedule create form from the top level
- * schedules list then we know which resource this schedule will belong to once it is created
- */
-
-export function ScheduleSelectStep(props: {
-  resourceEndPoint?: string;
-  isTopLevelSchedule?: boolean;
-}) {
-  const isTopLevelScheduleForm = props.isTopLevelSchedule;
+export function ScheduleSelectStep(
+  props: Readonly<{
+    resourceEndPoint?: string;
+    isTopLevelSchedule?: boolean;
+  }>
+) {
   const scheduleType = useWatch<ScheduleFormWizard, 'schedule_type'>({ name: 'schedule_type' });
   const resourceId = useWatch<ScheduleFormWizard, 'resourceId'>({ name: 'resourceId' });
   const resource = useWatch<ScheduleFormWizard, 'resource'>({ name: 'resource' });
-  const { id, source_id, schedule_id } = useParams<{
-    id?: string;
-    source_id: string;
-    schedule_id?: string;
-  }>();
+  const { id, source_id, schedule_id } = useParams();
   const { setValue } = useFormContext();
-  const { setStepData, setWizardData } = usePageWizard<ScheduleFormWizard>();
-  const getSchedulePromptValues = useGetSchedulePromptValues();
+  const { setStepData, setWizardData, wizardData } = usePageWizard<ScheduleFormWizard>();
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
+  const { error, ready } = useSchedulePromptDefaults(resourceId, scheduleType, schedule_id);
 
-  // When the resource changes,
-  // we need to set the promptStep default values to the launch configuration defaults
   useEffect(() => {
     if (!id || props.resourceEndPoint === undefined) return;
+    let cancelled = false;
     const getResource = async () => {
-      try {
-        let scheduleResource: ScheduleResources;
-        if (source_id) {
-          scheduleResource = await requestGet<InventorySource>(
-            `${props.resourceEndPoint ?? ''}${source_id}/`
-          );
-        } else {
-          scheduleResource = await requestGet<ScheduleResources>(
-            `${props.resourceEndPoint ?? ''}${id}/`
-          );
-        }
-        setWizardData((prev) => ({
-          ...prev,
+      const scheduleResource = await requestGet<ScheduleResources>(
+        `${props.resourceEndPoint ?? ''}${source_id || id}/`
+      );
+      if (cancelled) return;
+      setWizardData((previous) => ({
+        ...previous,
+        schedule_type: scheduleResource.type,
+        resource: scheduleResource,
+        resourceId: scheduleResource.id,
+      }));
+      setStepData((previous) => ({
+        ...previous,
+        details: {
+          ...previous.details,
           schedule_type: scheduleResource.type,
           resource: scheduleResource,
           resourceId: scheduleResource.id,
-        }));
-
-        setStepData((prev) => ({
-          ...prev,
-          details: {
-            ...prev.details,
-            schedule_type: scheduleResource.type,
-            resource: scheduleResource,
-            resourceId: scheduleResource.id || Number(id),
-          },
-        }));
-        setValue('resource', scheduleResource);
-        setValue('resourceId', scheduleResource.id);
-        setValue('schedule_type', scheduleResource.type);
-      } catch (error) {
-        HandleErrors(error as Error);
-      }
+        },
+      }));
+      setValue('resource', scheduleResource);
+      setValue('resourceId', scheduleResource.id);
+      setValue('schedule_type', scheduleResource.type);
     };
-
-    void getResource();
+    void getResource().catch((error: unknown) => {
+      if (cancelled) return;
+      const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+      alertToaster.addAlert({
+        variant: 'danger',
+        title: t('Failed to fetch the template for this schedule'),
+        children: [...genericErrors, ...fieldErrors].map((error) => (
+          <div key={String(error.message)}>{error.message}</div>
+        )),
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [
     alertToaster,
     id,
     props.resourceEndPoint,
-    resourceId,
     setStepData,
     setWizardData,
     setValue,
@@ -103,134 +82,13 @@ export function ScheduleSelectStep(props: {
     t,
   ]);
 
-  useEffect(() => {
-    async function updatePromptStep() {
-      if (
-        !resourceId ||
-        (scheduleType !== 'job_template' && scheduleType !== 'workflow_job_template')
-      ) {
-        return;
-      }
-      const urlId = resourceId || Number(id);
-      try {
-        const endPoint =
-          scheduleType === 'job_template'
-            ? awxAPI`/job_templates/${urlId?.toString()}/`
-            : awxAPI`/workflow_job_templates/${urlId.toString()}/`;
-        const resource = await requestGet<ScheduleResources>(endPoint);
-        const launchConfig = await requestGet<LaunchConfiguration>(`${endPoint}launch/`);
-        let credentials: Credential[] = [];
-        let instanceGroups: InstanceGroup[] = [];
-        let scheduleLabels: Label[] = [];
-        let surveySpec: Survey | undefined;
-        const surveyAnswers: { [key: string]: string | number | string[] } = {};
-        if (schedule_id) {
-          if (launchConfig.ask_credential_on_launch) {
-            const response = await requestGet<AwxItemsResponse<Credential>>(
-              awxAPI`/schedules/${schedule_id}/credentials/`
-            );
-            credentials = response.results;
-          }
-          if (launchConfig.ask_instance_groups_on_launch) {
-            const igs = await requestGet<AwxItemsResponse<InstanceGroup>>(
-              awxAPI`/schedules/${schedule_id}/instance_groups/`
-            );
-            instanceGroups = igs.results;
-          }
-          if (launchConfig.ask_labels_on_launch) {
-            const labels = await requestGet<AwxItemsResponse<Label>>(
-              awxAPI`/schedules/${schedule_id}/labels/`
-            );
-            scheduleLabels = labels.results;
-          }
-          if (launchConfig.survey_enabled) {
-            surveySpec = await requestGet<Survey>(`${endPoint}survey_spec/`);
-            // Fetch the schedule to get extra_data with survey answers
-            const scheduleData = await requestGet<Schedule>(awxAPI`/schedules/${schedule_id}/`);
-            // Extract survey answers from extra_data
-            if (surveySpec?.spec && scheduleData.extra_data) {
-              surveySpec.spec.forEach((spec) => {
-                const value = scheduleData.extra_data[spec.variable];
-                if (
-                  value !== undefined &&
-                  value !== null &&
-                  (typeof value === 'string' || typeof value === 'number' || Array.isArray(value))
-                ) {
-                  surveyAnswers[spec.variable] = value as string | number | string[];
-                }
-              });
-            }
-          }
-        }
-        const promptValues: PromptFormValues = await getSchedulePromptValues(
-          launchConfig,
-          credentials,
-          instanceGroups,
-          scheduleLabels,
-          surveySpec
-        );
-        // Single setStepData call that handles all updates
-        setStepData((prev) => ({
-          ...prev,
-          promptStep: {
-            ...prev.promptStep,
-            prompt: {
-              ...promptValues,
-            },
-            resource,
-            launch_config: launchConfig,
-          },
-          survey: Object.keys(surveyAnswers).length > 0 ? { survey: surveyAnswers } : prev.survey,
-          details: { ...prev.details, resourceId: urlId, resource },
-        }));
-        setWizardData((prev) => ({
-          ...prev,
-          launch_config: launchConfig,
-        }));
-        setValue('schedule_type', scheduleType);
-        setValue('launch_config', launchConfig);
-      } catch (error) {
-        HandleErrors(error as Error);
-      }
-    }
-    void updatePromptStep();
-  }, [
-    alertToaster,
-    getSchedulePromptValues,
-    id,
-    props.resourceEndPoint,
-    resourceId,
-    scheduleType,
-    schedule_id,
-    setStepData,
-    setValue,
-    t,
-    setWizardData,
-  ]);
-  if (isTopLevelScheduleForm) {
-    return (
-      <>
-        <ScheduleTypeInputs />
-        {resourceId || resource?.id ? <ScheduleResourceInputs /> : null}
-      </>
-    );
-  }
-  return resourceId || resource?.id ? <ScheduleResourceInputs /> : <LoadingState />;
-}
-
-export function HandleErrors(error: Error) {
-  const alertToaster = usePageAlertToaster();
-  const { t } = useTranslation();
-  const { genericErrors, fieldErrors } = awxErrorAdapter(error);
-  alertToaster.addAlert({
-    variant: 'danger',
-    title: t('Failed to fetch the template for this schedule'),
-    timeout: 5000,
-    children: (
-      <>
-        {genericErrors?.map((err) => <div key={err.message as string}>{err.message}</div>)}
-        {fieldErrors?.map((err) => <div key={err.message as string}>{err.message}</div>)}
-      </>
-    ),
-  });
+  if (error) return <AwxError error={error} />;
+  const hasResource = Boolean(resourceId || resource?.id);
+  return (
+    <>
+      {props.isTopLevelSchedule && <ScheduleTypeInputs />}
+      {hasResource ? <ScheduleResourceInputs /> : !props.isTopLevelSchedule && <LoadingState />}
+      {ready && !wizardData.launch_config?.ask_labels_on_launch && <ScheduleLabelsInput />}
+    </>
+  );
 }

@@ -44,6 +44,9 @@ export interface RuleFields {
   exceptions: RuleListItemType[] | [];
   endType: string | undefined;
 }
+export type ScheduleLabel = { name: string; id?: number; organization?: number | null };
+export type SchedulePromptValues = Omit<PromptFormValues, 'labels'> & { labels?: ScheduleLabel[] };
+
 export interface ScheduleFormWizard {
   resourceInventory?: number;
   name: string;
@@ -56,7 +59,7 @@ export interface ScheduleFormWizard {
   rules: RuleListItemType[];
   exceptions: RuleListItemType[] | [];
   launch_config: LaunchConfiguration | null;
-  prompt: PromptFormValues;
+  prompt: SchedulePromptValues;
   schedule_days_to_keep: number;
   survey: { [key: string]: string | number | string[] };
   enabled: boolean;
