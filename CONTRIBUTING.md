@@ -30,6 +30,10 @@ and [commit signature verification](https://docs.github.com/en/authentication/ma
 
 ## Text and Internationalization
 
+### Contributing translations
+
+If you are contributing translations rather than UI code, read the [translator contribution guide](docs/contributing/translations.md). It explains how to update locale catalogs, validate changes, and propose a new language.
+
 ## Internationalization
 
 Internationalization leans on the [i18next](https://www.i18next.com/) library. We use this library to mark our strings for translation.
