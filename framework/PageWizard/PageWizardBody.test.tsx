@@ -9,17 +9,17 @@ import { PageFormTextInput } from '../PageForm/Inputs/PageFormTextInput';
 import { PageWizardBody } from './PageWizardBody';
 import { PageWizardProvider } from './PageWizardProvider';
 
+function SetFormError() {
+  const { setError } = useFormContext();
+  useEffect(() => {
+    setError('name', { message: 'Invalid name' });
+  }, [setError]);
+  return null;
+}
+
 describe('PageWizardBody', () => {
   function LocationDisplay() {
     return <div data-testid="location">{useLocation().pathname}</div>;
-  }
-
-  function SetFormError() {
-    const { setError } = useFormContext();
-    useEffect(() => {
-      setError('name', { message: 'Invalid name' });
-    }, [setError]);
-    return null;
   }
 
   it('should render the provided element within a page section', () => {
@@ -154,6 +154,32 @@ describe('PageWizardBody', () => {
     const list = screen.getByRole('list');
     expect(within(list).getByText('First error')).toBeInTheDocument();
     expect(within(list).getByText('Second error')).toBeInTheDocument();
+  });
+
+  it('renders duplicate request errors as separate list items', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <PageWizardProvider
+          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+          onSubmit={() =>
+            Promise.reject(
+              Object.assign(new Error('Could not save'), {
+                json: { detail: 'Could not save: Repeated error\nRepeated error' },
+              })
+            )
+          }
+        >
+          <PageWizardBody onCancel={() => {}} />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+    expect(await screen.findAllByText('Repeated error')).toHaveLength(2);
+    expect(screen.queryByText('Could not save: Repeated error')).not.toBeInTheDocument();
   });
 
   it('renders an Error message when the request has no JSON payload', async () => {
