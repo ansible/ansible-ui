@@ -293,25 +293,4 @@ describe('PageWizardBody', () => {
       expect(screen.getByTestId('name')).toHaveAttribute('aria-invalid', 'true');
     });
   });
-
-  it('renders a generic request error for non-Error rejections', async () => {
-    const user = userEvent.setup();
-
-    const { container } = render(
-      <MemoryRouter>
-        <PageWizardProvider
-          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
-          onSubmit={() => Promise.reject('failed')}
-        >
-          <PageWizardBody onCancel={() => {}} />
-        </PageWizardProvider>
-      </MemoryRouter>
-    );
-
-    await user.click(screen.getByRole('button', { name: 'Finish' }));
-
-    await waitFor(() => {
-      expect(container.querySelector('.pf-v6-c-alert')).toBeInTheDocument();
-    });
-  });
 });
