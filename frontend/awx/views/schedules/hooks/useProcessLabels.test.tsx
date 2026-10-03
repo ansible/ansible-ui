@@ -269,7 +269,9 @@ describe('schedule label reconciliation', () => {
     const { genericErrors, fieldErrors } = awxErrorAdapter(error);
     expect(fieldErrors).toEqual([]);
     expect(error.message).toBe('Failed to remove labels');
-    expect(genericErrors[0].message).toBe('Permission denied\nPermission denied');
+    expect(genericErrors[0].message).toBe(
+      'Failed to remove labels: Permission denied\nPermission denied'
+    );
     expect(posts).toHaveLength(3);
     expect(posts.every((body) => body.disassociate)).toBe(true);
   });
@@ -304,7 +306,7 @@ describe('schedule label reconciliation', () => {
     if (!(error instanceof RequestError)) return;
     expect(error.message).toBe('Failed to add labels');
     expect(error.json).toEqual({
-      detail: 'LAB_INJECTED_FAILURE: Maximum number of labels reached.',
+      detail: 'Failed to add labels: LAB_INJECTED_FAILURE: Maximum number of labels reached.',
     });
     expect(current).toEqual([label(2)]);
     posts.length = 0;
