@@ -11,7 +11,7 @@ import { useScheduleSteps } from '../hooks/useScheduleSteps';
 import { ScheduleFormWizard } from '../types';
 
 // ponytail: Vitest resolves router entrypoints separately; share the real DOM router context until test aliases unify them.
-vi.mock('react-router', async () => vi.importActual('react-router-dom'));
+vi.mock('react-router', () => vi.importActual('react-router-dom'));
 
 const templateLabel = { id: 1, name: 'Template default', organization: 7 };
 const scheduleLabel = { id: 2, name: 'Schedule label', organization: 7 };

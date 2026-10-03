@@ -6,9 +6,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import type { Schedule } from '../../../interfaces/Schedule';
-import type { ScheduleFormWizard } from '../types';
+import type { ScheduleFormWizard, SchedulePromptValues as PromptFormValues } from '../types';
 import type { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
-import type { SchedulePromptValues as PromptFormValues } from '../types';
 import { useProcessSchedule } from './useProcessSchedules';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 
