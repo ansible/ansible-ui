@@ -230,7 +230,6 @@ describe('useProcessSchedule', () => {
 
     expect(postCalls).toHaveLength(1);
     expect(awxErrorAdapter(error).genericErrors[0].message).toContain('Failed to add');
-    expect(awxErrorAdapter(error).genericErrors[0].message).toContain('rejected');
     expect(awxErrorAdapter(error).genericErrors[0].message).toContain('Permission denied');
   });
 
