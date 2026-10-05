@@ -1,8 +1,14 @@
 import { HostMetric } from '../../../interfaces/HostMetric';
 
-/** Escape a value for inclusion in a CSV cell (RFC 4180). */
+const FORMULA_INJECTION_PREFIX = /^[=+\-@]/;
+
+/** Escape a value for inclusion in a CSV cell (RFC 4180 + Excel formula safety). */
 export function escapeCsvValue(value: string | number | null | undefined): string {
-  const str = value === null || value === undefined ? '' : String(value);
+  let str = value === null || value === undefined ? '' : String(value);
+  // Prevent spreadsheet formula injection when the CSV is opened in Excel.
+  if (FORMULA_INJECTION_PREFIX.test(str)) {
+    str = `'${str}`;
+  }
   if (/[",\n\r]/.test(str)) {
     return `"${str.replace(/"/g, '""')}"`;
   }

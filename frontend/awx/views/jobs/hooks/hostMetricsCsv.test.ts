@@ -35,6 +35,13 @@ describe('escapeCsvValue', () => {
     expect(escapeCsvValue('say "hi"')).toBe('"say ""hi"""');
     expect(escapeCsvValue('line1\nline2')).toBe('"line1\nline2"');
   });
+
+  it('should neutralize spreadsheet formula injection prefixes', () => {
+    expect(escapeCsvValue('=cmd')).toBe("'=cmd");
+    expect(escapeCsvValue('+1')).toBe("'+1");
+    expect(escapeCsvValue('-1')).toBe("'-1");
+    expect(escapeCsvValue('@sum')).toBe("'@sum");
+  });
 });
 
 describe('hostMetricsToCsv', () => {

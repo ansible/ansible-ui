@@ -15,7 +15,17 @@ export function useHostMetricsToolbarActions(options: {
   const { t } = useTranslation();
   const { onComplete, listUrl, itemCount } = options;
   const deleteHostMetrics = useDeleteHostMetrics(onComplete);
-  const downloadHostMetrics = useDownloadHostMetrics(listUrl);
+  const { downloadHostMetrics, isDownloading } = useDownloadHostMetrics(listUrl);
+
+  const downloadDisabledReason = (() => {
+    if (isDownloading) {
+      return t('Download in progress');
+    }
+    if (itemCount === 0) {
+      return t('No host metrics to download');
+    }
+    return undefined;
+  })();
 
   return useMemo<IPageAction<HostMetric>[]>(
     () => [
@@ -29,7 +39,7 @@ export function useHostMetricsToolbarActions(options: {
         onClick: () => {
           void downloadHostMetrics();
         },
-        isDisabled: !itemCount ? t('No host metrics to download') : undefined,
+        isDisabled: downloadDisabledReason,
         ouiaId: 'host-metrics-download-button',
       },
       {
@@ -41,6 +51,6 @@ export function useHostMetricsToolbarActions(options: {
         isDanger: true,
       },
     ],
-    [deleteHostMetrics, downloadHostMetrics, itemCount, t]
+    [deleteHostMetrics, downloadDisabledReason, downloadHostMetrics, t]
   );
 }

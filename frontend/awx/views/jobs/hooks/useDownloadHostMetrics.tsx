@@ -1,7 +1,7 @@
 import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
 import { downloadBlobFile } from '@ansible/ansible-ui-framework/utils/download-file';
 import { requestGet } from '@ansible/common-ui/crud/Data';
-import { useCallback } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { HostMetric } from '../../../interfaces/HostMetric';
@@ -37,8 +37,15 @@ export async function fetchAllHostMetrics(
 export function useDownloadHostMetrics(listUrl: string) {
   const { t } = useTranslation();
   const alertToaster = usePageAlertToaster();
+  const [isDownloading, setIsDownloading] = useState(false);
+  const isDownloadingRef = useRef(false);
 
-  return useCallback(async () => {
+  const downloadHostMetrics = useCallback(async () => {
+    if (isDownloadingRef.current) {
+      return;
+    }
+    isDownloadingRef.current = true;
+    setIsDownloading(true);
     try {
       const hosts = await fetchAllHostMetrics(listUrl);
       const csv = hostMetricsToCsv(hosts);
@@ -55,6 +62,11 @@ export function useDownloadHostMetrics(listUrl: string) {
         children: err instanceof Error ? err.message : t('An unknown error occurred.'),
         timeout: 5000,
       });
+    } finally {
+      isDownloadingRef.current = false;
+      setIsDownloading(false);
     }
   }, [listUrl, alertToaster, t]);
+
+  return { downloadHostMetrics, isDownloading };
 }

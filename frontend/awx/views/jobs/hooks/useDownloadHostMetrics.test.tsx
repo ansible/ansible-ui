@@ -83,7 +83,7 @@ describe('useDownloadHostMetrics', () => {
     const { result } = renderHook(() => useDownloadHostMetrics(listUrl));
 
     await act(async () => {
-      await result.current();
+      await result.current.downloadHostMetrics();
     });
 
     expect(urls).toHaveLength(2);
@@ -120,7 +120,7 @@ describe('useDownloadHostMetrics', () => {
     );
 
     await act(async () => {
-      await result.current();
+      await result.current.downloadHostMetrics();
     });
 
     expect(mockDownloadBlobFile).not.toHaveBeenCalled();
