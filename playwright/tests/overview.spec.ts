@@ -49,7 +49,11 @@ test('overview - dashboard cards', async ({ page }) => {
   }
 });
 
-test.skip('hosts resource counts should redirect correctly', async ({ page }) => {
+test('hosts resource counts should redirect correctly', async ({ page }) => {
+  test.skip(
+    true,
+    'Host count filter coverage is deferred until backend host-summary filtering is supported.'
+  );
   await expect(page.locator('h1').first()).toContainText(/Welcome to (?:the )?Ansible/);
 
   if (await page.locator('#platform-awx').isVisible()) {
