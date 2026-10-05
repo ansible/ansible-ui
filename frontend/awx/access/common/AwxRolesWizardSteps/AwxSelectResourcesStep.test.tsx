@@ -27,12 +27,12 @@ describe('AwxSelectResourcesStep', () => {
     expect(viewCall?.[1]).toBe('resources');
   });
 
-  it('uses an empty endpoint for an unknown resource type', () => {
+  it('does not configure an endpoint for an unknown resource type', () => {
     usePageWizard.mockReturnValue({ wizardData: { resourceType: 'awx.unknown' } });
 
     render(<AwxSelectResourcesStep userOrTeamName="Alex" />);
 
     const viewCall = useAwxMultiSelectListView.mock.calls.at(-1);
-    expect(viewCall?.[0]?.url).toBe('');
+    expect(viewCall?.[0]?.url).toBeUndefined();
   });
 });
