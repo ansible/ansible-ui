@@ -49,6 +49,7 @@ test('overview - dashboard cards', async ({ page }) => {
 });
 
 test('hosts resource counts should redirect correctly', async ({ page }) => {
+  // The backend does not yet support these host-summary filters; restore this coverage after that API behavior is fixed.
   test.skip(
     true,
     'Host count filter coverage is deferred until backend host-summary filtering is supported.'
