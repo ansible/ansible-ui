@@ -1,7 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 
-// Re-enable when the backend host-summary filter behavior is corrected.
 async function expectHostsPageWithStatusFilter(page: Page, status: 'ready' | 'failed') {
   const isReady = status === 'ready';
   const chipLabel = isReady ? 'Show only ready hosts' : 'Show only failed hosts';
