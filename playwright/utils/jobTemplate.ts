@@ -8,6 +8,7 @@ import { filterTable } from '../commands/filterTable';
 import { navigateTo } from '../commands/navigateTo';
 import { expectJobOutputSuccess } from '../commands/jobOutputStatus';
 import { waitForJobStatus } from '../commands/waitForJobStatus';
+import { waitForResourceCopyResponse } from './copyResourceName';
 
 export interface CreateJobTemplateOptions {
   name?: string;
@@ -385,9 +386,9 @@ export const JobTemplate = {
       await navigateTo(page, 'Automation Execution', 'Templates');
       await page.getByLabel('table view', { exact: true }).click();
 
-      const copyResponsePromise = page.waitForResponse(
-        (response) => response.url().includes('/copy/') && response.status() === 201
-      );
+      const copyResponsePromise = waitForResourceCopyResponse(page, jobTemplateName, {
+        urlIncludes: '/job_templates/',
+      });
 
       if (view === 'details') {
         await clickTableRow({ text: jobTemplateName }, page);
@@ -408,6 +409,8 @@ export const JobTemplate = {
         await page.getByRole('menuitem', { name: 'Duplicate template' }).click();
       }
 
+      const copiedName = await copyResponsePromise;
+
       await expect(page.locator('h4')).toContainText(
         `Success alert:${jobTemplateName} duplicated.`,
         {
@@ -415,9 +418,7 @@ export const JobTemplate = {
         }
       );
 
-      const copyResponse = await copyResponsePromise;
-      const copiedTemplate = (await copyResponse.json()) as JobTemplateType;
-      return copiedTemplate.name;
+      return copiedName;
     },
   },
 } as const;

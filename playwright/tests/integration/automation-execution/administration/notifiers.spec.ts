@@ -8,6 +8,7 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupBefore, setupAfter } from '@ansible/playwright/commands/setup';
+import { waitForResourceCopyResponse } from '@ansible/playwright/utils/copyResourceName';
 
 test.beforeEach(setupBefore({ path: '/execution/administration/notifiers' }));
 test.afterEach(setupAfter);
@@ -49,18 +50,13 @@ test.describe('Notifiers - List View', () => {
     await expect(row).toBeVisible();
     await row.getByTestId('actions-dropdown').click();
 
-    const copyResponsePromise = page.waitForResponse(
-      (response) =>
-        response.url().includes('/notification_templates/') &&
-        response.url().includes('/copy/') &&
-        response.status() === 201
-    );
+    const copyResponsePromise = waitForResourceCopyResponse(page, originalName, {
+      urlIncludes: '/notification_templates/',
+    });
 
     await page.getByTestId('duplicate-notifier').click();
 
-    const copyResponse = await copyResponsePromise;
-    const copiedNotifier = (await copyResponse.json()) as { name: string; id: number };
-    const copiedName = copiedNotifier.name;
+    const copiedName = await copyResponsePromise;
 
     await expect(page.getByTestId('alert-toaster')).toContainText('duplicated');
 
@@ -388,18 +384,13 @@ test.describe('Notifiers - Details Page', () => {
       await clickTableRow({ text: notifierName }, page);
       await expect(page.getByRole('heading', { name: notifierName, exact: true })).toBeVisible();
 
-      const copyResponsePromise = page.waitForResponse(
-        (response) =>
-          response.url().includes('/notification_templates/') &&
-          response.url().includes('/copy/') &&
-          response.status() === 201
-      );
+      const copyResponsePromise = waitForResourceCopyResponse(page, notifierName, {
+        urlIncludes: '/notification_templates/',
+      });
 
       await clickPageAction('Duplicate notifier', page);
 
-      const copyResponse = await copyResponsePromise;
-      const copiedNotifier = (await copyResponse.json()) as { name: string; id: number };
-      const copiedName = copiedNotifier.name;
+      const copiedName = await copyResponsePromise;
 
       await expect(page.getByTestId('alert-toaster')).toContainText('duplicated');
 
