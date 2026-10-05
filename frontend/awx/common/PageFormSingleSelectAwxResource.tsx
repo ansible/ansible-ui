@@ -47,7 +47,7 @@ export function PageFormSingleSelectAwxResource<
     labelHelp?: string;
     queryParams?: QueryParams;
     summaryFieldsPath?: string;
-    noResultsMessage?: string;
+    noResultsMessage?: React.ReactNode;
     enableBrowse?: boolean;
   }>
 ) {
