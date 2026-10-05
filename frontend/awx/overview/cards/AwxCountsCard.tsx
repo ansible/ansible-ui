@@ -22,13 +22,17 @@ export function AwxCountsCard(props: { data: IAwxDashboardData }) {
                   label: t('Ready'),
                   count: data.hosts.total - data.hosts.failed,
                   color: successfulColor,
-                  link: getPageUrl(AwxRoute.Hosts),
+                  link: getPageUrl(AwxRoute.Hosts, {
+                    query: { ready_status: ['True'] },
+                  }),
                 },
                 {
                   label: t('Failed'),
                   count: data.hosts.failed,
                   color: failedColor,
-                  link: getPageUrl(AwxRoute.Hosts),
+                  link: getPageUrl(AwxRoute.Hosts, {
+                    query: { failed_status: ['True'] },
+                  }),
                 },
               ]
             : undefined,
