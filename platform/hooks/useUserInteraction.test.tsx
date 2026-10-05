@@ -1,5 +1,4 @@
 import { renderHook } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { useUserInteraction } from './useUserInteraction';
 
@@ -8,20 +7,19 @@ describe('useUserInteraction', () => {
     vi.useRealTimers();
   });
 
-  test('should invoke callback on pointer movement and throttle subsequent events', async () => {
+  test('should invoke callback on pointer movement and throttle subsequent events', () => {
     vi.useFakeTimers();
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     const callback = vi.fn();
 
     renderHook(() => useUserInteraction(500, callback));
 
-    await user.pointer({ target: document.body, coords: { x: 0, y: 0 } });
-    await user.pointer({ target: document.body, coords: { x: 1, y: 1 } });
+    document.dispatchEvent(new Event('pointermove'));
+    document.dispatchEvent(new Event('pointermove'));
 
     expect(callback).toHaveBeenCalledTimes(1);
 
     vi.advanceTimersByTime(500);
-    await user.pointer({ target: document.body, coords: { x: 2, y: 2 } });
+    document.dispatchEvent(new Event('pointermove'));
 
     expect(callback).toHaveBeenCalledTimes(2);
   });
@@ -31,7 +29,7 @@ describe('useUserInteraction', () => {
     const callback = vi.fn();
     const { unmount } = renderHook(() => useUserInteraction(1000, callback));
 
-    dispatchPointerMove();
+    document.dispatchEvent(new Event('pointermove'));
     expect(callback).toHaveBeenCalledTimes(1);
 
     unmount();
@@ -47,7 +45,7 @@ describe('useUserInteraction', () => {
     });
 
     rerender({ cb: second });
-    dispatchPointerMove();
+    document.dispatchEvent(new Event('pointermove'));
 
     expect(first).not.toHaveBeenCalled();
     expect(second).toHaveBeenCalledTimes(1);
