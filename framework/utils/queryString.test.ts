@@ -248,18 +248,22 @@ describe('queryString', () => {
 
     it('should append only the first activity stream value to object2', () => {
       const filter: IToolbarFilter = {
-        type: ToolbarFilterType.SingleText,
-        comparison: 'contains',
+        type: ToolbarFilterType.MultiSelect,
         key: 'name',
         label: 'Name',
         query: 'object1__in',
+        placeholder: 'Select a value',
+        options: [
+          { label: 'Foo', value: 'foo' },
+          { label: 'Bar', value: 'bar' },
+        ],
       };
       const state: IFilterState = {
-        name: ['foo', 'bar'],
+        name: ['foo'],
       };
 
       expect(filtersToSearchObj([filter], state).toString()).to.equal(
-        'or__object1__in=foo&or__object1__in=bar&or__object2__in=foo'
+        'or__object1__in=foo&or__object2__in=foo'
       );
     });
 
