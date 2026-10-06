@@ -57,6 +57,7 @@ export function PageAsyncMultiSelect<
   const [open, setOpen] = useState(false);
 
   const nextRef = useRef<number | string | undefined>();
+  const optionsRef = useRef<PageSelectOption<ValueT>[] | null>();
   const [searchValue, setSearchValue] = useState<string>('');
   const setSearch = useDebounce((search: string) => setSearchValue(search), 200);
 
@@ -83,12 +84,11 @@ export function PageAsyncMultiSelect<
         if (!result.remaining) {
           setAllLoaded(true);
         }
-        setOptions((prevOptions) => {
-          if (abortController.signal.aborted) return prevOptions;
-          const newOptions = mergePageSelectOptions(prevOptions, result.options, true);
-          setTotal(result.remaining + newOptions.length);
-          return newOptions;
-        });
+        const newOptions = mergePageSelectOptions(optionsRef.current, result.options, true);
+        if (abortController.signal.aborted) return;
+        optionsRef.current = newOptions;
+        setOptions(newOptions);
+        setTotal(result.remaining + newOptions.length);
       })
       .catch((err) => {
         if (abortController.signal.aborted) return;
@@ -116,6 +116,7 @@ export function PageAsyncMultiSelect<
       e.stopPropagation();
       setTotal(0);
       setOptions([]);
+      optionsRef.current = [];
       nextRef.current = undefined;
       queryHandler();
     },
@@ -123,12 +124,15 @@ export function PageAsyncMultiSelect<
   );
 
   useEffect(() => {
-    if (open) {
-      setTotal(0);
-      setOptions([]);
-      nextRef.current = undefined;
-      queryHandler();
+    if (!open) {
+      activeAbortController.current?.abort();
+      return;
     }
+    setTotal(0);
+    setOptions([]);
+    optionsRef.current = [];
+    nextRef.current = undefined;
+    return queryHandler();
   }, [open, queryHandler]);
 
   const footer = (

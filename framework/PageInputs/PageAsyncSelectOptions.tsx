@@ -67,6 +67,16 @@ export function mergePageSelectOptions<ValueT>(
   return mergedOptions;
 }
 
-export function deferPageSelect<ValueT>(onSelect: (value: ValueT | null) => void, value: ValueT) {
-  setTimeout(() => onSelect(value), 0);
+export function deferPageSelect<ValueT>(
+  onSelect: (value: ValueT | null) => void,
+  value: ValueT,
+  signal?: AbortSignal
+) {
+  const timeoutId = setTimeout(() => {
+    if (signal?.aborted) return;
+    onSelect(value);
+  }, 0);
+  const cancel = () => clearTimeout(timeoutId);
+  signal?.addEventListener('abort', cancel, { once: true });
+  return cancel;
 }
