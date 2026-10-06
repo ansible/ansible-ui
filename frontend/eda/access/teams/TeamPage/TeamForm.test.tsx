@@ -16,6 +16,10 @@ const mockOrganizations = {
 };
 
 const server = setupServer(
+  http.options(edaAPI`/teams/`, () =>
+    HttpResponse.json({ actions: { POST: { name: { type: 'string' } } } })
+  ),
+  http.options(edaAPI`/teams/5/`, () => HttpResponse.json({ actions: { PATCH: { name: {} } } })),
   http.options(edaAPI`/organizations/`, () => {
     return HttpResponse.json({ actions: { GET: {} } });
   }),

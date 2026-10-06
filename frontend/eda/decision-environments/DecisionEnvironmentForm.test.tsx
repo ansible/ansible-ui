@@ -2,10 +2,20 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { edaAPI } from '../common/eda-utils';
-import { CreateDecisionEnvironment } from './DecisionEnvironmentForm';
+import { CreateDecisionEnvironment, EditDecisionEnvironment } from './DecisionEnvironmentForm';
+
+const mockDecisionEnvironment = {
+  id: 1,
+  name: 'Test DE',
+  description: 'Description',
+  image_url: 'quay.io/test/de:latest',
+  organization: { id: 1, name: 'Default' },
+  eda_credential: null,
+  pull_policy: 'always',
+};
 
 const mockOptionsResponse = {
   name: 'Decision Environment List',
@@ -75,7 +85,20 @@ const server = setupServer(
   }),
   http.options(edaAPI`/decision-environments/`, () => {
     return HttpResponse.json(mockOptionsResponse);
-  })
+  }),
+  http.get(edaAPI`/decision-environments/1/`, () => HttpResponse.json(mockDecisionEnvironment)),
+  http.options(edaAPI`/decision-environments/1/`, () =>
+    HttpResponse.json({
+      actions: {
+        PATCH: {
+          name: { type: 'string' },
+          pull_policy: {
+            choices: [['always', 'Always']],
+          },
+        },
+      },
+    })
+  )
 );
 
 describe('Create Decision Environment Form', () => {
@@ -137,5 +160,71 @@ describe('Create Decision Environment Form', () => {
     expect(
       within(screen.getByTestId('organization_id-form-group')).getByText('*')
     ).toBeInTheDocument();
+  });
+
+  it('should render pull policy options from tuple-style OPTIONS choices', async () => {
+    server.use(
+      http.options(edaAPI`/decision-environments/`, () =>
+        HttpResponse.json({
+          ...mockOptionsResponse,
+          actions: {
+            POST: {
+              ...mockOptionsResponse.actions.POST,
+              pull_policy: {
+                choices: [['missing', 'If not present']],
+              },
+            },
+          },
+        })
+      )
+    );
+
+    render(
+      <MemoryRouter>
+        <CreateDecisionEnvironment />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Pull/i })).toBeInTheDocument();
+    });
+  });
+
+  it('should render edit form when PATCH is allowed', async () => {
+    render(
+      <MemoryRouter initialEntries={['/decision-environments/edit/1']}>
+        <Routes>
+          <Route path="/decision-environments/edit/:id" element={<EditDecisionEnvironment />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Edit Test DE/i, level: 1 })).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('button', { name: /Save decision environment/i })).toBeInTheDocument();
+  });
+
+  it('should show read-only warning when OPTIONS has no PATCH action', async () => {
+    server.use(
+      http.options(edaAPI`/decision-environments/1/`, () =>
+        HttpResponse.json({ actions: { GET: {} } })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/decision-environments/edit/1']}>
+        <Routes>
+          <Route path="/decision-environments/edit/:id" element={<EditDecisionEnvironment />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/you do not have permissions to edit this decision environment/i)
+      ).toBeInTheDocument();
+    });
   });
 });
