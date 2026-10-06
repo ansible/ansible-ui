@@ -1,5 +1,6 @@
 import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { getCopyResourceName } from '@ansible/common-ui/utils/copyResourceName';
 import { AlertProps } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -17,7 +18,7 @@ export function useCopyNotifier(onComplete: () => void) {
       timeout: 2000,
     };
     postRequest(awxAPI`/notification_templates/${notification.id.toString()}/copy/`, {
-      name: `${notification.name} @ ${new Date().toTimeString().substring(0, 8)}`,
+      name: getCopyResourceName(notification.name),
     })
       .then(() => {
         alertToaster.addAlert(alert);
