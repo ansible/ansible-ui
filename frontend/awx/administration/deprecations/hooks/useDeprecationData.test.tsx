@@ -954,4 +954,148 @@ describe('getDeprecationOccurrences', () => {
     ]);
     expect(occurrences).toEqual([]);
   });
+
+  it('handles deprecated events with bare text (no DEPRECATION_MARKER)', () => {
+    const occurrences = getDeprecationOccurrences([
+      event({
+        id: 1,
+        counter: 1,
+        event: 'deprecated',
+        stdout: 'Some plain deprecation text without the marker',
+        task: 'Install packages',
+      }),
+    ]);
+    expect(occurrences).toEqual([
+      { text: 'Some plain deprecation text without the marker', task: 'Install packages' },
+    ]);
+  });
+});
+
+describe('extractDeprecationType', () => {
+  it('should extract and truncate long deprecation messages at word boundary', async () => {
+    const longMessage =
+      '[DEPRECATION WARNING]: This is a very long deprecation message that exceeds eighty characters and needs to be truncated at a word boundary to fit within the limit. This feature will be removed in version 2.20.';
+    const mockEvents = {
+      count: 1,
+      results: [
+        {
+          id: 1,
+          event: 'deprecated',
+          stdout: longMessage,
+          start_line: 1,
+          task: 'Long task',
+          play: 'main',
+          playbook: 'site.yml',
+          created: '2024-01-01T00:00:00Z',
+          job: 1,
+        },
+      ],
+    };
+
+    server.use(
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({ results: [{ id: 1, summary_fields: {} }], count: 1 })
+      ),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEvents))
+    );
+
+    const { result } = renderHook(() => useDeprecationData());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    const extractedType = result.current.data?.deprecations[0].type;
+    expect(extractedType).toBeDefined();
+    expect(extractedType!.length).toBeLessThanOrEqual(80);
+    expect(extractedType).not.toContain('This feature will be removed');
+  });
+
+  it('should remove trailing period from extracted deprecation message', async () => {
+    const messageWithPeriod =
+      '[DEPRECATION WARNING]: The ansible.builtin.command module is deprecated. This feature will be removed in version 2.20.';
+    const mockEvents = {
+      count: 1,
+      results: [
+        {
+          id: 1,
+          event: 'deprecated',
+          stdout: messageWithPeriod,
+          start_line: 1,
+          task: 'Run command',
+          play: 'main',
+          playbook: 'site.yml',
+          created: '2024-01-01T00:00:00Z',
+          job: 1,
+        },
+      ],
+    };
+
+    server.use(
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({ results: [{ id: 1, summary_fields: {} }], count: 1 })
+      ),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEvents))
+    );
+
+    const { result } = renderHook(() => useDeprecationData());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.data?.deprecations[0].type).toBe(
+      'The ansible.builtin.command module is deprecated'
+    );
+  });
+});
+
+describe('getSeverity', () => {
+  it('should assign cool severity for counts 1-10', async () => {
+    const events = Array.from({ length: 5 }, (_, i) => ({
+      id: i + 400,
+      event: 'deprecated',
+      stdout: 'Using with_items on yum module is deprecated',
+      start_line: i,
+      task: 'Install',
+      play: 'main',
+      playbook: 'site.yml',
+      created: '2024-01-01T00:00:00Z',
+      job: 1,
+    }));
+
+    server.use(
+      http.get(awxAPI`/jobs/`, () =>
+        HttpResponse.json({
+          results: [{ id: 1, summary_fields: {} }],
+          count: 1,
+        })
+      ),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () =>
+        HttpResponse.json({ count: events.length, results: events })
+      )
+    );
+
+    const { result } = renderHook(() => useDeprecationData());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.data?.deprecations[0].severity).toBe('cool');
+  });
+});
+
+describe('useDeprecationData refresh', () => {
+  it('should allow manual refresh of data', async () => {
+    let requestCount = 0;
+    server.use(
+      http.get(awxAPI`/jobs/`, () => {
+        requestCount++;
+        return HttpResponse.json(mockJobsResponse);
+      }),
+      http.get(awxAPI`/jobs/:jobId/job_events/`, () => HttpResponse.json(mockEventsWithItems))
+    );
+
+    const { result } = renderHook(() => useDeprecationData());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(requestCount).toBe(1);
+
+    result.current.refresh();
+    await waitFor(() => expect(result.current.isRefreshing).toBe(false));
+
+    expect(requestCount).toBe(2);
+  });
 });
