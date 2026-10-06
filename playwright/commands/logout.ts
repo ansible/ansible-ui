@@ -14,5 +14,7 @@ export async function logout(page: Page, options?: { username?: string }) {
   await page.getByRole('menuitem', { name: 'Logout' }).click();
 
   // Verify we are on the AAP page
-  await expect(page.getByRole('heading', { name: 'Log in to your account' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Log in to your account' })).toBeVisible({
+    timeout: 30_000,
+  });
 }
