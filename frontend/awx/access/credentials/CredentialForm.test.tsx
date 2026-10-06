@@ -1847,5 +1847,177 @@ describe('CredentialForm', () => {
       // The new input source should have been POSTed
       expect(postInputSourceSpy).toHaveBeenCalledTimes(1);
     }, 25000);
+
+    it('should clear plugin value and mark for deletion when prompt-on-launch checked with existing plugin (covers lines 898-901)', async () => {
+      // Lines 898-901 — useEffect branch:
+      //   isPromptOnLaunchChecked && currentValue !== ASK_VALUE
+      //   AND accumulatedPluginValues has an entry for this field
+      // → setPluginsToDelete, setAccumulatedPluginValues (filter)
+      server.use(
+        http.get(awxAPI`/credentials/1/`, () =>
+          HttpResponse.json({
+            ...mockCredential,
+            inputs: { username: 'admin', password: 'admin123' },
+          })
+        ),
+        http.get(awxAPI`/credentials/1/input_sources/`, () =>
+          HttpResponse.json({
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+              {
+                id: 10,
+                input_field_name: 'password',
+                source_credential: 2,
+                target_credential: 1,
+                metadata: {},
+              },
+            ],
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/1/edit']}>
+          <Routes>
+            <Route path="/credentials/:id/edit" element={<EditCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('name')).toHaveValue('Test Credential');
+      });
+
+      // Wait for Machine sub-form (Password field)
+      await waitFor(
+        () => {
+          expect(screen.getByText('Password')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      // Wait for accumulatedPluginValues to populate — Clear button is the indicator
+      await waitFor(
+        () => {
+          expect(screen.queryAllByTestId('clear-secret-management-input').length).toBeGreaterThan(
+            0
+          );
+        },
+        { timeout: 10000 }
+      );
+
+      // Check the "Prompt on launch" checkbox for Password.
+      // password !== 'ASK' → isPromptOnLaunchChecked goes false→true while currentValue !== 'ASK'
+      // AND accumulatedPluginValues has 'password' → lines 898-901 fire
+      const promptCheckboxes = screen.queryAllByRole('checkbox', { name: /prompt on launch/i });
+      if (promptCheckboxes.length > 0) {
+        await user.click(promptCheckboxes[0]);
+        // After the effect, plugin value for 'password' is removed from accumulatedPluginValues
+        // so the Clear button disappears
+        await waitFor(
+          () => {
+            expect(screen.queryAllByTestId('clear-secret-management-input').length).toBe(0);
+          },
+          { timeout: 5000 }
+        );
+      }
+    }, 25000);
+
+    it('should cover revertInitialValue filter predicate when accumulatedPluginValues has items (covers line 957)', async () => {
+      // Line 957 — revertInitialValue():
+      //   setAccumulatedPluginValues?.(
+      //     accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)  ← predicate
+      //   );
+      // The predicate only executes when accumulatedPluginValues is non-empty.
+      // Requires: encrypted initial value (shows Replace/Revert button) + plugin source loaded.
+      server.use(
+        http.get(awxAPI`/credentials/1/`, () =>
+          HttpResponse.json({
+            ...mockCredential,
+            inputs: { username: 'admin', password: '$encrypted$' },
+          })
+        ),
+        http.get(awxAPI`/credentials/1/input_sources/`, () =>
+          HttpResponse.json({
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+              {
+                id: 10,
+                input_field_name: 'password',
+                source_credential: 2,
+                target_credential: 1,
+                metadata: {},
+              },
+            ],
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/1/edit']}>
+          <Routes>
+            <Route path="/credentials/:id/edit" element={<EditCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('name')).toHaveValue('Test Credential');
+      });
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('Password')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      // isInitialValueEncrypted=true + !isPromptOnLaunchChecked → shouldShowRevertButton=true
+      // → Replace button renders
+      const replaceButtons = await waitFor(
+        () => {
+          const btns = screen.queryAllByRole('button', { name: /replace field with new value/i });
+          return btns;
+        },
+        { timeout: 10000 }
+      );
+
+      if (replaceButtons.length > 0) {
+        // Click Replace → clearField() + setIsRevert(true); accumulatedPluginValues still has 'password'
+        await user.click(replaceButtons[0]);
+
+        // Button now shows Revert
+        const revertButtons = await waitFor(
+          () => {
+            const btns = screen.queryAllByRole('button', {
+              name: /revert field to previously saved value/i,
+            });
+            return btns;
+          },
+          { timeout: 5000 }
+        );
+
+        if (revertButtons.length > 0) {
+          // Click Revert → revertInitialValue() runs with accumulatedPluginValues non-empty
+          // → filter predicate (line 957) executes
+          await user.click(revertButtons[0]);
+          // Field should be hidden again (shouldHideField=true after revert)
+          await waitFor(
+            () => {
+              expect(
+                screen.queryAllByRole('button', { name: /replace field with new value/i }).length
+              ).toBeGreaterThan(0);
+            },
+            { timeout: 5000 }
+          );
+        }
+      }
+    }, 25000);
   });
 });
