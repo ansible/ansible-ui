@@ -23,7 +23,7 @@ function appendFieldErrors(
     return;
   }
   if (Array.isArray(value)) {
-    const messages = value.map((item) => String(item));
+    const messages = value.map(String);
     if (messages.length === 0) {
       return;
     }
@@ -41,7 +41,9 @@ function appendFieldErrors(
     }
     return;
   }
-  fieldErrors.push({ name: fieldName, message: String(value) });
+  if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+    fieldErrors.push({ name: fieldName, message: value.toString() });
+  }
 }
 
 export const edaErrorAdapter = (error: unknown): ErrorOutput => {

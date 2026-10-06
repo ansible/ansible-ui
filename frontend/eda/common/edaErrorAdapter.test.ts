@@ -127,6 +127,18 @@ describe('edaErrorAdapter', () => {
     const result = edaErrorAdapter(error);
     expect(result.fieldErrors).toEqual([{ name: 'config.timeout', message: 'Must be positive' }]);
   });
+
+  it('should stringify primitive field error values', () => {
+    const error = new RequestError('Validation failed', undefined, 400, {}, { retries: 0 });
+    const result = edaErrorAdapter(error);
+    expect(result.fieldErrors).toEqual([{ name: 'retries', message: '0' }]);
+  });
+
+  it('should ignore empty validation arrays', () => {
+    const error = new RequestError('Validation failed', undefined, 400, {}, { name: [] });
+    const result = edaErrorAdapter(error);
+    expect(result.fieldErrors.length).toBe(0);
+  });
 });
 
 describe('useEdaErrorMessageParser', () => {
