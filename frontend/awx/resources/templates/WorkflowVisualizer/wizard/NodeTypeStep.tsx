@@ -211,8 +211,12 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                   prompts?.extra_vars && prompts.extra_vars !== ''
                     ? prompts.extra_vars
                     : (launchConfigValue?.extra_vars ?? ''),
-                skip_tags: prompts?.skip_tags ?? launchConfigValue?.skip_tags ?? [],
-                job_tags: prompts?.job_tags ?? launchConfigValue?.job_tags ?? [],
+                skip_tags: prompts?.skip_tags?.length
+                  ? prompts.skip_tags
+                  : (launchConfigValue?.skip_tags ?? []),
+                job_tags: prompts?.job_tags?.length
+                  ? prompts.job_tags
+                  : (launchConfigValue?.job_tags ?? []),
                 instance_groups: [
                   ...(prompts?.instance_groups ?? []),
                   ...(launchConfigValue?.instance_groups ?? []),
