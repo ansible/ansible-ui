@@ -1,8 +1,8 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { delay, http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { ReactNode } from 'react';
-import { SWRConfig } from 'swr';
+import { SWRConfig, useSWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import type { IAutomationDashboardCollectionStatus } from '../types';
@@ -241,8 +241,8 @@ describe('mapLeaderboardReport', () => {
       const report: ILeaderboardReport = {
         ...MOCK_LEADERBOARD_REPORT,
         organization_leaderboard: {
-          ...MOCK_LEADERBOARD_REPORT.organization_leaderboard,
           user_organization_rank: 27,
+          total_organizations: 42,
           leaderboard: [
             { rank: 1, name: 'Platform Engineering', runs: 2840, user_organization: false },
             { rank: 2, name: 'Security Operations', runs: 1923, user_organization: false },
@@ -287,6 +287,29 @@ describe('mapLeaderboardReport', () => {
       assertLeaderboardsContract(data);
     });
 
+    test('should map a report for a user in no organization (null org_streak and user_organization_rank) without throwing', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        org_streak: null,
+        organization_leaderboard: {
+          user_organization_rank: null,
+          total_organizations: 42,
+          leaderboard: [
+            { rank: 1, name: 'Platform Engineering', runs: 2840, user_organization: false },
+            { rank: 2, name: 'Security Operations', runs: 1923, user_organization: false },
+          ],
+        },
+      };
+
+      const data = mapLeaderboardReport(report);
+
+      expect(data.atAGlance.orgStreakDays).toBe(0);
+      expect(data.streakCalendar.every((day) => day.orgRuns === 0)).toBe(true);
+      expect(data.organizationLeaderboard.every((org) => !org.isUserOrg)).toBe(true);
+      expect(data.currentOrgStanding).toEqual({ rank: 0, totalRuns: 0 });
+      assertLeaderboardsContract(data);
+    });
+
     test('should tolerate an activity level whose leaderboard is null', () => {
       const report: ILeaderboardReport = {
         ...MOCK_LEADERBOARD_REPORT,
@@ -299,6 +322,23 @@ describe('mapLeaderboardReport', () => {
 
       expect(data.dimensions.breadth).toEqual({ score: null, rank: 5, totalRanked: 10 });
       expect(data.dimensionLeaderboards.breadth).toEqual([]);
+    });
+
+    test('should default to zeros when the summary counts and organization leaderboard are missing', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        job_runs: undefined,
+        active_organizations: null,
+        organization_leaderboard: undefined,
+      };
+
+      const data = mapLeaderboardReport(report);
+
+      expect(data.atAGlance.jobsRun).toBe(0);
+      expect(data.atAGlance.activeOrganizations).toBe(0);
+      expect(data.organizationLeaderboard).toEqual([]);
+      expect(data.currentOrgStanding).toEqual({ rank: 0, totalRuns: 2840 });
+      assertLeaderboardsContract(data);
     });
   });
 
@@ -471,6 +511,82 @@ describe('useAutomationLeaderboardsView', () => {
     expect(result.current.error).toBeUndefined();
     expect(result.current.lastSyncedAt).toBeNull();
     expect(result.current.atAGlance.jobsRun).toBe(1234);
+  });
+
+  test('should return empty-window defaults and a null lastSyncedAt when the report is empty', async () => {
+    mockEndpoints({ leaderboard: HttpResponse.json({}) });
+
+    const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.error).toBeUndefined();
+    expect(result.current.lastSyncedAt).toBeNull();
+    expect(result.current.organizationLeaderboard).toEqual([]);
+    assertLeaderboardsContract(result.current);
+  });
+
+  test.each([
+    ['a JSON string', '<html>Sign in</html>'],
+    ['null', null],
+    ['an empty string', ''],
+    ['0', 0],
+    ['false', false],
+    ['an array', []],
+  ])(
+    'should surface an error, not the empty state, when the report body is %s',
+    async (_, body) => {
+      mockEndpoints({ leaderboard: HttpResponse.json(body) });
+
+      const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+      expect(result.current.error?.message).toBe(
+        'The leaderboard report response is not a valid report.'
+      );
+      expect(result.current.lastSyncedAt).toBe('2026-09-01T14:00:00.000Z');
+      expect(result.current.organizationLeaderboard).toEqual([]);
+      assertLeaderboardsContract(result.current);
+    }
+  );
+
+  test('should surface the request error, not the invalid-report error, when a refetch of an invalid body fails', async () => {
+    mockEndpoints({ leaderboard: HttpResponse.json('<html>Sign in</html>') });
+
+    const { result } = renderHook(
+      () => ({ view: useAutomationLeaderboardsView(), swrConfig: useSWRConfig() }),
+      { wrapper }
+    );
+
+    await waitFor(() =>
+      expect(result.current.view.error?.message).toBe(
+        'The leaderboard report response is not a valid report.'
+      )
+    );
+
+    mockEndpoints({ leaderboard: HttpResponse.json({}, { status: 500 }) });
+    await act(() => result.current.swrConfig.mutate(metricsAPI`/dashboard_reports/leaderboard/`));
+
+    await waitFor(() =>
+      expect(result.current.view.error?.message).not.toBe(
+        'The leaderboard report response is not a valid report.'
+      )
+    );
+    expect(result.current.view.error).toBeInstanceOf(Error);
+  });
+
+  test('should map a partial report without throwing', async () => {
+    mockEndpoints({ leaderboard: HttpResponse.json({ job_runs: 5 }) });
+
+    const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.error).toBeUndefined();
+    expect(result.current.atAGlance.jobsRun).toBe(5);
+    expect(result.current.lastSyncedAt).toBe('2026-09-01T14:00:00.000Z');
+    assertLeaderboardsContract(result.current);
   });
 
   test('should still resolve lastSyncedAt from collection_status even when the leaderboard request fails', async () => {

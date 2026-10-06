@@ -70,13 +70,15 @@ export function AutomationAtAGlance() {
                 gap: 4,
               }}
             >
-              <Icon
-                size="sm"
-                status="custom"
-                className="automation-dashboard-featured-template-star"
-              >
-                <StarIcon />
-              </Icon>
+              {atAGlance.featuredTemplate.name && (
+                <Icon
+                  size="sm"
+                  status="custom"
+                  className="automation-dashboard-featured-template-star"
+                >
+                  <StarIcon />
+                </Icon>
+              )}
               <Truncate
                 content={atAGlance.featuredTemplate.name}
                 maxCharsDisplayed={40}

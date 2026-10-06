@@ -151,20 +151,21 @@ interface ILeaderboardActivityLevel {
 }
 
 export interface ILeaderboardReport {
-  job_runs: number;
-  active_organizations: number;
+  /** Like every top-level field, may be missing from a partial (not yet fully synced) report. */
+  job_runs?: number | null;
+  active_organizations?: number | null;
   /** `null` when no template ran in the window. */
-  featured_template: { id: number; name: string; run_count: number } | null;
-  enterprise_streak: ILeaderboardStreak;
+  featured_template?: { id: number; name: string; run_count: number } | null;
+  enterprise_streak?: ILeaderboardStreak | null;
   /** `null` when the user is not associated with any organization (e.g. super-admin on a fresh instance). */
-  org_streak: ILeaderboardOrgStreak | null;
-  organization_leaderboard: {
+  org_streak?: ILeaderboardOrgStreak | null;
+  organization_leaderboard?: {
     /** `null` when the user's organization has no rank yet. */
     user_organization_rank: number | null;
     total_organizations: number;
     /** Top 10, rank ascending. */
     leaderboard?: ILeaderboardOrganizationRow[] | null;
-  };
+  } | null;
   /** Snake_case badge ids, e.g. "top_tier" — see ORG_BADGE_ID_MAP. */
   org_achievements?: string[] | null;
   activity_levels?: ILeaderboardActivityLevel[] | null;
@@ -283,15 +284,15 @@ function mapAchievements<T extends string>(
 }
 
 export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLeaderboardsData {
-  const orgRows = orEmpty(report.organization_leaderboard.leaderboard);
+  const orgRows = orEmpty(report.organization_leaderboard?.leaderboard);
   const currentOrgRow = orgRows.find((row) => row.user_organization);
 
   return {
     // Set by the hook from collection_status's last_sync, not derivable here.
     lastSyncedAt: null,
     atAGlance: {
-      jobsRun: report.job_runs,
-      activeOrganizations: report.active_organizations,
+      jobsRun: report.job_runs ?? 0,
+      activeOrganizations: report.active_organizations ?? 0,
       featuredTemplate: {
         name: report.featured_template?.name ?? '',
         runs: report.featured_template?.run_count ?? 0,
@@ -311,7 +312,7 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
     })),
     currentOrgStanding: {
       // Falsy rank hides the panel header (see HighlightsLeaderboardPanel).
-      rank: report.organization_leaderboard.user_organization_rank ?? 0,
+      rank: report.organization_leaderboard?.user_organization_rank ?? 0,
       totalRuns: currentOrgRow?.runs ?? report.org_streak?.organization?.run_count ?? 0,
     },
     earnedUserAchievements: mapAchievements(report.user_achievements, MILESTONE_BADGE_ID_MAP),
@@ -348,6 +349,9 @@ function toIsoString(value: string | null | undefined): string | null {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
+/** Reported as `error` when the leaderboard request succeeds but its body isn't a report object. */
+const INVALID_REPORT_ERROR = new Error('The leaderboard report response is not a valid report.');
+
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
@@ -377,8 +381,33 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
 
   const lastSyncedAt = toIsoString(collectionStatus.last_sync);
 
-  if (!data) {
+  // Only `undefined` means "not loaded yet" or "request failed"; any other falsy body (`null`,
+  // `""`, `0`, `false`) is an invalid response and must fall through to the check below.
+  if (data === undefined) {
     return { ...EMPTY_LEADERBOARDS_DATA, lastSyncedAt, isLoading, error, collectionStatusError };
+  }
+  // A JSON body that isn't an object (a string, number, boolean, `null` or array) is a failure,
+  // not "no data yet", so surface it as an error instead of hiding it behind the empty state.
+  // (A non-JSON body, e.g. an HTML page, already fails in the fetcher and arrives as `error`.)
+  if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+    return {
+      ...EMPTY_LEADERBOARDS_DATA,
+      lastSyncedAt,
+      isLoading,
+      // SWR keeps the last body when a refetch fails, so a real request error takes precedence.
+      error: error ?? INVALID_REPORT_ERROR,
+      collectionStatusError,
+    };
+  }
+  // An empty report (`{}`) means nothing has been synced yet, so report it as never synced.
+  if (Object.keys(data).length === 0) {
+    return {
+      ...EMPTY_LEADERBOARDS_DATA,
+      lastSyncedAt: null,
+      isLoading,
+      error,
+      collectionStatusError,
+    };
   }
 
   return { ...mapLeaderboardReport(data), lastSyncedAt, isLoading, error, collectionStatusError };
