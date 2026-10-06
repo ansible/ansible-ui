@@ -59,7 +59,9 @@ function extractDeprecationType(stdout: string, task: string): string {
   // Extract a meaningful type from the deprecation message itself
   // Format: "[DEPRECATION WARNING]: <message text>. This feature will be removed..."
   // Look for the ending phrase but don't stop at periods in paths/module names
-  const match = stdout.match(/\[DEPRECATION WARNING\]:\s*(.+?)(?:\s+This feature|\s+Deprecation warnings|\s+It will be removed)/i);
+  const match = stdout.match(
+    /\[DEPRECATION WARNING\]:\s*(.+?)(?:\s+This feature|\s+Deprecation warnings|\s+It will be removed)/i
+  );
   if (match && match[1]) {
     let extracted = match[1].trim();
     // Remove trailing period if present
