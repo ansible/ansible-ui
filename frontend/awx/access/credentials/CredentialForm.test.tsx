@@ -8,6 +8,50 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { CreateCredential, EditCredential } from './CredentialForm';
 
 /**
+ * Mock BecomeMethodField so that it registers become_method = { name: 'sudo' } by default.
+ * This covers the CreateCredential onSubmit TRUE branch of the become_method null-guard:
+ *   typeof pluginInputs.become_method === 'object' &&
+ *   pluginInputs.become_method !== null &&           ← the AAP-93580 fix
+ *   'name' in pluginInputs.become_method
+ * EditCredential tests that pre-load credentials override this default via initialValues.
+ */
+vi.mock('./components/BecomeMethodField', async () => {
+  const React = await import('react');
+  const { useController } = await import('react-hook-form');
+
+  function MockBecomeMethodField({
+    fieldOptions,
+  }: {
+    fieldOptions: { id: string; label?: string };
+  }) {
+    // Default to { name: 'sudo' } so onSubmit exercises the object→string normalisation path.
+    // In EditCredential tests the form is initialised from the credential's inputs, so
+    // this defaultValue is only effective when no prior form value exists (i.e. CreateCredential).
+    const { field } = useController({ name: fieldOptions.id, defaultValue: { name: 'sudo' } });
+    return React.createElement(
+      'div',
+      null,
+      React.createElement(
+        'label',
+        { htmlFor: fieldOptions.id },
+        fieldOptions.label ?? fieldOptions.id
+      ),
+      React.createElement('input', {
+        type: 'hidden',
+        id: fieldOptions.id,
+        name: fieldOptions.id,
+        value:
+          typeof field.value === 'object' ? JSON.stringify(field.value) : String(field.value ?? ''),
+        'data-testid': `become-method-${fieldOptions.id}`,
+        onChange: field.onChange,
+      })
+    );
+  }
+
+  return { BecomeMethodField: MockBecomeMethodField };
+});
+
+/**
  * Replace the complex modal table-picker with a simple controllable dropdown.
  * Key goals:
  *  1. Register `credential_type` with React Hook Form (defaultValue: 1 = Machine) so
