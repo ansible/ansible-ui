@@ -207,6 +207,10 @@ export function useSaveVisualizer(templateId: string) {
             if (!isPrompt) {
               return;
             }
+            if (key === 'job_tags' || key === 'skip_tags') {
+              createNodePayload[key] = '' as CreateWorkflowNodePayload[K];
+              return;
+            }
             // Prompt field explicitly cleared; send null to the API to remove the node override
             createNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
             return;
@@ -314,6 +318,10 @@ export function useSaveVisualizer(templateId: string) {
             }
             if (value === null || value === '') {
               if (!isPrompt) {
+                return;
+              }
+              if (key === 'job_tags' || key === 'skip_tags') {
+                updatedNodePayload[key] = '' as CreateWorkflowNodePayload[K];
                 return;
               }
               // Prompt field explicitly cleared; send null to the API to remove the node override
