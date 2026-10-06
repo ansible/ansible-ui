@@ -63,6 +63,7 @@ export function PageAsyncSingleSelect<
   const [open, setOpen] = useState(false);
 
   const nextRef = useRef<number | string | undefined>();
+  const optionsRef = useRef<PageSelectOption<ValueT>[] | null>();
   const [searchValue, setSearchValue] = useState<string>('');
 
   const setSearch = useDebounce((search: string) => setSearchValue(search), 200);
@@ -90,22 +91,25 @@ export function PageAsyncSingleSelect<
         if (!result.remaining) {
           setAllLoaded(true);
         }
-        setOptions((prevOptions) => {
-          const newOptions = mergePageSelectOptions(
-            prevOptions,
-            result.options,
-            !props.disableSortOptions
-          );
-          if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
-            // Defer onSelect to avoid setState during render
-            deferPageSelect(onSelect, newOptions[0].value);
-          }
-          setTotal(result.remaining + newOptions.length);
-          if (writeInOption && result.remaining + newOptions.length === 0) {
-            newOptions.push(writeInOption(searchValue));
-          }
-          return newOptions;
-        });
+        let newOptions = mergePageSelectOptions(
+          optionsRef.current,
+          result.options,
+          !props.disableSortOptions
+        );
+        const autoSelectValue =
+          !searchValue && result.remaining === 0 && newOptions.length === 1
+            ? newOptions[0].value
+            : undefined;
+        if (writeInOption && result.remaining + newOptions.length === 0) {
+          newOptions = [...newOptions, writeInOption(searchValue)];
+        }
+        if (abortController.signal.aborted) return;
+        optionsRef.current = newOptions;
+        setOptions(newOptions);
+        setTotal(result.remaining + newOptions.length);
+        if (autoSelectValue !== undefined) {
+          deferPageSelect(onSelect, autoSelectValue, abortController.signal);
+        }
       })
       .catch((err) => {
         if (abortController.signal.aborted) return;
@@ -133,6 +137,7 @@ export function PageAsyncSingleSelect<
       e.stopPropagation();
       setTotal(0);
       setOptions([]);
+      optionsRef.current = [];
       setOpen(true);
       nextRef.current = undefined;
       queryHandler();
@@ -141,12 +146,15 @@ export function PageAsyncSingleSelect<
   );
 
   useEffect(() => {
-    if (open) {
-      setTotal(0);
-      setOptions([]);
-      nextRef.current = undefined;
-      queryHandler();
+    if (!open) {
+      activeAbortController.current?.abort();
+      return;
     }
+    setTotal(0);
+    setOptions([]);
+    optionsRef.current = [];
+    nextRef.current = undefined;
+    return queryHandler();
   }, [open, queryHandler]);
 
   useEffect(() => {

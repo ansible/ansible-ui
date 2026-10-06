@@ -104,6 +104,7 @@ describe('PageAsyncMultiSelect', () => {
     await waitFor(() => {
       expect(screen.getByText('Option 11')).toBeInTheDocument();
     });
+    expect(screen.getByText(/Loaded \d+ of \d+/)).toBeInTheDocument();
   });
 
   it('should show Browse button and invoke onBrowse', async () => {
