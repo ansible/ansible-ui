@@ -86,6 +86,14 @@ test.describe('Persona Switcher', () => {
       password: 'password',
     });
 
+    // Reload after the user session is established so the navigation is built
+    // from the normal user's permissions rather than the administrator's page
+    // state that was present before logout.
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(page.getByTestId('toolbar').getByRole('button', { name: username })).toBeVisible({
+      timeout: 30_000,
+    });
+
     // Administration View
     await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
     await expect(page.locator('#platform-overview')).toContainText('Overview');
