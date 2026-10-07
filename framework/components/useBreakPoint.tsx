@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
+export type WindowSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+
 // SEE: https://www.patternfly.org/tokens/all-patternfly-tokens/
 // And search for "breakpoint" to see the values used in PatternFly.
 // PF uses rems for breakpoints, but we convert them to pixels here.
 const BASE_FONT_SIZE = 16;
-const breakpoints: Record<string, number> = {
+const breakpoints: Record<WindowSize, number> = {
   xs: 0,
   sm: 36 * BASE_FONT_SIZE,
   md: 48 * BASE_FONT_SIZE,
@@ -12,8 +14,6 @@ const breakpoints: Record<string, number> = {
   xl: 75 * BASE_FONT_SIZE,
   xxl: 90.625 * BASE_FONT_SIZE,
 };
-
-export type WindowSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 export function useWindowSize(): WindowSize {
   const [windowSize, setWindowSize] = useState<WindowSize>(() => {

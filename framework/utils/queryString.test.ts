@@ -77,6 +77,10 @@ describe('queryString', () => {
       expect(filtersToSearchObj([nameFilter], {})).instanceOf(URLSearchParams);
     });
 
+    it('should ignore filters with no selected values', () => {
+      expect(filtersToSearchObj([nameFilter], { name: [] }).toString()).toBe('');
+    });
+
     it('should build simple string', () => {
       const filters = [nameFilter];
       const state: IFilterState = {
@@ -175,6 +179,15 @@ describe('queryString', () => {
       );
     });
 
+    it('should ignore an unsupported date range value', () => {
+      const filters = [dateRangeFilter];
+      const state: IFilterState = {
+        range: ['custom'],
+      };
+
+      expect(filtersToSearchObj(filters, state).toString()).to.equal('');
+    });
+
     it('should support special behavior for activity stream', () => {
       const filter: IToolbarFilter = {
         type: ToolbarFilterType.SingleText,
@@ -190,6 +203,30 @@ describe('queryString', () => {
       expect(filtersToSearchObj([filter], state).toString()).to.equal(
         'or__object1__in=foo%2Cbar&or__object2__in=foo%2Cbar'
       );
+    });
+
+    it('should ignore an empty activity stream value', () => {
+      const filter: IToolbarFilter = {
+        type: ToolbarFilterType.SingleText,
+        comparison: 'contains',
+        key: 'name',
+        label: 'Name',
+        query: 'object1__in',
+      };
+
+      expect(filtersToSearchObj([filter], { name: [''] }).toString()).to.equal('');
+    });
+
+    it('should not derive an activity stream object2 filter from multiple values', () => {
+      const filter: IToolbarFilter = {
+        type: ToolbarFilterType.MultiText,
+        comparison: 'contains',
+        key: 'name',
+        label: 'Name',
+        query: 'object1__in',
+      };
+
+      expect(filtersToSearchObj([filter], { name: ['job', 'schedule'] }).toString()).to.equal('');
     });
 
     it('should url encode string', () => {
