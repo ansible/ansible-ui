@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
   getStatusDecoratorIcon,
@@ -9,26 +9,25 @@ import {
 describe('getStatusDecoratorIcon', () => {
   const centerPoint = { x: 10, y: 10 };
 
-  it('should apply PF topology status modifier classes for successful jobs', () => {
-    const { container } = render(getStatusDecoratorIcon('successful', centerPoint));
-    expect(container.querySelector(`.${TOPOLOGY_NODE_DECORATOR_STATUS_CLASS}`)).toBeTruthy();
-    expect(container.querySelector('.pf-m-success')).toBeTruthy();
-  });
-
-  it('should apply danger modifier for failed jobs', () => {
-    const { container } = render(getStatusDecoratorIcon('failed', centerPoint));
-    expect(container.querySelector('.pf-m-danger')).toBeTruthy();
-  });
-
-  it('should apply warning modifier for canceled jobs', () => {
-    const { container } = render(getStatusDecoratorIcon('canceled', centerPoint));
-    expect(container.querySelector('.pf-m-warning')).toBeTruthy();
-  });
-
-  it('should apply info modifier for running jobs', () => {
-    const { container } = render(getStatusDecoratorIcon('running', centerPoint));
-    expect(container.querySelector('.pf-m-info')).toBeTruthy();
-  });
+  it.each([
+    ['successful', 'successful-icon', 'pf-m-success'],
+    ['success', 'successful-icon', 'pf-m-success'],
+    ['failed', 'failed-icon', 'pf-m-danger'],
+    ['fail', 'failed-icon', 'pf-m-danger'],
+    ['error', 'failed-icon', 'pf-m-danger'],
+    ['canceled', 'canceled-icon', 'pf-m-warning'],
+    ['running', 'running-icon', 'pf-m-info'],
+    ['pending', 'pending-icon', 'pf-m-info'],
+    ['waiting', 'pending-icon', 'pf-m-info'],
+  ] as const)(
+    'should render %s status with topology wrapper and modifier',
+    (status, testId, modifierClass) => {
+      const { container } = render(getStatusDecoratorIcon(status, centerPoint));
+      expect(container.querySelector(`.${TOPOLOGY_NODE_DECORATOR_STATUS_CLASS}`)).toBeTruthy();
+      expect(container.querySelector(`.${modifierClass}`)).toBeTruthy();
+      expect(screen.getByTestId(testId)).toBeInTheDocument();
+    }
+  );
 
   it('should return null for unknown status', () => {
     expect(getStatusDecoratorIcon('unknown', centerPoint)).toBeNull();
