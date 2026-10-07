@@ -1,7 +1,5 @@
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
+import tseslint from 'typescript-eslint';
 import i18next from 'eslint-plugin-i18next';
-import importPlugin from 'eslint-plugin-import';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import noOnlyTests from 'eslint-plugin-no-only-tests';
 import prettier from 'eslint-plugin-prettier';
@@ -28,16 +26,15 @@ export default [
   {
     files: ['frontend/**/*.{ts,tsx}', 'platform/**/*.{ts,tsx}', 'framework/**/*.{ts,tsx}'],
     languageOptions: {
-      parser: tsParser,
+      parser: tseslint.parser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
     },
     plugins: {
-      '@typescript-eslint': tsPlugin,
+      '@typescript-eslint': tseslint.plugin,
       i18next,
-      import: importPlugin,
       'jsx-a11y': jsxA11y,
       'no-only-tests': noOnlyTests,
       prettier,
