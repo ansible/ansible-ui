@@ -4,6 +4,12 @@ import {
   type IFilterState,
   type IToolbarFilter,
 } from '@ansible/ansible-ui-framework';
+import {
+  MILLISECONDS_PER_DAY,
+  MILLISECONDS_PER_HOUR,
+  MILLISECONDS_PER_MONTH,
+  MILLISECONDS_PER_WEEK,
+} from '@ansible/ansible-ui-framework/utils/dateRangeOffsets';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -257,16 +263,16 @@ function getQueryParamsForDateRangeFilters(toolbarFilter: IToolbarFilter, value:
     date.setMilliseconds(0);
     switch (value as DateRangeFilterPresets) {
       case DateRangeFilterPresets.LastHour:
-        queryParamValue = new Date(date.getTime() - 60 * 60 * 1000).toISOString();
+        queryParamValue = new Date(date.getTime() - MILLISECONDS_PER_HOUR).toISOString();
         break;
       case DateRangeFilterPresets.Last24Hours:
-        queryParamValue = new Date(date.getTime() - 24 * 60 * 60 * 1000).toISOString();
+        queryParamValue = new Date(date.getTime() - MILLISECONDS_PER_DAY).toISOString();
         break;
       case DateRangeFilterPresets.LastWeek:
-        queryParamValue = new Date(date.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        queryParamValue = new Date(date.getTime() - MILLISECONDS_PER_WEEK).toISOString();
         break;
       case DateRangeFilterPresets.LastMonth:
-        queryParamValue = new Date(date.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+        queryParamValue = new Date(date.getTime() - MILLISECONDS_PER_MONTH).toISOString();
         break;
     }
   }
