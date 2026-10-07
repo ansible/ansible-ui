@@ -35,58 +35,65 @@ interface DeprecationData {
   hasPartialData: boolean;
 }
 
-// Helper to extract deprecation type from one deprecation message and its task name
-function extractDeprecationType(stdout: string, task: string): string {
-  // Check stdout first (for events that have deprecation text)
+// Helper to check stdout for known deprecation patterns
+function checkStdoutPatterns(stdout: string): string | null {
   if (stdout.includes('with_items')) return 'with_items on module';
   if (stdout.includes('with_dict')) return 'with_dict loop';
   if (stdout.includes('bare variable') || stdout.includes('Conditional result')) {
     return 'Bare variables in conditionals';
   }
-  // Match the deprecated bare `include:` directive, not modern include_tasks/include_role
   if (/\binclude:\s/.test(stdout)) return 'include directive';
   if (stdout.includes('squash_actions')) return 'squash_actions';
   if (stdout.includes('hash_behaviour')) return 'hash_behaviour';
+  return null;
+}
 
-  // If stdout is empty, check task name (common for bare conditional deprecations)
+// Helper to check task name for deprecation patterns
+function checkTaskNamePatterns(task: string): string | null {
   const taskLower = task.toLowerCase();
   if (taskLower.includes('bare') && taskLower.includes('conditional')) {
     return 'Bare variables in conditionals';
   }
   if (taskLower.includes('with_items')) return 'with_items on module';
   if (taskLower.includes('with_dict')) return 'with_dict loop';
+  return null;
+}
 
-  // Extract a meaningful type from the deprecation message itself
-  // Format: "[DEPRECATION WARNING]: <message text>. This feature will be removed..."
-  // Look for the ending phrase but don't stop at periods in paths/module names
-  const match = stdout.match(
-    /\[DEPRECATION WARNING\]:\s*(.+?)(?:\s+This feature|\s+Deprecation warnings|\s+It will be removed)/i
-  );
-  if (match && match[1]) {
-    let extracted = match[1].trim();
-    // Remove trailing period if present
-    if (extracted.endsWith('.')) {
-      extracted = extracted.slice(0, -1);
-    }
-    // Truncate to 80 chars at word boundary if needed
-    if (extracted.length > 80) {
-      extracted = extracted.slice(0, 80);
-      const lastSpace = extracted.lastIndexOf(' ');
-      if (lastSpace > 60) {
-        extracted = extracted.slice(0, lastSpace);
-      }
-    }
-    return extracted;
+// Helper to extract and format deprecation message text
+function extractDeprecationMessage(stdout: string): string | null {
+  const regex = /\[DEPRECATION WARNING\]:\s*([^\n]+?)(?=\s+(?:This feature|Deprecation warnings|It will be removed))/i;
+  const match = regex.exec(stdout);
+  if (!match?.[1]) return null;
+
+  let extracted = match[1].trim();
+  if (extracted.endsWith('.')) {
+    extracted = extracted.slice(0, -1);
   }
+  if (extracted.length > 80) {
+    extracted = extracted.slice(0, 80);
+    const lastSpace = extracted.lastIndexOf(' ');
+    if (lastSpace > 60) {
+      extracted = extracted.slice(0, lastSpace);
+    }
+  }
+  return extracted;
+}
 
-  return 'Other deprecation';
+// Helper to extract deprecation type from one deprecation message and its task name
+function extractDeprecationType(stdout: string, task: string): string {
+  return (
+    checkStdoutPatterns(stdout) ||
+    checkTaskNamePatterns(task) ||
+    extractDeprecationMessage(stdout) ||
+    'Other deprecation'
+  );
 }
 
 const DEPRECATION_MARKER = '[DEPRECATION WARNING]';
 // ANSI escape sequence patterns constructed without literal control characters to satisfy no-control-regex
-const ESC = String.fromCharCode(0x1b);
-const ANSI_ESCAPE = new RegExp(`${ESC}\\[[0-9;]*[A-Za-z]`, 'g');
-const LEADING_ANSI = new RegExp(`^(?:${ESC}\\[[0-9;]*[A-Za-z])*`);
+const ESC = String.fromCodePoint(0x1b);
+const ANSI_ESCAPE = new RegExp(String.raw`${ESC}\[[0-9;]*[A-Za-z]`, 'g');
+const LEADING_ANSI = new RegExp(String.raw`^(?:${ESC}\[[0-9;]*[A-Za-z])*`);
 // Lines that end a deprecation message (task results, banners, other warnings, and the
 // ansible-core 2.19+ "Origin: <file>:<line>" source context, which shares the warning's colour)
 const END_OF_MESSAGE =
