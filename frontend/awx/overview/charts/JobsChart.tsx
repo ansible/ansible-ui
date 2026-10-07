@@ -43,7 +43,11 @@ export function JobsChart(props: {
   const { t } = useTranslation();
   const { period, jobType } = props;
 
-  const { data, error, isLoading } = useSWR<IJobChartData>(
+  const {
+    data,
+    error: requestError,
+    isLoading,
+  } = useSWR<IJobChartData>(
     awxAPI`/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
     (url: string) =>
       fetch(url).then((response) => {
@@ -68,7 +72,7 @@ export function JobsChart(props: {
       </Bullseye>
     );
 
-  if (error) return <EmptyStateError message={error.message} />;
+  if (requestError) return <EmptyStateError message={requestError.message} />;
 
   return (
     <PageDashboardChart
