@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import {
   ReactNode,
   createContext,
@@ -15,10 +14,6 @@ import { isRequestError } from '@ansible/common-ui/crud/RequestError';
 export const PAGE_SETTING_LANGUAGES = ['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh'] as const;
 export type PageSettingLanguage = (typeof PAGE_SETTING_LANGUAGES)[number];
 export type PageSettingLanguagePreference = 'browser' | PageSettingLanguage;
-
-type LanguageDetector = {
-  detect: () => string | readonly string[] | undefined;
-};
 
 function isPageSettingLanguagePreference(value: unknown): value is PageSettingLanguagePreference {
   return (
@@ -41,17 +36,13 @@ function applyLanguage(language: PageSettingLanguagePreference) {
 
   if (language === 'browser') {
     if (i18n.isInitialized) {
-      const languageDetector = i18n.services.languageDetector as unknown as
-        | LanguageDetector
-        | undefined;
-      const detectedLanguage = languageDetector?.detect();
-      const browserLanguage =
-        typeof detectedLanguage === 'string' ? detectedLanguage : detectedLanguage?.[0];
-      if (typeof browserLanguage === 'string') {
-        void i18n.changeLanguage(browserLanguage).then(() => {
+      // keep the active locale on rejection; add notification if recovery UX is needed.
+      void i18n
+        .changeLanguage()
+        .catch(() => undefined)
+        .then(() => {
           document.documentElement.lang = i18n.resolvedLanguage ?? i18n.language;
         });
-      }
     }
     return;
   }
