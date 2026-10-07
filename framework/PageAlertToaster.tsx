@@ -15,8 +15,16 @@ function stripTimeout(alert: AlertProps): AlertProps {
   return alertWithoutTimeout;
 }
 
-function alertIdentity(alert: AlertProps): string {
-  return JSON.stringify(stripTimeout(alert));
+function alertsMatch(first: AlertProps, second: AlertProps): boolean {
+  const firstWithoutTimeout = stripTimeout(first);
+  const secondWithoutTimeout = stripTimeout(second);
+  const firstKeys = Object.keys(firstWithoutTimeout) as Array<keyof AlertProps>;
+  const secondKeys = Object.keys(secondWithoutTimeout) as Array<keyof AlertProps>;
+
+  return (
+    firstKeys.length === secondKeys.length &&
+    firstKeys.every((key) => Object.is(firstWithoutTimeout[key], secondWithoutTimeout[key]))
+  );
 }
 
 function replaceAlertInList(
@@ -24,7 +32,7 @@ function replaceAlertInList(
   oldAlert: AlertProps,
   preparedAlert: AlertProps
 ): AlertProps[] {
-  const oldAlertIndex = alerts.findIndex((a) => alertIdentity(a) === alertIdentity(oldAlert));
+  const oldAlertIndex = alerts.findIndex((alert) => alertsMatch(alert, oldAlert));
   if (oldAlertIndex === -1) {
     return alerts;
   }
@@ -64,7 +72,9 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
     function addAlert(alert: AlertProps) {
       const preparedAlert = prepareAlert(alert);
       setToasterAlerts((alerts) => {
-        const alertIndex = alerts.indexOf(preparedAlert);
+        const alertIndex = alerts.findIndex((existingAlert) =>
+          alertsMatch(existingAlert, preparedAlert)
+        );
         if (alertIndex !== -1) {
           const newAlerts = [...alerts];
           newAlerts[alertIndex] = preparedAlert;
