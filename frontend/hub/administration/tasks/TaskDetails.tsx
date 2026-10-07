@@ -67,38 +67,40 @@ function maybeTranslate(name: string | undefined, t: TFunction) {
 
 function loadContent(taskId?: string) {
   if (!taskId) {
-    return Promise.reject();
+    return Promise.reject(new Error('Task ID is required'));
   }
 
   return requestGet<Task>(pulpAPI`/tasks/${taskId}/`).then((task) => {
-    const allRelatedTasks = [];
+    const allRelatedTasks: Promise<unknown>[] = [];
     let parentTask: Task | null = null;
     const childTasks: Task[] = [];
     const resources: TaskResource[] = [];
 
     if (task.parent_task) {
       const parentTaskId = parsePulpIDFromURL(task.parent_task);
-      allRelatedTasks.push(
-        parentTaskId &&
+      if (parentTaskId) {
+        allRelatedTasks.push(
           requestGet<Task>(pulpAPI`/tasks/${parentTaskId}/`)
             .then((data) => {
               parentTask = data;
             })
             .catch(() => null)
-      );
+        );
+      }
     }
 
     if (task.child_tasks.length) {
       task.child_tasks.forEach((child) => {
         const childTaskId = parsePulpIDFromURL(child);
-        allRelatedTasks.push(
-          childTaskId &&
+        if (childTaskId) {
+          allRelatedTasks.push(
             requestGet<Task>(pulpAPI`/tasks/${childTaskId}/`)
               .then((data) => {
                 childTasks.push(data);
               })
               .catch(() => null)
-        );
+          );
+        }
       });
     }
 
