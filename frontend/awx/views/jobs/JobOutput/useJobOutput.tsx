@@ -4,6 +4,12 @@ import {
   type IFilterState,
   type IToolbarFilter,
 } from '@ansible/ansible-ui-framework';
+import {
+  MILLISECONDS_PER_DAY,
+  MILLISECONDS_PER_HOUR,
+  MILLISECONDS_PER_MONTH,
+  MILLISECONDS_PER_WEEK,
+} from '@ansible/ansible-ui-framework/utils/dateRangeOffsets';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
@@ -21,10 +27,6 @@ type WebSocketMessage = {
 };
 
 const WS_EVENTS_BATCH_SIZE = 15;
-const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
-const MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
-const MILLISECONDS_PER_WEEK = 7 * MILLISECONDS_PER_DAY;
-const MILLISECONDS_PER_MONTH = 30 * MILLISECONDS_PER_DAY;
 const runningJobTypes: string[] = ['new', 'pending', 'waiting', 'running'];
 
 export function useJobOutput(
