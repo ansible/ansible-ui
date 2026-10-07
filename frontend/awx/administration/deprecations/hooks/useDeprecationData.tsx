@@ -83,10 +83,10 @@ function extractDeprecationType(stdout: string, task: string): string {
 }
 
 const DEPRECATION_MARKER = '[DEPRECATION WARNING]';
-// eslint-disable-next-line no-control-regex
-const ANSI_ESCAPE = /\x1b\[[0-9;]*[A-Za-z]/g;
-// eslint-disable-next-line no-control-regex
-const LEADING_ANSI = /^(?:\x1b\[[0-9;]*[A-Za-z])*/;
+// ANSI escape sequence patterns constructed without literal control characters to satisfy no-control-regex
+const ESC = String.fromCharCode(0x1b);
+const ANSI_ESCAPE = new RegExp(`${ESC}\\[[0-9;]*[A-Za-z]`, 'g');
+const LEADING_ANSI = new RegExp(`^(?:${ESC}\\[[0-9;]*[A-Za-z])*`);
 // Lines that end a deprecation message (task results, banners, other warnings, and the
 // ansible-core 2.19+ "Origin: <file>:<line>" source context, which shares the warning's colour)
 const END_OF_MESSAGE =
