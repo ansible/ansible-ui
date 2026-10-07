@@ -7,7 +7,7 @@ import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsVie
 
 const baseView = createLeaderboardsView({
   organizationLeaderboard: [
-    { id: '1', name: 'Platform Engineering', runs: 2840, rank: 1, isCurrentOrg: true },
+    { id: '1', name: 'Platform Engineering', runs: 2840, rank: 1, isUserOrg: true },
     { id: '10', name: 'IT Operations', runs: 187, rank: 10 },
   ],
   currentOrgStanding: { rank: 1, totalRuns: 2840 },
@@ -57,6 +57,21 @@ describe('HighlightsLeaderboardPanel', () => {
     // `display: flex` through its own `pf-v6-l-flex` stylesheet class, not an inline style).
     expect(label.closest('.pf-v6-l-flex')).toBeInTheDocument();
     expect(label.closest('[style*="flex-shrink"]')).toHaveStyle({ flexShrink: '0' });
+  });
+
+  test('should not tag any org when no row is flagged as the user org', () => {
+    vi.mocked(useAutomationLeaderboardsView).mockReturnValue({
+      ...baseView,
+      organizationLeaderboard: baseView.organizationLeaderboard.map((org) => ({
+        ...org,
+        isUserOrg: false,
+      })),
+    });
+
+    renderPanel();
+
+    expect(screen.getByText('Platform Engineering')).toBeInTheDocument();
+    expect(screen.queryByText('Your organization')).not.toBeInTheDocument();
   });
 
   test('should omit the rank summary header entirely when the org has no rank yet', () => {
