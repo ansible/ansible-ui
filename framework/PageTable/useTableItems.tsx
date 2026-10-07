@@ -425,11 +425,11 @@ export function useFiltered<T extends object>(items: T[], keyFn: (item: T) => st
       const key = keyFn(item);
       let cached = filterMapRef.current.map[key];
       if (!cached) {
-        cached = { item, passes: filterFn ? filterFn(item) : true };
+        cached = { item, passes: filterFn?.(item) ?? true };
         filterMapRef.current.map[key] = cached;
       } else if (cached.item !== item) {
         cached.item = item;
-        cached.passes = filterFn ? filterFn(item) : true;
+        cached.passes = filterFn?.(item) ?? true;
       }
       return cached.passes;
     },
@@ -438,7 +438,7 @@ export function useFiltered<T extends object>(items: T[], keyFn: (item: T) => st
 
   useEffect(() => {
     if (filterFn) {
-      setFiltered(items.filter(cachedFilterFn));
+      setFiltered(items.filter((item) => cachedFilterFn(item)));
     } else {
       setFiltered(items);
     }
@@ -478,11 +478,11 @@ function useSearched<T extends object>(
       const key = keyFn(item);
       let cached = searchMapRef.current.map[key];
       if (!cached) {
-        cached = { item, score: searchFn ? searchFn(item, search) : 0 };
+        cached = { item, score: searchFn?.(item, search) ?? 0 };
         searchMapRef.current.map[key] = cached;
       } else if (cached.item !== item) {
         cached.item = item;
-        cached.score = searchFn ? searchFn(item, search) : 0;
+        cached.score = searchFn?.(item, search) ?? 0;
       }
       return cached;
     },
