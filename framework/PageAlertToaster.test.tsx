@@ -17,6 +17,12 @@ function TestConsumer() {
       <button type="button" onClick={() => toaster.addAlert(alert)}>
         Add
       </button>
+      <button
+        type="button"
+        onClick={() => toaster.addAlert({ title: 'Fresh Alert', variant: 'success' })}
+      >
+        Add Fresh
+      </button>
       <button type="button" onClick={() => toaster.replaceAlert(alert, { title: 'Replaced' })}>
         Replace
       </button>
@@ -152,6 +158,34 @@ describe('PageAlertToaster', () => {
       await user.click(addButton);
 
       expect(screen.getAllByText('Test Alert')).toHaveLength(1);
+    });
+
+    it('should replace an alert when equivalent fresh props are added again', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      const addButton = screen.getByRole('button', { name: 'Add Fresh' });
+      await user.click(addButton);
+      await user.click(addButton);
+
+      expect(screen.getAllByText('Fresh Alert')).toHaveLength(1);
+    });
+
+    it('should leave alerts unchanged when replaceAlert cannot find the old alert', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Replace' }));
+
+      expect(screen.queryByText('Replaced')).not.toBeInTheDocument();
     });
 
     it('should replace an existing alert through replaceAlert', async () => {
