@@ -30,12 +30,12 @@ vi.mock('@patternfly/react-topology', async (importOriginal) => {
   };
 });
 
-function createWorkflowNodeElement(status: string, id = '42') {
+function createWorkflowNodeElement(status: string, id = '42'): GraphElement {
   return {
     isWorkflowNode: true,
     getNodeStatus: () => status,
     getId: () => id,
-  } as GraphElement & { isWorkflowNode: boolean };
+  } as unknown as GraphElement;
 }
 
 describe('useStatusDecorator', () => {
@@ -45,7 +45,7 @@ describe('useStatusDecorator', () => {
 
   it('should return null when element is not a node', () => {
     const { result } = renderHook(() => useStatusDecorator());
-    expect(result.current({} as GraphElement)).toBeNull();
+    expect(result.current({} as unknown as GraphElement)).toBeNull();
   });
 
   it('should return null when status has no decorator icon', () => {
