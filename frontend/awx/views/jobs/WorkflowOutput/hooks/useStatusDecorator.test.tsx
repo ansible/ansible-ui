@@ -15,7 +15,11 @@ vi.mock('@patternfly/react-topology', async (importOriginal) => {
       'data-cy'?: string;
       ariaLabel?: string;
     }) => (
-      <div data-testid={props['data-testid']} data-cy={props['data-cy']} aria-label={props.ariaLabel}>
+      <div
+        data-testid={props['data-testid']}
+        data-cy={props['data-cy']}
+        aria-label={props.ariaLabel}
+      >
         {props.icon}
       </div>
     ),
