@@ -47,7 +47,7 @@ export function JobsChart(props: {
     data,
     error: requestError,
     isLoading,
-  } = useSWR<IJobChartData>(
+  } = useSWR<IJobChartData, Error>(
     awxAPI`/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
     (url: string) =>
       fetch(url).then((response) => {
@@ -56,7 +56,7 @@ export function JobsChart(props: {
       })
   );
 
-  const [successful, error, failed, canceled] = alignJobChartSeriesByDay([
+  const [successful, errorSeries, failed, canceled] = alignJobChartSeriesByDay([
     mapJobChartTuples(data?.jobs?.successful, period),
     mapJobChartTuples(data?.jobs?.error, period),
     mapJobChartTuples(data?.jobs?.failed, period),
@@ -88,7 +88,7 @@ export function JobsChart(props: {
         {
           label: t('Error'),
           color: errorColor,
-          values: error,
+          values: errorSeries,
           link: getPageUrl(AwxRoute.Jobs) + '?status=error',
         },
         {
