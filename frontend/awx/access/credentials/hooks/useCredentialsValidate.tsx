@@ -27,7 +27,9 @@ export function useCredentialsValidate(
       const allCredentials = [...(fullDefaultCredentials || []), ...newCredentials];
       const vaultIds = allCredentials
         .filter((credential) => credential.kind === 'vault' && credential.inputs.vault_id)
-        .map((vaultCred) => vaultCred.inputs.vault_id.toString());
+        .map((vaultCred) => vaultCred.inputs.vault_id)
+        .filter((vaultId): vaultId is string | number => vaultId !== undefined)
+        .map((vaultId) => vaultId.toString());
       const otherCredentialTypes = allCredentials
         .filter((credential) => credential.kind !== 'vault')
         .map((nonVaultCred) => nonVaultCred.summary_fields.credential_type.name);
