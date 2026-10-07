@@ -24,7 +24,11 @@ export function HostMetrics() {
     toolbarFilters,
     tableColumns,
   });
-  const toolbarActions = useHostMetricsToolbarActions(view.unselectItemsAndRefresh);
+  const toolbarActions = useHostMetricsToolbarActions({
+    onComplete: view.unselectItemsAndRefresh,
+    listUrl: view.listUrl,
+    itemCount: view.itemCount,
+  });
   const rowActions = useHostMetricsRowActions(view.unselectItemsAndRefresh);
 
   return (
