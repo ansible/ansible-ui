@@ -61,11 +61,21 @@ function checkTaskNamePatterns(task: string): string | null {
 
 // Helper to extract and format deprecation message text
 function extractDeprecationMessage(stdout: string): string | null {
-  const regex = /\[DEPRECATION WARNING\]:\s*([^\n]+?)(?=\s+(?:This feature|Deprecation warnings|It will be removed))/i;
-  const match = regex.exec(stdout);
-  if (!match?.[1]) return null;
+  const markerIndex = stdout.indexOf('[DEPRECATION WARNING]:');
+  if (markerIndex === -1) return null;
 
-  let extracted = match[1].trim();
+  const afterMarker = stdout.slice(markerIndex + 22).trimStart();
+  const endPhrases = [' This feature', ' Deprecation warnings', ' It will be removed'];
+
+  let endIndex = afterMarker.length;
+  for (const phrase of endPhrases) {
+    const idx = afterMarker.indexOf(phrase);
+    if (idx !== -1 && idx < endIndex) {
+      endIndex = idx;
+    }
+  }
+
+  let extracted = afterMarker.slice(0, endIndex).trim();
   if (extracted.endsWith('.')) {
     extracted = extracted.slice(0, -1);
   }
@@ -76,7 +86,7 @@ function extractDeprecationMessage(stdout: string): string | null {
       extracted = extracted.slice(0, lastSpace);
     }
   }
-  return extracted;
+  return extracted || null;
 }
 
 // Helper to extract deprecation type from one deprecation message and its task name
