@@ -294,6 +294,28 @@ describe('mapLeaderboardReport', () => {
       expect(data.earnedOrgAchievements).not.toContain('not_a_real_badge');
     });
   });
+
+  describe('names', () => {
+    test('should show a dash for an empty template name and null or empty organization names', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        featured_template: { id: 9, name: '', run_count: 3 },
+        organization_leaderboard: {
+          user_organization_rank: 1,
+          total_organizations: 2,
+          leaderboard: [
+            { rank: 1, name: null, runs: 20 },
+            { rank: 2, name: '', runs: 10 },
+          ],
+        },
+      };
+
+      const data = mapLeaderboardReport(report);
+
+      expect(data.atAGlance.featuredTemplate).toEqual({ name: '-', runs: 3 });
+      expect(data.organizationLeaderboard.map((org) => org.name)).toEqual(['-', '-']);
+    });
+  });
 });
 
 describe('useAutomationLeaderboardsView', () => {

@@ -129,7 +129,8 @@ interface ILeaderboardOrgStreak extends ILeaderboardStreak {
 
 interface ILeaderboardOrganizationRow {
   rank: number;
-  name: string;
+  /** Can be `null` or empty. */
+  name: string | null;
   runs: number;
 }
 
@@ -187,6 +188,13 @@ const ORG_BADGE_ID_MAP: Record<string, OrgBadgeId> = {
   rising: 'rising',
   top_tier: 'topTier',
 };
+
+/** Shown in place of a name the API sends as `null`, omits, or leaves empty. */
+const EMPTY_NAME = '-';
+
+function displayName(name: string | null | undefined): string {
+  return name || EMPTY_NAME;
+}
 
 /** The API can send a list as `null` or omit it; treat both as empty. */
 function orEmpty<T>(list: T[] | null | undefined): T[] {
@@ -293,7 +301,9 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
       jobsRun: report.job_runs,
       activeOrganizations: report.active_organizations,
       featuredTemplate: {
-        name: report.featured_template?.name ?? '',
+        // Empty only when no template ran, so the card can show its empty state; a template
+        // without a name still gets a placeholder.
+        name: report.featured_template ? displayName(report.featured_template.name) : '',
         runs: report.featured_template?.run_count ?? 0,
       },
       enterpriseStreakDays: report.enterprise_streak?.streak ?? 0,
@@ -304,7 +314,7 @@ export function mapLeaderboardReport(report: ILeaderboardReport): AutomationLead
     dimensionLeaderboards: mapDimensionLeaderboards(report.activity_levels),
     organizationLeaderboard: orgRows.map((row) => ({
       id: String(row.rank),
-      name: row.name,
+      name: displayName(row.name),
       runs: row.runs,
       rank: row.rank,
       // Numeric row rank only — avoids null === null marking a row as the user's org.
