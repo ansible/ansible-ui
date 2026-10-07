@@ -3,6 +3,7 @@ import {
   PageDashboardChartVariant,
   PageDashboardChartVariantE,
 } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { Bullseye, Spinner } from '@patternfly/react-core';
@@ -42,7 +43,7 @@ export function JobsChart(props: {
   const { t } = useTranslation();
   const { period, jobType } = props;
 
-  const { data, isLoading } = useSWR<IJobChartData>(
+  const { data, error, isLoading } = useSWR<IJobChartData>(
     awxAPI`/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
     (url: string) =>
       fetch(url).then((response) => {
@@ -66,6 +67,8 @@ export function JobsChart(props: {
         <Spinner />
       </Bullseye>
     );
+
+  if (error) return <EmptyStateError message={error.message} />;
 
   return (
     <PageDashboardChart
