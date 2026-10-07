@@ -23,6 +23,7 @@ import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { getSyncJobId } from '../../../common/getSyncJobId';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InventorySource } from '../../../interfaces/InventorySource';
@@ -153,8 +154,10 @@ export function InventorySourceDetails(
       </>
     );
   };
-  const lastJob: { id: number; status: string; finished: string } =
-    summary_fields.current_job || summary_fields.last_job;
+  const lastJob = summary_fields.current_job?.id
+    ? summary_fields.current_job
+    : summary_fields.last_job;
+  const lastJobId = getSyncJobId(summary_fields, inventorySource.related?.last_job);
 
   return (
     <PageDetails disableScroll={props.disableScroll}>
@@ -178,19 +181,16 @@ export function InventorySourceDetails(
           inventorySource.name
         )}
       </PageDetail>
-      {lastJob ? (
+      {lastJobId !== undefined ? (
         <PageDetail label={t`Last job status`}>
-          <Link
+          <StatusCell
+            tooltip={<LastJobTooltip job={{ ...lastJob, id: lastJobId }} />}
+            status={lastJob?.status}
+            tooltipId={lastJobId}
             to={getPageUrl(AwxRoute.JobOutput, {
-              params: { id: lastJob.id, job_type: 'inventory' },
+              params: { id: lastJobId, job_type: 'inventory' },
             })}
-          >
-            <StatusCell
-              tooltip={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
-              status={lastJob.status}
-              tooltipId={lastJob.id}
-            />
-          </Link>
+          />
         </PageDetail>
       ) : null}
       <PageDetail label={t`Description`}>{inventorySource.description}</PageDetail>
