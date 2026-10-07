@@ -6,11 +6,12 @@ import {
   QueryParams,
 } from '@ansible/ansible-ui-framework';
 import { DateRangeFilterPresets } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
-
-const MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
-const MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
-const MILLISECONDS_PER_WEEK = 7 * MILLISECONDS_PER_DAY;
-const MILLISECONDS_PER_MONTH = 30 * MILLISECONDS_PER_DAY;
+import {
+  MILLISECONDS_PER_DAY,
+  MILLISECONDS_PER_HOUR,
+  MILLISECONDS_PER_MONTH,
+  MILLISECONDS_PER_WEEK,
+} from './dateRangeOffsets';
 
 export function buildQueryString(
   view: IView,
