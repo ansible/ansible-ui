@@ -81,7 +81,6 @@ vi.mock('./components/PageFormSelectCredentialType', async () => {
     name: string;
     isDisabled?: string;
     isRequired?: boolean;
-    helperText?: string;
   }) {
     const { field } = useController({ name, defaultValue: 1, rules: { required: isRequired } });
     const [isOpen, setIsOpen] = React.useState(false);
