@@ -11,7 +11,13 @@ export async function logout(page: Page, options?: { username?: string }) {
       exact: true,
     })
     .click();
-  await page.getByRole('menuitem', { name: 'Logout' }).click();
+  await Promise.all([
+    page.waitForURL(/\/login(?:[/?#]|$)/, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30_000,
+    }),
+    page.getByRole('menuitem', { name: 'Logout' }).click(),
+  ]);
 
   // Verify we are on the AAP page
   await expect(page.getByRole('heading', { name: 'Log in to your account' })).toBeVisible({
