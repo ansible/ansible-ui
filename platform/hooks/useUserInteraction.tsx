@@ -3,12 +3,17 @@ import { useEffect, useRef } from 'react';
 export function useUserInteraction(throttleMs: number, callback: () => void) {
   const isThrottledRef = useRef(false);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
+  const callbackRef = useRef(callback);
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
 
   useEffect(() => {
     const handleInteraction = () => {
       if (isThrottledRef.current) return;
 
-      callback();
+      callbackRef.current();
       isThrottledRef.current = true;
 
       // Clear any existing timeout
@@ -26,6 +31,11 @@ export function useUserInteraction(throttleMs: number, callback: () => void) {
 
     return () => {
       document.removeEventListener('pointermove', handleInteraction);
+      if (timeoutIdRef.current !== null) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = null;
+      }
+      isThrottledRef.current = false;
     };
-  }, [throttleMs, callback]);
+  }, [throttleMs]);
 }

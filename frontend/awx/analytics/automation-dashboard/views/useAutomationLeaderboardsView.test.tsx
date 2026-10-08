@@ -372,8 +372,8 @@ describe('mapLeaderboardReport', () => {
           user_organization_rank: 1,
           total_organizations: 2,
           leaderboard: [
-            { rank: 1, name: null, runs: 20 },
-            { rank: 2, name: '', runs: 10 },
+            { rank: 1, name: null, runs: 20, user_organization: false },
+            { rank: 2, name: '', runs: 10, user_organization: false },
           ],
         },
       };

@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageHeader, PageLayout } from '@ansible/ansible-ui-framework';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { PageDashboard } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboard';
 import { Bullseye, Button, PageSection, Spinner } from '@patternfly/react-core';
 import { CogIcon } from '@patternfly/react-icons';
@@ -41,10 +42,15 @@ export function AwxOverview() {
 
 function AwxOverviewInternal(props: { managedResources: Resource[] }) {
   const { managedResources } = props;
-  const { data, isLoading } = useSWR<IAwxDashboardData>(awxAPI`/dashboard/`, (url: string) =>
-    fetch(url).then((r) => r.json())
+  const { data, error, isLoading } = useSWR<IAwxDashboardData, Error>(
+    awxAPI`/dashboard/`,
+    (url: string) =>
+      fetch(url).then((response) => {
+        if (!response.ok) throw new Error(`Overview request failed: ${response.status}`);
+        return response.json();
+      })
   );
-  if (!data || isLoading) {
+  if (isLoading) {
     return (
       <PageSection hasBodyWrapper={false} isFilled>
         <Bullseye>
@@ -53,6 +59,8 @@ function AwxOverviewInternal(props: { managedResources: Resource[] }) {
       </PageSection>
     );
   }
+  if (error) return <EmptyStateError message={error.message} />;
+  if (!data) return null;
 
   return (
     <PageDashboard>
