@@ -41,6 +41,17 @@ function replaceAlertInList(
   return newAlerts;
 }
 
+function addAlertToList(alerts: AlertProps[], preparedAlert: AlertProps): AlertProps[] {
+  const alertIndex = alerts.findIndex((existingAlert) => alertsMatch(existingAlert, preparedAlert));
+  if (alertIndex === -1) {
+    return [...alerts, preparedAlert];
+  }
+
+  const newAlerts = [...alerts];
+  newAlerts[alertIndex] = preparedAlert;
+  return newAlerts;
+}
+
 export const PageAlertToasterContext = createContext<IPageAlertToaster>({
   addAlert: () => null,
   removeAlert: () => null,
@@ -71,18 +82,7 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
 
     function addAlert(alert: AlertProps) {
       const preparedAlert = prepareAlert(alert);
-      setToasterAlerts((alerts) => {
-        const alertIndex = alerts.findIndex((existingAlert) =>
-          alertsMatch(existingAlert, preparedAlert)
-        );
-        if (alertIndex !== -1) {
-          const newAlerts = [...alerts];
-          newAlerts[alertIndex] = preparedAlert;
-          return newAlerts;
-        } else {
-          return [...alerts, preparedAlert];
-        }
-      });
+      setToasterAlerts((alerts) => addAlertToList(alerts, preparedAlert));
     }
     function replaceAlert(oldAlert: AlertProps, alert: AlertProps) {
       const preparedAlert = prepareAlert(alert);
