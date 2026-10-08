@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useInMemoryView } from './useInMemoryView';
 
 interface TestItem {
@@ -21,6 +22,10 @@ const testItems: TestItem[] = [
 
 function Wrapper({ children }: { children: ReactNode }) {
   return <MemoryRouter>{children}</MemoryRouter>;
+}
+
+function FilterWrapper({ children }: { children: ReactNode }) {
+  return <MemoryRouter initialEntries={['/?category=fruit']}>{children}</MemoryRouter>;
 }
 
 describe('useInMemoryView', () => {
@@ -87,6 +92,28 @@ describe('useInMemoryView', () => {
       expect(result.current.pageItems[0].name).toBe('Alpha');
       expect(result.current.pageItems[4].name).toBe('Echo');
     }
+  });
+
+  it('should filter items using a toolbar filter value', () => {
+    const categoryFilter: IToolbarFilter = {
+      type: ToolbarFilterType.SingleText,
+      comparison: 'contains',
+      key: 'category',
+      label: 'Category',
+      query: 'category',
+    };
+    const { result } = renderHook(
+      () =>
+        useInMemoryView<TestItem>({
+          items: testItems,
+          keyFn: (item) => item.id,
+          toolbarFilters: [categoryFilter],
+        }),
+      { wrapper: FilterWrapper }
+    );
+
+    expect(result.current.itemCount).toBe(3);
+    expect(result.current.pageItems?.every((item) => item.category === 'fruit')).toBe(true);
   });
 
   it('should provide selection helpers', () => {

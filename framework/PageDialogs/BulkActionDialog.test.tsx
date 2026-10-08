@@ -168,6 +168,32 @@ describe('BulkActionDialog', () => {
     });
   });
 
+  it('should call onClose with canceled after canceling processing', async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    const actionFn = vi.fn().mockImplementation(() => new Promise<void>(() => {}));
+
+    renderDialog({ items: [{ id: 1, name: 'Item 1' }], actionFn, onClose });
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalledWith(
+          'canceled',
+          expect.anything(),
+          expect.anything(),
+          expect.anything()
+        );
+      },
+      { timeout: 3000 }
+    );
+  });
+
   it('should call onClose with success after actions complete', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const onClose = vi.fn();
