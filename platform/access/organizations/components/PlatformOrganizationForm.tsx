@@ -51,6 +51,12 @@ export function PlatformOrganizationForm(props: OrganizationFormProps) {
     awxAPI`/organizations/`
   );
 
+  /**
+   * Single OPTIONS payload for the wizard: Gateway org fields plus Controller-only
+   * POST metadata (e.g. `opa_query_path`). For `actions.POST`, spread order means
+   * Controller (AWX) entries override Gateway when both define the same field name,
+   * which controls which pattern and helper text users see during create.
+   */
   const mergedOptionsData =
     optionsData || awxOrganizationOptionsData
       ? {
