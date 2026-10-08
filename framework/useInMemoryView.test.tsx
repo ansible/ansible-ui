@@ -24,10 +24,6 @@ function Wrapper({ children }: { children: ReactNode }) {
   return <MemoryRouter>{children}</MemoryRouter>;
 }
 
-function FilterWrapper({ children }: { children: ReactNode }) {
-  return <MemoryRouter initialEntries={['/?category=fruit&perPage=10']}>{children}</MemoryRouter>;
-}
-
 describe('useInMemoryView', () => {
   it('should return all items when no filters applied', () => {
     const { result } = renderHook(
@@ -102,20 +98,25 @@ describe('useInMemoryView', () => {
       label: 'Category',
       query: 'category',
     };
-    const { result } = renderHook(
-      () =>
-        useInMemoryView<TestItem>({
-          items: testItems,
-          keyFn: (item) => item.id,
-          toolbarFilters: [categoryFilter],
-        }),
-      { wrapper: FilterWrapper }
-    );
+    window.history.replaceState(null, '', '/?category=fruit&perPage=10');
+    try {
+      const { result } = renderHook(
+        () =>
+          useInMemoryView<TestItem>({
+            items: testItems,
+            keyFn: (item) => item.id,
+            toolbarFilters: [categoryFilter],
+          }),
+        { wrapper: Wrapper }
+      );
 
-    await waitFor(() => {
-      expect(result.current.itemCount).toBe(3);
-      expect(result.current.pageItems?.every((item) => item.category === 'fruit')).toBe(true);
-    });
+      await waitFor(() => {
+        expect(result.current.itemCount).toBe(3);
+        expect(result.current.pageItems?.every((item) => item.category === 'fruit')).toBe(true);
+      });
+    } finally {
+      window.history.replaceState(null, '', '/');
+    }
   });
 
   it('should provide selection helpers', () => {
