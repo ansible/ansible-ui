@@ -1,10 +1,8 @@
 // @vitest-environment happy-dom
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import {
-  getStatusDecoratorIcon,
-  TOPOLOGY_NODE_DECORATOR_STATUS_CLASS,
-} from './workflowOutputStatusDecoratorIcon';
+import { TOPOLOGY_NODE_DECORATOR_STATUS_CLASS } from '../../../../common/topologyDecoratorStatus';
+import { getStatusDecoratorIcon } from './workflowOutputStatusDecoratorIcon';
 
 describe('getStatusDecoratorIcon', () => {
   const centerPoint = { x: 10, y: 10 };

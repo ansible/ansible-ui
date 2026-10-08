@@ -1,7 +1,4 @@
-import {
-  TOPOLOGY_NODE_DECORATOR_STATUS_CLASS,
-  wrapTopologyDecoratorStatusIcon,
-} from '../../../../common/topologyDecoratorStatus';
+import { wrapTopologyDecoratorStatusIcon } from '../../../../common/topologyDecoratorStatus';
 import {
   CheckCircleIcon,
   ClockIcon,
@@ -11,8 +8,6 @@ import {
 } from '@patternfly/react-icons';
 import { ReactElement } from 'react';
 import styled, { keyframes } from 'styled-components';
-
-export { TOPOLOGY_NODE_DECORATOR_STATUS_CLASS };
 
 const Spin = keyframes`
   from {
