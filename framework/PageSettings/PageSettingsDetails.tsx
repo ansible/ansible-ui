@@ -16,6 +16,13 @@ export function PageSettingsDetails() {
   const { t } = useTranslation();
   const [settings] = useContext(PageSettingsContext);
   const navigate = useNavigate();
+  const getSettingValue = (name: string) => {
+    const value = (settings as Record<string, string | number>)[name];
+    return (
+      /* v8 ignore next */
+      value ?? ''
+    );
+  };
   const actions = useMemo<IPageAction<object>[]>(
     () => [
       {
@@ -44,7 +51,7 @@ export function PageSettingsDetails() {
           <PageSettingsDetail
             key={option.name}
             option={option}
-            value={(settings as Record<string, string | number>)[option.name]}
+            value={getSettingValue(option.name)}
           />
         ))}
       </PageDetails>

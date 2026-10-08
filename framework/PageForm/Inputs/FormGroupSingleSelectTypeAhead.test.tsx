@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FormGroupSingleSelectTypeAhead } from './FormGroupSingleSelectTypeAhead';
@@ -33,6 +33,112 @@ describe('FormGroupSingleSelectTypeAhead', () => {
 
     expect(input).toHaveValue('test');
     expect(input).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('should render grouped options', async () => {
+    const user = userEvent.setup();
+    render(
+      <FormGroupSingleSelectTypeAhead
+        {...defaultProps}
+        options={[
+          { value: 'one', label: 'One', group: 'First' },
+          { value: 'two', label: 'Two', group: 'Second' },
+        ]}
+      />
+    );
+
+    await user.click(screen.getByRole('textbox'));
+
+    expect(screen.getByText('First')).toBeInTheDocument();
+    expect(screen.getByText('Second')).toBeInTheDocument();
+  });
+
+  it('should handle keyboard navigation with no options', async () => {
+    const user = userEvent.setup();
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} options={[]} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('should safely navigate sparse option lists', async () => {
+    const user = userEvent.setup();
+    const sparseOptions = new Array<{ value: string; label: string }>(2);
+    sparseOptions[1] = { value: 'option1', label: 'Option 1' };
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} options={sparseOptions} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowUp}');
+
+    expect(input).toBeInTheDocument();
+  });
+
+  it('should move to the next option after an option is focused', async () => {
+    const user = userEvent.setup();
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => {
+      expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option1');
+    });
+
+    input.focus();
+    await user.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option2');
+  });
+
+  it('should skip sparse entries while finding the next option', async () => {
+    const user = userEvent.setup();
+    const sparseOptions = new Array<{ value: string; label: string }>(2);
+    sparseOptions[0] = { value: 'option0', label: 'Option 0' };
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} options={sparseOptions} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => {
+      expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option0');
+    });
+    await user.keyboard('{ArrowDown}');
+
+    expect(input).toBeInTheDocument();
+  });
+
+  it('should skip disabled entries while finding the next option', async () => {
+    const user = userEvent.setup();
+    render(
+      <FormGroupSingleSelectTypeAhead
+        {...defaultProps}
+        options={[
+          { value: 'disabled', label: 'Disabled', isDisabled: true },
+          { value: 'enabled', label: 'Enabled' },
+        ]}
+      />
+    );
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    input.focus();
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => {
+      expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-enabled');
+    });
+
+    await user.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-enabled');
   });
 
   // Test the core deletion fix - this is what was broken

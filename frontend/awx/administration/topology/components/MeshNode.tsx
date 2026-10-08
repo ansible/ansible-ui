@@ -1,15 +1,8 @@
-import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '@ansible/ansible-ui-framework';
 import {
   BuilderImageIcon,
-  CheckCircleIcon,
-  ClockIcon,
   CubeIcon,
   DataProcessorIcon,
   DatabaseIcon,
-  ExclamationCircleIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  QuestionCircleIcon,
 } from '@patternfly/react-icons';
 import {
   DEFAULT_DECORATOR_RADIUS,
@@ -21,25 +14,7 @@ import {
 } from '@patternfly/react-topology';
 import { useMemo } from 'react';
 import { CustomNodeProps } from '../types';
-
-function getStatusIcon(nodeType: string) {
-  switch (nodeType) {
-    case 'ready':
-      return <CheckCircleIcon style={{ fill: pfSuccess }} />;
-    case 'installed':
-      return <ClockIcon style={{ fill: pfInfo }} />;
-    case 'provisioning':
-      return <PlusCircleIcon style={{ fill: pfDisabled }} />;
-    case 'deprovisioning':
-      return <MinusCircleIcon style={{ fill: pfDisabled }} />;
-    case 'unavailable':
-    case 'deprovision-fail':
-    case 'provision-fail':
-      return <ExclamationCircleIcon style={{ fill: pfDanger }} />;
-    default:
-      return <QuestionCircleIcon style={{ fill: pfDisabled }} />;
-  }
-}
+import { getMeshNodeStatusDecoratorIcon } from './meshNodeStatusDecoratorIcon';
 
 export function getNodeIcon(nodeType: string) {
   switch (nodeType) {
@@ -65,7 +40,7 @@ export const MeshNode: React.FC<CustomNodeProps & WithSelectionProps> = ({
   const Icon = data && getNodeIcon(data.nodeType);
 
   const statusDecorator = useMemo(() => {
-    const icon = data && getStatusIcon(data.nodeStatus);
+    const icon = data && getMeshNodeStatusDecoratorIcon(data.nodeStatus);
     if (!icon) {
       return null;
     }
@@ -78,7 +53,7 @@ export const MeshNode: React.FC<CustomNodeProps & WithSelectionProps> = ({
         radius={DEFAULT_DECORATOR_RADIUS}
         showBackground
         onClick={onSelect}
-        icon={<g>{icon}</g>}
+        icon={icon}
         ariaLabel={data?.nodeStatus}
       />
     );
