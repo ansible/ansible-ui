@@ -13,7 +13,9 @@ import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboards
 import { createLeaderboardsView } from './views/useAutomationLeaderboardsView.testUtils';
 import { useNewAchievementsAlert } from './common/useNewAchievementsAlert';
 
-vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
+}));
 vi.mock('./views/useAutomationLeaderboardsView', () => ({
   useAutomationLeaderboardsView: vi.fn(),
 }));

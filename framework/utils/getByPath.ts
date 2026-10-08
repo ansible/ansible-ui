@@ -13,11 +13,20 @@ export function getByPath(object: object, path: string): unknown {
   }
   const segments = path.split('.');
   let current: unknown = object;
-  for (const segment of segments) {
+  for (let index = 0; index < segments.length; index++) {
     if (current === null || current === undefined || typeof current !== 'object') {
       return undefined;
     }
-    current = (current as Record<string, unknown>)[segment];
+    const record = current as Record<string, unknown>;
+    const segment = segments[index];
+    if (Object.prototype.hasOwnProperty.call(record, segment)) {
+      current = record[segment];
+      continue;
+    }
+    const remainingPath = segments.slice(index).join('.');
+    return Object.prototype.hasOwnProperty.call(record, remainingPath)
+      ? record[remainingPath]
+      : undefined;
   }
   return current;
 }

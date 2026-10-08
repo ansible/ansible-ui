@@ -15,6 +15,21 @@ function attributesToRecord(element: Element): { [key: string]: string } | undef
   return record;
 }
 
+function directText(element: Element): string | undefined {
+  const text = Array.from(element.childNodes)
+    .filter((child) => child.nodeType === Node.TEXT_NODE)
+    .map((child) => child.nodeValue ?? '')
+    .join('')
+    .trim();
+  return text || undefined;
+}
+
+function childKey(element: Element): string {
+  return element.namespaceURI === 'http://www.w3.org/2005/Atom'
+    ? element.localName
+    : element.tagName;
+}
+
 function assignChild(
   node: XmlNode,
   key: string,
@@ -64,17 +79,17 @@ function parseElementValue(element: Element): XmlNode | string | Record<string, 
     return text;
   }
 
-  const node: XmlNode = { $: attributesToRecord(element), _: undefined };
+  const node: XmlNode = { $: attributesToRecord(element), _: directText(element) };
   for (const child of childElements) {
-    assignChild(node, child.tagName, parseElementValue(child));
+    assignChild(node, childKey(child), parseElementValue(child));
   }
   return node;
 }
 
 function parseEntryElement(entry: Element): XmlNode {
-  const node: XmlNode = { $: attributesToRecord(entry), _: undefined };
+  const node: XmlNode = { $: attributesToRecord(entry), _: directText(entry) };
   for (const child of Array.from(entry.children)) {
-    assignChild(node, child.tagName, parseElementValue(child));
+    assignChild(node, childKey(child), parseElementValue(child));
   }
   return node;
 }
@@ -89,14 +104,16 @@ export function parseAtomFeedXml(feedContent: string): { feed: XmlNode } {
     throw new Error('Invalid XML');
   }
 
-  const feedElement = doc.getElementsByTagName('feed')[0] ?? doc.documentElement;
-  const feed: XmlNode = { $: attributesToRecord(feedElement), _: undefined };
+  const feedElement =
+    Array.from(doc.getElementsByTagName('*')).find((element) => element.localName === 'feed') ??
+    doc.documentElement;
+  const feed: XmlNode = { $: attributesToRecord(feedElement), _: directText(feedElement) };
 
   for (const child of Array.from(feedElement.children)) {
-    if (child.tagName === 'entry') {
+    if (child.localName === 'entry') {
       assignChild(feed, 'entry', parseEntryElement(child));
     } else {
-      assignChild(feed, child.tagName, parseElementValue(child));
+      assignChild(feed, childKey(child), parseElementValue(child));
     }
   }
 
