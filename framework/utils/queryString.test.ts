@@ -229,6 +229,23 @@ describe('queryString', () => {
       expect(filtersToSearchObj([filter], { name: ['job', 'schedule'] }).toString()).to.equal('');
     });
 
+    it('should append only the first activity stream value to object2', () => {
+      const filter: IToolbarFilter = {
+        type: ToolbarFilterType.SingleText,
+        comparison: 'contains',
+        key: 'name',
+        label: 'Name',
+        query: 'object1__in',
+      };
+      const state: IFilterState = {
+        name: ['foo'],
+      };
+
+      expect(filtersToSearchObj([filter], state).toString()).to.equal(
+        'or__object1__in=foo&or__object2__in=foo'
+      );
+    });
+
     it('should url encode string', () => {
       const filters = [nameFilter];
       const state: IFilterState = {
