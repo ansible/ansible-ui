@@ -12,7 +12,7 @@ describe('feature flag catalog', () => {
   it('keeps the documented catalog valid and usable as registry definitions', () => {
     expect(() => validateFeatureFlagCatalog(catalog)).not.toThrow();
     expect(createFeatureFlagDefinitions(catalog)).toEqual({
-      'example-view': {
+      FEATURE_EXAMPLE_VIEW_ENABLED: {
         defaultValue: false,
         description: 'Example of an unfinished client-only view.',
         kind: 'release',

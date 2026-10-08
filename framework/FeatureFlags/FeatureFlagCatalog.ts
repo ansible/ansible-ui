@@ -8,7 +8,7 @@ type FeatureFlagDefinitionsFromCatalog<Catalog extends readonly FeatureFlagCatal
   readonly [Entry in Catalog[number] as Entry['name']]: Omit<Entry, 'name'>;
 };
 
-const featureFlagNamePattern = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
+const featureFlagNamePattern = /^FEATURE_[A-Z0-9_]+_ENABLED$/;
 const featureFlagKinds = new Set(['release', 'experiment', 'operational', 'kill-switch']);
 const featureFlagStatuses = new Set(['proposed', 'alpha', 'beta', 'production', 'deprecated']);
 const allowedCatalogFields = new Set([
