@@ -22,7 +22,7 @@ export function useApplicationListAccess(applicationsUrl: string) {
     if (error) {
       return undefined;
     }
-    if (data !== undefined) {
+    if (data?.results !== undefined) {
       return true;
     }
     return undefined;
