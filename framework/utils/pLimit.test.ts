@@ -23,7 +23,7 @@ describe('pLimit', () => {
     expect(() => pLimit(0)).toThrow();
     expect(() => pLimit(-1)).toThrow();
     expect(() => pLimit(1.5)).toThrow();
-    expect(() => pLimit(NaN)).toThrow();
+    expect(() => pLimit(Number.NaN)).toThrow();
     expect(() => pLimit(Infinity)).not.toThrow();
   });
 
