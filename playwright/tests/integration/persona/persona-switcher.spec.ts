@@ -94,6 +94,10 @@ test.describe('Persona Switcher', () => {
       timeout: 30_000,
     });
 
+    // Navigation is derived from asynchronous user and analytics-status requests. Wait for the
+    // permission-sensitive item to settle before asserting the rest of the normal-user view.
+    await expect(page.locator('#awx-analytics')).toBeHidden({ timeout: 30_000 });
+
     // Administration View
     await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
     await expect(page.locator('#platform-overview')).toContainText('Overview');
@@ -103,7 +107,6 @@ test.describe('Persona Switcher', () => {
     await expect(page.locator('#platform-hub')).toContainText('Automation Content');
     await expect(page.locator('#awx-settings')).toContainText('Settings');
     await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
-    await expect(page.locator('#awx-analytics')).toBeHidden();
     // Management jobs not shown for a normal user
     await page.locator('#platform-awx').click();
     await page.locator('#awx-administration').click();
