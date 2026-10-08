@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -304,6 +305,29 @@ describe('InventorySourceDetails', () => {
       expect(screen.getByText('Test Inventory Source')).toBeInTheDocument();
     });
     expect(screen.queryByText('Last job status')).not.toBeInTheDocument();
+  });
+
+  it('should not crash hovering status when the job id only comes from the related last_job URL fallback', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('inventory_sources') && request.url.includes('/1'),
+        () =>
+          HttpResponse.json({
+            ...fullInventorySource,
+            summary_fields: {
+              ...fullInventorySource.summary_fields,
+              current_job: null,
+              last_job: null,
+            },
+            related: { schedules: '', last_job: '/api/v2/inventory_updates/55/' },
+          })
+      )
+    );
+    renderInventorySourceDetails();
+    const statusCell = await screen.findByTestId('unknown-status');
+
+    const user = userEvent.setup();
+    await expect(user.hover(statusCell)).resolves.not.toThrow();
   });
 
   it('should not render execution environment when absent', async () => {
