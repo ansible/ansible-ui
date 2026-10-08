@@ -18,15 +18,15 @@ vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
 }));
 
 const server = setupServer(
-  http.get('*/_ui/v2/role_definitions/*', () =>
+  http.get('*/_ui/v2/role_definitions/', () =>
     HttpResponse.json({ count: 0, results: [], next: null, previous: null })
   ),
-  http.options('*/_ui/v2/role_definitions/*', () =>
+  http.options('*/_ui/v2/role_definitions/', () =>
     HttpResponse.json({ actions: { GET: {}, POST: {} } })
   )
 );
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -47,13 +47,10 @@ describe('HubSelectRolesStep', () => {
       </FormWrapper>
     );
 
-    await waitFor(
-      () => {
-        expect(
-          screen.getByText('Select roles to apply to all of your selected namespaces.')
-        ).toBeInTheDocument();
-      },
-      { timeout: 10000 }
-    );
+    await waitFor(() => {
+      expect(
+        screen.getByText('Select roles to apply to all of your selected namespaces.')
+      ).toBeInTheDocument();
+    });
   });
 });

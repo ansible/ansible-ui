@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { HubNamespace } from '../HubNamespace';
 import { useDeleteHubNamespaces } from './useDeleteHubNamespaces';
 
@@ -35,6 +35,10 @@ const namespace: HubNamespace = {
 };
 
 describe('useDeleteHubNamespaces', () => {
+  beforeEach(() => {
+    capturedConfig = {};
+  });
+
   it('opens bulk confirmation with delete warning', () => {
     const { result } = renderHook(() => useDeleteHubNamespaces(vi.fn()));
     const deleteNamespaces = result.current;

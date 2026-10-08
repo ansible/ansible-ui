@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContentTypeEnum } from '../../../interfaces/expanded/ContentType';
 import { HubRbacRole } from '../../../interfaces/expanded/HubRbacRole';
 import { useDeleteRoles } from './useDeleteRoles';
@@ -40,6 +40,10 @@ const baseRole: HubRbacRole = {
 };
 
 describe('useDeleteRoles', () => {
+  beforeEach(() => {
+    capturedConfig = {};
+  });
+
   it('marks built-in roles as non-actionable', () => {
     const { result } = renderHook(() => useDeleteRoles(vi.fn()));
     const deleteRoles = result.current;
