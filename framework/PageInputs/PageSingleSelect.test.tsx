@@ -171,7 +171,7 @@ describe('PageSingleSelect', () => {
 
     expect(await screen.findByText(testObjects[0].name)).toBeInTheDocument();
   });
-  
+
   it('should render dividers and support tabbing back to the search input', async () => {
     const user = userEvent.setup();
     const searchRef = createRef<HTMLInputElement>();
