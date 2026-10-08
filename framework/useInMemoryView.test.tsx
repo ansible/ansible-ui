@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
@@ -25,7 +25,7 @@ function Wrapper({ children }: { children: ReactNode }) {
 }
 
 function FilterWrapper({ children }: { children: ReactNode }) {
-  return <MemoryRouter initialEntries={['/?category=fruit']}>{children}</MemoryRouter>;
+  return <MemoryRouter initialEntries={['/?category=fruit&perPage=10']}>{children}</MemoryRouter>;
 }
 
 describe('useInMemoryView', () => {
@@ -94,7 +94,7 @@ describe('useInMemoryView', () => {
     }
   });
 
-  it('should filter items using a toolbar filter value', () => {
+  it('should filter items using a toolbar filter value', async () => {
     const categoryFilter: IToolbarFilter = {
       type: ToolbarFilterType.SingleText,
       comparison: 'contains',
@@ -112,8 +112,10 @@ describe('useInMemoryView', () => {
       { wrapper: FilterWrapper }
     );
 
-    expect(result.current.itemCount).toBe(3);
-    expect(result.current.pageItems?.every((item) => item.category === 'fruit')).toBe(true);
+    await waitFor(() => {
+      expect(result.current.itemCount).toBe(3);
+      expect(result.current.pageItems?.every((item) => item.category === 'fruit')).toBe(true);
+    });
   });
 
   it('should provide selection helpers', () => {
