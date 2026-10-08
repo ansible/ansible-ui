@@ -51,6 +51,19 @@ describe('useApplicationListAccess', () => {
     });
   });
 
+  it('should leave canList undefined when the probe returns a non-list payload', async () => {
+    server.use(http.get(applicationsUrl, () => HttpResponse.json({ unexpected: true })));
+
+    const { result } = renderHook(() => useApplicationListAccess(applicationsUrl), {
+      wrapper: SwrTestWrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+    expect(result.current.canList).toBeUndefined();
+  });
+
   it('should leave canList undefined for non-forbidden errors', async () => {
     server.use(http.get(applicationsUrl, () => new HttpResponse(null, { status: 500 })));
 
