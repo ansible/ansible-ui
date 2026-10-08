@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { useHubContext } from '../common/useHubContext';
+import { HubContext, useHubContext } from '../common/useHubContext';
 import { useHubNotifications } from './HubMasthead';
 
 const setNotificationGroups = vi.fn(
@@ -15,10 +15,14 @@ vi.mock('@ansible/ansible-ui-framework/PageNotifications/usePageNotifications', 
   usePageNotifications: () => ({ setNotificationGroups }),
 }));
 
+const hubContextWithPermission = (): HubContext => ({
+  featureFlags: {},
+  settings: {},
+  hasPermission: () => true,
+});
+
 vi.mock('../common/useHubContext', () => ({
-  useHubContext: vi.fn(() => ({
-    hasPermission: () => true,
-  })),
+  useHubContext: vi.fn(() => hubContextWithPermission()),
 }));
 
 const server = setupServer(
@@ -38,9 +42,7 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   server.resetHandlers();
   setNotificationGroups.mockClear();
-  vi.mocked(useHubContext).mockReturnValue({
-    hasPermission: () => true,
-  });
+  vi.mocked(useHubContext).mockReturnValue(hubContextWithPermission());
 });
 afterAll(() => server.close());
 
@@ -64,6 +66,7 @@ describe('useHubNotifications', () => {
 
   it('does not fetch approvals when the user lacks permission', async () => {
     vi.mocked(useHubContext).mockReturnValue({
+      ...hubContextWithPermission(),
       hasPermission: () => false,
     });
 
