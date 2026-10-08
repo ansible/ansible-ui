@@ -2,7 +2,7 @@
   "$schema": "./feature-flags.schema.json",
   "flags": [
     {
-      "name": "example-view",
+      "name": "FEATURE_EXAMPLE_VIEW_ENABLED",
       "status": "proposed",
       "defaultValue": false,
       "scope": "client-only",

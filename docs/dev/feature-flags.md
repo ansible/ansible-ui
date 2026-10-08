@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 
 const catalog = [
   {
-    name: 'example-view',
+    name: 'FEATURE_EXAMPLE_VIEW_ENABLED',
     defaultValue: false,
     description: 'Example of an unfinished client-only view.',
     kind: 'release',
@@ -59,7 +59,7 @@ function ExampleApp() {
 }
 
 function ExampleViewToggle() {
-  const isExampleViewEnabled = featureFlags.useFeatureFlag('example-view');
+  const isExampleViewEnabled = featureFlags.useFeatureFlag('FEATURE_EXAMPLE_VIEW_ENABLED');
 
   return isExampleViewEnabled ? <ExampleView /> : null;
 }
@@ -77,7 +77,9 @@ function ExampleView() {
 ```
 
 The application owns one typed catalog, one registry, and one React scope. The
-registry delegates evaluation to its provider and returns evaluation details
+catalog uses `FEATURE_<NAME>_ENABLED` identifiers, matching the existing AWX
+feature-flag convention. The registry delegates evaluation to its provider and
+returns evaluation details
 including the source/reason. With no provider, the registry returns the code
 default. The local provider persists explicit overrides under a namespaced
 browser-storage key; a production provider should instead read the approved
@@ -123,20 +125,20 @@ while the feature is unfinished. A developer can enable the flag locally for a
 working session with the registry API:
 
 ```ts
-localProvider.setOverride('example-view', true);
+localProvider.setOverride('FEATURE_EXAMPLE_VIEW_ENABLED', true);
 ```
 
 If the application exposes the registry in a local development harness, the
 same override can be stored in the browser console:
 
 ```js
-localStorage.setItem('ui:feature-flags', '{"example-view":true}');
+localStorage.setItem('ui:feature-flags', '{"FEATURE_EXAMPLE_VIEW_ENABLED":true}');
 ```
 
 Do not commit either override. Before merging to `devel`, keep the catalog and
 code default at `false`; CI and other users will therefore keep the unfinished
 feature hidden. Remove the local override with
-`localProvider.resetOverride('example-view')` or
+`localProvider.resetOverride('FEATURE_EXAMPLE_VIEW_ENABLED')` or
 by clearing the `ui:feature-flags` browser-storage entry when testing the
 default-off path.
 

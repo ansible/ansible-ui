@@ -30,7 +30,7 @@
       "properties": {
         "name": {
           "type": "string",
-          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          "pattern": "^FEATURE_[A-Z0-9_]+_ENABLED$"
         },
         "status": {
           "type": "string",

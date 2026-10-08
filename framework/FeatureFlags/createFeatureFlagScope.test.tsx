@@ -5,7 +5,7 @@ import { createFeatureFlagScope } from './createFeatureFlagScope';
 import { createFeatureFlagRegistry, createLocalFeatureFlagProvider } from './FeatureFlagRegistry';
 
 const definitions = {
-  unfinishedView: {
+  FEATURE_UNFINISHED_VIEW_ENABLED: {
     defaultValue: false,
     description: 'A default-off view.',
     kind: 'release',
@@ -27,13 +27,16 @@ describe('createFeatureFlagScope', () => {
         {children}
       </featureFlags.FeatureFlagProvider>
     );
-    const { result } = renderHook(() => featureFlags.useFeatureFlag('unfinishedView'), {
-      wrapper,
-    });
+    const { result } = renderHook(
+      () => featureFlags.useFeatureFlag('FEATURE_UNFINISHED_VIEW_ENABLED'),
+      {
+        wrapper,
+      }
+    );
 
     expect(result.current).toBe(false);
 
-    act(() => provider.setOverride('unfinishedView', true));
+    act(() => provider.setOverride('FEATURE_UNFINISHED_VIEW_ENABLED', true));
 
     expect(result.current).toBe(true);
   });
