@@ -184,7 +184,7 @@ export function InventorySourceDetails(
       {lastJobId !== undefined ? (
         <PageDetail label={t`Last job status`}>
           <StatusCell
-            tooltip={<LastJobTooltip job={{ ...lastJob, id: lastJobId }} />}
+            tooltip={buildLastJobTooltip(lastJob, lastJobId)}
             status={lastJob?.status}
             tooltipId={lastJobId}
             to={getPageUrl(AwxRoute.JobOutput, {
@@ -305,6 +305,16 @@ export function InventorySourceDetails(
       />
     </PageDetails>
   );
+}
+
+function buildLastJobTooltip(
+  job: { status: string; finished: string } | undefined,
+  jobId: number | undefined
+) {
+  if (!job?.status || jobId === undefined) {
+    return undefined;
+  }
+  return <LastJobTooltip job={{ ...job, id: jobId }} />;
 }
 
 export function LastJobTooltip(props: { job: { id: number; status: string; finished?: string } }) {
