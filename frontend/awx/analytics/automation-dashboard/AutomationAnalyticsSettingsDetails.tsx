@@ -14,18 +14,16 @@ import { useMemo } from 'react';
 import { ButtonVariant } from '@patternfly/react-core';
 import { PencilAltIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router-dom';
-import { usePlatformActiveUser } from '@ansible/platform-ui/main/PlatformActiveUserProvider';
 import { useCollectionStatus } from './common/useCollectionStatus';
 import { useAutomationLeaderboardHelpText } from './common/useAutomationLeaderboardHelpText';
+import { useCanEditAutomationAnalyticsSettings } from './common/useCanEditAutomationAnalyticsSettings';
 import { AwxError } from '../../common/AwxError';
 
 export function AutomationAnalyticsSettingsDetails() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { isLoading, error, data } = useCollectionStatus();
-  const { activePlatformUser } = usePlatformActiveUser();
-  // The metrics API lets platform auditors change this setting too, same as the nav visibility
-  const canEdit = !!(activePlatformUser?.is_superuser || activePlatformUser?.is_platform_auditor);
+  const canEdit = useCanEditAutomationAnalyticsSettings();
   const leaderboardHelpText = useAutomationLeaderboardHelpText();
   const actions = useMemo<IPageAction<object>[]>(() => {
     return [
