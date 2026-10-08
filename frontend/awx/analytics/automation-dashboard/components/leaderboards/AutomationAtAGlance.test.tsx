@@ -6,7 +6,9 @@ import { CARD_WIDTH_COL_SPAN, widthOrFullRow } from '../../common/leaderboardCar
 import type { StreakDay } from '../../views/useAutomationLeaderboardsView';
 import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsView.testUtils';
 
-vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
+}));
 
 // The streak strips moved to AutomationStreak; this calendar only satisfies the view type
 // here — the strips themselves are covered in AutomationStreak.test.tsx.

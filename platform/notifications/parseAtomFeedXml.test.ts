@@ -87,6 +87,23 @@ describe('parseAtomFeedXml', () => {
     expect(subtitle._).toBe('Feed summary');
   });
 
+  test('preserves mixed text content', () => {
+    const xml = '<feed><entry><summary>before <b>bold</b> after</summary></entry></feed>';
+
+    const { feed } = parseAtomFeedXml(xml);
+    const summary = (feed.entry as XmlNode).summary as XmlNode;
+    expect(summary._).toBe('before  after');
+    expect(summary.b).toBe('bold');
+  });
+
+  test('parses feeds and entries with arbitrary Atom prefixes', () => {
+    const xml =
+      '<atom:feed xmlns:atom="http://www.w3.org/2005/Atom"><atom:entry><atom:id>n1</atom:id></atom:entry></atom:feed>';
+
+    const { feed } = parseAtomFeedXml(xml);
+    expect((feed.entry as XmlNode).id).toBe('n1');
+  });
+
   test('collapses three or more sibling tags into an array', () => {
     const xml = `<feed>
       <entry>

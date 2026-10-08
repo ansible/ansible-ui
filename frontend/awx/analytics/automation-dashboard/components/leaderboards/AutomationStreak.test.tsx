@@ -4,7 +4,9 @@ import { AutomationStreak } from './AutomationStreak';
 import type { StreakDay } from '../../views/useAutomationLeaderboardsView';
 import { createLeaderboardsView } from '../../views/useAutomationLeaderboardsView.testUtils';
 
-vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
+}));
 
 // A 3-day calendar keeps the render cheap — StreakDayStrip's own behaviour is covered in
 // StreakDayStrip.test.tsx; here we only care that AutomationStreak wires the view into

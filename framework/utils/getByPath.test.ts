@@ -22,4 +22,8 @@ describe('getByPath', () => {
     const data = { 'foo.bar': 'literal', foo: { bar: 'nested' } };
     expect(getByPath(data, 'foo.bar')).toBe('literal');
   });
+
+  test('falls back to dotted keys while walking nested paths', () => {
+    expect(getByPath({ a: { 'b.c': 42 } }, 'a.b.c')).toBe(42);
+  });
 });

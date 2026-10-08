@@ -11,7 +11,9 @@ import type { AutomationLeaderboardsView } from './views/useAutomationLeaderboar
 import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 import { createLeaderboardsView } from './views/useAutomationLeaderboardsView.testUtils';
 
-vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
+}));
 vi.mock('./views/useAutomationLeaderboardsView', () => ({
   useAutomationLeaderboardsView: vi.fn(),
 }));
