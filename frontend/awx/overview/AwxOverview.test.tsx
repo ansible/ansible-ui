@@ -53,7 +53,7 @@ describe('AwxOverview', () => {
     });
   });
 
-  it('should keep the loading state when the dashboard request fails', async () => {
+  it('should render an error state when the dashboard request fails', async () => {
     const handler = vi.fn(() => new HttpResponse(null, { status: 500 }));
     server.use(http.get(({ request }) => request.url.includes('/dashboard/'), handler));
 
@@ -63,6 +63,8 @@ describe('AwxOverview', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => expect(handler).toHaveBeenCalled());
+    await waitFor(() => {
+      expect(screen.getByText('Overview request failed: 500')).toBeInTheDocument();
+    });
   });
 });
