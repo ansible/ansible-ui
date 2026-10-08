@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect } from 'react';
-import pLimit from 'p-limit';
+import { pLimit } from '../utils/pLimit';
 import { ErrorAdapter, GenericErrorDetail } from '../PageForm/typesErrorAdapter';
 import type { StatusWithMessageAndUrl } from './BulkActionDialog';
 

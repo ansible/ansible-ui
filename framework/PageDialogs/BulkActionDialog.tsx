@@ -10,9 +10,6 @@ import {
   ModalFooter,
 } from '@patternfly/react-core';
 import { CheckCircleIcon, ExclamationCircleIcon, PendingIcon } from '@patternfly/react-icons';
-<<<<<<< HEAD
-=======
->>>>>>> c870f25b9 (refactor(framework): split bulk action processing)
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { genericErrorAdapter } from '../PageForm/genericErrorAdapter';
