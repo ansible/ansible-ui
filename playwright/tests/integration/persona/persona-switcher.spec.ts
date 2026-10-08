@@ -95,6 +95,10 @@ test.describe('Persona Switcher', () => {
       timeout: 30_000,
     });
 
+    // Navigation is derived from asynchronous user and analytics-status requests. Wait for the
+    // permission-sensitive item to settle before asserting the rest of the normal-user view.
+    await expect(page.locator('#awx-analytics')).toBeHidden({ timeout: 30_000 });
+
     // Administration View
     await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
     await expect(page.locator('#platform-overview')).toContainText('Overview');
