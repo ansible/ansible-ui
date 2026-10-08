@@ -75,9 +75,9 @@ describe('PageAsyncMultiSelect', () => {
 
   it('should show queried options', async () => {
     const user = userEvent.setup();
-    const { container } = render(<PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} />);
+    render(<PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} />);
 
-    const toggle = container.querySelector('#test');
+    const toggle = screen.getByRole('button', { name: 'Select value' });
     expect(toggle).toBeInTheDocument();
 
     await user.click(toggle!);
@@ -91,9 +91,9 @@ describe('PageAsyncMultiSelect', () => {
 
   it('should show Load more button and load additional options', async () => {
     const user = userEvent.setup();
-    const { container } = render(<PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} />);
+    render(<PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} />);
 
-    await user.click(container.querySelector('#test')!);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
 
     await waitFor(() => {
       expect(screen.getByText('Option 1')).toBeInTheDocument();
@@ -110,11 +110,9 @@ describe('PageAsyncMultiSelect', () => {
   it('should show Browse button and invoke onBrowse', async () => {
     const user = userEvent.setup();
     const onBrowse = vi.fn();
-    const { container } = render(
-      <PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} onBrowse={onBrowse} />
-    );
+    render(<PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} onBrowse={onBrowse} />);
 
-    await user.click(container.querySelector('#test')!);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Browse' })).toBeInTheDocument();
@@ -126,7 +124,7 @@ describe('PageAsyncMultiSelect', () => {
 
   it('should show query error', async () => {
     const user = userEvent.setup();
-    const { container } = render(
+    render(
       <PageAsyncMultiSelectTest
         queryOptions={async () => {
           await new Promise((resolve) => setTimeout(resolve, 1));
@@ -135,7 +133,7 @@ describe('PageAsyncMultiSelect', () => {
       />
     );
 
-    const toggle = container.querySelector('#test');
+    const toggle = screen.getByRole('button', { name: 'Select value' });
     await user.click(toggle!);
 
     await waitFor(() => {
