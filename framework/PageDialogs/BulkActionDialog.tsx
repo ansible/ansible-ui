@@ -131,7 +131,7 @@ function useBulkActionDialogState<T extends object>(props: BulkActionDialogProps
 
   const onCloseClicked = useCallback(() => {
     setDialog(undefined);
-    let closeStatus: 'success' | 'failures' | 'canceled' = 'success';
+    let closeStatus: BulkActionCompletionStatus = 'success';
     if (error) closeStatus = 'failures';
     if (isCanceled) closeStatus = 'canceled';
     onClose?.(
