@@ -1,15 +1,8 @@
-import { pfDisabled } from '@ansible/ansible-ui-framework';
 import {
   BuilderImageIcon,
-  CheckCircleIcon,
-  ClockIcon,
   CubeIcon,
   DataProcessorIcon,
   DatabaseIcon,
-  ExclamationCircleIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  QuestionCircleIcon,
 } from '@patternfly/react-icons';
 import {
   DEFAULT_DECORATOR_RADIUS,
@@ -19,43 +12,9 @@ import {
   WithSelectionProps,
   getDefaultShapeDecoratorCenter,
 } from '@patternfly/react-topology';
-import { ReactElement, useMemo } from 'react';
-import {
-  topologyDecoratorStatusColorStyle,
-  wrapTopologyDecoratorStatusIcon,
-} from '../../../common/topologyDecoratorStatus';
+import { useMemo } from 'react';
 import { CustomNodeProps } from '../types';
-
-function getStatusIcon(nodeType: string): ReactElement {
-  switch (nodeType) {
-    case 'ready':
-      return wrapTopologyDecoratorStatusIcon(<CheckCircleIcon className="pf-m-success" />);
-    case 'installed':
-      return wrapTopologyDecoratorStatusIcon(<ClockIcon className="pf-m-info" />);
-    case 'provisioning':
-      return wrapTopologyDecoratorStatusIcon(
-        <g style={topologyDecoratorStatusColorStyle(pfDisabled)}>
-          <PlusCircleIcon />
-        </g>
-      );
-    case 'deprovisioning':
-      return wrapTopologyDecoratorStatusIcon(
-        <g style={topologyDecoratorStatusColorStyle(pfDisabled)}>
-          <MinusCircleIcon />
-        </g>
-      );
-    case 'unavailable':
-    case 'deprovision-fail':
-    case 'provision-fail':
-      return wrapTopologyDecoratorStatusIcon(<ExclamationCircleIcon className="pf-m-danger" />);
-    default:
-      return wrapTopologyDecoratorStatusIcon(
-        <g style={topologyDecoratorStatusColorStyle(pfDisabled)}>
-          <QuestionCircleIcon />
-        </g>
-      );
-  }
-}
+import { getMeshNodeStatusDecoratorIcon } from './meshNodeStatusDecoratorIcon';
 
 export function getNodeIcon(nodeType: string) {
   switch (nodeType) {
@@ -81,7 +40,7 @@ export const MeshNode: React.FC<CustomNodeProps & WithSelectionProps> = ({
   const Icon = data && getNodeIcon(data.nodeType);
 
   const statusDecorator = useMemo(() => {
-    const icon = data && getStatusIcon(data.nodeStatus);
+    const icon = data && getMeshNodeStatusDecoratorIcon(data.nodeStatus);
     if (!icon) {
       return null;
     }
