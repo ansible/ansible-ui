@@ -25,8 +25,17 @@ export interface FeatureFlagEvaluationContext {
 
 export type FeatureFlagEvaluationReason = 'DEFAULT' | 'ERROR' | 'LOCAL_OVERRIDE' | 'PROVIDER';
 
+export type FeatureFlagProviderStatus = 'INITIALIZING' | 'READY' | 'ERROR';
+
+export type FeatureFlagErrorCode =
+  | 'UNKNOWN_FLAG'
+  | 'PROVIDER_CONTEXT_ERROR'
+  | 'PROVIDER_ERROR'
+  | 'PROVIDER_INVALID_RESPONSE'
+  | 'PROVIDER_NOT_READY';
+
 export interface FeatureFlagEvaluation {
-  readonly error?: string;
+  readonly error?: FeatureFlagErrorCode;
   readonly flagKey: string;
   readonly reason: FeatureFlagEvaluationReason;
   readonly value: boolean;
@@ -39,6 +48,8 @@ export interface FeatureFlagProvider {
     defaultValue: boolean,
     context?: FeatureFlagEvaluationContext
   ): FeatureFlagEvaluation;
+  initialize?(): Promise<void> | void;
+  setContext?(context: FeatureFlagEvaluationContext): Promise<void> | void;
   subscribe?(listener: () => void): () => void;
 }
 
@@ -51,7 +62,11 @@ export interface FeatureFlagRegistry<Definitions extends FeatureFlagDefinitions>
   readonly definitions: Definitions;
   dispose(): void;
   evaluate(flag: FeatureFlagKey<Definitions>): FeatureFlagEvaluation;
+  getContext(): FeatureFlagEvaluationContext | undefined;
+  getStatus(): FeatureFlagProviderStatus;
   isEnabled(flag: FeatureFlagKey<Definitions>): boolean;
+  ready(): Promise<void>;
+  setContext(context: FeatureFlagEvaluationContext): Promise<void>;
   subscribe(listener: () => void): () => void;
 }
 
@@ -122,6 +137,13 @@ function createDefaultFeatureFlagProvider(): FeatureFlagProvider {
   };
 }
 
+function isFeatureFlagEvaluation(
+  value: FeatureFlagEvaluation,
+  flagKey: string
+): value is FeatureFlagEvaluation {
+  return value.flagKey === flagKey && typeof value.value === 'boolean';
+}
+
 export function createLocalFeatureFlagProvider(
   options: LocalFeatureFlagProviderOptions = {}
 ): LocalFeatureFlagProvider {
@@ -186,10 +208,32 @@ export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinit
 ): FeatureFlagRegistry<Definitions> {
   const provider = options.provider ?? createDefaultFeatureFlagProvider();
   const listeners = new Set<() => void>();
-  const unsubscribeProvider = provider.subscribe?.(() => {
+  let context = options.context;
+  let providerStatus: FeatureFlagProviderStatus = provider.initialize ? 'INITIALIZING' : 'READY';
+
+  const notify = () => {
     for (const listener of listeners) {
       listener();
     }
+  };
+
+  const initializeProvider = async () => {
+    if (!provider.initialize) {
+      return;
+    }
+
+    try {
+      await provider.initialize();
+      providerStatus = 'READY';
+    } catch {
+      providerStatus = 'ERROR';
+    }
+    notify();
+  };
+
+  const readyPromise = initializeProvider();
+  const unsubscribeProvider = provider.subscribe?.(() => {
+    notify();
   });
 
   const evaluate = (flag: FeatureFlagKey<Definitions>): FeatureFlagEvaluation => {
@@ -203,8 +247,35 @@ export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinit
       };
     }
 
+    if (providerStatus === 'INITIALIZING') {
+      return {
+        error: 'PROVIDER_NOT_READY',
+        flagKey: flag,
+        reason: 'DEFAULT',
+        value: definition.defaultValue,
+      };
+    }
+
+    if (providerStatus === 'ERROR') {
+      return {
+        error: 'PROVIDER_ERROR',
+        flagKey: flag,
+        reason: 'ERROR',
+        value: definition.defaultValue,
+      };
+    }
+
     try {
-      return provider.evaluateBoolean(flag, definition.defaultValue, options.context);
+      const evaluation = provider.evaluateBoolean(flag, definition.defaultValue, context);
+      if (isFeatureFlagEvaluation(evaluation, flag)) {
+        return evaluation;
+      }
+      return {
+        error: 'PROVIDER_INVALID_RESPONSE',
+        flagKey: flag,
+        reason: 'ERROR',
+        value: definition.defaultValue,
+      };
     } catch {
       return {
         error: 'PROVIDER_ERROR',
@@ -222,7 +293,22 @@ export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinit
       listeners.clear();
     },
     evaluate,
+    getContext: () => context,
+    getStatus: () => providerStatus,
     isEnabled: (flag) => evaluate(flag).value,
+    ready: () => readyPromise,
+    setContext: async (nextContext) => {
+      context = nextContext;
+      try {
+        await readyPromise;
+        await provider.setContext?.(nextContext);
+      } catch {
+        providerStatus = 'ERROR';
+        notify();
+        return;
+      }
+      notify();
+    },
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);

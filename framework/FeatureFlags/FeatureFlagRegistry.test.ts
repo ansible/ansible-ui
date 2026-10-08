@@ -165,6 +165,81 @@ describe('createFeatureFlagRegistry', () => {
     });
   });
 
+  it('uses the default until an asynchronous provider is ready', async () => {
+    let finishInitialization: () => void = () => undefined;
+    const provider: FeatureFlagProvider = {
+      name: 'asynchronous-provider',
+      evaluateBoolean: (flagKey, defaultValue) => ({
+        flagKey,
+        reason: 'PROVIDER',
+        value: !defaultValue,
+      }),
+      initialize: () =>
+        new Promise<void>((resolve) => {
+          finishInitialization = resolve;
+        }),
+    };
+    const registry = createFeatureFlagRegistry(definitions, { provider });
+
+    expect(registry.getStatus()).toBe('INITIALIZING');
+    expect(registry.evaluate('experimentalView')).toEqual({
+      error: 'PROVIDER_NOT_READY',
+      flagKey: 'experimentalView',
+      reason: 'DEFAULT',
+      value: false,
+    });
+
+    finishInitialization();
+    await registry.ready();
+
+    expect(registry.getStatus()).toBe('READY');
+    expect(registry.isEnabled('experimentalView')).toBe(true);
+  });
+
+  it('passes updated context to providers and notifies subscribers', async () => {
+    let receivedContext: { targetingKey?: string } | undefined;
+    const provider: FeatureFlagProvider = {
+      name: 'context-provider',
+      evaluateBoolean: (flagKey, defaultValue, context) => ({
+        flagKey,
+        reason: 'PROVIDER',
+        value: context?.targetingKey === 'enabled' || defaultValue,
+      }),
+      setContext: (context) => {
+        receivedContext = context;
+      },
+    };
+    const registry = createFeatureFlagRegistry(definitions, { provider });
+    const listener = vi.fn();
+    registry.subscribe(listener);
+
+    await registry.setContext({ targetingKey: 'enabled' });
+
+    expect(receivedContext).toEqual({ targetingKey: 'enabled' });
+    expect(registry.getContext()).toEqual({ targetingKey: 'enabled' });
+    expect(registry.isEnabled('experimentalView')).toBe(true);
+    expect(listener).toHaveBeenCalledOnce();
+  });
+
+  it('fails closed when a provider returns an invalid evaluation', () => {
+    const provider: FeatureFlagProvider = {
+      name: 'invalid-provider',
+      evaluateBoolean: () => ({
+        flagKey: 'other-flag',
+        reason: 'PROVIDER',
+        value: true,
+      }),
+    };
+    const registry = createFeatureFlagRegistry(definitions, { provider });
+
+    expect(registry.evaluate('experimentalView')).toEqual({
+      error: 'PROVIDER_INVALID_RESPONSE',
+      flagKey: 'experimentalView',
+      reason: 'ERROR',
+      value: false,
+    });
+  });
+
   it('notifies subscribers when a local override changes', () => {
     const provider = createLocalFeatureFlagProvider({ storage });
     const registry = createFeatureFlagRegistry(definitions, { provider });

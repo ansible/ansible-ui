@@ -21,14 +21,17 @@ to a product screen; it is a reviewable contract for discussion.
 
 ```tsx
 import {
+  createFeatureFlagDefinitions,
   createFeatureFlagRegistry,
   createLocalFeatureFlagProvider,
-  useFeatureFlag,
+  createFeatureFlagScope,
 } from '@ansible/ansible-ui-framework';
+import type { FeatureFlagCatalogEntry } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 
-const definitions = {
-  'example-view': {
+const catalog = [
+  {
+    name: 'example-view',
     defaultValue: false,
     description: 'Example of an unfinished client-only view.',
     kind: 'release',
@@ -37,16 +40,26 @@ const definitions = {
     scope: 'client-only',
     status: 'proposed',
   },
-} as const;
+] as const satisfies readonly FeatureFlagCatalogEntry[];
 
+const definitions = createFeatureFlagDefinitions(catalog);
 const localProvider = createLocalFeatureFlagProvider();
-const flags = createFeatureFlagRegistry(definitions, {
+const registry = createFeatureFlagRegistry(definitions, {
   context: { environment: 'development' },
   provider: localProvider,
 });
+const featureFlags = createFeatureFlagScope<typeof definitions>();
+
+function ExampleApp() {
+  return (
+    <featureFlags.FeatureFlagProvider registry={registry}>
+      <ExampleViewToggle />
+    </featureFlags.FeatureFlagProvider>
+  );
+}
 
 function ExampleViewToggle() {
-  const isExampleViewEnabled = useFeatureFlag(flags, 'example-view');
+  const isExampleViewEnabled = featureFlags.useFeatureFlag('example-view');
 
   return isExampleViewEnabled ? <ExampleView /> : null;
 }
@@ -63,7 +76,8 @@ function ExampleView() {
 }
 ```
 
-The registry delegates evaluation to its provider and returns evaluation details
+The application owns one typed catalog, one registry, and one React scope. The
+registry delegates evaluation to its provider and returns evaluation details
 including the source/reason. With no provider, the registry returns the code
 default. The local provider persists explicit overrides under a namespaced
 browser-storage key; a production provider should instead read the approved
@@ -71,30 +85,36 @@ runtime flag service.
 
 ## Provider boundary
 
-The application code should depend on the registry, not on a vendor SDK or a
-specific transport. A future runtime provider can evaluate values by
-environment and context while preserving the same application-facing API:
+Application code should depend on the typed scope, not on a vendor SDK or a
+specific transport. A future runtime provider can initialize asynchronously,
+receive context changes, and notify the registry when values change while
+preserving the same application-facing API:
 
 ```ts
-const flags = createFeatureFlagRegistry(definitions, {
+const registry = createFeatureFlagRegistry(definitions, {
   context: { environment: 'devel', targetingKey: 'development-user' },
   provider: runtimeFeatureFlagProvider,
 });
+
+await registry.ready();
+await registry.setContext({ environment: 'devel', targetingKey: 'new-user' });
 ```
 
-The provider is responsible for evaluation and may return a safe fallback with
-an error reason when its backing service is unavailable.
+Until a provider is ready, and when it fails or returns invalid data, the
+registry returns the catalog default with an error reason. Do not expose a
+default-on unfinished feature while the provider is initializing.
 
 ## Public catalog
 
-[`feature-flags.json`](./feature-flags.json) is the extendable
-public catalog. Add another object to its `flags` array when proposing a
-client-only flag. The companion [`feature-flags.schema.json`](./feature-flags.schema.json)
-provides editor validation for the catalog. It is documentation and inventory,
-not runtime configuration. The `status` field describes lifecycle (`proposed`, `alpha`,
-`beta`, `production`, or `deprecated`); it does not claim that a flag is
-enabled for every user. `defaultValue` and the per-user override determine the
-client behavior.
+The typed catalog in application code is the source of truth. Its validation
+rejects duplicate names, malformed removal dates, unexpected fields, and
+default-on proposed flags. [`feature-flags.json`](./feature-flags.json) is the
+public catalog mirror, and its corresponding test keeps it valid and usable as
+registry definitions. The companion [`feature-flags.schema.json`](./feature-flags.schema.json)
+continues to provide editor validation. The `status` field describes lifecycle
+(`proposed`, `alpha`, `beta`, `production`, or `deprecated`); it does not claim
+that a flag is enabled for every user. `defaultValue` and the provider result
+determine client behavior.
 
 ## Development workflow
 
@@ -129,4 +149,6 @@ flag service for those concerns.
 
 Before production use, each flag should have a named owner, a removal date, a
 flag-off test, a flag-on test, and a documented decision about whether the
-behavior can be safely backported.
+behavior can be safely backported. Keep the production provider adapter in its
+own PR after the runtime service is selected; do not add an unapproved service
+or client credentials to this shared framework layer.
