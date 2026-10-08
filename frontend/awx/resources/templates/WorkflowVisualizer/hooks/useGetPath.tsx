@@ -243,13 +243,7 @@ function getSmoothStepPath({
     let segment = '';
 
     if (i > 0 && i < points.length - 1) {
-      const previousPoint = points[i - 1];
-      const nextPoint = points[i + 1];
-      const pathPrefix = i === 0 ? 'M' : 'L';
-      segment =
-        previousPoint && nextPoint
-          ? getBend(previousPoint, p, nextPoint, borderRadius)
-          : `${pathPrefix}${p.x} ${p.y}`;
+      segment = getBend(points[i - 1], p, points[i + 1], borderRadius);
     } else {
       const pathPrefix = i === 0 ? 'M' : 'L';
       segment = `${pathPrefix}${p.x} ${p.y}`;
