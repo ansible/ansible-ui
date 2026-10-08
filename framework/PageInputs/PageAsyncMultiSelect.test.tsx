@@ -80,7 +80,7 @@ describe('PageAsyncMultiSelect', () => {
     const toggle = screen.getByRole('button', { name: 'Select value' });
     expect(toggle).toBeInTheDocument();
 
-    await user.click(toggle!);
+    await user.click(toggle);
 
     // Wait for options to be loaded and displayed
     await waitFor(() => {
@@ -134,7 +134,7 @@ describe('PageAsyncMultiSelect', () => {
     );
 
     const toggle = screen.getByRole('button', { name: 'Select value' });
-    await user.click(toggle!);
+    await user.click(toggle);
 
     await waitFor(() => {
       expect(screen.getByText('Error loading options')).toBeInTheDocument();
