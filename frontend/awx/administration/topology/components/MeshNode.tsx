@@ -1,4 +1,4 @@
-import { pfDanger, pfDisabled, pfInfo, pfSuccess } from '@ansible/ansible-ui-framework';
+import { pfDisabled } from '@ansible/ansible-ui-framework';
 import {
   BuilderImageIcon,
   CheckCircleIcon,
@@ -19,25 +19,41 @@ import {
   WithSelectionProps,
   getDefaultShapeDecoratorCenter,
 } from '@patternfly/react-topology';
-import { useMemo } from 'react';
+import { ReactElement, useMemo } from 'react';
+import {
+  topologyDecoratorStatusColorStyle,
+  wrapTopologyDecoratorStatusIcon,
+} from '../../../common/topologyDecoratorStatus';
 import { CustomNodeProps } from '../types';
 
-function getStatusIcon(nodeType: string) {
+function getStatusIcon(nodeType: string): ReactElement {
   switch (nodeType) {
     case 'ready':
-      return <CheckCircleIcon style={{ fill: pfSuccess }} />;
+      return wrapTopologyDecoratorStatusIcon(<CheckCircleIcon className="pf-m-success" />);
     case 'installed':
-      return <ClockIcon style={{ fill: pfInfo }} />;
+      return wrapTopologyDecoratorStatusIcon(<ClockIcon className="pf-m-info" />);
     case 'provisioning':
-      return <PlusCircleIcon style={{ fill: pfDisabled }} />;
+      return wrapTopologyDecoratorStatusIcon(
+        <g style={topologyDecoratorStatusColorStyle(pfDisabled)}>
+          <PlusCircleIcon />
+        </g>
+      );
     case 'deprovisioning':
-      return <MinusCircleIcon style={{ fill: pfDisabled }} />;
+      return wrapTopologyDecoratorStatusIcon(
+        <g style={topologyDecoratorStatusColorStyle(pfDisabled)}>
+          <MinusCircleIcon />
+        </g>
+      );
     case 'unavailable':
     case 'deprovision-fail':
     case 'provision-fail':
-      return <ExclamationCircleIcon style={{ fill: pfDanger }} />;
+      return wrapTopologyDecoratorStatusIcon(<ExclamationCircleIcon className="pf-m-danger" />);
     default:
-      return <QuestionCircleIcon style={{ fill: pfDisabled }} />;
+      return wrapTopologyDecoratorStatusIcon(
+        <g style={topologyDecoratorStatusColorStyle(pfDisabled)}>
+          <QuestionCircleIcon />
+        </g>
+      );
   }
 }
 
@@ -78,7 +94,7 @@ export const MeshNode: React.FC<CustomNodeProps & WithSelectionProps> = ({
         radius={DEFAULT_DECORATOR_RADIUS}
         showBackground
         onClick={onSelect}
-        icon={<g>{icon}</g>}
+        icon={icon}
         ariaLabel={data?.nodeStatus}
       />
     );

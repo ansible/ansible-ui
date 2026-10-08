@@ -1,4 +1,8 @@
 import {
+  TOPOLOGY_NODE_DECORATOR_STATUS_CLASS,
+  wrapTopologyDecoratorStatusIcon,
+} from '../../../../common/topologyDecoratorStatus';
+import {
   CheckCircleIcon,
   ClockIcon,
   ExclamationCircleIcon,
@@ -8,8 +12,7 @@ import {
 import { ReactElement } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-/** Matches @patternfly/react-topology DefaultNode status decorator wrapper. */
-export const TOPOLOGY_NODE_DECORATOR_STATUS_CLASS = 'pf-topology__node__decorator__status';
+export { TOPOLOGY_NODE_DECORATOR_STATUS_CLASS };
 
 const Spin = keyframes`
   from {
@@ -26,10 +29,6 @@ const IconWrapper = styled.g<{ centerPoint: { x: number; y: number } }>`
     `${Number(centerPoint.x) + 1}px ${Number(centerPoint.y) + 1}px`};
 `;
 
-function wrapDecoratorStatusIcon(icon: ReactElement) {
-  return <g className={TOPOLOGY_NODE_DECORATOR_STATUS_CLASS}>{icon}</g>;
-}
-
 export function getStatusDecoratorIcon(
   nodeType: string,
   centerPoint: { x: number; y: number }
@@ -37,7 +36,7 @@ export function getStatusDecoratorIcon(
   switch (nodeType) {
     case 'success':
     case 'successful':
-      return wrapDecoratorStatusIcon(
+      return wrapTopologyDecoratorStatusIcon(
         <CheckCircleIcon
           className="pf-m-success"
           data-cy="successful-icon"
@@ -45,7 +44,7 @@ export function getStatusDecoratorIcon(
         />
       );
     case 'running':
-      return wrapDecoratorStatusIcon(
+      return wrapTopologyDecoratorStatusIcon(
         <IconWrapper data-cy="running-icon" data-testid="running-icon" centerPoint={centerPoint}>
           <SyncAltIcon className="pf-m-info" />
         </IconWrapper>
@@ -53,7 +52,7 @@ export function getStatusDecoratorIcon(
     case 'fail':
     case 'failed':
     case 'error':
-      return wrapDecoratorStatusIcon(
+      return wrapTopologyDecoratorStatusIcon(
         <ExclamationCircleIcon
           className="pf-m-danger"
           data-cy="failed-icon"
@@ -62,11 +61,12 @@ export function getStatusDecoratorIcon(
       );
     case 'pending':
     case 'waiting':
-      return wrapDecoratorStatusIcon(
+      return wrapTopologyDecoratorStatusIcon(
         <ClockIcon className="pf-m-info" data-cy="pending-icon" data-testid="pending-icon" />
       );
     case 'canceled':
-      return wrapDecoratorStatusIcon(
+      // PF6 DefaultNode uses ExclamationTriangleIcon + pf-m-warning for warning/canceled states.
+      return wrapTopologyDecoratorStatusIcon(
         <ExclamationTriangleIcon
           className="pf-m-warning"
           data-cy="canceled-icon"

@@ -9,6 +9,7 @@ import {
 describe('getStatusDecoratorIcon', () => {
   const centerPoint = { x: 10, y: 10 };
 
+  // PF6 topology sets decorator SVG fill from CSS variables keyed off these modifier classes.
   it.each([
     ['successful', 'successful-icon', 'pf-m-success'],
     ['success', 'successful-icon', 'pf-m-success'],
