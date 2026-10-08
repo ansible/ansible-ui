@@ -111,8 +111,7 @@ describe('ActivityDescription', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Demo Inventory')).toBeInTheDocument();
-    expect(screen.getByTestId('source-resource-detail')).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Demo Inventory' })).toHaveAttribute(
       'href',
       '/test/awx-inventory-details/3?inventory_type=inventory'
     );
