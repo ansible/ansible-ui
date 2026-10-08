@@ -73,6 +73,8 @@ export * from './PageToolbar/PageToolbarFilters/ToolbarSingleSelectFilter';
 export * from './PageToolbar/PageToolbarFilters/ToolbarTextFilter';
 export * from './PageWizard';
 export * from './FeatureFlags/FeatureFlagRegistry';
+export * from './FeatureFlags/FeatureFlagCatalog';
+export * from './FeatureFlags/createFeatureFlagScope';
 export * from './FeatureFlags/useFeatureFlag';
 export * from './useFrameworkTranslations';
 export * from './useInMemoryView';
