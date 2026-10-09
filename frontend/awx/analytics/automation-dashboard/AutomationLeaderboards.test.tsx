@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
@@ -10,13 +11,19 @@ import { AutomationLeaderboards, CARD_WIDTH_COL_SPAN } from './AutomationLeaderb
 import type { AutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
 import { createLeaderboardsView } from './views/useAutomationLeaderboardsView.testUtils';
+import { useNewAchievementsAlert } from './common/useNewAchievementsAlert';
 
 vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
 vi.mock('./views/useAutomationLeaderboardsView', () => ({
   useAutomationLeaderboardsView: vi.fn(),
 }));
+vi.mock('./common/useNewAchievementsAlert', () => ({
+  useNewAchievementsAlert: vi.fn(() => ({ hasNewAchievements: false, dismiss: vi.fn() })),
+}));
 
 const baseView = createLeaderboardsView();
+
+const ALERT_TITLE = 'Congratulations! You or your organization earned new achievements.';
 
 function renderLeaderboards(view: Partial<AutomationLeaderboardsView>) {
   vi.mocked(useAutomationLeaderboardsView).mockReturnValue({ ...baseView, ...view });
@@ -160,5 +167,42 @@ describe('AutomationLeaderboards', () => {
     expect(
       screen.queryByRole('heading', { name: 'Unable to load leaderboards' })
     ).not.toBeInTheDocument();
+  });
+
+  // Both render the full card tree, like the happy-path test above, so they need its timeout.
+  test('should show the new-achievement alert and dismiss it from its close button', async () => {
+    const dismiss = vi.fn();
+    vi.mocked(useNewAchievementsAlert).mockReturnValue({ hasNewAchievements: true, dismiss });
+    renderLeaderboards({});
+
+    expect(screen.getByText(ALERT_TITLE)).toBeInTheDocument();
+    // Announced to screen readers, since it appears after the page has loaded.
+    expect(screen.getByText(ALERT_TITLE).closest('[aria-live]')).toHaveAttribute(
+      'aria-live',
+      'polite'
+    );
+    await userEvent.click(screen.getByRole('button', { name: /close/i }));
+
+    expect(dismiss).toHaveBeenCalledTimes(1);
+  }, 15000);
+
+  test('should not show the new-achievement alert when there is nothing new', () => {
+    vi.mocked(useNewAchievementsAlert).mockReturnValue({
+      hasNewAchievements: false,
+      dismiss: vi.fn(),
+    });
+    renderLeaderboards({});
+
+    expect(screen.queryByText(ALERT_TITLE)).not.toBeInTheDocument();
+  }, 15000);
+
+  test('should not show the new-achievement alert in the never-synced empty state', () => {
+    vi.mocked(useNewAchievementsAlert).mockReturnValue({
+      hasNewAchievements: true,
+      dismiss: vi.fn(),
+    });
+    renderLeaderboards({ lastSyncedAt: null });
+
+    expect(screen.queryByText(ALERT_TITLE)).not.toBeInTheDocument();
   });
 });
