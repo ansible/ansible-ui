@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { hubAPI } from '../../common/api/formatPath';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { HubContext } from '../../common/useHubContext';
 import { CreateRemote, EditRemote } from './RemoteForm';
 
@@ -170,7 +170,17 @@ describe('CreateRemote', () => {
     let postPayload: Record<string, unknown> | undefined;
 
     server.use(
-      http.post('*/remotes/ansible/collection/*', async ({ request }) => {
+      http.options(hubAPI`/_ui/v1/remotes/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: { type: 'string', required: true },
+              url: { type: 'string', required: true },
+            },
+          },
+        })
+      ),
+      http.post(pulpAPI`/remotes/ansible/collection/`, async ({ request }) => {
         postPayload = (await request.json()) as Record<string, unknown>;
         return HttpResponse.json({ pulp_href: '/pulp/api/v3/remotes/1/', name: 'test-remote' });
       })
@@ -186,9 +196,18 @@ describe('CreateRemote', () => {
     const urlInput = screen.getByRole('textbox', { name: /Server URL/i });
 
     await user.type(nameInput, 'test-remote');
-    await user.type(urlInput, 'https://galaxy.ansible.com');
+    await user.clear(urlInput);
+    await user.paste('https://console.redhat.com/api/automation-hub/');
 
-    expect(postPayload).not.toBeDefined();
+    await user.click(screen.getByRole('button', { name: 'Create remote' }));
+
+    await waitFor(() => {
+      expect(postPayload).toBeDefined();
+    });
+    expect(postPayload).toMatchObject({
+      name: 'test-remote',
+      url: 'https://console.redhat.com/api/automation-hub/',
+    });
   });
 });
 

@@ -50,7 +50,7 @@ const INVALID_PATTERN_CANDIDATES = [
  */
 export function findValueFailingPattern(pattern: string, flags?: string): string | undefined {
   try {
-    const re = new RegExp(pattern, flags ?? 'i');
+    const re = new RegExp(pattern, flags ?? '');
     return INVALID_PATTERN_CANDIDATES.find((candidate) => !re.test(candidate));
   } catch {
     return undefined;
@@ -59,7 +59,7 @@ export function findValueFailingPattern(pattern: string, flags?: string): string
 
 export function findValuePassingPattern(pattern: string, flags?: string): string | undefined {
   try {
-    const re = new RegExp(pattern, flags ?? 'i');
+    const re = new RegExp(pattern, flags ?? '');
     return VALID_PATTERN_CANDIDATES.find((candidate) => re.test(candidate));
   } catch {
     return undefined;
