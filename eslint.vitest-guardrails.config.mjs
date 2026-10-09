@@ -1,5 +1,4 @@
-import tsPlugin from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
+import tseslint from 'typescript-eslint';
 import vitest from '@vitest/eslint-plugin';
 import i18next from 'eslint-plugin-i18next';
 import testingLibrary from 'eslint-plugin-testing-library';
@@ -16,14 +15,14 @@ export default [
       'framework/**/*.{test,spec}.{ts,tsx}',
     ],
     languageOptions: {
-      parser: tsParser,
+      parser: tseslint.parser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
     },
     plugins: {
-      '@typescript-eslint': tsPlugin,
+      '@typescript-eslint': tseslint.plugin,
       '@vitest': vitest,
       'testing-library': testingLibrary,
       i18next,

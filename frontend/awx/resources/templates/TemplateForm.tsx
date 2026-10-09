@@ -221,7 +221,7 @@ async function submitCredentials(
   );
 
   const associatePromise = await Promise.all(associateCredentials);
-  return Promise.all([disassociatePromise, associatePromise]);
+  return [disassociatePromise, associatePromise];
 }
 
 async function submitLabels(template: JobTemplate, labels: Label[]) {
