@@ -146,6 +146,58 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
     });
   });
 
+  describe('Interactions', () => {
+    it('filters options and creates a new selection', async () => {
+      const user = userEvent.setup();
+      const onHandleSelection = vi.fn();
+      renderComponent({ onHandleSelection });
+
+      const input = screen.getByRole('textbox');
+      await user.type(input, 'New team');
+
+      const createOption = await screen.findByTestId('select-option-CREATE_NEW_VALUE');
+      expect(createOption).toHaveTextContent('Create "New team"');
+      await user.click(input);
+      await user.keyboard('{ArrowDown}{Enter}');
+
+      expect(onHandleSelection).toHaveBeenCalledWith({ name: 'New team' });
+      expect(input).toHaveValue('');
+    });
+
+    it('selects an existing option with the keyboard and closes with Escape', async () => {
+      const user = userEvent.setup();
+      const onHandleSelection = vi.fn();
+      renderComponent({ onHandleSelection });
+
+      const input = screen.getByRole('textbox');
+      await user.click(input);
+      await user.keyboard('{ArrowDown}{Enter}');
+
+      expect(onHandleSelection).toHaveBeenCalledWith({ name: 'Team 1' });
+
+      await user.click(input);
+      await user.keyboard('{Escape}');
+      expect(input).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    it('clears typed input and selected chips', async () => {
+      const user = userEvent.setup();
+      const onHandleClear = vi.fn();
+      renderComponent({
+        onHandleClear,
+        value: [{ name: 'Team 1' }, { name: 'Unnamed' }],
+      });
+
+      const input = screen.getByRole('textbox');
+      await user.type(input, 'Team');
+      await user.click(screen.getByRole('button', { name: 'Clear input value' }));
+      expect(input).toHaveValue('');
+
+      await user.click(screen.getByRole('button', { name: 'Close Team 1' }));
+      expect(onHandleClear).toHaveBeenCalledWith('Team 1');
+    });
+  });
+
   describe('Read-only Values', () => {
     const value = [{ name: 'Label 1' }, { name: 'Label 2', isReadOnly: true }];
 

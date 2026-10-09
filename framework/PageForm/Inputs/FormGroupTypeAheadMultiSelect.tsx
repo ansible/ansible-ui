@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import {
   Label,
   LabelGroup,
@@ -223,7 +222,8 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
             onClick={onToggleClick}
             onChange={onInputChangeHandler}
             onKeyDown={onInputKeyDownHandler}
-            id={`${id}-input`}
+            inputId={`${id}-input`}
+            aria-label={label}
             autoComplete="off"
             innerRef={textInputRef}
             placeholder={placeholderText as string}
@@ -291,6 +291,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
       onInputChangeHandler,
       onInputKeyDownHandler,
       id,
+      label,
       placeholderText,
       activeItemId,
       onClearButtonClick,
@@ -302,7 +303,7 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
 
   return (
     <PageFormGroup
-      fieldId={id}
+      fieldId={`${id}-input`}
       label={label}
       labelHelp={labelHelp}
       labelHelpTitle={labelHelpTitle ?? label}

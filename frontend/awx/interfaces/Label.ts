@@ -1,7 +1,7 @@
 export interface Label {
   id: number;
   name: string;
-  organization: number;
+  organization: number | null;
   type: string;
   url: string;
   created: string;
