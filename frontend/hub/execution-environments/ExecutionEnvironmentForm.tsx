@@ -10,6 +10,7 @@ import {
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { Button, InputGroup, Label, LabelGroup, TextInput } from '@patternfly/react-core';
 import { TagIcon } from '@patternfly/react-icons';
@@ -28,6 +29,7 @@ import { HubRoute } from '../main/HubRoutes';
 import { ExecutionEnvironment } from './ExecutionEnvironment';
 import { useExecutionEnvironmentFilters } from './hooks/useExecutionEnvironmentFilters';
 import { useExecutionEnvironmentsColumns } from './hooks/useExecutionEnvironmentsColumns';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 export function CreateExecutionEnvironment() {
   return <ExecutionEnvironmentForm mode="add" />;
@@ -50,6 +52,9 @@ function ExecutionEnvironmentForm(props: Readonly<{ mode: 'add' | 'edit' }>) {
     disableLinks: true,
   });
   const filters = useExecutionEnvironmentFilters();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    hubAPI`/_ui/v1/execution-environments/remotes/`
+  );
 
   const [tagsToInclude, setTagsToInclude] = useState<string[]>([]);
   const [tagsToExclude, setTagsToExclude] = useState<string[]>([]);
@@ -192,6 +197,7 @@ function ExecutionEnvironmentForm(props: Readonly<{ mode: 'add' | 'edit' }>) {
           singleColumn={true}
           disableSubmitOnEnter={true}
           errorAdapter={(error) => hubErrorAdapter(error, { base_path: 'name' })}
+          optionsData={optionsData}
         >
           <PageFormTextInput<ExecutionEnvironmentFormProps>
             name="name"

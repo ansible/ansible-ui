@@ -6,6 +6,8 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { requestGet } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 import { t } from 'i18next';
 import { useCallback, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -89,6 +91,9 @@ export function AuthenticatorForm(props: Readonly<AuthenticatorFormProps>) {
   const { plugins, authenticator } = props;
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    gatewayAPI`/authenticators/`
+  );
 
   let initialValues = {
     type: AuthenticatorTypeEnum.Local,
@@ -171,6 +176,7 @@ export function AuthenticatorForm(props: Readonly<AuthenticatorFormProps>) {
         onSubmit={props.handleSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={initialValues}
+        optionsData={optionsData}
         errorAdapter={(error: unknown) => authenticatorErrorAdapter(error, configurationFields)}
       >
         <AuthenticatorFormInputs

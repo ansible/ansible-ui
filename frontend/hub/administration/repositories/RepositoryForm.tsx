@@ -12,6 +12,7 @@ import {
 import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormGroup';
 import { PageFormWatch } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormWatch';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { Label } from '@patternfly/react-core';
 import { ReactNode } from 'react';
 import { FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form';
@@ -20,7 +21,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
 import { HubPageForm } from '../../common/HubPageForm';
 import { PageFormSingleSelectHubResource } from '../../common/PageFormSingleSelectHubResource';
-import { pulpAPI } from '../../common/api/formatPath';
+import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import {
   parsePulpIDFromURL,
   useRepositoryBasePath,
@@ -33,6 +34,7 @@ import { HubRemote } from './../remotes/Remotes';
 import { Repository } from './Repository';
 import { useRepositoriesColumns } from './hooks/useRepositoriesColumns';
 import { useRepositoryFilters } from './hooks/useRepositorySelector';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
 interface RepositoryFormProps {
   remote: HubRemote | string | null;
@@ -58,6 +60,9 @@ export function RepositoryForm() {
 
   const columns = useRepositoriesColumns({ disableLinks: true });
   const filters = useRepositoryFilters();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    hubAPI`/_ui/v1/repositories/`
+  );
   const onSubmit = (data: RepositoryFormProps) => {
     // format inputs to correct payload
     const payload = { ...data };
@@ -211,6 +216,7 @@ export function RepositoryForm() {
         onSubmit={onSubmit}
         onCancel={() => void navigate(-1)}
         defaultValue={repositoryFormValues}
+        optionsData={optionsData}
       >
         <PageFormTextInput<RepositoryFormProps>
           name="name"

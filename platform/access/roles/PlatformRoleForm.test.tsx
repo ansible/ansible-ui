@@ -442,6 +442,162 @@ describe('PlatformRoleForm', () => {
     }, 15000);
   });
 
+  describe('OPTIONS-driven validation', () => {
+    test('fetches field patterns from the /role_definitions/ OPTIONS endpoint and validates on blur', async () => {
+      server.use(
+        http.options(gatewayAPI`/role_definitions/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByRole('textbox', { name: /Name/i });
+      await user.type(nameInput, 'invalid@name!');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+    });
+
+    test('accepts valid name matching pattern on blur', async () => {
+      server.use(
+        http.options(gatewayAPI`/role_definitions/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByRole('textbox', { name: /Name/i });
+      await user.type(nameInput, 'Valid_Role-Name');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+      });
+    });
+
+    test('validation error clears when role name becomes valid', async () => {
+      server.use(
+        http.options(gatewayAPI`/role_definitions/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByRole('textbox', { name: /Name/i });
+      await user.type(nameInput, 'invalid@role');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+
+      await user.clear(nameInput);
+      await user.type(nameInput, 'valid_role');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+      });
+    });
+
+    test('multiple validation errors for role with many special characters', async () => {
+      server.use(
+        http.options(gatewayAPI`/role_definitions/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/roles/create']}>
+          <Routes>
+            <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByRole('textbox', { name: /Name/i });
+      await user.type(nameInput, 'bad!@#$%role');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
   describe('Cancel Navigation', () => {
     test('should navigate away from create form when cancel is clicked', async () => {
       const user = userEvent.setup();
@@ -482,6 +638,80 @@ describe('PlatformRoleForm', () => {
       await waitFor(() => {
         expect(screen.getByTestId('location-display')).toHaveTextContent('/access/roles/1/details');
       });
+    });
+  });
+
+  test('validates role name pattern from OPTIONS endpoint', async () => {
+    server.use(
+      http.options(gatewayAPI`/role_definitions/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/roles/create']}>
+        <Routes>
+          <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByRole('textbox', { name: /Name/i });
+    await user.type(nameInput, 'invalid@role!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Name must contain only letters, numbers, underscores, hyphens, and dots\./
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('accepts valid role name matching OPTIONS pattern', async () => {
+    server.use(
+      http.options(gatewayAPI`/role_definitions/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/roles/create']}>
+        <Routes>
+          <Route path="/access/roles/create" element={<CreatePlatformRole />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByRole('textbox', { name: /Name/i });
+    await user.type(nameInput, 'valid_role-1.0');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
     });
   });
 });

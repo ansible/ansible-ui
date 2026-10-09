@@ -29,6 +29,11 @@ export interface PageFormOptionsFieldMetadata {
  * PageWizard) accepts via the `optionsData` prop. Forms pass the OPTIONS
  * response they already fetch; PageForm extracts field metadata from the
  * POST/PUT/PATCH actions and provides it via {@link PageFormOptionsContext}.
+ *
+ * For patterns that are not on this OPTIONS payload (dynamic credential inputs,
+ * authenticator plugin configuration, etc.), build a field map with
+ * `buildFieldMetadataMap` from `@ansible/common-ui/validation/buildFieldMetadataMap`
+ * and provide it via {@link PageFormFieldMetadataProvider} instead.
  */
 export interface PageFormOptionsData {
   actions?: {
