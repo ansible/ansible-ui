@@ -169,11 +169,13 @@ describe('BulkActionDialog', () => {
   });
 
   it('should call onClose with canceled after canceling processing', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
     const user = userEvent.setup();
     const onClose = vi.fn();
     const actionFn = vi.fn().mockImplementation(() => new Promise<void>(() => {}));
+    const item = { id: 1, name: 'Item 1' };
 
-    renderDialog({ items: [{ id: 1, name: 'Item 1' }], actionFn, onClose });
+    renderDialog({ items: [item], actionFn, onClose });
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
@@ -181,17 +183,11 @@ describe('BulkActionDialog', () => {
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    await waitFor(
-      () => {
-        expect(onClose).toHaveBeenCalledWith(
-          'canceled',
-          expect.anything(),
-          expect.anything(),
-          expect.anything()
-        );
-      },
-      { timeout: 3000 }
-    );
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(onClose).toHaveBeenCalledOnce();
+    expect(onClose.mock.calls[0]).toEqual(['canceled', [], [item], []]);
+    vi.useRealTimers();
   });
 
   it('should call onClose with success after actions complete', async () => {
