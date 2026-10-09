@@ -1,15 +1,31 @@
-/* eslint-disable i18next/no-literal-string */
-import { createElement, ReactNode } from 'react';
-import { render, renderHook, waitFor } from '@testing-library/react';
+import { createElement, ReactNode, useContext } from 'react';
+import { act, cleanup, render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import i18n, { createInstance, InitOptions, ReadCallback } from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 import {
   PageSettingsProvider,
+  IPageSettings,
   usePageSettings,
   PageSettingsContext,
   createSWRErrorRetryHandler,
   SWR_DEDUPING_INTERVAL_MS,
 } from './PageSettingsProvider';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
+
+const languageInstance = vi.hoisted(() => ({
+  current: undefined as typeof i18n | undefined,
+}));
+
+vi.mock('i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('i18next')>();
+  return {
+    ...actual,
+    get default() {
+      return languageInstance.current ?? actual.default;
+    },
+  };
+});
 
 // Mock globalThis.matchMedia
 Object.defineProperty(globalThis, 'matchMedia', {
@@ -27,6 +43,23 @@ Object.defineProperty(globalThis, 'matchMedia', {
 });
 
 const capturedSWRConfigValues: Record<string, unknown>[] = [];
+
+function createSettingsWrapper(
+  onSettingsChange: (setSettings: (settings: IPageSettings) => void) => void
+) {
+  return function SettingsWrapper({ children }: Readonly<{ children: ReactNode }>) {
+    return (
+      <PageSettingsProvider>
+        <PageSettingsContext.Consumer>
+          {([_settings, setSettings]) => {
+            onSettingsChange(setSettings);
+            return children;
+          }}
+        </PageSettingsContext.Consumer>
+      </PageSettingsProvider>
+    );
+  };
+}
 
 vi.mock('swr', async (importOriginal) => {
   const actual = await importOriginal<typeof import('swr')>();
@@ -85,6 +118,7 @@ describe('PageSettingsProvider', () => {
         formLayout: 'vertical',
         dateFormat: 'date-time',
         dataEditorFormat: 'yaml',
+        language: 'browser',
         activeTheme: 'dark', // Based on mocked matchMedia
       });
     });
@@ -127,6 +161,60 @@ describe('PageSettingsProvider', () => {
       // Should use defaults when localStorage has invalid JSON
       expect(result.current.refreshInterval).toBe(60);
       expect(result.current.theme).toBe('system');
+    });
+
+    test('should fall back to browser language for an unsupported preference', () => {
+      localStorage.setItem('user-preferences', JSON.stringify({ language: 'de' }));
+
+      const wrapper = ({ children }: { children: ReactNode }) => (
+        <PageSettingsProvider>{children}</PageSettingsProvider>
+      );
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper });
+
+      expect(result.current.language).toBe('browser');
+    });
+
+    test('should use the default context value outside the provider', () => {
+      const { result } = renderHook(() => usePageSettings());
+
+      expect(result.current).toEqual({});
+      render(
+        <PageSettingsContext.Consumer>
+          {([_settings, setSettings]) => {
+            setSettings({});
+            return null;
+          }}
+        </PageSettingsContext.Consumer>
+      );
+    });
+
+    test('should persist and clear the selected language cache', async () => {
+      let setSettingsFunc: (settings: IPageSettings) => void = () => {};
+      const wrapper = createSettingsWrapper((setSettings) => {
+        setSettingsFunc = setSettings;
+      });
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper });
+      await act(() => Promise.resolve(setSettingsFunc({ ...result.current, language: 'fr' })));
+      await waitFor(() => expect(localStorage.getItem('lang')).toBe('fr'));
+
+      await act(() => Promise.resolve(setSettingsFunc({ ...result.current, language: 'browser' })));
+      await waitFor(() => {
+        expect(localStorage.getItem('lang')).toBeNull();
+        expect(document.cookie).not.toContain('lang=');
+      });
+    });
+
+    test('should skip language application when no language is set', async () => {
+      let setSettingsFunc: (settings: IPageSettings) => void = () => {};
+      const wrapper = createSettingsWrapper((setSettings) => {
+        setSettingsFunc = setSettings;
+      });
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper });
+      await act(() => Promise.resolve(setSettingsFunc({ ...result.current, language: undefined })));
+      await waitFor(() => expect(result.current.language).toBeUndefined());
     });
 
     test('should update settings and persist to localStorage', async () => {
@@ -173,6 +261,239 @@ describe('PageSettingsProvider', () => {
         localStorage.getItem('user-preferences') || '{}'
       ) as { refreshInterval?: number };
       expect(saved.refreshInterval).toBe(45);
+    });
+  });
+
+  describe('Language synchronization', () => {
+    let originalLang: string | null;
+    let originalUrl: string;
+    let originalCookie: string | undefined;
+
+    beforeEach(() => {
+      languageInstance.current = createInstance();
+      originalLang = document.documentElement.getAttribute('lang');
+      originalUrl = window.location.href;
+      originalCookie = document.cookie.split('; ').find((cookie) => cookie.startsWith('lang='));
+      document.cookie = 'lang=; Max-Age=0; path=/';
+    });
+
+    afterEach(() => {
+      cleanup();
+      vi.restoreAllMocks();
+      languageInstance.current = undefined;
+      if (originalLang === null) document.documentElement.removeAttribute('lang');
+      else document.documentElement.lang = originalLang;
+      document.cookie = 'lang=; Max-Age=0; path=/';
+      window.history.replaceState(null, '', originalUrl);
+      if (originalCookie) document.cookie = `${originalCookie}; path=/`;
+    });
+
+    async function renderLanguageSettings(candidates: string[], options: InitOptions = {}) {
+      const detector = new LanguageDetector();
+      detector.addDetector({ name: 'fixture', lookup: () => candidates });
+      await i18n.use(detector).init({
+        lng: 'fr',
+        fallbackLng: 'en',
+        supportedLngs: ['en', 'fr', 'ja'],
+        resources: {
+          en: { translation: { greeting: 'Hello' } },
+          fr: { translation: { greeting: 'Bonjour' } },
+          ja: { translation: { greeting: 'こんにちは' } },
+        },
+        detection: { order: ['fixture'], caches: [] },
+        ...options,
+      });
+      localStorage.setItem('user-preferences', JSON.stringify({ language: 'fr' }));
+      const view = renderHook(() => useContext(PageSettingsContext), {
+        wrapper: PageSettingsProvider,
+      });
+      await waitFor(() => expect(i18n.resolvedLanguage).toBe('fr'));
+      expect(document.documentElement.lang).toBe('fr');
+      document.cookie = 'lang=fr; path=/';
+      return view;
+    }
+
+    test('should not change an uninitialized i18next instance while updating preferences and caches', async () => {
+      const changeLanguage = vi.spyOn(i18n, 'changeLanguage');
+      const { result } = renderHook(() => useContext(PageSettingsContext), {
+        wrapper: PageSettingsProvider,
+      });
+      expect(i18n.isInitialized).toBeFalsy();
+      expect(changeLanguage).not.toHaveBeenCalled();
+
+      await act(() => Promise.resolve(result.current[1]({ ...result.current[0], language: 'ja' })));
+
+      expect(changeLanguage).not.toHaveBeenCalled();
+      expect(document.documentElement.lang).toBe('ja');
+      expect(localStorage.getItem('lang')).toBe('ja');
+
+      await act(() =>
+        Promise.resolve(result.current[1]({ ...result.current[0], language: 'browser' }))
+      );
+
+      expect(changeLanguage).not.toHaveBeenCalled();
+      expect(document.documentElement.lang).toBe('ja');
+      expect(localStorage.getItem('lang')).toBeNull();
+    });
+
+    test('should switch explicit French to detected English and clear explicit caches', async () => {
+      const { result } = await renderLanguageSettings(['en']);
+      expect(i18n.t('greeting')).toBe('Bonjour');
+      expect(localStorage.getItem('lang')).toBe('fr');
+
+      await act(() =>
+        Promise.resolve(result.current[1]({ ...result.current[0], language: 'browser' }))
+      );
+
+      await waitFor(() => {
+        expect(i18n.resolvedLanguage).toBe('en');
+        expect(i18n.t('greeting')).toBe('Hello');
+        expect(document.documentElement.lang).toBe('en');
+      });
+      expect(localStorage.getItem('lang')).toBeNull();
+      expect(document.cookie).not.toContain('lang=');
+      expect(JSON.parse(localStorage.getItem('user-preferences') ?? '{}')).toMatchObject({
+        language: 'browser',
+      });
+    });
+
+    test('should apply explicit Japanese translations, document language, and persisted preference', async () => {
+      const { result } = await renderLanguageSettings(['en']);
+
+      await act(() => Promise.resolve(result.current[1]({ ...result.current[0], language: 'ja' })));
+
+      await waitFor(() => {
+        expect(i18n.resolvedLanguage).toBe('ja');
+        expect(i18n.t('greeting')).toBe('こんにちは');
+        expect(document.documentElement.lang).toBe('ja');
+      });
+      expect(localStorage.getItem('lang')).toBe('ja');
+      expect(JSON.parse(localStorage.getItem('user-preferences') ?? '{}')).toMatchObject({
+        language: 'ja',
+      });
+    });
+
+    test('should select a supported browser candidate after an unsupported regional candidate', async () => {
+      const { result } = await renderLanguageSettings(['de-DE', 'ja']);
+
+      await act(() =>
+        Promise.resolve(result.current[1]({ ...result.current[0], language: 'browser' }))
+      );
+
+      await waitFor(() => {
+        expect(i18n.resolvedLanguage).toBe('ja');
+        expect(i18n.t('greeting')).toBe('こんにちは');
+        expect(document.documentElement.lang).toBe('ja');
+      });
+      expect(localStorage.getItem('lang')).toBeNull();
+      expect(document.cookie).not.toContain('lang=');
+    });
+
+    test('should honor the real lang querystring before browser candidates when returning to detection', async () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', 'ja');
+      window.history.replaceState(null, '', url);
+      const { result } = await renderLanguageSettings(['en'], {
+        detection: {
+          order: ['querystring', 'fixture'],
+          lookupQuerystring: 'lang',
+          caches: [],
+        },
+      });
+      expect(i18n.t('greeting')).toBe('Bonjour');
+
+      await act(() =>
+        Promise.resolve(result.current[1]({ ...result.current[0], language: 'browser' }))
+      );
+
+      await waitFor(() => {
+        expect(i18n.resolvedLanguage).toBe('ja');
+        expect(i18n.t('greeting')).toBe('こんにちは');
+        expect(document.documentElement.lang).toBe('ja');
+      });
+      expect(localStorage.getItem('lang')).toBeNull();
+      expect(document.cookie).not.toContain('lang=');
+    });
+
+    test('should resolve a regional browser candidate to the supported Japanese resource language', async () => {
+      const { result } = await renderLanguageSettings(['ja-JP']);
+
+      await act(() =>
+        Promise.resolve(result.current[1]({ ...result.current[0], language: 'browser' }))
+      );
+
+      await waitFor(() => {
+        expect(i18n.resolvedLanguage).toBe('ja');
+        expect(i18n.t('greeting')).toBe('こんにちは');
+        expect(document.documentElement.lang).toBe('ja');
+      });
+      expect(localStorage.getItem('lang')).toBeNull();
+      expect(document.cookie).not.toContain('lang=');
+    });
+
+    test('should resolve empty browser detection to the configured fallback and clear explicit caches', async () => {
+      const { result } = await renderLanguageSettings([]);
+
+      await act(() =>
+        Promise.resolve(result.current[1]({ ...result.current[0], language: 'browser' }))
+      );
+
+      await waitFor(() => {
+        expect(i18n.resolvedLanguage).toBe('en');
+        expect(i18n.t('greeting')).toBe('Hello');
+        expect(document.documentElement.lang).toBe('en');
+      });
+      expect(localStorage.getItem('lang')).toBeNull();
+      expect(document.cookie).not.toContain('lang=');
+      expect(JSON.parse(localStorage.getItem('user-preferences') ?? '{}')).toMatchObject({
+        language: 'browser',
+      });
+    });
+
+    test('should preserve the active UI language and repair the document language after an exceptional rejection', async () => {
+      const { result } = await renderLanguageSettings(['en']);
+      document.documentElement.lang = 'ja';
+      vi.spyOn(i18n, 'changeLanguage').mockRejectedValueOnce(new Error('Exceptional rejection'));
+
+      await act(() =>
+        Promise.resolve(result.current[1]({ ...result.current[0], language: 'browser' }))
+      );
+
+      await waitFor(() => expect(document.documentElement.lang).toBe('fr'));
+      expect(i18n.resolvedLanguage).toBe('fr');
+      expect(i18n.t('greeting')).toBe('Bonjour');
+      expect(localStorage.getItem('lang')).toBeNull();
+      expect(document.cookie).not.toContain('lang=');
+    });
+
+    test('should synchronize to available fallback translations after a browser resource load fails', async () => {
+      const read = vi.fn((_language: string, _namespace: string, callback: ReadCallback) => {
+        callback(new Error('Translation download failed'), false);
+      });
+      i18n.use({ type: 'backend', init: () => {}, read });
+      const failedLoading = vi.fn();
+      i18n.on('failedLoading', failedLoading);
+      const { result } = await renderLanguageSettings(['ja'], {
+        partialBundledLanguages: true,
+        resources: {
+          en: { translation: { greeting: 'Hello' } },
+          fr: { translation: { greeting: 'Bonjour' } },
+        },
+      });
+
+      await act(() =>
+        Promise.resolve(result.current[1]({ ...result.current[0], language: 'browser' }))
+      );
+
+      await waitFor(() => {
+        expect(i18n.resolvedLanguage).toBe('en');
+        expect(i18n.t('greeting')).toBe('Hello');
+        expect(document.documentElement.lang).toBe('en');
+      });
+      expect(read).toHaveBeenCalledWith('ja', 'translation', expect.any(Function));
+      expect(failedLoading).toHaveBeenCalledWith('ja', 'translation', expect.any(Error));
+      expect(localStorage.getItem('lang')).toBeNull();
+      expect(document.cookie).not.toContain('lang=');
     });
   });
 
@@ -244,6 +565,19 @@ describe('PageSettingsProvider', () => {
         expect(result.current.activeTheme).toBe('light');
         expect(result.current.theme).toBe('light');
       });
+    });
+
+    test('should use an explicit dark theme', async () => {
+      localStorage.setItem('user-preferences', JSON.stringify({ theme: 'dark' }));
+
+      const wrapper = ({ children }: { children: ReactNode }) => (
+        <PageSettingsProvider>{children}</PageSettingsProvider>
+      );
+
+      const { result } = renderHook(() => usePageSettings(), { wrapper });
+
+      await waitFor(() => expect(result.current.activeTheme).toBe('dark'));
+      expect(document.documentElement.classList.contains('pf-v6-theme-dark')).toBe(true);
     });
 
     const disabledThemeWrapper = ({ children }: { children: ReactNode }) => (

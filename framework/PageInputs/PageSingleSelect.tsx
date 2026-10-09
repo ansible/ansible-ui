@@ -19,6 +19,7 @@ import {
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 import {
+  Fragment,
   ReactNode,
   createContext,
   useCallback,
@@ -421,18 +422,21 @@ export function PageSingleSelectList(props: {
     >
       {props.options.map((option) => {
         const optionId = getID(option);
+        const optionKey = option.key ?? option.label;
         return (
-          <SelectOption
-            id={optionId}
-            icon={option.icon}
-            key={option.key !== undefined ? option.key : option.label}
-            value={option.key !== undefined ? option.key : option.label}
-            description={option.description}
-            data-cy={optionId}
-            data-testid={optionId}
-          >
-            {option.label}
-          </SelectOption>
+          <Fragment key={optionKey}>
+            <SelectOption
+              id={optionId}
+              icon={option.icon}
+              value={optionKey}
+              description={option.description}
+              data-cy={optionId}
+              data-testid={optionId}
+            >
+              {option.label}
+            </SelectOption>
+            {option.dividerAfter && <Divider />}
+          </Fragment>
         );
       })}
     </SelectList>
