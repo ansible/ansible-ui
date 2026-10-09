@@ -1,5 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["**/*", "../hub/**/*", "../../types/*.d.ts"],
-  "exclude": ["../hub/insights/**", "../hub/dist-insights/**"]
+  "include": ["**/*", "../hub/**/*", "../../types/*.d.ts"]
 }
