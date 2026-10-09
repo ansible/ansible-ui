@@ -1,7 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   FormGroupTypeAheadMultiSelect,
   FormGroupTypeAheadMultiSelectProps,
@@ -67,6 +67,19 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
 
       expect(screen.getByRole('textbox')).toBeDisabled();
     });
+  });
+
+  it('selects the first matching option with Enter', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    renderComponent({ onHandleSelection });
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'Team 1');
+    await user.keyboard('{Enter}');
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'Team 1' });
   });
 
   describe('Helper Text and Validation', () => {
