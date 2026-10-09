@@ -144,7 +144,7 @@ export function DeprecationsDashboard() {
   return (
     <>
       <PageSection>
-        {/* Partial data warning — shown when one or more per-job event fetches failed */}
+        {/* Partial data warning — shown when a per-job event fetch failed or hit the page cap */}
         {data?.hasPartialData && (
           <Alert
             variant="warning"
