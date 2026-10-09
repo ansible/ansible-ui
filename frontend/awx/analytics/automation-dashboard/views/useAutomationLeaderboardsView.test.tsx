@@ -5,6 +5,7 @@ import { ReactNode } from 'react';
 import { SWRConfig, useSWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { metricsAPI } from '../../../common/api/metrics-utils';
+import { AwxActiveUserContext } from '../../../common/useAwxActiveUser';
 import type { IAutomationDashboardCollectionStatus } from '../types';
 import {
   AutomationLeaderboardsData,
@@ -489,11 +490,13 @@ describe('useAutomationLeaderboardsView', () => {
     expect(result.current.lastSyncedAt).toBeNull();
   });
 
-  test('should stay loading while collection_status is in flight after the leaderboard resolves', async () => {
+  test('should not request the leaderboard until collection_status settles', async () => {
+    let leaderboardRequests = 0;
     server.use(
-      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () =>
-        HttpResponse.json(MOCK_LEADERBOARD_REPORT)
-      ),
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () => {
+        leaderboardRequests += 1;
+        return HttpResponse.json(MOCK_LEADERBOARD_REPORT);
+      }),
       http.get(metricsAPI`/dashboard_reports/collection_status/`, async () => {
         await delay(100);
         return HttpResponse.json(collectionStatusFixture);
@@ -502,12 +505,169 @@ describe('useAutomationLeaderboardsView', () => {
 
     const { result } = renderHook(() => useAutomationLeaderboardsView(), { wrapper });
 
-    await waitFor(() => expect(result.current.atAGlance.jobsRun).toBe(1234));
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.lastSyncedAt).toBeNull();
+    expect(leaderboardRequests).toBe(0);
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.lastSyncedAt).toBe('2026-09-01T14:00:00.000Z');
+    expect(result.current.atAGlance.jobsRun).toBe(1234);
+    expect(leaderboardRequests).toBe(1);
+  });
+
+  test("should request the leaderboard without waiting for the user's role to load", async () => {
+    let leaderboardRequests = 0;
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () => {
+        leaderboardRequests += 1;
+        return HttpResponse.json(MOCK_LEADERBOARD_REPORT);
+      }),
+      http.get(metricsAPI`/dashboard_reports/collection_status/`, () =>
+        HttpResponse.json(collectionStatusFixture)
+      )
+    );
+    // A mounted provider whose /me/ hasn't resolved yet: the role is still pending.
+    const rolePendingWrapper = ({ children }: { children: ReactNode }) =>
+      wrapper({
+        children: (
+          <AwxActiveUserContext.Provider
+            value={{ activeAwxUser: undefined, refreshActiveAwxUser: () => undefined }}
+          >
+            {children}
+          </AwxActiveUserContext.Provider>
+        ),
+      });
+
+    const { result } = renderHook(() => useAutomationLeaderboardsView(), {
+      wrapper: rolePendingWrapper,
+    });
+
+    await waitFor(() => expect(leaderboardRequests).toBe(1));
+    // The view as a whole still reports loading until the role is known.
+    expect(result.current.isLoading).toBe(true);
+  });
+
+  test('should refetch the leaderboard when collection_status reports a new last_sync', async () => {
+    let leaderboardRequests = 0;
+    let lastSync = '2026-09-01T14:00:00.000Z';
+    let jobRuns = 1234;
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () => {
+        leaderboardRequests += 1;
+        return HttpResponse.json({ ...MOCK_LEADERBOARD_REPORT, job_runs: jobRuns });
+      }),
+      http.get(metricsAPI`/dashboard_reports/collection_status/`, () =>
+        HttpResponse.json({ ...collectionStatusFixture, last_sync: lastSync })
+      )
+    );
+
+    // Every render once the first request went out, to prove the refetch never drops back to
+    // loading/empty and the timestamp always belongs to the report on screen.
+    const rendersAfterLoad: { isLoading: boolean; jobsRun: number; lastSyncedAt: string | null }[] =
+      [];
+    const { result } = renderHook(
+      () => {
+        const view = useAutomationLeaderboardsView();
+        if (leaderboardRequests > 0) {
+          rendersAfterLoad.push({
+            isLoading: view.isLoading,
+            jobsRun: view.atAGlance.jobsRun,
+            lastSyncedAt: view.lastSyncedAt,
+          });
+        }
+        return { view, swrConfig: useSWRConfig() };
+      },
+      { wrapper }
+    );
+
+    await waitFor(() => expect(result.current.view.atAGlance.jobsRun).toBe(1234));
+    expect(leaderboardRequests).toBe(1);
+
+    lastSync = '2026-09-02T14:00:00.000Z';
+    jobRuns = 5678;
+    await act(() =>
+      result.current.swrConfig.mutate(metricsAPI`/dashboard_reports/collection_status/`)
+    );
+
+    await waitFor(() => expect(result.current.view.atAGlance.jobsRun).toBe(5678));
+    expect(result.current.view.lastSyncedAt).toBe('2026-09-02T14:00:00.000Z');
+    expect(leaderboardRequests).toBe(2);
+    // The previous report stays on screen while the new one loads, instead of the loading state,
+    // and keeps its own sync timestamp until the new report replaces it.
+    const syncOfReport: Record<number, string> = {
+      1234: '2026-09-01T14:00:00.000Z',
+      5678: '2026-09-02T14:00:00.000Z',
+    };
+    const firstLoadedRender = rendersAfterLoad.findIndex((render) => render.jobsRun === 1234);
+    const loadedRenders = rendersAfterLoad.slice(firstLoadedRender);
+    expect(loadedRenders.every((render) => !render.isLoading)).toBe(true);
+    expect(
+      loadedRenders.every((render) => render.lastSyncedAt === syncOfReport[render.jobsRun])
+    ).toBe(true);
+  });
+
+  test('should keep the shown report and its sync timestamp, without an error, when the refetch for a new sync fails', async () => {
+    let lastSync = '2026-09-01T14:00:00.000Z';
+    let leaderboardRequests = 0;
+    let leaderboardResponse = (): Response => HttpResponse.json(MOCK_LEADERBOARD_REPORT);
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () => {
+        leaderboardRequests += 1;
+        return leaderboardResponse();
+      }),
+      http.get(metricsAPI`/dashboard_reports/collection_status/`, () =>
+        HttpResponse.json({ ...collectionStatusFixture, last_sync: lastSync })
+      )
+    );
+
+    const { result } = renderHook(
+      () => ({ view: useAutomationLeaderboardsView(), swrConfig: useSWRConfig() }),
+      { wrapper }
+    );
+
+    await waitFor(() => expect(result.current.view.atAGlance.jobsRun).toBe(1234));
+
+    lastSync = '2026-09-02T14:00:00.000Z';
+    leaderboardResponse = () => HttpResponse.json({}, { status: 500 });
+    await act(() =>
+      result.current.swrConfig.mutate(metricsAPI`/dashboard_reports/collection_status/`)
+    );
+
+    await waitFor(() => expect(leaderboardRequests).toBe(2));
+    // Let SWR settle the failed request before asserting nothing changed.
+    await act(() => delay(50));
+    // The page keeps showing the last good report rather than switching to the error state.
+    expect(result.current.view.error).toBeUndefined();
+    expect(result.current.view.isLoading).toBe(false);
+    expect(result.current.view.atAGlance.jobsRun).toBe(1234);
+    expect(result.current.view.lastSyncedAt).toBe('2026-09-01T14:00:00.000Z');
+  });
+
+  test('should not refetch the leaderboard when collection_status reports the same last_sync', async () => {
+    let leaderboardRequests = 0;
+    let collectionStatusRequests = 0;
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () => {
+        leaderboardRequests += 1;
+        return HttpResponse.json(MOCK_LEADERBOARD_REPORT);
+      }),
+      http.get(metricsAPI`/dashboard_reports/collection_status/`, () => {
+        collectionStatusRequests += 1;
+        return HttpResponse.json(collectionStatusFixture);
+      })
+    );
+
+    const { result } = renderHook(
+      () => ({ view: useAutomationLeaderboardsView(), swrConfig: useSWRConfig() }),
+      { wrapper }
+    );
+
+    await waitFor(() => expect(result.current.view.isLoading).toBe(false));
+    await act(() =>
+      result.current.swrConfig.mutate(metricsAPI`/dashboard_reports/collection_status/`)
+    );
+
+    expect(collectionStatusRequests).toBe(2);
+    expect(leaderboardRequests).toBe(1);
   });
 
   test('should return empty-window defaults and the error when the leaderboard request fails', async () => {
@@ -588,7 +748,12 @@ describe('useAutomationLeaderboardsView', () => {
     );
 
     mockEndpoints({ leaderboard: HttpResponse.json({}, { status: 500 }) });
-    await act(() => result.current.swrConfig.mutate(metricsAPI`/dashboard_reports/leaderboard/`));
+    // The SWR key is `[url, lastSyncedAt]`, so match it by its url.
+    await act(() =>
+      result.current.swrConfig.mutate(
+        (key) => Array.isArray(key) && key[0] === metricsAPI`/dashboard_reports/leaderboard/`
+      )
+    );
 
     await waitFor(() =>
       expect(result.current.view.error?.message).not.toBe(

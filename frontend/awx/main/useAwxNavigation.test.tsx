@@ -128,6 +128,7 @@ function setupCollectionStatus(
       show_leaderboard: true,
     },
     isLoading: false,
+    isRequestLoading: false,
     canSeeDashboard: true,
     canSeeLeaderboard: true,
     error: undefined,

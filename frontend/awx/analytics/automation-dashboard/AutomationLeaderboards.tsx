@@ -17,6 +17,8 @@ import {
   NARROW_GRID_MAX_COLUMNS,
   widthOrFullRow,
 } from './common/leaderboardCardWidths';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { useNewAchievementsAlert } from './common/useNewAchievementsAlert';
 
 /** Re-exported so `AutomationLeaderboards.test.tsx` doesn't need to import the shared module directly. */
 export { CARD_WIDTH_COL_SPAN } from './common/leaderboardCardWidths';
@@ -66,6 +68,31 @@ function LeaderboardsErrorState({
     <DashboardGridRow>
       <div style={{ gridColumn: `span ${gridColumns}`, maxWidth: '100%' }}>
         <EmptyStateError titleProp={t('Unable to load leaderboards')} message={error.message} />
+      </div>
+    </DashboardGridRow>
+  );
+}
+
+/** Dismissible banner shown while the user has an earned achievement they haven't dismissed yet. */
+function NewAchievementsAlert({ colSpan }: Readonly<{ colSpan: number }>) {
+  const { t } = useTranslation();
+  const { hasNewAchievements, dismiss } = useNewAchievementsAlert();
+
+  if (!hasNewAchievements) {
+    return null;
+  }
+
+  return (
+    <DashboardGridRow>
+      <div style={{ gridColumn: `span ${colSpan}`, maxWidth: '100%' }}>
+        <Alert
+          variant="success"
+          isInline
+          // Appears only after the report loads, so announce it to screen readers.
+          isLiveRegion
+          title={t('Congratulations! You or your organization earned new achievements.')}
+          actionClose={<AlertActionCloseButton onClose={dismiss} />}
+        />
       </div>
     </DashboardGridRow>
   );
@@ -122,6 +149,7 @@ function renderLeaderboardsContent(
 
   return (
     <>
+      <NewAchievementsAlert colSpan={topCardsColSpan} />
       <DashboardGridRow>
         <div style={{ gridColumn: `span ${topCardsColSpan}`, maxWidth: '100%' }}>
           <HighlightsSyncTimestamp lastSyncedAt={lastSyncedAt} />
