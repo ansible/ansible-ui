@@ -3,13 +3,15 @@ import {
   IPageActionLink,
   PageActionType,
 } from '@ansible/ansible-ui-framework';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { BrowserRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
 import { FrameworkTranslationsProvider } from '../../../../framework/useFrameworkTranslations';
+import { EdaActiveUserContext } from '../../common/useEdaActiveUser';
 import { IEdaView } from '../../common/useEventDrivenView';
 import { EdaRulebookActivation } from '../../interfaces/EdaRulebookActivation';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
@@ -24,6 +26,24 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     usePageAlertToaster: () => ({
       addAlert: mockAddAlert,
     }),
+  };
+});
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({
+      children,
+      'aria-label': ariaLabel,
+    }: {
+      children: React.ReactNode;
+      'aria-label': string;
+    }) => (
+      <dialog open aria-label={ariaLabel}>
+        {children}
+      </dialog>
+    ),
   };
 });
 
@@ -56,6 +76,15 @@ const mockDisableActivationsWithWarning = vi.fn();
 const mockDeleteRulebookActivations = vi.fn();
 const mockDeleteActivationsWithWarning = vi.fn();
 
+const mockActiveUser = {
+  id: 1,
+  username: 'admin',
+  is_superuser: true,
+  resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+  created_at: '2024-01-01T00:00:00Z',
+  modified_at: '2024-01-01T00:00:00Z',
+};
+
 vi.mock('./useControlRulebookActivations', () => ({
   useEnableRulebookActivationsWithWarning: () => mockEnableActivationsWithWarning,
   useRestartRulebookActivations: () => mockRestartActivations,
@@ -76,13 +105,26 @@ describe('useRulebookActivationsActions', () => {
     unselectItemsAndRefresh: vi.fn(),
   } as unknown as IEdaView<EdaRulebookActivation>;
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <BrowserRouter>
-      <PageDialogProvider>
-        <FrameworkTranslationsProvider>{children}</FrameworkTranslationsProvider>
-      </PageDialogProvider>
-    </BrowserRouter>
-  );
+  const createWrapper = (activeEdaUser = mockActiveUser) => {
+    const contextValue = { activeEdaUser };
+    const Wrapper = ({ children }: { children: React.ReactNode }) => {
+      return (
+        <BrowserRouter>
+          <PageDialogProvider>
+            <FrameworkTranslationsProvider>
+              <EdaActiveUserContext.Provider value={contextValue}>
+                {children}
+              </EdaActiveUserContext.Provider>
+            </FrameworkTranslationsProvider>
+          </PageDialogProvider>
+        </BrowserRouter>
+      );
+    };
+    Wrapper.displayName = 'RulebookActivationsActionsTestWrapper';
+    return Wrapper;
+  };
+
+  const wrapper = createWrapper();
 
   beforeAll(() => server.listen());
   afterEach(() => {
@@ -129,6 +171,57 @@ describe('useRulebookActivationsActions', () => {
       deleteAction.onClick(activations);
     });
     expect(mockDeleteRulebookActivations).toHaveBeenCalledWith(activations);
+  });
+
+  it('should delete logs for selected activations', async () => {
+    const user = userEvent.setup();
+    const clearLogs = vi.fn(() => HttpResponse.json({ deleted: 2 }));
+    server.use(http.post('*/activations/:id/clear-logs/', clearLogs));
+
+    const { result } = renderHook(() => useRulebookActivationsActions(mockView), { wrapper });
+    const clearLogsAction = result.current.find(
+      (action) => action.type === PageActionType.Button && action.label === 'Delete logs'
+    ) as IPageActionButtonMultiple<EdaRulebookActivation>;
+    const activations = [
+      { id: 1, name: 'Activation 2' },
+      { id: 2, name: 'Activation 1' },
+    ] as EdaRulebookActivation[];
+
+    act(() => {
+      clearLogsAction.onClick(activations);
+    });
+
+    const dialog = await screen.findByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(dialog).toHaveTextContent(
+      'This deletes stored database logs for Activation 1, Activation 2. Rulebook activations will continue running, and system logs on activation workers remain unaffected.'
+    );
+    expect(
+      within(dialog).getByText('Activation 1, Activation 2', { selector: 'strong' })
+    ).toBeInTheDocument();
+    expect(within(dialog).queryByRole('table')).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Delete logs' })).toBeDisabled();
+
+    await user.click(
+      within(dialog).getByRole('checkbox', {
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
+      })
+    );
+    await user.click(within(dialog).getByRole('button', { name: 'Delete logs' }));
+
+    await waitFor(() => {
+      expect(clearLogs).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('should allow non-admin users to open delete logs for backend authorization', () => {
+    const { result } = renderHook(() => useRulebookActivationsActions(mockView), {
+      wrapper: createWrapper({ ...mockActiveUser, is_superuser: false }),
+    });
+    const clearLogsAction = result.current.find(
+      (action) => action.type === PageActionType.Button && action.label === 'Delete logs'
+    ) as IPageActionButtonMultiple<EdaRulebookActivation>;
+
+    expect(clearLogsAction.isDisabled).toBeUndefined();
   });
 
   it('should handle enable rulebook activations without warning', async () => {

@@ -67,9 +67,40 @@
           },
           {
             "in": "query",
+            "name": "id__gt",
+            "schema": { "type": "integer" },
+            "description": "Filter logs with ID greater than value."
+          },
+          {
+            "in": "query",
+            "name": "id__lt",
+            "schema": { "type": "integer" },
+            "description": "Filter logs with ID less than value."
+          },
+          {
+            "in": "query",
             "name": "log",
             "schema": { "type": "string" },
             "description": "Filter by activation instance log."
+          },
+          {
+            "in": "query",
+            "name": "log_timestamp__gt",
+            "schema": { "type": "number" },
+            "description": "Filter logs with timestamp greater than value."
+          },
+          {
+            "in": "query",
+            "name": "log_timestamp__lt",
+            "schema": { "type": "number" },
+            "description": "Filter logs with timestamp less than value."
+          },
+          {
+            "name": "ordering",
+            "required": false,
+            "in": "query",
+            "description": "Which field to use when ordering the results.",
+            "schema": { "type": "string" }
           },
           {
             "name": "page",

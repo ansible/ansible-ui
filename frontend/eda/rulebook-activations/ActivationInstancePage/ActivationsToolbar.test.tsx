@@ -12,6 +12,7 @@ describe('RulebookActivationToolbar', () => {
     isFollowModeEnabled: false,
     setIsFollowModeEnabled: vi.fn(),
     isRunning: false,
+    onClearLogs: vi.fn(),
   };
 
   it('should render toolbar without follow button when not running', () => {
@@ -30,6 +31,24 @@ describe('RulebookActivationToolbar', () => {
       <RulebookActivationToolbar {...defaultProps} isRunning={true} isFollowModeEnabled={true} />
     );
     expect(screen.getByRole('button', { name: /Unfollow/i })).toBeInTheDocument();
+  });
+
+  it('should render the dangerous Delete logs action when allowed', () => {
+    render(<RulebookActivationToolbar {...defaultProps} />);
+
+    const deleteLogs = screen.getByRole('button', { name: 'Delete logs' });
+    expect(deleteLogs).toBeEnabled();
+    expect(deleteLogs).toHaveClass('pf-m-secondary');
+  });
+
+  it('should call onClearLogs when the allowed Delete logs action is clicked', async () => {
+    const user = userEvent.setup();
+    const onClearLogs = vi.fn();
+    render(<RulebookActivationToolbar {...defaultProps} onClearLogs={onClearLogs} />);
+
+    await user.click(screen.getByRole('button', { name: 'Delete logs' }));
+
+    expect(onClearLogs).toHaveBeenCalledOnce();
   });
 
   it('should call setIsFollowModeEnabled(true) when Follow is clicked', async () => {
