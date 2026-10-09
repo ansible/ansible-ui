@@ -10,7 +10,7 @@ vi.mock('@patternfly/react-topology', () => ({
   },
 }));
 
-const { useGetPath } = await import('./useGetPath');
+const { getPoints, Position, useGetPath } = await import('./useGetPath');
 
 function makeMockEdge(sourceX: number, sourceY: number, targetX: number, targetY: number) {
   return {
@@ -20,6 +20,26 @@ function makeMockEdge(sourceX: number, sourceY: number, targetX: number, targetY
 }
 
 describe('useGetPath', () => {
+  it('calculates a path and label for mixed handle positions', () => {
+    const [points, centerX, centerY] = getPoints({
+      source: { x: 0, y: 0 },
+      sourcePosition: Position.Right,
+      target: { x: 100, y: 100 },
+      targetPosition: Position.Bottom,
+      offset: 25,
+    });
+
+    expect(points).toEqual([
+      { x: 0, y: 0 },
+      { x: 25, y: 0 },
+      { x: 25, y: 125 },
+      { x: 100, y: 125 },
+      { x: 100, y: 100 },
+    ]);
+    expect(centerX).toBe(25);
+    expect(centerY).toBe(62.5);
+  });
+
   it('should return a path string starting with M for a simple left-to-right edge', () => {
     const edge = makeMockEdge(0, 0, 200, 0);
     const { path, centerPoint } = useGetPath(edge);
