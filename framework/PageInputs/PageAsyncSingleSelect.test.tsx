@@ -309,7 +309,26 @@ describe('PageAsyncSingleSelect', () => {
     });
 
     await user.click(screen.getByRole('button', { name: 'Browse' }));
-    expect(onBrowse).toHaveBeenCalled();
+    expect(onBrowse).toHaveBeenCalledOnce();
+  });
+
+  it('should show a write-in option when the query returns no results', async () => {
+    const user = userEvent.setup();
+    render(
+      <PageAsyncSingleSelectTest
+        queryOptions={() => Promise.resolve({ options: [], remaining: 0, next: 2 })}
+        writeInOption={(query) => ({
+          value: -1,
+          label: query ? `Create ${query}` : 'Create option',
+        })}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Create option')).toBeInTheDocument();
+    });
   });
 
   it('should show custom error text when queryErrorText is a string', async () => {
