@@ -1,0 +1,35 @@
+import { useLayoutEffect, useRef } from 'react';
+
+type ResizeTarget = React.RefObject<Element | null | undefined> | Element | null | undefined;
+
+/**
+ * Observe an element's size changes (replacement for `@react-hook/resize-observer`).
+ */
+export function useResizeObserver(
+  target: ResizeTarget,
+  callback: (entry: ResizeObserverEntry) => void,
+  options?: ResizeObserverOptions
+): void {
+  const callbackRef = useRef(callback);
+  callbackRef.current = callback;
+
+  const box = options?.box;
+
+  useLayoutEffect(() => {
+    const element =
+      target && typeof target === 'object' && 'current' in target ? target.current : target;
+    if (!element || !(element instanceof Element)) {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        callbackRef.current(entry);
+      }
+    });
+
+    observer.observe(element, box === undefined ? undefined : { box });
+    return () => observer.disconnect();
+  }, [target, box]);
+}

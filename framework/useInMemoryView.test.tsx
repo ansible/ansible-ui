@@ -1,8 +1,9 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useInMemoryView } from './useInMemoryView';
 
 interface TestItem {
@@ -86,6 +87,35 @@ describe('useInMemoryView', () => {
     if (result.current.pageItems) {
       expect(result.current.pageItems[0].name).toBe('Alpha');
       expect(result.current.pageItems[4].name).toBe('Echo');
+    }
+  });
+
+  it('should filter items using a toolbar filter value', async () => {
+    const categoryFilter: IToolbarFilter = {
+      type: ToolbarFilterType.SingleText,
+      comparison: 'contains',
+      key: 'category',
+      label: 'Category',
+      query: 'category',
+    };
+    window.history.replaceState(null, '', '/?category=fruit&perPage=10');
+    try {
+      const { result } = renderHook(
+        () =>
+          useInMemoryView<TestItem>({
+            items: testItems,
+            keyFn: (item) => item.id,
+            toolbarFilters: [categoryFilter],
+          }),
+        { wrapper: Wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.itemCount).toBe(3);
+        expect(result.current.pageItems?.every((item) => item.category === 'fruit')).toBe(true);
+      });
+    } finally {
+      window.history.replaceState(null, '', '/');
     }
   });
 

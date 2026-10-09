@@ -1,4 +1,4 @@
-import getValue from 'get-value';
+import { getByPath } from './utils/getByPath';
 import { useEffect, useMemo } from 'react';
 import { ITableColumn } from './PageTable/PageTableColumn';
 import {
@@ -54,8 +54,8 @@ export function useInMemoryView<T extends object>(options: {
       setSort({
         id: sort,
         sortFn: (l: T, r: T) => {
-          const lv = getValue(l, sort) as unknown;
-          const rv = getValue(r, sort) as unknown;
+          const lv = getByPath(l, sort);
+          const rv = getByPath(r, sort);
           return compareUnknowns(lv, rv);
         },
         direction: sortDirection,
@@ -73,7 +73,7 @@ export function useInMemoryView<T extends object>(options: {
         for (const key in filterState) {
           const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
           if (toolbarFilter) {
-            const value = getValue(item, toolbarFilter.query) as unknown;
+            const value = getByPath(item, toolbarFilter.query);
             const filterValues = filterState[key];
             if (filterValues && filterValues.length !== 0) {
               if (Array.isArray(value)) {

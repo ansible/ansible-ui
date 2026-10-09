@@ -5,7 +5,7 @@ import DOMPurify from 'dompurify';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
-import { parseStringPromise } from 'xml2js';
+import { parseAtomFeedXml, type XmlNode } from './parseAtomFeedXml';
 import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 
@@ -166,12 +166,9 @@ export function useRssNotifications() {
   const { setNotificationGroups } = usePageNotifications();
 
   useEffect(() => {
-    async function parseRssFeed(feedContent: string, deploymentType?: string) {
+    function parseRssFeed(feedContent: string, deploymentType?: string) {
       try {
-        const { feed } = (await parseStringPromise(feedContent, {
-          trim: true,
-          explicitArray: false,
-        })) as { feed: XmlNode };
+        const { feed } = parseAtomFeedXml(feedContent);
 
         if (!feed.entry || (!Array.isArray(feed.entry) && typeof feed.entry !== 'object')) {
           return;
@@ -201,7 +198,7 @@ export function useRssNotifications() {
       }
     }
     if (feedContent) {
-      void parseRssFeed(feedContent, gatewaySettings?.AAP_DEPLOYMENT_TYPE);
+      parseRssFeed(feedContent, gatewaySettings?.AAP_DEPLOYMENT_TYPE);
     }
   }, [feedContent, gatewaySettings?.AAP_DEPLOYMENT_TYPE, setNotificationGroups, title]);
 
@@ -224,23 +221,4 @@ export function useRssNotifications() {
       });
     }
   }, [settingsError, setNotificationGroups, title]);
-}
-
-export interface XmlNode {
-  // Attributes are typically stored under a property named '$' by default.
-  // The value of attributes is a dictionary where keys are attribute names and values are strings.
-  $: { [key: string]: string } | undefined;
-
-  // Text content within an element is often stored under a property named '_' by default.
-  // With `trim: true`, leading/trailing whitespace will be removed.
-  // It is a string or undefined if no text content.
-  _: string | undefined;
-
-  // For child elements, xml2js creates properties with the child element's tag name.
-  // With `explicitArray: false`:
-  // - If there's a single child element, its value will be a single XmlNode object.
-  // - If there are multiple child elements, its value will be an array of XmlNode objects.
-  // Also includes `string | undefined` for cases where a child element might directly contain
-  // only text without attributes or further nesting (though `_` is more common for this).
-  [key: string]: XmlNode | XmlNode[] | string | { [key: string]: string } | undefined;
 }
