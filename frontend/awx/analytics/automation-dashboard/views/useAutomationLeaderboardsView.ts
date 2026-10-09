@@ -1,7 +1,8 @@
 /**
  * Single source of data for the Automation Dashboard → Leaderboards tab.
  *
- * Fetches `/dashboard_reports/leaderboard/` once (via `useSWR`) and maps the raw response
+ * Fetches `/dashboard_reports/leaderboard/` (via `useSWR`, refetched whenever collection_status
+ * reports a new `last_sync`) and maps the raw response
  * (`ILeaderboardReport`) into `AutomationLeaderboardsData` — the leaderboard components read
  * only from this hook's return value, never the raw API shape.
  *
@@ -368,11 +369,6 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
   const fetcher = useFetcher();
 
   const leaderboardUrl = metricsAPI`/dashboard_reports/leaderboard/`;
-  const {
-    data,
-    error,
-    isLoading: isLeaderboardLoading,
-  } = useSWR<ILeaderboardReport, Error>(leaderboardUrl, fetcher);
 
   // Every viewer needs their own "Updated: …" timestamp here, regardless of whether they can
   // see the Dashboard/Leaderboards tabs, so this reuses the shared collection_status fetch
@@ -381,7 +377,35 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
     collectionStatus,
     error: collectionStatusError,
     isLoading: isCollectionStatusLoading,
+    // Unlike `isLoading` this doesn't also wait for the user's role (/me/), which the report
+    // doesn't need, so the report request isn't held back by it.
+    isRequestLoading: isCollectionStatusRequestLoading,
   } = useAutomationDashboardCollectionStatus();
+
+  const lastSyncedAt = toIsoString(collectionStatus.last_sync);
+
+  // The report only changes when the backend syncs, and collection_status already polls for
+  // that. Keying on `lastSyncedAt` refetches the report exactly when a new sync lands; waiting
+  // for the collection_status request to settle avoids a throwaway fetch under a `null` sync key
+  // on mount. `keepPreviousData` keeps the current report on screen while the new one loads.
+  // Each report carries the sync it was fetched for, so the "Updated: …" timestamp always matches
+  // the numbers shown, not the newer sync whose report is still loading (or failed to load).
+  const {
+    data,
+    error,
+    isLoading: isSwrLoading,
+  } = useSWR<
+    { report: ILeaderboardReport; syncedAt: string | null },
+    Error,
+    readonly [string, string | null] | null
+  >(
+    isCollectionStatusRequestLoading ? null : [leaderboardUrl, lastSyncedAt],
+    async ([url, syncedAt]) => ({ report: await fetcher<ILeaderboardReport>(url), syncedAt }),
+    { keepPreviousData: true }
+  );
+  // SWR reports loading for every new key; only treat it as loading when nothing is shown yet,
+  // so a sync-triggered refetch doesn't flash the loading state over the existing report.
+  const isLeaderboardLoading = isSwrLoading && data === undefined;
 
   // A null lastSyncedAt means "never synced" to the consumer, so it must not be reported until
   // collection_status has settled, otherwise the empty state flashes while it is in flight.
@@ -389,36 +413,44 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
   // "couldn't fetch the sync timestamp" isn't conflated with "no data yet" or a leaderboard failure.
   const isLoading = isLeaderboardLoading || isCollectionStatusLoading;
 
-  const lastSyncedAt = toIsoString(collectionStatus.last_sync);
-
   // Only `undefined` means "not loaded yet" or "request failed"; any other falsy body (`null`,
   // `""`, `0`, `false`) is an invalid response and must fall through to the check below.
   if (data === undefined) {
     return { ...EMPTY_LEADERBOARDS_DATA, lastSyncedAt, isLoading, error, collectionStatusError };
   }
+  const { report, syncedAt: reportSyncedAt } = data;
   // A JSON body that isn't an object (a string, number, boolean, `null` or array) is a failure,
   // not "no data yet", so surface it as an error instead of hiding it behind the empty state.
   // (A non-JSON body, e.g. an HTML page, already fails in the fetcher and arrives as `error`.)
-  if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+  if (report === null || typeof report !== 'object' || Array.isArray(report)) {
     return {
       ...EMPTY_LEADERBOARDS_DATA,
-      lastSyncedAt,
+      lastSyncedAt: reportSyncedAt,
       isLoading,
       // SWR keeps the last body when a refetch fails, so a real request error takes precedence.
       error: error ?? INVALID_REPORT_ERROR,
       collectionStatusError,
     };
   }
+  // From here on there is a valid report to show. A failed refetch (e.g. for a newer sync) keeps
+  // it on screen with its own timestamp instead of replacing the page with the error state, the
+  // same way collection_status rides out a failed poll; SWR keeps retrying in the background.
   // An empty report (`{}`) means nothing has been synced yet, so report it as never synced.
-  if (Object.keys(data).length === 0) {
+  if (Object.keys(report).length === 0) {
     return {
       ...EMPTY_LEADERBOARDS_DATA,
       lastSyncedAt: null,
       isLoading,
-      error,
+      error: undefined,
       collectionStatusError,
     };
   }
 
-  return { ...mapLeaderboardReport(data), lastSyncedAt, isLoading, error, collectionStatusError };
+  return {
+    ...mapLeaderboardReport(report),
+    lastSyncedAt: reportSyncedAt,
+    isLoading,
+    error: undefined,
+    collectionStatusError,
+  };
 }

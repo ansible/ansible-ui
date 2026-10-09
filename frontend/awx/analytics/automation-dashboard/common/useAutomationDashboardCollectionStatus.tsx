@@ -26,6 +26,8 @@ export function useAutomationDashboardCollectionStatus(): {
   collectionStatus: IAutomationDashboardCollectionStatus;
   /** collection_status is loading, or show_dashboard is true and the user's role is not known yet. */
   isLoading: boolean;
+  /** Only the collection_status request itself is loading (ignores the pending user role). */
+  isRequestLoading: boolean;
   /** Superuser, system auditor or platform auditor, and show_dashboard is true. */
   canSeeDashboard: boolean;
   canSeeLeaderboard: boolean;
@@ -86,6 +88,7 @@ export function useAutomationDashboardCollectionStatus(): {
     return {
       collectionStatus,
       isLoading: isSwrLoading || isRolePending,
+      isRequestLoading: isSwrLoading,
       canSeeDashboard,
       canSeeLeaderboard,
       error: data || isNotFound ? undefined : error,
