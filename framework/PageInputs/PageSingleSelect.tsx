@@ -112,6 +112,9 @@ export interface PageSingleSelectProps<ValueT> {
   disableSortOptions?: boolean;
 
   disableMaxDropdownWidth?: boolean;
+
+  /** Message shown when the option list is empty (defaults to “No results found”). */
+  noResultsMessage?: ReactNode;
 }
 
 /**
@@ -374,7 +377,7 @@ export function PageSingleSelect<
               </Bullseye>
             ) : (
               <SelectOption isDisabled key="no result">
-                {t('No results found')}
+                {props.noResultsMessage ?? t('No results found')}
               </SelectOption>
             )}
           </>

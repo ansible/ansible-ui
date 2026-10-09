@@ -6,7 +6,10 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { SingleSelectDialog } from '@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog';
 import { PageFormAsyncSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormAsyncSingleSelect';
-import { PageAsyncSelectOptionsFn } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import {
+  PageAsyncQueryErrorText,
+  PageAsyncSelectOptionsFn,
+} from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
 import { useID } from '@ansible/ansible-ui-framework/hooks/useID';
 import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
 import { requestGet } from '@ansible/common-ui/crud/Data';
@@ -38,12 +41,14 @@ export function PageFormSingleSelectAwxResource<
     defaultSelection?: Value[];
     placeholder: string;
     queryPlaceholder: string;
-    queryErrorText: string;
+    queryErrorText: PageAsyncQueryErrorText;
     helperText?: string;
     additionalControls?: React.ReactNode;
     labelHelp?: string;
     queryParams?: QueryParams;
     summaryFieldsPath?: string;
+    noResultsMessage?: React.ReactNode;
+    enableBrowse?: boolean;
   }>
 ) {
   const id = useID(props);
@@ -64,11 +69,11 @@ export function PageFormSingleSelectAwxResource<
           for (const [key, value] of Object.entries(props.queryParams)) {
             if (Array.isArray(value)) {
               for (const subVal of value) {
-                urlSearchParams.set(key, subVal);
+                urlSearchParams.append(key, subVal);
               }
-            } else {
-              urlSearchParams.set(key, value);
+              continue;
             }
+            urlSearchParams.set(key, value);
           }
         }
         if (options.next) urlSearchParams.set('name__gt', options.next.toString());
@@ -88,11 +93,14 @@ export function PageFormSingleSelectAwxResource<
           next: response.results[response.results.length - 1]?.name,
         };
       } catch (error) {
-        return {
-          remaining: 0,
-          options: [],
-          next: 0,
-        };
+        if (options.signal?.aborted) {
+          return {
+            remaining: 0,
+            options: [],
+            next: 0,
+          };
+        }
+        throw error;
       }
     },
     [props.url, props.queryParams]
@@ -155,13 +163,17 @@ export function PageFormSingleSelectAwxResource<
       isDisabled={props.isDisabled}
       helperText={props.helperText}
       labelHelp={props.labelHelp}
-      onBrowse={() =>
-        openSelectDialog((resource) =>
-          setValue(props.name, resource.id as PathValue<FormData, Name>)
-        )
+      onBrowse={
+        props.enableBrowse === false
+          ? undefined
+          : () =>
+              openSelectDialog((resource) =>
+                setValue(props.name, resource.id as PathValue<FormData, Name>)
+              )
       }
       queryLabel={queryLabel}
       additionalControls={props.additionalControls}
+      noResultsMessage={props.noResultsMessage}
     />
   );
 }
