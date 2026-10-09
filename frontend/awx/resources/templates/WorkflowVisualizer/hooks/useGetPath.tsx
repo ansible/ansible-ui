@@ -1,6 +1,6 @@
 import { Edge, Point } from '@patternfly/react-topology';
 
-enum Position {
+export enum Position {
   Left = 'left',
   Top = 'top',
   Right = 'right',
@@ -55,7 +55,7 @@ const getDirection = ({
 const distance = (a: PathPoint, b: PathPoint) =>
   Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
 
-function getPoints({
+export function getPoints({
   source,
   sourcePosition = Position.Bottom,
   target,
