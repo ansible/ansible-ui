@@ -39,9 +39,12 @@ const FILTER_KEYS: Record<string, AsyncKeyOptions> = {
 };
 
 const PAGE_SIZE = 10;
+/** Metrics filter endpoints use ansible_base DefaultPaginator (max 200). */
+const LOAD_ALL_PAGE_SIZE = 200;
 
 function buildRequestUrl(queryOptions: PageAsyncSelectQueryOptions, optionsPath: string): string {
-  let url = metricsAPI`/${optionsPath}/?page_size=${PAGE_SIZE}`;
+  const pageSize = queryOptions.pageSize ?? PAGE_SIZE;
+  let url = metricsAPI`/${optionsPath}/?page_size=${pageSize}`;
   if (queryOptions.next) {
     url += `&page=${queryOptions.next}`;
   }
@@ -71,6 +74,7 @@ export function useAutomationDashboardToolbarFilters(
       AwxItemsResponse<Record<string, string | number | undefined>>
     >(buildRequestUrl(queryOptions, field.apiPath), queryOptions.signal);
 
+    const pageSize = queryOptions.pageSize ?? PAGE_SIZE;
     let next = '';
     let remaining = 0;
     if (itemsResponse.results.length > 0 && itemsResponse.next) {
@@ -78,7 +82,7 @@ export function useAutomationDashboardToolbarFilters(
       const page = Object.fromEntries(urlParams.entries())?.page;
       if (page) {
         next = page;
-        remaining = itemsResponse.count - (Number.parseInt(page) - 1) * PAGE_SIZE;
+        remaining = itemsResponse.count - (Number.parseInt(page) - 1) * pageSize;
       }
     }
 
@@ -126,6 +130,9 @@ export function useAutomationDashboardToolbarFilters(
         queryErrorText: t('Failed to load options.'),
         queryLabel: (value: string) => queryResourceLabel(value, filterKey),
         queryOptions: (options) => queryResource(options, filterKey),
+        showSelectAll: true,
+        showLoadAll: true,
+        loadAllPageSize: LOAD_ALL_PAGE_SIZE,
       });
     });
 

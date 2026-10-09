@@ -18,6 +18,12 @@ export interface PageAsyncSelectQueryOptions {
 
   /** The signal to abort the query. Used when search term is changed. */
   signal: AbortSignal;
+
+  /**
+   * Optional page size override for this request (e.g. Load all).
+   * Call sites that support pagination should honor this when present.
+   */
+  pageSize?: number;
 }
 
 /** The result of a query for a page of options. */

@@ -41,6 +41,24 @@ export interface IToolbarAsyncMultiSelectFilter extends ToolbarFilterCommon {
   disableSortOptions?: boolean;
 
   useAndOperator?: boolean; // default is OR
+
+  /**
+   * Show a "Select all" checkbox in the dropdown header for visible options.
+   * Off by default.
+   */
+  showSelectAll?: boolean;
+
+  /**
+   * Show a "Load all" button below "Load more" that fetches every remaining page.
+   * Off by default.
+   */
+  showLoadAll?: boolean;
+
+  /**
+   * Page size sent when Load all is clicked. Set per endpoint to the API max
+   * (e.g. 200). Used only when `showLoadAll` is enabled.
+   */
+  loadAllPageSize?: number;
 }
 
 /**
