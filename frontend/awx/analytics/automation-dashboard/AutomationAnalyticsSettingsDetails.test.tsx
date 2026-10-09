@@ -92,17 +92,18 @@ describe('AutomationAnalyticsSettingsDetails', () => {
     expect(await screen.findByText('Edit page')).toBeInTheDocument();
   });
 
-  test('should show the Edit button for a platform auditor', async () => {
+  test('should hide the Edit button for a platform auditor', async () => {
     server.use(http.get(collectionStatusUrl, () => HttpResponse.json(collectionStatus)));
 
     renderDetails(platformAuditor);
 
+    expect(await screen.findByText('Enabled')).toBeInTheDocument();
     expect(
-      await screen.findByRole('button', { name: 'Edit automation analytics settings' })
-    ).toBeInTheDocument();
+      screen.queryByRole('button', { name: 'Edit automation analytics settings' })
+    ).not.toBeInTheDocument();
   });
 
-  test('should hide the Edit button for a user who is neither superuser nor platform auditor', async () => {
+  test('should hide the Edit button for a user who is not a superuser', async () => {
     server.use(http.get(collectionStatusUrl, () => HttpResponse.json(collectionStatus)));
 
     renderDetails(regularUser);

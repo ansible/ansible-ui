@@ -270,6 +270,21 @@ describe('usePlatformNavigation', () => {
     expect(item).toMatchObject({ path: 'automation-analytics', hidden });
   });
 
+  test.each([
+    ['superuser', { is_superuser: true, is_platform_auditor: false }, ['edit', '']],
+    ['platform auditor', { is_superuser: false, is_platform_auditor: true }, ['']],
+    ['regular user', { is_superuser: false, is_platform_auditor: false }, ['']],
+    ['user that is still loading', undefined, ['']],
+  ])('should register the Automation Analytics routes for a %s', (_role, user, paths) => {
+    mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: user });
+    const { result } = renderPlatformNavigation();
+
+    const item = findNavigationItem(result.current, AwxRoute.SettingsAutomationAnalytics);
+    const childPaths = item && 'children' in item ? item.children.map((child) => child.path) : [];
+
+    expect(childPaths).toEqual(paths);
+  });
+
   test('should hide Automation Analytics settings when there is no metrics service', () => {
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
       collectionStatus: { enabled: false },
