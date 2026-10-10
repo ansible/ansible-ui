@@ -217,12 +217,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                   ...(prompts?.instance_groups ?? []),
                   ...(launchConfigValue?.instance_groups ?? []),
                 ],
-                labels: [
-                  ...(prompts?.labels ?? []),
-                  ...(launchConfigValue?.labels ?? []),
-                ].filter(
-                  (label, index, arr) => arr.findIndex((l) => l.id === label.id) === index
-                ),
+                labels: prompts?.labels ?? launchConfigValue?.labels ?? [],
                 diff_mode: prompts?.diff_mode ?? launchConfigValue?.diff_mode,
                 forks: prompts?.forks ?? launchConfigValue?.forks,
                 limit: prompts?.limit ?? launchConfigValue?.limit,
