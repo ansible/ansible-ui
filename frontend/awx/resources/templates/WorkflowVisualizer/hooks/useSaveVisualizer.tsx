@@ -326,7 +326,9 @@ export function useSaveVisualizer(templateId: string) {
 
           setValue('all_parents_must_converge', resource.all_parents_must_converge);
           setValue('identifier', resource.identifier);
-          setValue('unified_job_template', unified_job_template.id);
+          if (launch_data?.original?.isTemplateChange) {
+            setValue('unified_job_template', unified_job_template.id);
+          }
 
           // Prompt values
           setValue('diff_mode', launch_data?.diff_mode, true);
