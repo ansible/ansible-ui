@@ -11,7 +11,7 @@ import { CreateCredential, EditCredential } from './CredentialForm';
  * Mock BecomeMethodField so that it registers become_method = { name: 'sudo' } by default.
  * This covers the CreateCredential onSubmit TRUE branch of the become_method null-guard:
  *   typeof pluginInputs.become_method === 'object' &&
- *   pluginInputs.become_method !== null &&           ← the AAP-93580 fix
+ *   pluginInputs.become_method !== null &&
  *   'name' in pluginInputs.become_method
  * EditCredential tests that pre-load credentials override this default via initialValues.
  */
@@ -522,7 +522,7 @@ describe('CredentialForm', () => {
       expect(postSpy).not.toHaveBeenCalled();
     });
 
-    it('should submit with null become_method without client-side TypeError (AAP-93580)', async () => {
+    it('should submit without TypeError when become_method is null', async () => {
       const postSpy = vi.fn();
       server.use(
         http.post(awxAPI`/credentials/`, async ({ request }) => {
@@ -1031,7 +1031,7 @@ describe('CredentialForm', () => {
       expect(screen.getByText('Internal Server Error')).toBeInTheDocument();
     });
 
-    it('should submit with null become_method without client-side TypeError (AAP-93580)', async () => {
+    it('should submit without TypeError when become_method is null', async () => {
       // Credential pre-loaded with become_method: null — simulates field cleared state
       server.use(
         http.get(awxAPI`/credentials/1/`, () =>
