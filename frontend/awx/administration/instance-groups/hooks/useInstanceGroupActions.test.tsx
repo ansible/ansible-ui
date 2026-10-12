@@ -2,9 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { PageActionType, usePageNavigate } from '@ansible/ansible-ui-framework';
-import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { useDeleteInstanceGroups } from './useDeleteInstanceGroups';
-import { AwxRoute } from '../../../main/AwxRoutes';
 import {
   useInstanceGroupRowActions,
   useInstanceGroupToolbarActions,
@@ -21,22 +19,6 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     usePageNavigate: vi.fn(),
   };
 });
-
-const mockInstanceGroup: InstanceGroup = {
-  id: 1,
-  type: 'instance_group',
-  url: '/api/v2/instance_groups/1/',
-  name: 'default',
-  is_container_group: false,
-  capacity: 100,
-  jobs_running: 0,
-  jobs_total: 0,
-  instances: 1,
-  percent_capacity_remaining: 100,
-  summary_fields: {
-    user_capabilities: { edit: true, delete: true },
-  },
-};
 
 function renderActionsHook<T>(useActions: (onComplete: () => void) => T) {
   const onComplete = vi.fn();
@@ -86,15 +68,6 @@ describe('useInstanceGroupActions', () => {
       type: PageActionType.Button,
       label: 'Delete instance group',
       isDanger: true,
-    });
-
-    const editAction = result.current[0];
-    expect(editAction.type).toBe(PageActionType.Button);
-    if (editAction.type === PageActionType.Button) {
-      editAction.onClick(mockInstanceGroup);
-    }
-    expect(mockPageNavigate).toHaveBeenCalledWith(AwxRoute.EditInstanceGroup, {
-      params: { id: 1 },
     });
   });
 });

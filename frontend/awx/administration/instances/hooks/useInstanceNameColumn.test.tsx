@@ -9,10 +9,15 @@ describe('useInstanceNameColumn', () => {
       wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
     });
 
-    expect(result.current.header).toBe('Name');
-    expect(result.current.sort).toBe('hostname');
-    expect(result.current.defaultSort).toBe(true);
-    expect(result.current.to).toBeTypeOf('function');
+    expect(result.current).toMatchObject({
+      header: 'Name',
+      sort: 'hostname',
+      defaultSort: true,
+      type: 'text',
+    });
+    if (result.current.type === 'text') {
+      expect(result.current.to).toBeTypeOf('function');
+    }
   });
 
   test('omits links when disableLinks is set', () => {
@@ -20,6 +25,9 @@ describe('useInstanceNameColumn', () => {
       wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
     });
 
-    expect(result.current.to).toBeUndefined();
+    expect(result.current.type).toBe('text');
+    if (result.current.type === 'text') {
+      expect(result.current.to).toBeUndefined();
+    }
   });
 });
