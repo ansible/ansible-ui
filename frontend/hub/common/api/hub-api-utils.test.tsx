@@ -43,7 +43,7 @@ describe('hub-api-utils', () => {
     it('serverlessURL strips host from absolute pulp links', () => {
       expect(serverlessURL('/api/foo')).toBe('/api/foo');
       expect(serverlessURL('http://localhost:5001/api/foo?x=1#hash')).toBe('/api/foo?x=1#hash');
-      expect(serverlessURL(undefined)).toBeUndefined();
+      expect(serverlessURL()).toBeUndefined();
     });
 
     it('key functions and appendTrailingSlash', () => {

@@ -76,12 +76,14 @@ describe('DocumentationParsers', () => {
 
     it('renders multiple formatted parts', () => {
       const parts = parse('M(ansible.builtin.ping)');
-      const textWithModule = parts[0].map((part) => formatPart(part, createParams()));
+      const params = createParams();
       render(
         <MemoryRouter>
           <span>
-            {textWithModule.map((node, index) => (
-              <span key={index}>{node}</span>
+            {parts[0].map((part) => (
+              <span key={part.type === dom.PartType.MODULE ? part.fqcn : `part-${part.type}`}>
+                {formatPart(part, params)}
+              </span>
             ))}
           </span>
         </MemoryRouter>
