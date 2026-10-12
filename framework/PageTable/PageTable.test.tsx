@@ -252,15 +252,15 @@ describe('PageTable Component', () => {
     expect(checkboxHeaders.length).toBeGreaterThan(0);
   });
 
-  it('should hide pagination when autoHidePagination and items fit in one page', () => {
-    const { container } = renderPageTable({
+  it('should always show pagination when autoHidePagination even if items fit in one page', () => {
+    renderPageTable({
       autoHidePagination: true,
       itemCount: 2,
       perPage: 10,
     });
 
-    const pagination = container.querySelector('.pf-v6-c-pagination');
-    expect(pagination).not.toBeInTheDocument();
+    const pagination = document.querySelector('.pf-v6-c-pagination');
+    expect(pagination).toBeInTheDocument();
   });
 
   it('should show pagination when autoHidePagination but items exceed perPage', () => {
