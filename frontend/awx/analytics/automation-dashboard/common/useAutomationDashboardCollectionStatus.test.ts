@@ -124,6 +124,7 @@ describe('useAutomationDashboardCollectionStatus', () => {
 
       expect(result.current.collectionStatus).toEqual(DEFAULT_STATUS);
       expect(result.current.isLoading).toBe(true);
+      expect(result.current.isRequestLoading).toBe(true);
     });
 
     test('should return data from API when available', () => {
@@ -279,6 +280,16 @@ describe('useAutomationDashboardCollectionStatus', () => {
       const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
 
       expect(result.current.isLoading).toBe(true);
+    });
+
+    test('should report the request itself as settled while only the role is pending', () => {
+      setupPendingAwxUser();
+      setupSWR(showBoth);
+
+      const { result } = renderHook(() => useAutomationDashboardCollectionStatus());
+
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.isRequestLoading).toBe(false);
     });
 
     test('should stay loading while the Platform user is pending and show_dashboard is true', () => {
