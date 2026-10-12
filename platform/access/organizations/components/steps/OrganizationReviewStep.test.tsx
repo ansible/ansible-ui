@@ -19,7 +19,7 @@ const mockWizardData = {
   ],
   maxHosts: 100,
   executionEnvironment: 5,
-  opa_query_path: 'test/policy',
+  policy: 'test/policy',
 };
 
 vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({

@@ -93,7 +93,7 @@ function ControllerOrganizationDetails(
       )}
       <PageFormTextInput
         label={t('Policy enforcement')}
-        name="opa_query_path"
+        name="policy"
         placeholder={t('Enter policy enforcement')}
         labelHelp={
           <Trans>

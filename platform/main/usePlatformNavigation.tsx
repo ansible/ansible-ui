@@ -53,6 +53,8 @@ import { Redirect } from './Redirect';
 import { usePersonaView } from './persona-view/usePersonaView';
 import { useAutomationDashboardCollectionStatus } from '../../frontend/awx/analytics/automation-dashboard/common/useAutomationDashboardCollectionStatus';
 import { useAutomationAnalyticsSettingsNavigation } from './useAutomationAnalyticsSettingsNavigation';
+import { applyPersonaAutomationAnalyticsNavVisibility } from './applyPersonaAutomationAnalyticsNavVisibility';
+import { canAccessPlatformAutomationAnalyticsNav } from './canAccessPlatformAutomationAnalyticsNav';
 
 export function usePlatformNavigation() {
   const { t } = useTranslation();
@@ -73,7 +75,16 @@ export function usePlatformNavigation() {
     activePersonaViewId = 'administration';
   }
 
-  const { activeAwxUser } = useAwxActiveUser();
+  const { activeAwxUser, refreshActiveAwxUser } = useAwxActiveUser();
+  const { activePlatformUser, refreshActivePlatformUser } = usePlatformActiveUser();
+  const isAwxUserPending = !!refreshActiveAwxUser && activeAwxUser === undefined;
+  const isPlatformUserPending = !!refreshActivePlatformUser && activePlatformUser === undefined;
+  const canAccessAutomationAnalyticsNav = canAccessPlatformAutomationAnalyticsNav({
+    activePlatformUser,
+    activeAwxUser,
+    isPlatformUserPending,
+    isAwxUserPending,
+  });
 
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
 
@@ -168,9 +179,6 @@ export function usePlatformNavigation() {
         findNavigationItemById(navigationItems, PlatformRoute.AWX)!.hidden = true;
         findNavigationItemById(navigationItems, PlatformRoute.EDA)!.hidden = true;
         findNavigationItemById(navigationItems, PlatformRoute.HUB)!.hidden = true;
-        if (activeAwxUser?.is_superuser || activeAwxUser?.is_system_auditor) {
-          removeNavigationItemById(navigationItems, AwxRoute.Analytics);
-        }
         findNavigationItemById(navigationItems, PlatformRoute.Access)!.hidden = true;
         findNavigationItemById(navigationItems, AwxRoute.Settings)!.hidden = true;
         navigationItems.push(removeNavigationItemById(navigationItems, AwxRoute.Jobs)!);
@@ -200,6 +208,12 @@ export function usePlatformNavigation() {
       }
     }
 
+    applyPersonaAutomationAnalyticsNavVisibility(navigationItems, {
+      personaViewSwitcherEnabled: !!personaViewSwitcherFlag?.enabled,
+      activePersonaViewId,
+      canAccessAutomationAnalyticsNav,
+    });
+
     return navigationItems;
   }, [
     t,
@@ -213,8 +227,8 @@ export function usePlatformNavigation() {
     managedCloudInstall,
     platformResourcesNavigation,
     activePersonaViewId,
-    activeAwxUser?.is_superuser,
-    activeAwxUser?.is_system_auditor,
+    personaViewSwitcherFlag?.enabled,
+    canAccessAutomationAnalyticsNav,
   ]);
 
   return pageNavigationItems;
@@ -297,12 +311,6 @@ export function useAutomationAnalytics(): PageNavigationItem {
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics)!;
   const { activePlatformUser } = usePlatformActiveUser();
-  const { activeAwxUser } = useAwxActiveUser();
-  const canAccessAutomationAnalyticsNav =
-    !!activePlatformUser?.is_superuser ||
-    !!activePlatformUser?.is_platform_auditor ||
-    !!activeAwxUser?.is_superuser ||
-    !!activeAwxUser?.is_system_auditor;
   // canSeeDashboard/canSeeLeaderboard are already applied to the tree by useAwxNavigation
   const {
     collectionStatus,
@@ -326,8 +334,7 @@ export function useAutomationAnalytics(): PageNavigationItem {
       }
     }
 
-    analytics.hidden =
-      !awxService || !analytics.children.length || !canAccessAutomationAnalyticsNav;
+    analytics.hidden = !awxService || !analytics.children.length;
   }
   return analytics;
 }

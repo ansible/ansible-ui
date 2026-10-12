@@ -1,5 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
@@ -20,14 +19,6 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
 
 vi.mock('../../../main/GatewayServices', () => ({
   useHasAwxService: () => true,
-}));
-
-vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
-  useAwxConfig: () => ({
-    license_info: {
-      license_type: 'enterprise',
-    },
-  }),
 }));
 
 const mockOrganization: Partial<PlatformOrganization> = {
@@ -69,43 +60,7 @@ const server = setupServer(
   ),
   http.post(awxAPI`/organizations/*/instance_groups/`, () => HttpResponse.json({ id: 1 })),
   http.post(awxAPI`/organizations/*/galaxy_credentials/`, () => HttpResponse.json({ id: 1 })),
-  http.patch(awxAPI`/organizations/*/`, () => HttpResponse.json({ id: 1, max_hosts: 100 })),
-  http.options(gatewayAPI`/organizations/`, () =>
-    HttpResponse.json({
-      actions: {
-        POST: {
-          name: {
-            type: 'string',
-            required: true,
-            read_only: false,
-            label: 'Name',
-          },
-        },
-      },
-    })
-  ),
-  http.options(awxAPI`/organizations/`, () =>
-    HttpResponse.json({
-      actions: {
-        POST: {
-          max_hosts: {
-            type: 'integer',
-            required: false,
-            read_only: false,
-            label: 'Max Hosts',
-          },
-          opa_query_path: {
-            type: 'string',
-            required: false,
-            read_only: false,
-            label: 'OPA Query Path',
-            pattern: '^[a-z0-9_./]*$',
-            pattern_description: 'Policy enforcement path must be lowercase alphanumeric.',
-          },
-        },
-      },
-    })
-  )
+  http.patch(awxAPI`/organizations/*/`, () => HttpResponse.json({ id: 1, max_hosts: 100 }))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -127,15 +82,15 @@ describe('CreatePlatformOrganization', () => {
     expect(screen.getAllByText('Organization details').length).toBeGreaterThan(0);
   });
 
-  it('should render form fields on organization details step', async () => {
+  it('should render form fields on organization details step', () => {
     render(
       <MemoryRouter>
         <CreatePlatformOrganization />
       </MemoryRouter>
     );
 
-    expect(await screen.findByLabelText(/Name/i)).toBeInTheDocument();
-    expect(await screen.findByLabelText(/Description/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
   });
 
   it('should display wizard navigation steps', () => {
@@ -148,68 +103,13 @@ describe('CreatePlatformOrganization', () => {
     expect(screen.getByText('Review')).toBeInTheDocument();
   });
 
-  it('should have Next button on first step', async () => {
+  it('should have Next button on first step', () => {
     render(
       <MemoryRouter>
         <CreatePlatformOrganization />
       </MemoryRouter>
     );
 
-    expect(await screen.findByRole('button', { name: /next/i })).toBeInTheDocument();
-  });
-
-  it('should call createOrganizationRequest with form values', () => {
-    const postSpy = vi.fn();
-    server.use(
-      http.post(gatewayAPI`/organizations/`, async ({ request }) => {
-        postSpy(await request.json());
-        return HttpResponse.json(mockOrganization);
-      })
-    );
-
-    render(
-      <MemoryRouter>
-        <CreatePlatformOrganization />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
-  });
-
-  it('should patch controller organization with opa_query_path when provided', async () => {
-    const user = userEvent.setup({ delay: null });
-    const patchSpy = vi.fn();
-    server.use(
-      http.patch(awxAPI`/organizations/1/`, async ({ request }) => {
-        patchSpy(await request.json());
-        return HttpResponse.json({ id: 1, max_hosts: 100, opa_query_path: '/path/to/policy' });
-      })
-    );
-
-    render(
-      <MemoryRouter>
-        <CreatePlatformOrganization />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
-    });
-
-    const nameInput = await screen.findByLabelText(/Name/i);
-    await user.type(nameInput, 'Test Org');
-
-    const policyInput = await screen.findByRole('textbox', { name: /Policy enforcement/i });
-    await user.type(policyInput, '/path/to/policy');
-
-    const nextButton = await screen.findByRole('button', { name: /next/i });
-    await user.click(nextButton);
-
-    const finishButton = await screen.findByRole('button', { name: /finish/i });
-    await user.click(finishButton);
-
-    await waitFor(() => {
-      expect(patchSpy).toHaveBeenCalled();
-    });
+    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
   });
 });

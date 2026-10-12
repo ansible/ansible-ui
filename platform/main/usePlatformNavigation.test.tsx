@@ -9,6 +9,7 @@ import { setupServer } from 'msw/node';
 import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { UIFlag } from '../settings/ui-flags/IUIFlag';
 import { PlatformRoute } from './PlatformRoutes';
 import { collectPageNavigationRouteIds } from '../test-utils/collectPageNavigationRoutes';
 import { usePlatformNavigation } from './usePlatformNavigation';
@@ -39,7 +40,10 @@ const {
   mockUseIsManagedCloudInstall: vi.fn(() => false),
   mockUsePersonaView: vi.fn(() => ({ activePersonaViewId: 'administration' })),
   mockUseUIFlag: vi.fn(() => ({ enabled: false })),
-  mockUseAwxActiveUser: vi.fn(() => ({ activeAwxUser: { is_superuser: true } })),
+  mockUseAwxActiveUser: vi.fn(() => ({
+    activeAwxUser: { is_superuser: true, is_system_auditor: false },
+    refreshActiveAwxUser: vi.fn(),
+  })),
   mockUseAutomationDashboardCollectionStatus: vi.fn(() => ({
     collectionStatus: { enabled: true },
     isLoading: false,
@@ -129,7 +133,7 @@ function buildAwxNav(): PageNavigationItem[] {
       path: 'analytics',
       children: [
         {
-          id: 'awx-automation-dashboard',
+          id: AwxRoute.AutomationDashboardMainPage,
           label: 'Automation Dashboard',
           path: 'automation-dashboard',
           element: <></>,
@@ -228,6 +232,7 @@ describe('usePlatformNavigation', () => {
     mockUseRuntimeFeatureFlagsEnabled.mockReturnValue({ isEnabled: false });
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: { is_superuser: true, is_platform_auditor: false },
+      refreshActivePlatformUser: vi.fn(),
     });
   });
 
@@ -296,6 +301,57 @@ describe('usePlatformNavigation', () => {
     const item = findNavigationItem(result.current, AwxRoute.SettingsAutomationAnalytics);
 
     expect(item).toMatchObject({ hidden: true });
+  });
+
+  describe('Persona view Automation Analytics nav', () => {
+    test('should hide analytics for a regular user in administration view when the switcher is enabled', () => {
+      mockUseUIFlag.mockImplementation((flag) =>
+        flag === UIFlag.PersonaViewSwitcher ? { enabled: true } : { enabled: false }
+      );
+      mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'administration' });
+      mockUsePlatformActiveUser.mockReturnValue({
+        activePlatformUser: { is_superuser: false, is_platform_auditor: false },
+        refreshActivePlatformUser: vi.fn(),
+      });
+      mockUseAwxActiveUser.mockReturnValue({
+        activeAwxUser: { is_superuser: false, is_system_auditor: false },
+        refreshActiveAwxUser: vi.fn(),
+      });
+
+      const { result } = renderPlatformNavigation();
+      const analytics = findNavigationItem(result.current, AwxRoute.Analytics);
+
+      expect(analytics?.hidden).toBe(true);
+    });
+
+    test('should keep analytics visible for a regular user when the persona switcher is disabled', () => {
+      mockUseUIFlag.mockReturnValue({ enabled: false });
+      mockUsePlatformActiveUser.mockReturnValue({
+        activePlatformUser: { is_superuser: false, is_platform_auditor: false },
+        refreshActivePlatformUser: vi.fn(),
+      });
+      mockUseAwxActiveUser.mockReturnValue({
+        activeAwxUser: { is_superuser: false, is_system_auditor: false },
+        refreshActiveAwxUser: vi.fn(),
+      });
+
+      const { result } = renderPlatformNavigation();
+      const analytics = findNavigationItem(result.current, AwxRoute.Analytics);
+
+      expect(analytics?.hidden).not.toBe(true);
+    });
+
+    test('should hide analytics in operator view when the switcher is enabled', () => {
+      mockUseUIFlag.mockImplementation((flag) =>
+        flag === UIFlag.PersonaViewSwitcher ? { enabled: true } : { enabled: false }
+      );
+      mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'operator' });
+
+      const { result } = renderPlatformNavigation();
+      const analytics = findNavigationItem(result.current, AwxRoute.Analytics);
+
+      expect(analytics?.hidden).toBe(true);
+    });
   });
 
   test('should include access management child routes from platform route hooks', () => {

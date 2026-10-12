@@ -12,23 +12,17 @@ const {
   mockUseHasAwxService,
   mockUseIsManagedCloudInstall,
   mockUsePlatformActiveUser,
-  mockUseAwxActiveUser,
   mockUseAutomationDashboardCollectionStatus,
 } = vi.hoisted(() => ({
   mockUseAwxNavigation: vi.fn(),
   mockUseHasAwxService: vi.fn(),
   mockUseIsManagedCloudInstall: vi.fn(),
   mockUsePlatformActiveUser: vi.fn(),
-  mockUseAwxActiveUser: vi.fn(),
   mockUseAutomationDashboardCollectionStatus: vi.fn(),
 }));
 
 vi.mock('@ansible/awx-ui/main/useAwxNavigation', () => ({
   useAwxNavigation: mockUseAwxNavigation,
-}));
-
-vi.mock('@ansible/awx-ui/common/useAwxActiveUser', () => ({
-  useAwxActiveUser: mockUseAwxActiveUser,
 }));
 
 vi.mock('./GatewayServices', () => ({
@@ -104,9 +98,6 @@ describe('useAutomationAnalytics', () => {
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: { is_superuser: true, is_platform_auditor: false },
     });
-    mockUseAwxActiveUser.mockReturnValue({
-      activeAwxUser: { is_superuser: true, is_system_auditor: false },
-    });
     // Dashboard feature enabled, dashboard and leaderboards both visible by default
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
       collectionStatus: {
@@ -150,15 +141,13 @@ describe('useAutomationAnalytics', () => {
     expect(result.current.hidden).toBe(false);
   });
 
-  test('should hide Automation Analytics nav for a regular non-superuser non-auditor user', () => {
+  test('should be visible for a regular non-superuser non-auditor user who can see leaderboards', () => {
+    // Leaderboards are not admin-gated; useAwxNavigation keeps the entry when a view is visible.
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: { is_superuser: false, is_platform_auditor: false },
     });
-    mockUseAwxActiveUser.mockReturnValue({
-      activeAwxUser: { is_superuser: false, is_system_auditor: false },
-    });
     const { result } = renderHook(() => useAutomationAnalytics());
-    expect(result.current.hidden).toBe(true);
+    expect(result.current.hidden).toBe(false);
   });
 
   test('should be hidden when AWX service is unavailable even for superuser', () => {
@@ -167,13 +156,10 @@ describe('useAutomationAnalytics', () => {
     expect(result.current.hidden).toBe(true);
   });
 
-  test('should hide Automation Analytics nav when activePlatformUser is null and AWX user is not an admin', () => {
+  test('should be visible when activePlatformUser is null but leaderboards can still be seen', () => {
     mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: null });
-    mockUseAwxActiveUser.mockReturnValue({
-      activeAwxUser: { is_superuser: false, is_system_auditor: false },
-    });
     const { result } = renderHook(() => useAutomationAnalytics());
-    expect(result.current.hidden).toBe(true);
+    expect(result.current.hidden).toBe(false);
   });
 
   // --- managed cloud install ---
@@ -260,9 +246,6 @@ describe('useAutomationAnalytics', () => {
     test('should be hidden for a regular user', () => {
       mockUsePlatformActiveUser.mockReturnValue({
         activePlatformUser: { is_superuser: false, is_platform_auditor: false },
-      });
-      mockUseAwxActiveUser.mockReturnValue({
-        activeAwxUser: { is_superuser: false, is_system_auditor: false },
       });
       const { result } = renderHook(() => useAutomationAnalytics());
       expect(result.current.hidden).toBe(true);
