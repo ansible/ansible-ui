@@ -47,6 +47,25 @@ vi.mock('./components', () => ({
       {title}
     </div>
   ),
+  DashboardTableCard: ({
+    id,
+    title,
+    emptyStateTitle,
+    emptyStateDescription,
+  }: {
+    id: string;
+    title: string;
+    emptyStateTitle?: string;
+    emptyStateDescription?: string;
+  }) => (
+    <div data-testid={id}>
+      <span>{title}</span>
+      {emptyStateTitle && <span data-testid={`${id}-empty-title`}>{emptyStateTitle}</span>}
+      {emptyStateDescription && (
+        <span data-testid={`${id}-empty-desc`}>{emptyStateDescription}</span>
+      )}
+    </div>
+  ),
   DashboardMainTableCard: ({ toolbarFilters }: { toolbarFilters?: IToolbarFilter[] }) => (
     <div
       data-testid="dashboard-main-table-card"
@@ -119,6 +138,8 @@ const mockDetails: IDashboardDetails = {
   total_time_saving: 50,
   total_number_of_host_job_runs: 20,
   total_number_of_job_runs: 30,
+  top_projects: [{ id: 1, name: 'Project Alpha', execution_count: 10 }],
+  top_users: [{ id: 1, name: 'Alice', execution_count: 5 }],
   job_chart: { kind: 'day', items: [{ label: '2024-01-01', value: 3 }] },
   host_chart: { kind: 'day', items: [{ label: '2024-01-01', value: 2 }] },
 };
@@ -217,6 +238,10 @@ describe('AutomationDashboard', () => {
     expect(getByText('Hosts automated')).toBeInTheDocument();
     expect(getByText('Hours of automation')).toBeInTheDocument();
 
+    // Table cards
+    expect(getByText('Top 5 projects')).toBeInTheDocument();
+    expect(getByText('Top 5 users')).toBeInTheDocument();
+
     // Chart cards
     expect(getByText('Number of hosts jobs are running on')).toBeInTheDocument();
     expect(getByText('Number of times jobs were run')).toBeInTheDocument();
@@ -279,6 +304,50 @@ describe('AutomationDashboard', () => {
     render(testWrapper());
     expect(screen.getByText('See all successful jobs')).toBeInTheDocument();
     expect(screen.getByText('See all failed jobs')).toBeInTheDocument();
+  });
+
+  // ─── Table card empty states ────────────────────────────────────────────────
+
+  test('should show "no data yet" empty state for table cards when itemCount is 0', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      mainTableView: { ...mockMainTableView, itemCount: 0 },
+    });
+    render(testWrapper());
+    expect(screen.getByTestId('top-projects-card-empty-title')).toHaveTextContent(
+      'No project data yet'
+    );
+    expect(screen.getByTestId('top-projects-card-empty-desc')).toHaveTextContent(
+      'Project data will appear after your first automation runs.'
+    );
+    expect(screen.getByTestId('top-users-card-empty-title')).toHaveTextContent('No user data yet');
+    expect(screen.getByTestId('top-users-card-empty-desc')).toHaveTextContent(
+      'User data will appear after your first automation runs.'
+    );
+  });
+
+  test('should show "no items to rank" empty state for table cards when itemCount > 0', () => {
+    render(testWrapper());
+    expect(screen.getByTestId('top-projects-card-empty-title')).toHaveTextContent(
+      'No projects to rank'
+    );
+    expect(screen.getByTestId('top-projects-card-empty-desc')).toHaveTextContent(
+      'Automation data exists, but no runs are currently associated with projects.'
+    );
+    expect(screen.getByTestId('top-users-card-empty-title')).toHaveTextContent('No users to rank');
+    expect(screen.getByTestId('top-users-card-empty-desc')).toHaveTextContent(
+      'Automation data exists, but no runs are currently attributed to individual users.'
+    );
+  });
+
+  test('should pass filterState to table cards when filters are not default', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      isFilterStateDefault: false,
+    });
+    render(testWrapper());
+    expect(screen.getByTestId('top-projects-card')).toBeInTheDocument();
+    expect(screen.getByTestId('top-users-card')).toBeInTheDocument();
   });
 
   // ─── Grid column layout ────────────────────────────────────────────────────
