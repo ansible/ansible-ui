@@ -93,7 +93,7 @@ export type PageTableCommonProps<T extends object> = {
   compact?: boolean;
   borderless?: boolean;
 
-  /** Auto hide the pagination at the bottom of the table if there are less items than in a page. */
+  /** Controls pagination top border styling. Pagination is always rendered when enabled. */
   autoHidePagination?: boolean;
 
   isSelected?: (item: T) => boolean;
@@ -354,10 +354,9 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
         </Scrollable>
       )}
-      {!props.disablePagination &&
-        (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
-          <PagePagination {...props} topBorder={!props.autoHidePagination} />
-        )}
+      {!props.disablePagination && (
+        <PagePagination {...props} topBorder={!props.autoHidePagination} />
+      )}
     </>
   );
 }
