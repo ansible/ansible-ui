@@ -25,22 +25,27 @@ const baseView = createLeaderboardsView();
 
 const ALERT_TITLE = 'Congratulations! You or your organization earned new achievements.';
 
+// Defined once so the context value isn't a new object on every render.
+const dashboardContext = { columns: 24 };
+
+const leaderboardsPage = () => (
+  <MemoryRouter>
+    <PageDashboardContext.Provider value={dashboardContext}>
+      <AutomationLeaderboards />
+    </PageDashboardContext.Provider>
+  </MemoryRouter>
+);
+
 function renderLeaderboards(view: Partial<AutomationLeaderboardsView>) {
   vi.mocked(useAutomationLeaderboardsView).mockReturnValue({ ...baseView, ...view });
-  return render(
-    <MemoryRouter>
-      <PageDashboardContext.Provider value={{ columns: 24 }}>
-        <AutomationLeaderboards />
-      </PageDashboardContext.Provider>
-    </MemoryRouter>
-  );
+  return render(leaderboardsPage());
 }
 
 describe('CARD_WIDTH_COL_SPAN', () => {
   test('should match the column span PageDashboardCard itself derives from each width tier', () => {
     (Object.keys(CARD_WIDTH_COL_SPAN) as PageDashboardCardWidth[]).forEach((width) => {
       const { container, unmount } = render(
-        <PageDashboardContext.Provider value={{ columns: 24 }}>
+        <PageDashboardContext.Provider value={dashboardContext}>
           <PageDashboardCard width={width}>content</PageDashboardCard>
         </PageDashboardContext.Provider>
       );
@@ -169,8 +174,42 @@ describe('AutomationLeaderboards', () => {
     ).not.toBeInTheDocument();
   });
 
+  test('should warn above the shown report when refreshing it for a newer sync failed', () => {
+    renderLeaderboards({ refreshError: new Error('refetch boom') });
+
+    const title = screen.getByText("Couldn't load the latest leaderboard data.");
+    expect(screen.getByText('Showing data from the previous sync.')).toBeInTheDocument();
+    // Announced to screen readers, since it appears after the page has loaded.
+    expect(title.closest('[aria-live]')).toHaveAttribute('aria-live', 'polite');
+    // The report itself stays on screen with its own timestamp.
+    expect(screen.getByText(/Updated: .+/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'At a glance' })).toBeInTheDocument();
+  }, 15000);
+
+  test('should render the warning into the live region already on the page when a refresh fails', () => {
+    const { container, rerender } = renderLeaderboards({});
+
+    expect(
+      screen.queryByText("Couldn't load the latest leaderboard data.")
+    ).not.toBeInTheDocument();
+    // Mounted while empty, so screen readers announce the alert added to it later.
+    const liveRegion = container.querySelector('[aria-live="polite"]');
+    expect(liveRegion).toBeEmptyDOMElement();
+
+    vi.mocked(useAutomationLeaderboardsView).mockReturnValue({
+      ...baseView,
+      refreshError: new Error('refetch boom'),
+    });
+    rerender(leaderboardsPage());
+
+    expect(
+      screen.getByText("Couldn't load the latest leaderboard data.").closest('[aria-live]')
+    ).toBe(liveRegion);
+  }, 15000);
+
   // Both render the full card tree, like the happy-path test above, so they need its timeout.
   test('should show the new-achievement alert and dismiss it from its close button', async () => {
+    const user = userEvent.setup();
     const dismiss = vi.fn();
     vi.mocked(useNewAchievementsAlert).mockReturnValue({ hasNewAchievements: true, dismiss });
     renderLeaderboards({});
@@ -181,7 +220,7 @@ describe('AutomationLeaderboards', () => {
       'aria-live',
       'polite'
     );
-    await userEvent.click(screen.getByRole('button', { name: /close/i }));
+    await user.click(screen.getByRole('button', { name: /close/i }));
 
     expect(dismiss).toHaveBeenCalledTimes(1);
   }, 15000);

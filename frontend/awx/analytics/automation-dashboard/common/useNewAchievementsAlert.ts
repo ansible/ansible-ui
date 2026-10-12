@@ -16,22 +16,21 @@ import {
  * from that list; dismissing it acknowledges everything currently earned.
  */
 export function useNewAchievementsAlert(): { hasNewAchievements: boolean; dismiss: () => void } {
-  const { earnedUserAchievements, earnedOrgAchievements, isLoading, error } =
+  const { earnedUserAchievements, earnedOrgAchievements, isLoading, error, collectionStatusError } =
     useAutomationLeaderboardsView();
   const { activeAwxUser } = useAwxActiveUser();
   const userId = activeAwxUser?.id;
 
   // User and org badge ids live in separate namespaces, so prefix them to keep them distinct.
-  // Joined into a string so the effect below only re-runs when the earned set actually changes,
-  // not on every render that rebuilds the arrays.
-  const earnedKeysString = [
-    ...earnedUserAchievements.map((id) => `user:${id}`),
-    ...earnedOrgAchievements.map((id) => `org:${id}`),
-  ].join(',');
-  const earnedKeys = useMemo(
-    () => (earnedKeysString ? earnedKeysString.split(',') : []),
-    [earnedKeysString]
+  // Serialized (sorted, as JSON so no id can break the encoding) so the effect below only re-runs
+  // when the earned set actually changes, not on every render that rebuilds the arrays.
+  const earnedKeysJson = JSON.stringify(
+    [
+      ...earnedUserAchievements.map((id) => `user:${id}`),
+      ...earnedOrgAchievements.map((id) => `org:${id}`),
+    ].sort((a, b) => a.localeCompare(b))
   );
+  const earnedKeys = useMemo(() => JSON.parse(earnedKeysJson) as string[], [earnedKeysJson]);
 
   // While loading or after a failed request the view reports no achievements; pruning against
   // that would wipe the acknowledged list, so only sync against a real response.
@@ -73,8 +72,13 @@ export function useNewAchievementsAlert(): { hasNewAchievements: boolean; dismis
     setAcknowledgedState({ userId, keys: earnedKeys });
   }, [userId, earnedKeys]);
 
+  // A failed sync-status request still comes with a valid report, so the sync above runs, but the
+  // page shows an error state instead of the leaderboards, so there is nothing to congratulate on.
   const hasNewAchievements =
-    isReady && acknowledged !== undefined && earnedKeys.some((key) => !acknowledged.includes(key));
+    isReady &&
+    !collectionStatusError &&
+    acknowledged !== undefined &&
+    earnedKeys.some((key) => !acknowledged.includes(key));
 
   return { hasNewAchievements, dismiss };
 }

@@ -7,7 +7,10 @@ import { AutomationDimensions } from './components/leaderboards/AutomationDimens
 import { HighlightsLeaderboardPanel } from './components/leaderboards/HighlightsLeaderboardPanel';
 import { HighlightsSyncTimestamp } from './components/leaderboards/HighlightsSyncTimestamp';
 import { MilestoneBadgesCard } from './components/leaderboards/MilestoneBadgesCard';
-import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
+import {
+  type AutomationLeaderboardsView,
+  useAutomationLeaderboardsView,
+} from './views/useAutomationLeaderboardsView';
 import { EmptyStateNoData } from '@ansible/ansible-ui-framework/components/EmptyStateNoData';
 import { useTranslation } from 'react-i18next';
 import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
@@ -17,7 +20,7 @@ import {
   NARROW_GRID_MAX_COLUMNS,
   widthOrFullRow,
 } from './common/leaderboardCardWidths';
-import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, AlertGroup } from '@patternfly/react-core';
 import { useNewAchievementsAlert } from './common/useNewAchievementsAlert';
 
 /** Re-exported so `AutomationLeaderboards.test.tsx` doesn't need to import the shared module directly. */
@@ -73,28 +76,40 @@ function LeaderboardsErrorState({
   );
 }
 
-/** Dismissible banner shown while the user has an earned achievement they haven't dismissed yet. */
-function NewAchievementsAlert({ colSpan }: Readonly<{ colSpan: number }>) {
+/**
+ * Status alerts above the report: a warning while the report shown is from an older sync because
+ * the refetch for the newer one failed (clears once a refetch succeeds), and a dismissible
+ * congratulation while the user has an earned achievement they haven't dismissed yet.
+ *
+ * Both appear after the page has rendered, so they are announced to screen readers. The live
+ * region stays mounted even when empty: screen readers only reliably announce changes inside a
+ * region that already exists, not a region inserted together with its content.
+ */
+function LeaderboardsAlerts({ refreshError }: Readonly<{ refreshError: Error | undefined }>) {
   const { t } = useTranslation();
   const { hasNewAchievements, dismiss } = useNewAchievementsAlert();
-
-  if (!hasNewAchievements) {
-    return null;
-  }
+  const hasAlerts = !!refreshError || hasNewAchievements;
 
   return (
-    <DashboardGridRow>
-      <div style={{ gridColumn: `span ${colSpan}`, maxWidth: '100%' }}>
+    <AlertGroup
+      isLiveRegion
+      // Keeps the same gap to the timestamp that separate grid rows had.
+      style={hasAlerts ? { marginBlockEnd: 'var(--pf-t--global--spacer--gutter--default)' } : {}}
+    >
+      {refreshError && (
+        <Alert variant="warning" isInline title={t("Couldn't load the latest leaderboard data.")}>
+          {t('Showing data from the previous sync.')}
+        </Alert>
+      )}
+      {hasNewAchievements && (
         <Alert
           variant="success"
           isInline
-          // Appears only after the report loads, so announce it to screen readers.
-          isLiveRegion
           title={t('Congratulations! You or your organization earned new achievements.')}
           actionClose={<AlertActionCloseButton onClose={dismiss} />}
         />
-      </div>
-    </DashboardGridRow>
+      )}
+    </AlertGroup>
   );
 }
 
@@ -114,12 +129,14 @@ function CollectionStatusErrorState({
   );
 }
 
+type LeaderboardsContentState = Pick<
+  AutomationLeaderboardsView,
+  'lastSyncedAt' | 'isLoading' | 'error' | 'collectionStatusError' | 'refreshError'
+>;
+
 function renderLeaderboardsContent(
   gridColumns: number,
-  lastSyncedAt: string | null,
-  isLoading: boolean,
-  error: Error | undefined,
-  collectionStatusError: Error | undefined
+  { lastSyncedAt, isLoading, error, collectionStatusError, refreshError }: LeaderboardsContentState
 ) {
   if (isLoading) {
     return (
@@ -149,9 +166,9 @@ function renderLeaderboardsContent(
 
   return (
     <>
-      <NewAchievementsAlert colSpan={topCardsColSpan} />
       <DashboardGridRow>
         <div style={{ gridColumn: `span ${topCardsColSpan}`, maxWidth: '100%' }}>
+          <LeaderboardsAlerts refreshError={refreshError} />
           <HighlightsSyncTimestamp lastSyncedAt={lastSyncedAt} />
         </div>
       </DashboardGridRow>
@@ -173,21 +190,13 @@ function renderLeaderboardsContent(
 }
 
 export function AutomationLeaderboards() {
-  const { lastSyncedAt, isLoading, error, collectionStatusError } = useAutomationLeaderboardsView();
+  const view = useAutomationLeaderboardsView();
   const { columns } = useContext(PageDashboardContext);
   const snappedContextValue = useMemo(() => ({ columns: snapGridColumns(columns) }), [columns]);
   return (
     <PageDashboardContext.Provider value={snappedContextValue}>
       <DashboardLayout>
-        {(gridColumns) =>
-          renderLeaderboardsContent(
-            gridColumns,
-            lastSyncedAt,
-            isLoading,
-            error,
-            collectionStatusError
-          )
-        }
+        {(gridColumns) => renderLeaderboardsContent(gridColumns, view)}
       </DashboardLayout>
     </PageDashboardContext.Provider>
   );

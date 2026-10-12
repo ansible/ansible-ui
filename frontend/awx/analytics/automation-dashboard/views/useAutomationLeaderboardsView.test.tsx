@@ -605,7 +605,7 @@ describe('useAutomationLeaderboardsView', () => {
     ).toBe(true);
   });
 
-  test('should keep the shown report and its sync timestamp, without an error, when the refetch for a new sync fails', async () => {
+  test('should keep the shown report and its sync timestamp, reporting refreshError instead of error, when the refetch for a new sync fails', async () => {
     let lastSync = '2026-09-01T14:00:00.000Z';
     let leaderboardRequests = 0;
     let leaderboardResponse = (): Response => HttpResponse.json(MOCK_LEADERBOARD_REPORT);
@@ -635,11 +635,112 @@ describe('useAutomationLeaderboardsView', () => {
     await waitFor(() => expect(leaderboardRequests).toBe(2));
     // Let SWR settle the failed request before asserting nothing changed.
     await act(() => delay(50));
-    // The page keeps showing the last good report rather than switching to the error state.
+    // The page keeps showing the last good report rather than switching to the error state, and
+    // flags it as out of date.
     expect(result.current.view.error).toBeUndefined();
+    expect(result.current.view.refreshError).toBeInstanceOf(Error);
     expect(result.current.view.isLoading).toBe(false);
     expect(result.current.view.atAGlance.jobsRun).toBe(1234);
     expect(result.current.view.lastSyncedAt).toBe('2026-09-01T14:00:00.000Z');
+  });
+
+  test('should clear refreshError once the report for the new sync loads', async () => {
+    let lastSync = '2026-09-01T14:00:00.000Z';
+    let leaderboardResponse = (): Response => HttpResponse.json(MOCK_LEADERBOARD_REPORT);
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () => leaderboardResponse()),
+      http.get(metricsAPI`/dashboard_reports/collection_status/`, () =>
+        HttpResponse.json({ ...collectionStatusFixture, last_sync: lastSync })
+      )
+    );
+
+    const { result } = renderHook(
+      () => ({ view: useAutomationLeaderboardsView(), swrConfig: useSWRConfig() }),
+      { wrapper }
+    );
+    await waitFor(() => expect(result.current.view.atAGlance.jobsRun).toBe(1234));
+
+    lastSync = '2026-09-02T14:00:00.000Z';
+    leaderboardResponse = () => HttpResponse.json({}, { status: 500 });
+    await act(() =>
+      result.current.swrConfig.mutate(metricsAPI`/dashboard_reports/collection_status/`)
+    );
+    await waitFor(() => expect(result.current.view.refreshError).toBeInstanceOf(Error));
+
+    leaderboardResponse = () => HttpResponse.json(MOCK_LEADERBOARD_REPORT);
+    await act(() =>
+      result.current.swrConfig.mutate([metricsAPI`/dashboard_reports/leaderboard/`, lastSync])
+    );
+
+    await waitFor(() => expect(result.current.view.lastSyncedAt).toBe(lastSync));
+    expect(result.current.view.refreshError).toBeUndefined();
+    expect(result.current.view.error).toBeUndefined();
+  });
+
+  test('should not report refreshError when lastSyncedAt falls back to null and the refetch fails', async () => {
+    let leaderboardRequests = 0;
+    let leaderboardResponse = (): Response => HttpResponse.json(MOCK_LEADERBOARD_REPORT);
+    let collectionStatusResponse = (): Response => HttpResponse.json(collectionStatusFixture);
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () => {
+        leaderboardRequests += 1;
+        return leaderboardResponse();
+      }),
+      http.get(metricsAPI`/dashboard_reports/collection_status/`, () => collectionStatusResponse())
+    );
+
+    const { result } = renderHook(
+      () => ({ view: useAutomationLeaderboardsView(), swrConfig: useSWRConfig() }),
+      { wrapper }
+    );
+    await waitFor(() => expect(result.current.view.atAGlance.jobsRun).toBe(1234));
+
+    // A 404 means no metrics service, so collection_status falls back to a null last_sync.
+    collectionStatusResponse = () => HttpResponse.json({}, { status: 404 });
+    leaderboardResponse = () => HttpResponse.json({}, { status: 500 });
+    await act(() =>
+      result.current.swrConfig.mutate(metricsAPI`/dashboard_reports/collection_status/`)
+    );
+
+    await waitFor(() => expect(leaderboardRequests).toBe(2));
+    await act(() => delay(50));
+    // There is no newer sync to be out of date against, so nothing to warn about.
+    expect(result.current.view.refreshError).toBeUndefined();
+    expect(result.current.view.error).toBeUndefined();
+    expect(result.current.view.atAGlance.jobsRun).toBe(1234);
+  });
+
+  test('should not report refreshError when revalidating the current sync report fails', async () => {
+    let leaderboardRequests = 0;
+    let leaderboardResponse = (): Response => HttpResponse.json(MOCK_LEADERBOARD_REPORT);
+    server.use(
+      http.get(metricsAPI`/dashboard_reports/leaderboard/`, () => {
+        leaderboardRequests += 1;
+        return leaderboardResponse();
+      }),
+      http.get(metricsAPI`/dashboard_reports/collection_status/`, () =>
+        HttpResponse.json(collectionStatusFixture)
+      )
+    );
+
+    const { result } = renderHook(
+      () => ({ view: useAutomationLeaderboardsView(), swrConfig: useSWRConfig() }),
+      { wrapper }
+    );
+    await waitFor(() => expect(result.current.view.atAGlance.jobsRun).toBe(1234));
+    const { lastSyncedAt } = result.current.view;
+
+    leaderboardResponse = () => HttpResponse.json({}, { status: 500 });
+    await act(() =>
+      result.current.swrConfig.mutate([metricsAPI`/dashboard_reports/leaderboard/`, lastSyncedAt])
+    );
+
+    await waitFor(() => expect(leaderboardRequests).toBe(2));
+    await act(() => delay(50));
+    // The report shown is still the one for the latest sync, so nothing is out of date.
+    expect(result.current.view.refreshError).toBeUndefined();
+    expect(result.current.view.error).toBeUndefined();
+    expect(result.current.view.lastSyncedAt).toBe(lastSyncedAt);
   });
 
   test('should not refetch the leaderboard when collection_status reports the same last_sync', async () => {

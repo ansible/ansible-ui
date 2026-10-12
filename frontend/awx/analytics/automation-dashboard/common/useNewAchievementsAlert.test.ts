@@ -68,7 +68,7 @@ describe('useNewAchievementsAlert', () => {
     act(() => result.current.dismiss());
 
     expect(result.current.hasNewAchievements).toBe(false);
-    expect(readAcknowledgedAchievements(USER_ID)).toEqual(['user:centurion', 'org:topTier']);
+    expect(readAcknowledgedAchievements(USER_ID)).toEqual(['org:topTier', 'user:centurion']);
   });
 
   test('should keep the alert hidden on a later visit when nothing new was earned', () => {
@@ -115,6 +115,19 @@ describe('useNewAchievementsAlert', () => {
     const { result } = renderAlertHook({ ...state, earnedUserAchievements: [] });
 
     expect(result.current.hasNewAchievements).toBe(false);
+    expect(readAcknowledgedAchievements(USER_ID)).toEqual(['user:centurion']);
+  });
+
+  test('should not show the alert when the sync status failed, but still prune storage', () => {
+    writeAcknowledgedAchievements(USER_ID, ['user:centurion', 'user:explorer']);
+
+    const { result } = renderAlertHook({
+      collectionStatusError: new Error('status boom'),
+      earnedUserAchievements: ['centurion', 'reliable'],
+    });
+
+    expect(result.current.hasNewAchievements).toBe(false);
+    // The report itself is valid, so pruning against it is still safe.
     expect(readAcknowledgedAchievements(USER_ID)).toEqual(['user:centurion']);
   });
 

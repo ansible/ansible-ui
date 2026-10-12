@@ -107,6 +107,11 @@ export interface AutomationLeaderboardsView extends AutomationLeaderboardsData {
   error: Error | undefined;
   /** Error from the collection_status request that supplies `lastSyncedAt`. */
   collectionStatusError: Error | undefined;
+  /**
+   * Error from the refetch for a newer sync, reported while the previous report stays on screen
+   * (`error` is then undefined), so the page can say the numbers shown are out of date.
+   */
+  refreshError: Error | undefined;
 }
 
 // ─── API response shape (`/dashboard_reports/leaderboard/`) ──────────────────
@@ -416,7 +421,14 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
   // Only `undefined` means "not loaded yet" or "request failed"; any other falsy body (`null`,
   // `""`, `0`, `false`) is an invalid response and must fall through to the check below.
   if (data === undefined) {
-    return { ...EMPTY_LEADERBOARDS_DATA, lastSyncedAt, isLoading, error, collectionStatusError };
+    return {
+      ...EMPTY_LEADERBOARDS_DATA,
+      lastSyncedAt,
+      isLoading,
+      error,
+      collectionStatusError,
+      refreshError: undefined,
+    };
   }
   const { report, syncedAt: reportSyncedAt } = data;
   // A JSON body that isn't an object (a string, number, boolean, `null` or array) is a failure,
@@ -430,11 +442,17 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
       // SWR keeps the last body when a refetch fails, so a real request error takes precedence.
       error: error ?? INVALID_REPORT_ERROR,
       collectionStatusError,
+      refreshError: undefined,
     };
   }
   // From here on there is a valid report to show. A failed refetch (e.g. for a newer sync) keeps
   // it on screen with its own timestamp instead of replacing the page with the error state, the
   // same way collection_status rides out a failed poll; SWR keeps retrying in the background.
+  // It is reported as `refreshError` only when the shown report is for an older sync than the
+  // latest one: a failed revalidation of the current sync's report leaves nothing out of date,
+  // and a `null` lastSyncedAt (e.g. collection_status started answering 404) is no newer sync.
+  const refreshError =
+    error && lastSyncedAt !== null && reportSyncedAt !== lastSyncedAt ? error : undefined;
   // An empty report (`{}`) means nothing has been synced yet, so report it as never synced.
   if (Object.keys(report).length === 0) {
     return {
@@ -443,6 +461,7 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
       isLoading,
       error: undefined,
       collectionStatusError,
+      refreshError,
     };
   }
 
@@ -452,5 +471,6 @@ export function useAutomationLeaderboardsView(): AutomationLeaderboardsView {
     isLoading,
     error: undefined,
     collectionStatusError,
+    refreshError,
   };
 }
