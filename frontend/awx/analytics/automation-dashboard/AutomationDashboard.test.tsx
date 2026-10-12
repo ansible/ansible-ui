@@ -61,24 +61,26 @@ vi.mock('./components', async () => {
         {title}
       </div>
     ),
-    // Renders the empty-state props unconditionally, so the AutomationDashboard tests below only
-    // verify which copy is passed down (prop wiring). Whether the real card hides the empty state
-    // when it has rows is covered in DashboardTableCard.test.tsx.
+    // Show empty-state copy only when the dashboard passes an empty ranking list.
     DashboardTableCard: ({
       id,
       title,
+      items,
       emptyStateTitle,
       emptyStateDescription,
     }: {
       id: string;
       title: string;
+      items?: unknown[];
       emptyStateTitle?: string;
       emptyStateDescription?: string;
     }) => (
       <div data-testid={id}>
         <span>{title}</span>
-        {emptyStateTitle && <span data-testid={`${id}-empty-title`}>{emptyStateTitle}</span>}
-        {emptyStateDescription && (
+        {(!items || items.length === 0) && emptyStateTitle && (
+          <span data-testid={`${id}-empty-title`}>{emptyStateTitle}</span>
+        )}
+        {(!items || items.length === 0) && emptyStateDescription && (
           <span data-testid={`${id}-empty-desc`}>{emptyStateDescription}</span>
         )}
       </div>
@@ -354,6 +356,7 @@ describe('AutomationDashboard', () => {
   test('should pass the "no data yet" empty-state copy to table cards when itemCount is 0', () => {
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
       ...mockView,
+      details: { ...mockDetails, top_projects: [], top_users: [] },
       mainTableView: { ...mockMainTableView, itemCount: 0 },
     });
     render(testWrapper());
@@ -370,6 +373,11 @@ describe('AutomationDashboard', () => {
   });
 
   test('should pass the "no items to rank" empty-state copy to table cards when itemCount > 0', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      details: { ...mockDetails, top_projects: [], top_users: [] },
+      mainTableView: { ...mockMainTableView, itemCount: 5 },
+    });
     render(testWrapper());
     expect(screen.getByTestId('top-projects-card-empty-title')).toHaveTextContent(
       'No projects to rank'
