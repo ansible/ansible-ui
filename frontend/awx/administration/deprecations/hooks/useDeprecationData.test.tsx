@@ -984,10 +984,11 @@ describe('getDeprecationOccurrences', () => {
         stdout: `${PURPLE}[DEPRECATION WARNING]: Something deprecated in Task Z${RESET}`,
       }),
     ]);
+    // Task occurrences come first, then textless markers
     expect(occurrences).toEqual([
+      { text: '[DEPRECATION WARNING]: Something deprecated in Task Z', task: 'Task Z' },
       { text: '', task: 'Task X' },
       { text: '', task: 'Task Y' },
-      { text: '[DEPRECATION WARNING]: Something deprecated in Task Z', task: 'Task Z' },
     ]);
   });
 });
