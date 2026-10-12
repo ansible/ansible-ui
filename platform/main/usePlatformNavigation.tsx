@@ -297,6 +297,12 @@ export function useAutomationAnalytics(): PageNavigationItem {
   const managedCloudInstall = useIsManagedCloudInstall() ?? false;
   const analytics = removeNavigationItemById(awxNav, AwxRoute.Analytics)!;
   const { activePlatformUser } = usePlatformActiveUser();
+  const { activeAwxUser } = useAwxActiveUser();
+  const canAccessAutomationAnalyticsNav =
+    !!activePlatformUser?.is_superuser ||
+    !!activePlatformUser?.is_platform_auditor ||
+    !!activeAwxUser?.is_superuser ||
+    !!activeAwxUser?.is_system_auditor;
   // canSeeDashboard/canSeeLeaderboard are already applied to the tree by useAwxNavigation
   const {
     collectionStatus,
@@ -320,7 +326,8 @@ export function useAutomationAnalytics(): PageNavigationItem {
       }
     }
 
-    analytics.hidden = !awxService || !analytics.children.length;
+    analytics.hidden =
+      !awxService || !analytics.children.length || !canAccessAutomationAnalyticsNav;
   }
   return analytics;
 }
