@@ -969,6 +969,27 @@ describe('getDeprecationOccurrences', () => {
       { text: 'Some plain deprecation text without the marker', task: 'Install packages' },
     ]);
   });
+
+  it('does not drop unrelated markers when task occurrence has no matching marker', () => {
+    // Scenario: Two textless markers from Task X and Task Y, plus a task-level
+    // deprecation from Task Z. The Task Z occurrence should NOT consume either marker.
+    const occurrences = getDeprecationOccurrences([
+      event({ id: 1, counter: 1, event: 'deprecated', task: 'Task X' }),
+      event({ id: 2, counter: 2, event: 'deprecated', task: 'Task Y' }),
+      event({
+        id: 3,
+        counter: 3,
+        event: 'runner_on_ok',
+        task: 'Task Z',
+        stdout: `${PURPLE}[DEPRECATION WARNING]: Something deprecated in Task Z${RESET}`,
+      }),
+    ]);
+    expect(occurrences).toEqual([
+      { text: '', task: 'Task X' },
+      { text: '', task: 'Task Y' },
+      { text: '[DEPRECATION WARNING]: Something deprecated in Task Z', task: 'Task Z' },
+    ]);
+  });
 });
 
 describe('extractDeprecationType', () => {

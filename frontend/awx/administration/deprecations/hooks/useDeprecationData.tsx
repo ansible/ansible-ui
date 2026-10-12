@@ -216,7 +216,9 @@ function withoutMarkersExplainedBy(
   for (const occurrence of taskOccurrences) {
     if (remaining.length === 0) break;
     const sameTask = remaining.findIndex((marker) => marker.task === occurrence.task);
-    remaining.splice(Math.max(sameTask, 0), 1);
+    if (sameTask !== -1) {
+      remaining.splice(sameTask, 1);
+    }
   }
   return remaining;
 }
