@@ -10,7 +10,7 @@ function renderActivityStreamRoute(resource?: string | null) {
 describe('useGetActivityStreamRoute', () => {
   test('returns null when resource is missing', () => {
     expect(renderActivityStreamRoute(null).result.current).toBeNull();
-    expect(renderActivityStreamRoute(undefined).result.current).toBeNull();
+    expect(renderActivityStreamRoute().result.current).toBeNull();
     expect(renderActivityStreamRoute('').result.current).toBeNull();
   });
 
