@@ -37,6 +37,17 @@ vi.mock('@ansible/ansible-ui-framework/components/useURLSearchParams', () => ({
   ],
 }));
 
+vi.mock('@patternfly/react-core', async () => {
+  const actual = await vi.importActual('@patternfly/react-core');
+  return {
+    ...actual,
+    Modal: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    ModalBody: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    ModalHeader: ({ title }: { title: string }) => <div>{title}</div>,
+    ModalFooter: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  };
+});
+
 describe('useSignAllCollections', () => {
   const server = setupServer(
     http.get('*/pulp/api/v3/repositories/ansible/ansible/', () =>
