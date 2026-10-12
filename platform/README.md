@@ -20,7 +20,7 @@ flowchart TD
 
 1. Setup Platform
 
-   Follow the instructions in the platform to get it running.
+   Follow the [Ansible platform gateway](https://github.com/ansible/aap-gateway) documentation to run a gateway (or full platform) locally.
 
 1. Clone the Ansible UI Repository
 

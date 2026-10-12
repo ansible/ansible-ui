@@ -1,6 +1,6 @@
 # Getting started
 
-AAP-UI leverages internationalization through the [react-i18next](https://react.i18next.com/) library. This library provides an easy way to handle translations, including pluralization.
+Ansible UI leverages internationalization through the [react-i18next](https://react.i18next.com/) library. This library provides an easy way to handle translations, including pluralization.
 
 ## Using plural and singular
 

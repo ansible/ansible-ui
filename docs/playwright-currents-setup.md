@@ -45,8 +45,8 @@ The workflow is automatically configured in `.github/workflows/playwright-curren
 
 - **Trigger on:**
 
-  - Pull requests to `main` or `develop` branches
-  - Pushes to `main` or `develop` branches
+  - Pull requests to `devel`
+  - Pushes to `devel`
   - Manual workflow dispatch with custom parameters
 
 - **Run tests in parallel** across 4 shards for faster execution
@@ -129,7 +129,7 @@ Access your test results at: `https://app.currents.dev`
 
 **Automatic notifications for:**
 
-- ❌ **Test failures** on main branch
+- ❌ **Test failures** on `devel`
 - ✅ **Successful runs** after previous failures
 - 📊 **Weekly test summaries** (if configured)
 

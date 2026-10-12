@@ -1,25 +1,23 @@
-# Platform UI Architecture
+# Platform UI architecture
 
 ```mermaid
 flowchart TD
    ui(Platform UI) --- platform(Platform Gateway)
    platform --- awx(Controller)
-   platform --- hub(Automation HUB)
+   platform --- hub(Automation Hub)
    platform --- eda(Event Driven Ansible)
    awx --- aa(Ansible Analytics)
 ```
 
-The Platform UI is the unified UI for the Ansible Automation Platform.
+The Platform UI in [`platform/`](../../platform/) is the unified web UI for Ansible Automation Platform.
 
-- Dynamically composes the navigation and pages to create a unified experience.
-- Pulls in UI pages from AWX, HUB, EDA, and Analytics.
-- Contains gateway specific pages for
-  - Dashboard
-  - Authentication
-  - Access management
-  - Settings
+- Dynamically composes navigation and pages for a single product experience.
+- Embeds UI from the Controller (AWX), Hub, EDA, and Analytics workspaces under `frontend/`.
+- Includes gateway-specific areas such as dashboard, authentication, access management, and settings.
 
-It uses the Platform Gateway as the backend.
+The [Ansible platform gateway](https://github.com/ansible/aap-gateway) is the supported backend:
 
-- Unifies the APIs for the Ansible products such as AWX, HUB, and EDA
-- Provides centralized authentication and access management
+- Unifies APIs for Controller, Hub, EDA, and related services.
+- Provides centralized authentication and access management.
+
+Local development runs the Vite dev server in `platform/` and points at a gateway using the `PLATFORM_SERVER` environment variable. See the [repository README](../../README.md) and [`platform/README.md`](../../platform/README.md).
