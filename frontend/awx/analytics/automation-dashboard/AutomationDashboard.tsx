@@ -6,6 +6,7 @@ import { AwxRoute } from '../../main/AwxRoutes';
 import {
   DashboardChartCard,
   DashboardMainTableCard,
+  DashboardTableCard,
   DashboardValueCard,
   useAutomationDashboardToolbar,
 } from './components';
@@ -99,6 +100,54 @@ export function AutomationDashboard() {
             errorStateTitle={t('Error loading hours of automation')}
             width={valueCardWidth}
           ></DashboardValueCard>
+        </DashboardGridRow>
+        <DashboardGridRow>
+          <DashboardTableCard
+            id="top-projects-card"
+            title={t('Top 5 projects')}
+            help={t(
+              'Projects ranked by total job count in the selected period. Helps identify which projects are driving the most automation activity.'
+            )}
+            firstColumnHeader={t('Project name')}
+            errorStateTitle={t('Error loading projects')}
+            items={details?.top_projects ?? []}
+            error={view.detailsError}
+            loading={view.detailsLoading}
+            clearAllFilters={view.mainTableView.clearAllFilters}
+            filterState={view.isFilterStateDefault ? undefined : view.mainTableView.filterState}
+            emptyStateTitle={
+              view?.mainTableView?.itemCount ? t('No projects to rank') : t('No project data yet')
+            }
+            emptyStateDescription={
+              view?.mainTableView?.itemCount
+                ? t('Automation data exists, but no runs are currently associated with projects.')
+                : t('Project data will appear after your first automation runs.')
+            }
+          ></DashboardTableCard>
+          <DashboardTableCard
+            id="top-users-card"
+            title={t('Top 5 users')}
+            help={t(
+              'Users ranked by automation runs they triggered or that ran in their context in the selected period. Shows individual adoption and activity.'
+            )}
+            firstColumnHeader={t('User name')}
+            errorStateTitle={t('Error loading users')}
+            items={details?.top_users ?? []}
+            error={view.detailsError}
+            loading={view.detailsLoading}
+            clearAllFilters={view.mainTableView.clearAllFilters}
+            filterState={view.isFilterStateDefault ? undefined : view.mainTableView.filterState}
+            emptyStateTitle={
+              view?.mainTableView?.itemCount ? t('No users to rank') : t('No user data yet')
+            }
+            emptyStateDescription={
+              view?.mainTableView?.itemCount
+                ? t(
+                    'Automation data exists, but no runs are currently attributed to individual users.'
+                  )
+                : t('User data will appear after your first automation runs.')
+            }
+          ></DashboardTableCard>
         </DashboardGridRow>
         <DashboardGridRow>
           <DashboardChartCard

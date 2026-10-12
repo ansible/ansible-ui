@@ -56,6 +56,12 @@ async function mockReportDetailRoute(
         total_saving: 6918332.14,
         total_time_saving: 556.36,
         total_number_of_unique_hosts: 31,
+        top_projects: [
+          { id: 15, name: 'Test Project 1', execution_count: 20 },
+          { id: 9, name: 'Test Project 2', execution_count: 9 },
+          { id: 8, name: 'Test Project 3', execution_count: 2 },
+        ],
+        top_users: [{ id: 1, name: 'Test user', execution_count: 14 }],
         job_chart: {
           kind: 'month',
           items: [
@@ -208,6 +214,11 @@ test.describe('Automation Dashboard', () => {
   test('should show the Dashboard and Leaderboards tabs', async ({ page }) => {
     await expect(page.getByRole('tab', { name: 'Dashboard' })).toBeVisible();
     await expect(page.getByRole('tab', { name: 'Leaderboards' })).toBeVisible();
+  });
+
+  test('Should display table cards on automation dashboard', async ({ page }) => {
+    await expect(page.getByTestId('top-projects-card').filter({ hasText: 'Top 5' })).toBeVisible();
+    await expect(page.getByTestId('top-users-card').filter({ hasText: 'Top 5' })).toBeVisible();
   });
 
   test('Should have correct link in value cards', async ({ page }) => {
