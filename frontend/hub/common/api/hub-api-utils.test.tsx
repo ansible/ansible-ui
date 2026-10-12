@@ -151,7 +151,7 @@ describe('hub-api-utils', () => {
         })
       );
 
-      const result = await waitForTask(pulpUuid, undefined, 10, 1, 5);
+      const result = await waitForTask(pulpUuid, undefined, 50, 1.5, 5);
       expect(result).toMatchObject({ state: 'completed' });
     });
 
@@ -162,7 +162,7 @@ describe('hub-api-utils', () => {
         )
       );
 
-      await expect(waitForTask(pulpUuid, undefined, 10, 1, 3)).rejects.toThrow('Task blew up');
+      await expect(waitForTask(pulpUuid, undefined, 50, 1.5, 3)).rejects.toThrow('Task blew up');
     });
 
     it('parseTaskResponse polls task href from response', async () => {

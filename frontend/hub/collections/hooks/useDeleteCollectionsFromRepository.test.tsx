@@ -55,6 +55,8 @@ const mockCollection: CollectionVersionSearch = {
 
 describe('useDeleteCollectionsFromRepository', () => {
   const taskUuid = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
+  let modifyPayload: { remove_content_units?: string[]; base_version?: string } | undefined;
+  let taskPollCount = 0;
 
   const server = setupServer(
     http.get('*/pulp/api/v3/repositories/ansible/ansible/', () =>
@@ -74,23 +76,35 @@ describe('useDeleteCollectionsFromRepository', () => {
         links: { next: null },
       })
     ),
-    http.post(`*/pulp/api/v3/repositories/ansible/ansible/${taskUuid}/modify/`, () =>
-      HttpResponse.json({ task: `/pulp/api/v3/tasks/${taskUuid}/` })
+    http.post(
+      `*/pulp/api/v3/repositories/ansible/ansible/${taskUuid}/modify/`,
+      async ({ request }) => {
+        modifyPayload = (await request.json()) as {
+          remove_content_units?: string[];
+          base_version?: string;
+        };
+        return HttpResponse.json({ task: `/pulp/api/v3/tasks/${taskUuid}/` });
+      }
     ),
-    http.get(`*/pulp/api/v3/tasks/${taskUuid}/`, () => HttpResponse.json({ state: 'completed' }))
+    http.get(`*/pulp/api/v3/tasks/${taskUuid}/`, () => {
+      taskPollCount++;
+      return HttpResponse.json({ state: 'completed' });
+    })
   );
 
   beforeAll(() => {
     setHubApiPath('/api/galaxy');
-    server.listen({ onUnhandledRequest: 'warn' });
+    server.listen({ onUnhandledRequest: 'error' });
   });
   afterEach(() => {
     server.resetHandlers();
     capturedBulkActionConfig = {};
+    modifyPayload = undefined;
+    taskPollCount = 0;
   });
   afterAll(() => server.close());
 
-  it('configures bulk delete action for collections in repository', async () => {
+  it('configures bulk delete action and removes collection versions from repository', async () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <MemoryRouter>{children}</MemoryRouter>
     );
@@ -103,5 +117,11 @@ describe('useDeleteCollectionsFromRepository', () => {
     expect(capturedBulkActionConfig.actionFn).toBeDefined();
 
     await capturedBulkActionConfig.actionFn?.(mockCollection);
+
+    expect(modifyPayload).toEqual({
+      remove_content_units: [mockCollection.collection_version?.pulp_href],
+      base_version: '/versions/1/',
+    });
+    expect(taskPollCount).toBeGreaterThan(0);
   });
 });
