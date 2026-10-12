@@ -5,7 +5,7 @@ import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, test } from 'vitest';
 import { PlatformRoute } from '../main/PlatformRoutes';
-import { collectPageNavigationRouteIds } from '../test-utils/collectPageNavigationRoutes';
+import { collectPageNavigationRouteIds } from '@ansible/ansible-ui-framework/test-utils/collectPageNavigationRoutes';
 import { useGetPlatformApplicationsRoutes } from './useGetPlatformApplicationsRoutes';
 import { useGetPlatformAuthenticatorsRoutes } from './useGetPlatformAuthenticatorsRoutes';
 import { useGetPlatformOrganizationsRoutes } from './useGetPlatformOrganizationsRoutes';

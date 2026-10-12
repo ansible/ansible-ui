@@ -10,7 +10,7 @@ import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PlatformRoute } from './PlatformRoutes';
-import { collectPageNavigationRouteIds } from '../test-utils/collectPageNavigationRoutes';
+import { collectPageNavigationRouteIds } from '@ansible/ansible-ui-framework/test-utils/collectPageNavigationRoutes';
 import { usePlatformNavigation } from './usePlatformNavigation';
 import { gatewayAPI } from '../utils/gateway-api-utils';
 

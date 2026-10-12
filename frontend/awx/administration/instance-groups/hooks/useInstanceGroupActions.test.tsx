@@ -20,6 +20,20 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   };
 });
 
+function getToolbarActionByLabel(
+  actions: ReturnType<typeof useInstanceGroupToolbarActions>,
+  label: string
+) {
+  return actions.find((action) => 'label' in action && action.label === label);
+}
+
+function getRowActionByLabel(
+  actions: ReturnType<typeof useInstanceGroupRowActions>,
+  label: string
+) {
+  return actions.find((action) => 'label' in action && action.label === label);
+}
+
 function renderActionsHook<T>(useActions: (onComplete: () => void) => T) {
   const onComplete = vi.fn();
   return renderHook(() => useActions(onComplete), {
@@ -46,13 +60,11 @@ describe('useInstanceGroupActions', () => {
   test('useInstanceGroupToolbarActions exposes create and delete actions', () => {
     const { result } = renderActionsHook(useInstanceGroupToolbarActions);
 
-    expect(result.current[0]).toMatchObject({
+    expect(getToolbarActionByLabel(result.current, 'Create group')).toMatchObject({
       type: PageActionType.Dropdown,
-      label: 'Create group',
     });
-    expect(result.current[2]).toMatchObject({
+    expect(getToolbarActionByLabel(result.current, 'Delete instance groups')).toMatchObject({
       type: PageActionType.Button,
-      label: 'Delete instance groups',
       isDanger: true,
     });
   });
@@ -60,13 +72,11 @@ describe('useInstanceGroupActions', () => {
   test('useInstanceGroupRowActions exposes edit and delete row actions', () => {
     const { result } = renderActionsHook(useInstanceGroupRowActions);
 
-    expect(result.current[0]).toMatchObject({
+    expect(getRowActionByLabel(result.current, 'Edit instance group')).toMatchObject({
       type: PageActionType.Button,
-      label: 'Edit instance group',
     });
-    expect(result.current[3]).toMatchObject({
+    expect(getRowActionByLabel(result.current, 'Delete instance group')).toMatchObject({
       type: PageActionType.Button,
-      label: 'Delete instance group',
       isDanger: true,
     });
   });
