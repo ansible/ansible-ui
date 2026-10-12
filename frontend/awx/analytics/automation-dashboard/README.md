@@ -288,7 +288,9 @@ The central view hook consumed by the Dashboard tab. Composes the sub-hooks and 
 `/dashboard_reports/leaderboard/` with `useSWR` and maps the raw response through the exported
 `mapLeaderboardReport`. `lastSyncedAt` comes from the shared `useAutomationDashboardCollectionStatus`
 (`last_sync`);
-its failure is reported separately as `collectionStatusError`. The components consume only this
+its failure is reported separately as `collectionStatusError`. When the refetch for a newer sync
+fails, the previous report stays on screen and the failure is reported as `refreshError` (not
+`error`), which the tab shows as a warning above the report. The components consume only this
 hook.
 
 ### `useFilterSetView`

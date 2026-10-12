@@ -16,6 +16,7 @@ export function createLeaderboardsView(
     isLoading: false,
     error: undefined,
     collectionStatusError: undefined,
+    refreshError: undefined,
     lastSyncedAt: '2026-09-01T14:00:00.000Z',
     atAGlance: {
       jobsRun: 0,
