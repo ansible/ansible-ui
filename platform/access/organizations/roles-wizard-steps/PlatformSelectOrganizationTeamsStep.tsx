@@ -1,10 +1,13 @@
-import { ITableColumn, IToolbarFilter, TextCell } from '@ansible/ansible-ui-framework';
+import { ITableColumn, IToolbarFilter, LoadingPage, TextCell } from '@ansible/ansible-ui-framework';
 import { PageMultiSelectList } from '@ansible/ansible-ui-framework/PageTable/PageMultiSelectList';
 import { useNameToolbarFilter } from '@ansible/awx-ui/common/awx-toolbar-filters';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { Content, ContentVariants } from '@patternfly/react-core';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { usePlatformMultiSelectListView } from '../../../common/usePlatformMultiSelectListView';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 
@@ -25,15 +28,21 @@ export function PlatformSelectOrganizationTeamsStep() {
     ];
   }, [t]);
 
+  const params = useParams<{ id: string }>();
+  const { data: organization, isLoading } = useGet<PlatformOrganization>(
+    gatewayAPI`/organizations/${params.id || ''}/`
+  );
+
   const view = usePlatformMultiSelectListView<PlatformTeam>(
     {
-      url: gatewayAPI`/teams/`,
+      url: gatewayAPI`/organizations/${params.id || ''}/teams/`,
       toolbarFilters,
       tableColumns,
       disableQueryString: true,
     },
     'teams'
   );
+  if (isLoading || !organization) return <LoadingPage />;
 
   return (
     <>
