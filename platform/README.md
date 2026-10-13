@@ -5,7 +5,7 @@ The Platform UI is the unified UI for Ansible. It uses the Ansible platform as t
 ```mermaid
 flowchart TD
    ui(Ansible UI) --- platform(Ansible Jewel)
-   platform --- awx(Controller)
+   platform --- awx(AWX)
    platform --- hub(Automation HUB)
    platform --- eda(Event Driven Ansible)
    awx --- aa(Ansible Analytics)

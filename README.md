@@ -1,6 +1,6 @@
 # Ansible UI
 
-Source for the Ansible web UI. The supported development path is the unified UI in `platform/`, which talks to [Ansible Jewel](https://github.com/ansible/jewel). Product-specific workspaces (Controller, Hub, EDA, and shared libraries) live under `frontend/` and are composed into that application.
+Source for the Ansible web UI. The supported development path is the unified UI in `platform/`, which talks to [Ansible Jewel](https://github.com/ansible/jewel). Product-specific workspaces (AWX, Hub, EDA, and shared libraries) live under `frontend/` and are composed into that application.
 
 Day-to-day integration happens on the **`devel`** branch. Open pull requests against `devel`.
 
@@ -66,7 +66,7 @@ Common variables when running the Ansible UI against a remote or local Jewel ins
 | `PLATFORM_SERVER` | Jewel API base URL (`protocol://host:port`, no trailing slash). |
 | `PLATFORM_USERNAME` | Login username for live E2E tests (optional for local dev). |
 | `PLATFORM_PASSWORD` | Login password for live E2E tests (optional for local dev). |
-| `AWX_API_PREFIX` | Controller API prefix when required by your gateway (often `/api/controller/v2`). |
+| `AWX_API_PREFIX` | AWX API prefix when required by Jewel (often `/api/controller/v2`). |
 | `EDA_API_PREFIX` | EDA API prefix when required by your gateway (often `/api/eda/v1`). |
 | `HUB_API_PREFIX` | Hub API prefix when required by your gateway. |
 
