@@ -1,6 +1,7 @@
 import {
   Badge,
   Bullseye,
+  Checkbox,
   Divider,
   Label,
   LabelGroup,
@@ -105,6 +106,12 @@ export interface PageMultiSelectProps<ValueT> {
   compareOptionValues?: (a: ValueT, b: ValueT) => boolean;
 
   disableMaxDropdownWidth?: boolean;
+
+  /**
+   * Show a BulkSelector-style "Select all" checkbox in the dropdown header for
+   * currently visible (search-filtered) options. Off by default.
+   */
+  showSelectAll?: boolean;
 }
 
 /**
@@ -315,6 +322,55 @@ export function PageMultiSelect<
     return newOptions;
   }, [options, props.disableSortOptions, searchValue]);
 
+  const showSelectAll = props.showSelectAll === true;
+
+  const isOptionSelected = useCallback(
+    (option: PageSelectOption<ValueT>) =>
+      (values ?? []).some((value) =>
+        compareOptionValues ? compareOptionValues(value, option.value) : value === option.value
+      ),
+    [values, compareOptionValues]
+  );
+
+  // Match BulkSelector / table header: checked when every visible option is selected;
+  // indeterminate when some (but not all) visible options are selected.
+  const allVisibleSelected =
+    showSelectAll &&
+    visibleOptions.length > 0 &&
+    visibleOptions.every((option) => isOptionSelected(option));
+  const someVisibleSelected =
+    showSelectAll && visibleOptions.some((option) => isOptionSelected(option));
+  let selectAllChecked: boolean | null = false;
+  if (allVisibleSelected) {
+    selectAllChecked = true;
+  } else if (someVisibleSelected) {
+    selectAllChecked = null;
+  }
+
+  /**
+   * Same semantics as table BulkSelector checkbox:
+   * - If all visible options are selected → clear the entire selection (deselect all)
+   * - Otherwise → select all currently visible options (merge into existing selection)
+   */
+  const onSelectAllToggle = useCallback(() => {
+    if (allVisibleSelected) {
+      onSelect(() => []);
+      return;
+    }
+    onSelect((previousValues) => {
+      const next = previousValues ? [...previousValues] : [];
+      for (const option of visibleOptions) {
+        const alreadySelected = next.some((value) =>
+          compareOptionValues ? compareOptionValues(value, option.value) : value === option.value
+        );
+        if (!alreadySelected) {
+          next.push(option.value);
+        }
+      }
+      return next;
+    });
+  }, [allVisibleSelected, onSelect, visibleOptions, compareOptionValues]);
+
   const groups = useMemo(() => {
     const hasGroups = options.some((option) => !!option.group);
     if (hasGroups) {
@@ -391,28 +447,48 @@ export function PageMultiSelect<
           )}
         </>
       ) : (
-        <ScrollableStyled>
-          {groups ? (
+        <>
+          {showSelectAll && (
             <>
-              {Object.keys(groups).map((groupName) => (
-                <SelectGroup label={groupName} key={groupName}>
-                  <PageMultiSelectList
-                    searchRef={searchRef}
-                    options={visibleOptions.filter((option) => option.group === groupName)}
-                    selectedOptions={selectedOptions.filter((option) => option.group === groupName)}
-                  />
-                  <Divider />
-                </SelectGroup>
-              ))}
+              <SelectAllHeader>
+                <Checkbox
+                  id={`${id}-select-all`}
+                  data-cy="select-all"
+                  data-testid="select-all"
+                  label={t('Select all')}
+                  isChecked={selectAllChecked}
+                  onChange={onSelectAllToggle}
+                  aria-label={t('Select all')}
+                />
+              </SelectAllHeader>
+              <Divider />
             </>
-          ) : (
-            <PageMultiSelectList
-              searchRef={searchRef}
-              options={visibleOptions}
-              selectedOptions={selectedOptions}
-            />
           )}
-        </ScrollableStyled>
+          <ScrollableStyled>
+            {groups ? (
+              <>
+                {Object.keys(groups).map((groupName) => (
+                  <SelectGroup label={groupName} key={groupName}>
+                    <PageMultiSelectList
+                      searchRef={searchRef}
+                      options={visibleOptions.filter((option) => option.group === groupName)}
+                      selectedOptions={selectedOptions.filter(
+                        (option) => option.group === groupName
+                      )}
+                    />
+                    <Divider />
+                  </SelectGroup>
+                ))}
+              </>
+            ) : (
+              <PageMultiSelectList
+                searchRef={searchRef}
+                options={visibleOptions}
+                selectedOptions={selectedOptions}
+              />
+            )}
+          </ScrollableStyled>
+        </>
       )}
       {props.footer && <MenuFooter>{props.footer}</MenuFooter>}
     </Select>
@@ -461,6 +537,11 @@ function PageMultiSelectList(props: {
     </SelectList>
   );
 }
+
+const SelectAllHeader = styled.div`
+  padding-block: var(--pf-t--global--spacer--sm);
+  padding-inline: var(--pf-t--global--spacer--md);
+`;
 
 const ScrollableStyled = styled(Scrollable)`
   max-height: 40vh;
