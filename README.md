@@ -1,6 +1,6 @@
 # Ansible UI
 
-Source for the Ansible Automation Platform web UI. The supported development path is the **Platform UI** in `platform/`, which talks to the [Ansible platform gateway](https://github.com/ansible/aap-gateway) API. Product-specific workspaces (Controller, Hub, EDA, and shared libraries) live under `frontend/` and are composed into that unified UI.
+Source for the Ansible web UI. The supported development path is the unified UI in `platform/`, which talks to [Ansible Jewel](https://github.com/ansible/jewel). Product-specific workspaces (Controller, Hub, EDA, and shared libraries) live under `frontend/` and are composed into that application.
 
 Day-to-day integration happens on the **`devel`** branch. Open pull requests against `devel`.
 
@@ -33,14 +33,14 @@ Day-to-day integration happens on the **`devel`** branch. Open pull requests aga
    npm ci
    ```
 
-4. **Run a platform gateway**
+4. **Run Ansible Jewel**
 
-   The UI expects a running gateway (or full platform) that serves the unified APIs. Follow the [aap-gateway](https://github.com/ansible/aap-gateway) documentation to stand up a local environment.
+   The UI expects a running Jewel instance that serves the unified APIs. Follow the [ansible/jewel](https://github.com/ansible/jewel) documentation to stand up a local development environment.
 
-5. **Configure and start the Platform UI**
+5. **Configure and start the Ansible UI**
 
    ```zsh
-   export PLATFORM_SERVER='https://localhost:443'  # gateway URL (protocol://host:port)
+   export PLATFORM_SERVER='https://localhost:443'  # Jewel API URL (protocol://host:port)
    npm start
    ```
 
@@ -59,11 +59,11 @@ This repository is an npm workspaces monorepo. See [`WORKSPACES.md`](WORKSPACES.
 
 ## Environment variables
 
-Common variables when running the Platform UI against a remote or local gateway:
+Common variables when running the Ansible UI against a remote or local Jewel instance:
 
 | Environment variable | Description |
 | -------------------- | ----------- |
-| `PLATFORM_SERVER` | Gateway base URL (`protocol://host:port`, no trailing slash). |
+| `PLATFORM_SERVER` | Jewel API base URL (`protocol://host:port`, no trailing slash). |
 | `PLATFORM_USERNAME` | Login username for live E2E tests (optional for local dev). |
 | `PLATFORM_PASSWORD` | Login password for live E2E tests (optional for local dev). |
 | `AWX_API_PREFIX` | Controller API prefix when required by your gateway (often `/api/controller/v2`). |

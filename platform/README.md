@@ -4,7 +4,7 @@ The Platform UI is the unified UI for Ansible. It uses the Ansible platform as t
 
 ```mermaid
 flowchart TD
-   ui(Ansible UI) --- platform(Platform gateway)
+   ui(Ansible UI) --- platform(Ansible Jewel)
    platform --- awx(Controller)
    platform --- hub(Automation HUB)
    platform --- eda(Event Driven Ansible)
@@ -20,7 +20,7 @@ flowchart TD
 
 1. Setup Platform
 
-   Follow the [Ansible platform gateway](https://github.com/ansible/aap-gateway) documentation to run a gateway (or full platform) locally.
+   Follow the [Ansible Jewel](https://github.com/ansible/jewel) documentation to run Jewel locally.
 
 1. Clone the Ansible UI Repository
 
@@ -38,7 +38,7 @@ flowchart TD
 
    | Environment Variable | Description                                         |
    | -------------------: | --------------------------------------------------- |
-   |    `PLATFORM_SERVER` | The Ansible Platform server (protocol://host:port). |
+   |    `PLATFORM_SERVER` | The Jewel API server (protocol://host:port). |
 
    ```zsh
    export PLATFORM_SERVER=https://localhost:443
@@ -53,7 +53,7 @@ flowchart TD
 
    This will start the Ansible UI in development mode.
    It will be running on <https://localhost:4100>.
-   The Platform gateway ui will talk to the platform gateway api using the `PLATFORM_SERVER` environment variable.
+   The dev server proxies API requests to Jewel using the `PLATFORM_SERVER` environment variable.
 
 ## Building for Production
 

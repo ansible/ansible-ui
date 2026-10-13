@@ -7,7 +7,3 @@ This repository uses **`devel`** as the default integration branch. Feature work
 1. Fetch the latest `devel` and create a topic branch from it.
 2. Open a pull request against `devel` when the change is ready for review.
 3. Keep the branch reasonably up to date with `devel` while review is in progress (merge `origin/devel` into your branch as needed).
-
-## Release branches
-
-Product release branches (for example downstream stable branches) are managed outside this document. If you are contributing to the open source tree, you normally do not need a release branch—use `devel`.
