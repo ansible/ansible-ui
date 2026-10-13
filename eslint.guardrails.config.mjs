@@ -54,6 +54,29 @@ export default [
       'max-nested-callbacks': ['warn', 4],
       'sonarjs/cognitive-complexity': ['warn', 15],
       'sonarjs/no-nested-conditional': 'warn',
+      'no-restricted-syntax': [
+        'warn',
+        {
+          selector: 'JSXOpeningElement[name.name=/^h[1-6]$/]',
+          message: 'Prefer the PatternFly Title component for headings.',
+        },
+        {
+          selector: "JSXOpeningElement[name.name='p']",
+          message: 'Prefer the PatternFly Content or HelperText component for text.',
+        },
+        {
+          selector: "JSXOpeningElement[name.name='ul']",
+          message: 'Prefer the PatternFly List component for unordered lists.',
+        },
+        {
+          selector: "JSXOpeningElement[name.name='ol']",
+          message: 'Prefer the PatternFly List component for ordered lists.',
+        },
+        {
+          selector: "JSXOpeningElement[name.name='li']",
+          message: 'Prefer the PatternFly List component for list items.',
+        },
+      ],
     },
   },
 ];
