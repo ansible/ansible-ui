@@ -51,9 +51,9 @@ type ReorderItemsProps<T extends object> = {
 
 export function moveReorderItem<T>(
   arr: T[],
-  itemId: string,
+  itemId: string | number,
   toIndex: number,
-  keyFn: (item: T) => string
+  keyFn: (item: T) => string | number
 ): T[] {
   const fromIndex = arr.findIndex((item) => keyFn(item) === itemId);
 
@@ -149,7 +149,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     return null;
   };
 
-  const moveItem = (arr: T[], itemId: string, toIndex: number) =>
+  const moveItem = (arr: T[], itemId: string | number, toIndex: number) =>
     moveReorderItem(arr, itemId, toIndex, keyFn);
 
   const onDragLeave: TbodyProps['onDragLeave'] = (evt) => {
