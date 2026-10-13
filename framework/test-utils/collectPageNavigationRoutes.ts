@@ -5,7 +5,7 @@ export type PageNavigationRouteDescriptor = {
   path: string;
 };
 
-/** Flattens a platform navigation tree for structural route assertions in tests. */
+/** Flattens a navigation tree for structural route assertions in tests. */
 export function collectPageNavigationRoutes(
   navigation: PageNavigationItem | PageNavigationItem[]
 ): PageNavigationRouteDescriptor[] {
