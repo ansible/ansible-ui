@@ -1,17 +1,16 @@
 import { ITableColumn, PageDashboardCard, PageTable } from '@ansible/ansible-ui-framework';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
+import { Truncate } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { DashboardTableCardProps, IDashboardTableItem } from '../types';
-import { PageLoadingTable } from '../../../../../framework/PageTable/PageLoadingTable';
 import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
 
 const TRUNCATED_NAME_CELL_MAX_WIDTH = 320;
 
 const truncatedNameCellStyle: React.CSSProperties = {
   maxWidth: `${TRUNCATED_NAME_CELL_MAX_WIDTH}px`,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
+  minWidth: 0,
 };
 
 export function DashboardTableCard(props: DashboardTableCardProps) {
@@ -34,12 +33,12 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
   const [perPage, setPerPage] = useState(5);
   const { t } = useTranslation();
 
-  const nameCell = (item: IDashboardTableItem) => {
-    return <div style={truncatedNameCellStyle}>{item.name}</div>;
-  };
+  const nameCell = (item: IDashboardTableItem) => (
+    <Truncate content={item.name} style={truncatedNameCellStyle} />
+  );
 
   const valueCell = (item: IDashboardTableItem) =>
-    item?.execution_count || item.execution_count === 0
+    typeof item.execution_count === 'number'
       ? item.execution_count.toLocaleString(DEFAULT_NUMBER_LOCALE)
       : '';
 

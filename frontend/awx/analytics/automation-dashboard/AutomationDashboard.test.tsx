@@ -47,21 +47,26 @@ vi.mock('./components', () => ({
       {title}
     </div>
   ),
+  // Stub: renders empty-state copy only when items are empty (see DashboardTableCard.test.tsx).
   DashboardTableCard: ({
     id,
     title,
+    items,
     emptyStateTitle,
     emptyStateDescription,
   }: {
     id: string;
     title: string;
+    items?: unknown[];
     emptyStateTitle?: string;
     emptyStateDescription?: string;
   }) => (
     <div data-testid={id}>
       <span>{title}</span>
-      {emptyStateTitle && <span data-testid={`${id}-empty-title`}>{emptyStateTitle}</span>}
-      {emptyStateDescription && (
+      {(!items || items.length === 0) && emptyStateTitle && (
+        <span data-testid={`${id}-empty-title`}>{emptyStateTitle}</span>
+      )}
+      {(!items || items.length === 0) && emptyStateDescription && (
         <span data-testid={`${id}-empty-desc`}>{emptyStateDescription}</span>
       )}
     </div>
@@ -306,11 +311,12 @@ describe('AutomationDashboard', () => {
     expect(screen.getByText('See all failed jobs')).toBeInTheDocument();
   });
 
-  // ─── Table card empty states ────────────────────────────────────────────────
+  // ─── DashboardTableCard empty-state prop wiring ────────────────────────────
 
-  test('should show "no data yet" empty state for table cards when itemCount is 0', () => {
+  test('wires "no data yet" empty state props when itemCount is 0', () => {
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
       ...mockView,
+      details: { ...mockDetails, top_projects: [], top_users: [] },
       mainTableView: { ...mockMainTableView, itemCount: 0 },
     });
     render(testWrapper());
@@ -326,7 +332,12 @@ describe('AutomationDashboard', () => {
     );
   });
 
-  test('should show "no items to rank" empty state for table cards when itemCount > 0', () => {
+  test('wires "no items to rank" empty state props when itemCount > 0 and ranking lists are empty', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      details: { ...mockDetails, top_projects: [], top_users: [] },
+      mainTableView: { ...mockMainTableView, itemCount: 5 },
+    });
     render(testWrapper());
     expect(screen.getByTestId('top-projects-card-empty-title')).toHaveTextContent(
       'No projects to rank'

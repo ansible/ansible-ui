@@ -81,4 +81,12 @@ describe('DashboardTableCard', () => {
     const valueCell = row?.querySelectorAll('td')[1];
     expect(valueCell).toHaveTextContent('');
   });
+
+  test('renders zero in value cell when execution_count is 0', () => {
+    const items = [{ id: 1, name: 'Zero Jobs', execution_count: 0 }] as IDashboardTableItem[];
+    render(<DashboardTableCard {...defaultProps} items={items} />);
+    const row = screen.getByText('Zero Jobs').closest('tr');
+    const valueCell = row?.querySelectorAll('td')[1];
+    expect(valueCell).toHaveTextContent('0');
+  });
 });
