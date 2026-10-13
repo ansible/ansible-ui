@@ -20,6 +20,15 @@ const testItems: TestItem[] = [
   { id: 5, name: 'Echo', category: 'fruit' },
 ];
 
+const keyFn = (item: TestItem) => item.id;
+const categoryFilter: IToolbarFilter = {
+  type: ToolbarFilterType.SingleText,
+  comparison: 'contains',
+  key: 'category',
+  label: 'Category',
+  query: 'category',
+};
+
 function Wrapper({ children }: { children: ReactNode }) {
   return <MemoryRouter>{children}</MemoryRouter>;
 }
@@ -30,7 +39,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: testItems,
-          keyFn: (item) => item.id,
+          keyFn,
           disableQueryString: true,
         }),
       { wrapper: Wrapper }
@@ -45,7 +54,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: undefined,
-          keyFn: (item) => item.id,
+          keyFn,
           disableQueryString: true,
         }),
       { wrapper: Wrapper }
@@ -61,7 +70,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: testItems,
-          keyFn: (item) => item.id,
+          keyFn,
           error,
           disableQueryString: true,
         }),
@@ -76,7 +85,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: testItems,
-          keyFn: (item) => item.id,
+          keyFn,
           tableColumns: [{ header: 'Name', sort: 'name', cell: (i) => i.name }],
           disableQueryString: true,
         }),
@@ -91,20 +100,13 @@ describe('useInMemoryView', () => {
   });
 
   it('should filter items using a toolbar filter value', async () => {
-    const categoryFilter: IToolbarFilter = {
-      type: ToolbarFilterType.SingleText,
-      comparison: 'contains',
-      key: 'category',
-      label: 'Category',
-      query: 'category',
-    };
     window.history.replaceState(null, '', '/?category=fruit&perPage=10');
     try {
       const { result } = renderHook(
         () =>
           useInMemoryView<TestItem>({
             items: testItems,
-            keyFn: (item) => item.id,
+            keyFn,
             toolbarFilters: [categoryFilter],
           }),
         { wrapper: Wrapper }
@@ -124,7 +126,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: testItems,
-          keyFn: (item) => item.id,
+          keyFn,
           disableQueryString: true,
         }),
       { wrapper: Wrapper }
