@@ -8,6 +8,7 @@ import prettier from 'eslint-plugin-prettier';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import sonarjs from 'eslint-plugin-sonarjs';
+import patternflyOrg from './eslint-plugins/patternfly-org/index.mjs';
 
 export default [
   {
@@ -41,6 +42,7 @@ export default [
       'jsx-a11y': jsxA11y,
       'no-only-tests': noOnlyTests,
       prettier,
+      'patternfly-org': patternflyOrg,
       react,
       'react-hooks': reactHooks,
       sonarjs,
@@ -54,29 +56,8 @@ export default [
       'max-nested-callbacks': ['warn', 4],
       'sonarjs/cognitive-complexity': ['warn', 15],
       'sonarjs/no-nested-conditional': 'warn',
-      'no-restricted-syntax': [
-        'warn',
-        {
-          selector: 'JSXOpeningElement[name.name=/^h[1-6]$/]',
-          message: 'Prefer the PatternFly Title component for headings.',
-        },
-        {
-          selector: "JSXOpeningElement[name.name='p']",
-          message: 'Prefer the PatternFly Content or HelperText component for text.',
-        },
-        {
-          selector: "JSXOpeningElement[name.name='ul']",
-          message: 'Prefer the PatternFly List component for unordered lists.',
-        },
-        {
-          selector: "JSXOpeningElement[name.name='ol']",
-          message: 'Prefer the PatternFly List component for ordered lists.',
-        },
-        {
-          selector: "JSXOpeningElement[name.name='li']",
-          message: 'Prefer the PatternFly List component for list items.',
-        },
-      ],
+      'patternfly-org/prefer-pf-text-components': 'warn',
+      'patternfly-org/prefer-pf-list-components': 'warn',
     },
   },
 ];
