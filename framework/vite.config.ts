@@ -40,7 +40,7 @@ export default defineConfig({
     },
   },
   test: {
-    maxWorkers: 3,
+    maxWorkers: 2,
     coverage: {
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
