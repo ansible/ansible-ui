@@ -36,8 +36,8 @@ flowchart TD
 
 1. Setup Environment Variables
 
-   | Environment Variable | Description                                         |
-   | -------------------: | --------------------------------------------------- |
+   | Environment Variable | Description                                  |
+   | -------------------: | -------------------------------------------- |
    |    `PLATFORM_SERVER` | The Jewel API server (protocol://host:port). |
 
    ```zsh
