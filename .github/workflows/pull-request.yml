@@ -201,6 +201,7 @@ jobs:
       - run: npm ci
         if: steps.cache.outputs.cache-hit != 'true'
       - run: npm run eslint:guardrails
+      - run: npm run eslint:vitest-guardrails
 
   vitest-awx:
     name: Vitest (awx)
