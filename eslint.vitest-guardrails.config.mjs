@@ -41,6 +41,21 @@ export default [
         },
       ],
       '@vitest/no-identical-title': 'warn',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector:
+            "CallExpression[callee.name='useInMemoryView'] > ObjectExpression > Property[key.name='toolbarFilters'][value.type='ArrayExpression']",
+          message:
+            'Pass a stable toolbarFilters reference to useInMemoryView; hoist or memoize the array so its effect does not repeatedly update filter state.',
+        },
+        {
+          selector:
+            "CallExpression[callee.name='useInMemoryView'] > ObjectExpression > Property[key.name='toolbarFilters'] > TSAsExpression > ArrayExpression",
+          message:
+            'Pass a stable toolbarFilters reference to useInMemoryView; hoist or memoize the array so its effect does not repeatedly update filter state.',
+        },
+      ],
       'testing-library/no-debugging-utils': 'warn',
       'testing-library/prefer-user-event': 'warn',
       'testing-library/no-node-access': 'warn',
