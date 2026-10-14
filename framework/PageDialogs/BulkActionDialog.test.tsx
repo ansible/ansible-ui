@@ -191,19 +191,18 @@ describe('BulkActionDialog', () => {
   });
 
   it('should call onClose with success after actions complete', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
     const onClose = vi.fn();
     const actionFn = vi.fn().mockResolvedValue(undefined);
 
     renderDialog({ items: [{ id: 1, name: 'Item 1' }], actionFn, onClose });
 
     await waitFor(() => expect(actionFn).toHaveBeenCalled());
-    await waitFor(
-      () => {
-        expect(onClose).toHaveBeenCalled();
-      },
-      { timeout: 3000 }
-    );
+    await vi.advanceTimersByTimeAsync(1000);
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
     expect(onClose.mock.calls[0][0]).toBe('success');
+    vi.useRealTimers();
   });
 
   it('should call onClose with failure status when actions fail', async () => {
