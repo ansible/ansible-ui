@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -198,9 +198,17 @@ describe('BulkActionDialog', () => {
     renderDialog({ items: [{ id: 1, name: 'Item 1' }], actionFn, onClose });
 
     await waitFor(() => expect(actionFn).toHaveBeenCalled());
-    await vi.advanceTimersByTimeAsync(1000);
+    await act(async () => {
+      await Promise.resolve();
+    });
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
 
-    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(onClose).toHaveBeenCalledOnce();
     expect(onClose.mock.calls[0][0]).toBe('success');
     vi.useRealTimers();
   });
