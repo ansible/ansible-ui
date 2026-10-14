@@ -1,10 +1,12 @@
 /* eslint-disable i18next/no-literal-string */
 import { act, render } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { useDashboardGridColumns } from './useDashboardGridColumns';
 
-vi.mock('@react-hook/resize-observer', () => ({ default: vi.fn() }));
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
+}));
 
 function Probe() {
   const { ref, gridColumns } = useDashboardGridColumns();
@@ -45,7 +47,7 @@ describe('useDashboardGridColumns', () => {
 
     const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
     act(() => {
-      resizeCallback({ contentRect: { width: 2400 } } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: { width: 2400 } } as ResizeObserverEntry);
     });
 
     // (2400 - 56) / 69.25 => 33
@@ -64,10 +66,10 @@ describe('useDashboardGridColumns', () => {
 
     const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
     act(() => {
-      resizeCallback({ contentRect: { width: 0 } } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: { width: 0 } } as ResizeObserverEntry);
     });
     act(() => {
-      resizeCallback({ contentRect: {} } as ResizeObserverEntry, {} as ResizeObserver);
+      resizeCallback({ contentRect: {} } as ResizeObserverEntry);
     });
 
     // transient / hidden measurements are ignored — no flash to one column

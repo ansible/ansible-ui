@@ -6,7 +6,7 @@ import {
   type RefObject,
   type SetStateAction,
 } from 'react';
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 
 /** Approx. width of one dashboard grid column, in px (matches the framework PageDashboard). */
 const COLUMN_WIDTH = 1662 / 24;
