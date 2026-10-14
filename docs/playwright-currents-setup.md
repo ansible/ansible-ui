@@ -41,34 +41,24 @@ Add the following secrets to your GitHub repository:
 
 ### 3. Workflow Configuration
 
-The workflow is automatically configured in `.github/workflows/playwright-currents.yml` and will:
+The reusable workflow lives in `.github/workflows/playwright-currents.yml` (`workflow_call`). It is invoked by other workflows (for example ephemeral AAP Playwright on pull requests) with platform URL and credentials passed in as inputs.
 
-- **Trigger on:**
+The **Run Playwright with Currents** entry in the Actions tab (`.github/workflows/run-playwright-currents.yml`) is **`workflow_dispatch` only**—it does not run on every push or pull request to `devel`.
 
-  - Pull requests to `devel`
-  - Pushes to `devel`
-  - Manual workflow dispatch with custom parameters
+When invoked, a run will:
 
-- **Run tests in parallel** across 4 shards for faster execution
+- **Execute tests in parallel** across multiple shards (configurable)
 - **Upload artifacts** including test results and HTML reports
-- **Send notifications** to Slack (if configured)
+- **Report results** to Currents.dev (and optionally Slack, if configured)
 
 ## Usage
 
-### Automatic Execution
+### Manual execution (Currents workflow)
 
-Tests run automatically on:
+To run the dispatch workflow against a specific environment:
 
-- **Pull Requests** - Full test suite validation
-- **Main/Develop pushes** - Regression testing
-- **Scheduled runs** - Nightly test execution
-
-### Manual Execution
-
-You can manually trigger tests with custom parameters:
-
-1. Go to **Actions** tab in your GitHub repository
-2. Select **Playwright Tests with Currents.dev** workflow
+1. Go to **Actions** in the GitHub repository
+2. Select **Run Playwright with Currents**
 3. Click **Run workflow**
 4. Configure parameters:
    - **Platform URLs** - Test environment endpoints

@@ -52,8 +52,10 @@ This repository is an npm workspaces monorepo. See [`WORKSPACES.md`](WORKSPACES.
 
 | Path | Role |
 | ---- | ---- |
-| `platform/` | Unified Platform UI (primary application) |
+| `platform/` | Unified Ansible UI (primary application) |
 | `frontend/awx`, `frontend/hub`, `frontend/eda` | Product UI workspaces used by the platform build |
+| `frontend/common` | Shared UI utilities and access components across product workspaces |
+| `packages/*` | Optional shared npm packages (workspace glob; may be empty) |
 | `framework/` | Shared PatternFly-based UI framework |
 | `playwright/` | End-to-end and integration tests |
 
@@ -67,8 +69,8 @@ Common variables when running the Ansible UI against a remote or local Jewel ins
 | `PLATFORM_USERNAME` | Login username for live E2E tests (optional for local dev). |
 | `PLATFORM_PASSWORD` | Login password for live E2E tests (optional for local dev). |
 | `AWX_API_PREFIX` | AWX API prefix when required by Jewel (often `/api/controller/v2`). |
-| `EDA_API_PREFIX` | EDA API prefix when required by your gateway (often `/api/eda/v1`). |
-| `HUB_API_PREFIX` | Hub API prefix when required by your gateway. |
+| `EDA_API_PREFIX` | EDA API prefix when required by Jewel (often `/api/eda/v1`). |
+| `HUB_API_PREFIX` | Hub API prefix when required by Jewel. |
 
 ```zsh
 export PLATFORM_SERVER='https://localhost:443'
@@ -95,7 +97,7 @@ Playwright tests use additional variables; see [`playwright/Playwright.md`](play
 | Script | Description |
 | ------ | ----------- |
 | `npm run start` | Platform UI dev server on port 4100 |
-| `npm run build` | Production build (output under `build/platform`) |
+| `npm run build` | Production build (output under `platform/dist`) |
 | `npm run test` | Workspace-level checks |
 
 ## Documentation
@@ -109,7 +111,7 @@ Playwright tests use additional variables; see [`playwright/Playwright.md`](play
 
 ## Standalone product UIs (unsupported)
 
-`package.json` scripts still exist to run individual product workspaces in isolation (for example `npm --prefix frontend/awx start` on port 4101). **These standalone dev servers are not supported** in this repository: they are unmaintained, are not validated in CI, and often do not work with current gateway authentication and RBAC. Use the Platform UI workflow above unless you are explicitly working on a dedicated standalone effort.
+`package.json` scripts still exist to run individual product workspaces in isolation (for example `npm --prefix frontend/awx start` on port 4101). **These standalone dev servers are not supported** in this repository: they are unmaintained, are not validated in CI, and often do not work with [Ansible Jewel](https://github.com/ansible/jewel) authentication and RBAC (the unified API layer used by the supported `platform/` workflow). Use the Ansible UI workflow above unless you are explicitly working on a dedicated standalone effort.
 
 | Script | Dev URL (if it starts) |
 | ------ | ---------------------- |

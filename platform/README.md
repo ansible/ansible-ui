@@ -76,6 +76,6 @@ flowchart TD
    npm run build
    ```
 
-   The built Ansible UI static files should be in the `build/platform` directory.
+   The built Ansible UI static files should be in the `platform/dist` directory.
    These should be served using a service like `nginx`.
    An example nginx config for optimal client side caching is at `/platform/platform.conf`
