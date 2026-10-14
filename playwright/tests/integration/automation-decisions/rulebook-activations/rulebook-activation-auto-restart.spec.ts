@@ -14,7 +14,7 @@ import {
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
 test.afterEach(setupAfter);
 
-test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
+test.describe('Rulebook Activations - Auto-restart on Project Sync if Rulebook Changes', () => {
   test.beforeAll(() => {
     if (isSaaS()) {
       test.skip(true, 'Rulebook activations not available on SaaS deployments');
@@ -41,7 +41,7 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
   });
 
   test(
-    'should create rulebook activation with auto-restart on project update enabled',
+    'should create rulebook activation with auto-restart on project sync if rulebook changes enabled',
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(150000);
@@ -83,9 +83,9 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
         await page.getByRole('option', { name: decisionEnvironmentName }).click();
       });
 
-      await test.step('Enable auto-restart on project update', async () => {
+      await test.step('Enable auto-restart on project sync if rulebook changes', async () => {
         const autoRestartCheckbox = page.getByRole('checkbox', {
-          name: 'Auto-restart on project update',
+          name: 'Auto-restart on project sync if rulebook changes',
         });
         await expect(autoRestartCheckbox).toBeVisible();
         await expect(autoRestartCheckbox).not.toBeChecked();
@@ -110,7 +110,7 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
   );
 
   test(
-    'should edit rulebook activation to enable auto-restart on project update',
+    'should edit rulebook activation to enable auto-restart on project sync if rulebook changes',
     { tag: ['@not_mock'] },
     async ({ page }) => {
       test.setTimeout(150000);
@@ -130,9 +130,9 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
         ).toBeVisible();
       });
 
-      await test.step('Enable auto-restart on project update', async () => {
+      await test.step('Enable auto-restart on project sync if rulebook changes', async () => {
         const autoRestartCheckbox = page.getByRole('checkbox', {
-          name: 'Auto-restart on project update',
+          name: 'Auto-restart on project sync if rulebook changes',
         });
         await expect(autoRestartCheckbox).toBeVisible();
         await expect(autoRestartCheckbox).not.toBeChecked();
@@ -161,7 +161,7 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
       await page.getByText('Create rulebook activation').click();
 
       const autoRestartCheckbox = page.getByRole('checkbox', {
-        name: 'Auto-restart on project update',
+        name: 'Auto-restart on project sync if rulebook changes',
       });
 
       await test.step('Checkbox should be visible and unchecked initially', async () => {
@@ -198,7 +198,7 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
       await test.step('Enable auto-restart on first edit', async () => {
         await clickPageAction('Edit rulebook activation', page);
         const autoRestartCheckbox = page.getByRole('checkbox', {
-          name: 'Auto-restart on project update',
+          name: 'Auto-restart on project sync if rulebook changes',
         });
         await autoRestartCheckbox.check();
         await page.getByRole('button', { name: 'Save rulebook activation' }).click();
@@ -214,7 +214,7 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
         ).toBeVisible();
 
         const autoRestartCheckbox = page.getByRole('checkbox', {
-          name: 'Auto-restart on project update',
+          name: 'Auto-restart on project sync if rulebook changes',
         });
         await expect(autoRestartCheckbox).toBeChecked();
       });
@@ -293,7 +293,7 @@ test.describe('Rulebook Activations - Auto-restart on Project Update', () => {
 
       await test.step('Enable multiple options including auto-restart', async () => {
         await page.getByRole('checkbox', { name: 'Skip audit events' }).check();
-        await page.getByRole('checkbox', { name: 'Auto-restart on project update' }).check();
+        await page.getByRole('checkbox', { name: 'Auto-restart on project sync if rulebook changes' }).check();
         await page
           .getByRole('switch', { name: 'Rulebook activation enabled?' })
           .click({ force: true });

@@ -294,9 +294,9 @@ export function RulebookActivationDetails() {
               )}
               {!!rulebookActivation.restart_on_project_update && (
                 <Content component={ContentVariants.li}>
-                  {t('Auto-restart on project update')}
+                  {t('Auto-restart on project sync if rulebook changes')}
                   <StandardPopover
-                    header={t('Auto-restart on project update')}
+                    header={t('Auto-restart on project sync if rulebook changes')}
                     content={t(
                       'When the associated project resyncs, this rulebook activation automatically restarts if its rulebook has changed, so it runs with the latest rulebook content.'
                     )}

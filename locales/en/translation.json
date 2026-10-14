@@ -323,7 +323,7 @@
     "Authentication Providers": "Authentication Providers",
     "Authentication type": "Authentication type",
     "Auto": "Auto",
-    "Auto-restart on project update": "Auto-restart on project update",
+    "Auto-restart on project sync if rulebook changes": "Auto-restart on project sync if rulebook changes",
     "Automated cost": "Automated cost",
     "Automated process cost": "Automated process cost",
     "Automatically enable this rulebook activation to run.": "Automatically enable this rulebook activation to run.",

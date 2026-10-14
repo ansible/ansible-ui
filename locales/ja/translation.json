@@ -295,7 +295,7 @@
     "Authentication Providers": "Authentication Providers",
     "Authentication type": "認証タイプ",
     "Auto": "自動",
-    "Auto-restart on project update": "Auto-restart on project update",
+    "Auto-restart on project sync if rulebook changes": "Auto-restart on project sync if rulebook changes",
     "Automated cost": "Automated cost",
     "Automated process cost": "自動化プロセスコスト",
     "Automatically enable this rulebook activation to run.": "このルールブックのアクティベーションを自動的に有効にして実行します。",

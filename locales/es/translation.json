@@ -367,7 +367,7 @@
     "Authentication Providers": "Authentication Providers",
     "Authentication type": "Tipo de autenticación",
     "Auto": "Auto",
-    "Auto-restart on project update": "Auto-restart on project update",
+    "Auto-restart on project sync if rulebook changes": "Auto-restart on project sync if rulebook changes",
     "Automated cost": "Automated cost",
     "Automated process cost": "Coste del proceso automatizado",
     "Automatically enable this rulebook activation to run.": "Habilitar automáticamente la activación de este reglamento para que se ejecute.",

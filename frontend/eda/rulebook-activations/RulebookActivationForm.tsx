@@ -324,8 +324,8 @@ export function RulebookActivationInputs() {
             name="skip_audit_events"
           />
           <PageFormCheckbox<IEdaRulebookActivationInputs>
-            label={t`Auto-restart on project update`}
-            labelHelpTitle={t('Auto-restart on project update')}
+            label={t`Auto-restart on project sync if rulebook changes`}
+            labelHelpTitle={t('Auto-restart on project sync if rulebook changes')}
             labelHelp={t(
               'When the associated project resyncs, this rulebook activation automatically restarts if its rulebook has changed, so it runs with the latest rulebook content.'
             )}

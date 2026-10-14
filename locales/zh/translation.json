@@ -295,7 +295,7 @@
     "Authentication Providers": "Authentication Providers",
     "Authentication type": "认证类型",
     "Auto": "自动",
-    "Auto-restart on project update": "Auto-restart on project update",
+    "Auto-restart on project sync if rulebook changes": "Auto-restart on project sync if rulebook changes",
     "Automated cost": "Automated cost",
     "Automated process cost": "自动化过程成本",
     "Automatically enable this rulebook activation to run.": "自动启用此规则手册激活运行。",
