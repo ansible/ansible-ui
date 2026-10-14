@@ -24,6 +24,7 @@ import { AwxError } from '../../../common/AwxError';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { ExecutionEnvironmentDetail } from '../../../common/ExecutionEnvironmentDetail';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { getSyncJobId } from '../../../common/getSyncJobId';
 import { useAwxConfig } from '../../../common/useAwxConfig';
 import { useAwxWebSocketSubscription } from '../../../common/useAwxWebSocket';
 import { Project } from '../../../interfaces/Project';
@@ -197,6 +198,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
   );
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!project) return <LoadingPage breadcrumbs tabs />;
+  const jobId = getSyncJobId(project.summary_fields, project.related?.last_job);
   return (
     <PageDetails disableScroll={props.disableScroll}>
       <PageDetail label={t('Name')}>
@@ -220,14 +222,11 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
         </PageDetail>
       )}
       <PageDetail label={t('Last job status')}>
-        {project.summary_fields?.current_job || project.summary_fields?.last_job ? (
+        {jobId !== undefined ? (
           <StatusCell
             status={project.status}
             to={getPageUrl(AwxRoute.JobOutput, {
-              params: {
-                job_type: project.type,
-                id: project.summary_fields?.current_job?.id ?? project.summary_fields?.last_job?.id,
-              },
+              params: { job_type: project.type, id: jobId },
             })}
           />
         ) : (

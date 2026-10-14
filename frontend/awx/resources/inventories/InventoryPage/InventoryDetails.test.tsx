@@ -244,4 +244,29 @@ describe('InventoryDetails', () => {
 
     expect(screen.getByText('Last job status')).toBeInTheDocument();
   });
+
+  it('should not render last job status when current_job has no numeric id and last_job is absent', async () => {
+    const inventory = {
+      ...baseInventory,
+      id: 78,
+      kind: 'constructed',
+      update_cache_timeout: 0,
+      verbosity: 0,
+      source_vars: '',
+      limit: '',
+      source: {
+        summary_fields: {
+          current_job: { status: 'running' },
+        },
+      },
+    } as unknown as Inventory;
+
+    renderInventoryDetails(inventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('test inventory')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Last job status')).not.toBeInTheDocument();
+  });
 });
