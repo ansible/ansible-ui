@@ -52,7 +52,7 @@ function processSurvey(
 
   // Drop answers for fields whose conditions are not met, so conditionally-hidden
   // fields (which still carry their seeded default) don't appear in the review.
-  const visibleSurvey = pruneSurveyByConditions(survey, surveyConfig?.spec, extraVarsObj);
+  const visibleSurvey = pruneSurveyByConditions(survey, surveyConfig?.spec, { ...extraVarsObj });
   const updatedSurvey: { [key: string]: string | string[] } = { ...visibleSurvey };
 
   if (surveyConfig?.spec) {

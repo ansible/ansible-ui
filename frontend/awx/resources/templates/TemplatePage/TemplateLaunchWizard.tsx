@@ -185,7 +185,9 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           const extraVarsObj = prompt?.extra_vars
             ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
             : {};
-          const visibleSurvey = pruneSurveyByConditions(survey, surveySpec?.spec, extraVarsObj);
+          const visibleSurvey = pruneSurveyByConditions(survey, surveySpec?.spec, {
+            ...extraVarsObj,
+          });
           setValue('extra_vars', {
             ...extraVarsObj,
             ...visibleSurvey,
@@ -196,7 +198,9 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           const extraVarsObj = prompt?.extra_vars
             ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
             : {};
-          const visibleSurvey = pruneSurveyByConditions(survey, surveySpec?.spec, extraVarsObj);
+          const visibleSurvey = pruneSurveyByConditions(survey, surveySpec?.spec, {
+            ...extraVarsObj,
+          });
 
           payload = {
             ...payload,

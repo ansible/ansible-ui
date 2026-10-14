@@ -92,22 +92,20 @@ export function evaluateConditions(element: Spec, data: Record<string, unknown>)
  * used while rendering the survey.
  */
 export function pruneSurveyByConditions<T = unknown>(
-  survey: Record<string, T>,
-  spec: Spec[] | undefined,
-  context: object = {}
+  survey: Readonly<Record<string, T>>,
+  spec: readonly Spec[] | undefined,
+  context: Readonly<Record<string, unknown>> = {}
 ): Record<string, T> {
   if (!spec || spec.length === 0) return { ...survey };
 
-  const data: Record<string, unknown> = { ...(context as Record<string, unknown>), ...survey };
-  const result: Record<string, T> = { ...survey };
+  const data: Record<string, unknown> = { ...context, ...survey };
+  const hidden = new Set(
+    spec.filter((element) => !evaluateConditions(element, data)).map((element) => element.variable)
+  );
 
-  for (const element of spec) {
-    if (element.variable in result && !evaluateConditions(element, data)) {
-      delete result[element.variable];
-    }
-  }
-
-  return result;
+  return Object.fromEntries(
+    Object.entries(survey).filter(([variable]) => !hidden.has(variable))
+  ) as Record<string, T>;
 }
 
 const LIST_OPERATORS: SurveyCondition['operator'][] = ['in', 'notin'];

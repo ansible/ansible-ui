@@ -239,7 +239,7 @@ export function SurveyStep({
   singleColumn,
   pageNumber,
   surveySpecData,
-}: {
+}: Readonly<{
   templateId?: string;
   jobType?: string;
   singleColumn?: boolean;
@@ -247,7 +247,7 @@ export function SurveyStep({
   pageNumber?: number;
   /** Survey spec that was already loaded by the caller; skips fetching it again. */
   surveySpecData?: Survey;
-}) {
+}>) {
   const { wizardData, stepData } = usePageWizard();
   const { reset, unregister } = useFormContext();
 
