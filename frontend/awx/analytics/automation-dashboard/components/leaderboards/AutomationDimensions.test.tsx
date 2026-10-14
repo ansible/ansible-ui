@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { AutomationDimensions } from './AutomationDimensions';
@@ -78,6 +78,14 @@ describe('AutomationDimensions', () => {
     ).not.toBeInTheDocument();
   });
 
+  test('should show the score and rank for a user ranked outside the top 10', () => {
+    render(<AutomationDimensions />);
+
+    const row = screen.getByText('Consistency').closest('li') as HTMLElement;
+    expect(within(row).getByText('9')).toBeInTheDocument();
+    expect(row).toHaveTextContent('Rank 14 of 84');
+  });
+
   test('should show a placeholder instead of 0 when the score is unknown but the user is ranked', () => {
     vi.mocked(useAutomationLeaderboardsView).mockReturnValue({
       ...baseView,
@@ -89,9 +97,41 @@ describe('AutomationDimensions', () => {
 
     render(<AutomationDimensions />);
 
-    const row = screen.getByText('Consistency').closest('li');
-    expect(row).toHaveTextContent('—');
+    const row = screen.getByText('Consistency').closest('li') as HTMLElement;
+    expect(within(row).getByText('—')).toBeInTheDocument();
     expect(row).toHaveTextContent('Rank 14 of 84');
     expect(row).not.toHaveTextContent(/(^|\D)0(\D|$)/);
+  });
+
+  test('should bold only the top 3 names in the leaderboard', () => {
+    vi.mocked(useAutomationLeaderboardsView).mockReturnValue({
+      ...baseView,
+      dimensionLeaderboards: {
+        ...baseView.dimensionLeaderboards,
+        volume: [
+          { id: 'u-1', name: 'SL', value: 612 },
+          { id: 'u-2', name: 'AG', value: 540 },
+          { id: 'u-3', name: 'MC', value: 500 },
+          { id: 'u-4', name: 'RK', value: 450 },
+        ],
+      },
+    });
+
+    render(<AutomationDimensions />);
+
+    expect(screen.getByText('MC')).toHaveStyle({ fontWeight: '700' });
+    expect(screen.getByText('RK')).not.toHaveStyle({ fontWeight: '700' });
+  });
+
+  test('should render no leaderboard bars when the selected dimension has no rows', () => {
+    vi.mocked(useAutomationLeaderboardsView).mockReturnValue({
+      ...baseView,
+      dimensionLeaderboards: { ...baseView.dimensionLeaderboards, volume: [] },
+    });
+
+    render(<AutomationDimensions />);
+
+    expect(screen.getByRole('heading', { name: 'Top 10 — Volume' })).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 });

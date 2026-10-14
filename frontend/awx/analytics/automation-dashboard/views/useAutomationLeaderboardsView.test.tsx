@@ -160,23 +160,92 @@ describe('mapLeaderboardReport', () => {
   });
 
   describe('dimensions', () => {
-    test("should read the score from the current user's own leaderboard row when present", () => {
+    test('should read the score from current_user_runs', () => {
       const data = mapLeaderboardReport(MOCK_LEADERBOARD_REPORT);
 
       expect(data.dimensions.volume).toEqual({ score: 487, rank: 3, totalRanked: 84 });
       expect(data.dimensions.breadth).toEqual({ score: 12, rank: 1, totalRanked: 84 });
     });
 
-    test('should report a null score, not 0, when the current user is ranked but outside the returned top 10', () => {
+    test('should read the score from current_user_runs when the user is outside the returned top 10', () => {
       const data = mapLeaderboardReport(MOCK_LEADERBOARD_REPORT);
 
-      expect(data.dimensions.consistency).toEqual({ score: null, rank: 14, totalRanked: 84 });
+      expect(data.dimensions.consistency).toEqual({ score: 18, rank: 14, totalRanked: 84 });
+    });
+
+    test("should fall back to the current user's own leaderboard row when current_user_runs is missing", () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        activity_levels: [
+          {
+            id: 'breadth',
+            current_user_rank: 1,
+            total_users: 84,
+            leaderboard: [{ rank: 1, username: 'Jamie Ortiz', runs: 12, is_current_user: true }],
+          },
+        ],
+      };
+
+      expect(mapLeaderboardReport(report).dimensions.breadth).toEqual({
+        score: 12,
+        rank: 1,
+        totalRanked: 84,
+      });
+    });
+
+    test('should report a null score, not 0, when current_user_runs is null and the user is ranked outside the top 10', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        activity_levels: [
+          {
+            id: 'consistency',
+            current_user_rank: 14,
+            total_users: 84,
+            current_user_runs: null,
+            leaderboard: [{ rank: 1, username: 'MC', runs: 29 }],
+          },
+        ],
+      };
+
+      expect(mapLeaderboardReport(report).dimensions.consistency).toEqual({
+        score: null,
+        rank: 14,
+        totalRanked: 84,
+      });
+    });
+
+    test('should fall back to 0 when current_user_runs is missing and the user is unranked', () => {
+      const report: ILeaderboardReport = {
+        ...MOCK_LEADERBOARD_REPORT,
+        activity_levels: [
+          {
+            id: 'volume',
+            current_user_rank: 0,
+            total_users: 84,
+            leaderboard: [{ rank: 1, username: 'SL', runs: 612 }],
+          },
+        ],
+      };
+
+      expect(mapLeaderboardReport(report).dimensions.volume).toEqual({
+        score: 0,
+        rank: 0,
+        totalRanked: 84,
+      });
     });
 
     test('should report a 0 score for an unranked dimension (rank 0, no activity)', () => {
       const report: ILeaderboardReport = {
         ...MOCK_LEADERBOARD_REPORT,
-        activity_levels: [{ id: 'volume', current_user_rank: 0, total_users: 84, leaderboard: [] }],
+        activity_levels: [
+          {
+            id: 'volume',
+            current_user_rank: 0,
+            total_users: 84,
+            current_user_runs: 0,
+            leaderboard: [],
+          },
+        ],
       };
 
       expect(mapLeaderboardReport(report).dimensions.volume).toEqual({
@@ -315,13 +384,19 @@ describe('mapLeaderboardReport', () => {
       const report: ILeaderboardReport = {
         ...MOCK_LEADERBOARD_REPORT,
         activity_levels: [
-          { id: 'breadth', current_user_rank: 5, total_users: 10, leaderboard: null },
+          {
+            id: 'breadth',
+            current_user_rank: 5,
+            total_users: 10,
+            current_user_runs: 7,
+            leaderboard: null,
+          },
         ],
       };
 
       const data = mapLeaderboardReport(report);
 
-      expect(data.dimensions.breadth).toEqual({ score: null, rank: 5, totalRanked: 10 });
+      expect(data.dimensions.breadth).toEqual({ score: 7, rank: 5, totalRanked: 10 });
       expect(data.dimensionLeaderboards.breadth).toEqual([]);
     });
 
