@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
@@ -8,6 +9,7 @@ import {
   DashboardMainTableCard,
   DashboardTableCard,
   DashboardValueCard,
+  useAutomationDashboardPeriodFilter,
   useAutomationDashboardToolbar,
 } from './components';
 
@@ -21,10 +23,16 @@ const WIDE_LAYOUT_MAX_COLUMNS = 31;
 
 export function AutomationDashboard() {
   const { t } = useTranslation();
+  const periodFilter = useAutomationDashboardPeriodFilter();
   const toolbarFilters = useAutomationDashboardToolbar();
+  // The query string, required-filter validation and export work on all filters, period included.
+  const allFilters = useMemo(
+    () => [periodFilter, ...toolbarFilters],
+    [periodFilter, toolbarFilters]
+  );
   const getPageUrl = useGetPageUrl();
 
-  const view = useAutomationDashboardView({ toolbarFilters });
+  const view = useAutomationDashboardView({ toolbarFilters: allFilters });
   const { details, templateIdsError, isLoadingTemplateIds } = view;
 
   const noDataString = t('No jobs have been run.');
@@ -182,7 +190,7 @@ export function AutomationDashboard() {
         <DashboardGridRow>
           <DashboardMainTableCard
             {...view}
-            toolbarFilters={toolbarFilters}
+            toolbarFilters={allFilters}
             topCardsWidth={valueCardWidth}
           />
         </DashboardGridRow>
@@ -194,6 +202,8 @@ export function AutomationDashboard() {
     <>
       <DashboardToolbar
         toolbarFilters={toolbarFilters}
+        periodFilter={periodFilter}
+        validationFilters={allFilters}
         {...view.mainTableView}
         keyFn={(item) => item.id}
         registerClearCallback={view.registerClearCallback}

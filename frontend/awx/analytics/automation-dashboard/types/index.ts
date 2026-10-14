@@ -84,8 +84,6 @@ export interface IAutomationDashboardCollectionStatus {
 export interface AutomationDashboardToolbarFiltersProps
   extends Readonly<{
     filterableFields: string[];
-    /** Additional filters appended after the dynamic filters. */
-    additionalFilters?: IToolbarFilter[];
   }> {}
 
 export interface AsyncKeyOptions {
