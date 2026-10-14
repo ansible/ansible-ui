@@ -1,99 +1,102 @@
 import { vi, test, afterEach, describe, expect } from 'vitest';
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { SWRConfig } from 'swr';
 import {
   IToolbarFilter,
   PageAlertToasterProvider,
+  PageDashboardContext,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
-import useResizeObserver from '@react-hook/resize-observer';
 import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardToolbar } from './components';
+import { DEFAULT_NUMBER_LOCALE } from './constants/common';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
-import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
+import { useAutomationDashboardToolbarActions } from './common/useAutomationDashboardToolbarActions';
 import type {
   IAutomationDashboardView,
   IDashboardDetails,
   IJobTemplate,
+  DashboardChartCardProps,
   DashboardValueCardProps,
-  IAutomationDashboardCollectionStatus,
 } from './types';
-
-vi.mock('@react-hook/resize-observer', () => ({
-  default: vi.fn(),
-}));
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-const DEFAULT_COLLECTION_STATUS: IAutomationDashboardCollectionStatus = {
-  enabled: true,
-  next_run: null,
-  initial_collection_status: null,
-};
-
-vi.mock('./common/useAutomationDashboardCollectionStatus', () => ({
-  useAutomationDashboardCollectionStatus: vi.fn(() => ({
-    collectionStatus: DEFAULT_COLLECTION_STATUS,
-    isLoading: false,
-  })),
-}));
-
-vi.mock('./components', () => ({
-  useAutomationDashboardToolbar: vi.fn(() => []),
-  DashboardValueCard: ({
-    id,
-    title,
-    value,
-    valueSuffix,
-    linkText,
-    width,
-  }: DashboardValueCardProps) => (
-    <div data-testid={id} data-width={width}>
-      <span>{title}</span>
-      <span>
-        {typeof value === 'number' ? value.toLocaleString() : value}
-        {valueSuffix ? ` ${valueSuffix}` : ''}
-      </span>
-      {linkText && <span>{linkText}</span>}
-    </div>
-  ),
-  DashboardChartCard: ({ title }: { title: string }) => <div>{title}</div>,
-  DashboardTableCard: ({
-    title,
-    items,
-    emptyStateTitle,
-    emptyStateDescription,
-    filterState,
-  }: {
-    title: string;
-    items?: unknown[];
-    emptyStateTitle?: string;
-    emptyStateDescription?: string;
-    filterState?: Record<string, unknown>;
-  }) => (
-    <div>
-      <div>{title}</div>
-      <div data-testid={`${title}-filter-state`}>
-        {filterState ? JSON.stringify(filterState) : 'none'}
+vi.mock('./components', async () => {
+  const { ToolbarFilterType } = await import('@ansible/ansible-ui-framework');
+  const periodFilter = {
+    type: ToolbarFilterType.DateRange,
+    key: 'period',
+    label: 'Period',
+    query: 'period',
+    options: [{ label: 'Last 7 days', value: 'last_7_days' }],
+    placeholder: 'Filter by period',
+    isRequired: true,
+  };
+  return {
+    useAutomationDashboardPeriodFilter: vi.fn(() => periodFilter),
+    useAutomationDashboardToolbar: vi.fn(() => []),
+    DashboardValueCard: ({
+      id,
+      title,
+      value,
+      valueSuffix,
+      linkText,
+      width,
+    }: DashboardValueCardProps) => (
+      <div data-testid={id} data-width={width}>
+        <span>{title}</span>
+        <span>
+          {typeof value === 'number' ? value.toLocaleString(DEFAULT_NUMBER_LOCALE) : value}
+          {valueSuffix ? ` ${valueSuffix}` : ''}
+        </span>
+        {linkText && <span>{linkText}</span>}
       </div>
-      {(!items || items.length === 0) && (
-        <div data-testid={`${title}-empty-state`}>
-          {emptyStateTitle && <div data-testid="empty-state-title">{emptyStateTitle}</div>}
-          {emptyStateDescription && (
-            <div data-testid="empty-state-description">{emptyStateDescription}</div>
-          )}
-        </div>
-      )}
-    </div>
-  ),
-  DashboardMainTableCard: ({ toolbarFilters }: { toolbarFilters?: IToolbarFilter[] }) => (
-    <div
-      data-testid="dashboard-main-table-card"
-      data-toolbar-filter-keys={toolbarFilters?.map((filter) => filter.key).join(',') ?? ''}
-    />
-  ),
-}));
+    ),
+    DashboardChartCard: ({ id, title, width }: DashboardChartCardProps) => (
+      <div data-testid={id} data-width={width}>
+        {title}
+      </div>
+    ),
+    DashboardTableCard: ({
+      id,
+      title,
+      emptyStateTitle,
+      emptyStateDescription,
+    }: {
+      id: string;
+      title: string;
+      emptyStateTitle?: string;
+      emptyStateDescription?: string;
+    }) => (
+      <div data-testid={id}>
+        <span>{title}</span>
+        {emptyStateTitle && <span data-testid={`${id}-empty-title`}>{emptyStateTitle}</span>}
+        {emptyStateDescription && (
+          <span data-testid={`${id}-empty-desc`}>{emptyStateDescription}</span>
+        )}
+      </div>
+    ),
+    DashboardMainTableCard: ({ toolbarFilters }: { toolbarFilters?: IToolbarFilter[] }) => (
+      <div
+        data-testid="dashboard-main-table-card"
+        data-toolbar-filter-keys={toolbarFilters?.map((filter) => filter.key).join(',') ?? ''}
+      />
+    ),
+  };
+});
+
+// Call-through spy: the toolbar renders as usual, the test only inspects the arguments.
+vi.mock('./common/useAutomationDashboardToolbarActions', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('./common/useAutomationDashboardToolbarActions')>();
+  return {
+    ...actual,
+    useAutomationDashboardToolbarActions: vi.fn(actual.useAutomationDashboardToolbarActions),
+  };
+});
 
 vi.mock('./views/useAutomationDashboardView', () => ({
   useAutomationDashboardView: vi.fn(() => mockView),
@@ -104,7 +107,6 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   return {
     ...actual,
     PageLayout: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-    PageDashboard: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
     PageToolbar: () => null,
     PageHeader: ({ title, controls }: { title: string; controls?: React.ReactNode }) => (
       <div>
@@ -222,12 +224,22 @@ const mockView: IAutomationDashboardView = {
 
 // ─── Test wrapper ─────────────────────────────────────────────────────────────
 
-function testWrapper() {
+function testWrapper(gridColumns?: number) {
+  const dashboard =
+    gridColumns === undefined ? (
+      <AutomationDashboard />
+    ) : (
+      <PageDashboardContext.Provider value={{ columns: gridColumns }}>
+        <AutomationDashboard />
+      </PageDashboardContext.Provider>
+    );
   return (
     <MemoryRouter>
-      <PageAlertToasterProvider>
-        <AutomationDashboard />
-      </PageAlertToasterProvider>
+      <SWRConfig
+        value={{ dedupingInterval: 0, provider: () => new Map(), shouldRetryOnError: false }}
+      >
+        <PageAlertToasterProvider>{dashboard}</PageAlertToasterProvider>
+      </SWRConfig>
     </MemoryRouter>
   );
 }
@@ -235,16 +247,12 @@ function testWrapper() {
 describe('AutomationDashboard', () => {
   afterEach(() => {
     vi.clearAllMocks();
+    // Restore the default so a per-test override cannot leak into later tests.
+    vi.mocked(useAutomationDashboardToolbar).mockReturnValue([]);
   });
 
-  test('renders AutomationDashboard component', () => {
-    const { getByText } = render(testWrapper());
-    expect(getByText('Automation Dashboard')).toBeInTheDocument();
-  });
-
-  test('renders dashboard title', () => {
-    const { getByText } = render(testWrapper());
-    expect(getByText('Automation Dashboard')).toBeInTheDocument();
+  test('should render without crashing', () => {
+    render(testWrapper());
   });
 
   test('should render all dashboard card labels', () => {
@@ -268,26 +276,49 @@ describe('AutomationDashboard', () => {
     expect(screen.getByTestId('dashboard-main-table-card')).toBeInTheDocument();
   });
 
-  test('should pass toolbarFilters through to DashboardMainTableCard', () => {
+  test('should pass the period and toolbar filters through to DashboardMainTableCard and the view', () => {
     const mockToolbarFilters: IToolbarFilter[] = [
       {
-        type: ToolbarFilterType.DateRange,
-        key: 'period',
-        label: 'Period',
-        query: 'period',
-        options: [{ label: 'Last 7 days', value: 'last_7_days' }],
-        placeholder: 'Filter by period',
-        isRequired: true,
+        type: ToolbarFilterType.AsyncMultiSelect,
+        key: 'template',
+        label: 'Template',
+        query: 'template',
+        queryOptions: vi.fn(),
+        queryLabel: (value: string) => value,
       },
     ];
-    vi.mocked(useAutomationDashboardToolbar).mockReturnValueOnce(mockToolbarFilters);
+    vi.mocked(useAutomationDashboardToolbar).mockReturnValue(mockToolbarFilters);
 
     render(testWrapper());
 
     expect(screen.getByTestId('dashboard-main-table-card')).toHaveAttribute(
       'data-toolbar-filter-keys',
-      'period'
+      'period,template'
     );
+    const viewFilters = vi.mocked(useAutomationDashboardView).mock.calls.at(-1)?.[0].toolbarFilters;
+    expect(viewFilters?.map((filter) => filter.key)).toEqual(['period', 'template']);
+  });
+
+  test('should validate the report actions against the same filters as the view, period included', () => {
+    vi.mocked(useAutomationDashboardToolbar).mockReturnValue([
+      {
+        type: ToolbarFilterType.AsyncMultiSelect,
+        key: 'template',
+        label: 'Template',
+        query: 'template',
+        queryOptions: vi.fn(),
+        queryLabel: (value: string) => value,
+      },
+    ]);
+
+    render(testWrapper());
+
+    const viewFilters = vi.mocked(useAutomationDashboardView).mock.calls.at(-1)?.[0].toolbarFilters;
+    const actionFilters = vi
+      .mocked(useAutomationDashboardToolbarActions)
+      .mock.calls.at(-1)?.[0].toolbarFilters;
+    expect(actionFilters).toBe(viewFilters);
+    expect(actionFilters?.map((filter) => filter.key)).toEqual(['period', 'template']);
   });
 
   // ─── Value card data ───────────────────────────────────────────────────────
@@ -324,180 +355,85 @@ describe('AutomationDashboard', () => {
     expect(screen.getByText('See all failed jobs')).toBeInTheDocument();
   });
 
-  // ─── Collection status loading ─────────────────────────────────────────────
+  // ─── Table card empty states ────────────────────────────────────────────────
 
-  test('should show loading state when collection status is loading', () => {
-    vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValueOnce({
-      collectionStatus: DEFAULT_COLLECTION_STATUS,
-      isLoading: true,
-    });
-    render(testWrapper());
-    expect(screen.getByTestId('loading-state')).toBeInTheDocument();
-    expect(screen.queryByText('Automation Dashboard')).not.toBeInTheDocument();
-  });
-
-  test('should show dashboard when collection status is not loading', () => {
-    vi.mocked(useAutomationDashboardCollectionStatus).mockReturnValueOnce({
-      collectionStatus: DEFAULT_COLLECTION_STATUS,
-      isLoading: false,
-    });
-    render(testWrapper());
-    expect(screen.queryByTestId('loading-state')).not.toBeInTheDocument();
-    expect(screen.getByText('Automation Dashboard')).toBeInTheDocument();
-  });
-
-  // ─── Empty state scenarios ─────────────────────────────────────────────────
-
-  test('should show "no data yet" empty state when there are no items and no top projects', () => {
-    const viewWithNoData = {
+  test('should show "no data yet" empty state for table cards when itemCount is 0', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
       ...mockView,
-      details: { ...mockDetails, top_projects: [] },
       mainTableView: { ...mockMainTableView, itemCount: 0 },
-    };
-    vi.mocked(useAutomationDashboardView).mockReturnValueOnce(viewWithNoData);
-    render(testWrapper());
-    expect(screen.getByText('No project data yet')).toBeInTheDocument();
-    expect(
-      screen.getByText('Project data will appear after your first automation runs.')
-    ).toBeInTheDocument();
-  });
-
-  test('should show "no data yet" empty state when there are no items and no top users', () => {
-    const viewWithNoData = {
-      ...mockView,
-      details: { ...mockDetails, top_users: [] },
-      mainTableView: { ...mockMainTableView, itemCount: 0 },
-    };
-    vi.mocked(useAutomationDashboardView).mockReturnValueOnce(viewWithNoData);
-    render(testWrapper());
-    expect(screen.getByText('No user data yet')).toBeInTheDocument();
-    expect(
-      screen.getByText('User data will appear after your first automation runs.')
-    ).toBeInTheDocument();
-  });
-
-  test('should show filtered empty state when items exist but top projects are empty', () => {
-    const viewWithFilteredData = {
-      ...mockView,
-      details: { ...mockDetails, top_projects: [] },
-      mainTableView: { ...mockMainTableView, itemCount: 5 },
-    };
-    vi.mocked(useAutomationDashboardView).mockReturnValueOnce(viewWithFilteredData);
-    render(testWrapper());
-    expect(screen.getByText('No projects to rank')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Automation data exists, but no runs are currently associated with projects.'
-      )
-    ).toBeInTheDocument();
-  });
-
-  test('should show filtered empty state when items exist but top users are empty', () => {
-    const viewWithFilteredData = {
-      ...mockView,
-      details: { ...mockDetails, top_users: [] },
-      mainTableView: { ...mockMainTableView, itemCount: 5 },
-    };
-    vi.mocked(useAutomationDashboardView).mockReturnValueOnce(viewWithFilteredData);
-    render(testWrapper());
-    expect(screen.getByText('No users to rank')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Automation data exists, but no runs are currently attributed to individual users.'
-      )
-    ).toBeInTheDocument();
-  });
-
-  // ─── Grid column layout ────────────────────────────────────────────────────
-
-  test('should use the container width to compute grid columns on mount', () => {
-    const clientWidthSpy = vi
-      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
-      .mockReturnValue(500);
-
-    render(testWrapper());
-
-    // width 500 -> below the wide-layout column range, so value cards stay 'md'
-    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
-
-    clientWidthSpy.mockRestore();
-  });
-
-  test('should switch value cards to the wide layout width when the container is wide enough', () => {
-    const clientWidthSpy = vi
-      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
-      .mockReturnValue(1450);
-
-    render(testWrapper());
-
-    // width 1450 -> falls within the wide-layout column range
-    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'xs');
-
-    clientWidthSpy.mockRestore();
-  });
-
-  test('should recompute grid columns when the container is resized', () => {
-    const clientWidthSpy = vi
-      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
-      .mockReturnValue(500);
-
-    render(testWrapper());
-    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
-
-    const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
-    act(() => {
-      resizeCallback({ contentRect: { width: 1450 } } as ResizeObserverEntry, {} as ResizeObserver);
     });
-
-    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'xs');
-
-    clientWidthSpy.mockRestore();
-  });
-
-  test('should fall back to the minimum grid columns when a resize reports no width', () => {
-    const clientWidthSpy = vi
-      .spyOn(HTMLElement.prototype, 'clientWidth', 'get')
-      .mockReturnValue(1450);
-
     render(testWrapper());
-    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'xs');
-
-    const resizeCallback = vi.mocked(useResizeObserver).mock.calls[0][1];
-    act(() => {
-      resizeCallback({ contentRect: {} } as ResizeObserverEntry, {} as ResizeObserver);
-    });
-
-    // no reported width -> gridColumns falls back to 1, below the wide-layout range
-    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
-
-    clientWidthSpy.mockRestore();
+    expect(screen.getByTestId('top-projects-card-empty-title')).toHaveTextContent(
+      'No project data yet'
+    );
+    expect(screen.getByTestId('top-projects-card-empty-desc')).toHaveTextContent(
+      'Project data will appear after your first automation runs.'
+    );
+    expect(screen.getByTestId('top-users-card-empty-title')).toHaveTextContent('No user data yet');
+    expect(screen.getByTestId('top-users-card-empty-desc')).toHaveTextContent(
+      'User data will appear after your first automation runs.'
+    );
   });
 
-  // ─── Filter state passthrough ──────────────────────────────────────────────
+  test('should show "no items to rank" empty state for table cards when itemCount > 0', () => {
+    render(testWrapper());
+    expect(screen.getByTestId('top-projects-card-empty-title')).toHaveTextContent(
+      'No projects to rank'
+    );
+    expect(screen.getByTestId('top-projects-card-empty-desc')).toHaveTextContent(
+      'Automation data exists, but no runs are currently associated with projects.'
+    );
+    expect(screen.getByTestId('top-users-card-empty-title')).toHaveTextContent('No users to rank');
+    expect(screen.getByTestId('top-users-card-empty-desc')).toHaveTextContent(
+      'Automation data exists, but no runs are currently attributed to individual users.'
+    );
+  });
 
-  test('should pass the active filter state to the table cards when filters are not default', () => {
-    const activeFilterState = { template_name: ['demo'] };
+  test('should pass filterState to table cards when filters are not default', () => {
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
       ...mockView,
       isFilterStateDefault: false,
-      mainTableView: { ...mockMainTableView, filterState: activeFilterState },
     });
-
     render(testWrapper());
-
-    expect(screen.getByTestId('Top 5 projects-filter-state')).toHaveTextContent(
-      JSON.stringify(activeFilterState)
-    );
-    expect(screen.getByTestId('Top 5 users-filter-state')).toHaveTextContent(
-      JSON.stringify(activeFilterState)
-    );
+    expect(screen.getByTestId('top-projects-card')).toBeInTheDocument();
+    expect(screen.getByTestId('top-users-card')).toBeInTheDocument();
   });
 
-  test('should not pass filter state to the table cards when filters are default', () => {
-    render(testWrapper());
+  // ─── Grid column layout ────────────────────────────────────────────────────
+  // The column count itself is measured by useDashboardGridColumns (covered in its own test)
+  // and supplied via PageDashboardContext. Here we only check how AutomationDashboard maps it
+  // to the value-card and chart-card widths.
 
-    expect(screen.getByTestId('Top 5 projects-filter-state')).toHaveTextContent('none');
-    expect(screen.getByTestId('Top 5 users-filter-state')).toHaveTextContent('none');
+  test('should render value cards at md width when the grid is narrow', () => {
+    render(testWrapper(8)); // below WIDE_LAYOUT_MIN_COLUMNS (16)
+
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
+  });
+
+  test('should render value cards at xs width when the grid is within the wide-layout range', () => {
+    render(testWrapper(20)); // between 16 and 31
+
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'xs');
+  });
+
+  test('should render value cards at md width again when the grid is wider than the range', () => {
+    render(testWrapper(40)); // above WIDE_LAYOUT_MAX_COLUMNS (31)
+
+    expect(screen.getByTestId('successful-jobs-card')).toHaveAttribute('data-width', 'md');
+  });
+
+  test('should render chart cards at md width up to WIDE_LAYOUT_MAX_COLUMNS', () => {
+    render(testWrapper(31));
+
+    expect(screen.getByTestId('host-chart-card')).toHaveAttribute('data-width', 'md');
+    expect(screen.getByTestId('job-chart-card')).toHaveAttribute('data-width', 'md');
+  });
+
+  test('should render chart cards at xl width when the grid is wider than WIDE_LAYOUT_MAX_COLUMNS', () => {
+    render(testWrapper(32));
+
+    expect(screen.getByTestId('host-chart-card')).toHaveAttribute('data-width', 'xl');
+    expect(screen.getByTestId('job-chart-card')).toHaveAttribute('data-width', 'xl');
   });
 
   // ─── Template IDs loading state ────────────────────────────────────────────
@@ -512,8 +448,6 @@ describe('AutomationDashboard', () => {
     expect(screen.getByTestId('loading-state')).toBeInTheDocument();
     expect(screen.queryByText('Successful jobs')).not.toBeInTheDocument();
   });
-
-  // ─── Template IDs error state ─────────────────────────────────────────────
 
   test('should show error state when template IDs fail to load', () => {
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({

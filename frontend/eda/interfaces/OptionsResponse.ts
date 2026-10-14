@@ -6,6 +6,10 @@ export interface ActionsResponse {
   filterable: boolean;
   default?: string | object;
   choices?: [string, string][];
+  pattern?: string;
+  pattern_description?: string;
+  patternDescription?: string;
+  flags?: string;
 }
 
 export interface OptionsResponse<T extends ActionsResponse> {

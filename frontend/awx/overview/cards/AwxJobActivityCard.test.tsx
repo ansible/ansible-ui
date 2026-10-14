@@ -37,4 +37,37 @@ describe('AwxJobActivityCard', () => {
       expect(screen.getByText('Job Activity')).toBeInTheDocument();
     });
   });
+
+  it('should render the current-day chart category from UTC graph buckets', async () => {
+    const previousDay = Math.floor(Date.UTC(2025, 8, 30) / 1000);
+    const currentDay = Math.floor(Date.UTC(2025, 9, 1) / 1000);
+
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('dashboard/graphs/jobs'),
+        () =>
+          HttpResponse.json({
+            jobs: {
+              successful: [
+                [previousDay, 2],
+                [currentDay, 11],
+              ],
+              failed: [[currentDay, 1]],
+              canceled: [],
+              error: [],
+            },
+          })
+      )
+    );
+
+    render(
+      <MemoryRouter>
+        <AwxJobActivityCard />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('10/1')).toBeInTheDocument();
+    });
+  });
 });

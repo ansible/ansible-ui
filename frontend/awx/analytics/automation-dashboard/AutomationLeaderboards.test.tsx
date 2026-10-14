@@ -1,0 +1,249 @@
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import { afterEach, describe, expect, test, vi } from 'vitest';
+import {
+  PageDashboardCard,
+  PageDashboardCardWidth,
+  PageDashboardContext,
+} from '@ansible/ansible-ui-framework';
+import { AutomationLeaderboards, CARD_WIDTH_COL_SPAN } from './AutomationLeaderboards';
+import type { AutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
+import { useAutomationLeaderboardsView } from './views/useAutomationLeaderboardsView';
+import { createLeaderboardsView } from './views/useAutomationLeaderboardsView.testUtils';
+import { useNewAchievementsAlert } from './common/useNewAchievementsAlert';
+
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn(),
+}));
+vi.mock('./views/useAutomationLeaderboardsView', () => ({
+  useAutomationLeaderboardsView: vi.fn(),
+}));
+vi.mock('./common/useNewAchievementsAlert', () => ({
+  useNewAchievementsAlert: vi.fn(() => ({ hasNewAchievements: false, dismiss: vi.fn() })),
+}));
+
+const baseView = createLeaderboardsView();
+
+const ALERT_TITLE = 'Congratulations! You or your organization earned new achievements.';
+
+// Defined once so the context value isn't a new object on every render.
+const dashboardContext = { columns: 24 };
+
+const leaderboardsPage = () => (
+  <MemoryRouter>
+    <PageDashboardContext.Provider value={dashboardContext}>
+      <AutomationLeaderboards />
+    </PageDashboardContext.Provider>
+  </MemoryRouter>
+);
+
+function renderLeaderboards(view: Partial<AutomationLeaderboardsView>) {
+  vi.mocked(useAutomationLeaderboardsView).mockReturnValue({ ...baseView, ...view });
+  return render(leaderboardsPage());
+}
+
+describe('CARD_WIDTH_COL_SPAN', () => {
+  test('should match the column span PageDashboardCard itself derives from each width tier', () => {
+    (Object.keys(CARD_WIDTH_COL_SPAN) as PageDashboardCardWidth[]).forEach((width) => {
+      const { container, unmount } = render(
+        <PageDashboardContext.Provider value={dashboardContext}>
+          <PageDashboardCard width={width}>content</PageDashboardCard>
+        </PageDashboardContext.Provider>
+      );
+
+      const card = container.querySelector('.page-dashboard-card') as HTMLElement;
+      expect(card.style.gridColumn).toBe(`span ${CARD_WIDTH_COL_SPAN[width]}`);
+
+      unmount();
+    });
+  });
+});
+
+describe('AutomationLeaderboards', () => {
+  afterEach(() => vi.clearAllMocks());
+
+  // Renders the full card tree (unlike the other tests below, which all short-circuit before
+  // it) — that's ~4-5s under load, so it needs a longer timeout than the 5s default.
+  test('should render the sync timestamp and every leaderboard section on the happy path', () => {
+    renderLeaderboards({});
+
+    expect(screen.getByText(/Updated: .+/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'At a glance' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Streak' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Activity levels' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Top 10 organizations' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '30-day achievements' })).toBeInTheDocument();
+
+    // Streak and Activity levels always render at their own 'xxl' default width, regardless of
+    // the measured grid — each is the sole card in its row, so 'xxl' fills the full grid (24
+    // columns in this render).
+    expect(screen.getByTestId('automation-streak')).toHaveStyle({ gridColumn: 'span 24' });
+    expect(screen.getByTestId('activity-levels')).toHaveStyle({ gridColumn: 'span 24' });
+  }, 15000);
+
+  test('should show only a loading spinner while the view is loading', () => {
+    renderLeaderboards({ isLoading: true });
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'No leaderboard data yet' })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Updated: .+/)).not.toBeInTheDocument();
+  });
+
+  test('should not flash the never-synced empty state while lastSyncedAt is still loading', () => {
+    renderLeaderboards({ isLoading: true, lastSyncedAt: null });
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'No leaderboard data yet' })
+    ).not.toBeInTheDocument();
+  });
+
+  test('should show the empty state when the report has never been synced', () => {
+    renderLeaderboards({ isLoading: false, lastSyncedAt: null });
+
+    expect(screen.getByRole('heading', { name: 'No leaderboard data yet' })).toBeInTheDocument();
+    expect(
+      screen.getByText(/Leaderboard data will appear here once job runs have been recorded/)
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  });
+
+  test('should show the error state with the error message when the view errors', () => {
+    renderLeaderboards({ isLoading: false, error: new Error('Metrics service unavailable') });
+
+    expect(
+      screen.getByRole('heading', { name: 'Unable to load leaderboards' })
+    ).toBeInTheDocument();
+    expect(screen.getByText('Metrics service unavailable')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Updated: .+/)).not.toBeInTheDocument();
+  });
+
+  test('should show a distinct sync-status error state when only collection_status failed', () => {
+    renderLeaderboards({
+      isLoading: false,
+      lastSyncedAt: null,
+      collectionStatusError: new Error('Status service unavailable'),
+    });
+
+    expect(screen.getByRole('heading', { name: 'Unable to load sync status' })).toBeInTheDocument();
+    expect(screen.getByText('Status service unavailable')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Unable to load leaderboards' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'No leaderboard data yet' })
+    ).not.toBeInTheDocument();
+  });
+
+  test('should prefer the leaderboard error over the sync-status error', () => {
+    renderLeaderboards({
+      isLoading: false,
+      lastSyncedAt: null,
+      error: new Error('boom'),
+      collectionStatusError: new Error('status boom'),
+    });
+
+    expect(
+      screen.getByRole('heading', { name: 'Unable to load leaderboards' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Unable to load sync status' })
+    ).not.toBeInTheDocument();
+  });
+
+  test('should prefer the error state over the never-synced empty state', () => {
+    renderLeaderboards({ isLoading: false, lastSyncedAt: null, error: new Error('boom') });
+
+    expect(
+      screen.getByRole('heading', { name: 'Unable to load leaderboards' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'No leaderboard data yet' })
+    ).not.toBeInTheDocument();
+  });
+
+  test('should show the loading spinner instead of the error state while still loading', () => {
+    renderLeaderboards({ isLoading: true, error: new Error('boom') });
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Unable to load leaderboards' })
+    ).not.toBeInTheDocument();
+  });
+
+  test('should warn above the shown report when refreshing it for a newer sync failed', () => {
+    renderLeaderboards({ refreshError: new Error('refetch boom') });
+
+    const title = screen.getByText("Couldn't load the latest leaderboard data.");
+    expect(screen.getByText('Showing data from the previous sync.')).toBeInTheDocument();
+    // Announced to screen readers, since it appears after the page has loaded.
+    expect(title.closest('[aria-live]')).toHaveAttribute('aria-live', 'polite');
+    // The report itself stays on screen with its own timestamp.
+    expect(screen.getByText(/Updated: .+/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'At a glance' })).toBeInTheDocument();
+  }, 15000);
+
+  test('should render the warning into the live region already on the page when a refresh fails', () => {
+    const { container, rerender } = renderLeaderboards({});
+
+    expect(
+      screen.queryByText("Couldn't load the latest leaderboard data.")
+    ).not.toBeInTheDocument();
+    // Mounted while empty, so screen readers announce the alert added to it later.
+    const liveRegion = container.querySelector('[aria-live="polite"]');
+    expect(liveRegion).toBeEmptyDOMElement();
+
+    vi.mocked(useAutomationLeaderboardsView).mockReturnValue({
+      ...baseView,
+      refreshError: new Error('refetch boom'),
+    });
+    rerender(leaderboardsPage());
+
+    expect(
+      screen.getByText("Couldn't load the latest leaderboard data.").closest('[aria-live]')
+    ).toBe(liveRegion);
+  }, 15000);
+
+  // Both render the full card tree, like the happy-path test above, so they need its timeout.
+  test('should show the new-achievement alert and dismiss it from its close button', async () => {
+    const user = userEvent.setup();
+    const dismiss = vi.fn();
+    vi.mocked(useNewAchievementsAlert).mockReturnValue({ hasNewAchievements: true, dismiss });
+    renderLeaderboards({});
+
+    expect(screen.getByText(ALERT_TITLE)).toBeInTheDocument();
+    // Announced to screen readers, since it appears after the page has loaded.
+    expect(screen.getByText(ALERT_TITLE).closest('[aria-live]')).toHaveAttribute(
+      'aria-live',
+      'polite'
+    );
+    await user.click(screen.getByRole('button', { name: /close/i }));
+
+    expect(dismiss).toHaveBeenCalledTimes(1);
+  }, 15000);
+
+  test('should not show the new-achievement alert when there is nothing new', () => {
+    vi.mocked(useNewAchievementsAlert).mockReturnValue({
+      hasNewAchievements: false,
+      dismiss: vi.fn(),
+    });
+    renderLeaderboards({});
+
+    expect(screen.queryByText(ALERT_TITLE)).not.toBeInTheDocument();
+  }, 15000);
+
+  test('should not show the new-achievement alert in the never-synced empty state', () => {
+    vi.mocked(useNewAchievementsAlert).mockReturnValue({
+      hasNewAchievements: true,
+      dismiss: vi.fn(),
+    });
+    renderLeaderboards({ lastSyncedAt: null });
+
+    expect(screen.queryByText(ALERT_TITLE)).not.toBeInTheDocument();
+  });
+});

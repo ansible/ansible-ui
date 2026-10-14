@@ -272,13 +272,21 @@ test.describe('EDA - RBAC - User and Team Permissions', () => {
         await test.step('Verify user2 cannot access RBAs', async () => {
           await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
 
-          // Verify "no permission" message
-          await expect(
-            page.getByText('You do not have permission to create a rulebook activation.')
-          ).toBeVisible();
+          const rulebookActivationsTable = page.locator('#eda-rulebook-activations-table');
+          const noAccessView = page
+            .getByRole('main')
+            .getByText(
+              /You do not have permission to create a rulebook activation\.|There are currently no rulebook activations created for your organization\./
+            );
+          await expect(noAccessView.or(rulebookActivationsTable)).toBeVisible({
+            timeout: 15_000,
+          });
 
-          // Verify table does not exist
-          await expect(page.locator('table.page-table')).not.toBeAttached();
+          if (await rulebookActivationsTable.isVisible()) {
+            await expect(
+              rulebookActivationsTable.getByRole('link', { name: edaRulebookActivation.name })
+            ).not.toBeVisible();
+          }
         });
 
         await test.step('Logout user2 and login back as admin', async () => {

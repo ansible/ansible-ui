@@ -31,20 +31,13 @@ type AsyncFilter = IToolbarFilter & {
   queryLabel: (value: string) => React.ReactElement;
 };
 
-function renderFilters(filterableFields: string[], additionalFilters?: IToolbarFilter[]) {
-  return renderHook(() =>
-    useAutomationDashboardToolbarFilters({ filterableFields, additionalFilters })
-  ).result.current as AsyncFilter[];
+function renderFilters(filterableFields: string[]) {
+  return renderHook(() => useAutomationDashboardToolbarFilters({ filterableFields })).result
+    .current as AsyncFilter[];
 }
 
-function TestComponent({
-  filterableFields,
-  additionalFilters,
-}: {
-  filterableFields: string[];
-  additionalFilters?: IToolbarFilter[];
-}) {
-  const filters = useAutomationDashboardToolbarFilters({ filterableFields, additionalFilters });
+function TestComponent({ filterableFields }: Readonly<{ filterableFields: string[] }>) {
+  const filters = useAutomationDashboardToolbarFilters({ filterableFields });
   return (
     <div>
       {filters.map((filter) => (
@@ -91,25 +84,9 @@ describe('useAutomationDashboardToolbarFilters', () => {
     expect(filters[0].query).toBe('label');
   });
 
-  test('includes additionalFilters after dynamic filters', () => {
-    const additional: IToolbarFilter = {
-      key: 'custom',
-      label: 'Custom',
-      type: ToolbarFilterType.Search,
-      query: '',
-    };
-    render(<TestComponent filterableFields={['label']} additionalFilters={[additional]} />);
-    expect(screen.getByTestId('filter-custom')).toHaveTextContent('Custom');
-  });
-
   test('returns empty array when filterableFields is empty', () => {
     render(<TestComponent filterableFields={[]} />);
     expect(screen.queryByTestId('filter-label')).toBeNull();
-  });
-
-  test('handles undefined additionalFilters gracefully', () => {
-    render(<TestComponent filterableFields={['label']} additionalFilters={undefined} />);
-    expect(screen.getByTestId('filter-label')).toHaveTextContent('Label');
   });
 
   test('skips unknown filterableFields', () => {

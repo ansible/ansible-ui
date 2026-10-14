@@ -1,7 +1,7 @@
 import { PageTable } from '@ansible/ansible-ui-framework';
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { CubesIcon } from '@patternfly/react-icons';

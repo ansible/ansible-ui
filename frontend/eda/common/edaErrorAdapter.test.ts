@@ -72,6 +72,73 @@ describe('edaErrorAdapter', () => {
     expect(result.fieldErrors.length).toBe(0);
     expect(result.genericErrors).toEqual([{ message: 'Generic non-field error' }]);
   });
+
+  it('should handle inputs as generic errors when it is an array of strings', () => {
+    const error = new RequestError('Input error', undefined, 400, {}, { inputs: ['Error'] });
+    const result = edaErrorAdapter(error);
+    expect(result.genericErrors).toEqual([{ message: 'Error' }]);
+    expect(result.fieldErrors.length).toBe(0);
+  });
+
+  it('should map nested credential inputs to inputs.<field> form field names', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      {
+        inputs: {
+          aws_access_key: [
+            "This field can't include HTML tags, script markup, or unsafe URI schemes.",
+          ],
+        },
+      }
+    );
+    const result = edaErrorAdapter(error);
+    expect(result.genericErrors.length).toBe(0);
+    expect(result.fieldErrors).toEqual([
+      {
+        name: 'inputs.aws_access_key',
+        message: "This field can't include HTML tags, script markup, or unsafe URI schemes.",
+      },
+    ]);
+  });
+
+  it('should handle inputs as field errors when values are strings', () => {
+    const error = new RequestError(
+      'Input error',
+      undefined,
+      400,
+      {},
+      { inputs: { host: 'Host is required' } }
+    );
+    const result = edaErrorAdapter(error);
+    expect(result.fieldErrors).toEqual([{ name: 'inputs.host', message: 'Host is required' }]);
+  });
+
+  it('should flatten arbitrarily nested field errors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { config: { timeout: ['Must be positive'] } }
+    );
+    const result = edaErrorAdapter(error);
+    expect(result.fieldErrors).toEqual([{ name: 'config.timeout', message: 'Must be positive' }]);
+  });
+
+  it('should stringify primitive field error values', () => {
+    const error = new RequestError('Validation failed', undefined, 400, {}, { retries: 0 });
+    const result = edaErrorAdapter(error);
+    expect(result.fieldErrors).toEqual([{ name: 'retries', message: '0' }]);
+  });
+
+  it('should ignore empty validation arrays', () => {
+    const error = new RequestError('Validation failed', undefined, 400, {}, { name: [] });
+    const result = edaErrorAdapter(error);
+    expect(result.fieldErrors.length).toBe(0);
+  });
 });
 
 describe('useEdaErrorMessageParser', () => {

@@ -10,6 +10,7 @@ import { navigateTo } from '../commands/navigateTo';
 import { platformUI } from '../commands/login';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
 import { awxAPI } from '../commands/apiClient';
+import { waitForResourceCopyResponse } from './copyResourceName';
 
 export interface CreateWorkflowJobTemplateOptions {
   name?: string;
@@ -373,12 +374,9 @@ export const WorkflowJobTemplate = {
       await navigateTo(page, 'Automation Execution', 'Templates');
       await filterTable({ filterLabel: 'Name', filterValue: workflowJobTemplateName }, page);
 
-      const copyResponsePromise = page.waitForResponse(
-        (response) =>
-          response.url().includes('/workflow_job_templates/') &&
-          response.url().includes('/copy/') &&
-          response.status() === 201
-      );
+      const copyResponsePromise = waitForResourceCopyResponse(page, workflowJobTemplateName, {
+        urlIncludes: '/workflow_job_templates/',
+      });
 
       await clickTableRowAction(
         {
@@ -389,10 +387,7 @@ export const WorkflowJobTemplate = {
         page
       );
 
-      const copyResponse = await copyResponsePromise;
-      const copiedWfjt = (await copyResponse.json()) as WorkflowJobTemplateType;
-
-      return copiedWfjt.name;
+      return copyResponsePromise;
     },
 
     delete: async (page: Page, workflowJobTemplateName: string): Promise<void> => {

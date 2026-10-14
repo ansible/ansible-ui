@@ -4,8 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useVirtualizedList } from './useVirtualized';
 
 let resizeObserverCallback: ((entry: ResizeObserverEntry) => void) | undefined;
-vi.mock('@react-hook/resize-observer', () => ({
-  default: vi.fn((_ref: unknown, cb: (entry: ResizeObserverEntry) => void) => {
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn((_ref: unknown, cb: (entry: ResizeObserverEntry) => void) => {
     resizeObserverCallback = cb;
   }),
 }));

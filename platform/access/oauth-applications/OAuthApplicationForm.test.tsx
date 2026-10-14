@@ -8,7 +8,11 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { PlatformOrganization } from '../../interfaces/PlatformOrganization';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
-import { CreateOAuthApplication, EditOAuthApplication } from './OAuthApplicationForm';
+import {
+  choicesToOptions,
+  CreateOAuthApplication,
+  EditOAuthApplication,
+} from './OAuthApplicationForm';
 
 // Mock usePageNavigate and related hooks
 const mockPushDialog = vi.fn();
@@ -835,6 +839,295 @@ describe('OAuthApplicationForm', () => {
       const nameField = screen.getByPlaceholderText('Enter OAuth application name');
       // Check if the field has a maxLength property
       expect(nameField).toBeInTheDocument();
+    });
+
+    test('fetches field patterns from the /applications/ OPTIONS endpoint and validates on blur', async () => {
+      server.use(
+        http.options(gatewayAPI`/applications/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+      await user.type(nameInput, 'invalid@name!');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+    });
+
+    test('accepts valid name matching pattern on blur', async () => {
+      server.use(
+        http.options(gatewayAPI`/applications/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+      await user.type(nameInput, 'Valid_App-Name');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+      });
+    });
+
+    test('clears validation error when name becomes valid', async () => {
+      server.use(
+        http.options(gatewayAPI`/applications/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+      await user.type(nameInput, 'bad@name');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+
+      await user.clear(nameInput);
+      await user.type(nameInput, 'GoodName_123');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
+      });
+    });
+
+    test('error persists when name contains multiple invalid characters', async () => {
+      server.use(
+        http.options(gatewayAPI`/applications/`, () =>
+          HttpResponse.json({
+            actions: {
+              POST: {
+                name: {
+                  pattern: String.raw`^[a-zA-Z0-9_\-]+$`,
+                  patternDescription:
+                    'Name must contain only letters, numbers, underscores, and hyphens.',
+                },
+              },
+            },
+          })
+        )
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+      await user.type(nameInput, 'bad@app#name$');
+      await user.click(document.body);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/Name must contain only letters, numbers, underscores, and hyphens\./)
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('choicesToOptions', () => {
+    test('maps tuple-style [value, label] choices to select options', () => {
+      expect(
+        choicesToOptions([
+          ['confidential', 'Confidential'],
+          ['public', 'Public'],
+        ])
+      ).toEqual([
+        { value: 'confidential', label: 'Confidential' },
+        { value: 'public', label: 'Public' },
+      ]);
+    });
+
+    test('maps object-style { value, display_name } choices to select options', () => {
+      expect(
+        choicesToOptions([
+          { value: 'authorization-code', display_name: 'Authorization code' },
+          { value: 'password', display_name: 'Resource owner password-based' },
+        ])
+      ).toEqual([
+        { value: 'authorization-code', label: 'Authorization code' },
+        { value: 'password', label: 'Resource owner password-based' },
+      ]);
+    });
+
+    test('returns an empty array when choices are missing or empty', () => {
+      expect(choicesToOptions()).toEqual([]);
+      expect(choicesToOptions([])).toEqual([]);
+    });
+  });
+
+  describe('Form submission with OPTIONS data', () => {
+    test('should accept user input for application creation', async () => {
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+          <Routes>
+            <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText('Enter OAuth application name')).toBeInTheDocument();
+      });
+
+      const nameInput = screen.getByPlaceholderText('Enter OAuth application name');
+      const urlInput = screen.getByPlaceholderText('Enter OAuth application URL');
+      const redirectInput = screen.getByPlaceholderText('Enter redirect URIs');
+
+      await user.type(nameInput, 'Test App');
+      await user.type(urlInput, 'https://example.com');
+      await user.type(redirectInput, 'https://example.com/callback');
+
+      expect(nameInput).toHaveValue('Test App');
+      expect(urlInput).toHaveValue('https://example.com');
+      expect(redirectInput).toHaveValue('https://example.com/callback');
+    }, 15000);
+  });
+
+  test('applies OPTIONS pattern validation to OAuth application name field', async () => {
+    server.use(
+      http.options(gatewayAPI`/applications/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+        <Routes>
+          <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+    await user.type(nameInput, 'invalid@app!');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Name must contain only letters, numbers, underscores, hyphens, and dots\./
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('accepts valid OAuth application name matching OPTIONS pattern', async () => {
+    server.use(
+      http.options(gatewayAPI`/applications/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\.]+$`,
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and dots.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/oauth-applications/create']}>
+        <Routes>
+          <Route path="/access/oauth-applications/create" element={<CreateOAuthApplication />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByPlaceholderText('Enter OAuth application name');
+    await user.type(nameInput, 'valid_app-1.0');
+    await user.click(document.body);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
     });
   });
 });

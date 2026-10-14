@@ -2,10 +2,23 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import type { IDashboardFilterSet } from '../types';
 import { useFilterSetView } from './useFilterSetView';
+import { dashboardFilterSetKey } from '../utils/persistedFilterState';
+
+const USER_ID = 42;
+
+const { mockUseAwxActiveUser } = vi.hoisted(() => ({
+  mockUseAwxActiveUser: vi.fn<() => { activeAwxUser: { id: number } | undefined }>(() => ({
+    activeAwxUser: { id: USER_ID },
+  })),
+}));
+
+vi.mock('../../../common/useAwxActiveUser', () => ({
+  useAwxActiveUser: mockUseAwxActiveUser,
+}));
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -35,7 +48,14 @@ const pageResponse = (results: IDashboardFilterSet[], next: string | null = null
 const server = setupServer();
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => server.resetHandlers());
+beforeEach(() => {
+  mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: USER_ID } });
+});
+afterEach(() => {
+  server.resetHandlers();
+  sessionStorage.clear();
+  vi.clearAllMocks();
+});
 afterAll(() => server.close());
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -65,6 +85,157 @@ describe('useFilterSetView', () => {
       expect(result.current.setSelectedFilterSet).toBeTypeOf('function');
       expect(result.current.removeFilterSet).toBeTypeOf('function');
       expect(result.current.upsertFilterSet).toBeTypeOf('function');
+    });
+  });
+
+  describe('session persistence', () => {
+    test('should restore the selected filter set persisted earlier in the session', () => {
+      sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
+
+      const { result } = renderHook(() => useFilterSetView());
+
+      expect(result.current.value).toBe('1');
+      expect(result.current.selectedFilterSet).toEqual(filterSetA);
+      expect(result.current.filterSets).toContainEqual(filterSetA);
+    });
+
+    test('should persist the selection so a remounted hook restores it', () => {
+      const first = renderHook(() => useFilterSetView());
+      act(() => {
+        first.result.current.setSelectedFilterSet(filterSetB);
+      });
+      first.unmount();
+
+      const second = renderHook(() => useFilterSetView());
+
+      expect(second.result.current.selectedFilterSet).toEqual(filterSetB);
+      expect(second.result.current.value).toBe('2');
+    });
+
+    test('should clear the persisted selection when deselected', () => {
+      sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
+
+      const { result } = renderHook(() => useFilterSetView());
+      act(() => {
+        result.current.setSelectedFilterSet(undefined);
+      });
+
+      expect(sessionStorage.getItem(dashboardFilterSetKey(USER_ID))).toBeNull();
+    });
+
+    test('should not restore a selection persisted by a different user', () => {
+      const OTHER_USER_ID = 7;
+      sessionStorage.setItem(dashboardFilterSetKey(OTHER_USER_ID), JSON.stringify(filterSetA));
+
+      const { result } = renderHook(() => useFilterSetView());
+
+      expect(result.current.value).toBeUndefined();
+      expect(result.current.selectedFilterSet).toBeUndefined();
+    });
+
+    test('should re-seed from the new user when the active user changes mid-session', async () => {
+      const OTHER_USER_ID = 7;
+      sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
+      sessionStorage.setItem(dashboardFilterSetKey(OTHER_USER_ID), JSON.stringify(filterSetB));
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([filterSetA]))
+        )
+      );
+
+      const { result, rerender } = renderHook(() => useFilterSetView());
+      expect(result.current.selectedFilterSet).toEqual(filterSetA);
+
+      // First user's fetched reports land in the local cache.
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+      await waitFor(() => expect(result.current.filterSets).toContainEqual(filterSetA));
+
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: OTHER_USER_ID } });
+      rerender();
+
+      expect(result.current.selectedFilterSet).toEqual(filterSetB);
+      expect(result.current.value).toBe('2');
+      // The first user's cached reports must not leak into the second user's dropdown.
+      expect(result.current.filterSets).toEqual([filterSetB]);
+    });
+
+    test('should keep a selection made before the user id resolved', async () => {
+      // Cold load: /me/ not cached yet, so no active user at mount.
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: undefined });
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([filterSetA, filterSetB]))
+        )
+      );
+
+      const { result, rerender } = renderHook(() => useFilterSetView());
+
+      // User picks Report B while /me/ is still loading.
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+      act(() => result.current.setSelectedFilterSet(filterSetB));
+      expect(result.current.selectedFilterSet).toEqual(filterSetB);
+
+      // /me/ resolves — this user has nothing persisted.
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: USER_ID } });
+      rerender();
+
+      expect(result.current.selectedFilterSet).toEqual(filterSetB);
+      expect(result.current.filterSets).toContainEqual(filterSetB);
+    });
+
+    test('should keep a selection made before the user id resolved even when that user has a persisted value', async () => {
+      // This user has a persisted selection from an earlier session...
+      sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
+      // ...but /me/ hasn't resolved yet at mount.
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: undefined });
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([filterSetA, filterSetB]))
+        )
+      );
+
+      const { result, rerender } = renderHook(() => useFilterSetView());
+
+      // User picks Report B while /me/ is still loading.
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+      act(() => result.current.setSelectedFilterSet(filterSetB));
+      expect(result.current.selectedFilterSet).toEqual(filterSetB);
+
+      // /me/ resolves to the user with Report A persisted — the fresh selection must survive,
+      // not be silently overwritten by the older persisted value.
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: USER_ID } });
+      rerender();
+
+      expect(result.current.selectedFilterSet).toEqual(filterSetB);
+    });
+
+    test('should clear the cache when the new active user has nothing persisted', async () => {
+      const OTHER_USER_ID = 7;
+      sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([filterSetA, filterSetB]))
+        )
+      );
+
+      const { result, rerender } = renderHook(() => useFilterSetView());
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+      await waitFor(() => expect(result.current.filterSets).toContainEqual(filterSetB));
+
+      mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: OTHER_USER_ID } });
+      rerender();
+
+      expect(result.current.filterSets).toEqual([]);
+      expect(result.current.selectedFilterSet).toBeUndefined();
+      expect(result.current.value).toBeUndefined();
     });
   });
 
@@ -238,6 +409,54 @@ describe('useFilterSetView', () => {
       });
 
       expect(result.current.filterSets.filter((f) => f.id === filterSetA.id)).toHaveLength(1);
+    });
+
+    test('should refresh a stale seeded copy with the fetched server data', async () => {
+      sessionStorage.setItem(dashboardFilterSetKey(USER_ID), JSON.stringify(filterSetA));
+      const renamed: IDashboardFilterSet = {
+        ...filterSetA,
+        name: 'Report A (renamed)',
+        filters: '{"period":["last_90_days"]}',
+      };
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([renamed]))
+        )
+      );
+
+      const { result } = renderHook(() => useFilterSetView());
+      expect(result.current.filterSets).toContainEqual(filterSetA);
+
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+
+      await waitFor(() => {
+        expect(result.current.filterSets).toContainEqual(renamed);
+      });
+      expect(result.current.filterSets).not.toContainEqual(filterSetA);
+      expect(result.current.selectedFilterSet).toEqual(renamed);
+    });
+
+    test('should leave the cache untouched when the fetched data is identical', async () => {
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/filter_sets/`, () =>
+          HttpResponse.json(pageResponse([filterSetA]))
+        )
+      );
+
+      const { result } = renderHook(() => useFilterSetView());
+
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+      const afterFirst = result.current.filterSets;
+
+      await act(async () => {
+        await result.current.queryOptions(queryOpts());
+      });
+
+      expect(result.current.filterSets).toBe(afterFirst);
     });
 
     test('should include next page token when more pages exist', async () => {

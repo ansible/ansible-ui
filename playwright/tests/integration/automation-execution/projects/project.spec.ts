@@ -13,6 +13,7 @@ import {
   JobTemplate,
   Project,
 } from '@ansible/playwright/utils';
+import { waitForResourceCopyResponse } from '@ansible/playwright/utils/copyResourceName';
 
 test.beforeEach(setupBefore({ path: '/execution/projects' }));
 test.afterEach(setupAfter);
@@ -125,16 +126,13 @@ test.describe('Project - Edit, Copy, and Sync', () => {
       );
       await expect(page.getByRole('heading', { name: projectName, exact: true })).toBeVisible();
 
-      const copyResponsePromise = page.waitForResponse(
-        (response) => response.url().includes('/copy/') && response.status() === 201
-      );
+      const copyResponsePromise = waitForResourceCopyResponse(page, projectName, {
+        urlIncludes: '/projects/',
+      });
 
       await clickPageAction('Duplicate project', page);
 
-      const copyResponse = await copyResponsePromise;
-      const responseData: unknown = await copyResponse.json();
-      const copiedProject = responseData as { name: string; id: number };
-      const copiedName2 = copiedProject.name;
+      const copiedName2 = await copyResponsePromise;
 
       // Wait for success alert (copy from details stays on current details page)
       await expect(page.getByTestId('alert-toaster')).toContainText('duplicated', {

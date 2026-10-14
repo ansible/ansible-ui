@@ -15,7 +15,7 @@ import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert } from '@patternfly/react-core';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import useSWR from 'swr';
@@ -33,33 +33,33 @@ import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse'
 import { EdaRoute } from '../main/EdaRoutes';
 import { DecisionEnvironmentDetails } from './DecisionEnvironmentPage/DecisionEnvironmentDetails';
 
-function DecisionEnvironmentInputs() {
+function DecisionEnvironmentInputs(props: { optionsData?: OptionsResponse<ActionsResponse> }) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const { data: credentials } = useGet<EdaResult<EdaCredential>>(
     edaAPI`/eda-credentials/` + `?credential_type__kind=registry&page_size=300`
   );
-  const { data: optionsData, isLoading: isLoadingOptions } = useOptions<{
-    actions: {
-      POST: {
-        pull_policy?: {
-          choices?: Array<{ value: string; display_name: string }>;
-        };
-      };
-    };
-  }>(edaAPI`/decision-environments/`);
+  const optionsData = props.optionsData;
 
-  const pullPolicyChoices = optionsData?.actions?.POST?.pull_policy?.choices;
+  const pullPolicyChoices = optionsData?.actions?.POST?.pull_policy?.choices as
+    | Array<{ value: string; display_name: string }>
+    | [string, string][]
+    | undefined;
 
   const pullPolicyOptions = useMemo(() => {
     if (!Array.isArray(pullPolicyChoices) || pullPolicyChoices.length === 0) {
       return [];
     }
 
-    return pullPolicyChoices.map((choice) => ({
-      value: choice.value,
-      label: choice.display_name,
-    }));
+    return pullPolicyChoices.map((choice) => {
+      if (Array.isArray(choice)) {
+        return { value: choice[0], label: choice[1] };
+      }
+      return {
+        value: choice.value,
+        label: choice.display_name,
+      };
+    });
   }, [pullPolicyChoices]);
 
   const imageHelpBlock = (
@@ -77,7 +77,7 @@ function DecisionEnvironmentInputs() {
     </>
   );
 
-  if (isLoadingOptions || !optionsData) {
+  if (!optionsData) {
     return <LoadingPage />;
   }
 
@@ -148,6 +148,9 @@ export function CreateDecisionEnvironment() {
       : undefined;
 
   const postRequest = usePostRequest<Partial<EdaDecisionEnvironment>, EdaDecisionEnvironment>();
+  const { data: optionsData, isLoading: isLoadingOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(edaAPI`/decision-environments/`);
 
   const onSubmit: PageFormSubmitHandler<EdaDecisionEnvironment> = async (decisionEnvironment) => {
     const newDecisionEnvironment = await postRequest(
@@ -167,15 +170,20 @@ export function CreateDecisionEnvironment() {
           { label: t('Create decision environment') },
         ]}
       />
-      <EdaPageForm
-        submitText={t('Create decision environment')}
-        onSubmit={onSubmit}
-        cancelText={t('Cancel')}
-        onCancel={onCancel}
-        defaultValue={{ organization_id: defaultOrganization?.id }}
-      >
-        <DecisionEnvironmentInputs />
-      </EdaPageForm>
+      {isLoadingOptions || !optionsData ? (
+        <LoadingPage />
+      ) : (
+        <EdaPageForm
+          submitText={t('Create decision environment')}
+          onSubmit={onSubmit}
+          cancelText={t('Cancel')}
+          onCancel={onCancel}
+          defaultValue={{ organization_id: defaultOrganization?.id }}
+          optionsData={optionsData}
+        >
+          <DecisionEnvironmentInputs optionsData={optionsData} />
+        </EdaPageForm>
+      )}
     </PageLayout>
   );
 }
@@ -185,10 +193,10 @@ export function EditDecisionEnvironment() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
-    edaAPI`/decision-environments/${params.id ?? ''}/`
-  );
-  const canPatchDE = data ? Boolean(data.actions && data.actions['PATCH']) : true;
+  const { data: optionsData, isLoading: isLoadingOptions } = useOptions<
+    OptionsResponse<ActionsResponse>
+  >(edaAPI`/decision-environments/${params.id ?? ''}/`);
+  const canPatchDE = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
 
   const { data: decisionEnvironment } = useGet<EdaDecisionEnvironmentRead>(
     edaAPI`/decision-environments/${id.toString()}/`
@@ -213,50 +221,60 @@ export function EditDecisionEnvironment() {
         />
       </PageLayout>
     );
-  } else {
-    return (
-      <PageLayout>
-        <PageHeader
-          title={`${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}`}
-          breadcrumbs={[
-            { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
-            { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
-          ]}
+  }
+
+  let editPageBody: ReactNode;
+  if (!canPatchDE) {
+    editPageBody = (
+      <>
+        <Alert
+          variant={'warning'}
+          isInline
+          style={{
+            marginLeft: '24px',
+            marginRight: '24px',
+            marginTop: '24px',
+            paddingLeft: '24px',
+            paddingTop: '16px',
+          }}
+          title={t(
+            'You do not have permissions to edit this decision environment. Please contact your organization administrator if there is an issue with your access.'
+          )}
         />
-        {!canPatchDE ? (
-          <>
-            <Alert
-              variant={'warning'}
-              isInline
-              style={{
-                marginLeft: '24px',
-                marginRight: '24px',
-                marginTop: '24px',
-                paddingLeft: '24px',
-                paddingTop: '16px',
-              }}
-              title={t(
-                'You do not have permissions to edit this decision environment. Please contact your organization administrator if there is an issue with your access.'
-              )}
-            />
-            <DecisionEnvironmentDetails />
-          </>
-        ) : (
-          <EdaPageForm
-            submitText={t('Save decision environment')}
-            onSubmit={onSubmit}
-            cancelText={t('Cancel')}
-            onCancel={onCancel}
-            defaultValue={{
-              ...decisionEnvironment,
-              eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
-              organization_id: decisionEnvironment?.organization?.id || undefined,
-            }}
-          >
-            <DecisionEnvironmentInputs />
-          </EdaPageForm>
-        )}
-      </PageLayout>
+        <DecisionEnvironmentDetails />
+      </>
+    );
+  } else if (isLoadingOptions || !optionsData) {
+    editPageBody = <LoadingPage />;
+  } else {
+    editPageBody = (
+      <EdaPageForm
+        submitText={t('Save decision environment')}
+        onSubmit={onSubmit}
+        cancelText={t('Cancel')}
+        onCancel={onCancel}
+        defaultValue={{
+          ...decisionEnvironment,
+          eda_credential_id: decisionEnvironment?.eda_credential?.id || undefined,
+          organization_id: decisionEnvironment?.organization?.id || undefined,
+        }}
+        optionsData={optionsData}
+      >
+        <DecisionEnvironmentInputs optionsData={optionsData} />
+      </EdaPageForm>
     );
   }
+
+  return (
+    <PageLayout>
+      <PageHeader
+        title={`${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}`}
+        breadcrumbs={[
+          { label: t('Decision Environments'), to: getPageUrl(EdaRoute.DecisionEnvironments) },
+          { label: `${t('Edit')} ${decisionEnvironment?.name || t('Decision Environment')}` },
+        ]}
+      />
+      {editPageBody}
+    </PageLayout>
+  );
 }

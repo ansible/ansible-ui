@@ -3,7 +3,7 @@
 import { Ansi } from '@ansible/common-ui/Ansi';
 import { Label } from '@patternfly/react-core';
 import { AngleRightIcon } from '@patternfly/react-icons';
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { Dispatch, SetStateAction, useRef } from 'react';
 import styled from 'styled-components';
 import { JobEvent } from '../../../interfaces/JobEvent';

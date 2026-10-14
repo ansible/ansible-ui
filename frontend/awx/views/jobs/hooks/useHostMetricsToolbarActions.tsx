@@ -1,16 +1,47 @@
 import { IPageAction, PageActionSelection, PageActionType } from '@ansible/ansible-ui-framework';
-import { TrashIcon } from '@patternfly/react-icons';
+import { ButtonVariant } from '@patternfly/react-core';
+import { DownloadIcon, TrashIcon } from '@patternfly/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HostMetric } from '../../../interfaces/HostMetric';
 import { useDeleteHostMetrics } from './useDeleteHostMetrics';
+import { useDownloadHostMetrics } from './useDownloadHostMetrics';
 
-export function useHostMetricsToolbarActions(onComplete: (host: HostMetric[]) => void) {
+export function useHostMetricsToolbarActions(options: {
+  onComplete: (host: HostMetric[]) => void;
+  listUrl: string;
+  itemCount: number | undefined;
+}) {
   const { t } = useTranslation();
+  const { onComplete, listUrl, itemCount } = options;
   const deleteHostMetrics = useDeleteHostMetrics(onComplete);
+  const { downloadHostMetrics, isDownloading } = useDownloadHostMetrics(listUrl);
+
+  const downloadDisabledReason = (() => {
+    if (isDownloading) {
+      return t('Download in progress');
+    }
+    if (itemCount === 0) {
+      return t('No host metrics to download');
+    }
+    return undefined;
+  })();
 
   return useMemo<IPageAction<HostMetric>[]>(
     () => [
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.None,
+        variant: ButtonVariant.secondary,
+        isPinned: true,
+        icon: DownloadIcon,
+        label: t('Download'),
+        onClick: () => {
+          void downloadHostMetrics();
+        },
+        isDisabled: downloadDisabledReason,
+        ouiaId: 'host-metrics-download-button',
+      },
       {
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
@@ -20,6 +51,6 @@ export function useHostMetricsToolbarActions(onComplete: (host: HostMetric[]) =>
         isDanger: true,
       },
     ],
-    [deleteHostMetrics, t]
+    [deleteHostMetrics, downloadDisabledReason, downloadHostMetrics, t]
   );
 }

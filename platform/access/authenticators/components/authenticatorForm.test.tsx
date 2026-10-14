@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -19,7 +19,16 @@ describe('authenticatorForm', () => {
     }),
     http.get(gatewayAPI`/authenticator_plugins/`, () => {
       return HttpResponse.json(authenticator_plugins);
-    })
+    }),
+    http.options(gatewayAPI`/authenticators/`, () =>
+      HttpResponse.json({
+        actions: {
+          POST: {
+            name: { type: 'string', required: true },
+          },
+        },
+      })
+    )
   );
   const voidFn = async () => {};
 
@@ -46,6 +55,53 @@ describe('authenticatorForm', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  test('fetches name pattern from authenticators OPTIONS and validates on blur', async () => {
+    server.use(
+      http.options(gatewayAPI`/authenticators/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: {
+                pattern: String.raw`^[a-zA-Z0-9_\-\s]+$`,
+                patternDescription:
+                  'Name must contain only letters, numbers, underscores, hyphens, and spaces.',
+              },
+            },
+          },
+        })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/access/authenticators/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/create'}
+            element={
+              <AuthenticatorForm
+                plugins={authenticator_plugins as AuthenticatorPlugins}
+                handleSubmit={voidFn}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByTestId('name');
+    await user.type(nameInput, 'invalid<script>');
+    await user.tab();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Name must contain only letters, numbers, underscores, hyphens, and spaces\./
+        )
+      ).toBeInTheDocument();
+    });
   });
 
   test('should render create authenticator form', () => {

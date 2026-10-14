@@ -54,7 +54,7 @@ function buildRequestUrl(queryOptions: PageAsyncSelectQueryOptions, optionsPath:
 export function useAutomationDashboardToolbarFilters(
   props: AutomationDashboardToolbarFiltersProps
 ) {
-  const { filterableFields, additionalFilters } = props;
+  const { filterableFields } = props;
   const { t } = useTranslation();
 
   const queryResource = useCallback<
@@ -107,10 +107,6 @@ export function useAutomationDashboardToolbarFilters(
     const seenKeys = new Set<string>();
     const toolbarFilters: IToolbarFilter[] = [];
 
-    if (additionalFilters) {
-      toolbarFilters.push(...additionalFilters);
-    }
-
     filterableFields.forEach((filterKey) => {
       if (!filterKey || seenKeys.has(filterKey)) return;
       const field = FILTER_KEYS[filterKey];
@@ -130,5 +126,5 @@ export function useAutomationDashboardToolbarFilters(
     });
 
     return toolbarFilters;
-  }, [filterableFields, additionalFilters, t, queryResource, queryResourceLabel]);
+  }, [filterableFields, t, queryResource, queryResourceLabel]);
 }

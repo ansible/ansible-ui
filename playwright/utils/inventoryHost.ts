@@ -150,7 +150,14 @@ export const InventoryHost = {
 
     bulkDelete: async (page: Page, inventoryName: string): Promise<void> => {
       await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
-      await page.getByLabel('Select all').check();
+
+      await clearTableFilters(page);
+      const rowCheckboxes = page.getByRole('checkbox', { name: 'Select row' });
+      await expect(rowCheckboxes).not.toHaveCount(0);
+      for (const checkbox of await rowCheckboxes.all()) {
+        await checkbox.check();
+      }
+
       await page.getByLabel('toolbar actions').click();
       await page.getByRole('menuitem', { name: 'Delete hosts' }).click();
 
@@ -161,19 +168,22 @@ export const InventoryHost = {
       await page.getByRole('button', { name: 'Delete hosts', exact: true }).click();
       await waitForBulkActionDialog(page);
 
-      // Inventories list Name filters persist onto this tab. PF6 empty-filter
-      // title is not always a heading, so match visible text then clear filters.
       await clearTableFilters(page);
-      const emptyState = page.getByText('No hosts are assigned to this inventory.');
-      const noResults = page.getByText('No results found', { exact: true });
-      await expect(emptyState.or(noResults)).toBeVisible({ timeout: 15000 });
-      await clearTableFilters(page);
-      if (!(await emptyState.isVisible().catch(() => false))) {
-        await page.getByRole('tab', { name: 'Details' }).click();
-        await page.getByRole('tab', { name: 'Hosts' }).click();
-        await clearTableFilters(page);
-      }
-      await expect(emptyState).toBeVisible({ timeout: 15000 });
+      await expect
+        .poll(
+          async () => {
+            const count = await rowCheckboxes.count();
+            if (count === 0) {
+              return 0;
+            }
+            await page.reload();
+            await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
+            await clearTableFilters(page);
+            return await rowCheckboxes.count();
+          },
+          { timeout: 60000, message: 'inventory hosts still listed after bulk delete' }
+        )
+        .toBe(0);
     },
   },
 };

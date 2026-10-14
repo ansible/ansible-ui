@@ -11,7 +11,7 @@ import {
   SelectList,
   SelectOption,
 } from '@patternfly/react-core';
-import getValue from 'get-value';
+import { getByPath } from '../../utils/getByPath';
 import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Controller,
@@ -180,16 +180,17 @@ export function PageFormSelect<
   const [translations] = useFrameworkTranslations();
   const required = useRequiredValidationRule(props.label, props.isRequired);
 
-  const undoValue = getValue(defaultValues as object, props.name) as PathValue<
+  const undoValue = getByPath(defaultValues as object, props.name) as PathValue<
     TFieldValues,
     TFieldName
   >;
 
   useEffect(() => {
     const value = getValues(props.name);
+    const onlyOption = options[0];
     if (!value) {
-      if (options.length === 1 && isRequired) {
-        setValue(props.name, options[0].value as PathValue<TFieldValues, TFieldName>);
+      if (options.length === 1 && isRequired && onlyOption) {
+        setValue(props.name, onlyOption.value as PathValue<TFieldValues, TFieldName>);
       }
     }
   }, [getValues, isRequired, options, props.name, setValue]);

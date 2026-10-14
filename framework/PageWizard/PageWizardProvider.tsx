@@ -67,13 +67,19 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
   // set initial activeStep
   useEffect(() => {
     const visibleSteps = getVisibleSteps(steps, wizardData);
-    if (activeStep || !visibleSteps.length) {
+    const firstVisibleStep = visibleSteps[0];
+    if (activeStep || !firstVisibleStep) {
       return;
     }
-    if ((visibleSteps[0] as PageWizardParentStep).substeps) {
-      setActiveStep((visibleSteps[0] as PageWizardParentStep).substeps[0]);
+    if (isPageWizardParentStep(firstVisibleStep)) {
+      const firstSubstep = firstVisibleStep.substeps[0];
+      if (
+        /* v8 ignore next */
+        firstSubstep
+      )
+        setActiveStep(firstSubstep);
     } else {
-      setActiveStep(visibleSteps[0]);
+      setActiveStep(firstVisibleStep);
     }
   }, [activeStep, steps, wizardData]);
 
@@ -110,9 +116,21 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
 
       const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
       // If the next step is a parent step, mark its first substep as the next active step
-      const nextStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex + 1])
-        ? visibleStepsFlattened[activeStepIndex + 2]
-        : visibleStepsFlattened[activeStepIndex + 1];
+      const nextCandidate = visibleStepsFlattened[activeStepIndex + 1];
+      let nextStep: PageWizardStep | undefined;
+      if (
+        /* v8 ignore next */
+        nextCandidate
+      ) {
+        nextStep = isPageWizardParentStep(nextCandidate)
+          ? visibleStepsFlattened[activeStepIndex + 2]
+          : nextCandidate;
+      }
+      if (
+        /* v8 ignore next */
+        !nextStep
+      )
+        return;
 
       // Clear search params
       setSearchParams(new URLSearchParams(''));
@@ -128,9 +146,21 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
     const visibleStepsFlattened = getVisibleSteps(flattenedSteps, wizardData);
 
     const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
-    const previousStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex - 1])
-      ? visibleStepsFlattened[activeStepIndex - 2]
-      : visibleStepsFlattened[activeStepIndex - 1];
+    const previousCandidate = visibleStepsFlattened[activeStepIndex - 1];
+    let previousStep: PageWizardStep | undefined;
+    if (
+      /* v8 ignore next */
+      previousCandidate
+    ) {
+      previousStep = isPageWizardParentStep(previousCandidate)
+        ? visibleStepsFlattened[activeStepIndex - 2]
+        : previousCandidate;
+    }
+    if (
+      /* v8 ignore next */
+      !previousStep
+    )
+      return;
     // Clear search params
     setSearchParams(new URLSearchParams(''));
     setActiveStep(previousStep);

@@ -460,4 +460,5 @@ import { hubAPI } from '../../common/api/formatPath';
 // npm run vitest              — run all tests
 // npm run vitest -- --watch   — watch mode
 // npm run vitest-preview      — vitest UI
+// npm run eslint:vitest-guardrails — lint Vitest files for Testing Library/Vitest practices
 ```

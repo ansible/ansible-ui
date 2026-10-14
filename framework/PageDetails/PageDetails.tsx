@@ -1,5 +1,5 @@
 import { Alert, DescriptionList, PageSection } from '@patternfly/react-core';
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '../hooks/useResizeObserver';
 import { ReactNode, useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { usePageSettings } from '../PageSettings/PageSettingsProvider';

@@ -45,7 +45,7 @@ export function OrganizationReviewStep(
     galaxyCredentials,
     maxHosts,
     executionEnvironment,
-    policy,
+    opa_query_path,
   } = wizardData as OrganizationWizardFormValues;
 
   let fetchedEE: ExecutionEnvironment | undefined;
@@ -131,7 +131,9 @@ export function OrganizationReviewStep(
             {maxHosts}
           </PageDetail>
         )}
-        {policy && <PageDetail label={t('Policy enforcement')}>{policy}</PageDetail>}
+        {opa_query_path && (
+          <PageDetail label={t('Policy enforcement')}>{opa_query_path}</PageDetail>
+        )}
       </PageDetails>
     </>
   );

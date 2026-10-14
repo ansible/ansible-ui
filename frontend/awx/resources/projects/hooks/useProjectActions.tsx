@@ -6,6 +6,7 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { getCopyResourceName } from '@ansible/common-ui/utils/copyResourceName';
 import { AlertProps, ButtonVariant } from '@patternfly/react-core';
 import {
   CopyIcon,
@@ -134,7 +135,7 @@ export function useProjectActions(
             timeout: 2000,
           };
           postRequest(awxAPI`/projects/${project?.id.toString() ?? ''}/copy/`, {
-            name: `${project.name} @ ${new Date().toTimeString().substring(0, 8)}`,
+            name: getCopyResourceName(project.name),
           })
             .then(() => {
               alertToaster.addAlert(alert);

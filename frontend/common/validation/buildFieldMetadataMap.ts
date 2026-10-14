@@ -38,6 +38,16 @@ function resolvePatternDescription(field: SchemaFieldWithPattern): string | unde
  * Builds a `Record<string, FieldMetadata>` map from an array of schema
  * fields, suitable for passing to {@link PageFormFieldMetadataProvider}.
  *
+ * **When to use this vs `optionsData` on PageForm/PageWizard**
+ *
+ * - Pass **`optionsData`** (from `useOptions` / REST OPTIONS on the form's primary
+ *   endpoint) when field patterns are advertised on that resource's POST/PUT/PATCH
+ *   actions. See {@link PageFormOptionsData}.
+ * - Use **`buildFieldMetadataMap`** when patterns live on a **nested schema** loaded
+ *   separately (credential type `inputs`, authenticator `configuration_schema`, notifier
+ *   plugin fields, etc.). Wrap the result in `PageFormFieldMetadataProvider`; use
+ *   `merge` when combining with parent OPTIONS metadata.
+ *
  * Only fields that carry a `pattern` are included; fields without one
  * are skipped so the provider doesn't needlessly enlarge the context.
  *

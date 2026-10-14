@@ -1,6 +1,6 @@
 import { Button, DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-core';
 import { TimesCircleIcon } from '@patternfly/react-icons';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
@@ -45,71 +45,43 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
   const selectedValue = filterValues && filterValues.length > 0 ? filterValues[0] : undefined;
   const selectedOption = props.options.find((option) => option.value === selectedValue);
 
-  if (isRequired && !selectedOption) {
-    setFilterValues(() => [defaultValue ?? props.options[0].value]);
+  const firstOption = props.options[0];
+  if (isRequired && !selectedOption && firstOption) {
+    setFilterValues(() => [
+      /* v8 ignore next */
+      defaultValue ?? firstOption.value,
+    ]);
   }
-
-  // `from`/`to` are derived directly from filterValues (not local state) so that
-  // externally-set values — e.g. loading a saved report with a custom range —
-  // are always reflected, not just the value present when this component first mounted.
-  const from = filterValues && filterValues.length > 1 ? filterValues[1] : undefined;
-  const to = filterValues && filterValues.length > 2 ? filterValues[2] : undefined;
-
-  // Remembers the last custom range entered so it can be restored if the user
-  // switches to a preset and back to Custom, without controlling the displayed
-  // from/to values itself (those stay solely derived from filterValues above).
-  const lastCustomRangeRef = useRef<{ from?: string; to?: string }>({});
-  useEffect(() => {
-    if (selectedOption?.isCustom && (from || to)) {
-      lastCustomRangeRef.current = { from, to };
-    }
-  }, [selectedOption, from, to]);
 
   function onSelectChange(value: string | null) {
-    if (value === null) {
-      if (defaultValue) {
-        setFilterValues(() => [defaultValue]);
-      }
-      return;
-    }
-    const option = props.options.find((option) => option.value === value);
-    if (!option) return;
-    if (!option.isCustom) {
+    if (value === null) return;
+    if (props.options.some((option) => option.value === value)) {
       setFilterValues(() => [value]);
-      return;
     }
-    const remembered = lastCustomRangeRef.current;
-    const newValues = [value];
-    if (remembered.from) {
-      newValues.push(remembered.from);
-      if (remembered.to) newValues.push(remembered.to);
-    }
-    setFilterValues(() => newValues);
   }
 
-  function setFrom(value?: string) {
-    if (!selectedOption) return;
-    if (!value) {
-      // Keep "to" as-is when "from" is cleared — the "to" DatePicker becomes
-      // read-only (see DateRange below) rather than losing its value.
-      const newValues = to ? [selectedOption.value, '', to] : [selectedOption.value];
+  const [from, setFrom] = useState<string | undefined>(() => {
+    if (filterValues && filterValues.length > 1) return filterValues[1];
+    return undefined;
+  });
+
+  const [to, setTo] = useState<string | undefined>(() => {
+    if (filterValues && filterValues.length > 2) return filterValues[2];
+    return undefined;
+  });
+
+  useEffect(() => {
+    if (selectedOption?.isCustom) {
+      const newValues = [selectedOption.value];
+      if (from) {
+        newValues.push(from);
+        if (to) {
+          newValues.push(to);
+        }
+      }
       setFilterValues(() => newValues);
-      return;
     }
-    const newValues = to ? [selectedOption.value, value, to] : [selectedOption.value, value];
-    setFilterValues(() => newValues);
-  }
-
-  function setTo(value?: string) {
-    // The "to" DatePicker is disabled until "from" is set (see DateRange below),
-    // so `from` is always defined here.
-    if (!selectedOption || !from) return;
-    if (value) {
-      setFilterValues(() => [selectedOption.value, from, value]);
-      return;
-    }
-    setFilterValues(() => [selectedOption.value, from]);
-  }
+  }, [selectedOption, from, to, setFilterValues]);
 
   return (
     <ToolbarItem>
@@ -181,8 +153,6 @@ export function DateRange(props: {
           variant="control"
           style={{ alignSelf: 'flex-start' }}
           onClick={() => setTo(undefined)}
-          aria-label={t('Clear end date')}
-          data-testid="toolbar-date-picker-clear-end-date"
         ></Button>
       )}
     </>

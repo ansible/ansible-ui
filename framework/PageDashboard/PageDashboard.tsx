@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '../hooks/useResizeObserver';
 import { ReactNode, createContext, useLayoutEffect, useRef, useState } from 'react';
 import { Scrollable } from '../components/Scrollable';
 

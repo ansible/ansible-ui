@@ -30,10 +30,10 @@ export function EditCredential() {
   const navigate = useNavigate();
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/eda-credentials/${params.id ?? ''}/`
   );
-  const canPatchCredential = data ? Boolean(data.actions?.['PATCH']) : true;
+  const canPatchCredential = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
   const { data: credential } = useGet<EdaCredential>(edaAPI`/eda-credentials/${id.toString()}/`);
   const openCredentialsExternalTestModal = useCredentialsTestModal();
   const [isTestButtonEnabled, setIsTestButtonEnabled] = useState(false);
@@ -185,6 +185,7 @@ export function EditCredential() {
               organization_id: credential?.organization?.id,
               credential_type_id: credential?.credential_type?.id || undefined,
             }}
+            optionsData={optionsData}
             additionalActions={
               isExternalCredential ? (
                 <Button
