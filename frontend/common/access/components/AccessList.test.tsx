@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { AccessList } from './AccessList';
+import { ACCESS_LIST_ROLE_NAME_FILTER_QUERY, AccessList } from './AccessList';
 import type { UserRoleAccess } from '../interfaces/UserRoleAccess';
 
 const mockResults: UserRoleAccess[] = [
@@ -49,6 +49,13 @@ const mockEmptyResults = {
 };
 
 describe('AccessList', () => {
+  it('uses a role name filter query valid for role_user_access actor lists', () => {
+    expect(ACCESS_LIST_ROLE_NAME_FILTER_QUERY).toBe(
+      'role_assignments__role_definition__name__icontains'
+    );
+    expect(ACCESS_LIST_ROLE_NAME_FILTER_QUERY).not.toBe('role_definition__name__icontains');
+  });
+
   const server = setupServer();
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
