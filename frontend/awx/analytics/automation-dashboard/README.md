@@ -38,8 +38,10 @@ automation-dashboard/
 │   └── useDashboardGridColumns.tsx  # Measures the responsive grid column count
 ├── components/
 │   ├── index.ts
-│   ├── Toolbar.tsx                  # useAutomationDashboardToolbar hook
+│   ├── Toolbar.tsx                  # useAutomationDashboardPeriodFilter + useAutomationDashboardToolbar hooks
 │   ├── DashboardToolbar.tsx         # Filter toolbar + "Select report" filter-set control
+│   ├── DashboardToolbarFilters.tsx  # Dashboard version of PageToolbarFilters (filters + period + chips)
+│   ├── AutomationDashboardPeriodFilter.tsx  # Period presets / Custom from–to control
 │   ├── DashboardLayout.tsx          # Scrollable grid wrapper + DashboardGridRow
 │   ├── DashboardValueCard.tsx       # KPI card
 │   ├── DashboardDetailsCard.tsx     # KPI card rendered as a PageDetail
@@ -69,6 +71,7 @@ automation-dashboard/
 │   └── index.ts                     # Dashboard data models and prop types
 ├── utils/
 │   ├── queryString.ts               # Filter <-> query-string helpers
+│   ├── filterStateUpdates.ts        # Pure filter-state updates (custom period values, chip removal)
 │   └── persistedFilterState.ts      # Per-user sessionStorage persistence of toolbar state
 └── views/                           # Data / state hooks
     ├── useAutomationDashboardView.tsx      # Dashboard tab: central data + export hook
@@ -155,7 +158,9 @@ AutomationDashboardMainPage (page shell — stays mounted across tab switches)
   └── PageDashboardContext.Provider { columns }
         └── PageRoutedTabs                     (both visible; otherwise a single view, see below)
               ├── AutomationDashboard        (Dashboard tab)
-              │     ├── useAutomationDashboardToolbar()   ← toolbar filters
+              │     ├── useAutomationDashboardPeriodFilter() ← period filter definition
+              │     ├── useAutomationDashboardToolbar()   ← template/label/organization/project filters
+              │     │     (combined as [period, ...filters] for the view, validation and export)
               │     ├── useAutomationDashboardView()      ← central data + export hook
               │     │     ├── useAutomationDashboardBaseView   ← paginated table state (SWR)
               │     │     ├── useGetReportDetails              ← aggregate KPI fetch (SWR)
@@ -251,6 +256,27 @@ validation (empty, NaN, integer checks).
 
 The filter toolbar plus the **Select report** control that loads, applies, creates, updates, and
 removes saved filter sets (`useFilterSetView` + the `common/use*ToolbarFilterSet` hooks).
+
+The filters are rendered by `DashboardToolbarFilters` — a dashboard version of the framework
+`PageToolbarFilters` — and not by the shared framework component:
+
+- The resource filters (template, label, organization, project) use the same filter selector,
+  async multi-select and chips as the framework.
+- The period is rendered by `AutomationDashboardPeriodFilter`. `filterState.period`
+  (`['preset']` or `['custom', from?, to?]`) is its only source of truth, so a custom range loaded
+  from a saved report or filter set is shown correctly.
+- Everything shares one toggle group: below the `md` breakpoint it collapses behind the filter
+  icon. There the period dropdown and the date range each get their own row (PatternFly `Flex`
+  with a breakpoint-dependent `direction`); from `md` up they share a row and wrap instead of
+  overflowing. Between `md` and `lg` (below 992px) the whole period takes its own row
+  (PatternFly `pf-v6-u-w-100-on-md` / `pf-v6-u-w-auto-on-lg` utilities). All breakpoint switching
+  uses PatternFly CSS, no JS breakpoint logic.
+
+The period is not part of `useAutomationDashboardToolbar()`. `AutomationDashboard` combines it with
+the other filters (`[period, ...filters]`) for the query string, required-filter validation,
+export and URL deep links. It passes the period to `DashboardToolbar` as `periodFilter` (for
+rendering) and the combined list as `validationFilters` (for the required-filter validation of the
+report actions).
 
 ---
 

@@ -1,7 +1,8 @@
 import {
   IFilterState,
+  IToolbarDateRangeFilter,
+  IToolbarFilter,
   PageActions,
-  PageToolbarFilters,
   PageToolbarProps,
   useBreakpoint,
 } from '@ansible/ansible-ui-framework';
@@ -20,6 +21,7 @@ import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { IDashboardFilterSet, IJobTemplate } from '../types';
 import { useFilterSetView } from '../views/useFilterSetView';
 import { isFilterStateShape } from '../utils/persistedFilterState';
+import { DashboardToolbarFilters } from './DashboardToolbarFilters';
 
 const DEFAULT_FILTER_STATE: IFilterState = {
   period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
@@ -49,6 +51,13 @@ export function DashboardToolbar(
   props: Readonly<
     PageToolbarProps<IJobTemplate> & {
       registerClearCallback?: (callback: () => void) => void;
+      /** The period filter, rendered by the dashboard-local period control. */
+      periodFilter?: IToolbarDateRangeFilter;
+      /**
+       * All filters including the period, for the required-filter validation of the report
+       * actions. Defaults to `toolbarFilters`.
+       */
+      validationFilters?: IToolbarFilter[];
     }
   >
 ) {
@@ -65,8 +74,15 @@ export function DashboardToolbar(
     upsertFilterSet,
   } = useFilterSetView();
 
-  const { setFilterState, filterState, registerClearCallback, clearAllFilters, toolbarFilters } =
-    props;
+  const {
+    setFilterState,
+    filterState,
+    registerClearCallback,
+    clearAllFilters,
+    toolbarFilters,
+    periodFilter,
+    validationFilters = toolbarFilters,
+  } = props;
 
   // Register callback to reset dropdown when clearAllFilters is called
   useEffect(() => {
@@ -123,7 +139,7 @@ export function DashboardToolbar(
 
   const toolbarActions = useAutomationDashboardToolbarActions({
     filterState,
-    toolbarFilters,
+    toolbarFilters: validationFilters,
     selectedFilterSet,
     onDelete: onFilterSetDelete,
     onSave,
@@ -187,8 +203,9 @@ export function DashboardToolbar(
           />
         </div>
         {filterState && setFilterState && (
-          <PageToolbarFilters
-            toolbarFilters={props.toolbarFilters}
+          <DashboardToolbarFilters
+            toolbarFilters={toolbarFilters}
+            periodFilter={periodFilter}
             filterState={filterState}
             setFilterState={setFilterState}
           />
