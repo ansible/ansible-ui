@@ -32,8 +32,8 @@ export interface StreakDay {
 /** The active user's standing in one automation dimension. */
 export interface DimensionStanding {
   /**
-   * The user's score for this dimension in the 30-day window, or `null` when they are ranked but
-   * outside the returned top 10, so the API doesn't expose their raw score.
+   * The user's score for this dimension in the 30-day window; 0 when they have no runs. `null`
+   * only when an older backend omits `current_user_runs` and the user is ranked outside the top 10.
    */
   score: number | null;
   /** The user's rank among all ranked users (1-based). */
@@ -153,6 +153,11 @@ interface ILeaderboardActivityLevel {
   id: DimensionKey;
   current_user_rank: number;
   total_users: number;
+  /**
+   * The current user's score in this dimension, even when outside the top 10; 0 with no runs.
+   * Optional so an older backend that predates the field doesn't crash the card.
+   */
+  current_user_runs?: number | null;
   /** Top 10, rank ascending. Only includes the current user's row if they're in the top 10. */
   leaderboard?: ILeaderboardActivityRow[] | null;
 }
@@ -253,11 +258,11 @@ function mapDimensions(
   };
 
   for (const level of orEmpty(activityLevels)) {
-    // The current user's raw score is only available when they're in the returned top 10. Ranked
-    // but outside it → `null` (unknown, not 0). Unranked (rank 0) means no activity → 0.
+    // Fallback for a backend without `current_user_runs`: the user's own top-10 row. Ranked but
+    // outside it → `null` (unknown, not 0). Unranked (rank 0) means no activity → 0.
     const ownRow = orEmpty(level.leaderboard).find((row) => row.is_current_user);
     dimensions[level.id] = {
-      score: ownRow?.runs ?? (level.current_user_rank > 0 ? null : 0),
+      score: level.current_user_runs ?? ownRow?.runs ?? (level.current_user_rank > 0 ? null : 0),
       rank: level.current_user_rank,
       totalRanked: level.total_users,
     };

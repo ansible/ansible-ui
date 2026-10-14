@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useOutletContext, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { getSyncJobId } from '../../../common/getSyncJobId';
 import { useVerbosityString } from '../../../common/useVerbosityString';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { ConstructedInventory, Inventory } from '../../../interfaces/Inventory';
@@ -66,10 +67,13 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
 
   const inventoryFormDetailLables = useInventoryFormDetailLabels();
 
-  const inventorySourceSyncJob =
-    inventorySourceData?.summary_fields?.current_job ||
-    inventorySourceData?.summary_fields?.last_job ||
-    undefined;
+  const inventorySourceSyncJob = inventorySourceData?.summary_fields?.current_job?.id
+    ? inventorySourceData.summary_fields.current_job
+    : inventorySourceData?.summary_fields?.last_job;
+  const inventorySourceSyncJobId = getSyncJobId(
+    inventorySourceData?.summary_fields,
+    inventorySourceData?.related?.last_job
+  );
 
   if (inputInventoriesError) {
     return <AwxError error={inputInventoriesError} />;
@@ -80,6 +84,7 @@ export function InventoryDetailsInner(props: Readonly<{ inventory: InventoryWith
       <PageDetail label={t('Name')}>{inventory.name}</PageDetail>
       <PageDetailJobStatus
         job={inventorySourceSyncJob}
+        jobId={inventorySourceSyncJobId}
         isEmpty={inventory.kind !== 'constructed'}
       />
       <PageDetail label={t('Description')}>{inventory.description}</PageDetail>
@@ -295,13 +300,15 @@ function PageDetailJobStatus(
           status: string;
         }
       | undefined;
+    jobId: number | undefined;
     isEmpty?: boolean;
   }>
 ) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
   const lastJob = props.job;
-  if (!lastJob) {
+  const jobId = props.jobId;
+  if (!lastJob || jobId === undefined) {
     return null;
   }
 
@@ -309,16 +316,15 @@ function PageDetailJobStatus(
     <PageDetail label={t`Last job status`} isEmpty={props.isEmpty}>
       <Tooltip
         position="top"
-        content={lastJob ? <LastJobTooltip job={lastJob} /> : undefined}
-        key={lastJob.id}
+        content={<LastJobTooltip job={{ ...lastJob, id: jobId }} />}
+        key={jobId}
       >
-        <Link
+        <StatusCell
+          status={lastJob.status}
           to={getPageUrl(AwxRoute.JobOutput, {
-            params: { id: lastJob.id, job_type: 'inventory' },
+            params: { id: jobId, job_type: 'inventory' },
           })}
-        >
-          <StatusCell status={lastJob.status} />
-        </Link>
+        />
       </Tooltip>
     </PageDetail>
   );
