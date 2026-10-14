@@ -477,6 +477,7 @@ function collapseAdjacentSeperators<T extends object>(actions: IPageAction<T>[])
   const result: IPageAction<T>[] = [];
   let previousAction: IPageAction<T> | undefined;
   for (const action of actions) {
+    if (!action) continue;
     if (action.type === PageActionType.Seperator) {
       if (!previousAction || previousAction.type !== PageActionType.Seperator) {
         result.push(action);

@@ -16,4 +16,11 @@ describe('filterActionSeperators', () => {
       action,
     ]);
   });
+
+  it('removes separators from sparse action arrays', () => {
+    const actions = [] as IPageAction<object>[];
+    actions[1] = { type: PageActionType.Seperator } as IPageAction<object>;
+
+    expect(filterActionSeperators(actions)).toEqual([]);
+  });
 });

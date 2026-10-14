@@ -34,4 +34,28 @@ describe('SingleSelectDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
     expect(onSelect).toHaveBeenCalledWith(item);
   });
+
+  it('does not select an empty first array entry', async () => {
+    const onSelect = vi.fn();
+    const view = {
+      selectedItems: [undefined],
+      pageItems: [],
+    } as unknown as IView & ISelected<{ id: string }> & { pageItems: { id: string }[] };
+
+    render(
+      <PageDialogProvider>
+        <SingleSelectDialog
+          title="Select item"
+          view={view}
+          tableColumns={[]}
+          toolbarFilters={[]}
+          onSelect={onSelect}
+          confirmText="Confirm"
+        />
+      </PageDialogProvider>
+    );
+
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Confirm' }));
+    expect(onSelect).not.toHaveBeenCalled();
+  });
 });

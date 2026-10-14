@@ -314,6 +314,13 @@ describe('PageToolbarFilters', () => {
     expect(container.querySelector('[data-testid="text-input"]')).not.toBeInTheDocument();
   });
 
+  it('should tolerate a sparse toolbar filter array', () => {
+    const toolbarFilters = [] as IToolbarFilter[];
+    toolbarFilters[1] = createSingleTextFilter(1);
+
+    expect(() => render(<ToolbarFiltersTest toolbarFilters={toolbarFilters} />)).not.toThrow();
+  });
+
   it('should hide label for pinned single-select with no value', () => {
     const filter = createSingleSelectFilter(1, { isPinned: true });
 
