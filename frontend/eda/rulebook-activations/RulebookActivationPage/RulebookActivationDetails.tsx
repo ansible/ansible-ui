@@ -298,7 +298,7 @@ export function RulebookActivationDetails() {
                   <StandardPopover
                     header={t('Auto-restart on project sync if rulebook changes')}
                     content={t(
-                      'When the associated project resyncs, this rulebook activation automatically restarts if its rulebook has changed, so it runs with the latest rulebook content.'
+                      'When the associated project syncs, this rulebook activation automatically restarts if its rulebook has changed, so it runs with the latest rulebook content.'
                     )}
                   />
                 </Content>
