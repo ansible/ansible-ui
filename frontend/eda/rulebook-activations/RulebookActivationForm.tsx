@@ -327,7 +327,7 @@ export function RulebookActivationInputs() {
             label={t`Auto-restart on project update`}
             labelHelpTitle={t('Auto-restart on project update')}
             labelHelp={t(
-              'When enabled, this rulebook activation automatically restarts when its associated project resyncs, so it runs with the latest project content.'
+              'When the associated project resyncs, this rulebook activation automatically restarts if its rulebook has changed, so it runs with the latest rulebook content.'
             )}
             name="restart_on_project_update"
           />
