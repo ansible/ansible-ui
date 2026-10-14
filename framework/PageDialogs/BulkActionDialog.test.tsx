@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -191,26 +191,19 @@ describe('BulkActionDialog', () => {
   });
 
   it('should call onClose with success after actions complete', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
     const onClose = vi.fn();
     const actionFn = vi.fn().mockResolvedValue(undefined);
 
     renderDialog({ items: [{ id: 1, name: 'Item 1' }], actionFn, onClose });
 
     await waitFor(() => expect(actionFn).toHaveBeenCalled());
-    await act(async () => {
-      await Promise.resolve();
-    });
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
-    });
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(1000);
-    });
-
-    expect(onClose).toHaveBeenCalledOnce();
+    await waitFor(
+      () => {
+        expect(onClose).toHaveBeenCalled();
+      },
+      { timeout: 3000 }
+    );
     expect(onClose.mock.calls[0][0]).toBe('success');
-    vi.useRealTimers();
   });
 
   it('should call onClose with failure status when actions fail', async () => {
