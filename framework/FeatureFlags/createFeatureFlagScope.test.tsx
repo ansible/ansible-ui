@@ -19,6 +19,12 @@ const definitions = {
 const featureFlags = createFeatureFlagScope<typeof definitions>();
 
 describe('createFeatureFlagScope', () => {
+  it('requires a provider for consumers', () => {
+    expect(() =>
+      renderHook(() => featureFlags.useFeatureFlag('FEATURE_UNFINISHED_VIEW_ENABLED'))
+    ).toThrow('useFeatureFlag must be used inside FeatureFlagProvider');
+  });
+
   it('updates a consumer when an enabled local flag changes', () => {
     const provider = createLocalFeatureFlagProvider();
     const registry = createFeatureFlagRegistry(definitions, { provider });

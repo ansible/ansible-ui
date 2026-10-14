@@ -38,4 +38,23 @@ describe('feature flag catalog', () => {
       'Unexpected field in feature flag catalog'
     );
   });
+
+  it.each([
+    [{ ...catalog[0], name: 'invalid-name' }, 'Invalid feature flag name'],
+    [[catalog[0], catalog[0]], 'Duplicate feature flag name'],
+    [{ ...catalog[0], defaultValue: true }, 'Proposed feature flag must default off'],
+    [{ ...catalog[0], status: 'unknown' }, 'Invalid feature flag status'],
+    [{ ...catalog[0], kind: 'unknown' }, 'Invalid feature flag kind'],
+    [{ ...catalog[0], scope: 'server' }, 'Invalid feature flag scope'],
+    [{ ...catalog[0], defaultValue: 'true', status: 'alpha' }, 'Invalid feature flag default'],
+    [{ ...catalog[0], description: ' ' }, 'Feature flag requires a description and owner'],
+    [{ ...catalog[0], owner: ' ' }, 'Feature flag requires a description and owner'],
+    [{ ...catalog[0], removalDate: '2026-02-30' }, 'Invalid feature flag removal date'],
+  ])('rejects invalid catalog entries', (entry, message) => {
+    const invalidCatalog = Array.isArray(entry) ? entry : [entry];
+
+    expect(() => validateFeatureFlagCatalog(invalidCatalog as FeatureFlagCatalogEntry[])).toThrow(
+      message
+    );
+  });
 });

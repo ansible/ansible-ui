@@ -196,6 +196,29 @@ describe('createFeatureFlagRegistry', () => {
     expect(registry.isEnabled('experimentalView')).toBe(true);
   });
 
+  it('keeps defaults when provider initialization fails', async () => {
+    const provider: FeatureFlagProvider = {
+      name: 'failing-initialization-provider',
+      evaluateBoolean: (flagKey, defaultValue) => ({
+        flagKey,
+        reason: 'PROVIDER',
+        value: !defaultValue,
+      }),
+      initialize: () => Promise.reject(new Error('initialization failed')),
+    };
+    const registry = createFeatureFlagRegistry(definitions, { provider });
+
+    await registry.ready();
+
+    expect(registry.getStatus()).toBe('ERROR');
+    expect(registry.evaluate('experimentalView')).toEqual({
+      error: 'PROVIDER_ERROR',
+      flagKey: 'experimentalView',
+      reason: 'ERROR',
+      value: false,
+    });
+  });
+
   it('passes updated context to providers and notifies subscribers', async () => {
     let receivedContext: { targetingKey?: string } | undefined;
     const provider: FeatureFlagProvider = {
@@ -219,6 +242,29 @@ describe('createFeatureFlagRegistry', () => {
     expect(registry.getContext()).toEqual({ targetingKey: 'enabled' });
     expect(registry.isEnabled('experimentalView')).toBe(true);
     expect(listener).toHaveBeenCalledOnce();
+  });
+
+  it('keeps defaults when a provider rejects a context update', async () => {
+    const provider: FeatureFlagProvider = {
+      name: 'failing-context-provider',
+      evaluateBoolean: (flagKey, defaultValue) => ({
+        flagKey,
+        reason: 'PROVIDER',
+        value: !defaultValue,
+      }),
+      setContext: () => Promise.reject(new Error('context update failed')),
+    };
+    const registry = createFeatureFlagRegistry(definitions, { provider });
+
+    await registry.setContext({ targetingKey: 'enabled' });
+
+    expect(registry.getStatus()).toBe('ERROR');
+    expect(registry.evaluate('experimentalView')).toEqual({
+      error: 'PROVIDER_ERROR',
+      flagKey: 'experimentalView',
+      reason: 'ERROR',
+      value: false,
+    });
   });
 
   it('fails closed when a provider returns an invalid evaluation', () => {
