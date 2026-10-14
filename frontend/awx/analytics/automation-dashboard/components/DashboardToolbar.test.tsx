@@ -3,8 +3,16 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { PageAlertToasterProvider, PageDialogProvider } from '@ansible/ansible-ui-framework';
-import type { IFilterState, PageToolbarProps } from '@ansible/ansible-ui-framework';
+import {
+  PageAlertToasterProvider,
+  PageDialogProvider,
+  ToolbarFilterType,
+} from '@ansible/ansible-ui-framework';
+import type {
+  IFilterState,
+  IToolbarDateRangeFilter,
+  PageToolbarProps,
+} from '@ansible/ansible-ui-framework';
 import type { IDashboardFilterSet, IJobTemplate } from '../types';
 import { DashboardToolbar } from './DashboardToolbar';
 
@@ -268,6 +276,99 @@ describe('DashboardToolbar', () => {
           </Wrapper>
         );
       }).not.toThrow();
+    });
+  });
+
+  describe('period filter', () => {
+    const periodFilter: IToolbarDateRangeFilter = {
+      type: ToolbarFilterType.DateRange,
+      key: 'period',
+      label: 'Period',
+      query: 'period',
+      placeholder: 'Filter by period',
+      isRequired: true,
+      defaultValue: 'last_7_days',
+      options: [
+        { label: 'Last 7 days', value: 'last_7_days' },
+        { label: 'Custom', value: 'custom', isCustom: true },
+      ],
+    };
+
+    test('should render the period with the dashboard-local filter only once', () => {
+      render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} periodFilter={periodFilter} />
+        </Wrapper>
+      );
+
+      expect(screen.getByTestId('automation-dashboard-period-filter')).toBeInTheDocument();
+      expect(screen.getAllByRole('button', { name: 'Last 7 days' })).toHaveLength(1);
+    });
+
+    test('should show the custom range of a saved report loaded after mount', () => {
+      const props = buildProps();
+      const { rerender } = render(
+        <Wrapper>
+          <DashboardToolbar {...props} periodFilter={periodFilter} />
+        </Wrapper>
+      );
+
+      rerender(
+        <Wrapper>
+          <DashboardToolbar
+            {...props}
+            periodFilter={periodFilter}
+            filterState={{ period: ['custom', '2024-02-01', '2024-02-15'] }}
+          />
+        </Wrapper>
+      );
+
+      expect(screen.getByLabelText('Start date')).toHaveValue('2024-02-01');
+      expect(screen.getByLabelText('End date')).toHaveValue('2024-02-15');
+    });
+
+    test('should not render the period filter without a periodFilter', () => {
+      render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} />
+        </Wrapper>
+      );
+
+      expect(screen.queryByTestId('automation-dashboard-period-filter')).not.toBeInTheDocument();
+    });
+
+    test('should validate the actions against the given validationFilters', async () => {
+      const { useAutomationDashboardToolbarActions } = await import(
+        '../common/useAutomationDashboardToolbarActions'
+      );
+      const validationFilters = [periodFilter];
+      render(
+        <Wrapper>
+          <DashboardToolbar
+            {...buildProps()}
+            periodFilter={periodFilter}
+            validationFilters={validationFilters}
+          />
+        </Wrapper>
+      );
+
+      const lastCall = vi.mocked(useAutomationDashboardToolbarActions).mock.calls.at(-1)?.[0];
+      expect(lastCall?.toolbarFilters).toBe(validationFilters);
+    });
+
+    test('should validate the actions against toolbarFilters when no validationFilters are given', async () => {
+      const { useAutomationDashboardToolbarActions } = await import(
+        '../common/useAutomationDashboardToolbarActions'
+      );
+      const props = buildProps();
+      render(
+        <Wrapper>
+          <DashboardToolbar {...props} periodFilter={periodFilter} />
+        </Wrapper>
+      );
+
+      const lastCall = vi.mocked(useAutomationDashboardToolbarActions).mock.calls.at(-1)?.[0];
+      expect(lastCall?.toolbarFilters).toBe(props.toolbarFilters);
     });
   });
 

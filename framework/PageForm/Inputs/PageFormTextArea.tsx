@@ -1,5 +1,5 @@
 import { InputGroup, InputGroupItem, TextArea } from '@patternfly/react-core';
-import getValue from 'get-value';
+import { getByPath } from '../../utils/getByPath';
 import { useState } from 'react';
 import { Controller, FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { useID } from '../../hooks/useID';
@@ -154,7 +154,7 @@ export function PageFormTextArea<
       rules={{
         required,
         validate: createFieldValidate(fieldMetadata, validate, () =>
-          getValue(defaultValues as object, name)
+          getByPath(defaultValues as object, name)
         ),
 
         minLength:

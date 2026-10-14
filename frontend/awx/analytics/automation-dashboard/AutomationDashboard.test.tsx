@@ -13,6 +13,7 @@ import { AutomationDashboard } from './AutomationDashboard';
 import { useAutomationDashboardToolbar } from './components';
 import { DEFAULT_NUMBER_LOCALE } from './constants/common';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
+import { useAutomationDashboardToolbarActions } from './common/useAutomationDashboardToolbarActions';
 import type {
   IAutomationDashboardView,
   IDashboardDetails,
@@ -23,56 +24,79 @@ import type {
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
 
-vi.mock('./components', () => ({
-  useAutomationDashboardToolbar: vi.fn(() => []),
-  DashboardValueCard: ({
-    id,
-    title,
-    value,
-    valueSuffix,
-    linkText,
-    width,
-  }: DashboardValueCardProps) => (
-    <div data-testid={id} data-width={width}>
-      <span>{title}</span>
-      <span>
-        {typeof value === 'number' ? value.toLocaleString(DEFAULT_NUMBER_LOCALE) : value}
-        {valueSuffix ? ` ${valueSuffix}` : ''}
-      </span>
-      {linkText && <span>{linkText}</span>}
-    </div>
-  ),
-  DashboardChartCard: ({ id, title, width }: DashboardChartCardProps) => (
-    <div data-testid={id} data-width={width}>
-      {title}
-    </div>
-  ),
-  DashboardTableCard: ({
-    id,
-    title,
-    emptyStateTitle,
-    emptyStateDescription,
-  }: {
-    id: string;
-    title: string;
-    emptyStateTitle?: string;
-    emptyStateDescription?: string;
-  }) => (
-    <div data-testid={id}>
-      <span>{title}</span>
-      {emptyStateTitle && <span data-testid={`${id}-empty-title`}>{emptyStateTitle}</span>}
-      {emptyStateDescription && (
-        <span data-testid={`${id}-empty-desc`}>{emptyStateDescription}</span>
-      )}
-    </div>
-  ),
-  DashboardMainTableCard: ({ toolbarFilters }: { toolbarFilters?: IToolbarFilter[] }) => (
-    <div
-      data-testid="dashboard-main-table-card"
-      data-toolbar-filter-keys={toolbarFilters?.map((filter) => filter.key).join(',') ?? ''}
-    />
-  ),
-}));
+vi.mock('./components', async () => {
+  const { ToolbarFilterType } = await import('@ansible/ansible-ui-framework');
+  const periodFilter = {
+    type: ToolbarFilterType.DateRange,
+    key: 'period',
+    label: 'Period',
+    query: 'period',
+    options: [{ label: 'Last 7 days', value: 'last_7_days' }],
+    placeholder: 'Filter by period',
+    isRequired: true,
+  };
+  return {
+    useAutomationDashboardPeriodFilter: vi.fn(() => periodFilter),
+    useAutomationDashboardToolbar: vi.fn(() => []),
+    DashboardValueCard: ({
+      id,
+      title,
+      value,
+      valueSuffix,
+      linkText,
+      width,
+    }: DashboardValueCardProps) => (
+      <div data-testid={id} data-width={width}>
+        <span>{title}</span>
+        <span>
+          {typeof value === 'number' ? value.toLocaleString(DEFAULT_NUMBER_LOCALE) : value}
+          {valueSuffix ? ` ${valueSuffix}` : ''}
+        </span>
+        {linkText && <span>{linkText}</span>}
+      </div>
+    ),
+    DashboardChartCard: ({ id, title, width }: DashboardChartCardProps) => (
+      <div data-testid={id} data-width={width}>
+        {title}
+      </div>
+    ),
+    DashboardTableCard: ({
+      id,
+      title,
+      emptyStateTitle,
+      emptyStateDescription,
+    }: {
+      id: string;
+      title: string;
+      emptyStateTitle?: string;
+      emptyStateDescription?: string;
+    }) => (
+      <div data-testid={id}>
+        <span>{title}</span>
+        {emptyStateTitle && <span data-testid={`${id}-empty-title`}>{emptyStateTitle}</span>}
+        {emptyStateDescription && (
+          <span data-testid={`${id}-empty-desc`}>{emptyStateDescription}</span>
+        )}
+      </div>
+    ),
+    DashboardMainTableCard: ({ toolbarFilters }: { toolbarFilters?: IToolbarFilter[] }) => (
+      <div
+        data-testid="dashboard-main-table-card"
+        data-toolbar-filter-keys={toolbarFilters?.map((filter) => filter.key).join(',') ?? ''}
+      />
+    ),
+  };
+});
+
+// Call-through spy: the toolbar renders as usual, the test only inspects the arguments.
+vi.mock('./common/useAutomationDashboardToolbarActions', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('./common/useAutomationDashboardToolbarActions')>();
+  return {
+    ...actual,
+    useAutomationDashboardToolbarActions: vi.fn(actual.useAutomationDashboardToolbarActions),
+  };
+});
 
 vi.mock('./views/useAutomationDashboardView', () => ({
   useAutomationDashboardView: vi.fn(() => mockView),
@@ -223,6 +247,8 @@ function testWrapper(gridColumns?: number) {
 describe('AutomationDashboard', () => {
   afterEach(() => {
     vi.clearAllMocks();
+    // Restore the default so a per-test override cannot leak into later tests.
+    vi.mocked(useAutomationDashboardToolbar).mockReturnValue([]);
   });
 
   test('should render without crashing', () => {
@@ -250,26 +276,49 @@ describe('AutomationDashboard', () => {
     expect(screen.getByTestId('dashboard-main-table-card')).toBeInTheDocument();
   });
 
-  test('should pass toolbarFilters through to DashboardMainTableCard', () => {
+  test('should pass the period and toolbar filters through to DashboardMainTableCard and the view', () => {
     const mockToolbarFilters: IToolbarFilter[] = [
       {
-        type: ToolbarFilterType.DateRange,
-        key: 'period',
-        label: 'Period',
-        query: 'period',
-        options: [{ label: 'Last 7 days', value: 'last_7_days' }],
-        placeholder: 'Filter by period',
-        isRequired: true,
+        type: ToolbarFilterType.AsyncMultiSelect,
+        key: 'template',
+        label: 'Template',
+        query: 'template',
+        queryOptions: vi.fn(),
+        queryLabel: (value: string) => value,
       },
     ];
-    vi.mocked(useAutomationDashboardToolbar).mockReturnValueOnce(mockToolbarFilters);
+    vi.mocked(useAutomationDashboardToolbar).mockReturnValue(mockToolbarFilters);
 
     render(testWrapper());
 
     expect(screen.getByTestId('dashboard-main-table-card')).toHaveAttribute(
       'data-toolbar-filter-keys',
-      'period'
+      'period,template'
     );
+    const viewFilters = vi.mocked(useAutomationDashboardView).mock.calls.at(-1)?.[0].toolbarFilters;
+    expect(viewFilters?.map((filter) => filter.key)).toEqual(['period', 'template']);
+  });
+
+  test('should validate the report actions against the same filters as the view, period included', () => {
+    vi.mocked(useAutomationDashboardToolbar).mockReturnValue([
+      {
+        type: ToolbarFilterType.AsyncMultiSelect,
+        key: 'template',
+        label: 'Template',
+        query: 'template',
+        queryOptions: vi.fn(),
+        queryLabel: (value: string) => value,
+      },
+    ]);
+
+    render(testWrapper());
+
+    const viewFilters = vi.mocked(useAutomationDashboardView).mock.calls.at(-1)?.[0].toolbarFilters;
+    const actionFilters = vi
+      .mocked(useAutomationDashboardToolbarActions)
+      .mock.calls.at(-1)?.[0].toolbarFilters;
+    expect(actionFilters).toBe(viewFilters);
+    expect(actionFilters?.map((filter) => filter.key)).toEqual(['period', 'template']);
   });
 
   // ─── Value card data ───────────────────────────────────────────────────────

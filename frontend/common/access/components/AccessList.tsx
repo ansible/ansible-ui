@@ -23,6 +23,10 @@ type QueryParams = {
   [key: string]: string;
 };
 
+/** role_user_access lists User/Team actors; filter via role assignment, not assignment rows. */
+export const ACCESS_LIST_ROLE_NAME_FILTER_QUERY =
+  'role_assignments__role_definition__name__icontains';
+
 type AccessProps<T extends UserRoleAccess> = {
   service: 'awx' | 'eda' | 'hub';
   tableColumnFunctions: {
@@ -98,7 +102,7 @@ export function AccessList<T extends UserRoleAccess>(props: AccessProps<T>) {
         key: 'role_definition__name',
         label: t('Role name'),
         type: ToolbarFilterType.SingleText,
-        query: 'role_definition__name__icontains',
+        query: ACCESS_LIST_ROLE_NAME_FILTER_QUERY,
         comparison: 'contains',
       },
       ...(props.additionalTableFilters ?? []),

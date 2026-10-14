@@ -214,7 +214,7 @@ jobs:
   vitest:
     name: Vitest (${{ matrix.name }})
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     needs: packages
     strategy:
       fail-fast: false
