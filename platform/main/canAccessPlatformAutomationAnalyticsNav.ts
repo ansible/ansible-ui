@@ -2,8 +2,8 @@ import type { AwxUser } from '@ansible/awx-ui/interfaces/User';
 import type { PlatformUser } from '../interfaces/PlatformUser';
 
 export type PlatformAutomationAnalyticsNavUserContext = {
-  activePlatformUser?: PlatformUser | null;
-  activeAwxUser?: AwxUser | null;
+  activePlatformUser?: Pick<PlatformUser, 'is_superuser' | 'is_platform_auditor'> | null;
+  activeAwxUser?: Pick<AwxUser, 'is_superuser' | 'is_system_auditor'> | null;
   isPlatformUserPending?: boolean;
   isAwxUserPending?: boolean;
 };

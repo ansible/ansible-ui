@@ -9,7 +9,6 @@ import { setupServer } from 'msw/node';
 import { ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
-import { UIFlag } from '../settings/ui-flags/IUIFlag';
 import { PlatformRoute } from './PlatformRoutes';
 import { collectPageNavigationRouteIds } from '../test-utils/collectPageNavigationRoutes';
 import { usePlatformNavigation } from './usePlatformNavigation';
@@ -223,7 +222,10 @@ describe('usePlatformNavigation', () => {
     mockUseIsManagedCloudInstall.mockReturnValue(false);
     mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'administration' });
     mockUseUIFlag.mockReturnValue({ enabled: false });
-    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
+    mockUseAwxActiveUser.mockReturnValue({
+      activeAwxUser: { is_superuser: true, is_system_auditor: false },
+      refreshActiveAwxUser: vi.fn(),
+    });
     mockUseAutomationDashboardCollectionStatus.mockReturnValue({
       collectionStatus: { enabled: true },
       isLoading: false,
@@ -305,9 +307,7 @@ describe('usePlatformNavigation', () => {
 
   describe('Persona view Automation Analytics nav', () => {
     test('should hide analytics for a regular user in administration view when the switcher is enabled', () => {
-      mockUseUIFlag.mockImplementation((flag) =>
-        flag === UIFlag.PersonaViewSwitcher ? { enabled: true } : { enabled: false }
-      );
+      mockUseUIFlag.mockReturnValue({ enabled: true });
       mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'administration' });
       mockUsePlatformActiveUser.mockReturnValue({
         activePlatformUser: { is_superuser: false, is_platform_auditor: false },
@@ -342,9 +342,7 @@ describe('usePlatformNavigation', () => {
     });
 
     test('should hide analytics in operator view when the switcher is enabled', () => {
-      mockUseUIFlag.mockImplementation((flag) =>
-        flag === UIFlag.PersonaViewSwitcher ? { enabled: true } : { enabled: false }
-      );
+      mockUseUIFlag.mockReturnValue({ enabled: true });
       mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'operator' });
 
       const { result } = renderPlatformNavigation();

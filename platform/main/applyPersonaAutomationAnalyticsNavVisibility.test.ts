@@ -9,7 +9,7 @@ function buildNav(): PageNavigationItem[] {
       id: AwxRoute.Analytics,
       label: 'Automation Analytics',
       path: 'analytics',
-      children: [{ id: 'child', label: 'Child', path: 'child' }],
+      children: [],
     },
   ];
 }
