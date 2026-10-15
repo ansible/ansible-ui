@@ -1651,6 +1651,7 @@
     "Field for passing a custom Kubernetes or OpenShift Pod specification.": "Field for passing a custom Kubernetes or OpenShift Pod specification.",
     "Field listener_port must be set on peer {{peerInstance}}.": "Field listener_port must be set on peer {{peerInstance}}.",
     "Field listener_port must be set on peers {{peersInstance}}": "Field listener_port must be set on peers {{peersInstance}}",
+    "must be set when SSH key is encrypted.": "must be set when SSH key is encrypted.",
     "File downloaded": "File downloaded",
     "File upload rejected. Please select a single .json file.": "File upload rejected. Please select a single .json file.",
     "File uploaded": "File uploaded",
