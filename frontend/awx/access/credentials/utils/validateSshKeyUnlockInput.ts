@@ -1,11 +1,19 @@
+import { SSH_KEY_UNLOCK_REQUIRED_I18N_KEY } from './credentialSshKeyValidation';
 import { isEncryptedSshPrivateKey } from './isEncryptedSshPrivateKey';
 
-/** Matches the AWX controller validation message for encrypted SSH keys. */
-export const SSH_KEY_UNLOCK_REQUIRED_MESSAGE = 'must be set when SSH key is encrypted.';
+/** @deprecated Use {@link SSH_KEY_UNLOCK_REQUIRED_I18N_KEY} with `t()` — kept for unit tests. */
+export const SSH_KEY_UNLOCK_REQUIRED_MESSAGE = SSH_KEY_UNLOCK_REQUIRED_I18N_KEY;
 
-const SATISFIED_UNLOCK_VALUES = new Set(['ASK', '$encrypted$', 'ENCRYPTED']);
+const SATISFIED_UNLOCK_VALUES = new Set(['ASK', '$encrypted$']);
 
-function hasPassphraseValue(sshKeyUnlock: unknown): boolean {
+export type ValidateSshKeyUnlockOptions = {
+  /** Localized placeholder shown for unchanged encrypted secrets (`t('ENCRYPTED')`). */
+  maskedSecretPlaceholder: string;
+  /** Localized validation message (`t(SSH_KEY_UNLOCK_REQUIRED_I18N_KEY)`). */
+  requiredMessage: string;
+};
+
+function hasPassphraseValue(sshKeyUnlock: unknown, options: ValidateSshKeyUnlockOptions): boolean {
   if (typeof sshKeyUnlock !== 'string') {
     return false;
   }
@@ -13,16 +21,20 @@ function hasPassphraseValue(sshKeyUnlock: unknown): boolean {
   if (!trimmed) {
     return false;
   }
+  if (trimmed === options.maskedSecretPlaceholder) {
+    return false;
+  }
   return !SATISFIED_UNLOCK_VALUES.has(trimmed);
 }
 
 /**
- * Cross-field validation for Machine credentials: an encrypted SSH private key
+ * Cross-field validation for Machine / SCM credentials: an encrypted SSH private key
  * requires a private key passphrase (unless prompt-on-launch is enabled).
  */
 export function validateSshKeyUnlockInput(
   sshKeyUnlock: unknown,
-  formValues: Record<string, unknown>
+  formValues: Record<string, unknown>,
+  options: ValidateSshKeyUnlockOptions
 ): true | string {
   if (formValues.ask_ssh_key_unlock === true) {
     return true;
@@ -40,9 +52,18 @@ export function validateSshKeyUnlockInput(
     return true;
   }
 
-  if (hasPassphraseValue(sshKeyUnlock)) {
+  if (hasPassphraseValue(sshKeyUnlock, options)) {
     return true;
   }
 
-  return SSH_KEY_UNLOCK_REQUIRED_MESSAGE;
+  return options.requiredMessage;
+}
+
+export function createSshKeyUnlockValidationOptions(
+  t: (key: string) => string
+): ValidateSshKeyUnlockOptions {
+  return {
+    maskedSecretPlaceholder: t('ENCRYPTED'),
+    requiredMessage: t(SSH_KEY_UNLOCK_REQUIRED_I18N_KEY),
+  };
 }

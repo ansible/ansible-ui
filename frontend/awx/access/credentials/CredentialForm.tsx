@@ -45,7 +45,11 @@ import {
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
 import { buildCredentialPluginInputs } from './utils/buildCredentialPluginInputs';
-import { validateSshKeyUnlockInput } from './utils/validateSshKeyUnlockInput';
+import { credentialKindUsesSshKeyUnlockValidation } from './utils/credentialSshKeyValidation';
+import {
+  createSshKeyUnlockValidationOptions,
+  validateSshKeyUnlockInput,
+} from './utils/validateSshKeyUnlockInput';
 
 interface CredentialForm extends Omit<Credential, 'inputs'> {
   user?: number;
@@ -1052,9 +1056,14 @@ function CredentialTextInput({
         )
       }
       validate={
-        credentialType?.kind === 'ssh' && field.id === 'ssh_key_unlock'
+        credentialKindUsesSshKeyUnlockValidation(credentialType?.kind) &&
+        field.id === 'ssh_key_unlock'
           ? (value, formValues) =>
-              validateSshKeyUnlockInput(value, formValues as Record<string, unknown>)
+              validateSshKeyUnlockInput(
+                value,
+                formValues as Record<string, unknown>,
+                createSshKeyUnlockValidationOptions(t)
+              )
           : undefined
       }
     />

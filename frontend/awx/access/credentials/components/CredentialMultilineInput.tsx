@@ -9,7 +9,11 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPluginsInputSource } from '../CredentialPlugins/hooks/useCredentialPluginsDialog';
-import { validateSshKeyUnlockInput } from '../utils/validateSshKeyUnlockInput';
+import { credentialKindUsesSshKeyUnlockValidation } from '../utils/credentialSshKeyValidation';
+import {
+  createSshKeyUnlockValidationOptions,
+  validateSshKeyUnlockInput,
+} from '../utils/validateSshKeyUnlockInput';
 
 export function CredentialMultilineInput({
   field,
@@ -33,13 +37,18 @@ export function CredentialMultilineInput({
   const { t } = useTranslation();
   const [shouldHideField, setShouldHideField] = useState(field.secret);
   const { getValues, setValue, clearErrors } = useFormContext();
+  const sshKeyUnlockValidationOptions = createSshKeyUnlockValidationOptions(t);
   const validateSshKeyData =
-    kind === 'ssh' && field.id === 'ssh_key_data'
+    credentialKindUsesSshKeyUnlockValidation(kind) && field.id === 'ssh_key_data'
       ? (value: string) => {
-          const result = validateSshKeyUnlockInput(getValues('ssh_key_unlock'), {
-            ...(getValues() as Record<string, unknown>),
-            ssh_key_data: value,
-          });
+          const result = validateSshKeyUnlockInput(
+            getValues('ssh_key_unlock'),
+            {
+              ...(getValues() as Record<string, unknown>),
+              ssh_key_data: value,
+            },
+            sshKeyUnlockValidationOptions
+          );
           return result === true ? undefined : result;
         }
       : undefined;

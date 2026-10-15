@@ -42,4 +42,22 @@ describe('buildCredentialPluginInputs', () => {
       ssh_key_unlock: 'passphrase',
     });
   });
+
+  it('still includes empty strings for other optional fields', () => {
+    const credential = {
+      security_token: '',
+      username: 'admin',
+    };
+
+    const inputs = buildCredentialPluginInputs(
+      credential,
+      [
+        { id: 'username', type: 'string', label: 'Username' },
+        { id: 'security_token', type: 'string', label: 'STS Token' },
+      ],
+      () => false
+    );
+
+    expect(inputs).toEqual({ username: 'admin', security_token: '' });
+  });
 });

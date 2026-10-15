@@ -5,10 +5,18 @@ type CredentialFormValues = Record<string, string | number | { name: string } | 
 export type CredentialPluginInputValue = string | number | { name: string };
 
 /**
+ * Optional secret fields that must be omitted from `inputs` when empty so PATCH
+ * does not send `""` and trigger AWX validation (e.g. `ssh_key_unlock`).
+ */
+const CREDENTIAL_INPUT_FIELDS_OMIT_WHEN_EMPTY = new Set(['ssh_key_unlock']);
+
+function shouldOmitEmptyCredentialInput(fieldId: string): boolean {
+  return CREDENTIAL_INPUT_FIELDS_OMIT_WHEN_EMPTY.has(fieldId);
+}
+
+/**
  * Moves credential type input fields from the top-level form object into
- * `inputs`. Empty strings are omitted so optional secrets (such as an unset
- * `ssh_key_unlock`) are not sent explicitly on PATCH, matching create behavior
- * and AWX validation expectations.
+ * `inputs`.
  */
 export function buildCredentialPluginInputs(
   credential: CredentialFormValues,
@@ -28,7 +36,10 @@ export function buildCredentialPluginInputs(
     const value = credential[field.id];
     delete credential[field.id];
 
-    if (value === undefined || value === null || value === '') {
+    if (value === undefined || value === null) {
+      return;
+    }
+    if (value === '' && shouldOmitEmptyCredentialInput(field.id)) {
       return;
     }
     if (typeof value === 'string' || typeof value === 'number') {
