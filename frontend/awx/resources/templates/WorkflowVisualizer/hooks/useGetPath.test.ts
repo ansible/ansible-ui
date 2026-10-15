@@ -40,6 +40,19 @@ describe('useGetPath', () => {
     expect(centerY).toBe(62.5);
   });
 
+  it('centers the label on the longest horizontal segment', () => {
+    const [, centerX, centerY] = getPoints({
+      source: { x: 0, y: 0 },
+      sourcePosition: Position.Right,
+      target: { x: 100, y: 20 },
+      targetPosition: Position.Bottom,
+      offset: 25,
+    });
+
+    expect(centerX).toBe(62.5);
+    expect(centerY).toBe(45);
+  });
+
   it('should return a path string starting with M for a simple left-to-right edge', () => {
     const edge = makeMockEdge(0, 0, 200, 0);
     const { path, centerPoint } = useGetPath(edge);
