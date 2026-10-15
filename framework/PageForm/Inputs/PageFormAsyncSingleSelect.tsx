@@ -40,6 +40,7 @@ export type PageFormAsyncSingleSelectProps<
   | 'onBrowse'
   | 'queryLabel'
   | 'writeInOption'
+  | 'noResultsMessage'
 > &
   Pick<
     PageFormGroupProps,
@@ -110,6 +111,7 @@ export function PageFormAsyncSingleSelect<
               disableAutoSelect
               isRequired={props.isRequired}
               writeInOption={props.writeInOption}
+              noResultsMessage={props.noResultsMessage}
             />
           </PageFormGroup>
         );
