@@ -64,6 +64,13 @@ Check whether the changes follow:
 - **No new ESLint suppressions** (`eslint-disable`, `eslint-disable-next-line`,
   `eslint-disable-line`, file-level `/* eslint-disable */`). Review blocker;
   fix the rule instead of silencing it (see §7).
+- **Shared framework scope:** When a PR changes `framework/`, treat unrelated
+  feature work or product rollout changes in the same PR as a **review
+  blocker**. Require a dedicated, independently reversible framework PR and
+  follow-up adoption PRs unless the author gives a concrete reason splitting is
+  unsafe. Require complete relevant framework tests and representative
+  validation of affected consuming workspaces, and require the PR description
+  to document compatibility impact before approval.
 
 ### Internationalization Safety Check
 
