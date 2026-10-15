@@ -5,7 +5,8 @@ import { isApplicationListForbidden } from '../applicationListAccess';
 
 /**
  * Probes whether the current user can list OAuth/applications at the given URL.
- * Gateway may respond with 403 or an empty list when the user lacks view permission.
+ * Gateway returns 403 when the user lacks list permission; a 200 with `results`
+ * (including an empty array) means list access succeeded.
  */
 export function useApplicationListAccess(applicationsUrl: string) {
   const { data, error, isLoading } = useGet<AwxItemsResponse<unknown>>(applicationsUrl, {
