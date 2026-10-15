@@ -20,8 +20,11 @@
 
 ## Shared Framework Scope
 
+<!-- Leave the framework-specific checkboxes unchecked if this PR does not change `framework/`. -->
+
 - [ ] This PR does not mix shared `framework/` changes with unrelated feature work or product rollout changes. If it does, split the work into a dedicated framework PR and follow-up PRs, or explain why splitting is not feasible.
 - [ ] If this PR changes `framework/`, it includes complete relevant framework test coverage and representative validation of affected consuming workspaces.
+- [ ] If this PR changes `framework/`, its description documents the compatibility impact, including affected consumers or supported behavior.
 
 ## Dependencies
 

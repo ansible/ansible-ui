@@ -61,3 +61,6 @@ document its compatibility impact, include complete relevant framework test
 coverage and representative cross-workspace validation, and remain safe to
 revert without reverting a product rollout. Follow with separate
 product-specific PRs after the shared behavior is accepted.
+
+This checklist targets `framework/`; apply the same separation judgment to
+shared `frontend/common/` changes and cross-cutting `platform/` utilities.

@@ -69,7 +69,8 @@ Check whether the changes follow:
   blocker**. Require a dedicated, independently reversible framework PR and
   follow-up adoption PRs unless the author gives a concrete reason splitting is
   unsafe. Require complete relevant framework tests and representative
-  validation of affected consuming workspaces before approval.
+  validation of affected consuming workspaces, and require the PR description
+  to document compatibility impact before approval.
 
 ### Internationalization Safety Check
 
