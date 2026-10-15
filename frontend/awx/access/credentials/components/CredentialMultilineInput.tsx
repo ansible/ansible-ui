@@ -9,6 +9,7 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPluginsInputSource } from '../CredentialPlugins/hooks/useCredentialPluginsDialog';
+import { validateSshKeyUnlockInput } from '../utils/validateSshKeyUnlockInput';
 
 export function CredentialMultilineInput({
   field,
@@ -32,6 +33,16 @@ export function CredentialMultilineInput({
   const { t } = useTranslation();
   const [shouldHideField, setShouldHideField] = useState(field.secret);
   const { getValues, setValue, clearErrors } = useFormContext();
+  const validateSshKeyData =
+    kind === 'ssh' && field.id === 'ssh_key_data'
+      ? (value: string) => {
+          const result = validateSshKeyUnlockInput(getValues('ssh_key_unlock'), {
+            ...(getValues() as Record<string, unknown>),
+            ssh_key_data: value,
+          });
+          return result === true ? undefined : result;
+        }
+      : undefined;
   const watchedFieldValue = getValues();
   const onClear = () => {
     setValue(field.id, '', { shouldDirty: false });
@@ -121,6 +132,7 @@ export function CredentialMultilineInput({
         isDisabled={false}
         isClearButtonDisabled={!watchedFieldValue?.[field.id]}
         allowEditingUploadedText={true}
+        validate={validateSshKeyData}
         icon={
           kind !== 'external' ? (
             field.secret && watchedFieldValue?.[field.id] === '$encrypted$' ? (
