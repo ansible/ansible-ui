@@ -33,7 +33,6 @@
     "duplicates"
   ],
   "ignoreDependencies": [
-    "@types/glob",
     "@types/json-schema",
     "@types/styled-components",
     "@vitejs/plugin-react",
