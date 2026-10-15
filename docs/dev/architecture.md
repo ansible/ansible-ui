@@ -12,7 +12,7 @@ flowchart TD
 The application in [`platform/`](../../platform/) is the unified web UI for Ansible.
 
 - Dynamically composes navigation and pages for a single product experience.
-- Embeds UI from the AWX, Hub, EDA, and Analytics workspaces under `frontend/`.
+- Embeds UI from the AWX (including Analytics), Hub, and EDA workspaces under `frontend/`.
 - Includes Jewel-specific areas such as dashboard, authentication, access management, and settings.
 
 [Ansible Jewel](https://github.com/ansible/jewel) is the supported upstream backend:
