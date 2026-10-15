@@ -85,13 +85,14 @@ export PLATFORM_PASSWORD='nomeetingsfriday'
 
 ## AI-assisted contributions
 
-This project is primarily human-created and may use AI-assisted development.
-Contributors may use AI tools and remain responsible for their work. See
-[`AI_POLICY.md`](AI_POLICY.md) and the [Ansible community AI
-policy](https://docs.ansible.com/projects/ansible/latest/community/ai_policy.html).
+This project is primarily human-created. Contributors may use AI-assisted
+development tools and remain responsible for their work. See
+[`AI_POLICY.md`](AI_POLICY.md) and the [Ansible community AI policy](https://docs.ansible.com/projects/ansible/latest/community/ai_policy.html).
 
-- **[AI Attribution](https://aiattribution.github.io/):** AIA Ph SeCeNc Hin R
-  Claude Code, Cursor, and similar AI-assisted development tools v1.0
+The attribution below describes how AI may appear in contributions to this
+repository (not that the codebase as a whole was AI-generated):
+
+- **[AI Attribution](https://aiattribution.github.io/):** AIA Ph SeCeNc Hin R Claude Code, Cursor, and similar AI-assisted development tools v1.0 ([interpret this statement](https://aiattribution.github.io/interpret-attribution))
 
 ## Code of Conduct
 
