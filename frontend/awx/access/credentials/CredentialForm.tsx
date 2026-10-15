@@ -142,9 +142,8 @@ export function CreateCredential() {
     {} as CredentialTypes
   );
 
-  const isExternalCredential =
-    !!parsedCredentialTypes &&
-    parsedCredentialTypes?.[selectedCredentialTypeId]?.kind === 'external';
+  const selectedCredentialType = parsedCredentialTypes?.[selectedCredentialTypeId];
+  const isExternalCredential = selectedCredentialType?.kind === 'external';
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
@@ -230,8 +229,7 @@ export function CreateCredential() {
               onClick={(e) => {
                 e.preventDefault();
                 openCredentialsExternalTestModal({
-                  credentialType:
-                    parsedCredentialTypes?.[selectedCredentialTypeId] ?? ({} as CredentialType),
+                  credentialType: selectedCredentialType,
                   watchedSubFormFields: watchedSubFormFields,
                 });
               }}
@@ -338,10 +336,10 @@ export function EditCredential() {
     {} as CredentialTypes
   );
 
-  const isExternalCredential =
-    !!parsedCredentialTypes && credential !== undefined
-      ? parsedCredentialTypes?.[credential.credential_type]?.kind === 'external'
-      : null;
+  const selectedCredentialType = credential
+    ? parsedCredentialTypes?.[credential.credential_type]
+    : undefined;
+  const isExternalCredential = selectedCredentialType?.kind === 'external';
 
   const promptPassword: Prompts = useMemo(() => {
     const promptPasswordObj: Prompts = {};
@@ -512,8 +510,7 @@ export function EditCredential() {
                 e.preventDefault();
                 openCredentialsExternalTestModal({
                   credential: credential,
-                  credentialType:
-                    parsedCredentialTypes?.[credential?.credential_type] ?? ({} as CredentialType),
+                  credentialType: selectedCredentialType,
                   watchedSubFormFields: watchedSubFormFields,
                 });
               }}
