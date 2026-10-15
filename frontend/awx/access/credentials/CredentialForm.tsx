@@ -44,6 +44,8 @@ import {
   useCredentialPluginsModal,
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
+import { buildCredentialPluginInputs } from './utils/buildCredentialPluginInputs';
+import { validateSshKeyUnlockInput } from './utils/validateSshKeyUnlockInput';
 
 interface CredentialForm extends Omit<Credential, 'inputs'> {
   user?: number;
@@ -127,24 +129,14 @@ export function CreateCredential() {
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
-    const pluginInputs: CredentialForm['inputs'] = {};
     const isHandledByCredentialPlugin = (field: string) =>
       accumulatedPluginValues.some((cp) => cp.input_field_name === field);
     const possibleFields = credentialTypeInputs?.fields || [];
-    possibleFields.forEach((field) => {
-      if (
-        field.id &&
-        typeof field.id === 'string' &&
-        field.id in credential &&
-        !isHandledByCredentialPlugin(field.id)
-      ) {
-        const id = field.id as keyof CredentialForm;
-        if (credential[id] !== undefined || credential[id] !== '') {
-          pluginInputs[id] = credential[id] as string | number;
-          delete credential[id];
-        }
-      }
-    });
+    const pluginInputs: CredentialForm['inputs'] = buildCredentialPluginInputs(
+      credential,
+      possibleFields,
+      isHandledByCredentialPlugin
+    );
     // can send only one of org, user, team
     if (!credential.organization) {
       credential.user = activeAwxUser?.id;
@@ -366,25 +358,15 @@ export function EditCredential() {
     if (!editedCredential.organization) {
       editedCredential.user = activeAwxUser?.id;
     }
-    const pluginInputs: CredentialForm['inputs'] = {};
     const isHandledByCredentialPlugin = (field: string) =>
       accumulatedPluginValues.some((cp) => cp.input_field_name === field);
 
     const possibleFields = credentialTypeInputs?.fields || [];
-    possibleFields.forEach((field) => {
-      if (
-        field.id &&
-        typeof field.id === 'string' &&
-        field.id in editedCredential &&
-        !isHandledByCredentialPlugin(field.id)
-      ) {
-        const id = field.id as keyof CredentialForm;
-        if (editedCredential[id] !== undefined || editedCredential[id] !== '') {
-          pluginInputs[id] = editedCredential[id] as string | number;
-          delete editedCredential[id];
-        }
-      }
-    });
+    const pluginInputs: CredentialForm['inputs'] = buildCredentialPluginInputs(
+      editedCredential,
+      possibleFields,
+      isHandledByCredentialPlugin
+    );
     // filter out fields that a prefixed with 'ask_'
     Object.keys(editedCredential).forEach((key) => {
       if (key.startsWith('ask_')) {
@@ -1068,6 +1050,12 @@ function CredentialTextInput({
         field?.ask_at_runtime && (
           <PageFormCheckbox name={`ask_${field.id}`} label={t('Prompt on launch')} />
         )
+      }
+      validate={
+        credentialType?.kind === 'ssh' && field.id === 'ssh_key_unlock'
+          ? (value, formValues) =>
+              validateSshKeyUnlockInput(value, formValues as Record<string, unknown>)
+          : undefined
       }
     />
   );
