@@ -3,6 +3,7 @@ import { isTopology } from '@ansible/playwright/commands/getTopologyType';
 import { login, platformUI } from '@ansible/playwright/commands/login';
 import { logout } from '@ansible/playwright/commands/logout';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { User } from '@ansible/playwright/utils';
 import { expect, test } from '@playwright/test';
 
@@ -95,7 +96,10 @@ test.describe('Persona Switcher', () => {
     await expect(page.locator('#platform-hub')).toContainText('Automation Content');
     await expect(page.locator('#awx-settings')).toContainText('Settings');
     await expect(page.locator('#platform-quickstarts')).toContainText('QuickStarts');
-    await expect(page.locator('#awx-analytics')).toBeHidden();
+    await expect(page.locator('#awx-analytics')).toContainText('Automation Analytics');
+    await navigateTo(page, 'Automation Analytics', 'Automation Dashboard');
+    await expect(page.getByRole('tab', { name: 'Dashboard' })).not.toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Leaderboards' })).not.toBeVisible();
     // Management jobs not shown for a normal user
     await page.locator('#platform-awx').click();
     await page.locator('#awx-administration').click();
