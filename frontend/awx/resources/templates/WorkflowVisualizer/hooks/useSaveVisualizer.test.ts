@@ -725,6 +725,76 @@ describe('useSaveVisualizer', () => {
     expect(nodePatchCalls.length).toBe(1);
   });
 
+  test('should omit unified_job_template from edit PATCH when template is unchanged', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        launch_data: {
+          original: {
+            isTemplateChange: false,
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCalls.length).toBe(1);
+    expect(nodePatchCalls[0][1] as object).not.toHaveProperty('unified_job_template');
+  });
+
+  test('should include unified_job_template in edit PATCH when template changed', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        launch_data: {
+          original: {
+            isTemplateChange: true,
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+    const mainPatchPayload = nodePatchCalls[nodePatchCalls.length - 1][1] as {
+      unified_job_template?: number;
+    };
+    expect(mainPatchPayload.unified_job_template).toBe(1);
+  });
+
   test('should update edited approval nodes', async () => {
     const approvalNode = makeGraphNode({
       id: '42',
