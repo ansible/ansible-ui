@@ -59,6 +59,7 @@ export function useCreateNodeComponent(): () => FunctionComponent<
           target: Node<NodeModel, GraphNodeData> | Graph<GraphModel, GraphModel>
         ) => {
           if (!isNode(target)) return;
+          if (source.getId() === target.getId()) return;
 
           const nodeStatus = target.getNodeStatus();
           if (nodeStatus === NodeStatus.danger) {
