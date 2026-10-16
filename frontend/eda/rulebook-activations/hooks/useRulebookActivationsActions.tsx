@@ -29,6 +29,7 @@ import {
   useDeleteRulebookActivationsWithWarning,
 } from './useDeleteRulebookActivations';
 import { StatusEnum } from '../../interfaces/generated/eda-api';
+import { useClearLogsDialog } from './useClearLogsDialog';
 
 export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -52,6 +53,9 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     view.unselectItemsAndRefresh
   );
   const getPageUrl = useGetPageUrl();
+
+  const openClearLogsDialog = useClearLogsDialog();
+
   const enableRulebookActivation: (activation: EdaRulebookActivation) => Promise<void> =
     useCallback(
       async (activation) => {
@@ -172,6 +176,14 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
         type: PageActionType.Button,
         selection: PageActionSelection.Multiple,
         icon: TrashIcon,
+        label: t('Delete logs'),
+        onClick: (activations: EdaRulebookActivation[]) => openClearLogsDialog(activations),
+        isDanger: true,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Multiple,
+        icon: TrashIcon,
         label: t('Delete rulebook activations'),
         onClick: (rulebookActivations: EdaRulebookActivation[]) =>
           deleteRulebookActivations(rulebookActivations),
@@ -186,6 +198,7 @@ export function useRulebookActivationsActions(view: IEdaView<EdaRulebookActivati
     disableRulebookActivations,
     restartRulebookActivations,
     deleteRulebookActivations,
+    openClearLogsDialog,
     getPageUrl,
   ]);
 }

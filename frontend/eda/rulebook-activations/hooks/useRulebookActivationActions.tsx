@@ -28,6 +28,7 @@ import {
   useDeleteRulebookActivations,
   useDeleteRulebookActivationsWithWarning,
 } from './useDeleteRulebookActivations';
+import { useClearLogsDialog } from './useClearLogsDialog';
 
 export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivation>) {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
     view.unselectItemsAndRefresh
   );
   const copyRulebookActivation = useCopyRulebookActivation(view.refresh as () => void);
+  const openClearLogsDialog = useClearLogsDialog();
   const alertToaster = usePageAlertToaster();
   const parseError = useEdaErrorMessageParser();
   const enableActivationsWithWarning = useEnableRulebookActivationsWithWarning(
@@ -179,6 +181,14 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
         type: PageActionType.Button,
         selection: PageActionSelection.Single,
         icon: TrashIcon,
+        label: t('Delete logs'),
+        onClick: (activation: EdaRulebookActivation) => openClearLogsDialog([activation]),
+        isDanger: true,
+      },
+      {
+        type: PageActionType.Button,
+        selection: PageActionSelection.Single,
+        icon: TrashIcon,
         label: t('Delete rulebook activation'),
         isHidden: (activation: EdaRulebookActivation) => activation?.status === StatusEnum.Deleting,
         onClick: (rulebookActivation: EdaRulebookActivation) =>
@@ -193,6 +203,7 @@ export function useRulebookActivationActions(view: IEdaView<EdaRulebookActivatio
     restartActivations,
     pageNavigate,
     copyRulebookActivation,
+    openClearLogsDialog,
     deleteRulebookActivations,
   ]);
 }
