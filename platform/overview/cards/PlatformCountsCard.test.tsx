@@ -35,4 +35,13 @@ describe('PlatformCountsCard', () => {
       expect(screen.getByTestId('awx-counts-card')).toBeInTheDocument();
     });
   });
+
+  test('should render nothing when the dashboard request fails', async () => {
+    server.use(http.get(awxAPI`/dashboard/`, () => new HttpResponse(null, { status: 503 })));
+    const { container } = render(<PlatformCountsCard />);
+
+    await waitFor(() => {
+      expect(container).toBeEmptyDOMElement();
+    });
+  });
 });
