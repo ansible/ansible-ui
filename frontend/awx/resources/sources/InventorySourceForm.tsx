@@ -38,6 +38,7 @@ export interface SourceFields extends FieldValues {
       | 'gce'
       | 'azure_rm'
       | 'vmware'
+      | 'vmware_vm'
       | 'vmware_esxi'
       | 'satellite6'
       | 'openstack'
