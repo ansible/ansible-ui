@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { DashboardTableInputField } from './DashboardTableInputField';
-import { render, waitFor, act, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 
 function renderInputField(props = {}) {
   return render(
@@ -222,6 +222,87 @@ describe('DashboardTableInputField', () => {
       const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
       fireEvent(form, submitEvent);
       expect(submitEvent.defaultPrevented).toBe(true);
+    });
+  });
+
+  describe('pending edits (AAP-87021)', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    test('should not overwrite a pending edit when value prop changes', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      const props = { id: 'test-input', min: 0, max: 100, label: 'Test Input', onChange };
+      const { rerender } = render(<DashboardTableInputField {...props} value={5} />);
+      const input = screen.getByRole('spinbutton');
+      await user.clear(input);
+      await user.type(input, '8');
+
+      // A response for an earlier save arrives while the debounce is still pending.
+      rerender(<DashboardTableInputField {...props} value={9} />);
+      expect(input).toHaveValue(8);
+
+      await act(() => vi.advanceTimersByTime(600));
+      expect(onChange).toHaveBeenCalledWith(8);
+    });
+
+    test('should accept value prop changes once the debounce has fired', async () => {
+      const user = userEvent.setup();
+      const props = { id: 'test-input', min: 0, max: 100, label: 'Test Input', onChange: vi.fn() };
+      const { rerender } = render(<DashboardTableInputField {...props} value={5} />);
+      const input = screen.getByRole('spinbutton');
+      await user.clear(input);
+      await user.type(input, '8');
+      await act(() => vi.advanceTimersByTime(600));
+
+      rerender(<DashboardTableInputField {...props} value={9} />);
+      expect(input).toHaveValue(9);
+    });
+
+    test('should send a pending value on unmount', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      const { unmount } = renderInputField({ value: 0, onChange });
+      const input = screen.getByRole('spinbutton');
+      await user.clear(input);
+      await user.type(input, '50');
+
+      unmount();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(50);
+    });
+
+    test('should not send anything on unmount when the edit is invalid', async () => {
+      const user = userEvent.setup();
+      const onChange = vi.fn();
+      const { unmount } = renderInputField({ value: 5, min: 0, max: 10, onChange });
+      const input = screen.getByRole('spinbutton');
+      await user.clear(input);
+      await user.type(input, '555');
+
+      unmount();
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    test('should not overwrite an emptied field while the user is retyping', async () => {
+      const user = userEvent.setup();
+      const props = { id: 'test-input', min: 0, max: 100, label: 'Test Input', onChange: vi.fn() };
+      const { rerender } = render(<DashboardTableInputField {...props} value={5} />);
+      const input = screen.getByRole('spinbutton');
+      await user.clear(input);
+
+      // A response for an earlier save arrives while the field is empty.
+      rerender(<DashboardTableInputField {...props} value={9} />);
+      expect(input).toHaveValue(null);
+
+      await user.type(input, '7');
+      expect(input).toHaveValue(7);
+      await act(() => vi.advanceTimersByTime(600));
+      expect(props.onChange).toHaveBeenCalledWith(7);
     });
   });
 });
