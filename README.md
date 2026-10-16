@@ -55,6 +55,7 @@ This repository is an npm workspaces monorepo. See [`WORKSPACES.md`](WORKSPACES.
 | `platform/`                                    | Platform UI (unified Ansible UI; primary application)               |
 | `frontend/awx`, `frontend/hub`, `frontend/eda` | Product UI workspaces used by the platform build                    |
 | `frontend/common`                              | Shared UI utilities and access components across product workspaces |
+| `frontend/chatbot`                             | Lightspeed chatbot UI workspace (and other `frontend/*` workspaces) |
 | `packages/*`                                   | Optional shared npm packages (workspace glob; may be empty)         |
 | `framework/`                                   | Shared PatternFly-based UI framework                                |
 | `playwright/`                                  | End-to-end and integration tests                                    |
@@ -70,7 +71,7 @@ Common variables when running the Ansible UI against a remote or local Jewel ins
 | `PLATFORM_PASSWORD`  | Login password for live E2E tests (optional for local dev).         |
 | `AWX_API_PREFIX`     | AWX API prefix when required by Jewel (often `/api/controller/v2`). |
 | `EDA_API_PREFIX`     | EDA API prefix when required by Jewel (often `/api/eda/v1`).        |
-| `HUB_API_PREFIX`     | Hub API prefix when required by Jewel.                              |
+| `HUB_API_PREFIX`     | Hub API prefix when required by Jewel (often `/api/galaxy`).        |
 
 ```zsh
 export PLATFORM_SERVER='https://localhost:443'
@@ -106,8 +107,12 @@ Playwright tests use additional variables; see [`playwright/Playwright.md`](play
 - [Contributing](./CONTRIBUTING.md)
 - [Platform UI](./platform/README.md)
 - [Framework](./framework/README.md)
+- [Testing strategy](./docs/test/testing-strategy.md)
+- [Test server setup](./docs/test/test-server-setup.md)
 - [Playwright tests](./playwright/Playwright.md)
 - [Handling errors in forms](./framework/PageForm/README.md)
+
+The root README no longer links to legacy deployment-type notes that were removed during the upstream documentation refresh; use [architecture](./docs/dev/architecture.md) and the [docs index](./docs/index.md) for supported development and test workflows.
 
 ## Standalone product UIs (unsupported)
 

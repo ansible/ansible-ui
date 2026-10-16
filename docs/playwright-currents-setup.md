@@ -4,14 +4,22 @@ This document describes how to set up and use Playwright tests with Currents.dev
 
 ## Overview
 
-The integration provides:
+When a workflow invokes `.github/workflows/playwright-currents.yml`, Currents.dev provides:
 
 - ✅ **Parallel test execution** across multiple shards
 - ✅ **Rich test reporting** with screenshots, videos, and logs
 - ✅ **Test analytics** and flaky test detection
-- ✅ **GitHub integration** with PR comments and commit status
-- ✅ **Slack notifications** for test failures
 - ✅ **Test result history** and trends
+
+**How runs are started in this repository** (nothing in Actions runs Currents on every `devel` push by default):
+
+| Workflow                       | File                                                                             | Trigger                                      | Currents reporting                        |
+| ------------------------------ | -------------------------------------------------------------------------------- | -------------------------------------------- | ----------------------------------------- |
+| Reusable Playwright + Currents | `playwright-currents.yml`                                                        | `workflow_call` only                         | Yes, when a caller workflow invokes it    |
+| Run Playwright with Currents   | `run-playwright-currents.yml`                                                    | `workflow_dispatch` (Actions → Run workflow) | Yes                                       |
+| Pull request E2E               | External pipeline (comment `/run-playwright` on the PR; see `pr-e2e-status.yml`) | On demand per PR                             | Yes (bot posts a Currents dashboard link) |
+
+GitHub PR comments and optional Slack notifications depend on which of the above paths ran and how your environment is configured—not on automatic pushes to `devel`.
 
 ## Setup
 
@@ -103,25 +111,20 @@ Access your test results at: `https://app.currents.dev`
 
 ### GitHub Integration
 
-**Pull Request Comments:**
+**Pull request E2E (on-demand):**
 
-- Automatic test result summary
-- Links to detailed reports
-- Failure screenshots and logs
+- Comment `/run-playwright` on a pull request to request the external E2E pipeline.
+- When that pipeline finishes, `aap-pde-ci-bot` may post a PR comment with a **Currents dashboard** link (see `.github/workflows/pr-e2e-status.yml`).
 
-**Commit Status Checks:**
+**Manual Currents workflow:**
 
-- Pass/fail status on commits
-- Required checks for branch protection
-- Integration with merge requirements
+- **Run Playwright with Currents** does not open automatically on every PR; use **Actions → Run Playwright with Currents** when you need a dispatch run against a specific environment.
+
+**Commit status checks** apply only when your organization wires a workflow or external pipeline to required checks—they are not implied by every Currents run.
 
 ### Slack Notifications
 
-**Automatic notifications for:**
-
-- ❌ **Test failures** on `devel`
-- ✅ **Successful runs** after previous failures
-- 📊 **Weekly test summaries** (if configured)
+`SLACK_WEBHOOK_URL` is listed as an optional repository secret for teams that connect Slack to their test pipeline. This repository’s GitHub Actions workflows do not send Slack messages on every `devel` push. Treat Slack as **optional** and configured outside these docs unless your deployment explicitly enables it for a given workflow.
 
 ## Troubleshooting
 
@@ -135,9 +138,9 @@ Access your test results at: `https://app.currents.dev`
 
 **Slow test execution:**
 
-- Adjust shard count in the workflow (currently 4 shards)
+- Adjust `PARALLEL_TESTS` / shard count in `playwright-currents.yml` inputs (default 4)
 - Review test parallelization settings
-- Check for resource constraints in GitHub Actions
+- Check for resource constraints in GitHub Actions or the external E2E pipeline
 
 **Missing artifacts:**
 

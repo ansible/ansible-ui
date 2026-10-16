@@ -14,6 +14,8 @@ Documentation for the [Ansible UI](https://github.com/ansible/ansible-ui) reposi
 
 ## Testing
 
+- [Testing strategy](test/testing-strategy.md)
+- [Test server setup](test/test-server-setup.md)
 - [Playwright (E2E)](../playwright/Playwright.md)
 - [Playwright Currents setup](playwright-currents-setup.md)
 
