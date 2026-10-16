@@ -25,7 +25,7 @@ describe('useEdaTeamFilters', () => {
     const { result } = renderHook(() => useEdaTeamFilters());
 
     const nameFilter = result.current.find((f) => f.key === 'name');
-    expect(nameFilter?.query).toBe('name');
+    expect(nameFilter?.query).toBe('name__startswith');
   });
 
   it('should use startsWith comparison for name filter', () => {

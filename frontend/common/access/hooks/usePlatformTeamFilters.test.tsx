@@ -16,7 +16,7 @@ describe('usePlatformTeamFilters', () => {
 
     expect(nameFilter.key).toBe('name');
     expect(nameFilter.label).toBe('Name');
-    expect(nameFilter.query).toBe('name');
+    expect(nameFilter.query).toBe('name__startswith');
     expect(nameFilter.type).toBe(ToolbarFilterType.MultiText);
   });
 });
