@@ -10,7 +10,7 @@ export function useEdaTeamFilters() {
         key: 'name',
         label: t('Name'),
         type: ToolbarFilterType.MultiText,
-        query: 'name',
+        query: 'name__startswith',
         comparison: 'startsWith',
       },
     ],
