@@ -26,10 +26,12 @@ vi.mock('../PageSettings/PageSettingsProvider', () => ({
   }),
 }));
 
+const { mockWriteToClipboard } = vi.hoisted(() => ({ mockWriteToClipboard: vi.fn() }));
+
 vi.mock('../hooks/useClipboard', () => ({
   useClipboard: () => ({
     copySuccess: false,
-    writeToClipboard: vi.fn(),
+    writeToClipboard: mockWriteToClipboard,
   }),
 }));
 
@@ -234,6 +236,64 @@ describe('PageDetailCodeEditor', () => {
     );
 
     expect(screen.getByTestId('code-block-value')).toBeInTheDocument();
+  });
+
+  // Regression test for AAP-66504: "Copy to clipboard" button has various results
+  // https://redhat.atlassian.net/browse/AAP-66504
+  test('should copy the currently toggled JSON format, not the original YAML value', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <PageDetailCodeEditor value={'key: value'} />
+      </TestWrapper>
+    );
+
+    // Default display is YAML (matches the original prop value)
+    expect(screen.getByTestId('code-block-value').textContent).toBe('key: value');
+
+    // Toggle the displayed format to JSON
+    const jsonButton = screen.getByRole('button', { name: 'Toggle to JSON' });
+    await user.click(jsonButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('code-block-value').textContent).toContain('"key"');
+    });
+    const displayedJson = screen.getByTestId('code-block-value').textContent ?? '';
+
+    // Click "Copy to clipboard" while JSON is selected
+    const copyButton = screen.getByRole('button', { name: 'Copy to clipboard' });
+    await user.click(copyButton);
+
+    // Bug AAP-66504: clipboard always received the original `value` ("key: value"),
+    // ignoring the toggle. The fix must copy whatever is currently displayed (JSON).
+    expect(mockWriteToClipboard).toHaveBeenCalledWith(displayedJson);
+    expect(mockWriteToClipboard).not.toHaveBeenCalledWith('key: value');
+  });
+
+  test('should copy the currently toggled YAML format when switching back from JSON', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <PageDetailCodeEditor value={'{"key": "value"}'} />
+      </TestWrapper>
+    );
+
+    // Switch to JSON first, then back to YAML
+    await user.click(screen.getByRole('button', { name: 'Toggle to JSON' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('code-block-value').textContent).toContain('"key"');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Toggle to YAML' }));
+    await waitFor(() => {
+      expect(screen.getByTestId('code-block-value').textContent).toContain('key:');
+    });
+    const displayedYaml = screen.getByTestId('code-block-value').textContent ?? '';
+
+    await user.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+
+    expect(mockWriteToClipboard).toHaveBeenCalledWith(displayedYaml);
+    expect(mockWriteToClipboard).not.toHaveBeenCalledWith('{"key": "value"}');
   });
 });
 
