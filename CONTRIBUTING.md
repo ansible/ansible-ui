@@ -20,7 +20,7 @@ If you find a problem with the project, search if an issue already exists. If a 
 
 ## Code changes
 
-If you have forked the project and created a branch with changes you would like to see added to the project, create a pull request and your request will be reviewed.
+If you have forked the project and created a branch with changes you would like to see added to the project, create a pull request against **`devel`** and your request will be reviewed.
 
 ### Signed commits
 

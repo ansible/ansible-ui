@@ -1,34 +1,9 @@
 # Branching
 
-> As outlined in previous decision records, we have adopted a structured 8-week release cycle with a hardening sprint and hackathon process at the end of each cycle to ensure that all new feature/function code is properly tested and validated before being included in a release.
+This repository uses **`devel`** as the default integration branch. Feature work and bug fixes should branch from `devel` and pull requests should target `devel`.
 
-> To accommodate urgent fixes, we reinstated the bi-weekly async release model, but only for CVEs and defects. However, to ensure this process does not introduce instability, it is essential that component teams follow strict branch management practices.
+## Workflow
 
-## 8 Week Release Schedule
-
-### Sprint 1
-
-- Features go into `main`
-- Defects go into `main`
-- Critical defects cherry-picked to `release`
-- At the end of sprint - `release` is tagged for an async release
-
-### Sprint 2
-
-- Features go into `main`
-- Defects go into `main`
-- Critical defects cherry-picked to `release`
-- At the end of sprint - `release` is tagged for an async release
-
-### Sprint 3
-
-- Features go into `main`
-- Defects go into `main`
-- At the end of sprint - `main` merged into `release` (Contains all feature and fixes from main)
-
-### Hardening Sprint
-
-- Hackathon of `release` (Contains all feature and fixes from main)
-- Hackathon defects go into `main`
-- Hackathon defects cherry-picked to `release`
-- At the end of sprint - `release` is tagged and released with new features
+1. Fetch the latest `devel` and create a topic branch from it.
+2. Open a pull request against `devel` when the change is ready for review.
+3. Keep the branch reasonably up to date with `devel` while review is in progress (merge `origin/devel` into your branch as needed).

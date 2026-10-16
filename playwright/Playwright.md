@@ -4,6 +4,8 @@
 
 ## Ansible Testing
 
+See also: [Testing strategy](../docs/test/testing-strategy.md), [Test server setup](../docs/test/test-server-setup.md), and [Playwright Currents setup](../docs/playwright-currents-setup.md).
+
 Goals
 
 - End-to-end tests that can validate the platform for all supported configurations.
@@ -53,14 +55,14 @@ Solution
    > Playwright runs against a UI that might not be the same as the API server. Having a new variable PLATFORM_UI keeps existing developers from running into issues with PLATFORM_SERVER which is pointed at the server API.
    >
    > For nightly runs PLATFORM_UI will be pointed at a PLATFORM_SERVER to run tests.
-   
+
    Additionally, for Ansible Lightspeed UI testing, the environment variable "LIGHTSPEED_SERVER" is required,
-   In case the environment LIGHTSPEED_SERVER is not supplied the related tests are skipped. 
+   In case the environment LIGHTSPEED_SERVER is not supplied the related tests are skipped.
 
    ```bash
    LIGHTSPEED_SERVER=https://localhost:8447
    ```
- 
+
 4. **Run the Platform UI**
 
    When running against a local UI, you need to have the local UI running.
@@ -96,12 +98,12 @@ Solution
 
 Tests should be tagged based on their capabilities. Tags are built into playwright and different playwright projects (i.e. "mock chromium") will default to the right flags.
 
-|       Tag | Description                                                          |
-| --------: | -------------------------------------------------------------------- |
-| @not_mock | This test should not run when testing against the mock API           |
-|  @upgrade | This test should only run against a server that is setup for upgrade |
+|       Tag | Description                                                                           |
+| --------: | ------------------------------------------------------------------------------------- |
+| @not_mock | This test should not run when testing against the mock API                            |
+|  @upgrade | This test should only run against a server that is setup for upgrade                  |
 |    @tier1 | This test runs in the Tier 1 Jenkins nightly pipeline (green-path customer scenarios) |
-|   @visual | Visual regression test (excluded from Jenkins runs via `NOT_TAGS`)   |
+|   @visual | Visual regression test (excluded from Jenkins runs via `NOT_TAGS`)                    |
 
 ### Tier 1 Tagging Convention
 
@@ -280,7 +282,13 @@ AAP_TOPOLOGY_TYPE=saas
 
 ```typescript
 import { TOPOLOGY_SAAS, TOPOLOGY_AZURE } from '@ansible/playwright/commands/constants';
-import { getTopologyType, isTopology, isSaaS, isAzure, isOcpA } from '@ansible/playwright/commands/getTopologyType';
+import {
+  getTopologyType,
+  isTopology,
+  isSaaS,
+  isAzure,
+  isOcpA,
+} from '@ansible/playwright/commands/getTopologyType';
 
 // Skip for specific topology
 test.beforeAll(() => {
@@ -297,18 +305,26 @@ test.beforeAll(() => {
 });
 
 // Individual helper functions
-if (isSaaS()) { /* Skip on SaaS */ }
-if (isAzure()) { /* Skip on Azure */ }
-if (isOcpA()) { /* Skip on OCP-A */ }
+if (isSaaS()) {
+  /* Skip on SaaS */
+}
+if (isAzure()) {
+  /* Skip on Azure */
+}
+if (isOcpA()) {
+  /* Skip on OCP-A */
+}
 ```
 
 **Available constants:**
+
 - `TOPOLOGY_SAAS` - AWS SaaS deployment (`'saas'`)
 - `TOPOLOGY_AZURE` - Azure cloud deployment (`'man-b'`)
 - `TOPOLOGY_OCP_A` - OpenShift deployment (`'ocp-a'`)
 - `TOPOLOGY_UNKNOWN` - Unknown or local/RPM deployment (`''`)
 
 **Helper functions:**
+
 - `getTopologyType()` - Returns the current topology type string
 - `isSaaS()` - Returns true if topology is SaaS
 - `isAzure()` - Returns true if topology is Azure
