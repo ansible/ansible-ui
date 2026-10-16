@@ -302,22 +302,30 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       {
         header: t('Credentials'),
         helpText: t('Credential(s) used to access the nodes this job will be ran against.'),
-        cell: (job: UnifiedJob) => (
-          <LabelGroup
-            numLabels={5}
-            collapsedText={t(`{{count}} more`, {
-              count: (job.summary_fields.credentials?.length ?? 0) - 5,
-            })}
-          >
-            {job.summary_fields.credentials?.map((cred) => (
-              <CredentialLabel credential={cred} key={cred.id} />
-            ))}
-          </LabelGroup>
-        ),
-        value: (job: UnifiedJob) =>
-          job.summary_fields?.credentials?.length
-            ? job.summary_fields?.credentials?.length
-            : undefined,
+        cell: (job: UnifiedJob) => {
+          const credentials = job.summary_fields.credentials?.length
+            ? job.summary_fields.credentials
+            : job.summary_fields.credential
+              ? [job.summary_fields.credential]
+              : [];
+          return (
+            <LabelGroup
+              numLabels={5}
+              collapsedText={t(`{{count}} more`, {
+                count: credentials.length - 5,
+              })}
+            >
+              {credentials.map((cred) => (
+                <CredentialLabel credential={cred} key={cred.id} />
+              ))}
+            </LabelGroup>
+          );
+        },
+        value: (job: UnifiedJob) => {
+          const count =
+            job.summary_fields?.credentials?.length || (job.summary_fields?.credential ? 1 : 0);
+          return count || undefined;
+        },
         table: ColumnTableOption.expanded,
         card: 'hidden',
         list: 'hidden',
