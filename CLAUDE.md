@@ -49,3 +49,18 @@ This repo has no Storybook. Do not use `@latest` for MCP packages.
 - Accessibility is part of every UI change.
 - `npm test` (eslint, tsc, prettier, vitest) and `npm run eslint:guardrails` on touched files before calling the work done.
 - Never remove existing features, routes, or components without explicit instruction.
+
+### Shared framework delivery
+
+Changes to `framework/` can affect every product workspace. Deliver shared
+framework behavior in a dedicated upstream PR before product-specific adoption.
+Keep that PR limited to `framework/` and its focused tests; do not combine it
+with unrelated feature work, other upstream changes, or Controller, Hub, EDA,
+and Platform rollout changes. The framework PR must be independently testable,
+document its compatibility impact, include complete relevant framework test
+coverage and representative cross-workspace validation, and remain safe to
+revert without reverting a product rollout. Follow with separate
+product-specific PRs after the shared behavior is accepted.
+
+This checklist targets `framework/`; apply the same separation judgment to
+shared `frontend/common/` changes and cross-cutting `platform/` utilities.
