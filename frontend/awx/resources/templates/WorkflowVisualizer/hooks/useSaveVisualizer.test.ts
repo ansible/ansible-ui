@@ -1089,7 +1089,7 @@ describe('useSaveVisualizer', () => {
     expect(payload.extra_data).toEqual(expect.objectContaining({ survey_key: 'survey_value' }));
   });
 
-  test('should send null to API when scm_branch prompt field is cleared on a new node', async () => {
+  test('should preserve empty Limit and send null for cleared scm_branch on a new node', async () => {
     const newNode = makeGraphNode({
       id: 'unsavedNode-scm',
       visible: true,
@@ -1138,6 +1138,55 @@ describe('useSaveVisualizer', () => {
     expect(workflowNodeCall).toBeDefined();
     const payload = (workflowNodeCall as unknown[])[1] as Record<string, unknown>;
     expect(payload).toHaveProperty('scm_branch', null);
+    expect(payload).toHaveProperty('limit', '');
+  });
+
+  test('should preserve null Limit on a prompted new node', async () => {
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-limit-null',
+      visible: true,
+      modified: false,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: 'limit-null',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Deploy',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          limit: null,
+          original: {
+            launch_config: {
+              ask_limit_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [newNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const workflowNodeCall = mockPostFn.mock.calls.find(
+      (c: unknown[]) => typeof c[0] === 'string' && c[0].includes('/workflow_nodes/')
+    );
+    expect(workflowNodeCall).toBeDefined();
+    const payload = (workflowNodeCall as unknown[])[1] as Record<string, unknown>;
     expect(payload).toHaveProperty('limit', null);
   });
 
@@ -1246,7 +1295,7 @@ describe('useSaveVisualizer', () => {
     expect(payload).not.toHaveProperty('forks');
   });
 
-  test('should send null to API when scm_branch prompt field is cleared on an existing node', async () => {
+  test('should preserve empty Limit and send null for cleared scm_branch on an existing node', async () => {
     const editedNode = makeGraphNode({
       id: '42',
       visible: true,
@@ -1299,7 +1348,7 @@ describe('useSaveVisualizer', () => {
     expect(nodePatchCall).toBeDefined();
     const payload = (nodePatchCall as unknown[])[1] as Record<string, unknown>;
     expect(payload).toHaveProperty('scm_branch', null);
-    expect(payload).toHaveProperty('limit', null);
+    expect(payload).toHaveProperty('limit', '');
   });
 
   test('should not send cleared scm_branch when ask_scm_branch_on_launch is false on an existing node', async () => {

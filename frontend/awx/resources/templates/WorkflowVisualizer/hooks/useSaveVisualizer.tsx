@@ -203,11 +203,11 @@ export function useSaveVisualizer(templateId: string) {
           if (value === undefined) {
             return;
           }
-          if (value === null || value === '') {
+          if (value === null || (value === '' && key !== 'limit')) {
             if (!isPrompt) {
               return;
             }
-            // Prompt field explicitly cleared; send null to the API to remove the node override
+            // Empty prompt fields remove the node override; an empty Limit is an explicit value.
             createNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
             return;
           }
@@ -312,11 +312,11 @@ export function useSaveVisualizer(templateId: string) {
             if (value === undefined) {
               return;
             }
-            if (value === null || value === '') {
+            if (value === null || (value === '' && key !== 'limit')) {
               if (!isPrompt) {
                 return;
               }
-              // Prompt field explicitly cleared; send null to the API to remove the node override
+              // Empty prompt fields remove the node override; an empty Limit is an explicit value.
               updatedNodePayload[key] = null as unknown as CreateWorkflowNodePayload[K];
               return;
             }
