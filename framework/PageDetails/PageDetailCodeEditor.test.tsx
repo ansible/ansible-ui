@@ -5,6 +5,8 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { PageDetailCodeEditor } from './PageDetailCodeEditor';
 
+const writeToClipboard = vi.hoisted(() => vi.fn());
+
 // Mock dependencies
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
@@ -29,37 +31,8 @@ vi.mock('../PageSettings/PageSettingsProvider', () => ({
 vi.mock('../hooks/useClipboard', () => ({
   useClipboard: () => ({
     copySuccess: false,
-    writeToClipboard: vi.fn(),
+    writeToClipboard,
   }),
-}));
-
-vi.mock('../PageForm/Inputs/PageFormDataEditor', () => ({
-  objectToString: (obj: unknown, language: string) => {
-    if (language === 'json') {
-      return JSON.stringify(obj, null, 2);
-    }
-    if (obj && typeof obj === 'object' && '__preserveYamlString' in obj) {
-      return (obj as { __preserveYamlString: string }).__preserveYamlString;
-    }
-    if (obj && typeof obj === 'object') {
-      return JSON.stringify(obj, null, 2);
-    }
-    return String(obj);
-  },
-  valueToObject: (value: string, isArray: boolean): unknown => {
-    if (isArray) {
-      try {
-        return JSON.parse(value) as unknown;
-      } catch {
-        return [];
-      }
-    }
-    try {
-      return JSON.parse(value) as unknown;
-    } catch {
-      return { __preserveYamlString: value };
-    }
-  },
 }));
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -68,7 +41,6 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => (
 
 async function loadFormatDetailCodeEditorValue() {
   vi.resetModules();
-  vi.unmock('../PageForm/Inputs/PageFormDataEditor');
   const module = await import('./PageDetailCodeEditor');
   return module.formatDetailCodeEditorValue;
 }
@@ -151,6 +123,40 @@ describe('PageDetailCodeEditor', () => {
 
     expect(screen.queryByRole('button', { name: 'Toggle to YAML' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Toggle to JSON' })).not.toBeInTheDocument();
+  });
+
+  test('copies the displayed JSON after switching to JSON', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <PageDetailCodeEditor value="key: value" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Toggle to JSON' }));
+    const displayed = screen.getByTestId('code-block-value').textContent ?? '';
+    expect(displayed).toContain('"key"');
+
+    await user.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+    expect(writeToClipboard).toHaveBeenCalledWith(displayed);
+  });
+
+  test('copies the displayed YAML after switching to YAML', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <PageDetailCodeEditor value='{"key":"value"}' />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Toggle to JSON' }));
+    await user.click(screen.getByRole('button', { name: 'Toggle to YAML' }));
+    const displayed = screen.getByTestId('code-block-value').textContent ?? '';
+    expect(displayed).toContain('key:');
+    expect(displayed).not.toContain('"key"');
+
+    await user.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+    expect(writeToClipboard).toHaveBeenCalledWith(displayed);
   });
 
   test('should toggle language from YAML to JSON', async () => {
