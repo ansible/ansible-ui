@@ -61,6 +61,31 @@ function createSettingsWrapper(
   };
 }
 
+async function renderLanguageSettings(candidates: string[], options: InitOptions = {}) {
+  const detector = new LanguageDetector();
+  detector.addDetector({ name: 'fixture', lookup: () => candidates });
+  await i18n.use(detector).init({
+    lng: 'fr',
+    fallbackLng: 'en',
+    supportedLngs: ['en', 'fr', 'ja'],
+    resources: {
+      en: { translation: { greeting: 'Hello' } },
+      fr: { translation: { greeting: 'Bonjour' } },
+      ja: { translation: { greeting: 'こんにちは' } },
+    },
+    detection: { order: ['fixture'], caches: [] },
+    ...options,
+  });
+  localStorage.setItem('user-preferences', JSON.stringify({ language: 'fr' }));
+  const view = renderHook(() => useContext(PageSettingsContext), {
+    wrapper: PageSettingsProvider,
+  });
+  await waitFor(() => expect(i18n.resolvedLanguage).toBe('fr'));
+  expect(document.documentElement.lang).toBe('fr');
+  document.cookie = 'lang=fr; path=/';
+  return view;
+}
+
 vi.mock('swr', async (importOriginal) => {
   const actual = await importOriginal<typeof import('swr')>();
 
@@ -287,31 +312,6 @@ describe('PageSettingsProvider', () => {
       window.history.replaceState(null, '', originalUrl);
       if (originalCookie) document.cookie = `${originalCookie}; path=/`;
     });
-
-    async function renderLanguageSettings(candidates: string[], options: InitOptions = {}) {
-      const detector = new LanguageDetector();
-      detector.addDetector({ name: 'fixture', lookup: () => candidates });
-      await i18n.use(detector).init({
-        lng: 'fr',
-        fallbackLng: 'en',
-        supportedLngs: ['en', 'fr', 'ja'],
-        resources: {
-          en: { translation: { greeting: 'Hello' } },
-          fr: { translation: { greeting: 'Bonjour' } },
-          ja: { translation: { greeting: 'こんにちは' } },
-        },
-        detection: { order: ['fixture'], caches: [] },
-        ...options,
-      });
-      localStorage.setItem('user-preferences', JSON.stringify({ language: 'fr' }));
-      const view = renderHook(() => useContext(PageSettingsContext), {
-        wrapper: PageSettingsProvider,
-      });
-      await waitFor(() => expect(i18n.resolvedLanguage).toBe('fr'));
-      expect(document.documentElement.lang).toBe('fr');
-      document.cookie = 'lang=fr; path=/';
-      return view;
-    }
 
     test('should not change an uninitialized i18next instance while updating preferences and caches', async () => {
       const changeLanguage = vi.spyOn(i18n, 'changeLanguage');
