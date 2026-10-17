@@ -16,9 +16,13 @@ import { useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
+import {
+  canViewNotificationsTab,
+  useNotificationAdminOrganizations,
+} from '../../../common/useNotificationAdminOrganizations';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { Project } from '../../../interfaces/Project';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useCanViewNotificationsTab } from '../../notifications/hooks/useCanViewNotificationsTab';
 import { useProjectActions } from '../hooks/useProjectActions';
 
 export function ProjectPage() {
@@ -33,12 +37,9 @@ export function ProjectPage() {
   } = useGet<Project>(awxAPI`/projects/${params.id ?? ''}/`);
   const pageNavigate = usePageNavigate();
   const itemActions = useProjectActions(() => pageNavigate(AwxRoute.Projects));
-  const {
-    canViewNotificationsTab,
-    error: notificationsTabError,
-    refresh: refreshNotificationsTab,
-    isLoading: isNotificationsTabLoading,
-  } = useCanViewNotificationsTab();
+  const { activeAwxUser } = useAwxActiveUser();
+  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
+    useNotificationAdminOrganizations();
   const getPageUrl = useGetPageUrl();
   const tabs: { label: string; page: string }[] = useMemo(() => {
     const tabs = [
@@ -48,15 +49,13 @@ export function ProjectPage() {
       { label: t('User Access'), page: AwxRoute.ProjectUsers },
       { label: t('Team Access'), page: AwxRoute.ProjectTeams },
     ];
-    if (canViewNotificationsTab) {
+    if (canViewNotificationsTab(activeAwxUser, notificationAdminOrganizations)) {
       tabs.push({ label: t('Notifications'), page: AwxRoute.ProjectNotifications });
     }
     return tabs;
-  }, [t, canViewNotificationsTab]);
+  }, [t, activeAwxUser, notificationAdminOrganizations]);
   if (projectError) return <AwxError error={projectError} handleRefresh={projectRefresh} />;
-  if (notificationsTabError)
-    return <AwxError error={notificationsTabError} handleRefresh={refreshNotificationsTab} />;
-  if (!project || isProjectLoading || isNotificationsTabLoading)
+  if (!project || isProjectLoading || isLoadingNotificationAdminOrganizations)
     return <LoadingPage breadcrumbs tabs />;
 
   return (

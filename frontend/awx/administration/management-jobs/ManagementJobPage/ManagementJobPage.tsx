@@ -7,9 +7,13 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
+import {
+  canViewNotificationsTab,
+  useNotificationAdminOrganizations,
+} from '../../../common/useNotificationAdminOrganizations';
+import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { SystemJobTemplate } from '../../../interfaces/SystemJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
-import { useCanViewNotificationsTab } from '../../../resources/notifications/hooks/useCanViewNotificationsTab';
 
 export function ManagementJobPage() {
   const { t } = useTranslation();
@@ -21,22 +25,19 @@ export function ManagementJobPage() {
   } = useGetItem<SystemJobTemplate>(awxAPI`/system_job_templates`, params.id);
 
   const getPageUrl = useGetPageUrl();
-  const {
-    canViewNotificationsTab,
-    error: notificationsTabError,
-    refresh: refreshNotificationsTab,
-    isLoading: isNotificationsTabLoading,
-  } = useCanViewNotificationsTab();
+  const { activeAwxUser } = useAwxActiveUser();
+
+  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
+    useNotificationAdminOrganizations();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
-  if (notificationsTabError)
-    return <AwxError error={notificationsTabError} handleRefresh={refreshNotificationsTab} />;
 
-  if (!systemJobTemplate || isNotificationsTabLoading) return <LoadingPage breadcrumbs tabs />;
+  if (!systemJobTemplate || isLoadingNotificationAdminOrganizations)
+    return <LoadingPage breadcrumbs tabs />;
 
   const tabs = [{ label: t('Schedules'), page: AwxRoute.ManagementJobSchedules }];
 
-  if (canViewNotificationsTab) {
+  if (canViewNotificationsTab(activeAwxUser, notificationAdminOrganizations)) {
     tabs.push({ label: t('Notifications'), page: AwxRoute.ManagementJobNotifications });
   }
 
