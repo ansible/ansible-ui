@@ -19,7 +19,9 @@ import { resolvePromptField } from './resolvePromptField';
 
 /**
  * Resolves job_tags or skip_tags with prompt-first precedence.
- * Prompt-first: prefer defined prompt (including empty array), fall back to parsing resource.
+ * Prompt-first: prefer defined prompt (including empty array), fall back to parsing a stored
+ * resource override. A null or absent resource value means inherit, so leave it unset for the
+ * NodeTypeStep to apply the job-template default.
  *
  * The parseStringToTagArray output type includes label and value, while the prompt type
  * only has name. We return parseStringToTagArray's type since that's what the form expects.
@@ -27,15 +29,15 @@ import { resolvePromptField } from './resolvePromptField';
 function resolveTagField(
   promptTags: { name: string }[] | undefined,
   resourceTags: string | null | undefined
-): Array<{ name: string; label: string; value: string }> {
+): Array<{ name: string; label: string; value: string }> | undefined {
   if (promptTags !== undefined) {
     // Convert prompt format to full tag array format
     return promptTags.map((tag) => ({ name: tag.name, label: tag.name, value: tag.name }));
   }
-  if (resourceTags !== undefined) {
-    return parseStringToTagArray(resourceTags ?? '');
+  if (resourceTags === null || resourceTags === undefined) {
+    return undefined;
   }
-  return parseStringToTagArray('');
+  return parseStringToTagArray(resourceTags);
 }
 
 interface WizardStepState {
