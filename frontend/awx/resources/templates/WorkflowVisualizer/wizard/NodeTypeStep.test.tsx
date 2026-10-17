@@ -456,6 +456,93 @@ describe('NodeTypeStep', () => {
     expect(container.firstChild).not.toBeNull();
   });
 
+  it.each([
+    {
+      scenario: 'inherited defaults',
+      promptTags: undefined,
+      expectedJobTags: ['deploy', 'build'],
+      expectedSkipTags: ['skip_a'],
+    },
+    {
+      scenario: 'an override matching defaults',
+      promptTags: {
+        job_tags: [{ name: 'deploy' }, { name: 'build' }],
+        skip_tags: [{ name: 'skip_a' }],
+      },
+      expectedJobTags: ['deploy', 'build'],
+      expectedSkipTags: ['skip_a'],
+    },
+    {
+      scenario: 'explicitly cleared tags',
+      promptTags: { job_tags: [], skip_tags: [] },
+      expectedJobTags: [],
+      expectedSkipTags: [],
+    },
+    {
+      scenario: 'nonempty user selections',
+      promptTags: {
+        job_tags: [{ name: 'custom' }],
+        skip_tags: [{ name: 'slow' }, { name: 'other' }],
+      },
+      expectedJobTags: ['custom'],
+      expectedSkipTags: ['slow', 'other'],
+    },
+  ])(
+    'should preserve tag precedence for $scenario',
+    async ({ promptTags, expectedJobTags, expectedSkipTags }) => {
+      mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+        if (url.includes('/launch/')) {
+          return Promise.resolve({
+            ask_credential_on_launch: true,
+            ask_tags_on_launch: true,
+            ask_skip_tags_on_launch: true,
+            survey_enabled: false,
+            defaults: {
+              credentials: [],
+              inventory: null,
+              job_tags: 'deploy,build',
+              skip_tags: 'skip_a',
+            },
+          });
+        }
+        if (url.includes('/credentials/')) {
+          return Promise.resolve({ count: 0, results: [] });
+        }
+        return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+      });
+
+      const stepState = {
+        nodePromptsStep: {
+          prompt: {
+            credentials: [],
+            labels: [],
+            instance_groups: [],
+            ...(promptTags ?? {}),
+          },
+        },
+      };
+      let capturedPrompt:
+        | { job_tags?: { name: string }[]; skip_tags?: { name: string }[] }
+        | undefined;
+      mockSetStepData.mockImplementation((updater: unknown) => {
+        if (typeof updater === 'function') {
+          const result = (
+            updater as (prev: typeof stepState) => {
+              nodePromptsStep?: { prompt?: typeof capturedPrompt };
+            }
+          )(stepState);
+          capturedPrompt = result.nodePromptsStep?.prompt;
+        }
+      });
+
+      render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+      await waitFor(() => expect(capturedPrompt).toBeDefined(), { timeout: 5000 });
+      expect(capturedPrompt?.job_tags?.map((tag) => tag.name)).toEqual(expectedJobTags);
+      expect(capturedPrompt?.skip_tags?.map((tag) => tag.name)).toEqual(expectedSkipTags);
+    }
+  );
+
   it('should preserve empty scm_branch from step data over launch config default when template has not changed', async () => {
     mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
       if (url.includes('/launch/')) {

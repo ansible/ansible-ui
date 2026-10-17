@@ -44,6 +44,20 @@ interface CreateWorkflowNodePayload {
 }
 type CreatePayloadProperty = keyof CreateWorkflowNodePayload;
 
+const EMPTY_STRING_OVERRIDE_FIELDS = new Set<CreatePayloadProperty>([
+  'limit',
+  'scm_branch',
+  'job_tags',
+  'skip_tags',
+]);
+
+function shouldSerializeAsNull<K extends CreatePayloadProperty>(
+  key: K,
+  value: CreateWorkflowNodePayload[K]
+): boolean {
+  return value === null || (value === '' && !EMPTY_STRING_OVERRIDE_FIELDS.has(key));
+}
+
 export function useSaveVisualizer(templateId: string) {
   const controller = useVisualizationController();
   const deleteRequest = useDeleteRequest();
@@ -203,7 +217,7 @@ export function useSaveVisualizer(templateId: string) {
           if (value === undefined) {
             return;
           }
-          if (value === null || (value === '' && key !== 'limit')) {
+          if (shouldSerializeAsNull(key, value)) {
             if (!isPrompt) {
               return;
             }
@@ -317,7 +331,7 @@ export function useSaveVisualizer(templateId: string) {
             if (value === undefined) {
               return;
             }
-            if (value === null || (value === '' && key !== 'limit')) {
+            if (shouldSerializeAsNull(key, value)) {
               if (!isPrompt) {
                 return;
               }

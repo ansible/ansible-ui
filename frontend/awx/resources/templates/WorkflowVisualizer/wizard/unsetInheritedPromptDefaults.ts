@@ -13,17 +13,42 @@ const INHERITED_SCALAR_PROMPT_FIELDS = [
 ] as const;
 
 type InheritedScalarPromptField = (typeof INHERITED_SCALAR_PROMPT_FIELDS)[number];
+const INHERITED_TAG_PROMPT_FIELDS = ['job_tags', 'skip_tags'] as const;
+type InheritedTagPromptField = (typeof INHERITED_TAG_PROMPT_FIELDS)[number];
 
-/** API workflow node scalar prompts: null means inherit; a set value is an explicit override. */
+/** API workflow node prompts: null means inherit; a set value is an explicit override. */
 export type ResourcePromptSnapshot = Partial<{
   [K in InheritedScalarPromptField]: PromptFormValues[K] | null;
-}>;
+}> &
+  Partial<Record<InheritedTagPromptField, string | null>>;
 
 /**
  * Removes prompt fields that only reflect job-template launch defaults in the UI.
  * When the API stored `null` (no node override), matching template defaults should
  * not be written into launch_data so save keeps inherit semantics.
  */
+function unsetInheritedTagPromptDefaults(
+  effectivePrompt: Partial<PromptFormValues>,
+  launchConfig: LaunchConfiguration,
+  resourceNode: ResourcePromptSnapshot
+): void {
+  for (const key of INHERITED_TAG_PROMPT_FIELDS) {
+    if (
+      (resourceNode[key] !== null && resourceNode[key] !== undefined) ||
+      !(key in effectivePrompt)
+    ) {
+      continue;
+    }
+    const templateDefault = launchConfig.defaults[key];
+    if (templateDefault === undefined) {
+      continue;
+    }
+    if (effectivePrompt[key]?.map((tag) => tag.name).join(',') === templateDefault) {
+      delete effectivePrompt[key];
+    }
+  }
+}
+
 export function unsetInheritedPromptDefaults(
   effectivePrompt: Partial<PromptFormValues>,
   launchConfig: LaunchConfiguration | null | undefined,
@@ -49,4 +74,6 @@ export function unsetInheritedPromptDefaults(
       delete effectivePrompt[key];
     }
   }
+
+  unsetInheritedTagPromptDefaults(effectivePrompt, launchConfig, resourceNode);
 }

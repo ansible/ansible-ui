@@ -346,6 +346,44 @@ describe('WorkflowJobTemplateDetails', () => {
     expect(screen.getByText('skip-prompt')).toBeInTheDocument();
   });
 
+  it.each([
+    {
+      scenario: 'empty prompt arrays',
+      node: {
+        ...mockNodeData,
+        launch_data: { job_tags: [], skip_tags: [] },
+      } as GraphNodeData,
+    },
+    {
+      scenario: 'empty node resource strings',
+      node: {
+        ...mockNodeData,
+        resource: {
+          ...mockNodeData.resource,
+          job_tags: '',
+          skip_tags: '',
+        } as never,
+      },
+    },
+  ])('should not show template defaults for $scenario', ({ node }) => {
+    mockUseGetWithLaunchConfig({ ask_tags_on_launch: true, ask_skip_tags_on_launch: true });
+
+    renderComponent(mockTemplate, node);
+
+    for (const tag of ['deploy', 'build', 'skip_a', 'skip_b']) {
+      expect(screen.queryByText(tag)).not.toBeInTheDocument();
+    }
+  });
+
+  it('should show template defaults for inherited tags when prompting is enabled', () => {
+    mockUseGetWithLaunchConfig({ ask_tags_on_launch: true, ask_skip_tags_on_launch: true });
+
+    renderComponent();
+
+    expect(screen.getByText('deploy')).toBeInTheDocument();
+    expect(screen.getByText('skip_a')).toBeInTheDocument();
+  });
+
   it('should render variables from node extra_data', () => {
     const nodeWithVars: GraphNodeData = {
       ...mockNodeData,

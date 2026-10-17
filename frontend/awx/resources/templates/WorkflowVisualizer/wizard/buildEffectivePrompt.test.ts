@@ -213,6 +213,57 @@ describe('buildEffectivePrompt', () => {
       expect(effectivePrompt.forks).toBeUndefined();
     });
 
+    test('should omit unchanged inherited tag defaults on a node without tag overrides', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt: {
+          job_tags: [{ name: 'deploy' }, { name: 'build' }],
+          skip_tags: [{ name: 'slow' }],
+        },
+        launchConfig: {
+          ...baseLaunchConfig,
+          ask_tags_on_launch: true,
+          ask_skip_tags_on_launch: true,
+          defaults: {
+            job_tags: 'deploy,build',
+            skip_tags: 'slow',
+            credentials: [],
+          },
+        } as unknown as LaunchConfiguration,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { job_tags: null, skip_tags: null },
+      });
+
+      expect(effectivePrompt.job_tags).toBeUndefined();
+      expect(effectivePrompt.skip_tags).toBeUndefined();
+    });
+
+    test('should keep explicitly cleared tags instead of inheriting nonempty defaults', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt: { job_tags: [], skip_tags: [] },
+        launchConfig: {
+          ...baseLaunchConfig,
+          ask_tags_on_launch: true,
+          ask_skip_tags_on_launch: true,
+          defaults: {
+            job_tags: 'deploy',
+            skip_tags: 'slow',
+            credentials: [],
+          },
+        } as unknown as LaunchConfiguration,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { job_tags: null, skip_tags: null },
+      });
+
+      expect(effectivePrompt.job_tags).toEqual([]);
+      expect(effectivePrompt.skip_tags).toEqual([]);
+    });
+
     test('should preserve an explicitly cleared Limit despite a template default', () => {
       const { effectivePrompt } = buildEffectivePrompt({
         originalTemplateId: 1,
