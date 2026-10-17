@@ -53,6 +53,61 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     expect(screen.getByText('Second')).toBeInTheDocument();
   });
 
+  it('should select an existing option and close the menu', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    const { rerender } = render(
+      <FormGroupSingleSelectTypeAhead {...defaultProps} onHandleSelection={onHandleSelection} />
+    );
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.click(screen.getByRole('option', { name: 'Option 1' }));
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'option1' });
+    rerender(
+      <FormGroupSingleSelectTypeAhead
+        {...defaultProps}
+        onHandleSelection={onHandleSelection}
+        value="option1"
+      />
+    );
+    await waitFor(() => {
+      expect(input).toHaveValue('Option 1');
+      expect(input).toHaveAttribute('aria-expanded', 'false');
+    });
+  });
+
+  it('should create a new option when creation is enabled', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    render(
+      <FormGroupSingleSelectTypeAhead {...defaultProps} onHandleSelection={onHandleSelection} />
+    );
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'New option');
+    await user.click(screen.getByRole('option', { name: 'Create new option "New option"' }));
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'New option' });
+    expect(input).toHaveValue('New option');
+  });
+
+  it('should not offer creation when creation is disabled', async () => {
+    const user = userEvent.setup();
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} allowCreate={false} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'Unknown option');
+
+    expect(screen.queryByRole('option', { name: /Create new option/ })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('option', { name: 'No results found for "Unknown option"' })
+    ).toBeDisabled();
+  });
+
   it('should handle keyboard navigation with no options', async () => {
     const user = userEvent.setup();
     render(<FormGroupSingleSelectTypeAhead {...defaultProps} options={[]} />);
