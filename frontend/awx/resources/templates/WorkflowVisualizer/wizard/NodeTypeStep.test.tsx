@@ -517,7 +517,7 @@ describe('NodeTypeStep', () => {
             credentials: [],
             labels: [],
             instance_groups: [],
-            ...(promptTags ?? {}),
+            ...promptTags,
           },
         },
       };
@@ -528,7 +528,7 @@ describe('NodeTypeStep', () => {
         if (typeof updater === 'function') {
           const result = (
             updater as (prev: typeof stepState) => {
-              nodePromptsStep?: { prompt?: typeof capturedPrompt };
+              nodePromptsStep?: { prompt: typeof capturedPrompt };
             }
           )(stepState);
           capturedPrompt = result.nodePromptsStep?.prompt;
