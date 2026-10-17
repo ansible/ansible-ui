@@ -110,9 +110,7 @@ describe('useTemplateNotificationsAccess', () => {
       previous: null,
     } as AwxItemsResponse<Organization>;
 
-    expect(
-      getTemplateNotificationsAccess({ is_system_auditor: false }, 7, managers, undefined)
-    ).toEqual({
+    expect(getTemplateNotificationsAccess({ is_system_auditor: false }, 7, managers)).toEqual({
       canView: true,
       readOnly: false,
     });
