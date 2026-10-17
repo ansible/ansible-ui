@@ -213,6 +213,24 @@ describe('buildEffectivePrompt', () => {
       expect(effectivePrompt.forks).toBeUndefined();
     });
 
+    test('should preserve an explicitly cleared Limit despite a template default', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt: { limit: '' },
+        launchConfig: {
+          ...baseLaunchConfig,
+          ask_limit_on_launch: true,
+          defaults: { limit: 'production', credentials: [] },
+        } as unknown as LaunchConfiguration,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { limit: null },
+      });
+
+      expect(effectivePrompt.limit).toBe('');
+    });
+
     test('should keep values when the user overrides away from the template default', () => {
       const { effectivePrompt } = buildEffectivePrompt({
         originalTemplateId: 1,
