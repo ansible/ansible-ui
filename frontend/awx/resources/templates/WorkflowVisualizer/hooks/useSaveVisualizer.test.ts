@@ -855,6 +855,104 @@ describe('useSaveVisualizer', () => {
     expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
   });
 
+  test('should preserve edits made while a node PATCH is in flight', async () => {
+    let resolvePatch: (value: {
+      id: number;
+      extra_data: { saved_variable: string };
+      summary_fields: { unified_job_template: { id: number } };
+    }) => void = () => undefined;
+    const pendingPatch = new Promise<{
+      id: number;
+      extra_data: { saved_variable: string };
+      summary_fields: { unified_job_template: { id: number } };
+    }>((resolve) => {
+      resolvePatch = resolve;
+    });
+    mockPatchFn.mockImplementationOnce(() => pendingPatch);
+
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'original-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 2,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          extra_vars: '{"saved_variable":"persisted value"}',
+          original: {
+            launch_config: {
+              ask_variables_on_launch: true,
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    const savePromise = result.current();
+    await vi.waitFor(() => expect(mockPatchFn).toHaveBeenCalledTimes(1));
+
+    editedNode.setData({
+      ...(editedNode.getData() as GraphNodeData),
+      resource: {
+        ...(editedNode.getData() as GraphNodeData).resource,
+        identifier: 'newer-node-edit',
+        summary_fields: {
+          ...(editedNode.getData() as GraphNodeData).resource.summary_fields,
+          unified_job_template: {
+            id: 3,
+            name: 'JT C',
+            description: '',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
+        },
+      },
+      launch_data: {
+        ...(editedNode.getData() as GraphNodeData).launch_data,
+        extra_vars: '{"new_variable":"newer value"}',
+      },
+    });
+
+    resolvePatch?.({
+      id: 42,
+      extra_data: { saved_variable: 'persisted value' },
+      summary_fields: { unified_job_template: { id: 2 } },
+    });
+    await savePromise;
+
+    const currentNodeData = editedNode.getData() as GraphNodeData;
+    expect(currentNodeData.resource.identifier).toBe('newer-node-edit');
+    expect(currentNodeData.resource.summary_fields.unified_job_template?.id).toBe(3);
+    expect(currentNodeData.launch_data?.extra_vars).toBe('{"new_variable":"newer value"}');
+    expect(currentNodeData.launch_data?.original).toMatchObject({
+      extra_data: { saved_variable: 'persisted value' },
+      template_id: 2,
+    });
+  });
+
   test('should reconcile a new node snapshot before a later edge save fails', async () => {
     let failEdgeAssociation = true;
     mockPostFn.mockImplementation((url: string) => {

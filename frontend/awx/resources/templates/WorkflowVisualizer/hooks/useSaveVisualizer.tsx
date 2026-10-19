@@ -262,8 +262,6 @@ export function useSaveVisualizer(templateId: string) {
         const newNodeId = newNode.id.toString();
         reconcileLaunchDataSnapshot({
           node,
-          nodeData,
-          launchData: launch_data,
           workflowNode: newNode,
           patchPayload: createNodePayload,
         });
@@ -392,8 +390,6 @@ export function useSaveVisualizer(templateId: string) {
               );
               reconcileLaunchDataSnapshot({
                 node,
-                nodeData,
-                launchData: launch_data,
                 workflowNode: clearedNode,
                 patchPayload: { extra_data: {} },
               });
@@ -407,8 +403,6 @@ export function useSaveVisualizer(templateId: string) {
           );
           reconcileLaunchDataSnapshot({
             node,
-            nodeData,
-            launchData: launch_data,
             workflowNode: updatedNode,
             patchPayload: updatedNodePayload,
           });
@@ -648,16 +642,12 @@ export function useSaveVisualizer(templateId: string) {
 
 interface ReconcileLaunchDataSnapshotOptions {
   node: GraphNode;
-  nodeData: GraphNodeData;
-  launchData: GraphNodeData['launch_data'];
   workflowNode: Partial<WorkflowNode> | undefined;
   patchPayload: Partial<CreateWorkflowNodePayload>;
 }
 
 function reconcileLaunchDataSnapshot({
   node,
-  nodeData,
-  launchData,
   workflowNode,
   patchPayload,
 }: ReconcileLaunchDataSnapshotOptions) {
@@ -674,12 +664,13 @@ function reconcileLaunchDataSnapshot({
   }
 
   action(() => {
+    const currentNodeData = node.getData() as GraphNodeData;
     node.setData({
-      ...nodeData,
+      ...currentNodeData,
       launch_data: {
-        ...launchData,
+        ...currentNodeData.launch_data,
         original: {
-          ...launchData?.original,
+          ...currentNodeData.launch_data?.original,
           ...(persistedExtraData === undefined ? {} : { extra_data: { ...persistedExtraData } }),
           ...(persistedTemplateId === undefined ? {} : { template_id: persistedTemplateId }),
         },
