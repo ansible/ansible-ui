@@ -609,7 +609,7 @@ describe('useSaveVisualizer', () => {
     ).toBe(true);
   });
 
-  test('should clear extra_data in a separate PATCH before the template-change PATCH when extra_data resolves empty', async () => {
+  test('should not send a standalone empty extra_data PATCH when extra_data is already empty during a template swap', async () => {
     const editedNode = makeGraphNode({
       id: '42',
       visible: true,
@@ -625,8 +625,8 @@ describe('useSaveVisualizer', () => {
           success_nodes: [],
           summary_fields: {
             unified_job_template: {
-              id: 1,
-              name: 'Test Template',
+              id: 2,
+              name: 'JT B',
               unified_job_type: RESOURCE_TYPE.job,
             },
           },
@@ -638,12 +638,16 @@ describe('useSaveVisualizer', () => {
               ask_labels_on_launch: false,
               ask_instance_groups_on_launch: false,
               ask_credential_on_launch: false,
+              ask_inventory_on_launch: true,
+              ask_variables_on_launch: true,
               defaults: { credentials: [] },
             },
             labels: [],
             instance_groups: [],
             credentials: [],
           },
+          inventory: { id: 99, name: 'Override Inventory' },
+          extra_vars: '{}',
         },
         survey_data: undefined,
       } as unknown as Partial<GraphNodeData>,
@@ -657,22 +661,77 @@ describe('useSaveVisualizer', () => {
         typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
     );
 
-    // One PATCH clears extra_data on its own, ahead of the template-change PATCH,
-    // because AWX ignores extra_data updates sent in the same request that changes
-    // unified_job_template.
-    const clearExtraDataCall = nodePatchCalls.find(
-      (c: unknown[]) => JSON.stringify(c[1]) === JSON.stringify({ extra_data: {} })
+    expect(nodePatchCalls).toHaveLength(1);
+
+    const mainPatchPayload = nodePatchCalls[0][1] as {
+      unified_job_template?: number;
+      inventory?: number;
+    };
+    expect(mainPatchPayload).toMatchObject({ unified_job_template: 2, inventory: 99 });
+    expect(mainPatchPayload).not.toHaveProperty('extra_data');
+    expect(
+      nodePatchCalls.some((call: unknown[]) =>
+        JSON.stringify(call[1]) === JSON.stringify({ extra_data: {} })
+      )
+    ).toBe(false);
+  });
+
+  test('should clear non-empty extra_data before the template-change PATCH when outgoing extra_data resolves empty', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: { existing_variable: 'old value' },
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 2,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            isTemplateChange: true,
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              ask_inventory_on_launch: true,
+              ask_variables_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+          inventory: { id: 99, name: 'Override Inventory' },
+          extra_vars: '{}',
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
     );
-    expect(clearExtraDataCall).toBeDefined();
 
-    // The clearing PATCH must happen before the main node PATCH.
-    const clearIndex = nodePatchCalls.indexOf(clearExtraDataCall!);
-    expect(clearIndex).toBe(0);
-    expect(nodePatchCalls.length).toBeGreaterThan(1);
-
-    // The main PATCH should no longer carry extra_data (it was deleted after clearing).
-    const mainPatchCall = nodePatchCalls[nodePatchCalls.length - 1];
-    expect((mainPatchCall[1] as { extra_data?: unknown }).extra_data).toBeUndefined();
+    expect(nodePatchCalls).toHaveLength(2);
+    expect(nodePatchCalls[0][1]).toEqual({ extra_data: {} });
+    expect(nodePatchCalls[1][1]).toMatchObject({ unified_job_template: 2, inventory: 99 });
+    expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
   });
 
   test('should not issue a separate extra_data PATCH when there is no template change', async () => {
