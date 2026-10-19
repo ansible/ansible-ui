@@ -38,6 +38,29 @@ describe('PageDashboardCard', () => {
     expect(screen.getByRole('link', { name: 'View all' })).toBeInTheDocument();
   });
 
+  it('should render optional header and footer content', () => {
+    renderCard({
+      title: 'Inventories',
+      supertitle: 'Automation',
+      subtitle: 'Managed resources',
+      description: 'Inventory information',
+      headerControls: <button type="button">Refresh</button>,
+      linkText: 'View all',
+      to: '/inventories',
+      footerActionButton: {
+        title: 'Add inventory',
+        icon: <span data-testid="footer-icon" />,
+        onClick: vi.fn(),
+      },
+    });
+
+    expect(screen.getByText('Automation')).toBeInTheDocument();
+    expect(screen.getByText('Managed resources')).toBeInTheDocument();
+    expect(screen.getByText('Inventory information')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    expect(screen.getByTestId('footer-icon')).toBeInTheDocument();
+  });
+
   it('should not render a header when neither title nor linkText are provided', () => {
     renderCard({ children: <div>Body</div> });
 
