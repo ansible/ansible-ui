@@ -9,5 +9,4 @@ export type TextInputType =
   | 'search'
   | 'tel'
   | 'time'
-  | 'url'
-  | undefined;
+  | 'url';
