@@ -39,6 +39,7 @@ vi.mock('@patternfly/react-charts/victory', () => ({
   ChartArea: () => <div data-testid="chart-area" />,
   ChartAxis: (props: MockAxisProps) => {
     props.tickFormat?.(1);
+    props.tickFormat?.(1.5);
     return <div data-testid="chart-axis" />;
   },
   ChartBar: () => <div data-testid="chart-bar" />,
@@ -46,6 +47,7 @@ vi.mock('@patternfly/react-charts/victory', () => ({
   ChartLegendTooltip: () => <div data-testid="chart-legend-tooltip" />,
   ChartLine: () => <div data-testid="chart-line" />,
   ChartScatter: (props: MockScatterProps) => {
+    props.size?.({ active: true });
     props.size?.({ active: false });
     return <div data-testid="chart-scatter" />;
   },
@@ -73,10 +75,19 @@ const groups: PageDashboardChartGroup[] = [
   },
 ];
 
-function renderChart(variant?: keyof typeof PageDashboardChartVariantE, allowZero?: boolean) {
+function renderChart(
+  variant?: keyof typeof PageDashboardChartVariantE,
+  allowZero?: boolean,
+  onlyIntegerTicks?: boolean
+) {
   return render(
     <MemoryRouter>
-      <PageDashboardChart groups={groups} variant={variant} allowZero={allowZero} />
+      <PageDashboardChart
+        groups={groups}
+        variant={variant}
+        allowZero={allowZero}
+        onlyIntegerTicks={onlyIntegerTicks}
+      />
     </MemoryRouter>
   );
 }
@@ -95,6 +106,12 @@ describe('PageDashboardChart', () => {
     renderChart(PageDashboardChartVariantE.stackedAreaChart, true);
 
     expect(screen.getByText('Empty group')).toBeInTheDocument();
+  });
+
+  it('supports disabling integer-only tick formatting', () => {
+    renderChart(undefined, undefined, false);
+
+    expect(screen.getAllByTestId('chart-axis')).toHaveLength(2);
   });
 
   it.each([
