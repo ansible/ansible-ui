@@ -120,16 +120,19 @@ function makeGraphNode(
     survey_data: undefined,
     ...nodeData,
   } as GraphNodeData;
+  let currentNodeData = defaultNodeData;
 
   return {
     getId: () => currentId,
-    getData: () => defaultNodeData,
+    getData: () => currentNodeData,
     getState: () => ({ modified }),
     isVisible: () => visible,
     setId: vi.fn((newId: string) => {
       currentId = newId;
     }),
-    setData: vi.fn(),
+    setData: vi.fn((data: GraphNodeData) => {
+      currentNodeData = data;
+    }),
     setState: vi.fn(),
     setLabel: vi.fn(),
     getSourceEdges: () => sourceEdges,
@@ -733,6 +736,122 @@ describe('useSaveVisualizer', () => {
     expect(nodePatchCalls).toHaveLength(2);
     expect(nodePatchCalls[0][1]).toEqual({ extra_data: {} });
     expect(nodePatchCalls[1][1]).toMatchObject({ unified_job_template: 2, inventory: 99 });
+    expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
+  });
+
+  test('should reconcile persisted snapshot after a node PATCH before a later edge save fails', async () => {
+    let failEdgeAssociation = true;
+    mockPostFn.mockImplementation((url: string) => {
+      if (failEdgeAssociation && url.includes('/success_nodes/')) {
+        return Promise.reject(new Error('edge save failed'));
+      }
+      return Promise.resolve({ id: 100 });
+    });
+    mockPatchFn
+      .mockResolvedValueOnce({
+        id: 42,
+        extra_data: { saved_variable: 'persisted value' },
+        summary_fields: { unified_job_template: { id: 2 } },
+      })
+      .mockResolvedValue({
+        id: 42,
+        extra_data: {},
+        summary_fields: { unified_job_template: { id: 3 } },
+      });
+
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 2,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            isTemplateChange: true,
+            template_id: 1,
+            extra_data: {},
+            launch_config: {
+              ask_variables_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+          extra_vars: '{"saved_variable":"persisted value"}',
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+      sourceEdges: [
+        {
+          isVisible: () => true,
+          getData: () => ({ tagStatus: EdgeStatus.success }),
+          getTarget: () => ({ getId: () => '100' }),
+        },
+      ],
+    });
+    mockGraphNodes = [editedNode];
+
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await expect(result.current()).rejects.toThrow('edge save failed');
+
+    const savedNodeData = editedNode.getData() as GraphNodeData;
+    expect(savedNodeData.launch_data?.original).toMatchObject({
+      template_id: 2,
+      extra_data: { saved_variable: 'persisted value' },
+    });
+
+    const reopenedNodeData = editedNode.getData() as GraphNodeData;
+    editedNode.setData({
+      ...reopenedNodeData,
+      resource: {
+        ...reopenedNodeData.resource,
+        summary_fields: {
+          ...reopenedNodeData.resource.summary_fields,
+          unified_job_template: {
+            id: 3,
+            name: 'JT C',
+            description: '',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
+        },
+      },
+      launch_data: {
+        ...reopenedNodeData.launch_data,
+        original: {
+          ...reopenedNodeData.launch_data?.original,
+          isTemplateChange: true,
+        },
+        extra_vars: '{}',
+      },
+    });
+
+    failEdgeAssociation = false;
+    mockPatchFn.mockClear();
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (call: unknown[]) =>
+        typeof call[0] === 'string' && call[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCalls).toHaveLength(2);
+    expect(nodePatchCalls[0][1]).toEqual({ extra_data: {} });
+    expect(nodePatchCalls[1][1]).toMatchObject({ unified_job_template: 3 });
     expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
   });
 
