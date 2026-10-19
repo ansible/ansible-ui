@@ -16,7 +16,6 @@ import { PageActionSelection, PageActionType } from '../../PageActions/PageActio
 import { PageActions } from '../../PageActions/PageActions';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/strings';
 import { usePageFormOptionsContext } from '../PageFormOptionsContext';
 import { createFieldValidate } from '../PageFormOptionsValidation';
 import { PageFormGroup } from './PageFormGroup';
@@ -29,6 +28,7 @@ import {
   SelectLookupButton,
 } from './PageFormTextInputHelpers';
 import { useRequiredValidationRule } from './validation-hooks';
+import { createTextInputRules } from './PageFormTextInputValidation';
 import { createChangeHandler, resolveParsedValue } from './PageFormTextInputValue';
 
 export {
@@ -427,54 +427,18 @@ export function PageFormTextInput<
           </PageFormGroup>
         );
       }}
-      rules={{
+      rules={createTextInputRules({
+        label,
         required,
         validate: createFieldValidate(fieldMetadata, validate, () =>
           getByPath(defaultValues as object, name)
         ),
-
-        minLength:
-          typeof label === 'string' && typeof minLength === 'number'
-            ? {
-                value: minLength,
-                message: `${capitalizeFirstLetter(
-                  label.toLocaleLowerCase()
-                )} must be at least ${minLength} characters.`,
-              }
-            : minLength,
-
-        maxLength:
-          typeof label === 'string' && typeof maxLength === 'number'
-            ? {
-                value: maxLength,
-                message: `${capitalizeFirstLetter(
-                  label.toLocaleLowerCase()
-                )} cannot be greater than ${maxLength} characters.`,
-              }
-            : maxLength,
-
-        min:
-          typeof label === 'string' && (typeof min === 'number' || typeof min === 'string')
-            ? {
-                value: min,
-                message: `${capitalizeFirstLetter(
-                  label.toLocaleLowerCase()
-                )} must be greater or equal to ${min}.`,
-              }
-            : min,
-
-        max:
-          typeof label === 'string' && (typeof max === 'number' || typeof max === 'string')
-            ? {
-                value: max,
-                message: `${capitalizeFirstLetter(
-                  label.toLocaleLowerCase()
-                )} cannot be greater than ${max}.`,
-              }
-            : max,
-
+        minLength,
+        maxLength,
+        min,
+        max,
         pattern,
-      }}
+      })}
     />
   );
 }
