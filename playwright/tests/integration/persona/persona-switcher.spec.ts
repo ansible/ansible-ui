@@ -58,7 +58,7 @@ test.describe('Persona Switcher', () => {
     await expect(page.locator('#platform-access')).toBeHidden();
     await expect(page.locator('#platform-overview')).toBeHidden();
     await expect(page.locator('#platform-hub')).toBeHidden();
-    await expect(page.locator('#awx-analytics')).toContainText('Automation Analytics');
+    await expect(page.locator('#awx-analytics')).toBeHidden();
     await expect(page.locator('#awx-settings')).toBeHidden();
     // Turn off the feature flag for Persona View Switcher
     await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
