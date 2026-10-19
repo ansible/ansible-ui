@@ -370,18 +370,18 @@ export function useSaveVisualizer(templateId: string) {
           await processInstanceGroups(nodeId, launch_data, 'disassociate');
           await processCredentials(nodeId, launch_data, 'disassociate');
 
-          // Clear extra_data in a separate PATCH before changing the template.
-          // AWX ignores extra_data updates when unified_job_template changes in
-          // the same request because the old template's ask_variables_on_launch
-          // flag governs field writability during validation.
-          if (
-            launch_data?.original?.isTemplateChange &&
+          const hasPersistedExtraData = Object.keys(resource.extra_data ?? {}).length > 0;
+          const clearsExtraData =
             'extra_data' in updatedNodePayload &&
-            Object.keys(updatedNodePayload.extra_data as object).length === 0
-          ) {
-            await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${nodeId}/`, {
-              extra_data: {},
-            });
+            Object.keys(updatedNodePayload.extra_data as object).length === 0;
+
+          if (launch_data?.original?.isTemplateChange && clearsExtraData) {
+            // Empty persisted data needs no clear; stale variables must be cleared before changing templates.
+            if (hasPersistedExtraData) {
+              await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${nodeId}/`, {
+                extra_data: {},
+              });
+            }
             delete updatedNodePayload.extra_data;
           }
 
