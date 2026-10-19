@@ -32,7 +32,6 @@ import { AwxRoute } from '../../../main/AwxRoutes';
 import {
   getFormattedChoices,
   isMultiSelect,
-  isLengthType,
   validateMax,
   validateMin,
 } from './TemplateSurveyValidation';
