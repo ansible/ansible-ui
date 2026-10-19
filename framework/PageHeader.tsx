@@ -134,8 +134,8 @@ export function PageHeader(props: PageHeaderProps) {
                 style={{ paddingBottom: isLg ? 6 : 4 }}
               />
             )}
-            {title ? (
-              props.titleHelp ? (
+            {title &&
+              (props.titleHelp ? (
                 <Popover
                   headerContent={props.titleHelpTitle ?? props.title}
                   bodyContent={
@@ -176,8 +176,7 @@ export function PageHeader(props: PageHeaderProps) {
                 <Title data-cy="page-title" data-testid="page-title" headingLevel="h1">
                   {title}
                 </Title>
-              )
-            ) : null}
+              ))}
             {isMdOrLarger && description && (
               <div
                 data-cy="app-description"
