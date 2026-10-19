@@ -5,27 +5,27 @@ import { describe, expect, it, vi } from 'vitest';
 import { PageDashboardChart, PageDashboardChartVariantE } from './PageDashboardChart';
 import type { PageDashboardChartGroup } from './PageDashboardChart';
 
-interface MockProps {
+interface MockChildrenProps {
   children?: ReactNode;
 }
 
-interface MockAxisProps extends MockProps {
+interface MockAxisProps {
   tickFormat?: (value: number) => string | number | undefined;
 }
 
-interface MockScatterProps extends MockProps {
+interface MockScatterProps {
   size?: (props: { active: boolean }) => number;
 }
 
-interface MockContainerProps extends MockProps {
+interface MockContainerProps extends MockChildrenProps {
   labels?: (point: { datum: { y: string | number } }) => string;
 }
 
-interface MockChartProps extends MockProps {
+interface MockChartProps extends MockChildrenProps {
   containerComponent?: ReactNode;
 }
 
-function MockChartComponent({ children, testId }: MockProps & { testId: string }) {
+function MockChartComponent({ children, testId }: MockChildrenProps & { testId: string }) {
   return <div data-testid={testId}>{children}</div>;
 }
 
@@ -42,14 +42,14 @@ vi.mock('@patternfly/react-charts/victory', () => ({
     return <div data-testid="chart-axis" />;
   },
   ChartBar: () => <div data-testid="chart-bar" />,
-  ChartGroup: (props: MockProps) => <MockChartComponent {...props} testId="chart-group" />,
+  ChartGroup: (props: MockChildrenProps) => <MockChartComponent {...props} testId="chart-group" />,
   ChartLegendTooltip: () => <div data-testid="chart-legend-tooltip" />,
   ChartLine: () => <div data-testid="chart-line" />,
   ChartScatter: (props: MockScatterProps) => {
     props.size?.({ active: false });
     return <div data-testid="chart-scatter" />;
   },
-  ChartStack: (props: MockProps) => <MockChartComponent {...props} testId="chart-stack" />,
+  ChartStack: (props: MockChildrenProps) => <MockChartComponent {...props} testId="chart-stack" />,
   createContainer: () => (props: MockContainerProps) => {
     props.labels?.({ datum: { y: 1 } });
     return <MockChartComponent {...props} testId="chart-container" />;
