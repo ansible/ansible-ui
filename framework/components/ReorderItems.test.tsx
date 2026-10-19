@@ -71,6 +71,8 @@ describe('ReorderItems', () => {
 
     const rows = container.querySelectorAll('tbody tr');
     const dataTransfer = { effectAllowed: '' };
+    // Native HTML5 drag events require DataTransfer and pointer coordinates;
+    // userEvent does not provide those event properties.
     fireEvent.dragStart(rows[0], { dataTransfer });
     fireEvent.dragOver(rows[1], { clientX: 50, clientY: 50 });
 
