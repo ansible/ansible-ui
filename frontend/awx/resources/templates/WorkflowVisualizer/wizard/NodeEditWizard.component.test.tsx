@@ -510,6 +510,105 @@ describe('NodeEditWizard', () => {
     }
   );
 
+  it('merges a newer reconciled snapshot when an open wizard submits a template swap', async () => {
+    const user = userEvent.setup();
+    const liveNodeData = {
+      resource: {
+        id: 42,
+        identifier: '550e8400-e29b-41d4-a716-446655440000',
+        all_parents_must_converge: false,
+        extra_data: {},
+        always_nodes: [],
+        failure_nodes: [],
+        success_nodes: [],
+        summary_fields: {
+          unified_job_template: {
+            id: 2,
+            name: 'Template B',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
+        },
+      },
+      launch_data: {
+        original: {
+          template_id: 1,
+          extra_data: {},
+        },
+      },
+      survey_data: {},
+    } as unknown as GraphNodeData;
+    const liveNode = {
+      ...(makeMockNode(2) as unknown as Record<string, unknown>),
+      getData: () => liveNodeData,
+    } as never;
+
+    mockGetInitialValues.mockResolvedValueOnce({
+      nodeTypeStep: {
+        node_type: RESOURCE_TYPE.job,
+        node_convergence: 'any' as const,
+        node_alias: '',
+        approval_name: '',
+        approval_description: '',
+        approval_timeout: 0,
+        node_days_to_keep: 30,
+        resource: {
+          id: 2,
+          name: 'Template B',
+          description: '',
+          type: 'job_template',
+          project: 1,
+          inventory: 1,
+          ask_inventory_on_launch: false,
+        },
+        resourceId: 2,
+        node_status_type: EdgeStatus.info,
+        launch_config: null,
+      },
+      nodePromptsStep: {
+        prompt: {
+          credentials: [],
+          labels: [],
+          instance_groups: [],
+          original: {
+            template_id: 1,
+            extra_data: {},
+            credentials: [],
+            labels: [],
+            instance_groups: [],
+          },
+        },
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <NodeEditWizard node={liveNode} />
+      </MemoryRouter>
+    );
+
+    await screen.findByRole('button', { name: 'Next' });
+
+    // Model a delayed node PATCH completing while the wizard remains open. The
+    // save hook reconciles the successful persisted state onto the live node.
+    liveNodeData.launch_data = {
+      original: {
+        template_id: 1,
+        extra_data: { persisted: 'from-delayed-patch' },
+      },
+    };
+
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+    await user.click(await screen.findByRole('button', { name: 'Finish' }));
+
+    await waitFor(() => expect(mockSetData).toHaveBeenCalled());
+    const saved = mockSetData.mock.calls[0][0] as GraphNodeData;
+    expect(saved.launch_data.original).toMatchObject({
+      template_id: 1,
+      extra_data: { persisted: 'from-delayed-patch' },
+      isTemplateChange: true,
+    });
+  });
+
   it('should show prompts step when initialValues has launch_config', async () => {
     mockGetInitialValues.mockResolvedValueOnce({
       nodeTypeStep: {
