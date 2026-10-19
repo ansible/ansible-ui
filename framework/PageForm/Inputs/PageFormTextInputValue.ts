@@ -2,7 +2,7 @@ import { FieldPath, FieldValues, PathValue, UseFormSetValue } from 'react-hook-f
 import type { TextInputType } from './PageFormTextInputTypes';
 
 /** Converts a stored UTC datetime-local value into the local input value. */
-export function resolveParsedValue(type: TextInputType, value: string): string {
+export function resolveParsedValue(type: TextInputType | undefined, value: string): string {
   if (type !== 'datetime-local' || !value) return value;
   const utcDate = new Date(value);
   const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
@@ -43,7 +43,7 @@ export function createChangeHandler<
   TFieldValues extends FieldValues,
   TFieldName extends FieldPath<TFieldValues>,
 >(params: {
-  type: TextInputType;
+  type?: TextInputType;
   name: TFieldName;
   max?: number | string;
   min?: number | string;
