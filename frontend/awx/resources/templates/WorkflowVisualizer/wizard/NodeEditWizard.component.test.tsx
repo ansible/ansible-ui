@@ -7,6 +7,7 @@ import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfigura
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus, type GraphNodeData } from '../types';
 import { NodeEditWizard } from './NodeEditWizard';
+import { mergeNodeOriginalResources } from './mergeNodeOriginalResources';
 import * as fetchLaunchConfigLoadResultModule from './fetchLaunchConfigLoadResult';
 import type { LaunchConfigLoadResult } from './launchConfigLoad';
 
@@ -607,6 +608,52 @@ describe('NodeEditWizard', () => {
       extra_data: { persisted: 'from-delayed-patch' },
       isTemplateChange: true,
     });
+  });
+
+  it('preserves freshly fetched associations while merging reconciled snapshot fields', () => {
+    const resource = (makeMockNode(2) as unknown as { getData: () => GraphNodeData }).getData()
+      .resource;
+    const merged = mergeNodeOriginalResources(
+      {
+        template_id: 2,
+        credentials: [
+          { id: 7, name: 'Fresh credential', credential_type: 1, passwords_needed: [] },
+        ],
+        instance_groups: [{ id: 8, name: 'Fresh instance group' }],
+        labels: [{ id: 9, name: 'Fresh label' }],
+        isTemplateChange: true,
+      },
+      {
+        template_id: 2,
+        extra_data: { persisted: 'value' },
+        credentials: [],
+        instance_groups: [],
+        labels: [],
+        isTemplateChange: true,
+      },
+      resource
+    );
+
+    expect(merged).toMatchObject({
+      template_id: 2,
+      extra_data: { persisted: 'value' },
+      credentials: [{ id: 7, name: 'Fresh credential' }],
+      instance_groups: [{ id: 8, name: 'Fresh instance group' }],
+      labels: [{ id: 9, name: 'Fresh label' }],
+    });
+    expect(merged?.isTemplateChange).toBeUndefined();
+  });
+
+  it('drops an obsolete template-change flag when the node is already on the original template', () => {
+    const resource = (makeMockNode(2) as unknown as { getData: () => GraphNodeData }).getData()
+      .resource;
+    const merged = mergeNodeOriginalResources(
+      { template_id: 2, isTemplateChange: true },
+      { template_id: 2, isTemplateChange: true },
+      resource
+    );
+
+    expect(merged).toEqual({ template_id: 2 });
   });
 
   it('should show prompts step when initialValues has launch_config', async () => {
