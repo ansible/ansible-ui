@@ -32,7 +32,7 @@ export const PAGE_DASHBOARD_CARD_WIDTH_COL_SPAN: Record<PageDashboardCardWidth, 
 
 const heightUnit = 90;
 
-export function PageDashboardCard(props: {
+export type PageDashboardCardProps = {
   id?: string;
   supertitle?: string;
   title?: string;
@@ -77,7 +77,102 @@ export function PageDashboardCard(props: {
   canCollapse?: boolean;
 
   disableBodyPadding?: boolean;
-}) {
+};
+
+function renderPageDashboardCardHeader(
+  props: PageDashboardCardProps,
+  isCollapsed: boolean,
+  setCollapsed: (collapsed: boolean) => void
+) {
+  return (
+    <CardHeader>
+      <Flex
+        spaceItems={{ default: 'spaceItemsLg' }}
+        alignItems={{ default: 'alignItemsCenter' }}
+        justifyContent={{ default: 'justifyContentFlexEnd' }}
+      >
+        <FlexItem grow={{ default: 'grow' }}>
+          {props.supertitle && (
+            <Content
+              data-cy="card-main"
+              data-testid="card-main"
+              component="small"
+              style={{ opacity: 0.8 }}
+            >
+              {props.supertitle}
+            </Content>
+          )}
+          <div>
+            <Title
+              data-cy="card-title"
+              data-testid="card-title"
+              headingLevel="h3"
+              size="xl"
+              style={{ display: 'inline-block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
+            >
+              {props.title}
+            </Title>
+            <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
+          </div>
+          {props.subtitle && (
+            <Content
+              data-cy="card-subtitle"
+              data-testid="card-subtitle"
+              component="small"
+              style={{ opacity: 0.8 }}
+            >
+              {props.subtitle}
+            </Content>
+          )}
+        </FlexItem>
+        {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
+        {props.linkText && (
+          <FlexItem>
+            <Content data-cy="card-link-text" data-testid="card-link-text" component="small">
+              <Link to={props.to as string}>{props.linkText}</Link>
+            </Content>
+          </FlexItem>
+        )}
+        {props.canCollapse && (
+          <FlexItem>
+            <AngleRightIcon
+              style={{
+                transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                transition: 'transform',
+              }}
+              onClick={() => setCollapsed(!isCollapsed)}
+            />
+          </FlexItem>
+        )}
+      </Flex>
+      {props.description && !isCollapsed && (
+        <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
+      )}
+    </CardHeader>
+  );
+}
+
+function renderPageDashboardCardFooter(
+  footerActionButton: PageDashboardCardProps['footerActionButton']
+) {
+  if (!footerActionButton) return null;
+
+  return (
+    <CardFooter style={{ textAlign: 'end' }}>
+      <Button
+        variant="link"
+        icon={footerActionButton.icon ? footerActionButton.icon : null}
+        onClick={() => {
+          void footerActionButton.onClick();
+        }}
+      >
+        {footerActionButton.title}
+      </Button>
+    </CardFooter>
+  );
+}
+
+export function PageDashboardCard(props: PageDashboardCardProps) {
   const id = useID(props);
 
   const dashboardContext = useContext(PageDashboardContext);
@@ -141,90 +236,14 @@ export function PageDashboardCard(props: {
       data-testid={id}
       // variant="secondary"
     >
-      {(props.title || props.linkText) && (
-        <CardHeader>
-          <Flex
-            spaceItems={{ default: 'spaceItemsLg' }}
-            alignItems={{ default: 'alignItemsCenter' }}
-            justifyContent={{ default: 'justifyContentFlexEnd' }}
-          >
-            <FlexItem grow={{ default: 'grow' }}>
-              {props.supertitle && (
-                <Content
-                  data-cy="card-main"
-                  data-testid="card-main"
-                  component="small"
-                  style={{ opacity: 0.8 }}
-                >
-                  {props.supertitle}
-                </Content>
-              )}
-              <div>
-                <Title
-                  data-cy="card-title"
-                  data-testid="card-title"
-                  headingLevel="h3"
-                  size="xl"
-                  style={{ display: 'inline-block', verticalAlign: '-0.15em', lineHeight: '1.2' }}
-                >
-                  {props.title}
-                </Title>
-                <Help help={props.help} title={props.helpTitle} docLink={props.helpDocLink} />
-              </div>
-              {props.subtitle && (
-                <Content
-                  data-cy="card-subtitle"
-                  data-testid="card-subtitle"
-                  component="small"
-                  style={{ opacity: 0.8 }}
-                >
-                  {props.subtitle}
-                </Content>
-              )}
-            </FlexItem>
-            {props.headerControls && <FlexItem>{props.headerControls}</FlexItem>}
-            {props.linkText && (
-              <FlexItem>
-                <Content data-cy="card-link-text" data-testid="card-link-text" component="small">
-                  {props.linkText && <Link to={props.to as string}>{props.linkText}</Link>}
-                </Content>
-              </FlexItem>
-            )}
-            {props.canCollapse && (
-              <FlexItem>
-                <AngleRightIcon
-                  style={{
-                    transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
-                    transition: 'transform',
-                  }}
-                  onClick={() => setCollapsed(!isCollapsed)}
-                />
-              </FlexItem>
-            )}
-          </Flex>
-          {props.description && !isCollapsed && (
-            <span style={{ opacity: 0.8, paddingTop: 6 }}>{props.description}</span>
-          )}
-        </CardHeader>
-      )}
+      {(props.title || props.linkText) &&
+        renderPageDashboardCardHeader(props, isCollapsed, setCollapsed)}
       {!isCollapsed && props.children && (
         <CardBody style={{ padding: props.disableBodyPadding ? 0 : undefined }}>
           {props.children}
         </CardBody>
       )}
-      {!isCollapsed && props.footerActionButton && (
-        <CardFooter style={{ textAlign: 'end' }}>
-          <Button
-            variant="link"
-            icon={props.footerActionButton.icon ? props.footerActionButton.icon : null}
-            onClick={() => {
-              void props.footerActionButton?.onClick();
-            }}
-          >
-            {props.footerActionButton.title}
-          </Button>
-        </CardFooter>
-      )}
+      {!isCollapsed && renderPageDashboardCardFooter(props.footerActionButton)}
     </Card>
   );
 }
