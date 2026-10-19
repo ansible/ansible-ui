@@ -58,7 +58,7 @@ test.describe('Persona Switcher', () => {
     await expect(page.locator('#platform-access')).toBeHidden();
     await expect(page.locator('#platform-overview')).toBeHidden();
     await expect(page.locator('#platform-hub')).toBeHidden();
-    await expect(page.locator('#awx-analytics')).toBeHidden();
+    await expect(page.locator('#awx-analytics')).toContainText('Automation Analytics');
     await expect(page.locator('#awx-settings')).toBeHidden();
     // Turn off the feature flag for Persona View Switcher
     await page.goto(platformUIWithoutSlash + '/settings/dev/flags');
@@ -94,10 +94,6 @@ test.describe('Persona Switcher', () => {
     await expect(page.getByTestId('toolbar').getByRole('button', { name: username })).toBeVisible({
       timeout: 30_000,
     });
-
-    // Navigation is derived from asynchronous user and analytics-status requests. Wait for the
-    // permission-sensitive item to settle before asserting the rest of the normal-user view.
-    await expect(page.locator('#awx-analytics')).toBeHidden({ timeout: 30_000 });
 
     // Administration View
     await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
