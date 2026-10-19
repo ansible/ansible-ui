@@ -29,6 +29,7 @@ import {
 } from './PageFormTextInputHelpers';
 import { useRequiredValidationRule } from './validation-hooks';
 import { createTextInputRules } from './PageFormTextInputValidation';
+import type { TextInputType } from './PageFormTextInputTypes';
 import { createChangeHandler, resolveParsedValue } from './PageFormTextInputValue';
 
 export {
@@ -64,18 +65,7 @@ type PageFormTextInputBaseProps<
    *
    * If the type attribute is not specified, the default type is "text".
    */
-  type?:
-    | 'text'
-    | 'date'
-    | 'datetime-local'
-    | 'email'
-    | 'month'
-    | 'number'
-    | 'password'
-    | 'search'
-    | 'tel'
-    | 'time'
-    | 'url';
+  type?: TextInputType;
 
   /**
    * The <label> tag defines a label for several elements.

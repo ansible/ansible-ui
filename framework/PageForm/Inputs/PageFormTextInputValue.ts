@@ -1,18 +1,5 @@
 import { FieldPath, FieldValues, PathValue, UseFormSetValue } from 'react-hook-form';
-
-type TextInputType =
-  | 'text'
-  | 'date'
-  | 'datetime-local'
-  | 'email'
-  | 'month'
-  | 'number'
-  | 'password'
-  | 'search'
-  | 'tel'
-  | 'time'
-  | 'url'
-  | undefined;
+import type { TextInputType } from './PageFormTextInputTypes';
 
 /** Converts a stored UTC datetime-local value into the local input value. */
 export function resolveParsedValue(type: TextInputType, value: string): string {
