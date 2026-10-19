@@ -28,6 +28,10 @@ type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValue
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
 type WizardStep = Record<StepName, StepContent>;
 
+function getOriginalTemplateId(original: PromptFormValues['original'], resource: WorkflowNode) {
+  return original?.template_id ?? resource.summary_fields?.unified_job_template?.id;
+}
+
 export function NodeEditWizard({ node }: { node: GraphNode }) {
   const { t } = useTranslation();
   const controller = useVisualizationController();
@@ -134,7 +138,7 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   const handleSubmit = async (formValues: WizardFormValues) => {
     const nodeData = node.getData() as { resource: WorkflowNode };
     const nodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
-    const originalTemplateId = nodeData.resource.summary_fields?.unified_job_template?.id;
+    const originalTemplateId = getOriginalTemplateId(nodeOriginalResources, nodeData.resource);
 
     const {
       approval_name,
