@@ -5,17 +5,25 @@ import { describe, expect, it, vi } from 'vitest';
 import { PageDashboardChart, PageDashboardChartVariantE } from './PageDashboardChart';
 import type { PageDashboardChartGroup } from './PageDashboardChart';
 
-type MockProps = { children?: ReactNode };
-type MockAxisProps = MockProps & {
+interface MockProps {
+  children?: ReactNode;
+}
+
+interface MockAxisProps extends MockProps {
   tickFormat?: (value: number) => string | number | undefined;
-};
-type MockScatterProps = MockProps & {
+}
+
+interface MockScatterProps extends MockProps {
   size?: (props: { active: boolean }) => number;
-};
-type MockContainerProps = MockProps & {
+}
+
+interface MockContainerProps extends MockProps {
   labels?: (point: { datum: { y: string | number } }) => string;
-};
-type MockChartProps = MockProps & { containerComponent?: ReactNode };
+}
+
+interface MockChartProps extends MockProps {
+  containerComponent?: ReactNode;
+}
 
 function MockChartComponent({ children, testId }: MockProps & { testId: string }) {
   return <div data-testid={testId}>{children}</div>;
