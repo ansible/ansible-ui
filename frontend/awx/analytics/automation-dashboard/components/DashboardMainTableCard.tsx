@@ -54,7 +54,6 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     refresh,
     exportCsv,
     loading,
-    isLoadingTemplateIds,
     detailsError,
     isFilterStateDefault,
     toolbarFilters,
@@ -266,7 +265,6 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       icon={ExportIcon}
       isDisabled={
         loading ||
-        isLoadingTemplateIds ||
         !(mainTableView.itemCount ?? 0) ||
         !costState ||
         !filtersValid
