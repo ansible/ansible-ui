@@ -7,7 +7,6 @@ import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { SurveyStep } from '../../../../common/SurveyStep';
 import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
-import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { RESOURCE_TYPE } from '../constants';
 import { useCloseSidebar, useGetInitialValues } from '../hooks';
 import type { GraphNode, GraphNodeData, PromptFormValues, WizardFormValues } from '../types';
@@ -19,6 +18,7 @@ import {
   shouldHideOtherStep,
 } from './helpers';
 import { buildEffectivePrompt } from './buildEffectivePrompt';
+import { mergeNodeOriginalResources } from './mergeNodeOriginalResources';
 import { NodePromptsStep } from './NodePromptsStep';
 import { NodeReviewStep } from './NodeReviewStep';
 import { NodeTypeStep } from './NodeTypeStep';
@@ -28,8 +28,94 @@ type StepContent = Partial<WizardFormValues> | { prompt: Partial<PromptFormValue
 type StepName = 'nodeTypeStep' | 'nodePromptsStep';
 type WizardStep = Record<StepName, StepContent>;
 
-function getOriginalTemplateId(original: PromptFormValues['original'], resource: WorkflowNode) {
-  return original?.template_id ?? resource.summary_fields?.unified_job_template?.id;
+function getResourceOrganization(resource: WizardFormValues['resource']) {
+  if (!resource || !('organization' in resource)) {
+    return undefined;
+  }
+  return resource.organization ?? null;
+}
+
+function buildNodeEditData({
+  formValues,
+  nodeData,
+  initialNodeOriginalResources,
+}: {
+  formValues: WizardFormValues;
+  nodeData: GraphNodeData;
+  initialNodeOriginalResources: PromptFormValues['original'] | undefined;
+}): { nodeName: string; nodeAlias: string; nodeToEdit: GraphNodeData } {
+  const latestNodeOriginalResources = nodeData.launch_data?.original;
+  const nodeOriginalResources = mergeNodeOriginalResources(
+    initialNodeOriginalResources,
+    latestNodeOriginalResources,
+    nodeData.resource
+  );
+  const originalTemplateId =
+    nodeOriginalResources?.template_id ??
+    nodeData.resource.summary_fields?.unified_job_template?.id;
+
+  const {
+    approval_name,
+    approval_description,
+    node_type,
+    resource,
+    approval_timeout,
+    node_alias,
+    node_convergence,
+    node_days_to_keep,
+    launch_config,
+    prompt,
+    survey,
+  } = formValues;
+
+  const { effectivePrompt } = buildEffectivePrompt({
+    originalTemplateId,
+    newResourceId: resource?.id ? Number(resource.id) : undefined,
+    prompt,
+    launchConfig: launch_config,
+    nodeOriginalResources,
+    resourceOrganization: getResourceOrganization(resource),
+    resourceNode: nodeData.resource,
+  });
+
+  const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
+  const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);
+  const nodeToEdit: GraphNodeData = {
+    ...nodeData,
+    resource: {
+      ...nodeData.resource,
+      all_parents_must_converge: node_convergence === 'all',
+      identifier: nodeIdentifier,
+      extra_data: {
+        days: node_days_to_keep,
+      },
+      summary_fields: {
+        ...nodeData.resource.summary_fields,
+        unified_job_template: {
+          id: Number(resource?.id || -1),
+          name: nodeName,
+          description: getValueBasedOnJobType(
+            node_type,
+            resource?.description || '',
+            approval_description
+          ),
+          unified_job_type: node_type,
+          timeout: approval_timeout,
+        },
+      },
+    },
+    launch_data: effectivePrompt,
+    survey_data: survey,
+  };
+
+  if (node_type !== RESOURCE_TYPE.workflow_approval) {
+    delete nodeToEdit.resource.summary_fields?.unified_job_template?.timeout;
+  }
+  if (!hasDaysToKeep(resource)) {
+    nodeToEdit.resource.extra_data = {};
+  }
+
+  return { nodeName, nodeAlias: node_alias, nodeToEdit };
 }
 
 export function NodeEditWizard({ node }: { node: GraphNode }) {
@@ -138,82 +224,16 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   const handleSubmit = async (formValues: WizardFormValues) => {
     const nodeData = node.getData() as GraphNodeData;
     const initialNodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
-    const latestNodeOriginalResources = nodeData.launch_data?.original;
-    const nodeOriginalResources =
-      initialNodeOriginalResources || latestNodeOriginalResources
-        ? {
-            ...initialNodeOriginalResources,
-            ...latestNodeOriginalResources,
-          }
-        : undefined;
-    const originalTemplateId = getOriginalTemplateId(nodeOriginalResources, nodeData.resource);
-
-    const {
-      approval_name,
-      approval_description,
-      node_type,
-      resource,
-      approval_timeout,
-      node_alias,
-      node_convergence,
-      node_days_to_keep,
-      launch_config,
-      prompt,
-      survey,
-    } = formValues;
-
-    const { effectivePrompt } = buildEffectivePrompt({
-      originalTemplateId,
-      newResourceId: resource?.id ? Number(resource.id) : undefined,
-      prompt,
-      launchConfig: launch_config,
-      nodeOriginalResources,
-      resourceOrganization:
-        resource && 'organization' in resource ? (resource.organization ?? null) : undefined,
-      resourceNode: nodeData.resource,
+    const { nodeAlias, nodeName, nodeToEdit } = buildNodeEditData({
+      formValues,
+      nodeData,
+      initialNodeOriginalResources,
     });
-
-    const nodeName = getValueBasedOnJobType(node_type, resource?.name || '', approval_name);
-    const nodeIdentifier = replaceIdentifier(nodeData.resource.identifier, node_alias);
-    const nodeToEdit: GraphNodeData = {
-      ...nodeData,
-      resource: {
-        ...nodeData.resource,
-        all_parents_must_converge: node_convergence === 'all',
-        identifier: nodeIdentifier,
-        extra_data: {
-          days: node_days_to_keep,
-        },
-        summary_fields: {
-          ...nodeData.resource.summary_fields,
-          unified_job_template: {
-            id: Number(resource?.id || -1),
-            name: nodeName,
-            description: getValueBasedOnJobType(
-              node_type,
-              resource?.description || '',
-              approval_description
-            ),
-            unified_job_type: node_type,
-            timeout: approval_timeout,
-          },
-        },
-      },
-      launch_data: effectivePrompt,
-      survey_data: survey,
-    };
-
-    if (node_type !== RESOURCE_TYPE.workflow_approval) {
-      delete nodeToEdit.resource.summary_fields?.unified_job_template?.timeout;
-    }
-    if (!hasDaysToKeep(resource)) {
-      nodeToEdit.resource.extra_data = {};
-    }
 
     // Fix race condition: without action(), node updates are async and non-atomic.
     // The save operation could read stale node data if it executes mid-update, losing changes.
     action(() => {
-      node.setLabel(getNodeLabel(nodeName, node_alias));
+      node.setLabel(getNodeLabel(nodeName, nodeAlias));
       node.setData(nodeToEdit);
       node.setState({ modified: true });
       controller.setState({ ...controller.getState(), modified: true });
