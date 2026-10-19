@@ -136,8 +136,16 @@ export function NodeEditWizard({ node }: { node: GraphNode }) {
   ];
 
   const handleSubmit = async (formValues: WizardFormValues) => {
-    const nodeData = node.getData() as { resource: WorkflowNode };
-    const nodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
+    const nodeData = node.getData() as GraphNodeData;
+    const initialNodeOriginalResources = initialValues?.nodePromptsStep?.prompt?.original;
+    const latestNodeOriginalResources = nodeData.launch_data?.original;
+    const nodeOriginalResources =
+      initialNodeOriginalResources || latestNodeOriginalResources
+        ? {
+            ...initialNodeOriginalResources,
+            ...latestNodeOriginalResources,
+          }
+        : undefined;
     const originalTemplateId = getOriginalTemplateId(nodeOriginalResources, nodeData.resource);
 
     const {
