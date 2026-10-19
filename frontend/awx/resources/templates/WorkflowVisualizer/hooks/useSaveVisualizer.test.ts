@@ -670,8 +670,8 @@ describe('useSaveVisualizer', () => {
     expect(mainPatchPayload).toMatchObject({ unified_job_template: 2, inventory: 99 });
     expect(mainPatchPayload).not.toHaveProperty('extra_data');
     expect(
-      nodePatchCalls.some((call: unknown[]) =>
-        JSON.stringify(call[1]) === JSON.stringify({ extra_data: {} })
+      nodePatchCalls.some(
+        (call: unknown[]) => JSON.stringify(call[1]) === JSON.stringify({ extra_data: {} })
       )
     ).toBe(false);
   });
