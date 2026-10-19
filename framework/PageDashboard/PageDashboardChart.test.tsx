@@ -1,0 +1,101 @@
+import type { ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { PageDashboardChart, PageDashboardChartVariantE } from './PageDashboardChart';
+import type { PageDashboardChartGroup } from './PageDashboardChart';
+
+type MockProps = { children?: ReactNode };
+type MockAxisProps = MockProps & {
+  tickFormat?: (value: number) => string | number | undefined;
+};
+type MockScatterProps = MockProps & {
+  size?: (props: { active: boolean }) => number;
+};
+type MockContainerProps = MockProps & {
+  labels?: (point: { datum: { y: string | number } }) => string;
+};
+type MockChartProps = MockProps & { containerComponent?: ReactNode };
+
+function MockChartComponent({ children, testId }: MockProps & { testId: string }) {
+  return <div data-testid={testId}>{children}</div>;
+}
+
+vi.mock('@patternfly/react-charts/victory', () => ({
+  Chart: (props: MockChartProps) => (
+    <MockChartComponent testId="chart">
+      {props.containerComponent}
+      {props.children}
+    </MockChartComponent>
+  ),
+  ChartArea: () => <div data-testid="chart-area" />,
+  ChartAxis: (props: MockAxisProps) => {
+    props.tickFormat?.(1);
+    return <div data-testid="chart-axis" />;
+  },
+  ChartBar: () => <div data-testid="chart-bar" />,
+  ChartGroup: (props: MockProps) => <MockChartComponent {...props} testId="chart-group" />,
+  ChartLegendTooltip: () => <div data-testid="chart-legend-tooltip" />,
+  ChartLine: () => <div data-testid="chart-line" />,
+  ChartScatter: (props: MockScatterProps) => {
+    props.size?.({ active: false });
+    return <div data-testid="chart-scatter" />;
+  },
+  ChartStack: (props: MockProps) => <MockChartComponent {...props} testId="chart-stack" />,
+  createContainer: () => (props: MockContainerProps) => {
+    props.labels?.({ datum: { y: 1 } });
+    return <MockChartComponent {...props} testId="chart-container" />;
+  },
+}));
+
+const groups: PageDashboardChartGroup[] = [
+  {
+    label: 'Successful jobs',
+    color: '#00a00d',
+    values: [
+      { label: 'Monday', value: 3 },
+      { label: 'Tuesday', value: 2 },
+    ],
+    link: '/jobs',
+  },
+  {
+    label: 'Empty group',
+    color: '#707070',
+    values: [{ label: 'Monday', value: 0 }],
+  },
+];
+
+function renderChart(variant?: keyof typeof PageDashboardChartVariantE, allowZero?: boolean) {
+  return render(
+    <MemoryRouter>
+      <PageDashboardChart groups={groups} variant={variant} allowZero={allowZero} />
+    </MemoryRouter>
+  );
+}
+
+describe('PageDashboardChart', () => {
+  it('filters empty groups and renders the default stacked area chart', () => {
+    renderChart();
+
+    expect(screen.getByText('Successful jobs')).toBeInTheDocument();
+    expect(screen.queryByText('Empty group')).not.toBeInTheDocument();
+    expect(screen.getAllByTestId('chart-area')).toHaveLength(1);
+    expect(screen.getAllByTestId('chart-scatter')).toHaveLength(1);
+  });
+
+  it('keeps empty groups when allowZero is enabled', () => {
+    renderChart(PageDashboardChartVariantE.stackedAreaChart, true);
+
+    expect(screen.getByText('Empty group')).toBeInTheDocument();
+  });
+
+  it.each([
+    [PageDashboardChartVariantE.lineChart, 'chart-line'],
+    [PageDashboardChartVariantE.stackedBarChart, 'chart-bar'],
+    [PageDashboardChartVariantE.barChart, 'chart-bar'],
+  ] as const)('renders the %s variant', (variant, testId) => {
+    renderChart(variant);
+
+    expect(screen.getAllByTestId(testId).length).toBeGreaterThan(0);
+  });
+});
