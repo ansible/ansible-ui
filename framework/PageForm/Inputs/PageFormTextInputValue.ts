@@ -37,7 +37,7 @@ export function handleNumberChange<
 ) {
   const { name, max, min, setValue, onChange } = params;
   let numberValue = Number(value);
-  if (value === '' || isNaN(numberValue)) {
+  if (value === '' || Number.isNaN(numberValue)) {
     setValue(name, null as PathValue<TFieldValues, TFieldName>);
     onChange(null);
     return;
