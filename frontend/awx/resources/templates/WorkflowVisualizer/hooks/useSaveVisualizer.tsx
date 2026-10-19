@@ -260,6 +260,13 @@ export function useSaveVisualizer(templateId: string) {
 
         if (!newNode.id) return;
         const newNodeId = newNode.id.toString();
+        reconcileLaunchDataSnapshot({
+          node,
+          nodeData,
+          launchData: launch_data,
+          workflowNode: newNode,
+          patchPayload: createNodePayload,
+        });
         // For new nodes the node already exists on the correct template, so
         // only associations are needed (nothing to disassociate on a brand new node).
         await processLabels(newNodeId, launch_data, 'associate');
@@ -383,8 +390,12 @@ export function useSaveVisualizer(templateId: string) {
                 awxAPI`/workflow_job_template_nodes/${nodeId}/`,
                 { extra_data: {} }
               );
-              reconcileLaunchDataSnapshot(node, nodeData, launch_data, clearedNode, {
-                extra_data: {},
+              reconcileLaunchDataSnapshot({
+                node,
+                nodeData,
+                launchData: launch_data,
+                workflowNode: clearedNode,
+                patchPayload: { extra_data: {} },
               });
             }
             delete updatedNodePayload.extra_data;
@@ -394,7 +405,13 @@ export function useSaveVisualizer(templateId: string) {
             awxAPI`/workflow_job_template_nodes/${nodeId}/`,
             updatedNodePayload
           );
-          reconcileLaunchDataSnapshot(node, nodeData, launch_data, updatedNode, updatedNodePayload);
+          reconcileLaunchDataSnapshot({
+            node,
+            nodeData,
+            launchData: launch_data,
+            workflowNode: updatedNode,
+            patchPayload: updatedNodePayload,
+          });
 
           // Associate new resources AFTER patching the template. The new template must be
           // in place before AWX will accept associations (e.g. ask_credential_on_launch=true).
@@ -629,13 +646,21 @@ export function useSaveVisualizer(templateId: string) {
   ]);
 }
 
-function reconcileLaunchDataSnapshot(
-  node: GraphNode,
-  nodeData: GraphNodeData,
-  launch_data: GraphNodeData['launch_data'],
-  workflowNode: Partial<WorkflowNode> | undefined,
-  patchPayload: Partial<CreateWorkflowNodePayload>
-) {
+interface ReconcileLaunchDataSnapshotOptions {
+  node: GraphNode;
+  nodeData: GraphNodeData;
+  launchData: GraphNodeData['launch_data'];
+  workflowNode: Partial<WorkflowNode> | undefined;
+  patchPayload: Partial<CreateWorkflowNodePayload>;
+}
+
+function reconcileLaunchDataSnapshot({
+  node,
+  nodeData,
+  launchData,
+  workflowNode,
+  patchPayload,
+}: ReconcileLaunchDataSnapshotOptions) {
   const persistedExtraData =
     workflowNode?.extra_data ??
     ('extra_data' in patchPayload
@@ -652,9 +677,9 @@ function reconcileLaunchDataSnapshot(
     node.setData({
       ...nodeData,
       launch_data: {
-        ...launch_data,
+        ...launchData,
         original: {
-          ...launch_data?.original,
+          ...launchData?.original,
           ...(persistedExtraData === undefined ? {} : { extra_data: { ...persistedExtraData } }),
           ...(persistedTemplateId === undefined ? {} : { template_id: persistedTemplateId }),
         },
