@@ -263,12 +263,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       exportType={'csv'}
       title={t('Export as CSV')}
       icon={ExportIcon}
-      isDisabled={
-        loading ||
-        !(mainTableView.itemCount ?? 0) ||
-        !costState ||
-        !filtersValid
-      }
+      isDisabled={loading || !(mainTableView.itemCount ?? 0) || !costState || !filtersValid}
       onExport={exportCsv}
     ></DashboardExportButton>
   );

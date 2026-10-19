@@ -209,7 +209,6 @@ describe('useGetReportDetails', () => {
       expect(url.searchParams.get('tz')).toBe('UTC');
       expect(url.searchParams.get('template_name')).toBe('automation-job');
     });
-
   });
 
   describe('Required filters validation', () => {
