@@ -374,7 +374,7 @@ describe('useGetInitialValues', () => {
         resource: {
           identifier: '550e8400-e29b-41d4-a716-446655440000',
           all_parents_must_converge: false,
-          extra_data: {},
+          extra_data: { initial: 'resource' },
           diff_mode: false,
           forks: 0,
           job_type: 'run',
@@ -403,6 +403,9 @@ describe('useGetInitialValues', () => {
     expect(initialValues.nodeTypeStep.node_type).toBe(RESOURCE_TYPE.job);
     expect(initialValues.nodePromptsStep).toBeDefined();
     expect(initialValues.nodePromptsStep?.prompt?.credentials).toBeDefined();
+    expect(initialValues.nodePromptsStep?.prompt?.original?.extra_data).toEqual({
+      initial: 'resource',
+    });
   });
 
   it('should return initial values for a saved job template node fetching credentials and labels', async () => {
@@ -490,6 +493,36 @@ describe('useGetInitialValues', () => {
       { id: 7, name: 'jt-default-ig' },
     ]);
   });
+  it.each([
+    { snapshot: { persisted: 'original' }, edited: {}, description: 'non-empty' },
+    { snapshot: {}, edited: { draft: 'unsaved' }, description: 'empty' },
+  ])(
+    'preserves a $description original extra_data snapshot when reopening',
+    async ({ snapshot, edited }) => {
+      const node = {
+        getId: () => '42',
+        getData: () => ({
+          launch_data: { original: { extra_data: snapshot } },
+          resource: {
+            identifier: 'existing-node',
+            extra_data: edited,
+            summary_fields: {
+              unified_job_template: {
+                id: 1,
+                name: 'Demo Template',
+                unified_job_type: RESOURCE_TYPE.job,
+              },
+            },
+          },
+        }),
+      } as never;
+
+      const { result } = renderHook(() => useGetInitialValues());
+      const initialValues = await result.current(node);
+
+      expect(initialValues.nodePromptsStep?.prompt?.original?.extra_data).toEqual(snapshot);
+    }
+  );
 
   it('should use hidePromptStep path when launch config has no prompts', async () => {
     testOverrides.set('/api/v2/job_templates/1/launch/', {

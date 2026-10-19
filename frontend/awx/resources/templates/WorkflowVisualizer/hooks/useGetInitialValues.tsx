@@ -190,8 +190,13 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
 
       const prompt = nodeData?.launch_data;
       const defaults = nodeData?.resource;
+      // The resource may already contain an unsaved edit when the wizard is reopened.
+      const persistedExtraData =
+        prompt?.original && Object.prototype.hasOwnProperty.call(prompt.original, 'extra_data')
+          ? prompt.original.extra_data
+          : defaults?.extra_data;
       const original = {
-        extra_data: defaults?.extra_data ? { ...defaults.extra_data } : undefined,
+        extra_data: persistedExtraData === undefined ? undefined : { ...persistedExtraData },
         credentials: nodeCredentials,
         instance_groups: nodeInstanceGroups,
         labels: nodeLabels,
