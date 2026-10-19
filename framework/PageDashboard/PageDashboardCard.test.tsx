@@ -75,4 +75,23 @@ describe('PageDashboardCard', () => {
 
     expect(screen.getByTestId('compact-card-test')).toHaveClass('pf-m-compact');
   });
+
+  it('should collapse the card and persist its state when the collapse control is clicked', async () => {
+    const user = userEvent.setup();
+    renderCard({
+      id: 'collapsible-card-test',
+      title: 'Inventories',
+      canCollapse: true,
+      children: <div>Card content</div>,
+    });
+
+    const card = screen.getByTestId('collapsible-card-test');
+    const collapseControl = card.querySelector('svg');
+    expect(collapseControl).not.toBeNull();
+
+    await user.click(collapseControl as SVGElement);
+
+    expect(screen.queryByText('Card content')).not.toBeInTheDocument();
+    expect(localStorage.getItem('db-collapsible-card-test-collapsed')).toBe('true');
+  });
 });
