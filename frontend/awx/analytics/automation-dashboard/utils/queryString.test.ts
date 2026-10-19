@@ -11,7 +11,6 @@ import {
 import {
   filtersToSearchObj,
   getQueryString,
-  getSystemJobExclusionParams,
   hasValidRequiredFilters,
   isRequiredFilterValid,
 } from './queryString';
@@ -565,42 +564,6 @@ describe('queryString', () => {
       expect(params.get('period')).toBeNull();
       expect(params.get('start_date')).toBeNull();
       expect(params.get('end_date')).toBeNull();
-    });
-  });
-
-  describe('getSystemJobExclusionParams', () => {
-    const templateIds: [string, string][] = [
-      ['template', '1'],
-      ['template', '2'],
-      ['template', '3'],
-    ];
-
-    test('should return template IDs when no user template filter is active', () => {
-      expect(getSystemJobExclusionParams({}, templateIds)).toEqual(templateIds);
-    });
-
-    test('should return template IDs when filterState is undefined', () => {
-      expect(getSystemJobExclusionParams(undefined, templateIds)).toEqual(templateIds);
-    });
-
-    test('should return undefined when user has an active template filter', () => {
-      expect(getSystemJobExclusionParams({ template: ['5'] }, templateIds)).toBeUndefined();
-    });
-
-    test('should return undefined when templateIds is undefined (still loading)', () => {
-      expect(getSystemJobExclusionParams({}, undefined)).toBeUndefined();
-    });
-
-    test('should return empty array when templateIds is empty (no templates on instance)', () => {
-      expect(getSystemJobExclusionParams({}, [])).toEqual([]);
-    });
-
-    test('should return undefined when user has template filter and templateIds is empty', () => {
-      expect(getSystemJobExclusionParams({ template: ['5'] }, [])).toBeUndefined();
-    });
-
-    test('should ignore non-template filters', () => {
-      expect(getSystemJobExclusionParams({ name: ['test'] }, templateIds)).toEqual(templateIds);
     });
   });
 

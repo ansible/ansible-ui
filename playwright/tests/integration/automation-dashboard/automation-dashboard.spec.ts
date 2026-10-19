@@ -187,18 +187,6 @@ test.beforeEach(async ({ page }) => {
       }),
     });
   });
-  await page.route(`**/api/metrics/v1/dashboard_reports/templates/*`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        count: 1,
-        next: null,
-        previous: null,
-        results: [{ id: 10, name: 'test-template' }],
-      }),
-    });
-  });
   await mockReportRoute(page);
   await mockReportDetailRoute(page);
   await setupBefore()({ page });
