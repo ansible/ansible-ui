@@ -370,7 +370,8 @@ export function useSaveVisualizer(templateId: string) {
           await processInstanceGroups(nodeId, launch_data, 'disassociate');
           await processCredentials(nodeId, launch_data, 'disassociate');
 
-          const hasPersistedExtraData = Object.keys(resource.extra_data ?? {}).length > 0;
+          const persistedExtraData = launch_data?.original?.extra_data ?? resource.extra_data;
+          const hasPersistedExtraData = Object.keys(persistedExtraData ?? {}).length > 0;
           const clearsExtraData =
             'extra_data' in updatedNodePayload &&
             Object.keys(updatedNodePayload.extra_data as object).length === 0;

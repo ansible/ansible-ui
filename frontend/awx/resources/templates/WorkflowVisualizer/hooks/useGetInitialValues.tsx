@@ -191,6 +191,7 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       const prompt = nodeData?.launch_data;
       const defaults = nodeData?.resource;
       const original = {
+        extra_data: defaults?.extra_data ? { ...defaults.extra_data } : undefined,
         credentials: nodeCredentials,
         instance_groups: nodeInstanceGroups,
         labels: nodeLabels,

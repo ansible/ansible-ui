@@ -609,7 +609,7 @@ describe('useSaveVisualizer', () => {
     ).toBe(true);
   });
 
-  test('should not send a standalone empty extra_data PATCH when extra_data is already empty during a template swap', async () => {
+  test('should not send a standalone empty extra_data PATCH when persisted data is empty during a template swap', async () => {
     const editedNode = makeGraphNode({
       id: '42',
       visible: true,
@@ -634,6 +634,7 @@ describe('useSaveVisualizer', () => {
         launch_data: {
           original: {
             isTemplateChange: true,
+            extra_data: {},
             launch_config: {
               ask_labels_on_launch: false,
               ask_instance_groups_on_launch: false,
@@ -686,7 +687,7 @@ describe('useSaveVisualizer', () => {
           id: 42,
           identifier: 'test-node',
           all_parents_must_converge: false,
-          extra_data: { existing_variable: 'old value' },
+          extra_data: {},
           always_nodes: [],
           failure_nodes: [],
           success_nodes: [],
@@ -701,6 +702,7 @@ describe('useSaveVisualizer', () => {
         launch_data: {
           original: {
             isTemplateChange: true,
+            extra_data: { existing_variable: 'old value' },
             launch_config: {
               ask_labels_on_launch: false,
               ask_instance_groups_on_launch: false,
