@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { RESOURCE_TYPE } from '../constants';
-import { EdgeStatus } from '../types';
+import { EdgeStatus, type GraphNodeData } from '../types';
 import { NodeEditWizard } from './NodeEditWizard';
 import * as fetchLaunchConfigLoadResultModule from './fetchLaunchConfigLoadResult';
 import type { LaunchConfigLoadResult } from './launchConfigLoad';
@@ -47,11 +47,6 @@ vi.mock('../../../../views/jobs/WorkflowOutput/WorkflowOutput', () => ({
   },
 }));
 
-const mockBuildEffectivePrompt = vi.fn(() => ({ effectivePrompt: { diff_mode: false } }));
-vi.mock('./buildEffectivePrompt', () => ({
-  buildEffectivePrompt: () => mockBuildEffectivePrompt(),
-}));
-
 const mockGetInitialValues = vi.fn(
   (): Promise<Record<string, unknown>> =>
     Promise.resolve({
@@ -91,13 +86,14 @@ vi.mock('@ansible/common-ui/crud/useOptions', () => ({
 }));
 
 const mockAddAlert = vi.fn();
+const mockAlertToaster = { addAlert: mockAddAlert };
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual<typeof import('@ansible/ansible-ui-framework')>(
     '@ansible/ansible-ui-framework'
   );
   return {
     ...actual,
-    usePageAlertToaster: () => ({ addAlert: mockAddAlert }),
+    usePageAlertToaster: () => mockAlertToaster,
   };
 });
 
@@ -150,31 +146,34 @@ const mockSetLabel = vi.fn();
 const mockSetData = vi.fn();
 const mockSetState = vi.fn();
 
-const mockNode = {
-  getId: () => '42',
-  getData: () => ({
-    resource: {
-      id: 42,
-      identifier: '550e8400-e29b-41d4-a716-446655440000',
-      all_parents_must_converge: false,
-      extra_data: {},
-      always_nodes: [],
-      failure_nodes: [],
-      success_nodes: [],
-      summary_fields: {
-        unified_job_template: {
-          id: 1,
-          name: 'Demo Template',
-          unified_job_type: RESOURCE_TYPE.job,
+const makeMockNode = (templateId = 1) =>
+  ({
+    getId: () => '42',
+    getData: () => ({
+      resource: {
+        id: 42,
+        identifier: '550e8400-e29b-41d4-a716-446655440000',
+        all_parents_must_converge: false,
+        extra_data: {},
+        always_nodes: [],
+        failure_nodes: [],
+        success_nodes: [],
+        summary_fields: {
+          unified_job_template: {
+            id: templateId,
+            name: 'Demo Template',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
         },
       },
-    },
-  }),
-  setLabel: mockSetLabel,
-  setData: mockSetData,
-  setState: mockSetState,
-  isVisible: () => true,
-} as never;
+    }),
+    setLabel: mockSetLabel,
+    setData: mockSetData,
+    setState: mockSetState,
+    isVisible: () => true,
+  }) as never;
+
+const mockNode = makeMockNode();
 
 describe('NodeEditWizard', () => {
   beforeEach(() => {
@@ -388,7 +387,7 @@ describe('NodeEditWizard', () => {
     expect(screen.queryByTestId('node-prompts-step')).not.toBeInTheDocument();
   });
 
-  it('should call buildEffectivePrompt and update node on submit', async () => {
+  it('should build the effective prompt and update node on submit', async () => {
     const user = userEvent.setup();
     mockGetInitialValues.mockResolvedValueOnce({
       nodeTypeStep: {
@@ -444,16 +443,72 @@ describe('NodeEditWizard', () => {
     const finishButton = screen.getByRole('button', { name: 'Finish' });
     await user.click(finishButton);
 
-    await waitFor(
-      () => {
-        expect(mockBuildEffectivePrompt).toHaveBeenCalled();
-      },
-      { timeout: 5000 }
-    );
-
-    expect(mockSetData).toHaveBeenCalled();
+    await waitFor(() => expect(mockSetData).toHaveBeenCalled());
+    const saved = mockSetData.mock.calls[0][0] as GraphNodeData;
+    expect(saved.launch_data).toMatchObject({
+      original: { credentials: [], labels: [], instance_groups: [] },
+    });
     expect(mockSetLabel).toHaveBeenCalled();
   });
+
+  it.each([
+    { description: 'preserved snapshot', original: { template_id: 17 }, isTemplateChange: true },
+    { description: 'legacy node', original: {}, isTemplateChange: undefined },
+  ])(
+    'selects the original template from the $description on submit',
+    async ({ original, isTemplateChange }) => {
+      const user = userEvent.setup();
+      mockGetInitialValues.mockResolvedValueOnce({
+        nodeTypeStep: {
+          node_type: RESOURCE_TYPE.job,
+          node_convergence: 'any' as const,
+          node_alias: '',
+          approval_name: '',
+          approval_description: '',
+          approval_timeout: 0,
+          node_days_to_keep: 30,
+          resource: {
+            id: 2,
+            name: 'Template B',
+            description: '',
+            type: 'job_template',
+            project: 1,
+            inventory: 1,
+            ask_inventory_on_launch: false,
+          },
+          resourceId: 2,
+          node_status_type: EdgeStatus.info,
+          launch_config: null,
+        },
+        nodePromptsStep: {
+          prompt: {
+            credentials: [],
+            labels: [],
+            instance_groups: [],
+            original: { ...original, extra_data: { persisted: 'value' } },
+          },
+        },
+      });
+
+      render(
+        <MemoryRouter>
+          <NodeEditWizard node={makeMockNode(2)} />
+        </MemoryRouter>
+      );
+
+      await user.click(await screen.findByRole('button', { name: 'Next' }));
+      await user.click(await screen.findByRole('button', { name: 'Finish' }));
+
+      await waitFor(() => expect(mockSetData).toHaveBeenCalled());
+      const saved = mockSetData.mock.calls[0][0] as GraphNodeData;
+      expect(saved.resource.summary_fields?.unified_job_template?.id).toBe(2);
+      expect(saved.launch_data.original).toMatchObject({
+        ...original,
+        extra_data: { persisted: 'value' },
+      });
+      expect(saved.launch_data.original?.isTemplateChange).toBe(isTemplateChange);
+    }
+  );
 
   it('should show prompts step when initialValues has launch_config', async () => {
     mockGetInitialValues.mockResolvedValueOnce({

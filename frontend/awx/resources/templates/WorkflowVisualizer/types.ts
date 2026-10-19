@@ -151,6 +151,7 @@ export interface PromptFormValues {
   /** Stored by useGetInitialValues alongside prompt values; indicates the original template had prompts. */
   launch_config?: LaunchConfiguration;
   original?: {
+    template_id?: number;
     extra_data?: WorkflowNode['extra_data'];
     credentials?:
       | {

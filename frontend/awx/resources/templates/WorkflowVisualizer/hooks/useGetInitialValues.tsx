@@ -196,6 +196,8 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
           ? prompt.original.extra_data
           : defaults?.extra_data;
       const original = {
+        template_id:
+          prompt?.original?.template_id ?? defaults?.summary_fields?.unified_job_template?.id,
         extra_data: persistedExtraData === undefined ? undefined : { ...persistedExtraData },
         credentials: nodeCredentials,
         instance_groups: nodeInstanceGroups,
