@@ -953,6 +953,127 @@ describe('useSaveVisualizer', () => {
     });
   });
 
+  test('should recompute template change after reverting while a node PATCH is in flight', async () => {
+    let resolvePatch: (value: {
+      id: number;
+      extra_data: { saved_variable: string };
+      summary_fields: { unified_job_template: { id: number } };
+    }) => void = () => undefined;
+    const pendingPatch = new Promise<{
+      id: number;
+      extra_data: { saved_variable: string };
+      summary_fields: { unified_job_template: { id: number } };
+    }>((resolve) => {
+      resolvePatch = resolve;
+    });
+    let failEdgeAssociation = true;
+    mockPatchFn
+      .mockImplementationOnce(() => pendingPatch)
+      .mockResolvedValue({
+        id: 42,
+        extra_data: {},
+        summary_fields: { unified_job_template: { id: 1 } },
+      });
+    mockPostFn.mockImplementation((url: string) => {
+      if (failEdgeAssociation && url.includes('/success_nodes/')) {
+        return Promise.reject(new Error('edge save failed'));
+      }
+      return Promise.resolve({ id: 100 });
+    });
+
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 2,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            template_id: 1,
+            extra_data: { saved_variable: 'persisted value' },
+            launch_config: {
+              ask_variables_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+          extra_vars: '{}',
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+      sourceEdges: [
+        {
+          isVisible: () => true,
+          getData: () => ({ tagStatus: EdgeStatus.success }),
+          getTarget: () => ({ getId: () => '100' }),
+        },
+      ],
+    });
+    mockGraphNodes = [editedNode];
+
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    const savePromise = result.current();
+    await vi.waitFor(() => expect(mockPatchFn).toHaveBeenCalledTimes(1));
+
+    editedNode.setData({
+      ...(editedNode.getData() as GraphNodeData),
+      resource: {
+        ...(editedNode.getData() as GraphNodeData).resource,
+        summary_fields: {
+          ...(editedNode.getData() as GraphNodeData).resource.summary_fields,
+          unified_job_template: {
+            id: 1,
+            name: 'JT A',
+            description: '',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
+        },
+      },
+    });
+
+    resolvePatch?.({
+      id: 42,
+      extra_data: { saved_variable: 'persisted value' },
+      summary_fields: { unified_job_template: { id: 2 } },
+    });
+    await expect(savePromise).rejects.toThrow('edge save failed');
+
+    expect((editedNode.getData() as GraphNodeData).launch_data?.original).toMatchObject({
+      template_id: 2,
+      isTemplateChange: true,
+    });
+
+    failEdgeAssociation = false;
+    mockPatchFn.mockClear();
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (call: unknown[]) =>
+        typeof call[0] === 'string' && call[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCalls).toHaveLength(2);
+    expect(nodePatchCalls[0][1]).toEqual({ extra_data: {} });
+    expect(nodePatchCalls[1][1]).toMatchObject({ unified_job_template: 1 });
+    expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
+  });
+
   test('should reconcile a new node snapshot before a later edge save fails', async () => {
     let failEdgeAssociation = true;
     mockPostFn.mockImplementation((url: string) => {

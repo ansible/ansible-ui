@@ -663,6 +663,13 @@ function reconcileLaunchDataSnapshot({
 
   action(() => {
     const currentNodeData = node.getData() as GraphNodeData;
+    const currentTemplateId =
+      currentNodeData.resource.summary_fields?.unified_job_template?.id ??
+      patchPayload.unified_job_template;
+    const isTemplateChange =
+      persistedTemplateId === undefined || currentTemplateId === undefined
+        ? undefined
+        : persistedTemplateId !== currentTemplateId;
     node.setData({
       ...currentNodeData,
       launch_data: {
@@ -671,6 +678,7 @@ function reconcileLaunchDataSnapshot({
           ...currentNodeData.launch_data?.original,
           ...(persistedExtraData === undefined ? {} : { extra_data: { ...persistedExtraData } }),
           ...(persistedTemplateId === undefined ? {} : { template_id: persistedTemplateId }),
+          ...(isTemplateChange === undefined ? {} : { isTemplateChange }),
         },
       },
     });
