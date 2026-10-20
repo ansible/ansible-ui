@@ -28,7 +28,7 @@
 
 ## Dependencies
 
-<!-- List any dependent PRs, required backend changes, or manual setup steps. Remove this section if none. -->
+<!-- List any dependent PRs, required backend changes, manual setup steps, or a temporary workaround's public tracking issue. Remove this section if none. Do not add internal tracker links. -->
 
 ## Testing
 

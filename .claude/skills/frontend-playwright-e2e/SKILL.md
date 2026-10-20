@@ -81,17 +81,33 @@ test.describe('Feature Name - Description', () => {
 | **Integration**     | Live API, no mocking; API interaction (RBAC, job execution, DB)                    |
 | **User acceptance** | Full user flows spanning resources (create template → run job → verify output)     |
 
+### Isolation and test data
+
+Playwright gives each test a fresh browser context, but it cannot reset shared
+server state. Each test must create or arrange the data it needs, use unique
+names through `createE2EName()`, and never depend on another test's side
+effects or execution order. Reuse the repository's `setupBefore` / `setupAfter`
+and API cleanup helpers; when repeated setup and teardown become substantial,
+prefer a reusable fixture or command over hidden module-level state.
+
 ### Critical Playwright rules
 
-#### 1. Use `data-testid` (NOT `data-cy`)
+#### 1. Prefer user-facing locators, then stable test IDs
 
 ```typescript
-// BEST
+// Preferred when the control has an accessible name
+await page.getByRole('button', { name: 'Create credential' }).click();
+
+// Use a stable explicit contract when a user-facing locator is not practical
 await page.getByTestId('content-type').click();
 
-// AVOID
+// Avoid legacy or DOM-structure selectors
 await page.locator('[data-cy="content-type"]').click();
 ```
+
+Use `getByRole`, `getByLabel`, or `getByText` for user-visible behavior.
+Use `getByTestId` only when it is the clearest stable contract; do not depend on
+CSS classes, XPath, or implementation-only DOM structure.
 
 #### 2. Selector best practices
 
@@ -149,10 +165,18 @@ cd playwright && npx playwright test tests/path/to/test.spec.ts --project 'live 
 
 Never conclude test work until all tests pass and lint/TypeScript issues are resolved.
 
+#### 6. Wait after state-changing table actions
+
+Helpers that filter a table intentionally change its visible rows. After
+clearing a filter or submitting a mutation, wait for the expected unfiltered
+rows or response before selecting, asserting a count, or performing a bulk
+action. Keep cleanup in `try/finally` or the existing `setupAfter` helper so a
+failed assertion does not leak test data.
+
 Do not start a second UI if port 4100 is already bound. To launch a run without
 dumping secrets, use the **Running tests** wizard below.
 
-#### 6. Web-first assertions & auto-waiting
+#### 7. Web-first assertions & auto-waiting
 
 `expect(locator)` assertions auto-retry until they pass or time out, and
 locator actions auto-wait for the element to be actionable. Rely on that — never

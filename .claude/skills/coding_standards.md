@@ -596,7 +596,7 @@ Key enforced rules from `.eslintrc.json`:
 
 CI also runs `npm run eslint:guardrails` as an **advisory** job
 (`continue-on-error`). **Source of truth for rules and thresholds is
-`.eslintrc.guardrails.json`** — do not copy numbers into skills or PRs. It does
+`eslint.guardrails.config.mjs`** — do not copy numbers into skills or PRs. It does
 not fail the required `eslint` check today, but every warning still has to be
 cleaned up later. **Do not add new warnings** in `frontend/`, `platform/`, or
 `framework/` `.ts`/`.tsx` (tests and generated files are ignored). Split files,
@@ -605,7 +605,7 @@ extract helpers, flatten conditionals. Do not `eslint-disable` these rules.
 Scoped check on files you touched:
 
 ```bash
-npx eslint --no-eslintrc --config .eslintrc.guardrails.json --ext .ts,.tsx path/to/changed.tsx
+npx eslint --config eslint.guardrails.config.mjs --ext .ts,.tsx path/to/changed.tsx
 ```
 
 ---

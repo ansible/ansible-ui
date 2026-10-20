@@ -184,7 +184,7 @@ Only create new components as a last resort.
 - Hardcoded API paths are ESLint errors — use tagged template helpers
 - `jsx-a11y/recommended` — accessibility enforced
 - Advisory guardrails: `npm run eslint:guardrails`. Rules and thresholds live
-  in `.eslintrc.guardrails.json` (source of truth — do not hardcode limits
+  in `eslint.guardrails.config.mjs` (source of truth — do not hardcode limits
   here). Do **not** introduce new warnings. Extract helpers instead of
   disabling rules. See coding_standards §15.
 

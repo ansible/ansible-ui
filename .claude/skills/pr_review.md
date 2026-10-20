@@ -24,10 +24,10 @@ Review only what the PR changes. Getting the scope wrong wastes effort and
 produces misleading feedback.
 
 - When GitHub CLI is available, start with `gh pr view <N> --json
-title,body,files,additions,deletions,baseRefName,headRefName` and
-  `gh pr diff <N> --name-only`. Then use `git diff --stat devel...HEAD` and
-  scoped `git diff` hunks for the detailed review. Confirm the file list
-  matches what the PR claims to change.
+  title,body,additions,deletions,baseRefName,headRefName` and
+  `gh api repos/ansible/ansible-ui/pulls/<N>/files --paginate --jq '.[].filename'`.
+  Then use `git diff --stat devel...HEAD` and scoped `git diff` hunks for the
+  detailed review. Confirm the file list matches what the PR claims to change.
 - Use three-dot `devel...HEAD` so you see only this branch's changes, not
   unrelated commits that landed on `devel` after it forked.
 - When the diff is large or surprising, confirm scope with the author before
@@ -213,6 +213,13 @@ Check whether:
 - The behavior is stable across browsers/devices
 - The test names clearly describe intent
 - E2E tests validate the full flow when needed
+- Async code covers loading, success, error, and empty states. For parallel
+  requests, include the out-of-order failure/success sequence so an early
+  error cannot replace a still-pending successful path.
+- A regression test would fail if the behavior being fixed were restored; a
+  test that merely passes is not sufficient.
+- Live E2E waits for post-filter or post-mutation data to settle and cleans up
+  resources in `try/finally` or the established suite helper.
 
 Generate a list of missing tests and suggested improvements.
 
@@ -251,11 +258,11 @@ BASE="${BASE:-origin/devel}"
 mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD -- frontend platform framework \
   | rg '\.(ts|tsx)$' | rg -v '\.(test|cy|fixture)\.')
 if ((${#files[@]})); then
-  head_n=$(npx eslint --no-eslintrc --config .eslintrc.guardrails.json -f unix --no-error-on-unmatched-pattern "${files[@]}" 2>/dev/null | rg -c 'Warning/' || true)
+  head_n=$(npx eslint --config eslint.guardrails.config.mjs -f unix --no-error-on-unmatched-pattern "${files[@]}" 2>/dev/null | rg -c 'Warning/' || true)
   base_n=0
   for f in "${files[@]}"; do
     git cat-file -e "$BASE:$f" 2>/dev/null || continue
-    c=$(git show "$BASE:$f" | npx eslint --no-eslintrc --config .eslintrc.guardrails.json --stdin --stdin-filename "$f" -f unix 2>/dev/null | rg -c 'Warning/' || true)
+    c=$(git show "$BASE:$f" | npx eslint --config eslint.guardrails.config.mjs --stdin --stdin-filename "$f" -f unix 2>/dev/null | rg -c 'Warning/' || true)
     base_n=$((base_n + ${c:-0}))
   done
   echo "eslint:guardrails warnings  ${BASE}=${base_n}  head=${head_n:-0}"
