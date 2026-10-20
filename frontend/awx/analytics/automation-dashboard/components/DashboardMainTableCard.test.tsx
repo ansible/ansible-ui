@@ -492,13 +492,12 @@ describe('DashboardMainTableCard', () => {
 
   // --- onTableInputChange: success ---
 
-  test('should show success alert after successful save', async () => {
+  test('should not show success alert after successful save', async () => {
     await triggerInputSave();
-    await waitFor(() =>
-      expect(
-        screen.getByText(/Template metadata for Test Template updated successfully/i)
-      ).toBeInTheDocument()
-    );
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
+    expect(
+      screen.queryByText(/Template metadata for Test Template updated successfully/i)
+    ).not.toBeInTheDocument();
   });
 
   test('should call refresh after successful put', async () => {
