@@ -14,7 +14,13 @@ import type { WorkflowNode } from '../../../../interfaces/WorkflowNode';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus, GraphNode, NodeResource, PromptFormValues, WizardFormValues } from '../types';
-import { getConvergenceType, getValueBasedOnJobType, shouldHideOtherStep } from '../wizard/helpers';
+import {
+  fetchJobTemplateInstanceGroupDefaults,
+  getConvergenceType,
+  getValueBasedOnJobType,
+  resolveWorkflowInstanceGroups,
+  shouldHideOtherStep,
+} from '../wizard/helpers';
 import { resolvePromptField } from './resolvePromptField';
 
 /**
@@ -209,6 +215,14 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
       // so the editor does not show a hardcoded 0 or blank value. On submit, unchanged
       // values that match the template default are omitted from launch_data (see buildEffectivePrompt).
       const templateDefaults = launch?.defaults;
+      const unifiedJobTemplate = defaults?.summary_fields?.unified_job_template;
+      const templateInstanceGroups =
+        unifiedJobTemplate?.unified_job_type === RESOURCE_TYPE.job && unifiedJobTemplate.id
+          ? await fetchJobTemplateInstanceGroupDefaults(
+              unifiedJobTemplate.id,
+              templateDefaults?.instance_groups
+            )
+          : [];
       const nodePromptsValues = {
         credentials: aggregateCredentials ?? (nodeCredentials || []),
         diff_mode: resolvePromptField(
@@ -220,7 +234,11 @@ export function useGetInitialValues(): (node: GraphNode) => Promise<WizardStepSt
           prompt?.execution_environment ?? (defaults?.execution_environment || undefined),
         extra_vars: prompt?.extra_vars ?? jsonToYaml(JSON.stringify(extraVarsWithoutSurvey)),
         forks: resolvePromptField(defaults?.forks, prompt?.forks, templateDefaults?.forks ?? 0),
-        instance_groups: prompt?.instance_groups ?? (nodeInstanceGroups || []),
+        instance_groups: resolveWorkflowInstanceGroups(
+          prompt?.instance_groups,
+          nodeInstanceGroups,
+          templateInstanceGroups
+        ),
         inventory: prompt?.inventory ?? (nodeData?.resource?.summary_fields?.inventory || null),
         job_slice_count: resolvePromptField(
           defaults?.job_slice_count,

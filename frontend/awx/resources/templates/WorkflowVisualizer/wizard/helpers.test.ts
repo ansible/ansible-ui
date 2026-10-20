@@ -9,6 +9,7 @@ import {
   preservePromptInstanceGroups,
   preservePromptList,
   processSurvey,
+  resolveWorkflowInstanceGroups,
 } from './helpers';
 
 describe('getLinkEdgeStatus', () => {
@@ -183,6 +184,20 @@ describe('preservePromptList', () => {
 
   test('should keep an explicit empty step list', () => {
     expect(preservePromptList([], [{ name: 'launch' }])).toEqual([]);
+  });
+});
+
+describe('resolveWorkflowInstanceGroups', () => {
+  test('should use template groups when prompt and node lists are empty', () => {
+    const template = [{ id: 1, name: 'default-ig' }];
+    expect(resolveWorkflowInstanceGroups(undefined, [], template)).toEqual(template);
+    expect(resolveWorkflowInstanceGroups([], [], template)).toEqual(template);
+  });
+
+  test('should prefer node groups over template defaults', () => {
+    const node = [{ id: 2, name: 'node-ig' }];
+    const template = [{ id: 1, name: 'default-ig' }];
+    expect(resolveWorkflowInstanceGroups(undefined, node, template)).toEqual(node);
   });
 });
 

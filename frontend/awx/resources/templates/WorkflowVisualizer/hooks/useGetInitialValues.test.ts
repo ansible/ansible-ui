@@ -138,6 +138,10 @@ const mockData: Record<string, unknown> = {
       },
     ],
   },
+  '/api/v2/job_templates/1/instance_groups/': {
+    count: 1,
+    results: [{ id: 7, name: 'jt-default-ig' }],
+  },
   '/api/v2/workflow_job_template_nodes/unsavedNode123/credentials/': { count: 0, results: [] },
   '/api/v2/workflow_job_template_nodes/unsavedNode123/labels/': { count: 0, results: [] },
   '/api/v2/workflow_job_template_nodes/unsavedNode123/instance_groups/': { count: 0, results: [] },
@@ -446,6 +450,45 @@ describe('useGetInitialValues', () => {
     expect(initialValues.nodePromptsStep?.prompt?.original?.instance_groups).toEqual(
       expect.arrayContaining([expect.objectContaining({ name: 'default' })])
     );
+  });
+
+  it('should prefill instance groups from the job template when the node has none', async () => {
+    testOverrides.set('/api/v2/job_templates/1/launch/', {
+      ask_credential_on_launch: true,
+      ask_instance_groups_on_launch: true,
+      ask_inventory_on_launch: false,
+      ask_variables_on_launch: false,
+      survey_enabled: false,
+      defaults: { instance_groups: [] },
+    });
+
+    const newNode = {
+      getId: () => 'unsavedNode-ig-defaults',
+      getData: () => ({
+        launch_data: undefined,
+        survey_data: undefined,
+        resource: {
+          identifier: '',
+          all_parents_must_converge: false,
+          extra_data: {},
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Template With IG',
+              unified_job_type: RESOURCE_TYPE.job,
+              timeout: 0,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(newNode);
+
+    expect(initialValues.nodePromptsStep?.prompt?.instance_groups).toEqual([
+      { id: 7, name: 'jt-default-ig' },
+    ]);
   });
 
   it('should use hidePromptStep path when launch config has no prompts', async () => {

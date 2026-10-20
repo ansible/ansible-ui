@@ -27,6 +27,7 @@ import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import type { Credential } from '../../../../interfaces/Credential';
+import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
@@ -42,6 +43,7 @@ import {
 } from '../hooks/useApprovalOptionsEndpoint';
 import { getAggregateCredentials } from './getAggregateCredentials';
 import {
+  fetchJobTemplateInstanceGroupDefaults,
   getResourceURL,
   preservePromptInstanceGroups,
   preservePromptList,
@@ -163,10 +165,19 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       }
       const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults?.defaults || {};
 
+      let templateInstanceGroups: InstanceGroup[] = defaults.instance_groups ?? [];
+      if (nodeType === RESOURCE_TYPE.job && resourceId) {
+        templateInstanceGroups = await fetchJobTemplateInstanceGroupDefaults(
+          resourceId,
+          templateInstanceGroups
+        );
+      }
+
       launchConfigValue = {
         ...defaults,
         execution_environment: defaults.execution_environment,
         inventory: inventory?.id ? inventory : null,
+        instance_groups: templateInstanceGroups,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),
       };
