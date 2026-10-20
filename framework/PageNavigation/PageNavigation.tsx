@@ -59,6 +59,19 @@ function PageNavigationItems(props: { items: PageNavigationItem[]; baseRoute: st
   );
 }
 
+function getNavigationItemId(item: PageNavigationItem): string | undefined {
+  let id: string | undefined;
+  if ('id' in item) {
+    id = item.id;
+  } else if ('children' in item) {
+    const rootChild = item.children.find((child) => child.path === '');
+    if (rootChild && 'id' in rootChild) {
+      id = rootChild.id;
+    }
+  }
+  return id ?? item.label?.split(' ').join('-').toLowerCase();
+}
+
 function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRoute: string }) {
   const { item } = props;
   const [isExpanded, setIsExpanded] = useState(
@@ -71,18 +84,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
     localStorage.setItem((item.id ?? item.label) + '-expanded', expanded ? 'true' : 'false');
   };
 
-  let id: string | undefined;
-  if ('id' in props.item) {
-    id = props.item.id;
-  } else if ('children' in props.item) {
-    const rootChild = props.item.children.find((child) => child.path === '');
-    if (rootChild && 'id' in rootChild) {
-      id = rootChild.id;
-    }
-  }
-  if (!id) {
-    id = props.item.label?.split(' ').join('-').toLowerCase();
-  }
+  const id = getNavigationItemId(props.item);
 
   const onClickNavItem = usePageNavBarClick();
   let route = props.baseRoute + '/' + item.path;
