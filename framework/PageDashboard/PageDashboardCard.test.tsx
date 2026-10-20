@@ -108,13 +108,16 @@ describe('PageDashboardCard', () => {
       children: <div>Card content</div>,
     });
 
-    const card = screen.getByTestId('collapsible-card-test');
-    const collapseControl = card.querySelector('svg');
-    expect(collapseControl).not.toBeNull();
+    const collapseControl = screen.getByRole('button', { name: 'Collapse' });
+    expect(collapseControl).toHaveAttribute('aria-expanded', 'true');
 
-    await user.click(collapseControl as SVGElement);
+    await user.click(collapseControl);
 
     expect(screen.queryByText('Card content')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Expand' })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
     expect(localStorage.getItem('db-collapsible-card-test-collapsed')).toBe('true');
   });
 });
