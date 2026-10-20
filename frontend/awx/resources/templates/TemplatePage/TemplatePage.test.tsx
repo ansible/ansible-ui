@@ -18,6 +18,7 @@ const jobTemplate = {
   summary_fields: {
     inventory: { name: 'Demo' },
     project: { name: 'Demo' },
+    organization: { id: 42, name: 'Test Organization' },
     user_capabilities: { edit: true, delete: true },
   },
   created: '',
@@ -40,6 +41,34 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('TemplatePage', () => {
+  it('shows Notifications to an auditor of the template organization', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('organizations'),
+        ({ request }) =>
+          HttpResponse.json({
+            count: 1,
+            results:
+              new URL(request.url).searchParams.get('role_level') === 'auditor_role'
+                ? [{ id: 42, name: 'Test Organization' }]
+                : [],
+            next: null,
+            previous: null,
+          })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/job-template/1']}>
+        <Routes>
+          <Route path="/templates/job-template/:id" element={<TemplatePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText('Notifications')).toBeInTheDocument());
+  });
+
   it('should render template page with template name', async () => {
     render(
       <MemoryRouter initialEntries={['/templates/job-template/1']}>
