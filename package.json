@@ -54,7 +54,7 @@
     "eslint:guardrails": "eslint --config eslint.guardrails.config.mjs frontend platform framework",
     "eslint:vitest-guardrails": "eslint --no-inline-config --config eslint.vitest-guardrails.config.mjs frontend platform framework",
     "eslint:fix": "nx run-many --target=eslint:fix",
-    "visual:check-baselines": "node --experimental-strip-types scripts/check-visual-baselines.ts",
+    "visual:check-baselines": "node --import tsx scripts/check-visual-baselines.ts",
     "fix": "nx run-many --target=eslint:fix,prettier:fix",
     "upgrade": "npx npm-check-updates -u --workspaces && npm npm-check-updates -u && npm i && npm test",
     "prepare": "husky",
