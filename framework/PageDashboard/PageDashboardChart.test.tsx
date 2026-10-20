@@ -38,19 +38,25 @@ vi.mock('@patternfly/react-charts/victory', () => ({
   ),
   ChartArea: () => <div data-testid="chart-area" />,
   ChartAxis: (props: MockAxisProps) => {
-    props.tickFormat?.(1);
-    props.tickFormat?.(1.5);
-    return <div data-testid="chart-axis" />;
+    return (
+      <div
+        data-testid="chart-axis"
+        data-integer-tick={props.tickFormat?.(1)}
+        data-decimal-tick={props.tickFormat?.(1.5)}
+      />
+    );
   },
   ChartBar: () => <div data-testid="chart-bar" />,
   ChartGroup: (props: MockChildrenProps) => <MockChartComponent {...props} testId="chart-group" />,
   ChartLegendTooltip: () => <div data-testid="chart-legend-tooltip" />,
   ChartLine: () => <div data-testid="chart-line" />,
-  ChartScatter: (props: MockScatterProps) => {
-    props.size?.({ active: true });
-    props.size?.({ active: false });
-    return <div data-testid="chart-scatter" />;
-  },
+  ChartScatter: (props: MockScatterProps) => (
+    <div
+      data-testid="chart-scatter"
+      data-size-active={props.size?.({ active: true })}
+      data-size-inactive={props.size?.({ active: false })}
+    />
+  ),
   ChartStack: (props: MockChildrenProps) => <MockChartComponent {...props} testId="chart-stack" />,
   createContainer: () => (props: MockContainerProps) => {
     props.labels?.({ datum: { y: 1 } });
@@ -111,7 +117,25 @@ describe('PageDashboardChart', () => {
   it('supports disabling integer-only tick formatting', () => {
     renderChart(undefined, undefined, false);
 
-    expect(screen.getAllByTestId('chart-axis')).toHaveLength(2);
+    const dependentAxis = screen.getAllByTestId('chart-axis')[1];
+    expect(dependentAxis).not.toHaveAttribute('data-integer-tick');
+    expect(dependentAxis).not.toHaveAttribute('data-decimal-tick');
+  });
+
+  it('filters non-integer dependent-axis ticks by default', () => {
+    renderChart();
+
+    const dependentAxis = screen.getAllByTestId('chart-axis')[1];
+    expect(dependentAxis).toHaveAttribute('data-integer-tick', '1');
+    expect(dependentAxis).toHaveAttribute('data-decimal-tick', '');
+  });
+
+  it('uses a larger scatter marker for active points', () => {
+    renderChart(PageDashboardChartVariantE.lineChart);
+
+    const scatter = screen.getByTestId('chart-scatter');
+    expect(scatter).toHaveAttribute('data-size-active', '6');
+    expect(scatter).toHaveAttribute('data-size-inactive', '3');
   });
 
   it.each([
