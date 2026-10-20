@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { visualDates } from './visualStabilization';
 
 type VisualMockPage =
   | 'credentials'
@@ -35,7 +36,7 @@ const mockTemplatesResponse = {
       summary_fields: {
         organization: { id: 1, name: 'Default' },
         labels: { count: 1, results: [{ id: 1, name: 'production' }] },
-        recent_jobs: [{ id: 101, status: 'successful', finished: '2025-06-01T14:30:00.000000Z' }],
+        recent_jobs: [{ id: 101, status: 'successful', finished: visualDates.fourDaysAgo }],
         user_capabilities: { edit: true, delete: true, start: true, copy: true },
       },
     },
@@ -46,7 +47,7 @@ const mockTemplatesResponse = {
       summary_fields: {
         organization: { id: 1, name: 'Default' },
         labels: { count: 0, results: [] },
-        recent_jobs: [{ id: 202, status: 'failed', finished: '2025-05-30T11:00:00.000000Z' }],
+        recent_jobs: [{ id: 202, status: 'failed', finished: visualDates.sixDaysAgo }],
         user_capabilities: { edit: true, delete: true, start: true, copy: true },
       },
     },
@@ -90,8 +91,8 @@ const mockInventory = {
   organization: 1,
   variables: '',
   total_hosts: 0,
-  created: '2025-01-15T10:00:00.000000Z',
-  modified: '2025-03-20T14:30:00.000000Z',
+  created: visualDates.olderCreated,
+  modified: visualDates.olderModified,
   summary_fields: {
     organization: { id: 1, name: 'Default', description: '' },
     created_by: { id: 1, username: 'admin' },
@@ -116,8 +117,8 @@ const mockActivationsResponse = {
       rules_fired_count: 124,
       restart_count: 2,
       status_message: 'Activation is running normally.',
-      created_at: '2025-06-01T14:30:00.000000Z',
-      modified_at: '2025-06-02T14:30:00.000000Z',
+      created_at: visualDates.fourDaysAgo,
+      modified_at: visualDates.threeDaysAgo,
     },
     {
       id: 22,
@@ -129,8 +130,8 @@ const mockActivationsResponse = {
       rules_fired_count: 17,
       restart_count: 0,
       status_message: 'Activation is stopped by an administrator.',
-      created_at: '2025-06-03T14:30:00.000000Z',
-      modified_at: '2025-06-04T14:30:00.000000Z',
+      created_at: visualDates.twoDaysAgo,
+      modified_at: visualDates.yesterday,
     },
   ],
 };
@@ -150,9 +151,9 @@ const mockUsersResponse = {
       is_superuser: true,
       is_platform_auditor: false,
       managed: false,
-      created: '2025-06-01T14:30:00.000000Z',
-      modified: '2025-06-02T14:30:00.000000Z',
-      last_login: '2025-06-04T10:15:00.000000Z',
+      created: visualDates.fourDaysAgo,
+      modified: visualDates.threeDaysAgo,
+      last_login: visualDates.yesterdayMorning,
     },
     {
       id: 32,
@@ -164,12 +165,82 @@ const mockUsersResponse = {
       is_superuser: false,
       is_platform_auditor: true,
       managed: false,
-      created: '2025-06-03T14:30:00.000000Z',
-      modified: '2025-06-04T14:30:00.000000Z',
+      created: visualDates.twoDaysAgo,
+      modified: visualDates.yesterday,
       last_login: null,
     },
   ],
 };
+
+const mockCurrentUserResponse = {
+  count: 1,
+  next: null,
+  previous: null,
+  results: [
+    {
+      id: 31,
+      url: '/api/gateway/v1/users/31/',
+      created: visualDates.fourDaysAgo,
+      created_by: '/api/gateway/v1/users/31/',
+      modified: visualDates.threeDaysAgo,
+      modified_by: '/api/gateway/v1/users/31/',
+      related: {},
+      summary_fields: {
+        created_by: {
+          id: 31,
+          username: 'automation-admin',
+          first_name: 'Automation',
+          last_name: 'Administrator',
+        },
+        modified_by: {
+          id: 31,
+          username: 'automation-admin',
+          first_name: 'Automation',
+          last_name: 'Administrator',
+        },
+        resource: { ansible_id: 'visual-user-31', resource_type: 'user' },
+      },
+      username: 'automation-admin',
+      email: 'automation-admin@example.test',
+      first_name: 'Automation',
+      last_name: 'Administrator',
+      is_superuser: true,
+      is_platform_auditor: false,
+      last_login_map_results: [],
+      last_login: visualDates.yesterdayMorning,
+      managed: false,
+    },
+  ],
+};
+
+const mockUIAuthResponse = {
+  show_login_form: false,
+  passwords: [],
+  ssos: [],
+  login_redirect_override: '',
+  custom_login_info: '',
+  custom_logo: '',
+  managed_cloud_install: false,
+  legacy_automation_hub_sso_url: '',
+  legacy_controller_sso_url: '',
+  legacy_auth_enabled: false,
+};
+
+const mockApiRootResponse = {
+  apis: {
+    gateway: '/api/gateway',
+    controller: '/api/controller',
+    eda: '/api/eda',
+    galaxy: '/api/galaxy',
+  },
+};
+
+const mockAwxConfigResponse = {
+  version: '4.6.0',
+  license_info: { compliant: false, time_remaining: 0 },
+};
+
+const mockGatewayPingResponse = { version: '4.6.0' };
 
 const mockOrganizationsResponse = {
   count: 2,
@@ -181,8 +252,8 @@ const mockOrganizationsResponse = {
       name: 'Automation Operations',
       description: 'Shared automation resources for operations teams.',
       url: '/api/gateway/v1/organizations/41/',
-      created: '2025-06-01T14:30:00.000000Z',
-      modified: '2025-06-02T14:30:00.000000Z',
+      created: visualDates.fourDaysAgo,
+      modified: visualDates.threeDaysAgo,
       managed: false,
       summary_fields: { related_field_counts: { users: 12, teams: 3 } },
     },
@@ -191,8 +262,8 @@ const mockOrganizationsResponse = {
       name: 'Development',
       description: 'Development and testing automation resources.',
       url: '/api/gateway/v1/organizations/42/',
-      created: '2025-06-03T14:30:00.000000Z',
-      modified: '2025-06-04T14:30:00.000000Z',
+      created: visualDates.twoDaysAgo,
+      modified: visualDates.yesterday,
       managed: false,
       summary_fields: { related_field_counts: { users: 5, teams: 2 } },
     },
@@ -208,8 +279,8 @@ const mockCredentialsResponse = {
       id: 1,
       name: 'Demo Machine Credential',
       description: 'Credential used by visual regression coverage',
-      created: '2025-06-01T14:30:00.000000Z',
-      modified: '2025-06-02T14:30:00.000000Z',
+      created: visualDates.fourDaysAgo,
+      modified: visualDates.threeDaysAgo,
       summary_fields: { credential_type: { id: 1, name: 'Machine' }, organization: null },
       kind: 'ssh',
       credential_type: 1,
@@ -225,8 +296,8 @@ const mockCredentialsResponse = {
       id: 2,
       name: 'Operations Credential',
       description: 'Credential for the operations team',
-      created: '2025-06-03T14:30:00.000000Z',
-      modified: '2025-06-04T14:30:00.000000Z',
+      created: visualDates.twoDaysAgo,
+      modified: visualDates.yesterday,
       summary_fields: { credential_type: { id: 1, name: 'Machine' }, organization: null },
       kind: 'ssh',
       credential_type: 1,
@@ -249,6 +320,48 @@ const json = (body: unknown) => ({
 const options = { actions: { GET: {}, POST: {} } };
 
 export async function installVisualMockApi(page: Page, pages: readonly VisualMockPage[]) {
+  await page.route('**/api/**', (route) =>
+    route.fulfill(
+      route.request().method() === 'OPTIONS'
+        ? json(options)
+        : {
+            status: 404,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              detail: 'No visual API fixture is registered for this request.',
+            }),
+          }
+    )
+  );
+  await page.route('**/api/gateway/v1/me/**', (route) =>
+    route.fulfill(json(route.request().method() === 'OPTIONS' ? options : mockCurrentUserResponse))
+  );
+  await page.route('**/api/gateway/v1/ui_auth/**', (route) =>
+    route.fulfill(json(route.request().method() === 'OPTIONS' ? options : mockUIAuthResponse))
+  );
+  await page.route('**/api/', (route) =>
+    route.fulfill(json(route.request().method() === 'OPTIONS' ? options : mockApiRootResponse))
+  );
+  await page.route('**/api/gateway/v1/ping/**', (route) =>
+    route.fulfill(json(route.request().method() === 'OPTIONS' ? options : mockGatewayPingResponse))
+  );
+  await page.route('**/api/controller/v2/config/**', (route) =>
+    route.fulfill(json(route.request().method() === 'OPTIONS' ? options : mockAwxConfigResponse))
+  );
+  await page.route('**/api/controller/v2/me/**', (route) =>
+    route.fulfill(json(route.request().method() === 'OPTIONS' ? options : mockCurrentUserResponse))
+  );
+  await page.route('**/api/galaxy/_ui/v1/me/**', (route) =>
+    route.fulfill(
+      json(route.request().method() === 'OPTIONS' ? options : mockCurrentUserResponse.results[0])
+    )
+  );
+  await page.route('**/api/eda/v1/users/me/**', (route) =>
+    route.fulfill(
+      json(route.request().method() === 'OPTIONS' ? options : mockCurrentUserResponse.results[0])
+    )
+  );
+
   if (pages.includes('overview')) {
     await page.route('**/api/controller/v2/dashboard/**', (route) =>
       route.fulfill(json(mockDashboardResponse))
