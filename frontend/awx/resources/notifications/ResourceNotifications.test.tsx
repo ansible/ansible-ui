@@ -83,7 +83,8 @@ describe('ResourceNotifications', () => {
   it('hides association switches when notifications are read-only', async () => {
     server.use(
       http.get(
-        ({ request }: { request: Request }) => request.url.includes('notification_templates_success'),
+        ({ request }: { request: Request }) =>
+          request.url.includes('notification_templates_success'),
         () =>
           HttpResponse.json({
             count: 1,
