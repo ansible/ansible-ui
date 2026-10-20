@@ -252,14 +252,15 @@ describe('PageTable Component', () => {
     expect(checkboxHeaders.length).toBeGreaterThan(0);
   });
 
-  it('should always show pagination when autoHidePagination even if items fit in one page', () => {
-    renderPageTable({
+  it('should hide pagination when autoHidePagination and items fit in one page', () => {
+    const { container } = renderPageTable({
       autoHidePagination: true,
       itemCount: 2,
       perPage: 10,
     });
 
-    expect(screen.getByTestId('pagination')).toBeInTheDocument();
+    const pagination = container.querySelector('.pf-v6-c-pagination');
+    expect(pagination).not.toBeInTheDocument();
   });
 
   it('should show pagination when autoHidePagination but items exceed perPage', () => {
@@ -276,15 +277,17 @@ describe('PageTable Component', () => {
       perPage: 10,
     });
 
-    expect(screen.getByTestId('pagination')).toBeInTheDocument();
+    const pagination = document.querySelector('.pf-v6-c-pagination');
+    expect(pagination).toBeInTheDocument();
   });
 
   it('should hide pagination when disablePagination is true', () => {
-    renderPageTable({
+    const { container } = renderPageTable({
       disablePagination: true,
     });
 
-    expect(screen.queryByTestId('pagination')).not.toBeInTheDocument();
+    const pagination = container.querySelector('.pf-v6-c-pagination');
+    expect(pagination).not.toBeInTheDocument();
   });
 
   it('should render selection checkbox column when showSelect is true', () => {

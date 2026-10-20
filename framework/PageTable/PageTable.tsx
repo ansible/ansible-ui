@@ -93,7 +93,7 @@ export type PageTableCommonProps<T extends object> = {
   compact?: boolean;
   borderless?: boolean;
 
-  /** When true, removes the top border from pagination for a compact look (e.g. dashboard cards). Pagination is always rendered so the per-page selector remains accessible. */
+  /** Auto hide the pagination at the bottom of the table if there are less items than in a page. */
   autoHidePagination?: boolean;
 
   isSelected?: (item: T) => boolean;
@@ -354,9 +354,10 @@ export function PageTable<T extends object>(props: PageTableProps<T>) {
           <PageTableCards {...props} showSelect={showSelect} tableColumns={managedColumns} />
         </Scrollable>
       )}
-      {!props.disablePagination && (
-        <PagePagination {...props} topBorder={!props.autoHidePagination} />
-      )}
+      {!props.disablePagination &&
+        (!props.autoHidePagination || (props.itemCount ?? 0) > props.perPage) && (
+          <PagePagination {...props} topBorder={!props.autoHidePagination} />
+        )}
     </>
   );
 }
