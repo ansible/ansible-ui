@@ -3,34 +3,44 @@ import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { OrganizationWizardFormValues } from '../components/PlatformOrganizationForm';
 import { buildControllerOrganizationUpdatePayload } from './buildControllerOrganizationUpdatePayload';
 
-function makeValues(
-  overrides: Partial<OrganizationWizardFormValues> & {
-    organization?: Partial<PlatformOrganization>;
-  } = {}
-): OrganizationWizardFormValues {
-  const organization: PlatformOrganization = {
-    id: 1,
-    name: 'Org',
-    description: 'Desc',
-    summary_fields: {},
-    ...overrides.organization,
-  } as PlatformOrganization;
+const baseOrganization = {
+  id: 1,
+  name: 'Org',
+  description: 'Desc',
+  summary_fields: {
+    created_by: {
+      id: 1,
+      username: 'admin',
+      first_name: 'Admin',
+      last_name: 'User',
+    },
+    modified_by: {
+      id: 1,
+      username: 'admin',
+      first_name: 'Admin',
+      last_name: 'User',
+    },
+  },
+  managed: false,
+} as PlatformOrganization;
 
+function makeValues(
+  organizationPatch?: Partial<PlatformOrganization>,
+  valuesPatch?: Partial<Omit<OrganizationWizardFormValues, 'organization'>>
+): OrganizationWizardFormValues {
   return {
-    organization,
+    organization: { ...baseOrganization, ...organizationPatch },
     opa_query_path: 'test/policy',
     maxHosts: 10,
     executionEnvironment: 5,
-    ...overrides,
+    ...valuesPatch,
   };
 }
 
 describe('buildControllerOrganizationUpdatePayload', () => {
   it('should include gateway name and description on the controller payload', () => {
     const payload = buildControllerOrganizationUpdatePayload(
-      makeValues({
-        organization: { name: 'Renamed', description: 'New description' },
-      })
+      makeValues({ name: 'Renamed', description: 'New description' })
     );
 
     expect(payload).toEqual({
@@ -43,18 +53,22 @@ describe('buildControllerOrganizationUpdatePayload', () => {
   });
 
   it('should default missing description to an empty string', () => {
-    const payload = buildControllerOrganizationUpdatePayload(
-      makeValues({
-        organization: { description: undefined },
-      })
-    );
+    const organization = { ...baseOrganization };
+    delete (organization as Partial<PlatformOrganization>).description;
+
+    const payload = buildControllerOrganizationUpdatePayload({
+      organization: organization as PlatformOrganization,
+      opa_query_path: 'test/policy',
+      maxHosts: 10,
+      executionEnvironment: 5,
+    });
 
     expect(payload.description).toBe('');
   });
 
   it('should default max_hosts to zero when maxHosts is unset', () => {
     const payload = buildControllerOrganizationUpdatePayload(
-      makeValues({
+      makeValues(undefined, {
         maxHosts: undefined,
         opa_query_path: undefined,
         executionEnvironment: undefined,
