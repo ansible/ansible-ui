@@ -120,8 +120,8 @@ export function DateRange(props: {
   const fromDate = from ? new Date(from) : undefined;
 
   const toValidator = (date: Date) => {
-    if (!fromDate || !isValidDate(fromDate)) return '';
-    if (date >= fromDate) return '';
+    if (!fromDate) return '';
+    if (isValidDate(fromDate) && date >= fromDate) return '';
     return t('The "to" date must be after the "from" date');
   };
 
