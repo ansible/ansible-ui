@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { ReactNode, useMemo } from 'react';
 import { ColumnPriority, ITableColumn, TableColumnCell } from '../PageTable/PageTableColumn';
 import { PageDetail } from './PageDetail';
