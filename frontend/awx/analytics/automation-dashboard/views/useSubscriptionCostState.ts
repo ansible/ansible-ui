@@ -1,6 +1,10 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { useSWRConfig } from 'swr';
 import { ISubscriptionCosts } from '../types';
-import { useGetReportSubscriptionCosts } from './useGetReportSubscriptionCosts';
+import {
+  SUBSCRIPTION_COSTS_URL,
+  useGetReportSubscriptionCosts,
+} from './useGetReportSubscriptionCosts';
 
 interface ISubscriptionCostState {
   costState: ISubscriptionCosts | undefined;
@@ -20,11 +24,16 @@ interface ISubscriptionCostState {
  * - `isPristine` is set to `false` whenever the caller mutates state
  *   locally via `setCostState`, protecting pending edits from being
  *   overwritten by a same-cycle SWR revalidation.
+ *
+ * `setCostState` is called with the server-confirmed record after a save. That
+ * record is also written into the SWR cache of the list GET, so remounting the
+ * dashboard does not briefly show the value from before the save.
  */
 export function useSubscriptionCostState(): ISubscriptionCostState {
   const { subscriptionCosts } = useGetReportSubscriptionCosts();
   const [costState, setCostState] = useState<ISubscriptionCosts | undefined>(undefined);
   const [isPristine, setIsPristine] = useState(true);
+  const { mutate } = useSWRConfig();
 
   // Reset to pristine whenever fresh server data arrives.
   // A change in `subscriptionCosts` represents a confirmed save or a remote
@@ -48,8 +57,15 @@ export function useSubscriptionCostState(): ISubscriptionCostState {
     (value) => {
       setIsPristine(false);
       setCostState(value);
+      if (value && typeof value !== 'function') {
+        void mutate<ISubscriptionCosts[]>(
+          SUBSCRIPTION_COSTS_URL,
+          (cached) => cached?.map((costs) => (costs.id === value.id ? value : costs)),
+          { revalidate: false }
+        );
+      }
     },
-    []
+    [mutate]
   );
 
   return { costState, setCostState: handleSetCostState };

@@ -1,18 +1,10 @@
-import {
-  ITableColumn,
-  PageDashboardCard,
-  PageTable,
-  usePageAlertToaster,
-} from '@ansible/ansible-ui-framework';
+import { ITableColumn, PageDashboardCard, PageTable } from '@ansible/ansible-ui-framework';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
-import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
-import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
-import { metricsAPI } from '../../../common/api/metrics-utils';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { CardBody } from '@patternfly/react-core';
@@ -21,11 +13,7 @@ import { ExportIcon } from '@patternfly/react-icons';
 import { DashboardExportButton } from './DashboardExportButton';
 import { hasValidRequiredFilters } from '../utils/queryString';
 import { DashboardDetailsCard } from './DashboardDetailsCard';
-
-interface IJobTemplateModify {
-  time_taken_manually_execute_minutes: number;
-  time_taken_create_automation_minutes: number;
-}
+import { IJobTemplateModify, useTemplateTimesSave } from '../views/useTemplateTimesSave';
 
 // Uses 1610px instead of PageDashboard's 1662px to account for card padding
 const GRID_COLUMN_WIDTH = 1610 / 24; // ~67px per column
@@ -61,8 +49,6 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
   } = props;
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
-  const putRequest = usePutRequest<IJobTemplateModify, IJobTemplateModify>();
-  const alertToaster = usePageAlertToaster();
 
   const ref = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(1);
@@ -78,71 +64,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     setColumns(calculateGridColumns(entry.contentRect.width));
   });
 
-  const [errors, setErrors] = useState<Record<
-    number,
-    Partial<Record<keyof IJobTemplateModify, string>>
-  > | null>(null);
-
-  const onTableInputChange = async (
-    item: IJobTemplate,
-    columnKey: keyof IJobTemplateModify,
-    value: number
-  ) => {
-    setErrors(null);
-    const templateName = item.template_name;
-    const data = {
-      time_taken_manually_execute_minutes: item.time_taken_manually_execute_minutes,
-      time_taken_create_automation_minutes: item.time_taken_create_automation_minutes,
-      [columnKey]: value,
-    };
-    let updatedData: IJobTemplateModify;
-    try {
-      updatedData = await putRequest(
-        metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/`,
-        data as IJobTemplateModify
-      );
-    } catch (err) {
-      const { genericErrors, fieldErrors } = awxErrorAdapter(err);
-      alertToaster.addAlert({
-        variant: 'danger',
-        title: t('Failed to update template metadata for {{templateName}}.', { templateName }),
-        children: (
-          <>
-            {genericErrors.map((e) => (
-              <div key={String(e.message)}>{e.message}</div>
-            ))}
-          </>
-        ),
-        timeout: 5000,
-      });
-      setErrors({
-        [item.id]: fieldErrors.reduce<Partial<Record<keyof IJobTemplateModify, string>>>(
-          (acc, e) => ({ ...acc, [e.name]: String(e.message) }),
-          {}
-        ),
-      });
-      return;
-    }
-
-    mainTableView.updateItem({ ...item, ...updatedData });
-
-    alertToaster.addAlert({
-      variant: 'success',
-      title: t('Template metadata for {{templateName}} updated successfully.', { templateName }),
-      timeout: 5000,
-    });
-
-    // Refresh: a failure here does not undo the save.
-    try {
-      await refresh();
-    } catch {
-      alertToaster.addAlert({
-        variant: 'warning',
-        title: t('Update saved but failed to refresh view.'),
-        timeout: 5000,
-      });
-    }
-  };
+  const { errors, onTableInputChange } = useTemplateTimesSave(mainTableView, refresh);
 
   const tableInputField = (columnKey: keyof IJobTemplateModify, item: IJobTemplate) => (
     <div style={{ width: `${TIME_COLUMN_WIDTH}px` }}>
@@ -152,7 +74,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
         max={1000000}
         type={'integer'}
         value={item[columnKey]}
-        onChange={(value: number) => void onTableInputChange(item, columnKey, value)}
+        onChange={(value: number) => onTableInputChange(item, columnKey, value)}
         error={errors?.[item.id]?.[columnKey]}
       />
     </div>
