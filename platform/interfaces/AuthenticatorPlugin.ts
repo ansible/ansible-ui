@@ -17,6 +17,8 @@ export interface PluginConfiguration {
 
 export interface AuthenticatorPlugin {
   type: AuthenticatorTypeEnum;
+  /** Human-readable type label from Gateway/DAB; preferred over the UI label map. */
+  display_name?: string | null;
   configuration_schema: PluginConfiguration[];
   documentation_url: string;
 }

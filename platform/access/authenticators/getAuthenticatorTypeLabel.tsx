@@ -1,6 +1,22 @@
 import { TFunction } from 'i18next';
 
-export function getAuthenticatorTypeLabel(type: string, t: TFunction<'translation'>) {
+type PluginLabelSource = {
+  type: string;
+  display_name?: string | null;
+};
+
+export function getAuthenticatorTypeLabel(
+  type: string,
+  t: TFunction<'translation'>,
+  plugins?: PluginLabelSource[]
+) {
+  if (plugins?.length) {
+    const plugin = plugins.find((entry) => entry.type === type);
+    if (plugin?.display_name) {
+      return plugin.display_name;
+    }
+  }
+
   const labels: { [k: string]: string } = {
     github: t('GitHub'),
     github_enterprise: t('GitHub enterprise'),
