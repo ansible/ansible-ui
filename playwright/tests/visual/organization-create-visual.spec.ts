@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { installVisualMockApi } from './visualMockApi';
 import { stabilizeVisualPage } from './visualStabilization';
 
 test.beforeEach(async ({ page }) => {
+  await installVisualMockApi(page, ['platformOrganizations']);
   await setupBefore({ path: '/overview' })({ page });
   await stabilizeVisualPage(page);
 });
