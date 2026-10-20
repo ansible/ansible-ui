@@ -40,7 +40,7 @@ export type PageDashboardChartGroup = {
   link?: string;
 };
 
-export type PageDashboardChartProps = {
+export type PageDashboardChartProps = Readonly<{
   id?: string;
   groups: PageDashboardChartGroup[];
   // prevent y axis to show float values
@@ -66,7 +66,7 @@ export type PageDashboardChartProps = {
   showLegendCount?: boolean;
 
   height?: number;
-};
+}>;
 
 export function PageDashboardChart(props: PageDashboardChartProps) {
   const { allowZero, xLabel, yLabel, minDomain, onlyIntegerTicks } = props;
