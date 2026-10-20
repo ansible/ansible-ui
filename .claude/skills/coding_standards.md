@@ -8,6 +8,11 @@ Before choosing a PatternFly component or prop, consult the configured
 changes, use Playwright MCP to inspect the running flow and Chrome DevTools MCP
 when browser console, network, layout, or performance evidence is needed.
 
+For UI composition, use this order: an existing `framework/` wrapper, then a
+PatternFly component, then semantic native HTML when no suitable component
+exists. Create a custom component only when those options cannot meet the
+required behavior or accessibility, and document why.
+
 ---
 
 ## 1. API Path Helpers — Never Hardcode Paths

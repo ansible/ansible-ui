@@ -178,9 +178,9 @@ Recipe: `git diff devel...HEAD | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expec
 
 ### HTML → PatternFly 6 Component Mapping
 
-Prefer PF6 or existing framework components for standard controls and content.
-Retain semantic HTML where the framework markup requires it or no suitable
-component abstraction exists. Typical mappings:
+Review UI choices in this order: existing framework wrapper, PF6 component,
+semantic native HTML when no suitable component abstraction exists, then a
+custom component only as a documented last resort. Typical mappings:
 
 | Raw HTML          | Use       |
 | ----------------- | --------- |

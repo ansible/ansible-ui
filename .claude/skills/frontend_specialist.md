@@ -139,6 +139,11 @@ for components not in the framework.
 
 Only create new components as a last resort.
 
+Choose UI building blocks in order: existing `framework/` wrapper, PatternFly
+component, semantic native HTML where no component applies, then a custom
+component only when the earlier options cannot meet the required behavior or
+accessibility.
+
 ---
 
 ## Step 4: Core Standards
