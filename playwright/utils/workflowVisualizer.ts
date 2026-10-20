@@ -29,6 +29,16 @@ export interface RenderWFVizWithMockDataOptions {
   page: Page;
 }
 
+/** Empty workflows expose two Add step controls; with nodes on canvas only one is shown. */
+async function clickWorkflowVisualizerAddStep(page: Page): Promise<void> {
+  const addStepButtons = page.getByRole('button', { name: 'Add step' });
+  await expect(addStepButtons.first()).toBeVisible({ timeout: 15_000 });
+  const addStepButton =
+    (await addStepButtons.count()) > 1 ? addStepButtons.nth(1) : addStepButtons.first();
+  await expect(addStepButton).toBeVisible();
+  await addStepButton.click();
+}
+
 export const WorkflowVisualizer = {
   api: {
     createNode: async (
@@ -175,14 +185,9 @@ export const WorkflowVisualizer = {
       page: Page,
       stepType: string,
       stepResourceName: string,
-      resourceSelectInputLabel: string,
-      options?: { addStepButtonIndex?: number }
+      resourceSelectInputLabel: string
     ): Promise<void> => {
-      const addStepButtonIndex = options?.addStepButtonIndex ?? 1;
-      await expect(
-        page.getByRole('button', { name: 'Add step' }).nth(addStepButtonIndex)
-      ).toBeVisible();
-      await page.getByRole('button', { name: 'Add step' }).nth(addStepButtonIndex).click();
+      await clickWorkflowVisualizerAddStep(page);
       await expect(page.getByRole('dialog')).toBeVisible();
       await page.getByRole('button', { name: 'Job Template', exact: true }).click();
       await page.getByRole('option', { name: stepType, exact: true }).click();
