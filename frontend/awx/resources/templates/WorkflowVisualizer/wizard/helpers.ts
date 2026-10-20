@@ -79,6 +79,28 @@ export function getNodeLabel(name: string, alias: string): string {
   return name;
 }
 
+/**
+ * Prefer workflow step prompt arrays over launch defaults (nullish coalescing).
+ * Avoids duplicating values when NodeTypeStep re-merges after launch config loads.
+ */
+export function preservePromptList<T>(stepValue: T[] | undefined, launchValue: T[] | undefined): T[] {
+  return stepValue ?? launchValue ?? [];
+}
+
+/**
+ * Instance groups on a workflow node: an empty step list means no node associations yet,
+ * so JT launch defaults should still appear in the prompt UI.
+ */
+export function preservePromptInstanceGroups<T extends { id: number }>(
+  stepGroups: T[] | undefined,
+  launchGroups: T[] | undefined
+): T[] {
+  if (stepGroups !== undefined && stepGroups.length > 0) {
+    return stepGroups;
+  }
+  return launchGroups ?? stepGroups ?? [];
+}
+
 export function shouldHideOtherStep(launchData: LaunchConfiguration) {
   if (Object.keys(launchData).length === 0) return true;
   return !(

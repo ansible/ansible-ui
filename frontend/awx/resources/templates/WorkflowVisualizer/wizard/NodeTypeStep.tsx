@@ -41,7 +41,12 @@ import {
   useApprovalOptionsEndpoint,
 } from '../hooks/useApprovalOptionsEndpoint';
 import { getAggregateCredentials } from './getAggregateCredentials';
-import { getResourceURL, shouldHideOtherStep } from './helpers';
+import {
+  getResourceURL,
+  preservePromptInstanceGroups,
+  preservePromptList,
+  shouldHideOtherStep,
+} from './helpers';
 import { LaunchConfigLoadResult, registerLaunchConfigLoad } from './launchConfigLoad';
 
 export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
@@ -211,13 +216,13 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                   prompts?.extra_vars && prompts.extra_vars !== ''
                     ? prompts.extra_vars
                     : (launchConfigValue?.extra_vars ?? ''),
-                skip_tags: [...(prompts?.skip_tags || []), ...(launchConfigValue?.skip_tags || [])],
-                job_tags: [...(prompts?.job_tags || []), ...(launchConfigValue?.job_tags ?? [])],
-                instance_groups: [
-                  ...(prompts?.instance_groups ?? []),
-                  ...(launchConfigValue?.instance_groups ?? []),
-                ],
-                labels: prompts?.labels ?? launchConfigValue?.labels ?? [],
+                skip_tags: preservePromptList(prompts?.skip_tags, launchConfigValue?.skip_tags),
+                job_tags: preservePromptList(prompts?.job_tags, launchConfigValue?.job_tags),
+                instance_groups: preservePromptInstanceGroups(
+                  prompts?.instance_groups,
+                  launchConfigValue?.instance_groups
+                ),
+                labels: preservePromptList(prompts?.labels, launchConfigValue?.labels),
                 diff_mode: prompts?.diff_mode ?? launchConfigValue?.diff_mode,
                 forks: prompts?.forks ?? launchConfigValue?.forks,
                 limit: prompts?.limit ?? launchConfigValue?.limit,

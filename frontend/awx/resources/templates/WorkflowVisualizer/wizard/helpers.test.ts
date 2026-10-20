@@ -2,7 +2,14 @@ import { describe, expect, test } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import type { Survey } from '../../../../interfaces/Survey';
 import { EdgeStatus } from '../types';
-import { getConvergenceType, getLinkEdgeStatus, getResourceURL, processSurvey } from './helpers';
+import {
+  getConvergenceType,
+  getLinkEdgeStatus,
+  getResourceURL,
+  preservePromptInstanceGroups,
+  preservePromptList,
+  processSurvey,
+} from './helpers';
 
 describe('getLinkEdgeStatus', () => {
   test('should default to always run when status is unset', () => {
@@ -159,5 +166,35 @@ describe('processSurvey', () => {
     const result = processSurvey(null, { text_var: 'shown' }, mockSurveySpec);
     expect(result).toContain('shown');
     expect(result).not.toContain('$encrypted$');
+  });
+});
+
+describe('preservePromptList', () => {
+  test('should prefer step values over launch defaults', () => {
+    const step = [{ name: 'a' }];
+    const launch = [{ name: 'a' }, { name: 'b' }];
+    expect(preservePromptList(step, launch)).toEqual(step);
+  });
+
+  test('should use launch defaults when step value is undefined', () => {
+    const launch = [{ name: 'only-launch' }];
+    expect(preservePromptList(undefined, launch)).toEqual(launch);
+  });
+
+  test('should keep an explicit empty step list', () => {
+    expect(preservePromptList([], [{ name: 'launch' }])).toEqual([]);
+  });
+});
+
+describe('preservePromptInstanceGroups', () => {
+  test('should use launch defaults when the step list is empty', () => {
+    const launch = [{ id: 1, name: 'default-ig' }];
+    expect(preservePromptInstanceGroups([], launch)).toEqual(launch);
+  });
+
+  test('should prefer non-empty step instance groups', () => {
+    const step = [{ id: 2, name: 'node-ig' }];
+    const launch = [{ id: 1, name: 'default-ig' }];
+    expect(preservePromptInstanceGroups(step, launch)).toEqual(step);
   });
 });
