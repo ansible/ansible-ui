@@ -25,7 +25,7 @@ produces misleading feedback.
 
 - When GitHub CLI is available, start with `gh pr view <N> --json
   title,body,additions,deletions,baseRefName,headRefName` and
-  `gh api repos/ansible/ansible-ui/pulls/<N>/files --paginate --jq '.[].filename'`.
+  `gh api "repos/OWNER/REPO/pulls/<N>/files" --paginate --jq '.[].filename'`.
   Then use `git diff --stat devel...HEAD` and scoped `git diff` hunks for the
   detailed review. Confirm the file list matches what the PR claims to change.
 - Use three-dot `devel...HEAD` so you see only this branch's changes, not
