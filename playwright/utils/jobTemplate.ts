@@ -343,6 +343,7 @@ export const JobTemplate = {
         }
         await page.getByRole('button', { name: 'Finish' }).click();
       }
+      await expect(page).toHaveURL(/\/jobs\/playbook\/\d+\/output/, { timeout: 30000 });
       await expect(page.getByRole('main')).toContainText('Output');
       if (!options?.doNotWait) {
         await expectJobOutputSuccess(page);
