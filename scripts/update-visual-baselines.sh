@@ -1,32 +1,20 @@
 #!/bin/bash
-# Orchestrates local Linux visual baseline generation via Podman
+# Orchestrates local Linux visual baseline generation via Podman or Docker
 # Updates -linux.png snapshots in playwright/tests/visual/*-snapshots/
 
 set -e
 
-# Validate required environment variables
-if [ -z "$PLATFORM_SERVER" ]; then
-  echo "Error: PLATFORM_SERVER environment variable is required"
-  echo ""
-  echo "Usage: PLATFORM_SERVER=<url> PLATFORM_USERNAME=<user> PLATFORM_PASSWORD=<pass> ./scripts/update-visual-baselines.sh [test-file]"
-  echo ""
-  echo "Examples:"
-  echo "  PLATFORM_SERVER=https://your-aap-instance PLATFORM_USERNAME=admin PLATFORM_PASSWORD=secret ./scripts/update-visual-baselines.sh"
-  exit 1
-fi
-
-if [ -z "$PLATFORM_USERNAME" ]; then
-  echo "Error: PLATFORM_USERNAME environment variable is required"
-  exit 1
-fi
-
-if [ -z "$PLATFORM_PASSWORD" ]; then
-  echo "Error: PLATFORM_PASSWORD environment variable is required"
-  exit 1
-fi
-
 # Optional test file argument (default: all visual tests)
 TEST_ARG="${1:-tests/visual/}"
+
+if command -v podman >/dev/null 2>&1; then
+  CONTAINER_RUNTIME=podman
+elif command -v docker >/dev/null 2>&1; then
+  CONTAINER_RUNTIME=docker
+else
+  echo "Error: Podman or Docker is required"
+  exit 1
+fi
 
 # Get project root (script is in scripts/, project root is one level up)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -35,13 +23,14 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 echo "=== AAP UI Visual Baseline Update ==="
-echo "PLATFORM_SERVER: $PLATFORM_SERVER"
+echo "Container runtime: $CONTAINER_RUNTIME"
+echo "Project: deterministic mock API"
 echo "Test path: $TEST_ARG"
 echo ""
 
 # Step 1: Build the image
 echo "[1/3] Building container image..."
-podman build -f platform/Containerfile --target platform-ui -t aap-ui-visual .
+$CONTAINER_RUNTIME build -f platform/Containerfile --target platform-ui -t aap-ui-visual .
 
 # Step 2: Run container with volume mount
 echo ""
@@ -49,10 +38,9 @@ echo "[2/3] Running snapshot update in container..."
 echo "This may take several minutes..."
 echo ""
 
-podman run --rm \
-  -e PLATFORM_SERVER="$PLATFORM_SERVER" \
-  -e PLATFORM_USERNAME="$PLATFORM_USERNAME" \
-  -e PLATFORM_PASSWORD="$PLATFORM_PASSWORD" \
+$CONTAINER_RUNTIME run --rm \
+  -e VISUAL_TEST_PATH="$TEST_ARG" \
+  -e SKIP_COVERAGE=true \
   -v "$PROJECT_ROOT/playwright/tests/visual:/work/playwright/tests/visual:z" \
   aap-ui-visual
 
