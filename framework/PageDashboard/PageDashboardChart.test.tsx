@@ -102,8 +102,8 @@ describe('PageDashboardChart', () => {
   it('filters empty groups and renders the default stacked area chart', () => {
     renderChart();
 
-    expect(screen.getByText('Successful jobs')).toBeInTheDocument();
-    expect(screen.queryByText('Empty group')).not.toBeInTheDocument();
+    expect(screen.getByText('Successful jobs')).toBeDefined();
+    expect(screen.queryByText('Empty group')).toBeNull();
     expect(screen.getAllByTestId('chart-area')).toHaveLength(1);
     expect(screen.getAllByTestId('chart-scatter')).toHaveLength(1);
   });
@@ -111,31 +111,31 @@ describe('PageDashboardChart', () => {
   it('keeps empty groups when allowZero is enabled', () => {
     renderChart(PageDashboardChartVariantE.stackedAreaChart, true);
 
-    expect(screen.getByText('Empty group')).toBeInTheDocument();
+    expect(screen.getByText('Empty group')).toBeDefined();
   });
 
   it('supports disabling integer-only tick formatting', () => {
     renderChart(undefined, undefined, false);
 
     const dependentAxis = screen.getAllByTestId('chart-axis')[1];
-    expect(dependentAxis).not.toHaveAttribute('data-integer-tick');
-    expect(dependentAxis).not.toHaveAttribute('data-decimal-tick');
+    expect(dependentAxis.getAttribute('data-integer-tick')).toBeNull();
+    expect(dependentAxis.getAttribute('data-decimal-tick')).toBeNull();
   });
 
   it('filters non-integer dependent-axis ticks by default', () => {
     renderChart();
 
     const dependentAxis = screen.getAllByTestId('chart-axis')[1];
-    expect(dependentAxis).toHaveAttribute('data-integer-tick', '1');
-    expect(dependentAxis).toHaveAttribute('data-decimal-tick', '');
+    expect(dependentAxis.getAttribute('data-integer-tick')).toBe('1');
+    expect(dependentAxis.getAttribute('data-decimal-tick')).toBe('');
   });
 
   it('uses a larger scatter marker for active points', () => {
     renderChart(PageDashboardChartVariantE.lineChart);
 
     const scatter = screen.getByTestId('chart-scatter');
-    expect(scatter).toHaveAttribute('data-size-active', '6');
-    expect(scatter).toHaveAttribute('data-size-inactive', '3');
+    expect(scatter.getAttribute('data-size-active')).toBe('6');
+    expect(scatter.getAttribute('data-size-inactive')).toBe('3');
   });
 
   it.each([
