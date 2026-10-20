@@ -284,4 +284,42 @@ describe('EditPlatformOrganization', () => {
       expect(patchPayload).toHaveProperty('opa_query_path');
     });
   });
+
+  it('should sync gateway organization name to controller on submit', async () => {
+    const user = userEvent.setup({ delay: null });
+    let controllerPatchPayload: Record<string, unknown> | undefined;
+    server.use(
+      http.patch(awxAPI`/organizations/100/`, async ({ request }) => {
+        controllerPatchPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json(mockControllerOrganization);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/organizations/1/edit']}>
+        <Routes>
+          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
+    });
+
+    const nameField = screen.getByLabelText(/name/i);
+    await user.clear(nameField);
+    await user.type(nameField, 'Renamed Organization');
+
+    const nextButton = await screen.findByRole('button', { name: /next/i });
+    await user.click(nextButton);
+
+    const finishButton = await screen.findByRole('button', { name: /finish/i });
+    await user.click(finishButton);
+
+    await waitFor(() => {
+      expect(controllerPatchPayload).toBeDefined();
+      expect(controllerPatchPayload?.name).toBe('Renamed Organization');
+    });
+  });
 });

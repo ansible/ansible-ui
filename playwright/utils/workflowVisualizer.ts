@@ -171,26 +171,44 @@ export const WorkflowVisualizer = {
       }
     },
 
+    addWorkflowStepWithoutSave: async (
+      page: Page,
+      stepType: string,
+      stepResourceName: string,
+      resourceSelectInputLabel: string,
+      options?: { addStepButtonIndex?: number }
+    ): Promise<void> => {
+      const addStepButtonIndex = options?.addStepButtonIndex ?? 1;
+      await expect(
+        page.getByRole('button', { name: 'Add step' }).nth(addStepButtonIndex)
+      ).toBeVisible();
+      await page.getByRole('button', { name: 'Add step' }).nth(addStepButtonIndex).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: stepType, exact: true }).click();
+      await page.getByLabel(`${resourceSelectInputLabel} *`).click();
+      if (stepType === 'Approval') {
+        await page.getByLabel('Name').fill(stepResourceName);
+      } else {
+        await page.getByLabel('Search input').fill(stepResourceName);
+        await page.getByRole('option', { name: stepResourceName }).click();
+      }
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
+    },
+
     createNode: async (
       page: Page,
       stepType: string,
       stepResourceName: string,
       resourceSelectInputLabel: string
     ): Promise<void> => {
-      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
-      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-      await page.getByRole('option', { name: `${stepType}`, exact: true }).click();
-      await page.getByLabel(`${resourceSelectInputLabel} *`).click();
-      if (stepType === 'Approval') {
-        await page.getByLabel('Name').fill(stepResourceName);
-      } else {
-        await page.getByLabel('Search input').fill(stepResourceName);
-        await page.getByRole('option', { name: `${stepResourceName}` }).click();
-      }
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
+      await WorkflowVisualizer.ui.addWorkflowStepWithoutSave(
+        page,
+        stepType,
+        stepResourceName,
+        resourceSelectInputLabel
+      );
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
