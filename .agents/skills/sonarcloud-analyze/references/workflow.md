@@ -46,5 +46,5 @@ Each table groups issues by SonarCloud rule and module (auto-detected from works
 
 ### Permissions
 
-Grant the local Codex environment permission to run the Python helper when
-needed. Do not commit local tool settings or credentials.
+Allow the local agent environment to run the Python helper when needed. Do not
+commit local tool settings or credentials.

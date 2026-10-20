@@ -27,7 +27,7 @@
 - Dev server: `npm start` (from `platform/`)
 - Build all workspaces: `npm run build`
 - Fix lint + formatting: `npm run fix` (`npm run prettier:fix` for formatting only)
-- Instruction files: `AGENTS.md` (symlink `AGENTS.md`)
+- Instruction files: `AGENTS.md` (canonical; `CLAUDE.md` is a compatibility symlink)
 
 ## MCP-assisted implementation
 

@@ -2,7 +2,7 @@
 
 ## Context
 
-SonarCloud shows ~2700 open issues for this project. Engineers currently triage and fix these manually — navigating the dashboard, reviewing each issue, researching fixes, and creating PRs by hand. This story delivers a Codex skill that automates analysis and remediation with human-in-the-loop review, starting with low-risk fix categories to build trust.
+SonarCloud shows ~2700 open issues for this project. Engineers currently triage and fix these manually — navigating the dashboard, reviewing each issue, researching fixes, and creating PRs by hand. This plan delivers an agent skill that automates analysis and remediation with human review, starting with low-risk fix categories to build trust.
 
 **Reference implementation**: [amazon.aws PR #2919](https://github.com/ansible-collections/amazon.aws/pull/2919) — proved that curl-based SonarCloud API calls in skill markdown work. We adapt this pattern for a TypeScript/React monorepo context.
 
@@ -26,7 +26,7 @@ Hybrid approach: a Python script handles the mechanical API fetching and categor
 ```
 .agents/skills/
   sonarcloud-remediation/
-    SKILL.md                      — Short Codex entrypoint
+    SKILL.md                      — Short skill entrypoint
     references/
       sonarcloud-remediation.md   — Full workflow logic (analyze + fix)
     scripts/
@@ -39,7 +39,7 @@ Hybrid approach: a Python script handles the mechanical API fetching and categor
     references/workflow.md      — Approval and remediation guidance
 ```
 
-**Existing review and test guidance** remains in its own Codex skills. Local tool settings are not committed; see `AI_AGENT_POLICY.md`.
+**Existing review and test guidance** remains in its own shared skills. Local tool settings are not committed; see `AI_AGENT_POLICY.md`.
 
 ---
 

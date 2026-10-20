@@ -221,104 +221,65 @@ Check whether:
 - Live E2E waits for post-filter or post-mutation data to settle and cleans up
   resources in `try/finally` or the established suite helper.
 
-Generate a list of missing tests and suggested improvements.
+For behavior-changing PRs, list missing regression coverage and focused test
+improvements. Skip test recommendations when they do not apply to the diff.
 
 ---
 
-## 6. Explain the Changes Back (for Documentation)
+## 6. Summarize When It Helps
 
-Generate a markdown summary file that explains:
-
-- What the PR does
-- Why the changes matter
-- Visual diagrams when relevant
-- Before/After examples
-- Known tradeoffs
-- Any follow-up tasks recommended
+When the PR description is unclear or the change needs a handoff, provide a
+concise summary of what changed, why it matters, relevant tradeoffs, and any
+follow-up work. Create a separate Markdown document only when the change itself
+requires durable documentation; do not create one as a routine review deliverable.
 
 ---
 
-## 7. Validation Commands
+## 7. CI and Focused Validation
 
-Run these project commands:
+Review current-head CI evidence first. Do not repeat checks that already passed.
+If a relevant check is missing or failed, select a focused check that covers the
+changed behavior and report its result.
 
-```bash
-npm run prettier                  # Formatting
-cd platform && npm run eslint # Linting (required)
-cd platform && npm run tsc    # Type check
-```
+Match validation to the diff:
 
-**No new guardrail warnings (review blocker).** CI `eslint-guardrails` is
-advisory, so reviewers must compare warning counts on the PR's changed files
-against the base branch (`devel` upstream, `stable-2.7` downstream). Head must
-not be higher than base. New files must be warning-free.
+- **Documentation-only changes:** use a Markdown or link check if the repository
+  provides one. Application lint, type checks, unit tests, and Playwright are
+  not required when no application behavior changed.
+- **Code changes:** use checks scoped to changed paths. Review guardrail warnings
+  on changed TypeScript files against the base branch when CI does not provide
+  that comparison; do not accept added warnings or new ESLint suppressions.
+- **Browser behavior:** use Playwright or manual browser validation only when the
+  change affects a user flow and current CI does not already provide sufficient
+  evidence. Do not trigger E2E for unrelated or documentation-only changes.
 
-```bash
-BASE="${BASE:-origin/devel}"
-mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD -- frontend platform framework \
-  | rg '\.(ts|tsx)$' | rg -v '\.(test|cy|fixture)\.')
-if ((${#files[@]})); then
-  head_n=$(npx eslint --config eslint.guardrails.config.mjs -f unix --no-error-on-unmatched-pattern "${files[@]}" 2>/dev/null | rg -c 'Warning/' || true)
-  base_n=0
-  for f in "${files[@]}"; do
-    git cat-file -e "$BASE:$f" 2>/dev/null || continue
-    c=$(git show "$BASE:$f" | npx eslint --config eslint.guardrails.config.mjs --stdin --stdin-filename "$f" -f unix 2>/dev/null | rg -c 'Warning/' || true)
-    base_n=$((base_n + ${c:-0}))
-  done
-  echo "eslint:guardrails warnings  ${BASE}=${base_n}  head=${head_n:-0}"
-  if (( ${head_n:-0} > base_n )); then echo 'BLOCK: new guardrail warnings added'; exit 1; fi
-fi
-
-# No new ESLint suppressions in added lines (review blocker)
-if git diff "$BASE"...HEAD | rg '^\+' | rg -q 'eslint-disable'; then
-  echo 'BLOCK: new eslint-disable suppression added'
-  git diff "$BASE"...HEAD | rg '^\+' | rg 'eslint-disable'
-  exit 1
-fi
-```
-
-Then ask the user to confirm manually:
-
-- UI works in the browser
-- Forms, navigation, and modals behave as expected
-- No console errors appear
+If relevant CI evidence is incomplete, state that clearly rather than assuming
+success or running an unrelated suite. Ask for manual confirmation only when a
+behavior cannot be verified from available tests or evidence.
 
 ---
 
-## 8. Final Deliverables
+## 8. Review Output
 
-Output should include:
-
-1. A structured PR review
-2. A list of issues to fix
-3. Recommendations for simplification
-4. Test coverage guidance
-5. A proposed `.md` explanation file for the PR
-6. `eslint:guardrails` warning count on changed files vs base (must not increase)
-7. No new `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line` in the diff
+Put actionable findings first. Each finding should include a severity, file and
+line, concrete impact, and a concise explanation. Separate required fixes from
+optional suggestions. If there are no findings, say so and summarize the
+reviewed scope. Report only relevant CI and focused validation evidence; do not
+require a separate Markdown summary file for every PR.
 
 ---
 
-## 9. Self-Review Quality Gate
+## 9. Independent Re-check
 
-Before posting, ask a fresh subagent that has not participated in the review to
-independently inspect the PR. Give it the PR URL, base branch, and head branch;
-do not provide the first review's conclusions. Compare its findings before
-posting:
-
-- Does every finding cite a file/line and a concrete reason?
-- Would the feedback still make sense to someone who did not see the diff?
-- Have you separated blocking issues from optional suggestions?
-- Did you run the validation commands (§7) rather than assuming they pass?
-- Did `eslint:guardrails` warning count on changed files stay at or below the base branch?
-- Did the diff add any `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line`? If yes, block.
-
-An independent pass from a clean context catches the assumptions the first pass
-carried in.
+For complex or high-risk changes, use a second independent reviewer when one is
+available. Do not prime that reviewer with the first review's findings. Compare
+the results for concrete evidence, clear impact, correct severity, and
+actionable wording. For small documentation-only changes, a careful self-review
+against the diff and source documents is sufficient.
 
 ---
 
-## 10. CI, ESLint, and agent-skill PRs
+## 10. CI, ESLint, and shared agent-guidance PRs
 
 Extra checks when the diff touches `.github/workflows/`, eslint config, or
 `.agents/skills/`:
@@ -327,5 +288,22 @@ Extra checks when the diff touches `.github/workflows/`, eslint config, or
 | --- | --- |
 | GitHub Actions | Third-party actions pinned to **full SHAs** or immutable versions; treat workflow edits as security-sensitive. |
 | ESLint | Prefer **flat config** (`eslint.config.mjs`). Avoid new parallel `.eslintrc.*` unless there is a documented reason (e.g. isolated guardrails). |
-| Agent skills | No private product or org names. No meta lines like “moved here from AGENTS.md”. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
+| Agent skills | Keep guidance provider-neutral and public-safe. Use one shared source of truth; tool-specific files should be thin adapters. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
 | Lockfile | Intentional `package-lock.json` churn should be obvious in the PR description. |
+
+## 11. Updating Review Guidance from PR Feedback
+
+When refreshing repository review guidance from recent pull request feedback:
+
+- Use the complete review window requested for the update, including submitted
+  reviews and inline review comments. Record the exact date range.
+- Include only human-authored feedback. Exclude GitHub accounts marked as bots,
+  known chatbot or AI-review accounts, and comments disclosed as AI-generated
+  or AI-assisted. If authorship is uncertain, do not use the comment as a source.
+- Preserve every distinct, actionable human observation. Deduplicate repeated
+  advice, but do not drop a finding just because it appears only once.
+- Check each proposed rule against current repository practice or authoritative
+  documentation before adding it. Keep rules general enough to help future
+  reviews; do not copy comments or reviewer names into the skill.
+- State the source window and human-only filtering in the PR description so the
+  review-guidance update can be audited.

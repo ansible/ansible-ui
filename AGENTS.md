@@ -1,10 +1,12 @@
-# Agent skills
+# Agent instructions and skills
 
-Codex is the primary coding agent for this repository. Repository instructions
-live in this file; CLAUDE.md is a compatibility symlink. Codex skills live in
-.agents/skills/<name>/ with a short SKILL.md entrypoint and optional
-references/ and scripts/. Keep each skill's name and description metadata
-accurate and keep entrypoints concise.
+Repository instructions live in this file; `CLAUDE.md` is a compatibility
+symlink for tools that look for that filename. Shared skill guidance lives in
+`.agents/skills/<name>/`, with a short `SKILL.md` entrypoint and optional
+references and scripts. Use the trigger table to load only the relevant skill.
+This layout is the source of truth; integrations may also provide native skill
+discovery or thin command adapters. Keep skill names and descriptions accurate
+and entrypoints concise.
 
 | Trigger | Read |
 | --- | --- |
@@ -24,9 +26,10 @@ wire executable agent hooks. See AI_AGENT_POLICY.md.
 
 ### MCP consultation workflow
 
-MCPs are part of the implementation workflow, not optional background tooling.
-Before implementing or changing frontend code, consult the relevant MCPs and use
-their results together with the repository wrappers and existing patterns.
+When relevant MCP integrations are available, consult them before implementing
+or changing frontend code and use their results together with repository
+wrappers and existing patterns. If an integration is unavailable, continue with
+the official documentation and repository patterns.
 
 1. **PatternFly MCP** — Before using a PatternFly component, variant, prop,
    token, or accessibility pattern, search the official PF6 documentation. Do
@@ -40,12 +43,12 @@ their results together with the repository wrappers and existing patterns.
    running UI. Use it alongside Playwright when the failure is browser-specific.
 
 Record which MCP documentation or browser evidence informed the implementation
-in the final handoff. If an MCP is unavailable, use the official documentation
-listed in `.agents/skills/library-references/SKILL.md` and state that fallback.
+in the final handoff when such tools were used. Otherwise, use the official
+documentation listed in `.agents/skills/library-references/SKILL.md`.
 
-The MCP versions are pinned in `.mcp.json` for reproducible agent behavior.
-PatternFly MCP 2.x requires Node.js 22+; use a Node 22+ local runtime for MCP
-startup even though some CI jobs currently use Node 20.
+MCP server versions are pinned in `.mcp.json` for reproducible behavior.
+PatternFly MCP 2.x requires Node.js 22+; use a Node 22+ local runtime when
+starting that server even though some CI jobs currently use Node 20.
 
 This repo has no Storybook. Do not use `@latest` for MCP packages.
 
@@ -54,7 +57,10 @@ This repo has no Storybook. Do not use `@latest` for MCP packages.
 - ESLint-enforced items are omitted from checklists. ESLint is the source of truth.
 - New code: zero new ESLint warnings, including `npm run eslint:guardrails`. Guardrail rules live in `eslint.guardrails.config.mjs`; the primary project config is `eslint.config.mjs`. No `eslint-disable` in new or modified code.
 - Accessibility is part of every UI change.
-- `npm test` (eslint, tsc, prettier, vitest) and `npm run eslint:guardrails` on touched files before calling the work done.
+- For code changes, run checks scoped to the changed paths: relevant lint,
+  type, unit, and guardrail checks. Run Playwright only when the change affects
+  browser behavior and the relevant flow is not already covered by current CI.
+  Documentation-only changes do not require application tests or Playwright.
 - Never remove existing features, routes, or components without explicit instruction.
 
 ### Shared framework delivery

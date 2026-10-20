@@ -4,10 +4,12 @@
 
 Ensure that the code adheres to the project's style guidelines. We use Prettier and ESLint for code formatting and linting.
 
-- Run `npm run eslint` to check for linting errors and ensure there are no issues reported.
-- Run `npm run eslint:guardrails` for touched `frontend/`, `platform/`, or
-  `framework/` TypeScript files. Do not add warnings or an `eslint-disable` to
-  silence new code.
+- For code changes, run lint checks scoped to the changed files.
+- Run `npm run eslint:guardrails` for changed `frontend/`, `platform/`, or
+  `framework/` TypeScript files when applicable. Do not add warnings or an
+  `eslint-disable` to silence new code.
+- Documentation-only changes do not require application lint, type, unit, or
+  Playwright checks.
 
 ## Problem Solving
 
@@ -30,7 +32,9 @@ Evaluate whether the PR introduces new patterns or idioms to the codebase.
 
 Ensure that the tests cover the new changes and pass without issues, and that no regression is introduced.
 
-- Verify that all tests are passing and are thorough enough to prevent future regressions.
+- For behavior changes, verify relevant current CI and focused tests are passing
+  and are thorough enough to prevent regressions. Do not run application or
+  Playwright tests for documentation-only changes.
 - Cover the user-visible success path plus relevant loading, error, empty, and
   permission states. For parallel requests, include an out-of-order failure /
   success case.
@@ -50,6 +54,7 @@ Assess any newly added dependencies.
 
 - Select a risk level and an applicable change type in the PR template.
 - Describe the scoped automated and manual validation. Trigger `/run-playwright`
-  after preliminary checks when ephemeral E2E coverage is needed.
+  after preliminary checks only when ephemeral E2E coverage is relevant to the
+  changed behavior.
 - Include before-and-after screenshots for visual changes, or explain why they
   are not applicable.

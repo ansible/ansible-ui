@@ -35,8 +35,8 @@ Same as the sonarcloud-analyze skill (including the requirement that `SONARCLOUD
 
 ### Permissions
 
-Grant the local Codex environment permission to run the Python helper when
-needed. Do not commit local tool settings or credentials.
+Allow the local agent environment to run the Python helper when needed. Do not
+commit local tool settings or credentials.
 
 ### Workflow
 

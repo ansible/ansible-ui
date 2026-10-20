@@ -1,6 +1,6 @@
 # Test Migration Specifications
 
-This directory contains structured specifications for migrating Cypress tests to Playwright. These specs are designed to be used by Codex and developers to ensure consistent, accurate migrations.
+This directory contains structured specifications for migrating Cypress tests to Playwright. These specs are designed for AI coding agents and developers to support consistent, accurate migrations.
 
 ## Directory Structure
 
@@ -19,13 +19,13 @@ migration-specs/
     └── ...
 ```
 
-## Using Migration Specs with Codex
+## Using Migration Specs with an AI coding agent
 
 ### Quick Start
 
 1. **Create a spec** using the template in `templates/migration-spec-template.yaml`
-2. **Ask Codex to migrate the test** using the spec path (for example, migration-specs/eda/roles.yaml).
-3. **Codex should**:
+2. **Ask the agent to migrate the test** using the spec path (for example, migration-specs/eda/roles.yaml).
+3. **The agent should**:
    - Read the spec
    - Understand the context (resources, utilities, API endpoints)
    - Migrate tests using verified patterns
@@ -170,8 +170,8 @@ notes: |
    - Confirm utility availability
    - Add notes about special cases
 
-3. **Execute Migration** (Codex or Developer)
-   Ask Codex to migrate the test described in migration-specs/eda/my-feature.yaml.
+3. **Execute Migration** (AI agent or developer)
+   Ask the agent to migrate the test described in migration-specs/eda/my-feature.yaml.
 
 4. **Verify & Commit** (with developer review)
    - All tests pass
