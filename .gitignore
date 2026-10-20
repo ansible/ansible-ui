@@ -25,13 +25,12 @@
 /storybook-static
 results.xml
 /playwright/playwright/html-report/
-# Local agent runtime; keep shared skills/commands (see AI_AGENT_POLICY.md)
+# Local agent runtime; share Codex skills only (see AI_AGENT_POLICY.md)
+.agents/*
+!.agents/skills/
+!.agents/skills/**
+# Keep local Claude Code settings out of the repository
 .claude/*
-!.claude/skills/
-!.claude/skills/**
-!.claude/commands/
-!.claude/commands/**
-!.claude/skill-triggers.json
 .cursor/
 .gemini/
 CLAUDE.local.md

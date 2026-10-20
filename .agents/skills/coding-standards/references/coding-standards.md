@@ -587,7 +587,7 @@ EDA equivalents: `useEdaBulkActionDialog`, `useEdaBulkConfirmation`.
 
 ## 15. ESLint Rules to Know
 
-Key enforced rules from `.eslintrc.json`:
+Key enforced rules from `eslint.config.mjs`:
 
 - **`eqeqeq: "error"`** — strict equality (`===`) always
 - **`no-console: "error"`** — no `console.log` in production code
@@ -712,13 +712,13 @@ render.)
 An inline `style={{ ... }}` object is a new object every render (breaks
 memoization and PatternFly's own bailouts). Prefer PatternFly layout components
 and utility classes, or a `styled-components` style — the repo's styling
-approach (see `library_references.md`); when a dynamic inline style is
+approach (see `library-references skill`); when a dynamic inline style is
 unavoidable, memoize the object with `useMemo`.
 
 ### Never `eslint-disable` in new or modified code
 
 Disabling a rule ships the problem plus a suppression to maintain. Fix the
-cause. (This repo forbids it outright — see `CLAUDE.md`.)
+cause. (This repo forbids it outright — see `AGENTS.md`.)
 
 ### Build `ReactNode` lists, not joined strings
 
@@ -755,6 +755,6 @@ const hasResults = !isLoading && !error && items.length > 0;
 ### Prefer native/browser APIs
 
 Reach for the platform before writing (or importing) custom code — see
-`pr_review.md` for the review grep. Deep copy → `structuredClone(obj)`; query
+`pr-review skill` for the review grep. Deep copy → `structuredClone(obj)`; query
 strings → `URLSearchParams`; request cancellation → `AbortController`; URL
 parsing → `new URL(...)`.

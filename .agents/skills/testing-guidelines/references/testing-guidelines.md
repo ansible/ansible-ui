@@ -4,7 +4,7 @@ Testing standards for this project. Read this skill before writing or reviewing
 any **Vitest** unit/component test file.
 
 For **Playwright E2E** (write, run, or debug), read
-`.claude/skills/frontend-playwright-e2e/SKILL.md` instead.
+`.agents/skills/frontend-playwright-e2e/SKILL.md` instead.
 
 ---
 

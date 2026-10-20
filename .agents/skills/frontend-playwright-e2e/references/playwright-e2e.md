@@ -1,19 +1,10 @@
----
-name: frontend-playwright-e2e
-description: >
-  Write, run, and debug Playwright E2E / integration / live tests. Use when
-  writing or reviewing a *.spec.ts under playwright/, or when the user asks to
-  run, execute, or debug E2E tests, or which env vars are required. Never print
-  secrets. For Vitest unit/component tests, read testing_guidelines.md instead.
-user-invocable: true
----
 
 # Playwright E2E
 
 Default to Vitest for unit/component work (see
-`.claude/skills/testing_guidelines.md`). Use Playwright for integration, e2e,
+`.agents/skills/testing-guidelines/SKILL.md`). Use Playwright for integration, e2e,
 and live testing. For ports, env file, and stack commands, read
-`.claude/skills/frontend-overlay/SKILL.md`.
+`.agents/skills/frontend-overlay/SKILL.md`.
 
 ## MCP workflow
 

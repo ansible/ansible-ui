@@ -1,4 +1,4 @@
-# Claude Skill: Pull Request Review
+# Pull Request Review
 
 Your goal is to review a pull request with high clarity, consistency, and alignment with the repo’s standards.
 
@@ -8,9 +8,9 @@ Your goal is to review a pull request with high clarity, consistency, and alignm
 
 Before reviewing the PR, read:
 
-- `CLAUDE.md` trigger table, then the matching skills (not the whole skill set)
-- `.claude/skills/frontend-overlay/SKILL.md` for wrappers and API helpers
-- Any domain-specific skill: coding_standards, testing_guidelines
+- `AGENTS.md` trigger table, then the matching skills (not the whole skill set)
+- `.agents/skills/frontend-overlay/SKILL.md` for wrappers and API helpers
+- Any domain-specific skill: coding-standards, testing-guidelines
 
 **Branch Strategy:**
 
@@ -321,11 +321,11 @@ carried in.
 ## 10. CI, ESLint, and agent-skill PRs
 
 Extra checks when the diff touches `.github/workflows/`, eslint config, or
-`.claude/skills/`:
+`.agents/skills/`:
 
 | Area | Review for |
 | --- | --- |
 | GitHub Actions | Third-party actions pinned to **full SHAs** or immutable versions; treat workflow edits as security-sensitive. |
 | ESLint | Prefer **flat config** (`eslint.config.mjs`). Avoid new parallel `.eslintrc.*` unless there is a documented reason (e.g. isolated guardrails). |
-| Agent skills | No private product or org names. No meta lines like “moved here from CLAUDE.md”. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
+| Agent skills | No private product or org names. No meta lines like “moved here from AGENTS.md”. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
 | Lockfile | Intentional `package-lock.json` churn should be obvious in the PR description. |
