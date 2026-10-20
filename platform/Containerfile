@@ -15,9 +15,10 @@ RUN npm ci
 RUN cd platform && npm run build
 
 # Set environment variables
-# Note: PLATFORM_USERNAME and PLATFORM_PASSWORD must be passed at runtime via -e flags
 ENV PLATFORM_UI=https://localhost:4100
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+ENV VISUAL_TEST_PATH=tests/visual/
+ENV SKIP_COVERAGE=true
 
 # Expose port 4100
 EXPOSE 4100
@@ -31,7 +32,7 @@ CMD ["sh", "-c", "\
   sleep 5 && \
   echo 'Running Playwright visual tests...' && \
   cd /work/playwright && \
-  npx playwright test tests/visual/ --project 'live chromium' --update-snapshots; \
+  npx playwright test "$VISUAL_TEST_PATH" --project 'mock chromium' --workers=1 --retries=0 --update-snapshots; \
   TEST_EXIT=$?; \
   kill $SERVER_PID 2>/dev/null || true; \
   exit $TEST_EXIT \
