@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { DashboardTableCard } from './DashboardTableCard';
 
@@ -62,7 +62,8 @@ describe('DashboardTableCard', () => {
   test('renders help text in the card', async () => {
     const user = userEvent.setup();
     render(<DashboardTableCard {...defaultProps} />);
-    const helpButton = screen.getByRole('button');
+    const cardHeader = screen.getByTestId('card-title').closest('div')!;
+    const helpButton = within(cardHeader).getByRole('button');
     await user.click(helpButton);
     expect(screen.getByText('Help text')).toBeInTheDocument();
   });

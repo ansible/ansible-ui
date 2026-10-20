@@ -259,8 +259,7 @@ describe('PageTable Component', () => {
       perPage: 10,
     });
 
-    const pagination = document.querySelector('.pf-v6-c-pagination');
-    expect(pagination).toBeInTheDocument();
+    expect(screen.getByTestId('pagination')).toBeInTheDocument();
   });
 
   it('should show pagination when autoHidePagination but items exceed perPage', () => {
@@ -277,17 +276,15 @@ describe('PageTable Component', () => {
       perPage: 10,
     });
 
-    const pagination = document.querySelector('.pf-v6-c-pagination');
-    expect(pagination).toBeInTheDocument();
+    expect(screen.getByTestId('pagination')).toBeInTheDocument();
   });
 
   it('should hide pagination when disablePagination is true', () => {
-    const { container } = renderPageTable({
+    renderPageTable({
       disablePagination: true,
     });
 
-    const pagination = container.querySelector('.pf-v6-c-pagination');
-    expect(pagination).not.toBeInTheDocument();
+    expect(screen.queryByTestId('pagination')).not.toBeInTheDocument();
   });
 
   it('should render selection checkbox column when showSelect is true', () => {

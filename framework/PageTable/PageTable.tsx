@@ -93,7 +93,7 @@ export type PageTableCommonProps<T extends object> = {
   compact?: boolean;
   borderless?: boolean;
 
-  /** Controls pagination top border styling. Pagination is always rendered when enabled. */
+  /** When true, removes the top border from pagination for a compact look (e.g. dashboard cards). Pagination is always rendered so the per-page selector remains accessible. */
   autoHidePagination?: boolean;
 
   isSelected?: (item: T) => boolean;
