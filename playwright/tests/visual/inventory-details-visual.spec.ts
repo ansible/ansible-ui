@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { installVisualMockApi } from './visualMockApi';
 import { stabilizeVisualPage } from './visualStabilization';
@@ -18,9 +17,11 @@ test.afterEach(async ({ page }) => {
   await setupAfter({ page });
 });
 
-async function openInventory(page: Parameters<typeof clickTableRow>[1]) {
+async function openInventory(page: Parameters<typeof navigateTo>[0]) {
   await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-  await clickTableRow({ text: inventoryName }, page);
+  const inventoryLink = page.getByRole('link', { name: inventoryName, exact: true });
+  await expect(inventoryLink).toHaveCount(1);
+  await inventoryLink.click();
   await expect(page.getByRole('heading', { name: inventoryName, exact: true })).toBeVisible();
   await stabilizeVisualPage(page);
 }

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
-import { visualPageRegistry } from '../playwright/tests/visual/visualPageRegistry.ts';
+import { visualPageRegistry } from '../playwright/tests/visual/visualPageRegistry';
 
 const visualRoot = path.resolve(process.argv[2] ?? 'playwright/tests/visual');
 const repositoryRoot = path.resolve(visualRoot, '../../..');

@@ -8,7 +8,7 @@ import path from 'path';
  * https://github.com/motdotla/dotenv
  */
 const __dirname = import.meta.dirname;
-dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -91,7 +91,7 @@ const config: PlaywrightTestConfig = {
       name: 'mock chromium',
       use: { ...devices['Desktop Chrome'] },
       metadata: { mock: true },
-      dependencies: ['coverage setup'],
+      dependencies: process.env.SKIP_COVERAGE === 'true' ? [] : ['coverage setup'],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
       ],

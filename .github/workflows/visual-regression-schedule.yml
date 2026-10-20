@@ -32,6 +32,7 @@ jobs:
     timeout-minutes: 120
     env:
       PLATFORM_UI: https://localhost:4100
+      PLATFORM_USERNAME: automation-admin
       SKIP_COVERAGE: 'true'
     steps:
       - name: Checkout devel
