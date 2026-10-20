@@ -16,6 +16,7 @@ import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
 import { useHasAwxService } from '../../../main/GatewayServices';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import { buildControllerOrganizationUpdatePayload } from '../utils/buildControllerOrganizationUpdatePayload';
 import { OrganizationWizardFormValues, PlatformOrganizationForm } from './PlatformOrganizationForm';
 
 interface AssociateControllerInstanceGroup {
@@ -122,13 +123,7 @@ export function EditPlatformOrganization() {
       if (awxService && controllerOrganization) {
         await updateControllerOrganizationRequest(
           awxAPI`/organizations/${controllerOrganization.id.toString()}/`,
-          {
-            name: values.organization.name,
-            description: values.organization.description ?? '',
-            opa_query_path: values?.opa_query_path ?? null,
-            default_environment: values?.executionEnvironment ?? null,
-            max_hosts: values?.maxHosts ? values?.maxHosts : 0,
-          }
+          buildControllerOrganizationUpdatePayload(values)
         );
 
         // Resolve promises for instance groups and galaxy credentials in order to

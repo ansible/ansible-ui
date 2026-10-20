@@ -320,6 +320,7 @@ describe('EditPlatformOrganization', () => {
     await waitFor(() => {
       expect(controllerPatchPayload).toBeDefined();
       expect(controllerPatchPayload?.name).toBe('Renamed Organization');
+      expect(controllerPatchPayload?.description).toBe('Test Description');
     });
   });
 });
