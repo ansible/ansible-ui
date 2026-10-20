@@ -84,16 +84,12 @@ test.describe('Workflow Viz', () => {
       const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
 
       await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', project);
-      await expect(
-        page.locator('[class*="topology__node__label"]', { hasText: projectName })
-      ).toBeVisible();
+      await expect(page.getByTestId('workflow-visualizer').getByText(projectName)).toBeVisible();
 
       await page.getByTestId('workflow-visualizer-toolbar-close').click();
       await WorkflowVisualizer.ui.navigateToVisualizer(page, workflowJobTemplate);
 
-      const projectNode = page.locator('[class*="topology__node__label"]', {
-        hasText: projectName,
-      });
+      const projectNode = page.getByTestId('workflow-visualizer').getByText(projectName);
       await expect(projectNode).toBeVisible();
       await projectNode.click();
       await expect(page.getByTestId('workflow-topology-sidebar')).toBeVisible();
