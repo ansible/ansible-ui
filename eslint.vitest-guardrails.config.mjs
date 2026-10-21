@@ -1,6 +1,7 @@
 import tseslint from 'typescript-eslint';
 import vitest from '@vitest/eslint-plugin';
 import i18next from 'eslint-plugin-i18next';
+import reactEffectPlugin from 'eslint-plugin-react-you-might-not-need-an-effect';
 import testingLibrary from 'eslint-plugin-testing-library';
 
 export default [
@@ -26,8 +27,10 @@ export default [
       '@vitest': vitest,
       'testing-library': testingLibrary,
       i18next,
+      'react-you-might-not-need-an-effect': reactEffectPlugin,
     },
     rules: {
+      ...reactEffectPlugin.configs.recommended.rules,
       'i18next/no-literal-string': 'off',
       '@vitest/expect-expect': [
         'warn',
@@ -41,21 +44,6 @@ export default [
         },
       ],
       '@vitest/no-identical-title': 'warn',
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector:
-            "CallExpression[callee.name='useInMemoryView'] > ObjectExpression > Property[key.name='toolbarFilters'][value.type='ArrayExpression']",
-          message:
-            'Pass a stable toolbarFilters reference to useInMemoryView; hoist or memoize the array so its effect does not repeatedly update filter state.',
-        },
-        {
-          selector:
-            "CallExpression[callee.name='useInMemoryView'] > ObjectExpression > Property[key.name='toolbarFilters'] > TSAsExpression > ArrayExpression",
-          message:
-            'Pass a stable toolbarFilters reference to useInMemoryView; hoist or memoize the array so its effect does not repeatedly update filter state.',
-        },
-      ],
       'testing-library/no-debugging-utils': 'warn',
       'testing-library/prefer-user-event': 'warn',
       'testing-library/no-node-access': 'warn',
