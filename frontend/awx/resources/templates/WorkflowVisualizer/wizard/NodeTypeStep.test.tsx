@@ -744,7 +744,6 @@ describe('NodeTypeStep', () => {
     expect(capturedPrompt).toMatchObject({ labels: [templateLabel] });
   });
 
-
   it('should not duplicate job_tags when step data and launch config defaults share the same tag', async () => {
     const tag = { name: 'deploy', label: 'deploy', value: 'deploy' };
     mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {

@@ -86,7 +86,10 @@ export function getNodeLabel(name: string, alias: string): string {
  * Prefer workflow step prompt arrays over launch defaults (nullish coalescing).
  * Avoids duplicating values when NodeTypeStep re-merges after launch config loads.
  */
-export function preservePromptList<T>(stepValue: T[] | undefined, launchValue: T[] | undefined): T[] {
+export function preservePromptList<T>(
+  stepValue: T[] | undefined,
+  launchValue: T[] | undefined
+): T[] {
   return stepValue ?? launchValue ?? [];
 }
 
