@@ -39,7 +39,7 @@ export function validateFeatureFlagCatalog(
       throw new Error(`Duplicate feature flag name: ${flag.name}`);
     }
     if (typeof flag.enabled !== 'boolean') {
-      throw new Error(`Invalid feature flag enabled value: ${flag.name}`);
+      throw new TypeError(`Invalid feature flag enabled value: ${flag.name}`);
     }
     if (!flag.description.trim() || !flag.owner.trim()) {
       throw new Error(`Feature flag requires a description and owner: ${flag.name}`);

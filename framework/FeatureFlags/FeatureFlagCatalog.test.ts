@@ -47,6 +47,14 @@ describe('feature flag catalog', () => {
     );
   });
 
+  it('throws a type error for a non-boolean enabled value', () => {
+    const invalidCatalog = [
+      { ...catalog[0], enabled: 'true' },
+    ] as unknown as FeatureFlagCatalogEntry[];
+
+    expect(() => validateFeatureFlagCatalog(invalidCatalog)).toThrow(TypeError);
+  });
+
   it.each([
     [{ ...catalog[0], name: 'invalid-name' }, 'Invalid feature flag name'],
     [[catalog[0], catalog[0]], 'Duplicate feature flag name'],

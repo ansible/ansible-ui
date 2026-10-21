@@ -79,6 +79,12 @@ function hasOwnProperty(value: object, key: string): boolean {
   return Object.prototype.hasOwnProperty.call(value, key);
 }
 
+function notifyListeners(listeners: ReadonlySet<() => void>): void {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
 function getDefaultStorage(): Storage | undefined {
   if (typeof window === 'undefined') {
     return undefined;
@@ -155,12 +161,6 @@ export function createLocalFeatureFlagProvider(
     }
   };
 
-  const notify = () => {
-    for (const listener of listeners) {
-      listener();
-    }
-  };
-
   return {
     name: 'local-development',
     evaluateBoolean: (flagKey, defaultValue, context) => {
@@ -176,7 +176,7 @@ export function createLocalFeatureFlagProvider(
       }
       delete overrides[flagKey];
       persist();
-      notify();
+      notifyListeners(listeners);
     },
     setOverride: (flagKey, enabled) => {
       if (overrides[flagKey] === enabled) {
@@ -184,7 +184,7 @@ export function createLocalFeatureFlagProvider(
       }
       overrides[flagKey] = enabled;
       persist();
-      notify();
+      notifyListeners(listeners);
     },
     subscribe: (listener) => {
       listeners.add(listener);
@@ -206,12 +206,6 @@ export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinit
   let context = options.context;
   let providerStatus: FeatureFlagProviderStatus = provider.initialize ? 'INITIALIZING' : 'READY';
 
-  const notify = () => {
-    for (const listener of listeners) {
-      listener();
-    }
-  };
-
   const initializeProvider = async () => {
     if (!provider.initialize) {
       return;
@@ -223,12 +217,12 @@ export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinit
     } catch {
       providerStatus = 'ERROR';
     }
-    notify();
+    notifyListeners(listeners);
   };
 
   const readyPromise = initializeProvider();
   const unsubscribeProvider = provider.subscribe?.(() => {
-    notify();
+    notifyListeners(listeners);
   });
 
   const evaluate = (flag: FeatureFlagKey<Definitions>): FeatureFlagEvaluation => {
@@ -299,10 +293,10 @@ export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinit
         await provider.setContext?.(nextContext);
       } catch {
         providerStatus = 'ERROR';
-        notify();
+        notifyListeners(listeners);
         return;
       }
-      notify();
+      notifyListeners(listeners);
     },
     subscribe: (listener) => {
       listeners.add(listener);
