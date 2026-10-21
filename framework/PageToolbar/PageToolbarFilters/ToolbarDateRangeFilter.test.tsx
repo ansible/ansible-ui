@@ -184,6 +184,10 @@ describe('DateRange validator', () => {
     }
   );
 
+  it('should disable the end date when the start date is invalid', () => {
+    expect(renderDateRange('invalid-date')).toBeDisabled();
+  });
+
   it('should skip ordering validation when there is no start date', () => {
     const endDate = renderDateRange();
 
