@@ -19,10 +19,7 @@
       "additionalProperties": false,
       "required": [
         "name",
-        "status",
         "defaultValue",
-        "scope",
-        "kind",
         "description",
         "owner",
         "removalDate"
@@ -32,19 +29,8 @@
           "type": "string",
           "pattern": "^FEATURE_[A-Z0-9_]+_ENABLED$"
         },
-        "status": {
-          "type": "string",
-          "enum": ["proposed", "alpha", "beta", "production", "deprecated"]
-        },
         "defaultValue": {
-          "type": "boolean"
-        },
-        "scope": {
-          "const": "client-only"
-        },
-        "kind": {
-          "type": "string",
-          "enum": ["release", "experiment", "operational", "kill-switch"]
+          "const": false
         },
         "description": {
           "type": "string",
@@ -58,26 +44,7 @@
           "type": "string",
           "format": "date"
         }
-      },
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "status": {
-                "const": "proposed"
-              }
-            },
-            "required": ["status"]
-          },
-          "then": {
-            "properties": {
-              "defaultValue": {
-                "const": false
-              }
-            }
-          }
-        }
-      ]
+      }
     }
   }
 }

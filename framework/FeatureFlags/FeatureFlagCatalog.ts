@@ -9,14 +9,9 @@ type FeatureFlagDefinitionsFromCatalog<Catalog extends readonly FeatureFlagCatal
 };
 
 const featureFlagNamePattern = /^FEATURE_[A-Z0-9_]+_ENABLED$/;
-const featureFlagKinds = new Set(['release', 'experiment', 'operational', 'kill-switch']);
-const featureFlagStatuses = new Set(['proposed', 'alpha', 'beta', 'production', 'deprecated']);
 const allowedCatalogFields = new Set([
   'name',
-  'status',
   'defaultValue',
-  'scope',
-  'kind',
   'description',
   'owner',
   'removalDate',
@@ -46,20 +41,11 @@ export function validateFeatureFlagCatalog(
     if (names.has(flag.name)) {
       throw new Error(`Duplicate feature flag name: ${flag.name}`);
     }
-    if (flag.status === 'proposed' && flag.defaultValue) {
-      throw new Error(`Proposed feature flag must default off: ${flag.name}`);
-    }
-    if (!featureFlagStatuses.has(flag.status)) {
-      throw new Error(`Invalid feature flag status: ${flag.name}`);
-    }
-    if (!featureFlagKinds.has(flag.kind)) {
-      throw new Error(`Invalid feature flag kind: ${flag.name}`);
-    }
-    if (flag.scope !== 'client-only') {
-      throw new Error(`Invalid feature flag scope: ${flag.name}`);
-    }
     if (typeof flag.defaultValue !== 'boolean') {
       throw new Error(`Invalid feature flag default: ${flag.name}`);
+    }
+    if (flag.defaultValue) {
+      throw new Error(`Feature flag must default off: ${flag.name}`);
     }
     if (!flag.description.trim() || !flag.owner.trim()) {
       throw new Error(`Feature flag requires a description and owner: ${flag.name}`);

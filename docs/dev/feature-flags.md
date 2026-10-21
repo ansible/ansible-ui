@@ -7,8 +7,7 @@ to a product screen; it is a reviewable contract for discussion.
 ## Goals
 
 - Keep definitions typed and discoverable.
-- Default flags to a safe value, normally `false` for unfinished UI.
-- Track lifecycle status separately from the current enabled state.
+- Default every flag to `false`; a provider can enable it for a configured environment.
 - Keep flag evaluation behind an explicit provider boundary.
 - Store only non-sensitive per-user preferences in browser storage for local development.
 - Pass environment and targeting context to a provider without putting secrets in the client.
@@ -34,11 +33,8 @@ const catalog = [
     name: 'FEATURE_EXAMPLE_VIEW_ENABLED',
     defaultValue: false,
     description: 'Example of an unfinished client-only view.',
-    kind: 'release',
     owner: 'UI platform team',
     removalDate: '2026-12-31',
-    scope: 'client-only',
-    status: 'proposed',
   },
 ] as const satisfies readonly FeatureFlagCatalogEntry[];
 
@@ -102,27 +98,24 @@ await registry.ready();
 await registry.setContext({ environment: 'devel', targetingKey: 'new-user' });
 ```
 
-Until a provider is ready, and when it fails or returns invalid data, the
-registry returns the catalog default with an error reason. Do not expose a
-default-on unfinished feature while the provider is initializing.
+The catalog and registry require `defaultValue: false`. A missing, unready, or
+failed provider therefore leaves the feature off and reports the evaluation
+reason.
 
 ## Public catalog
 
 The typed catalog in application code is the source of truth. Its validation
 rejects duplicate names, malformed removal dates, unexpected fields, and
-default-on proposed flags. [`feature-flags.json`](./feature-flags.json) is the
+defaults other than `false`. [`feature-flags.json`](./feature-flags.json) is the
 public catalog mirror, and its corresponding test keeps it valid and usable as
 registry definitions. The companion [`feature-flags.schema.json`](./feature-flags.schema.json)
-continues to provide editor validation. The `status` field describes lifecycle
-(`proposed`, `alpha`, `beta`, `production`, or `deprecated`); it does not claim
-that a flag is enabled for every user. `defaultValue` and the provider result
-determine client behavior.
+continues to provide editor validation. The provider supplies the on/off value
+for its environment; missing or failed providers leave the flag off.
 
 ## Development workflow
 
-Keep the committed catalog and registry definition at `defaultValue: false`
-while the feature is unfinished. A developer can enable the flag locally for a
-working session with the registry API:
+Every flag definition uses `defaultValue: false`. A development provider can
+enable a flag locally for a working session with the registry API:
 
 ```ts
 localProvider.setOverride('FEATURE_EXAMPLE_VIEW_ENABLED', true);
@@ -135,9 +128,8 @@ same override can be stored in the browser console:
 localStorage.setItem('ui:feature-flags', '{"FEATURE_EXAMPLE_VIEW_ENABLED":true}');
 ```
 
-Do not commit either override. Before merging to `devel`, keep the catalog and
-code default at `false`; CI and other users will therefore keep the unfinished
-feature hidden. Remove the local override with
+Do not commit either override. CI and other users keep the feature hidden unless
+their configured provider explicitly enables it. Remove the local override with
 `localProvider.resetOverride('FEATURE_EXAMPLE_VIEW_ENABLED')` or
 by clearing the `ui:feature-flags` browser-storage entry when testing the
 default-off path.

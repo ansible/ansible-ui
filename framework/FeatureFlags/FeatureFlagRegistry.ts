@@ -1,17 +1,8 @@
-export type FeatureFlagStatus = 'proposed' | 'alpha' | 'beta' | 'production' | 'deprecated';
-
-export type FeatureFlagKind = 'release' | 'experiment' | 'operational' | 'kill-switch';
-
-export type FeatureFlagScope = 'client-only';
-
 export interface FeatureFlagDefinition {
   readonly defaultValue: boolean;
   readonly description: string;
-  readonly kind: FeatureFlagKind;
   readonly owner: string;
   readonly removalDate: string;
-  readonly scope: FeatureFlagScope;
-  readonly status: FeatureFlagStatus;
 }
 
 export type FeatureFlagDefinitions = Readonly<Record<string, FeatureFlagDefinition>>;
@@ -206,6 +197,10 @@ export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinit
   definitions: Definitions,
   options: FeatureFlagRegistryOptions = {}
 ): FeatureFlagRegistry<Definitions> {
+  if (Object.values(definitions).some((definition) => definition.defaultValue)) {
+    throw new Error('Feature flags must default off');
+  }
+
   const provider = options.provider ?? createDefaultFeatureFlagProvider();
   const listeners = new Set<() => void>();
   let context = options.context;

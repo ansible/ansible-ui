@@ -36,20 +36,8 @@ const definitions = {
   experimentalView: {
     defaultValue: false,
     description: 'Example experimental view.',
-    kind: 'release',
     owner: 'UI platform team',
     removalDate: '2026-12-31',
-    scope: 'client-only',
-    status: 'proposed',
-  },
-  defaultOnView: {
-    defaultValue: true,
-    description: 'Example default-on view.',
-    kind: 'operational',
-    owner: 'UI platform team',
-    removalDate: '2026-12-31',
-    scope: 'client-only',
-    status: 'production',
   },
 } satisfies FeatureFlagDefinitions;
 
@@ -107,7 +95,6 @@ describe('createFeatureFlagRegistry', () => {
     const registry = createFeatureFlagRegistry(definitions, { provider });
 
     expect(registry.isEnabled('experimentalView')).toBe(false);
-    expect(registry.isEnabled('defaultOnView')).toBe(true);
   });
 
   it('keeps local overrides usable without browser storage', () => {
@@ -292,14 +279,14 @@ describe('createFeatureFlagRegistry', () => {
     const listener = vi.fn();
     const unsubscribe = registry.subscribe(listener);
 
-    provider.setOverride('defaultOnView', false);
+    provider.setOverride('experimentalView', true);
     expect(listener).toHaveBeenCalledOnce();
 
-    provider.resetOverride('defaultOnView');
+    provider.resetOverride('experimentalView');
     expect(listener).toHaveBeenCalledTimes(2);
 
     unsubscribe();
-    provider.setOverride('defaultOnView', false);
+    provider.setOverride('experimentalView', false);
     expect(listener).toHaveBeenCalledTimes(2);
   });
 
