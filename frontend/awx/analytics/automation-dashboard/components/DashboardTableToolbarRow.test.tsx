@@ -154,41 +154,33 @@ describe('DashboardTableToolbarRow', () => {
 
   // --- toolbarChangeHandler: success ---
 
-  test('should show success alert, call setCostState and refresh on engineer_avg_hourly_rate change', async () => {
+  test('should call setCostState and refresh without success toast on engineer_avg_hourly_rate change', async () => {
     renderRow();
     await triggerInputChange('engineer_avg_hourly_rate', '75');
-    await waitFor(() =>
-      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
-    );
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
     expect(mockSetCostState).toHaveBeenCalled();
-    expect(mockRefresh).toHaveBeenCalled();
+    expect(screen.queryByText(/Subscription costs updated successfully/i)).not.toBeInTheDocument();
   });
 
-  test('should show success alert on monthly_subscription_cost change', async () => {
+  test('should call refresh without success toast on monthly_subscription_cost change', async () => {
     renderRow();
     await triggerInputChange('monthly_subscription_cost', '200');
-    await waitFor(() =>
-      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
-    );
-    expect(mockRefresh).toHaveBeenCalled();
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
+    expect(screen.queryByText(/Subscription costs updated successfully/i)).not.toBeInTheDocument();
   });
 
-  test('should show success alert when switch is toggled', async () => {
+  test('should call setCostState without success toast when switch is toggled', async () => {
     const user = userEvent.setup();
     renderRow();
     await user.click(screen.getByTestId('switch-time-taken-automation-toggle'));
-    await waitFor(() =>
-      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
-    );
-    expect(mockSetCostState).toHaveBeenCalled();
+    await waitFor(() => expect(mockSetCostState).toHaveBeenCalled());
+    expect(screen.queryByText(/Subscription costs updated successfully/i)).not.toBeInTheDocument();
   });
 
   test('should skip setCostState call when setCostState is undefined', async () => {
     renderRow(buildProps({ setCostState: undefined }));
     await triggerInputChange('engineer_avg_hourly_rate', '75');
-    await waitFor(() =>
-      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
-    );
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
     expect(mockSetCostState).not.toHaveBeenCalled();
   });
 
@@ -243,5 +235,82 @@ describe('DashboardTableToolbarRow', () => {
 
     await triggerInputChange('engineer_avg_hourly_rate', '60');
     await waitFor(() => expect(screen.queryByText('Too high')).not.toBeInTheDocument());
+  });
+
+  // --- toolbarChangeHandler: rapid consecutive edits (AAP-87021) ---
+
+  test('should serialize rapid edits and send the latest values of all fields', async () => {
+    const bodies: ISubscriptionCosts[] = [];
+    let releaseFirstPut!: () => void;
+    const firstPutGate = new Promise<void>((resolve) => {
+      releaseFirstPut = resolve;
+    });
+    server.use(
+      http.put(/subscription_costs/, async ({ request }) => {
+        const body = (await request.json()) as ISubscriptionCosts;
+        bodies.push(body);
+        if (bodies.length === 1) {
+          await firstPutGate;
+        }
+        return HttpResponse.json(body);
+      })
+    );
+    renderRow();
+
+    await triggerInputChange('engineer_avg_hourly_rate', '75');
+    await waitFor(() => expect(bodies).toHaveLength(1));
+
+    // Second edit while the first PUT is still in flight: it must wait, not overtake.
+    await triggerInputChange('monthly_subscription_cost', '200');
+    await new Promise((r) => setTimeout(r, 700));
+    expect(bodies).toHaveLength(1);
+
+    releaseFirstPut();
+    await waitFor(() => expect(bodies).toHaveLength(2));
+    const latest = {
+      ...defaultCostState,
+      engineer_avg_hourly_rate: 75,
+      monthly_subscription_cost: 200,
+    };
+    expect(bodies[1]).toEqual(latest);
+
+    // Only the latest response is applied — the older one never reverts the state.
+    await waitFor(() => expect(mockSetCostState).toHaveBeenCalledTimes(1));
+    expect(mockSetCostState).toHaveBeenCalledWith(latest);
+    expect(mockRefresh).toHaveBeenCalledTimes(1);
+  });
+
+  test('should send the toggled-back value when the switch is clicked twice quickly', async () => {
+    const bodies: ISubscriptionCosts[] = [];
+    let releaseFirstPut!: () => void;
+    const firstPutGate = new Promise<void>((resolve) => {
+      releaseFirstPut = resolve;
+    });
+    server.use(
+      http.put(/subscription_costs/, async ({ request }) => {
+        const body = (await request.json()) as ISubscriptionCosts;
+        bodies.push(body);
+        if (bodies.length === 1) {
+          await firstPutGate;
+        }
+        return HttpResponse.json(body);
+      })
+    );
+    const user = userEvent.setup();
+    renderRow();
+    const toggle = screen.getByTestId('switch-time-taken-automation-toggle');
+
+    await user.click(toggle);
+    await waitFor(() => expect(bodies).toHaveLength(1));
+    expect(toggle).toBeChecked();
+
+    await user.click(toggle);
+    expect(toggle).not.toBeChecked();
+
+    releaseFirstPut();
+    await waitFor(() => expect(bodies).toHaveLength(2));
+    expect(bodies[1].include_template_creation_time_in_costs).toBe(false);
+    await waitFor(() => expect(mockSetCostState).toHaveBeenCalledTimes(1));
+    expect(mockSetCostState).toHaveBeenCalledWith(defaultCostState);
   });
 });

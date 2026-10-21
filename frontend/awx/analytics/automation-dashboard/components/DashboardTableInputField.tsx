@@ -6,7 +6,7 @@ import {
   HelperTextItem,
   TextInput,
 } from '@patternfly/react-core';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DashboardTableInputFieldProps } from '../types';
 import { Help } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
@@ -29,13 +29,41 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
   const [value, setValue] = useState<string | number | undefined>('');
   const [error, setError] = useState<string | null>(null);
 
+  // Valid value typed by the user but not yet handed to onChange (debounce pending).
+  const pendingValueRef = useRef<number | undefined>(undefined);
+  // True from the first keystroke until a valid value is handed to onChange, so an
+  // intermediate invalid entry (e.g. an emptied field) is protected as well.
+  const isEditingRef = useRef(false);
+  const onChangeRef = useRef(onChange);
   useEffect(() => {
+    onChangeRef.current = onChange;
+  });
+
+  useEffect(() => {
+    // Do not overwrite what the user is still typing with an earlier saved value.
+    if (isEditingRef.current) {
+      return;
+    }
     setValue(props.value);
     setError(null);
   }, [props.value]);
 
+  // Send a pending value on unmount instead of silently dropping it.
+  useEffect(
+    () => () => {
+      const pendingValue = pendingValueRef.current;
+      if (pendingValue !== undefined) {
+        pendingValueRef.current = undefined;
+        onChangeRef.current(pendingValue);
+      }
+    },
+    []
+  );
+
   const setValueDebounced = useDebounce((newValue: number | undefined) => {
+    pendingValueRef.current = undefined;
     if (newValue !== undefined) {
+      isEditingRef.current = false;
       onChange(newValue);
     }
   }, 600);
@@ -45,6 +73,8 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
     // If the debounce fires with undefined, onChange is not called (see setValueDebounced above).
     // A new valid save is rescheduled at the bottom if validation passes.
     setValueDebounced(undefined);
+    pendingValueRef.current = undefined;
+    isEditingRef.current = true;
     setError(null);
     setValue(newValue);
     const numberValue = Number(newValue);
@@ -64,6 +94,7 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
       setError(t('Value must be greater than or equal to {{min}}.', { min }));
       return;
     }
+    pendingValueRef.current = numberValue;
     setValueDebounced(numberValue);
   };
 

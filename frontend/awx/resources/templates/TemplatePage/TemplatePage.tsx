@@ -16,10 +16,7 @@ import { useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import {
-  canViewNotificationsTab,
-  useNotificationAdminOrganizations,
-} from '../../../common/useNotificationAdminOrganizations';
+import { useTemplateNotificationsAccess } from '../../../common/useNotificationAdminOrganizations';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -39,8 +36,10 @@ export function TemplatePage() {
     isLoading: isTemplateLoading,
     refresh,
   } = useGetItem<JobTemplate>(awxAPI`/job_templates`, params.id);
-  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
-    useNotificationAdminOrganizations();
+  const notificationsAccess = useTemplateNotificationsAccess(
+    activeAwxUser,
+    template?.summary_fields.organization?.id
+  );
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const itemActions = useTemplateActions({
@@ -57,14 +56,13 @@ export function TemplatePage() {
       { label: t('Jobs'), page: AwxRoute.JobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.JobTemplateSurvey },
     ];
-    if (canViewNotificationsTab(activeAwxUser, notificationAdminOrganizations)) {
+    if (notificationsAccess.canView) {
       tabs.push({ label: t('Notifications'), page: AwxRoute.JobTemplateNotifications });
     }
     return tabs;
-  }, [t, activeAwxUser, notificationAdminOrganizations]);
+  }, [t, notificationsAccess.canView]);
   if (templateError) return <AwxError error={templateError} handleRefresh={refresh} />;
-  if (isTemplateLoading || isLoadingNotificationAdminOrganizations)
-    return <LoadingPage breadcrumbs tabs />;
+  if (isTemplateLoading || notificationsAccess.isLoading) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
@@ -90,7 +88,7 @@ export function TemplatePage() {
         }}
         tabs={tabs}
         params={{ id: template?.id }}
-        componentParams={{ template }}
+        componentParams={{ template, notificationsReadOnly: notificationsAccess.readOnly }}
       />
     </PageLayout>
   );

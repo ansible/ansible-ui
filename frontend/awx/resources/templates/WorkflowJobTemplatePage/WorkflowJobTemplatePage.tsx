@@ -16,10 +16,7 @@ import { useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
 import { awxAPI } from '../../../common/api/awx-utils';
-import {
-  canViewNotificationsTab,
-  useNotificationAdminOrganizations,
-} from '../../../common/useNotificationAdminOrganizations';
+import { useTemplateNotificationsAccess } from '../../../common/useNotificationAdminOrganizations';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -39,8 +36,10 @@ export function WorkflowJobTemplatePage() {
     refresh,
   } = useGetItem<WorkflowJobTemplate>(awxAPI`/workflow_job_templates`, params.id);
 
-  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
-    useNotificationAdminOrganizations();
+  const notificationsAccess = useTemplateNotificationsAccess(
+    activeAwxUser,
+    template?.organization ?? template?.summary_fields.organization?.id
+  );
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const itemActions = useTemplateActions({
@@ -55,16 +54,16 @@ export function WorkflowJobTemplatePage() {
       { label: t('Schedules'), page: AwxRoute.WorkflowJobTemplateSchedules },
       { label: t('Jobs'), page: AwxRoute.WorkflowJobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.WorkflowJobTemplateSurvey },
-      canViewNotificationsTab(activeAwxUser, notificationAdminOrganizations)
+      notificationsAccess.canView
         ? { label: t('Notifications'), page: AwxRoute.WorkflowJobTemplateNotifications }
         : false,
     ],
 
-    [t, activeAwxUser, notificationAdminOrganizations]
+    [t, notificationsAccess.canView]
   );
 
   if (templateError) return <AwxError error={templateError} handleRefresh={refresh} />;
-  if (!template || isTemplateLoading || isLoadingNotificationAdminOrganizations)
+  if (!template || isTemplateLoading || notificationsAccess.isLoading)
     return <LoadingPage breadcrumbs tabs />;
 
   return (
@@ -91,7 +90,7 @@ export function WorkflowJobTemplatePage() {
         }}
         tabs={tabs}
         params={{ id: template.id }}
-        componentParams={{ template }}
+        componentParams={{ template, notificationsReadOnly: notificationsAccess.readOnly }}
       />
     </PageLayout>
   );

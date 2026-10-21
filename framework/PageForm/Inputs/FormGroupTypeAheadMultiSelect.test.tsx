@@ -82,6 +82,50 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
     expect(onHandleSelection).toHaveBeenCalledWith({ name: 'Team 1' });
   });
 
+  it('filters options as the user types', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'Team 2');
+
+    expect(screen.getByTestId('select-option-team2')).toBeInTheDocument();
+    expect(screen.queryByTestId('select-option-team1')).not.toBeInTheDocument();
+  });
+
+  it('clears a removable selected chip', async () => {
+    const user = userEvent.setup();
+    const onHandleClear = vi.fn();
+    renderComponent({
+      onHandleClear,
+      value: [{ name: 'Team 1' }],
+    });
+
+    const chip = screen.getByTestId('selected-chip');
+    await user.click(within(chip).getByRole('button'));
+
+    expect(onHandleClear).toHaveBeenCalledWith('Team 1');
+  });
+
+  it('clears the input filter without clearing selected values', async () => {
+    const user = userEvent.setup();
+    const onHandleClear = vi.fn();
+    renderComponent({
+      onHandleClear,
+      value: [{ name: 'Team 1' }],
+    });
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'Team 2');
+    await user.click(screen.getByTestId('clear-button'));
+
+    expect(onHandleClear).not.toHaveBeenCalled();
+    expect(input).toHaveValue('');
+    expect(screen.getByTestId('selected-chip')).toHaveTextContent('Team 1');
+  });
+
   describe('Helper Text and Validation', () => {
     it('shows helper text when provided', () => {
       renderComponent({

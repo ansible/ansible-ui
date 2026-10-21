@@ -124,8 +124,6 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     details: mockDetails,
     detailsError: undefined,
     detailsLoading: false,
-    templateIdsError: undefined,
-    isLoadingTemplateIds: false,
     costState: {
       id: 1,
       monthly_subscription_cost: 100,
@@ -494,13 +492,12 @@ describe('DashboardMainTableCard', () => {
 
   // --- onTableInputChange: success ---
 
-  test('should show success alert after successful save', async () => {
+  test('should not show success alert after successful save', async () => {
     await triggerInputSave();
-    await waitFor(() =>
-      expect(
-        screen.getByText(/Template metadata for Test Template updated successfully/i)
-      ).toBeInTheDocument()
-    );
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
+    expect(
+      screen.queryByText(/Template metadata for Test Template updated successfully/i)
+    ).not.toBeInTheDocument();
   });
 
   test('should call refresh after successful put', async () => {
@@ -586,5 +583,65 @@ describe('DashboardMainTableCard', () => {
     await user.clear(input);
     await user.type(input, '50');
     await waitFor(() => expect(screen.queryByText('Too large')).not.toBeInTheDocument());
+  });
+
+  // --- onTableInputChange: rapid consecutive edits (AAP-87021) ---
+
+  test('should serialize rapid edits of one row and send both latest time values', async () => {
+    const bodies: Record<string, number>[] = [];
+    let releaseFirstPut!: () => void;
+    const firstPutGate = new Promise<void>((resolve) => {
+      releaseFirstPut = resolve;
+    });
+    server.use(
+      http.put(/template_metadata\/1\//, async ({ request }) => {
+        const body = (await request.json()) as Record<string, number>;
+        bodies.push(body);
+        if (bodies.length === 1) {
+          await firstPutGate;
+        }
+        return HttpResponse.json(body);
+      })
+    );
+    const mainTableView = buildMainTableView();
+    renderCard(
+      buildProps({
+        mainTableView,
+        costState: {
+          id: 1,
+          monthly_subscription_cost: 100,
+          engineer_avg_hourly_rate: 50,
+          include_template_creation_time_in_costs: true,
+        },
+      })
+    );
+    const user = userEvent.setup();
+
+    const manualInput = screen.getByTestId('time_taken_manually_execute_minutes_1');
+    await user.clear(manualInput);
+    await user.type(manualInput, '50');
+    await waitFor(() => expect(bodies).toHaveLength(1));
+
+    // Edit the other column of the same row while the first PUT is in flight.
+    const createInput = screen.getByTestId('time_taken_create_automation_minutes_1');
+    await user.clear(createInput);
+    await user.type(createInput, '90');
+    await new Promise((r) => setTimeout(r, 700));
+    expect(bodies).toHaveLength(1);
+
+    releaseFirstPut();
+    await waitFor(() => expect(bodies).toHaveLength(2));
+    expect(bodies[1]).toEqual({
+      time_taken_manually_execute_minutes: 50,
+      time_taken_create_automation_minutes: 90,
+    });
+
+    await waitFor(() => expect(mainTableView.updateItem).toHaveBeenCalledTimes(1));
+    expect(mainTableView.updateItem).toHaveBeenCalledWith(
+      expect.objectContaining({
+        time_taken_manually_execute_minutes: 50,
+        time_taken_create_automation_minutes: 90,
+      })
+    );
   });
 });

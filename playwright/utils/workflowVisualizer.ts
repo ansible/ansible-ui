@@ -29,6 +29,16 @@ export interface RenderWFVizWithMockDataOptions {
   page: Page;
 }
 
+/** Empty workflows expose two Add step controls; with nodes on canvas only one is shown. */
+async function clickWorkflowVisualizerAddStep(page: Page): Promise<void> {
+  const addStepButtons = page.getByRole('button', { name: 'Add step' });
+  await expect(addStepButtons.first()).toBeVisible({ timeout: 15_000 });
+  const addStepButton =
+    (await addStepButtons.count()) > 1 ? addStepButtons.nth(1) : addStepButtons.first();
+  await expect(addStepButton).toBeVisible();
+  await addStepButton.click();
+}
+
 export const WorkflowVisualizer = {
   api: {
     createNode: async (
@@ -171,26 +181,39 @@ export const WorkflowVisualizer = {
       }
     },
 
+    addWorkflowStepWithoutSave: async (
+      page: Page,
+      stepType: string,
+      stepResourceName: string,
+      resourceSelectInputLabel: string
+    ): Promise<void> => {
+      await clickWorkflowVisualizerAddStep(page);
+      await expect(page.getByRole('dialog')).toBeVisible();
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: stepType, exact: true }).click();
+      await page.getByLabel(`${resourceSelectInputLabel} *`).click();
+      if (stepType === 'Approval') {
+        await page.getByLabel('Name').fill(stepResourceName);
+      } else {
+        await page.getByLabel('Search input').fill(stepResourceName);
+        await page.getByRole('option', { name: stepResourceName }).click();
+      }
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
+    },
+
     createNode: async (
       page: Page,
       stepType: string,
       stepResourceName: string,
       resourceSelectInputLabel: string
     ): Promise<void> => {
-      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
-      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-      await page.getByRole('option', { name: `${stepType}`, exact: true }).click();
-      await page.getByLabel(`${resourceSelectInputLabel} *`).click();
-      if (stepType === 'Approval') {
-        await page.getByLabel('Name').fill(stepResourceName);
-      } else {
-        await page.getByLabel('Search input').fill(stepResourceName);
-        await page.getByRole('option', { name: `${stepResourceName}` }).click();
-      }
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
+      await WorkflowVisualizer.ui.addWorkflowStepWithoutSave(
+        page,
+        stepType,
+        stepResourceName,
+        resourceSelectInputLabel
+      );
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();

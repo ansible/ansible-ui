@@ -198,10 +198,14 @@ describe('BulkActionDialog', () => {
     renderDialog({ items: [{ id: 1, name: 'Item 1' }], actionFn, onClose });
 
     await waitFor(() => expect(actionFn).toHaveBeenCalled());
-    await waitFor(() => expect(screen.getAllByText('Success').length).toBeGreaterThanOrEqual(1));
+    await waitFor(() => {
+      expect(screen.getAllByText('Success').length).toBeGreaterThanOrEqual(1);
+      expect(screen.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument();
+    });
+    expect(vi.getTimerCount()).toBe(1);
     await vi.advanceTimersByTimeAsync(1000);
 
-    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(onClose).toHaveBeenCalled();
     expect(onClose.mock.calls[0][0]).toBe('success');
     vi.useRealTimers();
   });

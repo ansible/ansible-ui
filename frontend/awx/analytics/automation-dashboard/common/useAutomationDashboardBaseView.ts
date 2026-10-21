@@ -4,11 +4,7 @@ import { useFetcher } from '@ansible/common-ui/crud/Data';
 import useSWR from 'swr';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { RequestError } from '../../../../common/crud/RequestError';
-import {
-  getQueryString,
-  getSystemJobExclusionParams,
-  hasValidRequiredFilters,
-} from '../utils/queryString';
+import { getQueryString, hasValidRequiredFilters } from '../utils/queryString';
 
 export type IAutomationDashboardBaseView<T extends { id: number }> = IView & {
   itemCount: number | undefined;
@@ -29,21 +25,8 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
   /** Extra querystring params passed to the backed API.  */
   queryParams?: QueryParams;
   defaultFilters?: { [key: string]: string[] };
-
-  /** Template IDs to inject when no user template filter is active (excludes system jobs). */
-  systemJobExclusionTemplateIds?: [string, string][];
-
-  /** When true, delays fetching until system job exclusion template IDs finish loading. */
-  isLoadingSystemJobExclusionIds?: boolean;
 }): IAutomationDashboardBaseView<T> {
-  const {
-    url,
-    toolbarFilters,
-    queryParams,
-    defaultFilters,
-    systemJobExclusionTemplateIds,
-    isLoadingSystemJobExclusionIds,
-  } = options;
+  const { url, toolbarFilters, queryParams, defaultFilters } = options;
 
   const view = useView({
     defaultValues: {
@@ -62,20 +45,11 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
     return hasValidRequiredFilters(toolbarFilters, view.filterState);
   }, [toolbarFilters, view.filterState]);
 
-  const extraSearchParams = getSystemJobExclusionParams(
-    view.filterState,
-    systemJobExclusionTemplateIds
-  );
-  const queryString = getQueryString(
-    view,
-    toolbarFilters || [],
-    queryParams || {},
-    extraSearchParams
-  );
+  const queryString = getQueryString(view, toolbarFilters || [], queryParams || {});
 
   // Only add queryString if all required filters are valid
   // If not valid, set url to null to prevent SWR from fetching
-  const fetchUrl = filtersValid && !isLoadingSystemJobExclusionIds ? url + queryString : null;
+  const fetchUrl = filtersValid ? url + queryString : null;
 
   const fetcher = useFetcher();
   const response = useSWR<AwxItemsResponse<T>>(fetchUrl, fetcher, { keepPreviousData: true });
