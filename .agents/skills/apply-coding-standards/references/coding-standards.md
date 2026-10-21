@@ -755,6 +755,6 @@ const hasResults = !isLoading && !error && items.length > 0;
 ### Prefer native/browser APIs
 
 Reach for the platform before writing (or importing) custom code — see
-`pr-review skill` for the review grep. Deep copy → `structuredClone(obj)`; query
+`review-pr skill` for the review grep. Deep copy → `structuredClone(obj)`; query
 strings → `URLSearchParams`; request cancellation → `AbortController`; URL
 parsing → `new URL(...)`.

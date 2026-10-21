@@ -11,9 +11,9 @@ Load this skill before implementing, reviewing, or refactoring any frontend code
 
 Before writing any code, read these skills in order:
 
-1. **`.agents/skills/frontend-overlay/SKILL.md`** — this repo’s wrappers, API
+1. **`.agents/skills/apply-frontend-overlay/SKILL.md`** — this repo’s wrappers, API
    helpers, E2E paths
-2. **`.agents/skills/coding-standards/SKILL.md`** — API helpers, PageForm wrappers,
+2. **`.agents/skills/apply-coding-standards/SKILL.md`** — API helpers, PageForm wrappers,
    view hooks, error adapters, CRUD hooks, framework component inventory,
    RBAC helpers, ESLint rules
 3. **`.agents/skills/testing-guidelines/SKILL.md`** — Vitest + MSW patterns, accessible
@@ -179,7 +179,7 @@ accessibility.
 - All user-facing strings wrapped in `t()` from `useTranslation`
 - Never compare translated display strings in logic — compare raw API values
 - ESLint enforces `i18next/no-literal-string` on JSX attributes
-- Full patterns: coding-standards § Internationalization
+- Full patterns: apply-coding-standards guide § Internationalization
 
 ### ESLint Rules
 - `eqeqeq: "error"` — strict equality always
@@ -191,7 +191,7 @@ accessibility.
 - Advisory guardrails: `npm run eslint:guardrails`. Rules and thresholds live
   in `eslint.guardrails.config.mjs` (source of truth — do not hardcode limits
   here). Do **not** introduce new warnings. Extract helpers instead of
-  disabling rules. See coding-standards §15.
+  disabling rules. See apply-coding-standards guide §15.
 
 ---
 
@@ -244,7 +244,7 @@ accessibility.
 
 ## Step 6: Implementation Workflow
 
-1. Read the skills (coding-standards, testing-guidelines, library-references)
+1. Read the skills (apply-coding-standards, testing-guidelines, library-references)
 2. Identify the correct workspace for the work
 3. Search for existing framework/PF/common components before creating new ones
    — prefer editing existing files over creating new ones

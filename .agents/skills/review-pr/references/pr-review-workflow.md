@@ -9,8 +9,8 @@ Your goal is to review a pull request with high clarity, consistency, and alignm
 Before reviewing the PR, read:
 
 - `AGENTS.md` trigger table, then the matching skills (not the whole skill set)
-- `.agents/skills/frontend-overlay/SKILL.md` for wrappers and API helpers
-- Any domain-specific skill: coding-standards, testing-guidelines
+- `.agents/skills/apply-frontend-overlay/SKILL.md` for wrappers and API helpers
+- Any domain-specific skill: apply-coding-standards, testing-guidelines
 
 **Branch Strategy:**
 
@@ -229,9 +229,10 @@ improvements. Skip test recommendations when they do not apply to the diff.
 ## 6. Summarize When It Helps
 
 When the PR description is unclear or the change needs a handoff, provide a
-concise summary of what changed, why it matters, relevant tradeoffs, and any
-follow-up work. Create a separate Markdown document only when the change itself
-requires durable documentation; do not create one as a routine review deliverable.
+concise summary in simplified technical English of what changed, why it matters,
+relevant tradeoffs, and any follow-up work. Create a separate Markdown document
+only when the change itself requires durable documentation; do not create one as
+a routine review deliverable.
 
 ---
 

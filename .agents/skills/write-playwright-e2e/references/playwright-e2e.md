@@ -4,7 +4,7 @@
 Default to Vitest for unit/component work (see
 `.agents/skills/testing-guidelines/SKILL.md`). Use Playwright for integration, e2e,
 and live testing. For ports, env file, and stack commands, read
-`.agents/skills/frontend-overlay/SKILL.md`.
+`.agents/skills/apply-frontend-overlay/SKILL.md`.
 
 ## MCP workflow
 
@@ -86,7 +86,8 @@ prefer a reusable fixture or command over hidden module-level state.
 #### 1. Prefer user-facing locators, then stable test IDs
 
 ```typescript
-// Preferred when the control has an accessible name
+// Preferred when the control has an accessible name.
+// If no accessible name exists, this can indicate there is an a11y bug.
 await page.getByRole('button', { name: 'Create credential' }).click();
 
 // Use a stable explicit contract when a user-facing locator is not practical

@@ -11,11 +11,11 @@ and entrypoints concise.
 | Trigger | Read |
 | --- | --- |
 | Before implementing, reviewing, or refactoring frontend code | .agents/skills/frontend-specialist/SKILL.md |
-| Before writing components, forms, pages, or hooks | .agents/skills/coding-standards/SKILL.md |
-| Product wrappers, API helpers, paths | .agents/skills/frontend-overlay/SKILL.md |
+| Before writing components, forms, pages, or hooks | .agents/skills/apply-coding-standards/SKILL.md |
+| Product wrappers, API helpers, paths | .agents/skills/apply-frontend-overlay/SKILL.md |
 | Before writing or reviewing a Vitest unit/component test | .agents/skills/testing-guidelines/SKILL.md |
-| Writing, running, or debugging Playwright E2E | .agents/skills/frontend-playwright-e2e/SKILL.md |
-| Before reviewing a pull request | .agents/skills/pr-review/SKILL.md |
+| Writing, running, or debugging Playwright E2E | .agents/skills/write-playwright-e2e/SKILL.md |
+| Before reviewing a pull request | .agents/skills/review-pr/SKILL.md |
 | Before coding with React, SWR, Vitest, Vite, or PatternFly 6 | .agents/skills/library-references/SKILL.md |
 | When analyzing SonarCloud issues | .agents/skills/sonarcloud-analyze/SKILL.md |
 | When fixing selected SonarCloud issues | .agents/skills/sonarcloud-fix/SKILL.md |
