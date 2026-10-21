@@ -7,7 +7,8 @@ to a product screen; it is a reviewable contract for discussion.
 ## Goals
 
 - Keep definitions typed and discoverable.
-- Default every flag to `false`; a provider can enable it for a configured environment.
+- Keep each shipped on/off value in source-controlled JSON so changes are reviewed in a PR.
+- Use `false` as the fallback when a flag value is missing or evaluation fails.
 - Keep flag evaluation behind an explicit provider boundary.
 - Store only non-sensitive per-user preferences in browser storage for local development.
 - Pass environment and targeting context to a provider without putting secrets in the client.
@@ -19,30 +20,22 @@ to a product screen; it is a reviewable contract for discussion.
 ## Example
 
 ```tsx
+import featureFlagConfig from './feature-flags.json';
 import {
+  createFeatureFlagConfigProvider,
   createFeatureFlagDefinitions,
   createFeatureFlagRegistry,
-  createLocalFeatureFlagProvider,
   createFeatureFlagScope,
 } from '@ansible/ansible-ui-framework';
 import type { FeatureFlagCatalogEntry } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 
-const catalog = [
-  {
-    name: 'FEATURE_EXAMPLE_VIEW_ENABLED',
-    defaultValue: false,
-    description: 'Example of an unfinished client-only view.',
-    owner: 'UI platform team',
-    removalDate: '2026-12-31',
-  },
-] as const satisfies readonly FeatureFlagCatalogEntry[];
-
+// Import the app-owned JSON file; the docs/dev JSON is this example's fixture.
+const catalog = featureFlagConfig.flags as readonly FeatureFlagCatalogEntry[];
 const definitions = createFeatureFlagDefinitions(catalog);
-const localProvider = createLocalFeatureFlagProvider();
+const configProvider = createFeatureFlagConfigProvider(catalog);
 const registry = createFeatureFlagRegistry(definitions, {
-  context: { environment: 'development' },
-  provider: localProvider,
+  provider: configProvider,
 });
 const featureFlags = createFeatureFlagScope<typeof definitions>();
 
@@ -72,52 +65,44 @@ function ExampleView() {
 }
 ```
 
-The application owns one typed catalog, one registry, and one React scope. The
-catalog uses `FEATURE_<NAME>_ENABLED` identifiers, matching the existing AWX
-feature-flag convention. The registry delegates evaluation to its provider and
-returns evaluation details
-including the source/reason. With no provider, the registry returns the code
-default. The local provider persists explicit overrides under a namespaced
-browser-storage key; a production provider should instead read the approved
-runtime flag service.
+The application owns one JSON config, one registry, and one React scope. The
+`enabled` boolean is the shipped on/off value. A PR that changes it takes effect
+when the application is built and deployed; it is not a live runtime switch.
+`createFeatureFlagDefinitions` keeps the safe fallback at `false`, while
+`createFeatureFlagConfigProvider` supplies the checked-in JSON value. The
+`FEATURE_<NAME>_ENABLED` identifier follows the existing AWX convention.
 
 ## Provider boundary
 
-Application code should depend on the typed scope, not on a vendor SDK or a
-specific transport. A future runtime provider can initialize asynchronously,
-receive context changes, and notify the registry when values change while
-preserving the same application-facing API:
+Application code depends on the typed scope. The source-controlled config
+provider reads the JSON `enabled` values when the app loads. Changing a value
+through a PR takes effect after that app build is deployed; there is no live
+runtime switch or polling service.
 
-```ts
-const registry = createFeatureFlagRegistry(definitions, {
-  context: { environment: 'devel', targetingKey: 'development-user' },
-  provider: runtimeFeatureFlagProvider,
-});
-
-await registry.ready();
-await registry.setContext({ environment: 'devel', targetingKey: 'new-user' });
-```
-
-The catalog and registry require `defaultValue: false`. A missing, unready, or
-failed provider therefore leaves the feature off and reports the evaluation
-reason.
+Definitions always use the safe fallback `defaultValue: false`. A missing,
+unready, or failed provider therefore leaves the feature off and reports the
+evaluation reason.
 
 ## Public catalog
 
-The typed catalog in application code is the source of truth. Its validation
-rejects duplicate names, malformed removal dates, unexpected fields, and
-defaults other than `false`. [`feature-flags.json`](./feature-flags.json) is the
-public catalog mirror, and its corresponding test keeps it valid and usable as
-registry definitions. The companion [`feature-flags.schema.json`](./feature-flags.schema.json)
-continues to provide editor validation. The provider supplies the on/off value
-for its environment; missing or failed providers leave the flag off.
+The app-owned JSON is the source of truth for each shipped toggle. Validation
+rejects duplicate names, invalid boolean values, malformed removal dates, and
+unexpected fields. [`feature-flags.json`](./feature-flags.json) is the example
+config used by the tests; the companion [`feature-flags.schema.json`](./feature-flags.schema.json)
+provides editor validation. The JSON `enabled` value may be `true` or `false`;
+registry defaults and provider failures remain off. The value applies to builds
+that import that config; use environment-specific config files when development
+and production need different values.
 
 ## Development workflow
 
-Every flag definition uses `defaultValue: false`. A development provider can
-enable a flag locally for a working session with the registry API:
+For a local experiment, a development build can use the local provider and
+enable a flag for a working session with the registry API:
 
 ```ts
+import { createLocalFeatureFlagProvider } from '@ansible/ansible-ui-framework';
+
+const localProvider = createLocalFeatureFlagProvider();
 localProvider.setOverride('FEATURE_EXAMPLE_VIEW_ENABLED', true);
 ```
 
@@ -128,8 +113,8 @@ same override can be stored in the browser console:
 localStorage.setItem('ui:feature-flags', '{"FEATURE_EXAMPLE_VIEW_ENABLED":true}');
 ```
 
-Do not commit either override. CI and other users keep the feature hidden unless
-their configured provider explicitly enables it. Remove the local override with
+Do not commit local overrides. To change the shipped value, update the app-owned
+JSON in a PR and deploy that change. Remove the local override with
 `localProvider.resetOverride('FEATURE_EXAMPLE_VIEW_ENABLED')` or
 by clearing the `ui:feature-flags` browser-storage entry when testing the
 default-off path.
@@ -138,11 +123,9 @@ default-off path.
 
 Client-only flags are not a security boundary. Never use them to grant access,
 protect secrets, enforce permissions, or control backend behavior. A user can
-change browser storage. Use server-side authorization and the approved runtime
-flag service for those concerns.
+change browser storage. Keep authorization and backend controls server-side.
 
 Before production use, each flag should have a named owner, a removal date, a
 flag-off test, a flag-on test, and a documented decision about whether the
-behavior can be safely backported. Keep the production provider adapter in its
-own PR after the runtime service is selected; do not add an unapproved service
-or client credentials to this shared framework layer.
+behavior can be safely backported. A client-side flag only controls presentation;
+it cannot protect permissions, backend behavior, or secrets.

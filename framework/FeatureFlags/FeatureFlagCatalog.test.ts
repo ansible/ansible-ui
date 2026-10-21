@@ -1,6 +1,7 @@
 import featureFlagsDocument from '../../docs/dev/feature-flags.json';
 import { describe, expect, it } from 'vitest';
 import {
+  createFeatureFlagConfigProvider,
   createFeatureFlagDefinitions,
   validateFeatureFlagCatalog,
   type FeatureFlagCatalogEntry,
@@ -9,7 +10,7 @@ import {
 const catalog = featureFlagsDocument.flags as FeatureFlagCatalogEntry[];
 
 describe('feature flag catalog', () => {
-  it('keeps the documented catalog valid and usable as registry definitions', () => {
+  it('keeps the JSON config valid and creates safe registry definitions', () => {
     expect(() => validateFeatureFlagCatalog(catalog)).not.toThrow();
     expect(createFeatureFlagDefinitions(catalog)).toEqual({
       FEATURE_EXAMPLE_VIEW_ENABLED: {
@@ -21,11 +22,21 @@ describe('feature flag catalog', () => {
     });
   });
 
-  it('rejects duplicate names, invalid lifecycle data, and unexpected fields', () => {
+  it('uses the JSON enabled value as the flag provider value', () => {
+    const enabledCatalog = [{ ...catalog[0], enabled: true }];
+    const provider = createFeatureFlagConfigProvider(enabledCatalog);
+
+    expect(provider.evaluateBoolean(catalog[0].name, false)).toEqual({
+      flagKey: catalog[0].name,
+      reason: 'PROVIDER',
+      value: true,
+    });
+  });
+
+  it('rejects duplicate names and unexpected fields', () => {
     const invalidCatalog = [
       {
         ...catalog[0],
-        defaultValue: true,
         extra: true,
       },
       catalog[0],
@@ -39,8 +50,7 @@ describe('feature flag catalog', () => {
   it.each([
     [{ ...catalog[0], name: 'invalid-name' }, 'Invalid feature flag name'],
     [[catalog[0], catalog[0]], 'Duplicate feature flag name'],
-    [{ ...catalog[0], defaultValue: true }, 'Feature flag must default off'],
-    [{ ...catalog[0], defaultValue: 'true' }, 'Invalid feature flag default'],
+    [{ ...catalog[0], enabled: 'true' }, 'Invalid feature flag enabled value'],
     [{ ...catalog[0], description: ' ' }, 'Feature flag requires a description and owner'],
     [{ ...catalog[0], owner: ' ' }, 'Feature flag requires a description and owner'],
     [{ ...catalog[0], removalDate: '2026-02-30' }, 'Invalid feature flag removal date'],

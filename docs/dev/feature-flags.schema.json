@@ -19,7 +19,7 @@
       "additionalProperties": false,
       "required": [
         "name",
-        "defaultValue",
+        "enabled",
         "description",
         "owner",
         "removalDate"
@@ -29,8 +29,8 @@
           "type": "string",
           "pattern": "^FEATURE_[A-Z0-9_]+_ENABLED$"
         },
-        "defaultValue": {
-          "const": false
+        "enabled": {
+          "type": "boolean"
         },
         "description": {
           "type": "string",
