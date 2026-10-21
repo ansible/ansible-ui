@@ -118,24 +118,24 @@ describe('PageDashboardChart', () => {
     renderChart(undefined, undefined, false);
 
     const dependentAxis = screen.getAllByTestId('chart-axis')[1];
-    expect(dependentAxis.getAttribute('data-integer-tick')).toBeNull();
-    expect(dependentAxis.getAttribute('data-decimal-tick')).toBeNull();
+    expect(dependentAxis.dataset.integerTick).toBeUndefined();
+    expect(dependentAxis.dataset.decimalTick).toBeUndefined();
   });
 
   it('filters non-integer dependent-axis ticks by default', () => {
     renderChart();
 
     const dependentAxis = screen.getAllByTestId('chart-axis')[1];
-    expect(dependentAxis.getAttribute('data-integer-tick')).toBe('1');
-    expect(dependentAxis.getAttribute('data-decimal-tick')).toBe('');
+    expect(dependentAxis.dataset.integerTick).toBe('1');
+    expect(dependentAxis.dataset.decimalTick).toBe('');
   });
 
   it('uses a larger scatter marker for active points', () => {
     renderChart(PageDashboardChartVariantE.lineChart);
 
     const scatter = screen.getByTestId('chart-scatter');
-    expect(scatter.getAttribute('data-size-active')).toBe('6');
-    expect(scatter.getAttribute('data-size-inactive')).toBe('3');
+    expect(scatter.dataset.sizeActive).toBe('6');
+    expect(scatter.dataset.sizeInactive).toBe('3');
   });
 
   it.each([
