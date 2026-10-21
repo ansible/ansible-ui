@@ -1,0 +1,72 @@
+---
+# Temporary validation for aap-konflux-pipelines PR 4641 (vite preview sidecar).
+# Same pattern as ansible-ui#3259: custom catalog bundle tag + dedicated PAC comment.
+# Trigger on a PR with: /run-playwright-vite-preview
+# Update bundle digest after pipeline team publishes from the konflux PR branch.
+# Remove this file after merging konflux PR 4641 and bumping aap-ui-e2e.yaml bundle digest.
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: aap-ui-e2e-vite-preview-pull-request
+  annotations:
+    build.appstudio.openshift.io/repo: https://github.com/{{repo_owner}}/{{repo_name}}?rev={{revision}}
+    build.appstudio.redhat.com/commit_sha: '{{revision}}'
+    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
+    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/on-comment: "^/run-playwright-vite-preview$"
+    pipelinesascode.tekton.dev/target-namespace: ansible-ci-tenant
+  labels:
+    appstudio.openshift.io/application: '{{repo_owner}}'
+    appstudio.openshift.io/component: '{{repo_owner}}-{{repo_name}}'
+    pipelines.appstudio.openshift.io/type: build
+spec:
+  timeouts:
+    pipeline: "8h"
+    tasks: "7h"
+    finally: "1h"
+  pipelineRef:
+    resolver: bundles
+    params:
+      - name: name
+        value: aap-ui-tests
+      - name: bundle
+        # TODO: replace digest after publishing from aap-konflux-pipelines#4641 (e.g. tag PR-4641)
+        value: quay.io/aap-ci/tekton-catalog/pipeline/test/aap-ui-tests:PR-4641@sha256:0000000000000000000000000000000000000000000000000000000000000000
+      - name: kind
+        value: pipeline
+      - name: secret
+        value: quay-aap-ci-viewer
+
+  taskRunTemplate:
+    serviceAccountName: konflux-integration-runner
+
+  params:
+    - name: git-url
+      value: '{{source_url}}'
+    - name: pipeline-pr-number
+      value: '{{pull_request_number}}'
+    - name: pipeline-github-org
+      value: '{{repo_owner}}'
+    - name: pipeline-github-repo
+      value: '{{repo_name}}'
+    - name: pipeline-target-branch
+      value: '{{target_branch}}'
+    - name: pipeline-sender
+      value: '{{sender}}'
+    - name: revision
+      value: '{{revision}}'
+
+  workspaces:
+    - name: workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+    - name: git-auth
+      secret:
+        secretName: '{{ git_auth_secret }}'
