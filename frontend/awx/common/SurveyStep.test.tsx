@@ -309,6 +309,32 @@ describe('SurveyStep', () => {
     });
   });
 
+  test('loads survey_spec using wizard resourceId when resource object is not set', async () => {
+    const apiPath = awxAPI`/job_templates/456/survey_spec/`;
+    server.use(
+      http.get(apiPath, () => HttpResponse.json(testSurveys.withoutColons)),
+      http.options(apiPath, () => HttpResponse.json({ actions: { POST: {} } }))
+    );
+
+    vi.mocked(usePageWizard).mockReturnValue({
+      wizardData: {
+        resourceId: 456,
+        schedule_type: 'job_template',
+      },
+      stepData: { survey: {} },
+    } as unknown as ReturnType<typeof usePageWizard>);
+
+    render(
+      <TestWrapper>
+        <SurveyStep />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Simple Choice')).toBeInTheDocument();
+    });
+  });
+
   test('applies survey_spec OPTIONS pattern validation to text survey answers', async () => {
     const user = userEvent.setup();
     const textSurvey: Survey = {

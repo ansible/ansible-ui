@@ -55,9 +55,27 @@ export function SurveyStep({
   if (!resource && stepData?.nodePromptsStep) {
     resource = (stepData?.nodePromptsStep as WizardFormValues).resource;
   }
-  const id = resource ? resource?.id?.toString() : templateId ? templateId : '';
+  if (!resource && stepData?.promptStep) {
+    resource = (stepData.promptStep as WizardFormValues).resource;
+  }
+  const wizardResourceId = (wizardData as { resourceId?: number | null }).resourceId;
+  const id =
+    resource?.id?.toString() ??
+    (wizardResourceId !== undefined && wizardResourceId !== null
+      ? wizardResourceId.toString()
+      : undefined) ??
+    templateId ??
+    '';
 
-  jobType = jobType ?? getJobType(resource);
+  const scheduleType = (wizardData as { schedule_type?: string }).schedule_type;
+  jobType =
+    jobType ??
+    getJobType(resource) ??
+    (scheduleType === 'workflow_job_template'
+      ? 'workflow_job_templates'
+      : scheduleType === 'job_template'
+        ? 'job_templates'
+        : undefined);
 
   const surveySpecUrl = awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`;
 
