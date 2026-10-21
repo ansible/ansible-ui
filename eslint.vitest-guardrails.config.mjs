@@ -1,6 +1,7 @@
 import tseslint from 'typescript-eslint';
 import vitest from '@vitest/eslint-plugin';
 import i18next from 'eslint-plugin-i18next';
+import reactEffectPlugin from 'eslint-plugin-react-you-might-not-need-an-effect';
 import testingLibrary from 'eslint-plugin-testing-library';
 
 export default [
@@ -26,8 +27,10 @@ export default [
       '@vitest': vitest,
       'testing-library': testingLibrary,
       i18next,
+      'react-you-might-not-need-an-effect': reactEffectPlugin,
     },
     rules: {
+      ...reactEffectPlugin.configs.recommended.rules,
       'i18next/no-literal-string': 'off',
       '@vitest/expect-expect': [
         'warn',
