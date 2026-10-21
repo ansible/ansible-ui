@@ -103,7 +103,7 @@ Tests should be tagged based on their capabilities. Tags are built into playwrig
 | @not_mock | This test should not run when testing against the mock API                            |
 |  @upgrade | This test should only run against a server that is setup for upgrade                  |
 |    @tier1 | This test runs in the Tier 1 Jenkins nightly pipeline (green-path customer scenarios) |
-|   @visual | Visual regression test (excluded from Jenkins runs via `NOT_TAGS`)                    |
+|   @visual | Mock-backed visual regression test (mock Chromium only; excluded from Jenkins via `NOT_TAGS`) |
 
 ### Tier 1 Tagging Convention
 
@@ -135,6 +135,9 @@ TAGS=@tier1 npm run live
 
 # Exclude visual tests (used in all Jenkins runs)
 NOT_TAGS=@visual npm run live
+
+# Run mock-backed visual tests locally
+TAGS=@visual npx playwright test --project "mock chromium"
 
 # Both can be combined
 TAGS=@tier1 NOT_TAGS=@visual npm run live

@@ -7,7 +7,13 @@ set -e
 # Optional test file argument (default: all visual tests)
 TEST_ARG="${1:-tests/visual/}"
 
-if command -v podman >/dev/null 2>&1; then
+if [[ -n "${VISUAL_CONTAINER_RUNTIME:-}" ]]; then
+  if ! command -v "$VISUAL_CONTAINER_RUNTIME" >/dev/null 2>&1; then
+    echo "Error: requested container runtime '$VISUAL_CONTAINER_RUNTIME' is not installed"
+    exit 1
+  fi
+  CONTAINER_RUNTIME="$VISUAL_CONTAINER_RUNTIME"
+elif command -v podman >/dev/null 2>&1; then
   CONTAINER_RUNTIME=podman
 elif command -v docker >/dev/null 2>&1; then
   CONTAINER_RUNTIME=docker
@@ -38,10 +44,14 @@ echo "[2/3] Running snapshot update in container..."
 echo "This may take several minutes..."
 echo ""
 
+mkdir -p "$PROJECT_ROOT/playwright/test-results" "$PROJECT_ROOT/playwright/playwright/html-report"
+
 $CONTAINER_RUNTIME run --rm \
   -e VISUAL_TEST_PATH="$TEST_ARG" \
   -e SKIP_COVERAGE=true \
   -v "$PROJECT_ROOT/playwright/tests/visual:/work/playwright/tests/visual:z" \
+  -v "$PROJECT_ROOT/playwright/test-results:/work/playwright/test-results:z" \
+  -v "$PROJECT_ROOT/playwright/playwright/html-report:/work/playwright/playwright/html-report:z" \
   aap-ui-visual
 
 # Step 3: Summary

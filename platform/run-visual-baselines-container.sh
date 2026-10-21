@@ -20,7 +20,20 @@ cd /work/platform
 npm run preview &
 server_pid=$!
 
-sleep 5
+preview_url='https://localhost:4100'
+preview_ready=false
+for attempt in {1..30}; do
+  if curl --insecure --silent --fail --output /dev/null "$preview_url"; then
+    preview_ready=true
+    break
+  fi
+  sleep 1
+done
+
+if [[ "$preview_ready" != true ]]; then
+  echo 'Vite preview did not become ready within 30 seconds.' >&2
+  exit 1
+fi
 
 echo 'Running Playwright visual tests...'
 cd /work/playwright
@@ -28,4 +41,4 @@ npx playwright test "${VISUAL_TEST_PATH:-tests/visual/}" \
   --project 'mock chromium' \
   --workers=1 \
   --retries=0 \
-  --update-snapshots
+  --update-snapshots=all
