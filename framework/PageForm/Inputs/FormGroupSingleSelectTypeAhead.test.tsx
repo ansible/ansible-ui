@@ -55,7 +55,7 @@ describe('FormGroupSingleSelectTypeAhead', () => {
   });
 
   it('should select an existing option and close the menu', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const onHandleSelection = vi.fn();
     const ControlledSelect = () => {
       const [value, setValue] = useState<string | null>(null);
@@ -79,12 +79,13 @@ describe('FormGroupSingleSelectTypeAhead', () => {
 
     expect(onHandleSelection).toHaveBeenCalledWith({ name: 'option1' });
     await waitFor(() => {
-      expect(input).toHaveValue('Option 1');
-      expect(input).toHaveAttribute('aria-expanded', 'false');
+      const updatedInput = screen.getByRole('textbox');
+      expect(updatedInput).toHaveValue('Option 1');
+      expect(updatedInput).toHaveAttribute('aria-expanded', 'false');
     });
 
-    rerender(<FormGroupSingleSelectTypeAhead {...defaultProps} value="option1" />);
-    expect(input).toHaveValue('Option 1');
+    rerender(<ControlledSelect />);
+    expect(screen.getByRole('textbox')).toHaveValue('Option 1');
   });
 
   it('should create a new option when creation is enabled', async () => {
@@ -115,6 +116,32 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     expect(
       screen.getByRole('option', { name: 'No results found for "Unknown option"' })
     ).toBeDisabled();
+  });
+
+  it('should show the required field indicator', () => {
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} isRequired />);
+
+    const label = screen.getByText('Test Select');
+    const requiredIndicator = label.parentElement?.querySelector('.pf-v6-c-form__label-required');
+
+    expect(requiredIndicator).toBeInTheDocument();
+  });
+
+  it('should show invalid helper text', () => {
+    render(
+      <FormGroupSingleSelectTypeAhead
+        {...defaultProps}
+        helperTextInvalid="This field is required."
+      />
+    );
+
+    expect(screen.getByText('This field is required.')).toBeInTheDocument();
+  });
+
+  it('should disable the input while submitting', () => {
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} isSubmitting />);
+
+    expect(screen.getByRole('textbox')).toBeDisabled();
   });
 
   it('should handle keyboard navigation with no options', async () => {

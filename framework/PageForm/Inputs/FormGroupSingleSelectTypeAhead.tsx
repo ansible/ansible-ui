@@ -403,7 +403,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
       isFullWidth
       isDisabled={isReadOnly || isSubmitting}
     >
-      <TextInputGroup isPlain>
+      <TextInputGroup isPlain isDisabled={isReadOnly || isSubmitting}>
         <TextInputGroupMain
           value={inputValue}
           onClick={onInputClick}
