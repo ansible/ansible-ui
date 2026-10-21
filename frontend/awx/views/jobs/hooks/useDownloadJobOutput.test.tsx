@@ -22,6 +22,8 @@ afterAll(() => server.close());
 
 describe('useDownloadJobOutput', () => {
   const mockJob = {
+    id: 26,
+    type: 'job',
     name: 'Test Job',
     related: { stdout: '/api/v2/jobs/26/stdout/' },
   } as unknown as UnifiedJob;
@@ -34,7 +36,44 @@ describe('useDownloadJobOutput', () => {
     const { result } = renderHook(() => useDownloadJobOutput());
     await result.current(mockJob);
 
-    expect(downloadTextFile).toHaveBeenCalledWith('Test Job', 'line1\nline2\nline3');
+    expect(downloadTextFile).toHaveBeenCalledWith('job_Test Job_26', 'line1\nline2\nline3');
+  });
+
+  it('should give two logs from the same template distinct filenames', async () => {
+    server.use(
+      http.get('*/jobs/26/stdout/', () => new HttpResponse('first run', { status: 200 })),
+      http.get('*/jobs/27/stdout/', () => new HttpResponse('second run', { status: 200 }))
+    );
+
+    const { result } = renderHook(() => useDownloadJobOutput());
+    await result.current(mockJob);
+    await result.current({
+      ...mockJob,
+      id: 27,
+      related: { stdout: '/api/v2/jobs/27/stdout/' },
+    } as unknown as UnifiedJob);
+
+    expect(downloadTextFile).toHaveBeenNthCalledWith(1, 'job_Test Job_26', 'first run');
+    expect(downloadTextFile).toHaveBeenNthCalledWith(2, 'job_Test Job_27', 'second run');
+  });
+
+  it('should use the unified job type in the filename', async () => {
+    server.use(
+      http.get(
+        '*/project_updates/31/stdout/',
+        () => new HttpResponse('scm output', { status: 200 })
+      )
+    );
+
+    const { result } = renderHook(() => useDownloadJobOutput());
+    await result.current({
+      id: 31,
+      type: 'project_update',
+      name: 'Demo Project',
+      related: { stdout: '/api/v2/project_updates/31/stdout/' },
+    } as unknown as UnifiedJob);
+
+    expect(downloadTextFile).toHaveBeenCalledWith('project_update_Demo Project_31', 'scm output');
   });
 
   it('should throw a RequestError when the API returns an error', async () => {
