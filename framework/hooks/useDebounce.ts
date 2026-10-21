@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { DebouncedFunction, debounce } from '../utils/debounce';
 
 export function useDebounce<Args extends unknown[]>(
@@ -6,9 +6,7 @@ export function useDebounce<Args extends unknown[]>(
   wait: number
 ): DebouncedFunction<Args> {
   const callbackRef = useRef(callback);
-  useLayoutEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
+  callbackRef.current = callback;
 
   const debounced = useMemo(
     () => debounce((...args: Args) => callbackRef.current(...args), wait),
