@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -56,26 +57,34 @@ describe('FormGroupSingleSelectTypeAhead', () => {
   it('should select an existing option and close the menu', async () => {
     const user = userEvent.setup();
     const onHandleSelection = vi.fn();
-    const { rerender } = render(
-      <FormGroupSingleSelectTypeAhead {...defaultProps} onHandleSelection={onHandleSelection} />
-    );
+    const ControlledSelect = () => {
+      const [value, setValue] = useState<string | null>(null);
+
+      return (
+        <FormGroupSingleSelectTypeAhead
+          {...defaultProps}
+          value={value}
+          onHandleSelection={(selection) => {
+            onHandleSelection(selection);
+            setValue(selection.name);
+          }}
+        />
+      );
+    };
+    const { rerender } = render(<ControlledSelect />);
 
     const input = screen.getByRole('textbox');
     await user.click(input);
     await user.click(screen.getByRole('option', { name: 'Option 1' }));
 
     expect(onHandleSelection).toHaveBeenCalledWith({ name: 'option1' });
-    rerender(
-      <FormGroupSingleSelectTypeAhead
-        {...defaultProps}
-        onHandleSelection={onHandleSelection}
-        value="option1"
-      />
-    );
     await waitFor(() => {
       expect(input).toHaveValue('Option 1');
       expect(input).toHaveAttribute('aria-expanded', 'false');
     });
+
+    rerender(<FormGroupSingleSelectTypeAhead {...defaultProps} value="option1" />);
+    expect(input).toHaveValue('Option 1');
   });
 
   it('should create a new option when creation is enabled', async () => {
