@@ -45,14 +45,6 @@ export function useTemplateTimesSave(
       unsavedTemplateTimesRef.current.delete(item.id);
       mainTableView.updateItem({ ...item, ...updatedData });
 
-      alertToaster.addAlert({
-        variant: 'success',
-        title: t('Template metadata for {{templateName}} updated successfully.', {
-          templateName: item.template_name,
-        }),
-        timeout: 5000,
-      });
-
       // Refresh: a failure here does not undo the save.
       try {
         await refresh();

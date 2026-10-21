@@ -5,6 +5,7 @@ import noOnlyTests from 'eslint-plugin-no-only-tests';
 import prettier from 'eslint-plugin-prettier';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
+import reactEffectPlugin from 'eslint-plugin-react-you-might-not-need-an-effect';
 import sonarjs from 'eslint-plugin-sonarjs';
 
 export default [
@@ -40,9 +41,11 @@ export default [
       prettier,
       react,
       'react-hooks': reactHooks,
+      'react-you-might-not-need-an-effect': reactEffectPlugin,
       sonarjs,
     },
     rules: {
+      ...reactEffectPlugin.configs.recommended.rules,
       'max-lines': ['warn', 500],
       'max-lines-per-function': ['warn', 200],
       complexity: ['warn', 20],

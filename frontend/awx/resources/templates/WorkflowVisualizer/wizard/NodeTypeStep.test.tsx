@@ -540,6 +540,210 @@ describe('NodeTypeStep', () => {
     expect(capturedPrompt).toMatchObject({ scm_branch: 'release' });
   });
 
+  it('should not duplicate labels when step data and launch config defaults share the same label', async () => {
+    const nodeLabel = { id: 1, name: 'JAK' };
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_labels_on_launch: true,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null, labels: [nodeLabel] },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    const stepStateWithNodeLabels = {
+      nodePromptsStep: {
+        prompt: { ...mockStepState.nodePromptsStep.prompt, labels: [nodeLabel] },
+      },
+    };
+
+    let capturedPrompt: { labels?: { id: number; name: string }[] } | undefined;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: typeof stepStateWithNodeLabels) => {
+            nodePromptsStep?: { prompt?: { labels?: { id: number; name: string }[] } };
+          }
+        )(stepStateWithNodeLabels);
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt?.labels).toEqual([nodeLabel]);
+    expect(capturedPrompt?.labels).toHaveLength(1);
+  });
+
+  it('should use launch config labels as fallback when step data has no labels override', async () => {
+    const templateLabel = { id: 2, name: 'prod' };
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_labels_on_launch: true,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null, labels: [templateLabel] },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    const stepStateWithoutLabelOverride = {
+      nodePromptsStep: {
+        prompt: { ...mockStepState.nodePromptsStep.prompt, labels: undefined },
+      },
+    };
+
+    let capturedPrompt: unknown;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: typeof stepStateWithoutLabelOverride) => {
+            nodePromptsStep?: { prompt?: unknown };
+          }
+        )(stepStateWithoutLabelOverride);
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt).toMatchObject({ labels: [templateLabel] });
+  });
+
+  it('should default labels to an empty array when step and launch config provide none', async () => {
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_labels_on_launch: true,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    const stepStateWithoutLabelOverride = {
+      nodePromptsStep: {
+        prompt: { ...mockStepState.nodePromptsStep.prompt, labels: undefined },
+      },
+    };
+
+    let capturedPrompt: { labels?: { id: number; name: string }[] } | undefined;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: typeof stepStateWithoutLabelOverride) => {
+            nodePromptsStep?: { prompt?: { labels?: { id: number; name: string }[] } };
+          }
+        )(stepStateWithoutLabelOverride);
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt?.labels).toEqual([]);
+  });
+
+  it('should keep empty step labels instead of falling back to launch config defaults', async () => {
+    const templateLabel = { id: 2, name: 'prod' };
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_labels_on_launch: true,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null, labels: [templateLabel] },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    const stepStateWithEmptyLabels = {
+      nodePromptsStep: {
+        prompt: { ...mockStepState.nodePromptsStep.prompt, labels: [] },
+      },
+    };
+
+    let capturedPrompt: { labels?: { id: number; name: string }[] } | undefined;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: typeof stepStateWithEmptyLabels) => {
+            nodePromptsStep?: { prompt?: { labels?: { id: number; name: string }[] } };
+          }
+        )(stepStateWithEmptyLabels);
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt?.labels).toEqual([]);
+  });
+
+  it('should use launch config labels when step prompt state is missing', async () => {
+    const templateLabel = { id: 3, name: 'stage' };
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_labels_on_launch: true,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null, labels: [templateLabel] },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    let capturedPrompt: unknown;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: Record<string, unknown>) => {
+            nodePromptsStep?: { prompt?: unknown };
+          }
+        )({});
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt).toMatchObject({ labels: [templateLabel] });
+  });
+
   it('registers launch config loads that can be awaited during wizard validation', async () => {
     render(
       <TestWrapper

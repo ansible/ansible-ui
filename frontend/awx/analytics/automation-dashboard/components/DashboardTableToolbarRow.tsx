@@ -48,13 +48,6 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
         setCostState(savedState);
       }
 
-      // PUT succeeded — show success before attempting the refresh.
-      alertToaster.addAlert({
-        variant: 'success',
-        title: t('Subscription costs updated successfully.'),
-        timeout: 5000,
-      });
-
       // Refresh: a failure here does not undo the save.
       try {
         await refresh();

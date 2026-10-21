@@ -154,41 +154,33 @@ describe('DashboardTableToolbarRow', () => {
 
   // --- toolbarChangeHandler: success ---
 
-  test('should show success alert, call setCostState and refresh on engineer_avg_hourly_rate change', async () => {
+  test('should call setCostState and refresh without success toast on engineer_avg_hourly_rate change', async () => {
     renderRow();
     await triggerInputChange('engineer_avg_hourly_rate', '75');
-    await waitFor(() =>
-      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
-    );
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
     expect(mockSetCostState).toHaveBeenCalled();
-    expect(mockRefresh).toHaveBeenCalled();
+    expect(screen.queryByText(/Subscription costs updated successfully/i)).not.toBeInTheDocument();
   });
 
-  test('should show success alert on monthly_subscription_cost change', async () => {
+  test('should call refresh without success toast on monthly_subscription_cost change', async () => {
     renderRow();
     await triggerInputChange('monthly_subscription_cost', '200');
-    await waitFor(() =>
-      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
-    );
-    expect(mockRefresh).toHaveBeenCalled();
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
+    expect(screen.queryByText(/Subscription costs updated successfully/i)).not.toBeInTheDocument();
   });
 
-  test('should show success alert when switch is toggled', async () => {
+  test('should call setCostState without success toast when switch is toggled', async () => {
     const user = userEvent.setup();
     renderRow();
     await user.click(screen.getByTestId('switch-time-taken-automation-toggle'));
-    await waitFor(() =>
-      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
-    );
-    expect(mockSetCostState).toHaveBeenCalled();
+    await waitFor(() => expect(mockSetCostState).toHaveBeenCalled());
+    expect(screen.queryByText(/Subscription costs updated successfully/i)).not.toBeInTheDocument();
   });
 
   test('should skip setCostState call when setCostState is undefined', async () => {
     renderRow(buildProps({ setCostState: undefined }));
     await triggerInputChange('engineer_avg_hourly_rate', '75');
-    await waitFor(() =>
-      expect(screen.getByText(/Subscription costs updated successfully/i)).toBeInTheDocument()
-    );
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
     expect(mockSetCostState).not.toHaveBeenCalled();
   });
 

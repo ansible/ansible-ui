@@ -3,7 +3,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePersistentFilters } from '@ansible/common-ui/PersistentFilters';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { awxAPI } from '../../common/api/awx-utils';
 import { AwxItemsResponse } from '../../common/AwxItemsResponse';
 import { useAwxView } from '../../common/useAwxView';
@@ -23,6 +23,7 @@ interface ResourceTypeMapper {
 
 export function ResourceNotifications({ resourceType, id }: { resourceType: string; id?: string }) {
   const { t } = useTranslation();
+  const outletContext = useOutletContext<{ notificationsReadOnly?: boolean } | undefined>();
 
   // modify to the specific resource id when adding a new resource that requires the notifications view
   const resourceToParamMap: ResourceTypeMapper = {
@@ -101,7 +102,7 @@ export function ResourceNotifications({ resourceType, id }: { resourceType: stri
         id="awx-inventory-sources-table"
         toolbarFilters={toolbarFilters}
         tableColumns={tableColumns}
-        rowActions={rowActions}
+        rowActions={outletContext?.notificationsReadOnly ? [] : rowActions}
         errorStateTitle={t(
           `Error loading ${
             resourceToErrorMsg[resourceType as keyof ResourceTypeMapper]

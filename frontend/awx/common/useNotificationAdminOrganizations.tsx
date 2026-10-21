@@ -31,3 +31,48 @@ export function canViewNotificationsTab(
     !!activeAwxUser?.is_system_auditor || (notificationAdminOrganizations?.results.length ?? 0) > 0
   );
 }
+
+export function getTemplateNotificationsAccess(
+  activeAwxUser: { is_system_auditor?: boolean } | null | undefined,
+  templateOrganizationId: number | null | undefined,
+  notificationAdminOrganizations?: AwxItemsResponse<Organization>,
+  auditorOrganizations?: AwxItemsResponse<Organization>
+) {
+  const managerAccess = canViewNotificationsTab(activeAwxUser, notificationAdminOrganizations);
+  const isAuditorOfTemplateOrganization =
+    typeof templateOrganizationId === 'number' &&
+    auditorOrganizations?.results.some(
+      (organization) => organization.id === templateOrganizationId
+    ) === true;
+
+  return {
+    canView: managerAccess || isAuditorOfTemplateOrganization,
+    readOnly: !managerAccess && isAuditorOfTemplateOrganization,
+  };
+}
+
+export function useTemplateNotificationsAccess(
+  activeAwxUser: { is_system_auditor?: boolean } | null | undefined,
+  templateOrganizationId: number | null | undefined
+) {
+  const { notificationAdminOrganizations, isLoadingNotificationAdminOrganizations } =
+    useNotificationAdminOrganizations();
+  const { data: auditorOrganizations, isLoading: isLoadingAuditorOrganizations } = useGet<
+    AwxItemsResponse<Organization>
+  >(
+    awxAPI`/organizations/`,
+    { role_level: 'auditor_role', count_disabled: 1 },
+    { shouldRetryOnError: false }
+  );
+  const access = getTemplateNotificationsAccess(
+    activeAwxUser,
+    templateOrganizationId,
+    notificationAdminOrganizations,
+    auditorOrganizations
+  );
+
+  return {
+    ...access,
+    isLoading: isLoadingNotificationAdminOrganizations || isLoadingAuditorOrganizations,
+  };
+}
