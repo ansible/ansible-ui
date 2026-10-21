@@ -339,7 +339,18 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.getByRole('button', { name: 'Save' }).nth(0).click();
+      await expect(
+        page.locator('[class*="topology__node__label"]', { hasText: projectTwoName })
+      ).toBeVisible();
+      const saveResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/workflow_nodes/') && response.request().method() === 'POST'
+      );
+      const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
+      await expect(saveButton).toBeEnabled();
+      await saveButton.click();
+      const saveResponse = await saveResponsePromise;
+      expect(saveResponse.status()).toBe(201);
       await expect(
         page.getByRole('heading', { name: 'Success alert: Successfully' })
       ).toBeVisible();
