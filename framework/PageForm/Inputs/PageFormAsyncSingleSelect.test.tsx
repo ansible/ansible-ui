@@ -69,6 +69,9 @@ function TestForm({
         <PageFormAsyncSingleSelect
           name="value"
           label="Value"
+          placeholder="Select value"
+          queryLabel={(value) => String(value)}
+          queryOptions={() => Promise.resolve({ next: 0, remaining: 0, options: [] })}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
           id={id}
