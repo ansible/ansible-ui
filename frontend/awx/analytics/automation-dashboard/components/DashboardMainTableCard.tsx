@@ -255,7 +255,6 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       <CardBody>
         <PageTable<IJobTemplate>
           keyFn={(item) => item.id}
-          autoHidePagination
           disableBodyPadding
           tableColumns={tableColumns}
           errorStateTitle={t('Error loading data.')}
