@@ -70,7 +70,7 @@ function TestForm({
           name="value"
           label="Value"
           placeholder="Select value"
-          queryLabel={(value) => String(value)}
+          queryLabel={String}
           queryOptions={() => Promise.resolve({ next: 0, remaining: 0, options: [] })}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
@@ -192,7 +192,7 @@ describe('PageFormAsyncSingleSelect validation message', () => {
   it('links the select to its form group when an id is provided', () => {
     render(<TestForm id="custom-select" />);
 
-    expect(screen.getByTestId('async-single-select').getAttribute('data-describedby')).toBe(
+    expect(screen.getByTestId('async-single-select').dataset.describedby).toBe(
       'custom-select-form-group'
     );
   });
