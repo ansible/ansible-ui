@@ -20,11 +20,11 @@ export function validateRequiredCredentialTypes(
 
   const { prompt } = wizardData;
   const selectedCredentials = prompt?.credentials || [];
-  const selectedCredentialTypes = selectedCredentials.map(
-    (credential) => credential.credential_type
+  const selectedCredentialTypes = new Set(
+    selectedCredentials.map((credential) => credential.credential_type)
   );
   const missingTypes = requiredCredentialTypes.filter(
-    (requiredType) => !selectedCredentialTypes.includes(requiredType.id)
+    (requiredType) => !selectedCredentialTypes.has(requiredType.id)
   );
 
   if (missingTypes.length) {
