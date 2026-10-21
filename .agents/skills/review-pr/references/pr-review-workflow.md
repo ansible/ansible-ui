@@ -15,7 +15,7 @@ Before reviewing the PR, read:
 **Branch Strategy:**
 
 - Base branch: `devel` (unless specified otherwise)
-- Review diff: `git diff devel...HEAD` or `devel` → current branch
+- Review diff: `gh pr diff <N> --repo OWNER/REPO`
 - Focus on changes introduced by the current branch, not existing code in `devel`
 
 ### Identify PR Scope (CRITICAL)
@@ -26,18 +26,18 @@ produces misleading feedback.
 - When GitHub CLI is available, start with `gh pr view <N> --json
   title,body,additions,deletions,baseRefName,headRefName` and
   `gh api "repos/OWNER/REPO/pulls/<N>/files" --paginate --jq '.[].filename'`.
-  Then use `git diff --stat devel...HEAD` and scoped `git diff` hunks for the
-  detailed review. Confirm the file list matches what the PR claims to change.
-- Use three-dot `devel...HEAD` so you see only this branch's changes, not
-  unrelated commits that landed on `devel` after it forked.
+  Then use `gh pr diff <N> --repo OWNER/REPO` for the detailed review. Confirm
+  the file list matches what the PR claims to change.
+- Use the PR-specific GitHub diff so a different local branch or base cannot
+  change which patch you review.
 - When the diff is large or surprising, confirm scope with the author before
   reviewing line-by-line.
 
-| Pitfall                              | Avoid by                                   |
-| ------------------------------------ | ------------------------------------------ |
-| Reviewing files the PR never touched | Diff the exact range; don't browse `devel` |
-| Stale diff after a rebase/force-push | `git fetch` and re-diff before commenting  |
-| Two-dot vs three-dot confusion       | Use `devel...HEAD` to isolate the branch   |
+| Pitfall                              | Avoid by                                                   |
+| ------------------------------------ | ---------------------------------------------------------- |
+| Reviewing files the PR never touched | Use the PR file list and `gh pr diff <N>`                  |
+| Stale diff after a rebase/force-push | Refresh with `gh pr diff <N>` before commenting            |
+| Local base/head mismatch             | Don't use local `devel...HEAD`; review the PR-specific diff |
 
 ---
 
@@ -164,8 +164,8 @@ When reviewing new components or logic, ask these critical questions:
 ### Rule Bypass Checks
 
 New code should not silence the tooling instead of fixing the problem. Grep the
-diff (`git diff devel...HEAD`) for each of these and review every hit in added
-lines:
+PR-specific diff (`gh pr diff <N> --repo OWNER/REPO`) for each of these and
+review every hit in added lines:
 
 | Pattern                                       | Review expectation               | Ask for instead                                                          |
 | --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------ |
@@ -174,7 +174,7 @@ lines:
 | `TODO` / `FIXME` / `HACK` / `XXX`             | Must not hide unfinished work    | Resolve, or file a tracked issue                                         |
 | Custom deep copy / query parsing / UUID       | Avoid re-inventing platform APIs | Native API (`structuredClone` / `URLSearchParams` / `crypto.randomUUID`) |
 
-Recipe: `git diff devel...HEAD | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expect-error)|TODO|FIXME|HACK|XXX'`
+Recipe: `gh pr diff <N> --repo OWNER/REPO | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expect-error)|TODO|FIXME|HACK|XXX'`
 
 ### HTML → PatternFly 6 Component Mapping
 
