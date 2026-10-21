@@ -335,6 +335,91 @@ describe('SurveyStep', () => {
     });
   });
 
+  test('loads survey_spec from promptStep resource when wizard resource is absent', async () => {
+    const apiPath = awxAPI`/job_templates/321/survey_spec/`;
+    server.use(
+      http.get(apiPath, () => HttpResponse.json(testSurveys.withoutColons)),
+      http.options(apiPath, () => HttpResponse.json({ actions: { POST: {} } }))
+    );
+
+    vi.mocked(usePageWizard).mockReturnValue({
+      wizardData: {},
+      stepData: {
+        survey: {},
+        promptStep: {
+          resource: {
+            id: 321,
+            type: 'job_template',
+            name: 'Schedule template',
+            description: '',
+          },
+        },
+      },
+    } as unknown as ReturnType<typeof usePageWizard>);
+
+    render(
+      <TestWrapper>
+        <SurveyStep />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Simple Choice')).toBeInTheDocument();
+    });
+  });
+
+  test('loads workflow job template survey_spec when schedule_type is workflow_job_template', async () => {
+    const apiPath = awxAPI`/workflow_job_templates/789/survey_spec/`;
+    server.use(
+      http.get(apiPath, () => HttpResponse.json(testSurveys.withoutColons)),
+      http.options(apiPath, () => HttpResponse.json({ actions: { POST: {} } }))
+    );
+
+    vi.mocked(usePageWizard).mockReturnValue({
+      wizardData: {
+        resourceId: 789,
+        schedule_type: 'workflow_job_template',
+      },
+      stepData: { survey: {} },
+    } as unknown as ReturnType<typeof usePageWizard>);
+
+    render(
+      <TestWrapper>
+        <SurveyStep />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Simple Choice')).toBeInTheDocument();
+    });
+  });
+
+  test('falls back to templateId when wizard resourceId is null', async () => {
+    const apiPath = awxAPI`/job_templates/555/survey_spec/`;
+    server.use(
+      http.get(apiPath, () => HttpResponse.json(testSurveys.withoutColons)),
+      http.options(apiPath, () => HttpResponse.json({ actions: { POST: {} } }))
+    );
+
+    vi.mocked(usePageWizard).mockReturnValue({
+      wizardData: {
+        resourceId: null,
+        schedule_type: 'job_template',
+      },
+      stepData: { survey: {} },
+    } as unknown as ReturnType<typeof usePageWizard>);
+
+    render(
+      <TestWrapper>
+        <SurveyStep templateId="555" />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Simple Choice')).toBeInTheDocument();
+    });
+  });
+
   test('applies survey_spec OPTIONS pattern validation to text survey answers', async () => {
     const user = userEvent.setup();
     const textSurvey: Survey = {

@@ -38,6 +38,15 @@ function getJobType(resource: WizardFormValues['resource']) {
   }
 }
 
+function getJobTypeFromScheduleType(scheduleType?: string) {
+  if (scheduleType === 'workflow_job_template') {
+    return 'workflow_job_templates';
+  }
+  if (scheduleType === 'job_template') {
+    return 'job_templates';
+  }
+}
+
 export function SurveyStep({
   templateId,
   jobType,
@@ -68,14 +77,7 @@ export function SurveyStep({
     '';
 
   const scheduleType = (wizardData as { schedule_type?: string }).schedule_type;
-  jobType =
-    jobType ??
-    getJobType(resource) ??
-    (scheduleType === 'workflow_job_template'
-      ? 'workflow_job_templates'
-      : scheduleType === 'job_template'
-        ? 'job_templates'
-        : undefined);
+  jobType = jobType ?? getJobType(resource) ?? getJobTypeFromScheduleType(scheduleType);
 
   const surveySpecUrl = awxAPI`/${jobType ?? 'job_templates'}/${id}/survey_spec/`;
 
