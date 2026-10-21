@@ -58,6 +58,16 @@ describe('createFeatureFlagRegistry', () => {
     });
   });
 
+  it('rejects definitions that default a flag on', () => {
+    const invalidDefinitions = {
+      experimentalView: { ...definitions.experimentalView, defaultValue: true },
+    };
+
+    expect(() => createFeatureFlagRegistry(invalidDefinitions)).toThrow(
+      'Feature flags must default off'
+    );
+  });
+
   it('uses local overrides only through the explicit local provider', () => {
     const provider = createLocalFeatureFlagProvider({
       storage,
@@ -121,12 +131,45 @@ describe('createFeatureFlagRegistry', () => {
     }
   });
 
+  it('keeps local overrides usable when browser storage access throws', () => {
+    const windowWithBlockedStorage = Object.defineProperty({}, 'localStorage', {
+      get: () => {
+        throw new Error('Storage access denied');
+      },
+    });
+    vi.stubGlobal('window', windowWithBlockedStorage);
+
+    try {
+      const provider = createLocalFeatureFlagProvider();
+      provider.setOverride('experimentalView', true);
+
+      expect(provider.evaluateBoolean('experimentalView', false)).toEqual({
+        flagKey: 'experimentalView',
+        reason: 'LOCAL_OVERRIDE',
+        value: true,
+      });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('ignores stored overrides with an invalid shape', () => {
     storage.setItem('test-flags', JSON.stringify({ experimentalView: 'enabled' }));
     const provider = createLocalFeatureFlagProvider({
       storage,
       storageKey: 'test-flags',
     });
+
+    expect(provider.evaluateBoolean('experimentalView', false)).toEqual({
+      flagKey: 'experimentalView',
+      reason: 'DEFAULT',
+      value: false,
+    });
+  });
+
+  it('ignores array values stored as feature flag overrides', () => {
+    storage.setItem('test-flags', JSON.stringify(['experimentalView']));
+    const provider = createLocalFeatureFlagProvider({ storage, storageKey: 'test-flags' });
 
     expect(provider.evaluateBoolean('experimentalView', false)).toEqual({
       flagKey: 'experimentalView',

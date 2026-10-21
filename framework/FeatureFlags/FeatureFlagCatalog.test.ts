@@ -53,6 +53,7 @@ describe('feature flag catalog', () => {
     [{ ...catalog[0], enabled: 'true' }, 'Invalid feature flag enabled value'],
     [{ ...catalog[0], description: ' ' }, 'Feature flag requires a description and owner'],
     [{ ...catalog[0], owner: ' ' }, 'Feature flag requires a description and owner'],
+    [{ ...catalog[0], removalDate: '12/31/2026' }, 'Invalid feature flag removal date'],
     [{ ...catalog[0], removalDate: '2026-02-30' }, 'Invalid feature flag removal date'],
   ])('rejects invalid catalog entries', (entry, message) => {
     const invalidCatalog = Array.isArray(entry) ? entry : [entry];

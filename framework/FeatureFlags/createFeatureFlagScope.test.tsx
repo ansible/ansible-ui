@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { renderToString } from 'react-dom/server';
 import { expect, describe, it } from 'vitest';
 import { createFeatureFlagScope } from './createFeatureFlagScope';
 import { createFeatureFlagRegistry, createLocalFeatureFlagProvider } from './FeatureFlagRegistry';
@@ -14,6 +15,10 @@ const definitions = {
 } as const;
 
 const featureFlags = createFeatureFlagScope<typeof definitions>();
+
+function FeatureFlagValue() {
+  return <span>{String(featureFlags.useFeatureFlag('FEATURE_UNFINISHED_VIEW_ENABLED'))}</span>;
+}
 
 describe('createFeatureFlagScope', () => {
   it('requires a provider for consumers', () => {
@@ -42,5 +47,16 @@ describe('createFeatureFlagScope', () => {
     act(() => provider.setOverride('FEATURE_UNFINISHED_VIEW_ENABLED', true));
 
     expect(result.current).toBe(true);
+  });
+
+  it('uses the registry snapshot when rendered on the server', () => {
+    const registry = createFeatureFlagRegistry(definitions);
+    const markup = renderToString(
+      <featureFlags.FeatureFlagProvider registry={registry}>
+        <FeatureFlagValue />
+      </featureFlags.FeatureFlagProvider>
+    );
+
+    expect(markup).toContain('<span>false</span>');
   });
 });
