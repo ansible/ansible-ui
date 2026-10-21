@@ -28,7 +28,7 @@ jobs:
 
   refresh-baselines:
     needs: build-platform-ui
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     env:
       PLATFORM_UI: https://localhost:4100
@@ -36,13 +36,13 @@ jobs:
       SKIP_COVERAGE: 'true'
     steps:
       - name: Checkout devel
-        uses: actions/checkout@v4
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
           ref: devel
           fetch-depth: 0
 
       - name: Download platform UI image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: platform-ui.tar
 
@@ -52,7 +52,7 @@ jobs:
           docker run -d --name platform-ui -p 4100:443 platform-ui
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e0 # v6
         with:
           node-version: 24
           cache: npm
@@ -64,7 +64,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Refresh Linux visual baselines
-        run: npx playwright test tests/visual --project "mock chromium" --workers=1 --retries=0 --update-snapshots
+        run: npx playwright test tests/visual --project "mock chromium" --workers=1 --retries=0 --update-snapshots=all
 
       - name: Validate visual baseline coverage
         run: npm run visual:check-baselines
@@ -82,7 +82,7 @@ jobs:
 
       - name: Open or update refresh pull request
         if: steps.baselines.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: devel

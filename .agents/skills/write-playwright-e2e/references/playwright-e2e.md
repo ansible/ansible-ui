@@ -255,10 +255,11 @@ await Organization.ui.create(page, { organizationName: 'Test Org' });
 ### Test tags
 
 - `@not_mock` — do not run against mocked data
-- `@visual` — visual regression (live-only; not a PR merge gate)
+- `@visual` — mock-backed visual regression (mock Chromium only; not an automatic PR merge gate)
 
-Visual specs live under `playwright/tests/visual/`. Do not block PRs on full-page
-screenshots (on-demand + weekly, live-only).
+Visual specs live under `playwright/tests/visual/` and run in the `mock chromium`
+project. Authors can refresh PR baselines with `/update-visual-baselines`; the
+weekly full refresh on `devel` remains the drift backstop.
 
 ---
 

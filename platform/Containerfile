@@ -17,7 +17,6 @@ RUN cd platform && npm run build
 # Set environment variables
 ENV PLATFORM_UI=https://localhost:4100
 ENV PLATFORM_USERNAME=automation-admin
-ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 ENV VISUAL_TEST_PATH=tests/visual/
 ENV SKIP_COVERAGE=true
 
