@@ -1,8 +1,8 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useContext } from 'react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   PageAlertToasterProvider,
   PageAlertToasterContext,
@@ -11,13 +11,37 @@ import {
 
 function TestConsumer() {
   const toaster = useContext(PageAlertToasterContext);
+  const alert = { title: 'Test Alert', variant: 'success' as const };
   return (
     <div>
+      <button type="button" onClick={() => toaster.addAlert(alert)}>
+        Add
+      </button>
       <button
         type="button"
-        onClick={() => toaster.addAlert({ title: 'Test Alert', variant: 'success' })}
+        onClick={() => toaster.addAlert({ title: 'Fresh Alert', variant: 'success' })}
       >
-        Add
+        Add Fresh
+      </button>
+      <button type="button" onClick={() => toaster.replaceAlert(alert, { title: 'Replaced' })}>
+        Replace
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          toaster.replaceAlert(
+            { title: 'Timed Alert', variant: 'info', timeout: 5000 },
+            { title: 'Timed Replaced', variant: 'warning' }
+          )
+        }
+      >
+        Replace Timed
+      </button>
+      <button
+        type="button"
+        onClick={() => toaster.addAlert({ title: 'Timed Alert', variant: 'info', timeout: 5000 })}
+      >
+        Add Timed For Replace
       </button>
       <button
         type="button"
@@ -36,6 +60,10 @@ function TestConsumer() {
 }
 
 describe('PageAlertToaster', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   describe('errorToAlertProps', () => {
     it('should convert Error instance to alert props', () => {
       const result = errorToAlertProps(new Error('Something failed'));
@@ -81,6 +109,98 @@ describe('PageAlertToaster', () => {
 
       await user.click(screen.getByRole('button', { name: 'Add' }));
       expect(screen.getByText('Test Alert')).toBeInTheDocument();
+    });
+
+    it('should remove timed alerts after their timeout', async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add Timed' }));
+      expect(screen.getByText('Timed Alert')).toBeInTheDocument();
+
+      await act(() => {
+        vi.advanceTimersByTime(1000);
+        return Promise.resolve();
+      });
+      expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
+    });
+
+    it('should replace timed alerts when replaceAlert uses the original timed props', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add Timed For Replace' }));
+      await user.click(screen.getByRole('button', { name: 'Replace Timed' }));
+
+      expect(screen.getByText('Timed Replaced')).toBeInTheDocument();
+      expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
+    });
+
+    it('should replace an alert when the same alert is added again', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      const addButton = screen.getByRole('button', { name: 'Add' });
+      await user.click(addButton);
+      await user.click(addButton);
+
+      expect(screen.getAllByText('Test Alert')).toHaveLength(1);
+    });
+
+    it('should replace an alert when equivalent fresh props are added again', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      const addButton = screen.getByRole('button', { name: 'Add Fresh' });
+      await user.click(addButton);
+      await user.click(addButton);
+
+      expect(screen.getAllByText('Fresh Alert')).toHaveLength(1);
+    });
+
+    it('should leave alerts unchanged when replaceAlert cannot find the old alert', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Replace' }));
+
+      expect(screen.queryByText('Replaced')).not.toBeInTheDocument();
+    });
+
+    it('should replace an existing alert through replaceAlert', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add' }));
+      await user.click(screen.getByRole('button', { name: 'Replace' }));
+
+      expect(screen.getByText('Replaced')).toBeInTheDocument();
+      expect(screen.queryByText('Test Alert')).not.toBeInTheDocument();
     });
 
     it('should remove all alerts', async () => {
