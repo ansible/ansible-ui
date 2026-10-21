@@ -72,20 +72,19 @@ test(
     });
 
     const organizationId = new URL(page.url()).pathname.match(/organizations\/(\d+)/)?.[1];
-    if (organizationId) {
-      await expect
-        .poll(async () => {
-          const response = await page.request.get(
-            `${platformUI}/api/gateway/v1/organizations/${organizationId}/`
-          );
-          if (!response.ok()) {
-            return '';
-          }
-          const body = (await response.json()) as { name?: string };
-          return body.name ?? '';
-        })
-        .toBe(editedName);
-    }
+    expect(organizationId, 'organization id in URL after edit').toBeTruthy();
+    await expect
+      .poll(async () => {
+        const response = await page.request.get(
+          `${platformUI}/api/gateway/v1/organizations/${organizationId}/`
+        );
+        if (!response.ok()) {
+          return '';
+        }
+        const body = (await response.json()) as { name?: string };
+        return body.name ?? '';
+      })
+      .toBe(editedName);
 
     // Details can render a cached gateway org (old name) after PATCH; reload
     // so the title matches what was saved.
