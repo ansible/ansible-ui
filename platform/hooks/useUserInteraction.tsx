@@ -1,13 +1,10 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 export function useUserInteraction(throttleMs: number, callback: () => void) {
   const isThrottledRef = useRef(false);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
   const callbackRef = useRef(callback);
-
-  useLayoutEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
+  callbackRef.current = callback;
 
   useEffect(() => {
     const handleInteraction = () => {
