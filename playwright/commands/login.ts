@@ -24,21 +24,23 @@ export async function login(
   const password = options?.password ?? process.env.PLATFORM_PASSWORD!;
   const usernameField = page.locator('#pf-login-username-id');
   const toolbarUser = page.getByTestId('toolbar').getByRole('button', { name: username });
+  const loginTimeout = 60_000;
 
-  // SPA bootstrap can hang on `load` (long-lived requests). DOMContentLoaded is
-  // enough to start waiting for the login form or the authenticated shell.
-  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-  await expect(page).toHaveTitle(/Ansible/, { timeout: 30_000 });
+  // SPA bootstrap can hang on DOMContentLoaded while long-lived requests are
+  // active. A committed response is enough to start waiting for the login form
+  // or an already-authenticated shell.
+  await page.goto(url, { waitUntil: 'commit', timeout: loginTimeout });
+  await expect(page).toHaveTitle(/Ansible/, { timeout: loginTimeout });
 
   // PatternFly Spinner aria-label is "Contents" while the app hydrates. Do not
   // fill the login fields until the form (or an already-authenticated toolbar)
   // is actually on the page.
   const loginReady = usernameField.or(toolbarUser).first();
   try {
-    await expect(loginReady).toBeVisible({ timeout: 30_000 });
+    await expect(loginReady).toBeVisible({ timeout: loginTimeout });
   } catch {
-    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30_000 });
-    await expect(loginReady).toBeVisible({ timeout: 30_000 });
+    await page.reload({ waitUntil: 'commit', timeout: loginTimeout });
+    await expect(loginReady).toBeVisible({ timeout: loginTimeout });
   }
 
   if (await toolbarUser.isVisible().catch(() => false)) {
@@ -49,5 +51,5 @@ export async function login(
   await page.locator('#pf-login-password-id').fill(password);
   await page.click('button[type="submit"]');
 
-  await expect(toolbarUser).toBeVisible({ timeout: 30_000 });
+  await expect(toolbarUser).toBeVisible({ timeout: loginTimeout });
 }
