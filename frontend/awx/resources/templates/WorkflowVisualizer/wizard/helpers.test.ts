@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
+import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import type { Survey } from '../../../../interfaces/Survey';
 import { EdgeStatus } from '../types';
 import {
@@ -249,7 +250,7 @@ describe('preservePromptInstanceGroups', () => {
 
 describe('fetchJobTemplateInstanceGroupDefaults', () => {
   test('should return launch defaults when they are non-empty', async () => {
-    const launch = [{ id: 1, name: 'launch-ig' }];
+    const launch: InstanceGroup[] = [{ id: 1, name: 'launch-ig' } as InstanceGroup];
     await expect(fetchJobTemplateInstanceGroupDefaults(5, launch)).resolves.toEqual(launch);
   });
 
