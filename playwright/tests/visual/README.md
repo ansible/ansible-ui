@@ -24,13 +24,13 @@ All commands should be run from the `playwright/` directory.
 
 ```bash
 # Generate initial baselines (first time, or after intentional UI changes)
-npx playwright test tests/visual/ --project "live chromium" --update-snapshots
+npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
 
 # Run visual tests (compares against baselines)
-npx playwright test tests/visual/ --project "live chromium"
+npx playwright test tests/visual/ --project "mock chromium"
 
 # Run using the @visual tag filter
-TAGS=@visual npx playwright test --project "live chromium"
+TAGS=@visual npx playwright test --project "mock chromium"
 
 # View the HTML report (includes visual diffs on failure)
 npx playwright show-report playwright/html-report
@@ -74,7 +74,7 @@ When a visual change is intentional (e.g., a PatternFly upgrade, a redesigned co
 ### macOS (darwin) baselines
 
 ```bash
-npx playwright test tests/visual/ --project "mock chromium" --update-snapshots
+npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
 ```
 
 ### Linux baselines (local via podman)
@@ -95,15 +95,27 @@ Requires Podman or Docker installed locally.
 
 Playwright snapshots include a platform suffix (`-darwin` or `-linux`). The ephemeral AAP Playwright workflow runs on Linux runners, so it requires `-linux` baselines. Due to font rendering differences between environments, Linux baselines must be generated on Linux.
 
-If you don't have Podman/Docker locally, use the CI workflow:
+After the PR baseline workflows are available on `devel`, you can use either trigger below if you don't have Podman/Docker locally:
 
 1. Open a PR with your changes
-2. Comment `/run-aap-ui-playwright --update-snapshots` on the PR
-3. The CI workflow will run the visual tests with `--update-snapshots` on the `aap-dev` runner, then auto-commit the updated `-linux.png` baselines back to your branch
+2. Comment `/update-visual-baselines` on your PR
+3. The workflow checks out the PR merge result, generates Linux `mock chromium` snapshots without an AAP backend, and commits changed baseline PNGs to the PR branch
 
-> **Note:** The `--update-snapshots` flag can be combined with an AAP version: `/run-aap-ui-playwright 2.5-next --update-snapshots`
+This command accepts same-repository PRs only. The workflow runs the full visual suite and updates only `*-mock-chromium-linux.png` files. The broader `/run-aap-ui-playwright --update-snapshots` command remains available for the general AAP Playwright flow.
 
-Review the updated `.png` files in the `-snapshots/` directory before merging.
+The author-triggered run checks out the PR merge commit so the images include the current `devel` base. It rejects the result if the PR head changes during generation; comment again to refresh the new head.
+
+### Manual workflow dispatch
+
+After the workflow is available on `devel`, authors with repository write access can also start it from **Actions → Update PR visual baselines → Run workflow**. Select `devel` as the workflow branch, then provide:
+
+- `pr_number`: the PR number.
+- `pr_ref`: the PR's head branch name.
+- `pr_head_sha`: the full 40-character SHA of the PR's current head commit.
+
+The workflow accepts open, same-repository PRs targeting `devel`. It generates baselines from the PR merge result and commits changed Linux mock Chromium PNGs to the PR branch. If the PR head advances during the run, it stops; dispatch it again with the latest branch and SHA.
+
+After the workflow completes, review each updated PNG in the PR's **Files changed** tab against the intended UI change. Investigate unexpected image changes before merging.
 
 ## Stabilizing dynamic content
 
@@ -174,6 +186,8 @@ await page.evaluate(() => {
 - **Element-level screenshots** (e.g., a `form`, `dl`, or toolbar locator) — these are scoped to a specific element and often avoid instability entirely.
 
 ### Baseline refresh automation
+
+Authors can comment `/update-visual-baselines` on a same-repository PR to refresh its Linux mock Chromium baselines. The run uses the PR merge result and commits changed PNGs to the author's PR branch. The weekly refresh remains the full `devel` drift backstop.
 
 `.github/workflows/visual-regression-schedule.yml` runs the full mock-backed visual suite every Monday at 12:00 UTC with one worker on the Linux UI image and coverage collection disabled. It opens or updates `visual-regression/weekly-refresh` only when snapshots change. `workflow_dispatch` provides the same full refresh on demand without backend configuration.
 
