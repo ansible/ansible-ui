@@ -1,5 +1,5 @@
 import { Alert, AlertActionCloseButton, AlertGroup, AlertProps } from '@patternfly/react-core';
-import { ReactNode, createContext, useContext, useState } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react';
 
 export interface IPageAlertToaster {
   addAlert: (alert: AlertProps) => void;
@@ -15,6 +15,7 @@ function stripTimeout(alert: AlertProps): AlertProps {
   return alertWithoutTimeout;
 }
 
+/** Shallowly compares props; object-valued props compare by reference. */
 function alertsMatch(first: AlertProps, second: AlertProps): boolean {
   const firstWithoutTimeout = stripTimeout(first);
   const secondWithoutTimeout = stripTimeout(second);
@@ -64,11 +65,43 @@ export function usePageAlertToaster(): IPageAlertToaster {
 
 export function PageAlertToasterProvider(props: { children: ReactNode }) {
   const [toasterAlerts, setToasterAlerts] = useState<AlertProps[]>([]);
+  const alertTimeouts = useRef(new Map<AlertProps, ReturnType<typeof setTimeout>>());
+
+  useEffect(() => {
+    const activeAlerts = new Set(toasterAlerts);
+    for (const [alert, timeoutId] of alertTimeouts.current) {
+      if (!activeAlerts.has(alert)) {
+        clearTimeout(timeoutId);
+        alertTimeouts.current.delete(alert);
+      }
+    }
+  }, [toasterAlerts]);
+
+  useEffect(
+    () => () => {
+      for (const timeoutId of alertTimeouts.current.values()) {
+        clearTimeout(timeoutId);
+      }
+      alertTimeouts.current.clear();
+    },
+    []
+  );
+
   const [pageAlertToaster] = useState<IPageAlertToaster>(() => {
+    function clearAlertTimeout(alert: AlertProps) {
+      for (const [timedAlert, timeoutId] of alertTimeouts.current) {
+        if (alertsMatch(timedAlert, alert)) {
+          clearTimeout(timeoutId);
+          alertTimeouts.current.delete(timedAlert);
+        }
+      }
+    }
+
     function removeAlerts(filter?: (alert: AlertProps) => boolean) {
       setToasterAlerts((alerts) => (filter ? alerts.filter(filter) : []));
     }
     function removeAlert(alert: AlertProps) {
+      clearAlertTimeout(alert);
       setToasterAlerts((alerts) => alerts.filter((a) => a !== alert));
     }
 
@@ -76,7 +109,11 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
       const alertWithoutTimeout = stripTimeout(alert);
       if (alertWithoutTimeout === alert) return alert;
 
-      setTimeout(() => removeAlert(alertWithoutTimeout), alert.timeout as number);
+      const timeoutId = setTimeout(() => {
+        alertTimeouts.current.delete(alertWithoutTimeout);
+        removeAlert(alertWithoutTimeout);
+      }, alert.timeout as number);
+      alertTimeouts.current.set(alertWithoutTimeout, timeoutId);
       return alertWithoutTimeout;
     }
 
@@ -85,6 +122,7 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
       setToasterAlerts((alerts) => addAlertToList(alerts, preparedAlert));
     }
     function replaceAlert(oldAlert: AlertProps, alert: AlertProps) {
+      clearAlertTimeout(oldAlert);
       const preparedAlert = prepareAlert(alert);
       setToasterAlerts((alerts) => replaceAlertInList(alerts, oldAlert, preparedAlert));
     }
