@@ -5,6 +5,7 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { platformUI } from '@ansible/playwright/commands/login';
 import { Organization } from '../../../../utils/organization';
 
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
@@ -69,6 +70,22 @@ test(
     await expect(page.getByRole('heading', { name: `Edit ${organizationName}` })).not.toBeVisible({
       timeout: 15_000,
     });
+
+    const organizationId = new URL(page.url()).pathname.match(/organizations\/(\d+)/)?.[1];
+    expect(organizationId, 'organization id in URL after edit').toBeTruthy();
+    await expect
+      .poll(async () => {
+        const response = await page.request.get(
+          `${platformUI}/api/gateway/v1/organizations/${organizationId}/`
+        );
+        if (!response.ok()) {
+          return '';
+        }
+        const body = (await response.json()) as { name?: string };
+        return body.name ?? '';
+      })
+      .toBe(editedName);
+
     // Details can render a cached gateway org (old name) after PATCH; reload
     // so the title matches what was saved.
     await page.reload();
