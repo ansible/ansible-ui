@@ -1,8 +1,11 @@
-import { describe, expect, test } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import type { Survey } from '../../../../interfaces/Survey';
 import { EdgeStatus } from '../types';
 import {
+  fetchJobTemplateInstanceGroupDefaults,
   getConvergenceType,
   getLinkEdgeStatus,
   getResourceURL,
@@ -11,6 +14,16 @@ import {
   processSurvey,
   resolveWorkflowInstanceGroups,
 } from './helpers';
+
+const instanceGroupsServer = setupServer(
+  http.get(awxAPI`/job_templates/5/instance_groups/`, () =>
+    HttpResponse.json({ count: 1, results: [{ id: 7, name: 'jt-ig' }] })
+  )
+);
+
+beforeAll(() => instanceGroupsServer.listen({ onUnhandledRequest: 'error' }));
+afterEach(() => instanceGroupsServer.resetHandlers());
+afterAll(() => instanceGroupsServer.close());
 
 describe('getLinkEdgeStatus', () => {
   test('should default to always run when status is unset', () => {
@@ -185,6 +198,10 @@ describe('preservePromptList', () => {
   test('should keep an explicit empty step list', () => {
     expect(preservePromptList([], [{ name: 'launch' }])).toEqual([]);
   });
+
+  test('should return an empty array when step and launch are undefined', () => {
+    expect(preservePromptList(undefined, undefined)).toEqual([]);
+  });
 });
 
 describe('resolveWorkflowInstanceGroups', () => {
@@ -199,6 +216,13 @@ describe('resolveWorkflowInstanceGroups', () => {
     const template = [{ id: 1, name: 'default-ig' }];
     expect(resolveWorkflowInstanceGroups(undefined, node, template)).toEqual(node);
   });
+
+  test('should prefer prompt groups over node and template defaults', () => {
+    const prompt = [{ id: 3, name: 'prompt-ig' }];
+    const node = [{ id: 2, name: 'node-ig' }];
+    const template = [{ id: 1, name: 'default-ig' }];
+    expect(resolveWorkflowInstanceGroups(prompt, node, template)).toEqual(prompt);
+  });
 });
 
 describe('preservePromptInstanceGroups', () => {
@@ -211,5 +235,40 @@ describe('preservePromptInstanceGroups', () => {
     const step = [{ id: 2, name: 'node-ig' }];
     const launch = [{ id: 1, name: 'default-ig' }];
     expect(preservePromptInstanceGroups(step, launch)).toEqual(step);
+  });
+
+  test('should use launch defaults when step instance groups are undefined', () => {
+    const launch = [{ id: 1, name: 'default-ig' }];
+    expect(preservePromptInstanceGroups(undefined, launch)).toEqual(launch);
+  });
+
+  test('should return an empty array when step and launch are undefined', () => {
+    expect(preservePromptInstanceGroups(undefined, undefined)).toEqual([]);
+  });
+});
+
+describe('fetchJobTemplateInstanceGroupDefaults', () => {
+  test('should return launch defaults when they are non-empty', async () => {
+    const launch = [{ id: 1, name: 'launch-ig' }];
+    await expect(fetchJobTemplateInstanceGroupDefaults(5, launch)).resolves.toEqual(launch);
+  });
+
+  test('should fetch JT instance groups when launch defaults are empty', async () => {
+    await expect(fetchJobTemplateInstanceGroupDefaults(5, [])).resolves.toEqual([
+      { id: 7, name: 'jt-ig' },
+    ]);
+  });
+
+  test('should fetch JT instance groups when launch defaults are undefined', async () => {
+    await expect(fetchJobTemplateInstanceGroupDefaults(5, undefined)).resolves.toEqual([
+      { id: 7, name: 'jt-ig' },
+    ]);
+  });
+
+  test('should return an empty array when the API response has no results', async () => {
+    instanceGroupsServer.use(
+      http.get(awxAPI`/job_templates/5/instance_groups/`, () => HttpResponse.json({ count: 0 }))
+    );
+    await expect(fetchJobTemplateInstanceGroupDefaults(5, undefined)).resolves.toEqual([]);
   });
 });
