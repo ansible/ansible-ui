@@ -137,7 +137,11 @@ export const WorkflowVisualizer = {
 
     /** Save pending visualizer edits; waits for toolbar Save to enable and surfaces API errors. */
     saveAndDismissToast: async (page: Page): Promise<void> => {
-      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+      // TopologyControlBar (Fit to Screen, zoom, etc.) is hidden when the workflow has no nodes.
+      const fitToScreen = page.getByRole('button', { name: 'Fit to Screen' });
+      if (await fitToScreen.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await fitToScreen.click();
+      }
 
       const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
       await expect(saveButton).toBeEnabled({ timeout: 30000 });
