@@ -67,6 +67,9 @@ function TestForm({
         <PageFormAsyncMultiSelect
           name="values"
           label="Values"
+          placeholder="Select values"
+          queryLabel={(value) => String(value)}
+          queryOptions={() => Promise.resolve({ next: 0, remaining: 0, options: [] })}
           id={id}
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
