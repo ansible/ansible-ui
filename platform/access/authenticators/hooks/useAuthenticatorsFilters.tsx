@@ -35,7 +35,7 @@ export function useTypeToolbarFilter() {
     ];
     if (plugins?.authenticators && !isLoading) {
       options = plugins.authenticators.map((plugin) => ({
-        label: getAuthenticatorTypeLabel(plugin.type, t),
+        label: getAuthenticatorTypeLabel(plugin.type, t, plugins.authenticators),
         value: plugin.type,
       }));
     }
