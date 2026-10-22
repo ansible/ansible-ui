@@ -4,7 +4,10 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { QUERY_PARAMS, useAutomationDashboardView } from './useAutomationDashboardView';
 import { useAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
+import { writePersistedFilterState } from '../utils/persistedFilterState';
 import type { IAutomationDashboardBaseView } from '../common/useAutomationDashboardBaseView';
+import { RequestError } from '../../../../common/crud/RequestError';
+import { useGetReportDetails } from './useGetReportDetails';
 
 // ─── Hoisted mocks (run before vi.mock factories) ─────────────────────────────
 
@@ -19,7 +22,9 @@ const {
   mockBaseViewRefresh: vi.fn(),
   mockRefreshDetails: vi.fn(),
   mockExportCsvBase: vi.fn(),
-  mockUseAwxActiveUser: vi.fn(() => ({ activeAwxUser: { id: 42 } })),
+  mockUseAwxActiveUser: vi.fn((): { activeAwxUser?: { id: number } } => ({
+    activeAwxUser: { id: 42 },
+  })),
 }));
 
 // ─── Dependency mocks ─────────────────────────────────────────────────────────
@@ -75,6 +80,33 @@ vi.mock('./useExportCsv', () => ({
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
+/** Runs `test` with the base view returning `overrides`, then restores its mock. */
+function withBaseView(overrides: Record<string, unknown>, test: () => void) {
+  const baseView = vi.mocked(useAutomationDashboardBaseView).getMockImplementation()!;
+  vi.mocked(useAutomationDashboardBaseView).mockImplementation(
+    (options) => ({ ...baseView(options), ...overrides }) as ReturnType<typeof baseView>
+  );
+  try {
+    test();
+  } finally {
+    vi.mocked(useAutomationDashboardBaseView).mockImplementation(baseView);
+  }
+}
+
+/** Runs `test` with the details returning `overrides`, then restores their mock. */
+function withDetails(overrides: Record<string, unknown>, test: () => void) {
+  const details = vi.mocked(useGetReportDetails).getMockImplementation()!;
+  vi.mocked(useGetReportDetails).mockImplementation((...args) => ({
+    ...details(...args),
+    ...overrides,
+  }));
+  try {
+    test();
+  } finally {
+    vi.mocked(useGetReportDetails).mockImplementation(details);
+  }
+}
+
 describe('useAutomationDashboardView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -106,6 +138,8 @@ describe('useAutomationDashboardView', () => {
     expect(view.setCostState).toBeTypeOf('function');
     expect(view.isFilterStateDefault).toBe(true);
     expect(view.registerClearCallback).toBeTypeOf('function');
+    expect(view.replaceFilterState).toBeTypeOf('function');
+    expect(view.filterResetCount).toBe(0);
   });
 
   // --- clearAllFilters override ---
@@ -117,6 +151,94 @@ describe('useAutomationDashboardView', () => {
     });
     expect(mockSetFilterState).toHaveBeenCalledWith({
       period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
+    });
+  });
+
+  test('should count clearAllFilters and replaceFilterState as filter resets', () => {
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    act(() => result.current.mainTableView.clearAllFilters());
+    expect(result.current.filterResetCount).toBe(1);
+
+    act(() => result.current.replaceFilterState({ period: ['last_30_days'] }));
+    expect(mockSetFilterState).toHaveBeenLastCalledWith({ period: ['last_30_days'] });
+    expect(result.current.filterResetCount).toBe(2);
+  });
+
+  test('should count seeding the filters for a user resolved after mount as a filter reset', () => {
+    writePersistedFilterState({ period: ['last_30_days'] }, 7);
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: undefined });
+    const { result, rerender } = renderHook(() =>
+      useAutomationDashboardView({ toolbarFilters: [] })
+    );
+    expect(result.current.filterResetCount).toBe(0);
+
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { id: 7 } });
+    rerender();
+
+    expect(mockSetFilterState).toHaveBeenCalledWith({ period: ['last_30_days'] });
+    expect(result.current.filterResetCount).toBe(1);
+  });
+
+  // --- Requests ---
+
+  const tooLarge = new RequestError('Too large', undefined, 431, undefined, undefined);
+
+  test('should show requests rejected as too large with previous data as filtersTooLarge only', () => {
+    withDetails({ error: tooLarge, reportDetails: {} }, () => {
+      withBaseView({ error: tooLarge, pageItems: [] }, () => {
+        const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+        expect(result.current.filtersTooLarge).toEqual({ previousData: 'all' });
+        expect(result.current.detailsError).toBeUndefined();
+        expect(result.current.mainTableView.error).toBeUndefined();
+      });
+    });
+  });
+
+  test('should keep the error of a request rejected as too large without previous data', () => {
+    withDetails({ error: tooLarge, reportDetails: undefined }, () => {
+      withBaseView({ error: tooLarge, pageItems: undefined }, () => {
+        const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+        expect(result.current.filtersTooLarge).toEqual({ previousData: 'none' });
+        // Neither has previous data: their error states are shown.
+        expect(result.current.detailsError).toBe(tooLarge);
+        expect(result.current.mainTableView.error).toBe(tooLarge);
+      });
+    });
+  });
+
+  test('should tell that some previous data is shown when only the details show it', () => {
+    withDetails({ error: tooLarge, reportDetails: {} }, () => {
+      // The table has no rows for its page: its error state is shown.
+      withBaseView({ error: tooLarge, pageItems: undefined }, () => {
+        const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+        expect(result.current.filtersTooLarge).toEqual({ previousData: 'some' });
+        expect(result.current.detailsError).toBeUndefined();
+        expect(result.current.mainTableView.error).toBe(tooLarge);
+      });
+    });
+  });
+
+  test('should tell that some previous data is shown when only the table is too large', () => {
+    // The cards request (shorter) passes: the cards show the current filters.
+    withBaseView({ error: tooLarge, pageItems: [] }, () => {
+      const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+      expect(result.current.filtersTooLarge).toEqual({ previousData: 'some' });
+      expect(result.current.mainTableView.error).toBeUndefined();
+    });
+  });
+
+  test('should keep other request errors', () => {
+    const serverError = new RequestError('Failed', undefined, 500, undefined, undefined);
+    withBaseView({ error: serverError }, () => {
+      const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+      expect(result.current.filtersTooLarge).toBeUndefined();
+      expect(result.current.mainTableView.error).toBe(serverError);
     });
   });
 

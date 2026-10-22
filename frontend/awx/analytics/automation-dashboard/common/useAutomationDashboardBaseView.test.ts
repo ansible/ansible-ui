@@ -2,6 +2,8 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { createElement, ReactNode } from 'react';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import {
   IToolbarDateRangeFilter,
@@ -30,6 +32,26 @@ const mockResponse: AwxItemsResponse<TestItem> = {
   count: 3,
   results: mockItems,
 };
+
+/**
+ * SWR retrying as in the app (the test setup turns retries off), with its own cache and a short
+ * retry interval so retries happen within a test (a retry within the deduping interval would
+ * reuse the failed request).
+ */
+function FastRetrySWRConfig(props: { children: ReactNode }) {
+  return createElement(
+    SWRConfig,
+    {
+      value: {
+        provider: () => new Map(),
+        errorRetryInterval: 10,
+        dedupingInterval: 0,
+        shouldRetryOnError: true,
+      },
+    },
+    props.children
+  );
+}
 
 // ─── MSW Server ───────────────────────────────────────────────────────────────
 
@@ -352,6 +374,8 @@ describe('useAutomationDashboardBaseView', () => {
 
     await waitFor(() => expect(result.current.error).toBeDefined());
     expect(result.current.page).toBe(2);
+    // Only a request rejected as too large drops the items of another page.
+    expect(result.current.pageItems).toEqual(mockItems);
   });
 
   // --- updateItem functionality ---
@@ -418,6 +442,88 @@ describe('useAutomationDashboardBaseView', () => {
 
     expect(capturedUrl).toContain('tz=UTC');
     expect(capturedUrl).toContain('custom=value');
+  });
+
+  // --- Requests rejected as too large ---
+
+  const templateFilter = {
+    type: ToolbarFilterType.SingleSelect,
+    key: 'template',
+    label: 'Template',
+    query: 'template',
+    options: [],
+    placeholder: 'Filter by template',
+  } as unknown as IToolbarSingleSelectFilter;
+
+  test('should keep the items of the previous request when a request is rejected as too large', async () => {
+    window.history.replaceState(null, '', '/');
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) =>
+        new URL(request.url).searchParams.has('template')
+          ? HttpResponse.json({}, { status: 431 })
+          : HttpResponse.json(mockResponse)
+      )
+    );
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        toolbarFilters: [templateFilter],
+      })
+    );
+    await waitFor(() => expect(result.current.pageItems).toEqual(mockItems));
+
+    act(() => result.current.setFilterState({ template: ['1'] }));
+
+    await waitFor(() => expect(result.current.error).toMatchObject({ statusCode: 431 }));
+    expect(result.current.pageItems).toEqual(mockItems);
+    expect(result.current.itemCount).toBe(mockResponse.count);
+  });
+
+  test('should not show the items of another page when a request is rejected as too large', async () => {
+    window.history.replaceState(null, '', '/');
+    server.use(
+      http.get(metricsAPI`/test/`, ({ request }) =>
+        new URL(request.url).searchParams.has('template')
+          ? HttpResponse.json({}, { status: 431 })
+          : HttpResponse.json(mockResponse)
+      )
+    );
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        toolbarFilters: [templateFilter],
+      })
+    );
+    await waitFor(() => expect(result.current.pageItems).toEqual(mockItems));
+    act(() => result.current.setFilterState({ template: ['1'] }));
+    await waitFor(() => expect(result.current.error).toMatchObject({ statusCode: 431 }));
+
+    // The items are of page 1: page 2 is rejected too and has no items to show.
+    act(() => result.current.setPage(2));
+
+    await waitFor(() => expect(result.current.pageItems).toBeUndefined());
+    expect(result.current.error).toMatchObject({ statusCode: 431 });
+  });
+
+  test('should not retry a request rejected as too large', async () => {
+    window.history.replaceState(null, '', '/');
+    let requestCount = 0;
+    server.use(
+      http.get(metricsAPI`/test/`, () => {
+        requestCount += 1;
+        return HttpResponse.json({}, { status: 431 });
+      })
+    );
+    const { result } = renderHook(
+      () => useAutomationDashboardBaseView<TestItem>({ url: metricsAPI`/test/` }),
+      { wrapper: FastRetrySWRConfig }
+    );
+    await waitFor(() => expect(result.current.error).toMatchObject({ statusCode: 431 }));
+
+    // Longer than several retries would take with the fast retry interval.
+    await act(() => new Promise((resolve) => setTimeout(resolve, 300)));
+
+    expect(requestCount).toBe(1);
   });
 
   // --- View state management ---

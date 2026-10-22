@@ -42,6 +42,8 @@ const periodFilter: IToolbarFilter = {
   placeholder: 'Filter by period',
 };
 
+const EXPORT_FAILED = 'Failed to export CSV.';
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('useExportCsv', () => {
@@ -293,9 +295,44 @@ describe('useExportCsv', () => {
     });
 
     expect(mockAddAlert).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'danger', title: 'Failed to export CSV.' })
+      expect.objectContaining({ variant: 'danger', title: EXPORT_FAILED })
     );
     expect(mockDownloadBlobFile).not.toHaveBeenCalled();
+  });
+
+  test.each([431, 414])(
+    'should ask to narrow the filters when the export is rejected as too large (%s)',
+    async (status) => {
+      fetchSpy.mockResolvedValue(new Response(null, { status }));
+      const { result } = renderHook(() => useExportCsv([], {}, {}));
+
+      await act(async () => {
+        await result.current('summary');
+      });
+
+      expect(mockAddAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'danger',
+          title: EXPORT_FAILED,
+          children: expect.stringContaining('Narrow the filters') as unknown,
+        })
+      );
+    }
+  );
+
+  test('should show the status of other failed exports', async () => {
+    fetchSpy.mockResolvedValue(
+      new Response(null, { status: 422, statusText: 'Unprocessable Entity' })
+    );
+    const { result } = renderHook(() => useExportCsv([], {}, {}));
+
+    await act(async () => {
+      await result.current('summary');
+    });
+
+    expect(mockAddAlert).toHaveBeenCalledWith(
+      expect.objectContaining({ children: '422 Unprocessable Entity' })
+    );
   });
 
   test('should show danger alert with error message when fetch throws a network error', async () => {
@@ -309,7 +346,7 @@ describe('useExportCsv', () => {
     expect(mockAddAlert).toHaveBeenCalledWith(
       expect.objectContaining({
         variant: 'danger',
-        title: 'Failed to export CSV.',
+        title: EXPORT_FAILED,
         children: 'Network error',
       })
     );

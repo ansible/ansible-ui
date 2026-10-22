@@ -3,7 +3,7 @@ import { render, renderHook, screen } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import { useAutomationDashboardToolbarFilters } from './useAutomationDashboardToolbarFilters';
 import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
-import type { PageAsyncSelectQueryOptions } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import type { AutomationDashboardAsyncQueryOptions } from './useAutomationDashboardAsyncOptions';
 import React from 'react';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
@@ -23,7 +23,7 @@ vi.mock('@ansible/common-ui/AsyncQueryLabel', () => ({
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 type AsyncFilter = IToolbarFilter & {
-  queryOptions: (opts: Partial<PageAsyncSelectQueryOptions>) => Promise<{
+  queryOptions: (opts: Partial<AutomationDashboardAsyncQueryOptions>) => Promise<{
     options: { label: string; value: string }[];
     next: string | number;
     remaining: number;
@@ -50,6 +50,11 @@ function TestComponent({ filterableFields }: Readonly<{ filterableFields: string
 }
 
 const emptyResponse = { count: 0, next: null, results: [] };
+
+/** A full page of `size` results. */
+function pageOfResults(size: number) {
+  return Array.from({ length: size }, (_, index) => ({ name: `T${index}`, id: String(index) }));
+}
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
@@ -141,7 +146,7 @@ describe('useAutomationDashboardToolbarFilters', () => {
     mockRequestGet.mockResolvedValueOnce({
       count: 25,
       next: '/api/v2/report/?page=3&page_size=10',
-      results: [{ name: 'T1', id: '1' }],
+      results: pageOfResults(10),
     });
 
     const result = await filters[0].queryOptions({});
@@ -160,6 +165,35 @@ describe('useAutomationDashboardToolbarFilters', () => {
     const result = await filters[0].queryOptions({});
     expect(result.next).toBe('');
     expect(result.remaining).toBe(0);
+  });
+
+  test('queryOptions uses the page size from the query options', async () => {
+    const filters = renderFilters(['template']);
+    mockRequestGet.mockResolvedValueOnce({
+      count: 450,
+      next: '/api/v2/report/?page=3&page_size=200',
+      results: pageOfResults(200),
+    });
+
+    const result = await filters[0].queryOptions({ next: '2', pageSize: 200 });
+    expect(mockRequestGet).toHaveBeenCalledWith(
+      expect.stringContaining('page_size=200&page=2'),
+      undefined
+    );
+    expect(result.remaining).toBe(50); // 450 - (3-1)*200
+  });
+
+  test('queryOptions bases remaining on the page size the API served', async () => {
+    const filters = renderFilters(['template']);
+    // The API caps the requested 200 at 100 per page.
+    mockRequestGet.mockResolvedValueOnce({
+      count: 450,
+      next: '/api/v2/report/?page=3&page_size=100',
+      results: pageOfResults(100),
+    });
+
+    const result = await filters[0].queryOptions({ next: '2', pageSize: 200 });
+    expect(result.remaining).toBe(250); // 450 - (3-1)*100
   });
 
   test('queryOptions appends page to URL when next is provided', async () => {
