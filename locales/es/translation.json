@@ -2405,7 +2405,7 @@
     "Number of current content": "Number of current content",
     "Number of external inventory sources in this inventory with failures.": "Number of external inventory sources in this inventory with failures.",
     "Number of hosts jobs are running on": "Number of hosts jobs are running on",
-    "Number of hosts that executed at least one automation job in the selected period. Indicates how much of your inventory is actively automated and can help with license or capacity planning.": "Number of hosts that executed at least one automation job in the selected period. Indicates how much of your inventory is actively automated and can help with license or capacity planning.",
+    "Number of hosts that executed at least one automation job in the selected period.": "Number of hosts that executed at least one automation job in the selected period.",
     "Number of hosts that ran at least one job in the selected period. Complements run count by showing how broadly automation is applied across your inventory.": "Number of hosts that ran at least one job in the selected period. Complements run count by showing how broadly automation is applied across your inventory.",
     "Number of job executions": "Number of job executions",
     "Number of job runs that completed without error in the selected period. Use the ratio between successful and failed jobs to track automation health and reliability over time.": "Number of job runs that completed without error in the selected period. Use the ratio between successful and failed jobs to track automation health and reliability over time.",

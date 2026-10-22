@@ -74,7 +74,7 @@ export function AutomationDashboard() {
             id="unique-hosts-card"
             title={t('Hosts automated')}
             help={t(
-              'Number of hosts that executed at least one automation job in the selected period. Indicates how much of your inventory is actively automated and can help with license or capacity planning.'
+              'Number of hosts that executed at least one automation job in the selected period.'
             )}
             value={details?.total_number_of_unique_hosts ?? noDataString}
             error={view.detailsError}
