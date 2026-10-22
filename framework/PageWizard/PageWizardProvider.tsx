@@ -11,6 +11,7 @@ import {
 import { useURLSearchParams } from '../components/useURLSearchParams';
 import type { PageWizardState } from './PageWizardState';
 import type { PageWizardParentStep, PageWizardStep } from './types';
+import { isWizardSupplementalData, type WizardSupplementalData } from './wizardSupplementalData';
 
 export const PageWizardContext = createContext<PageWizardState>({} as PageWizardState);
 
@@ -66,37 +67,45 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
   // set initial activeStep
   useEffect(() => {
     const visibleSteps = getVisibleSteps(steps, wizardData);
-    if (activeStep || !visibleSteps.length) {
+    const firstVisibleStep = visibleSteps[0];
+    if (activeStep || !firstVisibleStep) {
       return;
     }
-    if ((visibleSteps[0] as PageWizardParentStep).substeps) {
-      setActiveStep((visibleSteps[0] as PageWizardParentStep).substeps[0]);
+    if (isPageWizardParentStep(firstVisibleStep)) {
+      const firstSubstep = firstVisibleStep.substeps[0];
+      if (
+        /* v8 ignore next */
+        firstSubstep
+      )
+        setActiveStep(firstSubstep);
     } else {
-      setActiveStep(visibleSteps[0]);
+      setActiveStep(firstVisibleStep);
     }
   }, [activeStep, steps, wizardData]);
 
   const onNext = useCallback(
     async (formData: object = {}) => {
-      const visibleStepsFlattened = getVisibleStepsFlattened(steps, {
-        ...wizardData,
-        ...formData,
-      });
-
       if (activeStep === null) {
         return Promise.resolve();
       }
 
+      let supplementalWizardData: WizardSupplementalData = {};
       if (!isPageWizardParentStep(activeStep) && activeStep.validate) {
-        await activeStep.validate(formData, wizardData);
+        const validateResult = await activeStep.validate(formData, wizardData);
+        if (isWizardSupplementalData(validateResult)) {
+          supplementalWizardData = validateResult;
+        }
       }
+
+      const mergedWizardData = { ...wizardData, ...formData, ...supplementalWizardData };
+      const visibleStepsFlattened = getVisibleStepsFlattened(steps, mergedWizardData);
 
       const isLastStep =
         activeStep?.id === visibleStepsFlattened[visibleStepsFlattened.length - 1]?.id;
       if (isLastStep) {
         setIsSubmitting(true);
         try {
-          await onSubmit(wizardData);
+          await onSubmit(mergedWizardData as DataT);
         } catch (e) {
           setSubmitError(e instanceof Error ? e : new Error(t('An error occurred.')));
         } finally {
@@ -107,13 +116,25 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
 
       const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
       // If the next step is a parent step, mark its first substep as the next active step
-      const nextStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex + 1])
-        ? visibleStepsFlattened[activeStepIndex + 2]
-        : visibleStepsFlattened[activeStepIndex + 1];
+      const nextCandidate = visibleStepsFlattened[activeStepIndex + 1];
+      let nextStep: PageWizardStep | undefined;
+      if (
+        /* v8 ignore next */
+        nextCandidate
+      ) {
+        nextStep = isPageWizardParentStep(nextCandidate)
+          ? visibleStepsFlattened[activeStepIndex + 2]
+          : nextCandidate;
+      }
+      if (
+        /* v8 ignore next */
+        !nextStep
+      )
+        return;
 
       // Clear search params
       setSearchParams(new URLSearchParams(''));
-      setWizardData((prev) => ({ ...prev, ...formData }));
+      setWizardData((prev) => ({ ...prev, ...formData, ...supplementalWizardData }));
       setStepData((prev) => ({ ...prev, [activeStep?.id]: formData }));
       setActiveStep(nextStep);
       return Promise.resolve();
@@ -125,9 +146,21 @@ export function PageWizardProvider<DataT extends NonNullable<object>>(props: {
     const visibleStepsFlattened = getVisibleSteps(flattenedSteps, wizardData);
 
     const activeStepIndex = visibleStepsFlattened.findIndex((step) => step.id === activeStep?.id);
-    const previousStep = isPageWizardParentStep(visibleStepsFlattened[activeStepIndex - 1])
-      ? visibleStepsFlattened[activeStepIndex - 2]
-      : visibleStepsFlattened[activeStepIndex - 1];
+    const previousCandidate = visibleStepsFlattened[activeStepIndex - 1];
+    let previousStep: PageWizardStep | undefined;
+    if (
+      /* v8 ignore next */
+      previousCandidate
+    ) {
+      previousStep = isPageWizardParentStep(previousCandidate)
+        ? visibleStepsFlattened[activeStepIndex - 2]
+        : previousCandidate;
+    }
+    if (
+      /* v8 ignore next */
+      !previousStep
+    )
+      return;
     // Clear search params
     setSearchParams(new URLSearchParams(''));
     setActiveStep(previousStep);

@@ -73,8 +73,10 @@ export interface IDashboardFilterSet {
 
 export interface IAutomationDashboardCollectionStatus {
   enabled: boolean | null;
-  next_run: Date | null;
-  initial_collection_status: string | null;
+  /** ISO 8601 string as returned by the API (useFetcher applies no date reviver), or null. */
+  last_sync?: string | null;
+  show_dashboard: boolean | null;
+  show_leaderboard: boolean | null;
 }
 
 // ─── Toolbar ─────────────────────────────────────────────────────────────────
@@ -82,8 +84,6 @@ export interface IAutomationDashboardCollectionStatus {
 export interface AutomationDashboardToolbarFiltersProps
   extends Readonly<{
     filterableFields: string[];
-    /** Additional filters appended after the dynamic filters. */
-    additionalFilters?: IToolbarFilter[];
   }> {}
 
 export interface AsyncKeyOptions {

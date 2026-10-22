@@ -7,6 +7,7 @@ export interface FieldMetadata {
   pattern?: string;
   pattern_description?: string;
   flags?: string;
+  normalize?: string;
 }
 
 /**
@@ -20,6 +21,7 @@ export interface PageFormOptionsFieldMetadata {
   pattern_description?: string;
   patternDescription?: string;
   flags?: string;
+  normalize?: string;
 }
 
 /**
@@ -27,6 +29,11 @@ export interface PageFormOptionsFieldMetadata {
  * PageWizard) accepts via the `optionsData` prop. Forms pass the OPTIONS
  * response they already fetch; PageForm extracts field metadata from the
  * POST/PUT/PATCH actions and provides it via {@link PageFormOptionsContext}.
+ *
+ * For patterns that are not on this OPTIONS payload (dynamic credential inputs,
+ * authenticator plugin configuration, etc.), build a field map with
+ * `buildFieldMetadataMap` from `@ansible/common-ui/validation/buildFieldMetadataMap`
+ * and provide it via {@link PageFormFieldMetadataProvider} instead.
  */
 export interface PageFormOptionsData {
   actions?: {
@@ -82,19 +89,26 @@ export function extractPageFormOptionsFields(
         patternDescription = fieldMetadata.patternDescription;
       }
       const flags = typeof fieldMetadata.flags === 'string' ? fieldMetadata.flags : undefined;
+      const normalize =
+        typeof fieldMetadata.normalize === 'string' ? fieldMetadata.normalize : undefined;
 
       // Validate pattern syntax at extraction time
       if (pattern) {
         try {
           new RegExp(pattern, flags || '');
         } catch {
-          // Skip this field if pattern is invalid
+          if (process.env.NODE_ENV === 'development') {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `extractPageFormOptionsFields: skipping field "${fieldName}" — invalid regex pattern: ${pattern}`
+            );
+          }
           return;
         }
       }
 
       if (pattern || patternDescription) {
-        fields[fieldName] = { pattern, pattern_description: patternDescription, flags };
+        fields[fieldName] = { pattern, pattern_description: patternDescription, flags, normalize };
       }
     });
   });
@@ -125,6 +139,24 @@ export function usePageFormOptionsFields(
  * validation, which matters when different parts of one form correspond to
  * different backend resources (or when the relevant resource is only known
  * at runtime, e.g. after the user picks a type).
+ *
+ * ### Supported controls
+ *
+ * The following controls call {@link usePageFormOptionsContext} and apply
+ * pattern validation automatically when metadata is present:
+ *
+ * - **PageFormTextInput** — string fields (CharField, URLField, etc.)
+ * - **PageFormTextArea** — multiline string fields (PrivateKey, etc.)
+ *
+ * The following controls do **not** consume metadata. This is intentional:
+ *
+ * - **PageFormDataEditor** — structured JSON/YAML; regex patterns are
+ *   semantically wrong for serialized objects, and the backend never
+ *   injects `pattern` into non-CharField schema fields.
+ * - **PageFormFileUpload** — binary/file uploads; operates on `File`
+ *   objects, not strings.
+ * - **PageFormCheckbox**, **PageFormSelect** — boolean/enum values;
+ *   regex pattern validation is not applicable.
  */
 export function PageFormFieldMetadataProvider(
   props: Readonly<{

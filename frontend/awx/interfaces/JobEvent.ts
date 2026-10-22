@@ -1,4 +1,4 @@
-import { SetRequired } from 'type-fest';
+import { SetRequired } from '../../../framework/utils/utilityTypes';
 import { JobEvent as SwaggerJobEvent } from './generated-from-swagger/api';
 import { SummaryFieldJob } from './summary-fields/summary-fields';
 

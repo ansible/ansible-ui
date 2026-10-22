@@ -23,7 +23,7 @@ export function AuthenticatorTypeStep(
     .filter((plugin) => !excludedPlugins.includes(plugin.type))
     .map((plugin) => ({
       value: plugin.type,
-      label: getAuthenticatorTypeLabel(plugin.type, t),
+      label: getAuthenticatorTypeLabel(plugin.type, t, props.plugins.authenticators),
     }));
 
   return (

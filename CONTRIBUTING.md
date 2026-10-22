@@ -12,13 +12,15 @@ This repository's [`AI_POLICY.md`](AI_POLICY.md) summarizes how that policy
 applies here. For agent skills and local agent settings, see
 [`AI_AGENT_POLICY.md`](AI_AGENT_POLICY.md).
 
+The [README](README.md#ai-assisted-contributions) includes an [AI Attribution Initiative](https://aiattribution.github.io/) (AIA) statement for this repository: AIA Ph SeCeNc Hin R Claude Code, Cursor, and similar AI-assisted development tools v1.0 ([interpret this statement](https://aiattribution.github.io/interpret-attribution)).
+
 ## Issues
 
 If you find a problem with the project, search if an issue already exists. If a related issue doesn't exist, you can open a new issue.
 
 ## Code changes
 
-If you have forked the project and created a branch with changes you would like to see added to the project, create a pull request and your request will be reviewed.
+If you have forked the project and created a branch with changes you would like to see added to the project, create a pull request against **`devel`** and your request will be reviewed.
 
 ### Signed commits
 

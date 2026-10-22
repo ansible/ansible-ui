@@ -1,4 +1,4 @@
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '../hooks/useResizeObserver';
 import {
   createContext,
   ReactNode,
@@ -142,6 +142,8 @@ const Outer = styled.div<{
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  min-height: 0;
+  min-width: 0;
   overflow: hidden;
   position: relative;
   max-width: 100%;
@@ -155,6 +157,8 @@ const Inner = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  min-height: 0;
+  min-width: 0;
   overflow-y: auto;
   scrollbar-color: #8888 transparent;
 `;

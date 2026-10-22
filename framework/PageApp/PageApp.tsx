@@ -9,6 +9,9 @@ import { usePageNavigationRoutesContext } from '../PageNavigation/PageNavigation
 import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsDrawer';
 import { usePageNotifications } from '../PageNotifications/usePageNotifications';
 
+/** Page needs an onPageResize to enable its own size tracking; we only want the side effect. */
+function noop() {}
+
 export function PageApp(props: {
   /** Component for the masthead of the page. */
   masthead?: ReactNode;
@@ -48,6 +51,15 @@ export function PageApp(props: {
               notificationDrawer={<PageNotificationsDrawer />}
               isNotificationDrawerExpanded={notificationsDrawerOpen}
               isContentFilled
+              // Page only starts tracking its own size when one of
+              // isManagedSidebar / onPageResize is set. Without it, the
+              // isMobile it puts on PageContext is stuck false, and
+              // PageSidebar adds pf-m-expanded only when isSidebarOpen &&
+              // isMobile -- so below the xl breakpoint the sidebar stayed
+              // translated off-canvas however often the toggle was pressed.
+              // The sidebar's open state stays owned by PageNavSideBarContext;
+              // this only lets Page answer "are we on a small viewport?".
+              onPageResize={noop}
             >
               {props.banner}
               <Outlet />

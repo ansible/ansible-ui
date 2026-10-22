@@ -126,11 +126,11 @@ export function mungePromptData(
   // Only include fields that are configured for prompting
   if (launchConfig) {
     if (launchConfig.ask_tags_on_launch) {
-      result.job_tags = stringifyTags(prompt.job_tags) ?? '';
+      result.job_tags = stringifyTags(prompt.job_tags);
     }
 
     if (launchConfig.ask_skip_tags_on_launch) {
-      result.skip_tags = stringifyTags(prompt.skip_tags) ?? '';
+      result.skip_tags = stringifyTags(prompt.skip_tags);
     }
 
     if (launchConfig.ask_limit_on_launch && prompt.limit) {
@@ -170,8 +170,8 @@ export function mungePromptData(
     }
   } else {
     // Fallback to original behavior if no launch config
-    result.job_tags = stringifyTags(prompt.job_tags) ?? '';
-    result.skip_tags = stringifyTags(prompt.skip_tags) ?? '';
+    result.job_tags = stringifyTags(prompt.job_tags);
+    result.skip_tags = stringifyTags(prompt.skip_tags);
   }
 
   return result;
@@ -189,6 +189,23 @@ export function mungeSurveyAndExtraVarsData(
   });
 
   return { ...extraData, ...parseVariableField(extra_vars) };
+}
+
+export function parseRruleComponents(rruleStr: string): {
+  dtstart: string;
+  rruleLines: string[];
+  exruleLines: string[];
+} {
+  const lines: string[] = [];
+  for (const rawLine of rruleStr.split('\n')) {
+    lines.push(...rawLine.split(/ (?=RRULE:|EXRULE:)/));
+  }
+  const normalized = lines.map((l) => l.trim()).filter(Boolean);
+  return {
+    dtstart: normalized.find((l) => l.startsWith('DTSTART')) ?? '',
+    rruleLines: normalized.filter((l) => l.startsWith('RRULE:')),
+    exruleLines: normalized.filter((l) => l.startsWith('EXRULE:')),
+  };
 }
 
 export function ensureUntilZSuffix(ruleStr: string): string {

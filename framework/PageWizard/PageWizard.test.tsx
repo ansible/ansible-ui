@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { PageFormTextInput } from '../PageForm/Inputs/PageFormTextInput';
 import { PageWizard } from './PageWizard';
+import { PageWizardBasicStep } from './types';
 
 describe('PageWizard', () => {
   const Review = () => {
@@ -213,6 +214,144 @@ describe('PageWizard', () => {
     });
   });
 
+  it('uses supplemental wizard data returned from validate when choosing the next step', async () => {
+    const user = userEvent.setup();
+    const dynamicSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        element: <h1>Details</h1>,
+        validate: () => ({ showPrompts: true }),
+      },
+      {
+        id: 'prompts',
+        label: 'Prompts',
+        element: <h1>Prompts</h1>,
+        hidden: (wizardData: { showPrompts?: boolean }) => !wizardData.showPrompts,
+      },
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={dynamicSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn().mockResolvedValue(undefined)}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-section-prompts')).toHaveTextContent('Prompts');
+    });
+  });
+
+  it('continues when validate resolves without supplemental data', async () => {
+    const user = userEvent.setup();
+    const dynamicSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        element: <h1>Details</h1>,
+        validate: () => undefined,
+      },
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={dynamicSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn().mockResolvedValue(undefined)}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-section-review')).toHaveTextContent('Review');
+    });
+  });
+
+  it('ignores non-object validate results when choosing the next step', async () => {
+    const user = userEvent.setup();
+    const dynamicSteps = [
+      {
+        id: 'details',
+        label: 'Details',
+        element: <h1>Details</h1>,
+        validate: (() => ['ignored']) as unknown as NonNullable<PageWizardBasicStep['validate']>,
+      },
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={dynamicSteps}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn().mockResolvedValue(undefined)}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-section-review')).toHaveTextContent('Review');
+    });
+  });
+
+  it('submits merged form and supplemental data from the last step', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const lastStepSteps = [
+      {
+        id: 'review',
+        label: 'Review',
+        element: <h1>Review</h1>,
+        validate: () => ({ confirmed: true }),
+      },
+    ];
+
+    render(
+      <MemoryRouter>
+        <PageWizard
+          steps={lastStepSteps}
+          onCancel={vi.fn()}
+          onSubmit={onSubmit}
+          stepDefaults={{}}
+        />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('wizard-next'));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({ confirmed: true });
+    });
+  });
+
   describe('Substeps', () => {
     const stepsWithSubsteps = [
       {
@@ -272,6 +411,23 @@ describe('PageWizard', () => {
       expect(screen.getByTestId('wizard-next')).toHaveTextContent('Finish');
     });
 
+    it('should start at the first substep when the first step is a parent', async () => {
+      render(
+        <MemoryRouter>
+          <PageWizard
+            steps={[stepsWithSubsteps[1]]}
+            onCancel={vi.fn()}
+            onSubmit={vi.fn().mockResolvedValue(undefined)}
+            stepDefaults={{}}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('wizard-section-substepA')).toHaveTextContent('Substep A');
+      });
+    });
+
     it('should navigate back through substeps', async () => {
       const user = userEvent.setup();
       render(
@@ -296,6 +452,69 @@ describe('PageWizard', () => {
       await waitFor(() => {
         expect(screen.getByTestId('wizard-section-welcome')).toHaveTextContent('Welcome');
       });
+    });
+
+    it('does not advance when the next step is a parent without substeps', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <PageWizard
+            steps={[
+              {
+                id: 'welcome',
+                label: 'Welcome',
+                element: <h1>Welcome</h1>,
+              },
+              {
+                id: 'emptyParent',
+                label: 'Parent',
+                substeps: [] as unknown as [PageWizardBasicStep, ...PageWizardBasicStep[]],
+              },
+            ]}
+            onCancel={vi.fn()}
+            onSubmit={vi.fn().mockResolvedValue(undefined)}
+            stepDefaults={{}}
+          />
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByTestId('wizard-next'));
+
+      expect(screen.getByTestId('wizard-section-welcome')).toHaveTextContent('Welcome');
+    });
+
+    it('does not navigate back from the only substep of a parent', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <PageWizard
+            steps={[
+              {
+                id: 'parent',
+                label: 'Parent',
+                substeps: [
+                  {
+                    id: 'onlySubstep',
+                    label: 'Only substep',
+                    element: <h1>Only substep</h1>,
+                  },
+                ],
+              },
+            ]}
+            onCancel={vi.fn()}
+            onSubmit={vi.fn().mockResolvedValue(undefined)}
+            stepDefaults={{}}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('wizard-section-onlySubstep')).toHaveTextContent('Only substep');
+      });
+
+      await user.click(screen.getByTestId('wizard-back'));
+
+      expect(screen.getByTestId('wizard-section-onlySubstep')).toHaveTextContent('Only substep');
     });
   });
 });

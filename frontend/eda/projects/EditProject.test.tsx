@@ -193,6 +193,26 @@ describe('EditProject - SCM Update on Launch', () => {
       expect(screen.queryByRole('spinbutton', { name: /Cache Timeout/i })).not.toBeInTheDocument();
     });
 
+    it('should show read-only warning when OPTIONS has no PATCH action', async () => {
+      server.use(
+        http.options(edaAPI`/projects/1/`, () => HttpResponse.json({ actions: { GET: {} } }))
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/projects/1/edit']}>
+          <Routes>
+            <Route path="/projects/:id/edit" element={<EditProject />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/you do not have permissions to edit this project/i)
+        ).toBeInTheDocument();
+      });
+    });
+
     it('should show Cache Timeout field with default value when scm_update_on_launch is checked', async () => {
       const user = userEvent.setup();
 

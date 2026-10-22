@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { usePlatformActiveUser } from '@ansible/platform-ui/main/PlatformActiveUserProvider';
 import { ChatbotWindow } from './ChatbotWindow';

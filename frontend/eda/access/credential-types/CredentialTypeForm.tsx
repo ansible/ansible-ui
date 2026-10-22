@@ -35,6 +35,9 @@ export function CreateCredentialType() {
   const pageNavigate = usePageNavigate();
 
   const postRequest = usePostRequest<EdaCredentialType, EdaCredentialType>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/credential-types/`
+  );
 
   const onSubmit: PageFormSubmitHandler<EdaCredentialType> = async (credentialType) => {
     const newCredentialType = await postRequest(edaAPI`/credential-types/`, credentialType);
@@ -55,6 +58,7 @@ export function CreateCredentialType() {
         onSubmit={onSubmit}
         onCancel={() => pageNavigate(EdaRoute.CredentialTypes)}
         defaultValue={getInitialFormValues()}
+        optionsData={optionsData}
       >
         <CredentialTypeInputs />
       </EdaPageForm>
@@ -69,10 +73,10 @@ export function EditCredentialType() {
   const navigate = useNavigate();
 
   const params = useParams<{ id?: string }>();
-  const { data } = useOptions<OptionsResponse<ActionsResponse>>(
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     edaAPI`/credential-types/${params.id ?? ''}/`
   );
-  const canPatchCredentialType = data ? Boolean(data.actions && data.actions['PATCH']) : true;
+  const canPatchCredentialType = optionsData ? Boolean(optionsData.actions?.['PATCH']) : true;
 
   const { data: credentialType } = useGet<EdaCredentialType>(
     edaAPI`/credential-types/` + `${params?.id}/`
@@ -125,6 +129,7 @@ export function EditCredentialType() {
             onSubmit={handleSubmit}
             onCancel={onCancel}
             defaultValue={getInitialFormValues(credentialType)}
+            optionsData={optionsData}
           >
             <CredentialTypeInputs />
           </EdaPageForm>

@@ -1,70 +1,49 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  PageDashboardContext,
-  PageHeader,
-  PageLayout,
-  useGetPageUrl,
-} from '@ansible/ansible-ui-framework';
-import { Grid, GridItem } from '@patternfly/react-core';
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
   DashboardChartCard,
   DashboardMainTableCard,
   DashboardTableCard,
   DashboardValueCard,
+  useAutomationDashboardPeriodFilter,
   useAutomationDashboardToolbar,
 } from './components';
 
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { DashboardToolbar } from './components/DashboardToolbar';
-import useResizeObserver from '@react-hook/resize-observer';
-import { useAutomationDashboardCollectionStatus } from './common/useAutomationDashboardCollectionStatus';
-import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
-import { Scrollable } from '@ansible/ansible-ui-framework/components/Scrollable';
+import { DashboardGridRow, DashboardLayout } from './components/DashboardLayout';
 
-const Divisor = 1662 / 24;
 /** Breakpoint range (in grid columns) where value cards switch from 'md' to 'xs' size. */
 const WIDE_LAYOUT_MIN_COLUMNS = 16;
 const WIDE_LAYOUT_MAX_COLUMNS = 31;
 
 export function AutomationDashboard() {
   const { t } = useTranslation();
+  const periodFilter = useAutomationDashboardPeriodFilter();
   const toolbarFilters = useAutomationDashboardToolbar();
-  const getPageUrl = useGetPageUrl();
-  const description = t(
-    'Discover the significant cost and time savings achieved by automating Ansible jobs with the Ansible Automation Platform. Explore how automation reduces manual effort, enhances efficiency, and optimizes IT operations across your organization.'
+  // The query string, required-filter validation and export work on all filters, period included.
+  const allFilters = useMemo(
+    () => [periodFilter, ...toolbarFilters],
+    [periodFilter, toolbarFilters]
   );
+  const getPageUrl = useGetPageUrl();
 
-  const view = useAutomationDashboardView({ toolbarFilters });
+  const view = useAutomationDashboardView({ toolbarFilters: allFilters });
   const { details } = view;
 
   const noDataString = t('No jobs have been run.');
-  const { isLoading } = useAutomationDashboardCollectionStatus();
 
-  const ref = useRef<HTMLDivElement>(null);
-  const [gridColumns, setGridColumns] = useState(1);
+  const renderDashboardContent = (gridColumns: number) => {
+    const isWideLayout =
+      WIDE_LAYOUT_MIN_COLUMNS <= gridColumns && gridColumns <= WIDE_LAYOUT_MAX_COLUMNS;
+    const valueCardWidth = isWideLayout ? 'xs' : ('md' as const);
+    const chartCardWidth = gridColumns <= WIDE_LAYOUT_MAX_COLUMNS ? 'md' : ('xl' as const);
 
-  useLayoutEffect(() => {
-    const width = Math.max(1, Math.floor((ref.current?.clientWidth ?? 0) / Divisor));
-    setGridColumns(width);
-  }, []);
-
-  useResizeObserver(ref, (entry) => {
-    const width = Math.max(1, Math.floor((entry.contentRect.width ?? 0) / Divisor));
-    setGridColumns(width);
-  });
-
-  const isWideLayout =
-    WIDE_LAYOUT_MIN_COLUMNS <= gridColumns && gridColumns <= WIDE_LAYOUT_MAX_COLUMNS;
-  const valueCardWidth = isWideLayout ? 'xs' : ('md' as const);
-
-  const pageDashboardContextValue = useMemo(() => ({ columns: gridColumns }), [gridColumns]);
-
-  const dashboardContent = (
-    <>
-      <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
-        <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
+    return (
+      <>
+        <DashboardGridRow>
           <DashboardValueCard
             id="successful-jobs-card"
             title={t('Successful jobs')}
@@ -114,10 +93,8 @@ export function AutomationDashboard() {
             errorStateTitle={t('Error loading hours of automation')}
             width={valueCardWidth}
           ></DashboardValueCard>
-        </Grid>
-      </GridItem>
-      <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
-        <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
+        </DashboardGridRow>
+        <DashboardGridRow>
           <DashboardTableCard
             id="top-projects-card"
             title={t('Top 5 projects')}
@@ -164,6 +141,8 @@ export function AutomationDashboard() {
                 : t('User data will appear after your first automation runs.')
             }
           ></DashboardTableCard>
+        </DashboardGridRow>
+        <DashboardGridRow>
           <DashboardChartCard
             id="host-chart-card"
             title={t('Number of hosts jobs are running on')}
@@ -176,6 +155,7 @@ export function AutomationDashboard() {
             error={view.detailsError}
             errorStateTitle={t('Error loading host chart')}
             legendLabel={t('Hosts')}
+            width={chartCardWidth}
           ></DashboardChartCard>
           <DashboardChartCard
             id="job-chart-card"
@@ -189,54 +169,31 @@ export function AutomationDashboard() {
             errorStateTitle={t('Error loading job chart')}
             error={view.detailsError}
             legendLabel={t('Job runs')}
+            width={chartCardWidth}
           ></DashboardChartCard>
-        </Grid>
-      </GridItem>
-
-      <GridItem style={{ gridColumn: `span ${gridColumns}` }}>
-        <Grid hasGutter style={{ gridTemplateColumns: `repeat(${gridColumns}, 1fr)` }}>
+        </DashboardGridRow>
+        <DashboardGridRow>
           <DashboardMainTableCard
             {...view}
-            toolbarFilters={toolbarFilters}
+            toolbarFilters={allFilters}
             topCardsWidth={valueCardWidth}
           />
-        </Grid>
-      </GridItem>
-    </>
-  );
+        </DashboardGridRow>
+      </>
+    );
+  };
 
   return (
-    <PageLayout>
-      {!isLoading && (
-        <>
-          <PageHeader
-            title={t('Automation Dashboard')}
-            titleHelpTitle={t('Automation Dashboard')}
-            titleHelp={description}
-            description={description}
-          />
-          <DashboardToolbar
-            toolbarFilters={toolbarFilters}
-            {...view.mainTableView}
-            keyFn={(item) => item.id}
-            registerClearCallback={view.registerClearCallback}
-          />
-        </>
-      )}
-      <PageDashboardContext.Provider value={pageDashboardContextValue}>
-        <Scrollable marginLeft={20} marginRight={20} marginBottom={16} marginTop={16}>
-          <div
-            ref={ref}
-            style={{
-              display: 'grid',
-              gap: 16,
-              gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
-            }}
-          >
-            {isLoading ? <LoadingState /> : dashboardContent}
-          </div>
-        </Scrollable>
-      </PageDashboardContext.Provider>
-    </PageLayout>
+    <>
+      <DashboardToolbar
+        toolbarFilters={toolbarFilters}
+        periodFilter={periodFilter}
+        validationFilters={allFilters}
+        {...view.mainTableView}
+        keyFn={(item) => item.id}
+        registerClearCallback={view.registerClearCallback}
+      />
+      <DashboardLayout>{renderDashboardContent}</DashboardLayout>
+    </>
   );
 }

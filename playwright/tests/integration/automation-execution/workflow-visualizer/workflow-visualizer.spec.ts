@@ -283,33 +283,22 @@ test.describe('Workflow Viz', () => {
       const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
       await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', projectOne);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await expect(page.getByRole('button', { name: 'Add step' })).toBeVisible();
-      await page.getByRole('button', { name: 'Add step' }).click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-      await page.getByRole('option', { name: 'Project Sync' }).click();
-      await page.getByRole('button', { name: 'Project', exact: true }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill(projectTwo);
-      await page.getByRole('option', { name: projectTwo }).click();
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
+      await WorkflowVisualizer.ui.addWorkflowStepWithoutSave(
+        page,
+        'Project Sync',
+        projectTwo,
+        'Project'
+      );
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
-      await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await WorkflowVisualizer.ui.saveAndDismissToast(page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
       await toggleNodeKebab(projectOneName, page);
       await page.getByRole('menuitem', { name: 'Remove step' }).click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Remove step' }).click();
-      await page.getByRole('button', { name: 'Save' }).nth(0).click();
-      await expect(
-        page.getByRole('heading', { name: 'Success alert: Successfully' })
-      ).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await WorkflowVisualizer.ui.saveAndDismissToast(page);
       await expect(page.locator('[class*="action-icon__background"]').first()).toBeVisible();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await toggleNodeKebab(projectTwoName, page);
@@ -321,29 +310,16 @@ test.describe('Workflow Viz', () => {
         .click();
       await page.getByRole('button', { name: 'Remove step' }).click();
       await expect(page.locator('[class*="action-icon__background"]')).toHaveCount(0);
-      await page.getByRole('button', { name: 'Save' }).nth(0).click();
-      await expect(
-        page.getByRole('heading', { name: 'Success alert: Successfully' })
-      ).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
-      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
-      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-      await page.getByRole('option', { name: 'Project Sync' }).click();
-      await page.getByRole('button', { name: 'Project', exact: true }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill(projectTwo);
-      await page.getByRole('option', { name: projectTwo }).click();
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
+      await WorkflowVisualizer.ui.saveAndDismissToast(page);
+      await WorkflowVisualizer.ui.addWorkflowStepWithoutSave(
+        page,
+        'Project Sync',
+        projectTwo,
+        'Project'
+      );
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
-      await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.getByRole('button', { name: 'Save' }).nth(0).click();
-      await expect(
-        page.getByRole('heading', { name: 'Success alert: Successfully' })
-      ).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await WorkflowVisualizer.ui.saveAndDismissToast(page);
       await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
       await Project.ui.delete(page, projectTwo);
       await Project.ui.delete(page, projectOne);
@@ -391,6 +367,84 @@ test.describe('Workflow Viz', () => {
       await JobTemplate.ui.delete(page, jobTemplate);
       await Project.ui.delete(page, project);
       await Inventory.ui.delete(page, inventoryName);
+    }
+  );
+
+  test(
+    'Adds a labeled job template via Add step and link when labels are not prompted on launch, then saves as a sequential child',
+    { tag: ['@not_mock', '@compare', '@tier1'] },
+    async ({ page }) => {
+      test.setTimeout(5 * 60 * 1000);
+      const projectName = createE2EName();
+      const labelName = createE2EName('jt-label');
+      const project = await Project.ui.create(page, { projectName, organizationName: 'Default' });
+      const jobTemplateWithLabels = await JobTemplate.ui.create(page, {
+        labels: [labelName],
+        createLabel: true,
+      });
+      const workflowJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
+      await WorkflowVisualizer.ui.createVisualizerStep(page, 'Project Sync', project);
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+
+      await toggleNodeKebab(projectName, page);
+      await page.getByRole('menuitem', { name: 'Add step and link' }).click();
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: 'Job Template', exact: true }).click();
+      await page.getByLabel('Job template *').click();
+      await page.getByLabel('Search input').fill(jobTemplateWithLabels);
+      await page.getByRole('option', { name: jobTemplateWithLabels }).click();
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+
+      const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
+      await expect(saveButton).toBeEnabled({ timeout: 30000 });
+      await saveButton.click();
+
+      const toaster = page.getByTestId('alert-toaster');
+      const successToast = toaster.getByText('Successfully saved workflow visualizer');
+      const errorAlert = toaster.getByText('Failed to save workflow job template');
+      await expect(successToast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
+      if (await errorAlert.isVisible().catch(() => false)) {
+        throw new Error(`Workflow visualizer save failed: ${await toaster.innerText()}`);
+      }
+
+      const wfjtList = (await awxAPI.get(page, 'workflow_job_templates/', {
+        params: { name: workflowJobTemplate },
+      })) as { results: { id: number }[] };
+      const wfjtId = wfjtList.results[0].id;
+      const nodes = (await awxAPI.get(
+        page,
+        `workflow_job_templates/${wfjtId}/workflow_nodes/`
+      )) as {
+        results: {
+          id: number;
+          always_nodes: number[];
+          success_nodes: number[];
+          failure_nodes: number[];
+          summary_fields?: { unified_job_template?: { name: string } };
+        }[];
+      };
+
+      expect(nodes.results).toHaveLength(2);
+      const linkedParent = nodes.results.find(
+        (node) =>
+          node.always_nodes.length > 0 ||
+          node.success_nodes.length > 0 ||
+          node.failure_nodes.length > 0
+      );
+      expect(linkedParent).toBeDefined();
+      const childId =
+        linkedParent!.always_nodes[0] ??
+        linkedParent!.success_nodes[0] ??
+        linkedParent!.failure_nodes[0];
+      const childNode = nodes.results.find((node) => node.id === childId);
+      expect(childNode).toBeDefined();
+      expect(childNode!.summary_fields?.unified_job_template?.name).toBe(jobTemplateWithLabels);
+
+      await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
+      await JobTemplate.ui.delete(page, jobTemplateWithLabels);
+      await Project.ui.delete(page, project);
     }
   );
 

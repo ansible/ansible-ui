@@ -1,4 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { createElement, ReactNode } from 'react';
+import { Cache, SWRConfig } from 'swr';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { useSubscriptionCostState } from './useSubscriptionCostState';
 import type { ISubscriptionCosts } from '../types';
@@ -10,6 +12,7 @@ const { mockUseGetReportSubscriptionCosts } = vi.hoisted(() => ({
 }));
 
 vi.mock('./useGetReportSubscriptionCosts', () => ({
+  SUBSCRIPTION_COSTS_URL: '/subscription_costs/',
   useGetReportSubscriptionCosts: mockUseGetReportSubscriptionCosts,
 }));
 
@@ -115,5 +118,86 @@ describe('useSubscriptionCostState', () => {
     rerender();
 
     await waitFor(() => expect(result.current.costState).toBeUndefined());
+  });
+
+  describe('SWR list cache', () => {
+    const CACHE_KEY = '/subscription_costs/';
+
+    /** Renders the hook with an isolated SWR cache seeded with `cachedData`. */
+    async function renderWithCache(cachedData: ISubscriptionCosts[] | undefined) {
+      mockUseGetReportSubscriptionCosts.mockReturnValue({ subscriptionCosts: fixture });
+      const cache = new Map(
+        cachedData ? [[CACHE_KEY, { data: cachedData }]] : []
+      ) as unknown as Cache;
+      const wrapper = ({ children }: { children: ReactNode }) =>
+        createElement(SWRConfig, { value: { provider: () => cache } }, children);
+      const { result } = renderHook(() => useSubscriptionCostState(), { wrapper });
+      await waitFor(() => expect(result.current.costState).toEqual(fixture[0]));
+      const cachedData$ = () => (cache.get(CACHE_KEY) as { data?: unknown } | undefined)?.data;
+      return { result, cachedData$ };
+    }
+
+    /** Lets any pending SWR cache mutation settle. */
+    const flush = () => act(() => new Promise<void>((resolve) => setTimeout(resolve, 0)));
+
+    test('should write the saved costs into the SWR cache of the list GET', async () => {
+      const { result, cachedData$ } = await renderWithCache(fixture);
+
+      const saved: ISubscriptionCosts = { ...fixture[0], monthly_subscription_cost: 500 };
+      act(() => {
+        result.current.setCostState(saved);
+      });
+
+      await waitFor(() => expect(cachedData$()).toEqual([saved]));
+    });
+
+    test('should replace only the cached record with the same id', async () => {
+      const other: ISubscriptionCosts = { ...fixture[0], id: 2 };
+      const { result, cachedData$ } = await renderWithCache([fixture[0], other]);
+
+      const saved: ISubscriptionCosts = { ...fixture[0], monthly_subscription_cost: 500 };
+      act(() => {
+        result.current.setCostState(saved);
+      });
+
+      await waitFor(() => expect(cachedData$()).toEqual([saved, other]));
+    });
+
+    test('should leave the cache empty when nothing was cached yet', async () => {
+      const { result, cachedData$ } = await renderWithCache(undefined);
+
+      act(() => {
+        result.current.setCostState({ ...fixture[0], monthly_subscription_cost: 500 });
+      });
+      await flush();
+
+      expect(cachedData$()).toBeUndefined();
+    });
+
+    test('should not touch the cache for a functional update', async () => {
+      const { result, cachedData$ } = await renderWithCache(fixture);
+      const cachedBefore = cachedData$();
+
+      act(() => {
+        result.current.setCostState((prev) => prev && { ...prev, monthly_subscription_cost: 500 });
+      });
+      await flush();
+
+      expect(result.current.costState?.monthly_subscription_cost).toBe(500);
+      expect(cachedData$()).toBe(cachedBefore);
+    });
+
+    test('should not touch the cache when cleared to undefined', async () => {
+      const { result, cachedData$ } = await renderWithCache(fixture);
+      const cachedBefore = cachedData$();
+
+      act(() => {
+        result.current.setCostState(undefined);
+      });
+      await flush();
+
+      expect(result.current.costState).toBeUndefined();
+      expect(cachedData$()).toBe(cachedBefore);
+    });
   });
 });

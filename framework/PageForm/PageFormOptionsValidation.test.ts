@@ -56,6 +56,108 @@ describe('validateOptionsPattern', () => {
     };
     expect(validateOptionsPattern('résumé', unicodeMetadata, true)).toBe(true);
   });
+
+  test('normalizes with NFC before pattern validation when normalize is set', () => {
+    const decomposedEAcute = 'e\u0301';
+    const metadata: FieldMetadata = {
+      pattern: '^.$',
+      pattern_description: 'exactly one character',
+      normalize: 'NFC',
+    };
+    expect(decomposedEAcute).toHaveLength(2);
+    expect(validateOptionsPattern(decomposedEAcute, metadata, true)).toBe(true);
+  });
+
+  test('without normalize, decomposed Unicode is validated as entered', () => {
+    const decomposedEAcute = 'e\u0301';
+    const metadata: FieldMetadata = {
+      pattern: '^.$',
+      pattern_description: 'exactly one character',
+    };
+    expect(validateOptionsPattern(decomposedEAcute, metadata, true)).toBe('exactly one character');
+  });
+
+  test('NFC normalization can satisfy a max-length pattern after shortening', () => {
+    const decomposedEAcute = 'e\u0301';
+    const metadata: FieldMetadata = {
+      pattern: '^.{1}$',
+      pattern_description: 'at most one character',
+      normalize: 'NFC',
+    };
+    expect(validateOptionsPattern(decomposedEAcute, metadata, true)).toBe(true);
+    expect(
+      validateOptionsPattern(decomposedEAcute, { ...metadata, normalize: undefined }, true)
+    ).toBe('at most one character');
+  });
+
+  test('skips pattern validation for an unsupported normalize form', () => {
+    const metadata: FieldMetadata = {
+      pattern: '^[a-z]+$',
+      pattern_description: 'lowercase only',
+      normalize: 'INVALID',
+    };
+    expect(validateOptionsPattern('NOT_LOWERCASE', metadata, true)).toBe(true);
+  });
+
+  test('skips pattern validation when regex flags are invalid', () => {
+    const metadata: FieldMetadata = {
+      pattern: '^[a-z]+$',
+      pattern_description: 'lowercase only',
+      flags: 'x',
+    };
+    expect(validateOptionsPattern('NOT_LOWERCASE', metadata, true)).toBe(true);
+  });
+
+  test('returns true when the pattern cannot be compiled at validation time', () => {
+    expect(validateOptionsPattern('value', { pattern: '[' }, true)).toBe(true);
+  });
+
+  test('sanitizes pattern_description in error messages', () => {
+    const metadata: FieldMetadata = {
+      pattern: '^[a-z]+$',
+      pattern_description: 'bad <script>hint</script>',
+    };
+    expect(validateOptionsPattern('UPPER', metadata, true)).toBe('bad scripthint/script');
+  });
+
+  test('applies NFKC normalization before pattern validation', () => {
+    const metadata: FieldMetadata = {
+      pattern: '^.$',
+      pattern_description: 'exactly one character',
+      normalize: 'NFKC',
+    };
+    expect(validateOptionsPattern('e\u0301', metadata, true)).toBe(true);
+  });
+
+  test('applies NFD normalization before pattern validation', () => {
+    const composedEAcute = '\u00e9';
+    const metadata: FieldMetadata = {
+      pattern: '^.{2}$',
+      pattern_description: 'exactly two characters',
+      normalize: 'NFD',
+    };
+    expect(composedEAcute).toHaveLength(1);
+    expect(validateOptionsPattern(composedEAcute, metadata, true)).toBe(true);
+  });
+
+  test('applies NFKD normalization before pattern validation', () => {
+    const ligatureFi = '\uFB01';
+    const metadata: FieldMetadata = {
+      pattern: '^.{2}$',
+      pattern_description: 'exactly two characters',
+      normalize: 'NFKD',
+    };
+    expect(validateOptionsPattern(ligatureFi, metadata, true)).toBe(true);
+  });
+
+  test('still returns pattern error when normalized value does not match', () => {
+    const metadata: FieldMetadata = {
+      pattern: '^[a-z]+$',
+      pattern_description: 'lowercase only',
+      normalize: 'NFC',
+    };
+    expect(validateOptionsPattern('NOT_LOWERCASE', metadata, true)).toBe('lowercase only');
+  });
 });
 
 describe('runUserValidate', () => {
@@ -104,6 +206,21 @@ describe('createFieldValidate', () => {
     const result = validate('valid-name', {});
     expect(result).toBe('user error');
     expect(userValidate).toHaveBeenCalledWith('valid-name', {});
+  });
+
+  test('passes the original form value to user validate when normalize is used for pattern only', () => {
+    const decomposedEAcute = 'e\u0301';
+    const metadata: FieldMetadata = {
+      pattern: '^.$',
+      pattern_description: 'exactly one character',
+      normalize: 'NFC',
+    };
+    const userValidate = vi.fn().mockReturnValue(true);
+    const validate = createFieldValidate(metadata, userValidate, () => '');
+
+    expect(validate(decomposedEAcute, {})).toBe(true);
+    expect(userValidate).toHaveBeenCalledWith(decomposedEAcute, {});
+    expect(decomposedEAcute).toHaveLength(2);
   });
 
   test('treats the field as clean (not dirty) when value matches the default', () => {

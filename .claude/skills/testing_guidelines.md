@@ -411,6 +411,24 @@ obvious comments from test files.
 
 ---
 
+## TypeScript utility types
+
+Utility types in `framework/utils/` (and similar) can and should have tests.
+Vitest supports **type tests** with `expectTypeOf` so refactors cannot silently
+widen or narrow types.
+
+```typescript
+import { expectTypeOf } from 'vitest';
+import type { Example } from './utilityTypes';
+
+expectTypeOf<Example>().toEqualTypeOf<{ id: number }>();
+```
+
+See [Vitest type testing](https://vitest.dev/guide/testing-types.html). Keep type
+tests beside the types they guard or in an adjacent `*.test.ts` file.
+
+---
+
 ## Vitest Configuration
 
 Each workspace's `vite.config.ts` configures Vitest:
@@ -442,4 +460,5 @@ import { hubAPI } from '../../common/api/formatPath';
 // npm run vitest              — run all tests
 // npm run vitest -- --watch   — watch mode
 // npm run vitest-preview      — vitest UI
+// npm run eslint:vitest-guardrails — lint Vitest files for Testing Library/Vitest practices
 ```

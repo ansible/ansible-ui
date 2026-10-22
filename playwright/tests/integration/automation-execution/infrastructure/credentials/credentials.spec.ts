@@ -10,6 +10,7 @@ import { navigateTo } from '../../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../../commands/setup';
 import { Credential, Team, User } from '@ansible/playwright/utils';
 import { lookupCredentialTypeId } from '@ansible/playwright/utils/credential';
+import { waitForResourceCopyResponse } from '@ansible/playwright/utils/copyResourceName';
 
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/credentials' }));
 test.afterEach(setupAfter);
@@ -79,22 +80,16 @@ test.describe('Credentials - List View', () => {
     await expect(page.locator('tbody')).toBeVisible({ timeout: 5000 });
 
     // Set up API interception before clicking the duplicate button
-    const copyResponsePromise = page.waitForResponse(
-      (response) =>
-        response.url().includes('/credentials/') &&
-        response.url().includes('/copy/') &&
-        response.status() === 201
-    );
+    const copyResponsePromise = waitForResourceCopyResponse(page, credentialName, {
+      urlIncludes: '/credentials/',
+    });
 
     // Click the duplicate credential button
     const credentialLink = page.getByRole('link', { name: credentialName, exact: true });
     const row = page.getByRole('row').filter({ has: credentialLink });
     await row.getByRole('button', { name: 'Duplicate credential' }).click();
 
-    // Get the exact copied credential name from the API response
-    const copyResponse = await copyResponsePromise;
-    const copiedCredential = (await copyResponse.json()) as { name: string; id: number };
-    const copiedCredentialName = copiedCredential.name;
+    const copiedCredentialName = await copyResponsePromise;
 
     // Filter for the copied credential
     await filterTable(

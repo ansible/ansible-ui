@@ -9,6 +9,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormSingleSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSingleSelect';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +17,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { EdaPageForm } from '../../common/EdaPageForm';
 import { edaAPI } from '../../common/eda-utils';
 import { EdaCurrentUserUpdate, EdaUser, EdaUserCreateUpdate } from '../../interfaces/EdaUser';
+import { ActionsResponse, OptionsResponse } from '../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../main/EdaRoutes';
 
 type UserInput = EdaUserCreateUpdate & {
@@ -38,6 +40,7 @@ export function CreateUser() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const postRequest = usePostRequest<EdaUserCreateUpdate, EdaUser>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/users/`);
   const onSubmit: PageFormSubmitHandler<UserInput> = async (userInput, _, setFieldError) => {
     const { confirmPassword, userType, ...user } = userInput;
     user.is_superuser = userType === UserType.SystemAdministrator;
@@ -70,6 +73,7 @@ export function CreateUser() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={{ userType: UserType.NormalUser }}
+        optionsData={optionsData}
       >
         <UserInputs mode="create" />
       </EdaPageForm>
@@ -82,6 +86,7 @@ export function EditCurrentUser() {
   const navigate = useNavigate();
   const pageNavigate = usePageNavigate();
   const { data: user } = useGet<EdaUser>(edaAPI`/users/me/`);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/users/me/`);
   const patchRequest = usePatchRequest<EdaCurrentUserUpdate, EdaUser>();
   const onSubmit: PageFormSubmitHandler<UserInput> = async (
     userInput: CurrentUserInput,
@@ -121,6 +126,7 @@ export function EditCurrentUser() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={editUser}
+        optionsData={optionsData}
       >
         <CurrentUserInputs />
       </EdaPageForm>
@@ -135,6 +141,9 @@ export function EditUser() {
   const params = useParams<{ id?: string }>();
   const id = Number(params.id);
   const { data: user } = useGet<EdaUser>(edaAPI`/users/${id.toString()}/`);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/users/${id.toString()}/`
+  );
   const patchRequest = usePatchRequest<EdaUserCreateUpdate, EdaUser>();
   const onSubmit: PageFormSubmitHandler<UserInput> = async (
     userInput: UserInput,
@@ -188,6 +197,7 @@ export function EditUser() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={defaultValue}
+        optionsData={optionsData}
       >
         <UserInputs mode="edit" />
       </EdaPageForm>

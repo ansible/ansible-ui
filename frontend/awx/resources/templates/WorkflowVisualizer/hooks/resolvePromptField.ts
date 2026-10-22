@@ -13,7 +13,7 @@
  *
  * @param resource - API data from node.resource (may be stale after in-session edits)
  * @param prompt - In-session wizard state from node.launch_data (current edits)
- * @param fallback - Default value to use when both sources are undefined
+ * @param fallback - Value when both sources are unset; in workflow node init this is often the job template launch default
  * @returns Resolved value preserving in-session edits
  */
 export function resolvePromptField<T>(

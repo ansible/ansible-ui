@@ -49,7 +49,16 @@ const mockOidcCredentialType = {
   namespace: 'hashivault-kv-oidc',
   inputs: {
     fields: [],
-    metadata: [{ id: 'account-name', type: 'string', label: 'Account Name', secret: false }],
+    metadata: [
+      {
+        id: 'account-name',
+        type: 'string',
+        label: 'Account Name',
+        secret: false,
+        pattern: '^[a-zA-Z0-9_-]+$',
+        pattern_description: 'Only alphanumeric, dashes, and underscores',
+      },
+    ],
     required: ['account-name'],
   },
 };

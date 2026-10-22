@@ -27,6 +27,7 @@ import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import type { Credential } from '../../../../interfaces/Credential';
+import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
@@ -41,7 +42,14 @@ import {
   useApprovalOptionsEndpoint,
 } from '../hooks/useApprovalOptionsEndpoint';
 import { getAggregateCredentials } from './getAggregateCredentials';
-import { getResourceURL, shouldHideOtherStep } from './helpers';
+import {
+  fetchJobTemplateInstanceGroupDefaults,
+  getResourceURL,
+  preservePromptInstanceGroups,
+  preservePromptList,
+  shouldHideOtherStep,
+} from './helpers';
+import { LaunchConfigLoadResult, registerLaunchConfigLoad } from './launchConfigLoad';
 
 export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
   const { reset, getValues, setValue, formState, getFieldState, register, control } =
@@ -55,6 +63,7 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
   // "initial load of the existing node's template" (no change needed) from
   // "user switched to a different template" (credentials must be reset).
   const prevResourceIdRef = useRef<WizardFormValues['resourceId']>(undefined);
+  const latestResourceIdRef = useRef<WizardFormValues['resourceId']>(undefined);
 
   // Register form fields
   register('node_type');
@@ -102,9 +111,9 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       return requestGet<AllResources>(`${nodeResourceUrl}/${resourceId?.toString() ?? ''}`);
     };
 
-    const setLaunchToWizardData = async () => {
+    const setLaunchToWizardData = async (): Promise<LaunchConfigLoadResult | undefined> => {
       let launchConfigValue = {} as PromptFormValues;
-      if (!resourceId || !nodeType) return;
+      if (!resourceId || !nodeType) return undefined;
       setValue('resourceId', resourceId);
       let launchConfigResults = {} as LaunchConfiguration;
 
@@ -156,22 +165,41 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       }
       const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults?.defaults || {};
 
+      let templateInstanceGroups: InstanceGroup[] = defaults.instance_groups ?? [];
+      if (nodeType === RESOURCE_TYPE.job && resourceId) {
+        templateInstanceGroups = await fetchJobTemplateInstanceGroupDefaults(
+          resourceId,
+          templateInstanceGroups
+        );
+      }
+
       launchConfigValue = {
         ...defaults,
         execution_environment: defaults.execution_environment,
         inventory: inventory?.id ? inventory : null,
+        instance_groups: templateInstanceGroups,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),
       };
 
       const shouldShowPromptStep = !shouldHideOtherStep(launchConfigResults);
       const shouldShowSurveyStep = launchConfigResults.survey_enabled;
+      const launchConfig =
+        shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null;
+
+      if (latestResourceIdRef.current !== resourceId) {
+        return {
+          launch_config: launchConfig,
+          resource: nodeResource,
+          resourceId,
+        };
+      }
 
       // Always update wizard-level data so launch_config reflects the currently selected template.
       // This prevents stale prompt flags from a previously selected template being used on save.
       setWizardData((prev) => ({
         ...prev,
-        launch_config: shouldShowPromptStep || shouldShowSurveyStep ? launchConfigResults : null,
+        launch_config: launchConfig,
         resourceId,
         resource: nodeResource,
       }));
@@ -199,13 +227,13 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                   prompts?.extra_vars && prompts.extra_vars !== ''
                     ? prompts.extra_vars
                     : (launchConfigValue?.extra_vars ?? ''),
-                skip_tags: [...(prompts?.skip_tags || []), ...(launchConfigValue?.skip_tags || [])],
-                job_tags: [...(prompts?.job_tags || []), ...(launchConfigValue?.job_tags ?? [])],
-                instance_groups: [
-                  ...(prompts?.instance_groups ?? []),
-                  ...(launchConfigValue?.instance_groups ?? []),
-                ],
-                labels: [...(prompts?.labels ?? []), ...(launchConfigValue?.labels ?? [])],
+                skip_tags: preservePromptList(prompts?.skip_tags, launchConfigValue?.skip_tags),
+                job_tags: preservePromptList(prompts?.job_tags, launchConfigValue?.job_tags),
+                instance_groups: preservePromptInstanceGroups(
+                  prompts?.instance_groups,
+                  launchConfigValue?.instance_groups
+                ),
+                labels: preservePromptList(prompts?.labels, launchConfigValue?.labels),
                 diff_mode: prompts?.diff_mode ?? launchConfigValue?.diff_mode,
                 forks: prompts?.forks ?? launchConfigValue?.forks,
                 limit: prompts?.limit ?? launchConfigValue?.limit,
@@ -243,8 +271,6 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       } else if (isTemplateChange) {
         // The user switched to a template that has no promptable fields. Clear the entire
         // previous prompt step state so stale values from the old template are not submitted.
-        // processCredentials, processLabels, and processInstanceGroups all check for non-empty
-        // arrays independently of ask_*_on_launch flags, so any leftover values would be sent.
         // On initial load (isTemplateChange=false) there is nothing stale to clear.
         setStepData((prev) => {
           if (!prev?.nodePromptsStep) return prev;
@@ -264,10 +290,20 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
           };
         });
       }
+
+      return {
+        launch_config: launchConfig,
+        resource: nodeResource,
+        resourceId,
+      };
     };
 
+    latestResourceIdRef.current = resourceId;
+
     if (nodeType === RESOURCE_TYPE.job || nodeType === RESOURCE_TYPE.workflow_job) {
-      void setLaunchToWizardData();
+      if (resourceId) {
+        registerLaunchConfigLoad(nodeType, resourceId, setLaunchToWizardData());
+      }
     }
   }, [resourceId, nodeType, setWizardData, setValue, setStepData]);
 

@@ -32,7 +32,7 @@ export type FormGroupSingleSelectTypeAheadProps = {
   additionalControls?: React.ReactNode;
   isReadOnly?: boolean;
   placeholderText?: string;
-  options: { value: string; label: string; group?: string }[];
+  options: { value: string; label: string; group?: string; isDisabled?: boolean }[];
   onHandleSelection: (value: { name: string }) => void;
   isSubmitting?: boolean;
   value: string | string[] | Partial<{ name: string }> | null;
@@ -74,6 +74,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
         value: option.value,
         children: option.label,
         group: option.group,
+        isDisabled: option.isDisabled,
       })),
     [propOptions]
   );
@@ -241,6 +242,7 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
   const setActiveAndFocusedItem = (itemIndex: number) => {
     setFocusedItemIndex(itemIndex);
     const focusedItem = selectOptions[itemIndex];
+    if (!focusedItem) return;
     setActiveItemId(createItemId(focusedItem.value as string));
   };
 
@@ -308,7 +310,12 @@ export function FormGroupSingleSelectTypeAhead(props: FormGroupSingleSelectTypeA
 
     for (let i = 0; i < totalOptions; i++) {
       index = (index + step + totalOptions) % totalOptions;
-      if (!selectOptions[index].isDisabled) {
+      const option = selectOptions[index];
+      if (
+        /* v8 ignore next */
+        option &&
+        !option.isDisabled
+      ) {
         return index;
       }
     }

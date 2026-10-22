@@ -1,8 +1,9 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
+import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useInMemoryView } from './useInMemoryView';
 
 interface TestItem {
@@ -19,6 +20,16 @@ const testItems: TestItem[] = [
   { id: 5, name: 'Echo', category: 'fruit' },
 ];
 
+const keyFn = (item: TestItem) => item.id;
+const categoryFilter: IToolbarFilter = {
+  type: ToolbarFilterType.SingleText,
+  comparison: 'contains',
+  key: 'category',
+  label: 'Category',
+  query: 'category',
+};
+const categoryFilters = [categoryFilter];
+
 function Wrapper({ children }: { children: ReactNode }) {
   return <MemoryRouter>{children}</MemoryRouter>;
 }
@@ -29,7 +40,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: testItems,
-          keyFn: (item) => item.id,
+          keyFn,
           disableQueryString: true,
         }),
       { wrapper: Wrapper }
@@ -44,7 +55,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: undefined,
-          keyFn: (item) => item.id,
+          keyFn,
           disableQueryString: true,
         }),
       { wrapper: Wrapper }
@@ -60,7 +71,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: testItems,
-          keyFn: (item) => item.id,
+          keyFn,
           error,
           disableQueryString: true,
         }),
@@ -75,7 +86,7 @@ describe('useInMemoryView', () => {
       () =>
         useInMemoryView<TestItem>({
           items: testItems,
-          keyFn: (item) => item.id,
+          keyFn,
           tableColumns: [{ header: 'Name', sort: 'name', cell: (i) => i.name }],
           disableQueryString: true,
         }),
@@ -89,12 +100,30 @@ describe('useInMemoryView', () => {
     }
   });
 
+  it('should filter items using a toolbar filter value', () => {
+    const { result } = renderHook(
+      () =>
+        useInMemoryView<TestItem>({
+          items: testItems,
+          keyFn,
+          toolbarFilters: categoryFilters,
+          disableQueryString: true,
+        }),
+      { wrapper: Wrapper }
+    );
+
+    act(() => result.current.setFilterState({ category: ['fruit'] }));
+
+    expect(result.current.itemCount).toBe(3);
+    expect(result.current.pageItems?.every((item) => item.category === 'fruit')).toBe(true);
+  });
+
   it('should provide selection helpers', () => {
     const { result } = renderHook(
       () =>
         useInMemoryView<TestItem>({
           items: testItems,
-          keyFn: (item) => item.id,
+          keyFn,
           disableQueryString: true,
         }),
       { wrapper: Wrapper }

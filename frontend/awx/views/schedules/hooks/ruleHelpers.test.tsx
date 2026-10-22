@@ -8,6 +8,7 @@ import {
   mungePromptData,
   mungeSurveyAndExtraVarsData,
   normalizeOptions,
+  parseRruleComponents,
   useGetFrequencyOptions,
   useGetWeekdayOptions,
   useGetMonthOptions,
@@ -187,6 +188,51 @@ describe('useGetMonthOptions', () => {
     expect(result.current).toHaveLength(12);
     expect(result.current[0]).toEqual({ value: 1, label: 'January' });
     expect(result.current[11]).toEqual({ value: 12, label: 'December' });
+  });
+});
+
+describe('parseRruleComponents', () => {
+  it('should split space-separated single-line format', () => {
+    const result = parseRruleComponents('DTSTART:20240101T000000Z RRULE:FREQ=DAILY;COUNT=5');
+    expect(result).toEqual({
+      dtstart: 'DTSTART:20240101T000000Z',
+      rruleLines: ['RRULE:FREQ=DAILY;COUNT=5'],
+      exruleLines: [],
+    });
+  });
+
+  it('should preserve Z suffix on UNTIL in rrule line', () => {
+    const result = parseRruleComponents(
+      'DTSTART:20240101T000000Z\nRRULE:FREQ=DAILY;UNTIL=20240110T000000Z'
+    );
+    expect(result.rruleLines[0]).toBe('RRULE:FREQ=DAILY;UNTIL=20240110T000000Z');
+  });
+
+  it('should collect multiple RRULE lines from newline-separated input', () => {
+    const result = parseRruleComponents(
+      'DTSTART:20240101T000000Z\nRRULE:FREQ=DAILY\nRRULE:FREQ=WEEKLY'
+    );
+    expect(result).toEqual({
+      dtstart: 'DTSTART:20240101T000000Z',
+      rruleLines: ['RRULE:FREQ=DAILY', 'RRULE:FREQ=WEEKLY'],
+      exruleLines: [],
+    });
+  });
+
+  it('should separate EXRULE lines from RRULE lines', () => {
+    const result = parseRruleComponents(
+      'DTSTART:20240101T000000Z\nRRULE:FREQ=DAILY\nEXRULE:FREQ=WEEKLY;BYDAY=SA'
+    );
+    expect(result.rruleLines).toEqual(['RRULE:FREQ=DAILY']);
+    expect(result.exruleLines).toEqual(['EXRULE:FREQ=WEEKLY;BYDAY=SA']);
+  });
+
+  it('should return empty result for empty string input', () => {
+    expect(parseRruleComponents('')).toEqual({
+      dtstart: '',
+      rruleLines: [],
+      exruleLines: [],
+    });
   });
 });
 

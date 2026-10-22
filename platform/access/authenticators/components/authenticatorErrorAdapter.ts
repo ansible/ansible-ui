@@ -49,6 +49,21 @@ export const authenticatorErrorAdapter = (
             fieldErrors.push({ name, message: message });
           }
         }
+      } else if (key === 'configuration' && typeof messages === 'object' && messages !== null) {
+        // handles { configuration: { CONFIGURATION_FIELD: ['Error message'] } }
+        const configurationErrors = messages as Record<string, unknown>;
+        for (const configKey in configurationErrors) {
+          const configMessages = configurationErrors[configKey];
+          const message: unknown = Array.isArray(configMessages)
+            ? (configMessages as unknown[])[0]
+            : configMessages;
+          if (typeof message === 'string') {
+            const name = configurationFields.includes(configKey)
+              ? `configuration.${configKey}`
+              : configKey;
+            fieldErrors.push({ name, message });
+          }
+        }
       } else if (typeof messages === 'object' && messages !== null) {
         // handles { CONFIGURATION_FIELD: { object_key: 'Error message'} }
         const objectErrors = Object.keys(messages).map(

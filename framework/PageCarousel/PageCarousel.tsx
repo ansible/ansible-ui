@@ -1,6 +1,6 @@
 import { PageCarouselCardPage } from './PageCarouselCardPage';
 import { PageCarouselNav } from './PageCarouselNav';
-import useResizeObserver from '@react-hook/resize-observer';
+import { useResizeObserver } from '../hooks/useResizeObserver';
 import {
   ReactNode,
   useLayoutEffect,

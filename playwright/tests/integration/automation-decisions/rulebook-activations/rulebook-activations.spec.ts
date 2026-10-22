@@ -14,6 +14,7 @@ import {
   Organization,
   RulebookActivation,
 } from '@ansible/playwright/utils';
+import { waitForResourceCopyResponse } from '@ansible/playwright/utils/copyResourceName';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(setupBefore({ path: '/decisions/rulebook-activations' }));
@@ -303,8 +304,12 @@ test.describe('Rulebook Activations', () => {
           decisionEnvironmentName,
         });
         await expect(page.getByTestId('name')).toHaveText(rulebookActivationName);
+        const copyResponsePromise = waitForResourceCopyResponse(page, rulebookActivationName, {
+          urlIncludes: '/activations/',
+        });
         await page.getByRole('button', { name: 'kebab dropdown toggle' }).click();
         await page.getByRole('menuitem', { name: 'Duplicate rulebook activation' }).click();
+        await copyResponsePromise;
         await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
         await expect(
           page.getByRole('heading', { name: `Success alert: ${rulebookActivationName}` })

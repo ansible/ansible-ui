@@ -141,3 +141,53 @@ describe('useAwxErrorMessageParser', () => {
     expect(result.parsedErrors).toEqual([{ message: 'Name is required' }]);
   });
 });
+
+describe('awxErrorAdapter — AWX YAML/JSON parse errors (AAP-93178)', () => {
+  // The AWX backend returns this specific message format when extra_vars (or any
+  // YAML/JSON field) cannot be parsed server-side.  The adapter must surface it
+  // as a *field* error on `extra_vars` so PageForm can call setFieldError() and
+  // display the message directly below the editor — not as a generic banner.
+  const AWX_PARSE_ERROR =
+    'Cannot parse as JSON (error: Expecting value: line 1 column 1 (char 0))' +
+    ' or YAML (error: Input type `str` is not a dictionary).';
+
+  it('should map AWX extra_vars parse error to a field error', () => {
+    const error = new RequestError(
+      'Bad Request',
+      undefined,
+      400,
+      {},
+      {
+        extra_vars: [AWX_PARSE_ERROR],
+      }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors).toHaveLength(0);
+    expect(result.fieldErrors).toEqual([{ name: 'extra_vars', message: AWX_PARSE_ERROR }]);
+  });
+
+  it('should map multiple YAML field errors from the same response', () => {
+    // AWX can return parse errors for several fields at once (e.g. extra_vars
+    // and source_vars).  Each must become an individual field error.
+    const SOURCE_VARS_ERROR = 'Enter a valid JSON or YAML object.';
+    const error = new RequestError(
+      'Bad Request',
+      undefined,
+      400,
+      {},
+      {
+        extra_vars: [AWX_PARSE_ERROR],
+        source_vars: [SOURCE_VARS_ERROR],
+      }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors).toHaveLength(0);
+    expect(result.fieldErrors).toEqual(
+      expect.arrayContaining([
+        { name: 'extra_vars', message: AWX_PARSE_ERROR },
+        { name: 'source_vars', message: SOURCE_VARS_ERROR },
+      ])
+    );
+    expect(result.fieldErrors).toHaveLength(2);
+  });
+});

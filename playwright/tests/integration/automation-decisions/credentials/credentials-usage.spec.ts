@@ -39,7 +39,7 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
     // Get the corresponding EDA organization
     const ansibleId = platformOrg.summary_fields?.resource?.ansible_id;
     if (!ansibleId) {
-      throw new Error('Platform organization missing ansible_id');
+      throw new Error(`Platform organization "${organizationName}" missing ansible_id`);
     }
     const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
     edaOrgId = edaOrganization.id;

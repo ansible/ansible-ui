@@ -71,7 +71,10 @@ export interface InventorySource
     source_project: SummaryFieldProject;
     credential: SummaryFieldCredential;
   };
-  related: { schedules: string };
+  related: {
+    schedules: string;
+    last_job?: string;
+  };
 }
 
 export interface InventorySourceCreate {

@@ -136,6 +136,37 @@ describe('InventoryDetails', () => {
     expect(screen.getByText(/0 \(Normal\)/)).toBeInTheDocument();
   });
 
+  it('should render labels for constructed inventory', async () => {
+    const constructedInventory: Inventory = {
+      ...baseInventory,
+      id: 42,
+      kind: 'constructed',
+      summary_fields: {
+        ...baseInventory.summary_fields,
+        labels: {
+          count: 1,
+          results: [
+            { ...baseInventory.summary_fields.labels.results[0], id: 7, name: 'constructed label' },
+          ],
+        },
+      },
+      hosts_with_active_failures: 0,
+      total_groups: 0,
+      total_inventory_sources: 0,
+      inventory_sources_with_failures: 0,
+      update_cache_timeout: 0,
+      verbosity: 0,
+      source_vars: '',
+      limit: '',
+    };
+
+    renderInventoryDetails(constructedInventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('constructed label')).toBeInTheDocument();
+    });
+  });
+
   it('should render input inventory labels for constructed inventory', async () => {
     // Use id: 99 so the SWR cache from the previous constructed-inventory test (id: 9)
     // does not bleed into this one. The page-aware handler ensures that only page=1
@@ -212,5 +243,30 @@ describe('InventoryDetails', () => {
     });
 
     expect(screen.getByText('Last job status')).toBeInTheDocument();
+  });
+
+  it('should not render last job status when current_job has no numeric id and last_job is absent', async () => {
+    const inventory = {
+      ...baseInventory,
+      id: 78,
+      kind: 'constructed',
+      update_cache_timeout: 0,
+      verbosity: 0,
+      source_vars: '',
+      limit: '',
+      source: {
+        summary_fields: {
+          current_job: { status: 'running' },
+        },
+      },
+    } as unknown as Inventory;
+
+    renderInventoryDetails(inventory);
+
+    await waitFor(() => {
+      expect(screen.getByText('test inventory')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Last job status')).not.toBeInTheDocument();
   });
 });

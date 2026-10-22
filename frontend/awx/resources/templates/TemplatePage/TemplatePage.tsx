@@ -9,17 +9,16 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { LoadingPage } from '@ansible/ansible-ui-framework/components/LoadingPage';
 import { PageRoutedTabs } from '@ansible/common-ui/PageRoutedTabs';
-import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useViewActivityStream } from '../../../access/common/useViewActivityStream';
 import { AwxError } from '../../../common/AwxError';
-import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { useTemplateNotificationsAccess } from '../../../common/useNotificationAdminOrganizations';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
-import { Organization } from '../../../interfaces/Organization';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useTemplateActions } from '../hooks/useTemplateActions';
 
@@ -37,13 +36,9 @@ export function TemplatePage() {
     isLoading: isTemplateLoading,
     refresh,
   } = useGetItem<JobTemplate>(awxAPI`/job_templates`, params.id);
-  const {
-    data: isNotifAdmin,
-    error: isNotifAdminError,
-    refresh: refreshNotifAdmin,
-    isLoading: isNotifAdminLoading,
-  } = useGet<AwxItemsResponse<Organization>>(
-    awxAPI`/organizations/?role_level=add_notificationtemplate&count_disabled=1`
+  const notificationsAccess = useTemplateNotificationsAccess(
+    activeAwxUser,
+    template?.summary_fields.organization?.id
   );
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
@@ -52,7 +47,6 @@ export function TemplatePage() {
     isJobTemplate: template?.type === 'job_template' ? true : false,
   });
 
-  const error = isNotifAdminError || templateError;
   const tabs: { label: string; page: string }[] = useMemo(() => {
     const tabs = [
       { label: t('Details'), page: AwxRoute.JobTemplateDetails },
@@ -62,13 +56,13 @@ export function TemplatePage() {
       { label: t('Jobs'), page: AwxRoute.JobTemplateJobs },
       { label: t('Survey'), page: AwxRoute.JobTemplateSurvey },
     ];
-    if (activeAwxUser?.is_system_auditor || (isNotifAdmin && isNotifAdmin.results.length > 0)) {
+    if (notificationsAccess.canView) {
       tabs.push({ label: t('Notifications'), page: AwxRoute.JobTemplateNotifications });
     }
     return tabs;
-  }, [t, activeAwxUser, isNotifAdmin]);
-  if (error) return <AwxError error={error} handleRefresh={refresh || refreshNotifAdmin} />;
-  if (isTemplateLoading || isNotifAdminLoading) return <LoadingPage breadcrumbs tabs />;
+  }, [t, notificationsAccess.canView]);
+  if (templateError) return <AwxError error={templateError} handleRefresh={refresh} />;
+  if (isTemplateLoading || notificationsAccess.isLoading) return <LoadingPage breadcrumbs tabs />;
 
   return (
     <PageLayout>
@@ -94,7 +88,7 @@ export function TemplatePage() {
         }}
         tabs={tabs}
         params={{ id: template?.id }}
-        componentParams={{ template }}
+        componentParams={{ template, notificationsReadOnly: notificationsAccess.readOnly }}
       />
     </PageLayout>
   );

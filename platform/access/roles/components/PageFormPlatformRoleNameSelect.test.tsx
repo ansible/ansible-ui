@@ -20,7 +20,7 @@ function useQueryRoleOptions() {
     }
 
     const response = await fetch(url);
-    return response.json();
+    return (await response.json()) as typeof mockRoles;
   }, []);
 }
 

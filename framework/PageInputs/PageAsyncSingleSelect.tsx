@@ -4,8 +4,14 @@ import { useDebounce } from '../hooks/useDebounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { SetRequired } from 'type-fest';
-import { PageAsyncQueryErrorText, PageAsyncSelectOptionsFn } from './PageAsyncSelectOptions';
+import { SetRequired } from '../utils/utilityTypes';
+import {
+  deferPageSelect,
+  mergePageSelectOptions,
+  PageAsyncQueryErrorText,
+  PageAsyncSelectOptionsFn,
+  PageAsyncSelectQueryResult,
+} from './PageAsyncSelectOptions';
 import { PageSelectOption } from './PageSelectOption';
 import { PageSingleSelect, PageSingleSelectProps } from './PageSingleSelect';
 
@@ -49,7 +55,7 @@ export function PageAsyncSingleSelect<
 >(props: PageAsyncSingleSelectProps<ValueT>) {
   const { t } = useTranslation();
 
-  const { queryOptions, writeInOption } = props;
+  const { queryOptions, writeInOption, onBrowse, disableSortOptions } = props;
   const [loading, setLoading] = useState(false);
   const [allLoaded, setAllLoaded] = useState(false);
   const [loadingError, setLoadingError] = useState<Error>();
@@ -58,6 +64,7 @@ export function PageAsyncSingleSelect<
   const [open, setOpen] = useState(false);
 
   const nextRef = useRef<number | string | undefined>();
+  const optionsRef = useRef<PageSelectOption<ValueT>[] | null>();
   const [searchValue, setSearchValue] = useState<string>('');
 
   const setSearch = useDebounce((search: string) => setSearchValue(search), 200);
@@ -65,76 +72,79 @@ export function PageAsyncSingleSelect<
   const onSelect = useRef(props.onSelect).current;
 
   const activeAbortController = useRef<AbortController | null>(null);
+
+  const applyQueryResult = useCallback(
+    (result: PageAsyncSelectQueryResult<ValueT>, abortController: AbortController) => {
+      if (abortController.signal.aborted) {
+        return;
+      }
+      nextRef.current = result.next;
+      if (!result.remaining) {
+        setAllLoaded(true);
+      }
+      let newOptions = mergePageSelectOptions(
+        optionsRef.current,
+        result.options,
+        !disableSortOptions
+      );
+      const autoSelectValue =
+        !searchValue && result.remaining === 0 && newOptions.length === 1
+          ? newOptions[0].value
+          : undefined;
+      if (writeInOption && result.remaining + newOptions.length === 0) {
+        newOptions = [...newOptions, writeInOption(searchValue)];
+      }
+      if (abortController.signal.aborted) {
+        return;
+      }
+      optionsRef.current = newOptions;
+      setOptions(newOptions);
+      setTotal(result.remaining + newOptions.length);
+      if (autoSelectValue !== undefined) {
+        deferPageSelect(onSelect, autoSelectValue, abortController.signal);
+      }
+    },
+    [disableSortOptions, onSelect, searchValue, writeInOption]
+  );
+
+  const applyQueryError = useCallback(
+    (err: unknown, abortController: AbortController) => {
+      if (abortController.signal.aborted) {
+        return;
+      }
+      setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
+    },
+    [t]
+  );
+
   const queryHandler = useCallback(() => {
     if (activeAbortController.current) {
       activeAbortController.current.abort();
     }
     const abortController = new AbortController();
     activeAbortController.current = abortController;
-    setLoading(() => {
-      setAllLoaded(false);
-      setLoadingError(undefined);
-      setOptions((prevOptions) => {
-        if (prevOptions) {
-          return prevOptions;
-        } else {
-          return undefined;
-        }
-      });
-      void queryOptions({
-        next: nextRef.current!,
-        signal: abortController.signal,
-        search: searchValue,
+    setLoading(true);
+    setAllLoaded(false);
+    setLoadingError(undefined);
+    void queryOptions({
+      next: nextRef.current!,
+      signal: abortController.signal,
+      search: searchValue,
+    })
+      .then((result) => {
+        applyQueryResult(result, abortController);
       })
-        .then((result) => {
-          if (abortController.signal.aborted) return;
-          nextRef.current = result.next;
-          if (!result.remaining) {
-            setAllLoaded(true);
-          }
-          setOptions((prevOptions) => {
-            let newOptions: PageSelectOption<ValueT>[] = [
-              ...(prevOptions ?? []),
-              ...result.options,
-            ];
-            const uniqueValues = new Set<ValueT>();
-            newOptions = newOptions.filter((option) => {
-              if (uniqueValues.has(option.value)) return false;
-              uniqueValues.add(option.value);
-              return true;
-            });
-            if (!props.disableSortOptions) {
-              newOptions.sort((a, b) => {
-                const lhs = a.label.toLowerCase();
-                const rhs = b.label.toLowerCase();
-                if (lhs < rhs) return -1;
-                if (lhs > rhs) return 1;
-                return 0;
-              });
-            }
-            if (!searchValue && result.remaining === 0 && newOptions.length === 1) {
-              // Defer onSelect to avoid setState during render
-              setTimeout(() => onSelect(newOptions[0].value), 0);
-            }
-            setTotal(result.remaining + newOptions.length);
-            if (writeInOption && result.remaining + newOptions.length === 0) {
-              newOptions.push(writeInOption(searchValue));
-            }
-            return newOptions;
-          });
-        })
-        .catch((err) => {
-          if (abortController.signal.aborted) return;
-          setLoadingError(err instanceof Error ? err : new Error(t('Unknown error')));
-        })
-        .finally(() => {
-          if (abortController.signal.aborted) return;
-          setLoading(false);
-        });
-      return true;
-    });
+      .catch((err) => {
+        applyQueryError(err, abortController);
+      })
+      .finally(() => {
+        if (abortController.signal.aborted) {
+          return;
+        }
+        setLoading(false);
+      });
     return () => abortController.abort();
-  }, [onSelect, props.disableSortOptions, queryOptions, searchValue, t, writeInOption]);
+  }, [applyQueryError, applyQueryResult, queryOptions, searchValue]);
 
   const onLoadMore = useCallback(
     (e: React.MouseEvent) => {
@@ -151,6 +161,7 @@ export function PageAsyncSingleSelect<
       e.stopPropagation();
       setTotal(0);
       setOptions([]);
+      optionsRef.current = [];
       setOpen(true);
       nextRef.current = undefined;
       queryHandler();
@@ -158,13 +169,26 @@ export function PageAsyncSingleSelect<
     [queryHandler]
   );
 
+  const onBrowseClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen(false);
+      onBrowse?.();
+    },
+    [onBrowse]
+  );
+
   useEffect(() => {
-    if (open) {
-      setTotal(0);
-      setOptions([]);
-      nextRef.current = undefined;
-      queryHandler();
+    if (!open) {
+      activeAbortController.current?.abort();
+      return;
     }
+    setTotal(0);
+    setOptions([]);
+    optionsRef.current = [];
+    nextRef.current = undefined;
+    return queryHandler();
   }, [open, queryHandler]);
 
   useEffect(() => {
@@ -190,18 +214,9 @@ export function PageAsyncSingleSelect<
                 </Button>
               </ActionListItem>
             )}
-            {props.onBrowse && (
+            {onBrowse && (
               <ActionListItem>
-                <Button
-                  id="browse"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setOpen(false);
-                    props.onBrowse?.();
-                  }}
-                  variant="secondary"
-                >
+                <Button id="browse" onClick={onBrowseClick} variant="secondary">
                   {t('Browse')}
                 </Button>
               </ActionListItem>
@@ -259,6 +274,7 @@ export function PageAsyncSingleSelect<
           : undefined
       }
       disableMaxDropdownWidth={props.disableMaxDropdownWidth}
+      noResultsMessage={props.noResultsMessage}
     />
   );
 }

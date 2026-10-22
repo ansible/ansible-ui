@@ -1,12 +1,17 @@
 import { useAutomationDashboardToolbarFilters } from '../common/useAutomationDashboardToolbarFilters';
 import { useMemo } from 'react';
-import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { IToolbarDateRangeFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 
-export function useAutomationDashboardToolbar() {
+/**
+ * The period filter definition. It is rendered by `AutomationDashboardPeriodFilter` (not by the
+ * shared toolbar filters), but the query string, required-filter validation and export still
+ * need it, so callers combine it with `useAutomationDashboardToolbar()` for that logic.
+ */
+export function useAutomationDashboardPeriodFilter(): IToolbarDateRangeFilter {
   const { t } = useTranslation();
-  const periodToolbarFilter: IToolbarFilter = useMemo<IToolbarFilter>(
+  return useMemo<IToolbarDateRangeFilter>(
     () => ({
       type: ToolbarFilterType.DateRange,
       key: 'period',
@@ -34,16 +39,16 @@ export function useAutomationDashboardToolbar() {
         },
       ],
       placeholder: t('Filter by period'),
-      isPinned: true,
       isRequired: true,
-      disableSortOptions: true,
       defaultValue: AutomationDashboardDateRangeFilterPresets.last_7_days,
     }),
     [t]
   );
+}
 
-  return useAutomationDashboardToolbarFilters({
-    filterableFields: ['template', 'label', 'organization', 'project'],
-    additionalFilters: [periodToolbarFilter],
-  });
+const FILTERABLE_FIELDS = ['template', 'label', 'organization', 'project'];
+
+/** The filters rendered by the dashboard toolbar filters (without the period). */
+export function useAutomationDashboardToolbar() {
+  return useAutomationDashboardToolbarFilters({ filterableFields: FILTERABLE_FIELDS });
 }

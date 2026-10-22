@@ -4,12 +4,58 @@ import { useDescriptionColumn, useNameColumn } from '@ansible/common-ui/columns'
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { getSyncJobId } from '../../../common/getSyncJobId';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { LastJobTooltip } from '../inventorySources/InventorySourceDetails';
+
+type InventorySourceLike = {
+  status?: string;
+  summary_fields?: {
+    current_job?: { id?: number; status?: string; finished?: string };
+    last_job?: { id?: number; status?: string; finished?: string };
+    current_update?: { id?: number };
+  };
+  related?: { last_job?: string };
+};
+
+function hasRequiredJobFields(
+  job: { id?: number; status?: string; finished?: string } | undefined
+): job is { id: number; status: string; finished?: string } {
+  return job?.id !== null && job?.id !== undefined && typeof job?.status === 'string';
+}
+
+export function buildInventorySourceStatusCellProps(
+  inventorySource: InventorySourceLike,
+  getPageUrl: (route: string, config: { params: Record<string, string | number> }) => string,
+  disableLinks?: boolean
+) {
+  const lastJob = inventorySource.summary_fields?.current_job?.id
+    ? inventorySource.summary_fields.current_job
+    : inventorySource.summary_fields?.last_job;
+  // jobId may come from current_job, last_job, current_update, or related.last_job URL
+  // Tooltip is only available when current_job or last_job is present with required fields
+  const jobId = getSyncJobId(inventorySource.summary_fields, inventorySource.related?.last_job);
+  const jobOutputUrl =
+    jobId !== undefined && !disableLinks
+      ? getPageUrl(AwxRoute.JobOutput, {
+          params: {
+            id: jobId,
+            job_type: 'inventory',
+          },
+        })
+      : undefined;
+
+  return {
+    tooltip: jobId && hasRequiredJobFields(lastJob) ? <LastJobTooltip job={lastJob} /> : undefined,
+    tooltipId: lastJob?.id,
+    status: inventorySource.status,
+    to: jobOutputUrl,
+    disableLinks,
+  };
+}
 
 export function useInventorySourceColumns(options?: {
   disableSort?: boolean;
@@ -59,29 +105,15 @@ export function useInventorySourceColumns(options?: {
     () => ({
       header: t('Last job status'),
       cell: (inventorySource: InventorySource) => {
-        return (
-          <Link
-            to={getPageUrl(AwxRoute.JobOutput, {
-              params: {
-                id: inventorySource?.summary_fields?.last_job?.id,
-                job_type: 'inventory',
-              },
-            })}
-          >
-            <StatusCell
-              tooltip={
-                inventorySource.summary_fields.last_job ? (
-                  <LastJobTooltip job={inventorySource?.summary_fields?.last_job} />
-                ) : undefined
-              }
-              tooltipId={inventorySource.summary_fields.last_job?.id}
-              status={inventorySource.status}
-            />
-          </Link>
+        const props = buildInventorySourceStatusCellProps(
+          inventorySource,
+          getPageUrl,
+          options?.disableLinks
         );
+        return <StatusCell {...props} />;
       },
     }),
-    [t, getPageUrl]
+    [t, getPageUrl, options?.disableLinks]
   );
   const tableColumns = useMemo<ITableColumn<InventorySource>[]>(
     () => [nameColumn, descriptionColumn, statusColumn, typeColumn],

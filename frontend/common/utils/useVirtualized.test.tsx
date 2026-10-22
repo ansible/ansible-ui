@@ -4,8 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useVirtualizedList } from './useVirtualized';
 
 let resizeObserverCallback: ((entry: ResizeObserverEntry) => void) | undefined;
-vi.mock('@react-hook/resize-observer', () => ({
-  default: vi.fn((_ref: unknown, cb: (entry: ResizeObserverEntry) => void) => {
+vi.mock('@ansible/ansible-ui-framework/hooks/useResizeObserver', () => ({
+  useResizeObserver: vi.fn((_ref: unknown, cb: (entry: ResizeObserverEntry) => void) => {
     resizeObserverCallback = cb;
   }),
 }));
@@ -261,13 +261,15 @@ describe('useVirtualizedList', () => {
     const containerRef = { current: el } as RefObject<HTMLElement>;
     const items = [{ id: 1 }];
 
-    renderHook(() => useVirtualizedList(containerRef, items));
+    const { result } = renderHook(() => useVirtualizedList(containerRef, items));
 
     dispatchScroll();
 
     act(() => {
       flushRaf();
     });
+
+    expect(result.current.visibleItems.length).toBeGreaterThan(0);
   });
 
   it('should not cancel rAF on cleanup when none is pending', () => {

@@ -8,6 +8,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormTextInput';
 import { requestGet, requestPatch } from '@ansible/common-ui/crud/Data';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useInvalidateCacheOnUnmount } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +19,7 @@ import { EdaPageForm } from '../../../common/EdaPageForm';
 import { EdaOrganization } from '../../../interfaces/EdaOrganization';
 import { EdaResult } from '../../../interfaces/EdaResult';
 import { EdaTeam, EdaTeamCreate, EdaTeamDetail } from '../../../interfaces/EdaTeam';
+import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { EdaRoute } from '../../../main/EdaRoutes';
 import { PageFormSelectOrganization } from '../../organizations/components/PageFormOrganizationSelect';
 
@@ -36,6 +38,7 @@ export function CreateTeam() {
       ? organizations.results[0]
       : undefined;
   const postRequest = usePostRequest<EdaTeamCreate, EdaTeam>();
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(edaAPI`/teams/`);
 
   const onSubmit: PageFormSubmitHandler<EdaTeamCreate> = async (team) => {
     const newTeam = await postRequest(edaAPI`/teams/`, team);
@@ -57,6 +60,7 @@ export function CreateTeam() {
         onSubmit={onSubmit}
         onCancel={onCancel}
         defaultValue={{ organization_id: defaultOrganization?.id }}
+        optionsData={optionsData}
       >
         <TeamInputs />
       </EdaPageForm>
@@ -75,6 +79,10 @@ export function EditTeam() {
   const { data: team } = useSWR<EdaTeamDetail>(edaAPI`/teams/${id.toString()}/`, requestGet);
 
   useInvalidateCacheOnUnmount();
+
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
+    edaAPI`/teams/${id.toString()}/`
+  );
 
   const onSubmit: PageFormSubmitHandler<EdaTeam> = async (team) => {
     const newTeam = await requestPatch<EdaTeam>(edaAPI`/teams/${id.toString()}/`, team);
@@ -100,6 +108,7 @@ export function EditTeam() {
             ...team,
             organization_id: team?.organization?.id || undefined,
           }}
+          optionsData={optionsData}
         >
           <TeamInputs />
         </EdaPageForm>

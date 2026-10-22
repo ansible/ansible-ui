@@ -1,5 +1,9 @@
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import type { PromptFormValues } from '../types';
+import {
+  type ResourcePromptSnapshot,
+  unsetInheritedPromptDefaults,
+} from './unsetInheritedPromptDefaults';
 
 export interface BuildEffectivePromptParams {
   originalTemplateId: number | undefined;
@@ -8,6 +12,8 @@ export interface BuildEffectivePromptParams {
   launchConfig: LaunchConfiguration | null | undefined;
   nodeOriginalResources: PromptFormValues['original'];
   resourceOrganization: number | null | undefined;
+  /** Saved node resource; used to keep API null overrides when the user did not edit. */
+  resourceNode?: ResourcePromptSnapshot | null;
 }
 
 function clearUnpromptedFields(
@@ -29,21 +35,29 @@ export function buildEffectivePrompt({
   launchConfig,
   nodeOriginalResources,
   resourceOrganization,
+  resourceNode,
 }: Readonly<BuildEffectivePromptParams>): {
   isTemplateChange: boolean;
   effectivePrompt: Partial<PromptFormValues>;
 } {
+  const isNewNode = originalTemplateId === undefined;
   const isTemplateChange =
     originalTemplateId !== undefined && Number(newResourceId) !== originalTemplateId;
 
-  const effectivePrompt: Partial<PromptFormValues> = prompt ?? {};
+  const effectivePrompt: Partial<PromptFormValues> = prompt ? { ...prompt } : {};
 
   if (resourceOrganization !== undefined) {
     effectivePrompt.organization = resourceOrganization;
   }
 
-  if (isTemplateChange) {
+  // New nodes and template switches must not send related resources unless the
+  // current template prompts for them. AWX rejects those associations with
+  // "Field is not configured to prompt on launch", which aborts save after the
+  // node already exists and leaves it as an unlinked root/parallel node.
+  if (isTemplateChange || isNewNode) {
     clearUnpromptedFields(effectivePrompt, launchConfig);
+  } else {
+    unsetInheritedPromptDefaults(effectivePrompt, launchConfig, resourceNode);
   }
 
   effectivePrompt.original = {

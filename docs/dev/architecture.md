@@ -1,25 +1,23 @@
-# Platform UI Architecture
+# Ansible UI architecture
 
 ```mermaid
 flowchart TD
-   ui(Platform UI) --- platform(Platform Gateway)
-   platform --- awx(Controller)
-   platform --- hub(Automation HUB)
+   ui(Ansible UI) --- platform(Ansible Jewel)
+   platform --- awx(AWX)
+   platform --- hub(Automation Hub)
    platform --- eda(Event Driven Ansible)
    awx --- aa(Ansible Analytics)
 ```
 
-The Platform UI is the unified UI for the Ansible Automation Platform.
+The application in [`platform/`](../../platform/) is the unified web UI for Ansible.
 
-- Dynamically composes the navigation and pages to create a unified experience.
-- Pulls in UI pages from AWX, HUB, EDA, and Analytics.
-- Contains gateway specific pages for
-  - Dashboard
-  - Authentication
-  - Access management
-  - Settings
+- Dynamically composes navigation and pages for a single product experience.
+- Embeds UI from the AWX (including Analytics), Hub, and EDA workspaces under `frontend/`.
+- Includes Jewel-specific areas such as dashboard, authentication, access management, and settings.
 
-It uses the Platform Gateway as the backend.
+[Ansible Jewel](https://github.com/ansible/jewel) is the supported upstream backend:
 
-- Unifies the APIs for the Ansible products such as AWX, HUB, and EDA
-- Provides centralized authentication and access management
+- Unifies APIs for AWX, Hub, EDA, and related services.
+- Provides centralized authentication and access management.
+
+Local development runs the Vite dev server in `platform/` and points at Jewel using the `PLATFORM_SERVER` environment variable. See the [repository README](../../README.md) and [`platform/README.md`](../../platform/README.md).

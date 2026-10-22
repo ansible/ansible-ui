@@ -200,6 +200,56 @@ describe('queryString', () => {
       expect(result).toContain('page_size=10');
       expect(result).not.toContain('order_by');
     });
+
+    test('should include extraSearchParams in query string', () => {
+      const extraSearchParams: [string, string][] = [
+        ['template', '1'],
+        ['template', '2'],
+        ['template', '3'],
+      ];
+
+      const result = getQueryString(mockView, [], {}, extraSearchParams);
+
+      expect(result).toContain('template=1');
+      expect(result).toContain('template=2');
+      expect(result).toContain('template=3');
+    });
+
+    test('should not include extraSearchParams when undefined', () => {
+      const result = getQueryString(mockView, [], {});
+
+      expect(result).toContain('page=1');
+      expect(result).toContain('page_size=10');
+      expect(result).not.toContain('template');
+    });
+
+    test('should combine extraSearchParams with other parameters', () => {
+      const view: IView = {
+        ...mockView,
+        filterState: { name: ['test'] },
+      };
+      const filters: IToolbarFilter[] = [
+        {
+          type: ToolbarFilterType.SingleText,
+          key: 'name',
+          label: 'Name',
+          query: 'name__icontains',
+          placeholder: 'Filter by name',
+          comparison: 'contains',
+        },
+      ];
+      const extraSearchParams: [string, string][] = [
+        ['template', '1'],
+        ['template', '2'],
+      ];
+
+      const result = getQueryString(view, filters, { tz: 'UTC' }, extraSearchParams);
+
+      expect(result).toContain('name__icontains=test');
+      expect(result).toContain('tz=UTC');
+      expect(result).toContain('template=1');
+      expect(result).toContain('template=2');
+    });
   });
 
   describe('filtersToSearchObj', () => {

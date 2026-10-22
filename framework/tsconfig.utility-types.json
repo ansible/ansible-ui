@@ -1,0 +1,7 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["utils/utilityTypes.ts", "utils/utilityTypes.test-d.ts"]
+}

@@ -1,5 +1,8 @@
 {
   "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noUncheckedSideEffectImports": true
+  },
   "include": ["**/*", "../frontend/hub/**/*", "../types/*.d.ts", "vite.config.ts"],
   "exclude": ["../frontend/hub/insights/**", "../frontend/hub/dist-insights/**"]
 }

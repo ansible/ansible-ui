@@ -455,14 +455,14 @@ export function filterActionSeperators<T extends object>(actions: IPageAction<T>
   let filteredActions = [...actions];
 
   // Remove seperators at beginning of actions
-  while (filteredActions.length > 0 && filteredActions[0].type === PageActionType.Seperator) {
+  while (filteredActions[0]?.type === PageActionType.Seperator) {
     filteredActions.shift();
   }
 
   // Remove seperators at end of actions
   while (
     filteredActions.length > 0 &&
-    filteredActions[filteredActions.length - 1].type === PageActionType.Seperator
+    filteredActions[filteredActions.length - 1]?.type === PageActionType.Seperator
   ) {
     filteredActions.pop();
   }
@@ -477,6 +477,7 @@ function collapseAdjacentSeperators<T extends object>(actions: IPageAction<T>[])
   const result: IPageAction<T>[] = [];
   let previousAction: IPageAction<T> | undefined;
   for (const action of actions) {
+    if (!action) continue;
     if (action.type === PageActionType.Seperator) {
       if (!previousAction || previousAction.type !== PageActionType.Seperator) {
         result.push(action);

@@ -12,6 +12,7 @@ import {
 import { LoadingState } from '@ansible/ansible-ui-framework/components/LoadingState';
 import { UserTokenSecretsModal } from '@ansible/awx-ui/access/users/UserPage/UserTokenSecretsModal';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { usePutRequest } from '@ansible/common-ui/crud/usePutRequest';
 import { useCallback, useMemo } from 'react';
@@ -23,6 +24,11 @@ import { PlatformRoute } from '../../main/PlatformRoutes';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { PlatformPageForm } from '../../common/PlatformPageForm';
 import { OAuthApplicationSelect } from '../oauth-applications/components/OAuthApplicationSelect';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
+
+interface TokenFieldMeta {
+  read_only?: boolean;
+}
 
 export function ApiTokenForm() {
   const { id: userId, tokenid } = useParams<{ id?: string; tokenid?: string }>();
@@ -32,6 +38,17 @@ export function ApiTokenForm() {
   const onCancel = () => void navigate(-1);
   const { data: user } = useGet<PlatformUser>(userId ? gatewayAPI`/users/${userId}/` : undefined);
   const { data: token } = useGet<Token>(tokenid ? gatewayAPI`/tokens/${tokenid}/` : undefined);
+  const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(gatewayAPI`/tokens/`);
+  const showApplicationField = useMemo(() => {
+    if (tokenid) {
+      return true;
+    }
+    const applicationField = optionsData?.actions?.POST?.application as TokenFieldMeta | undefined;
+    if (applicationField === undefined) {
+      return true;
+    }
+    return !applicationField.read_only;
+  }, [optionsData, tokenid]);
 
   const title = useMemo(() => {
     if (token) {
@@ -160,6 +177,7 @@ export function ApiTokenForm() {
         cancelText={t('Cancel')}
         onCancel={onCancel}
         defaultValue={token}
+        optionsData={optionsData}
       >
         <PageFormTextArea<Token>
           name="description"
@@ -168,7 +186,13 @@ export function ApiTokenForm() {
           isRequired={false}
           autoFocus
         />
-        <OAuthApplicationSelect<Token> name="application" isRequired={false} isDisabled={tokenid} />
+        {showApplicationField ? (
+          <OAuthApplicationSelect<Token>
+            name="application"
+            isRequired={false}
+            isDisabled={tokenid}
+          />
+        ) : null}
         <PageFormSelect<Token>
           name="scope"
           label={t('Scope')}

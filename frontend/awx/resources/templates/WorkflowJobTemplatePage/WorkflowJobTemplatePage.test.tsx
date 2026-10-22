@@ -22,7 +22,62 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('WorkflowJobTemplatePage', () => {
+  it('shows Notifications to an auditor of the template organization', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('organizations'),
+        ({ request }) =>
+          HttpResponse.json({
+            count: 1,
+            results:
+              new URL(request.url).searchParams.get('role_level') === 'auditor_role'
+                ? [{ id: 1, name: 'Test Organization' }]
+                : [],
+            next: null,
+            previous: null,
+          })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/workflow-job-template/1']}>
+        <Routes>
+          <Route
+            path="/templates/workflow-job-template/:id"
+            element={<WorkflowJobTemplatePage />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText('Notifications')).toBeInTheDocument());
+  });
+
   it('should render template page with template name', async () => {
+    render(
+      <MemoryRouter initialEntries={['/templates/workflow-job-template/1']}>
+        <Routes>
+          <Route
+            path="/templates/workflow-job-template/:id"
+            element={<WorkflowJobTemplatePage />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('Test Workflow Job Template')).toBeInTheDocument();
+    });
+  });
+
+  it('should render when notification admin organization lookup fails', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('organizations'),
+        () => HttpResponse.json({}, { status: 500 })
+      )
+    );
+
     render(
       <MemoryRouter initialEntries={['/templates/workflow-job-template/1']}>
         <Routes>

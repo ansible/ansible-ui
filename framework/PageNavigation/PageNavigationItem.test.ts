@@ -87,6 +87,16 @@ describe('removeNavigationItemById', () => {
     expect(removeNavigationItemById(items, 'nonexistent')).toBeUndefined();
     expect(items).toHaveLength(2);
   });
+
+  it('should skip sparse array holes when removing', () => {
+    const items: PageNavigationItem[] = [];
+    items[1] = { id: 'b', path: '/b', element: stub };
+
+    const removed = removeNavigationItemById(items, 'b');
+
+    expect(removed?.id).toBe('b');
+    expect(items[1]).toBeUndefined();
+  });
 });
 
 describe('addNavigationItem', () => {
@@ -138,6 +148,16 @@ describe('addNavigationItemAfter', () => {
     expect(parent.children[1].id).toBe('a1b');
     expect(parent.children[2].id).toBe('a2');
   });
+
+  it('should skip sparse array holes when inserting after', () => {
+    const items: PageNavigationItem[] = [];
+    items[1] = { id: 'a', path: '/a', element: stub };
+    const newItem: PageNavigationItem = { id: 'b', path: '/b', element: stub };
+
+    addNavigationItemAfter(items, 'a', newItem);
+
+    expect(items[2]?.id).toBe('b');
+  });
 });
 
 describe('addNavigationItemBefore', () => {
@@ -164,5 +184,16 @@ describe('addNavigationItemBefore', () => {
     expect(parent.children[0].id).toBe('a0');
     expect(parent.children[1].id).toBe('a1');
     expect(parent.children[2].id).toBe('a2');
+  });
+
+  it('should skip sparse array holes when inserting before', () => {
+    const items: PageNavigationItem[] = [];
+    items[1] = { id: 'b', path: '/b', element: stub };
+    const newItem: PageNavigationItem = { id: 'a', path: '/a', element: stub };
+
+    addNavigationItemBefore(items, 'b', newItem);
+
+    expect(items[1]?.id).toBe('a');
+    expect(items[2]?.id).toBe('b');
   });
 });

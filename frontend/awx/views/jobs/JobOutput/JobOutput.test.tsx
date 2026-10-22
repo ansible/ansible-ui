@@ -99,7 +99,8 @@ describe('JobOutput', () => {
     render(<HostStatusBar counts={jobFixture.host_status_counts || {}} />);
 
     expect(screen.getByTestId('status-bar')).toBeInTheDocument();
-    expect(screen.getByText('Success 100%')).toBeInTheDocument();
+    expect(screen.getByText('Success 1')).toBeInTheDocument();
+    expect(screen.queryByText('Success 100%')).not.toBeInTheDocument();
   });
 
   it('should render JobOutputToolbar with filter options', () => {

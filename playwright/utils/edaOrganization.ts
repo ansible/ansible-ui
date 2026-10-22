@@ -15,13 +15,17 @@ export const EdaOrganization = {
 
       // Poll for the EDA organization to be created (it may take a moment after platform org creation)
       for (let i = 0; i < 30; i++) {
-        const result = await edaAPI.get<{ results: EdaOrganizationType[] }>(
-          page,
-          `/organizations/?resource__ansible_id=${ansibleId}`
-        );
+        try {
+          const result = await edaAPI.get<{ results: EdaOrganizationType[] }>(
+            page,
+            `/organizations/?resource__ansible_id=${ansibleId}`
+          );
 
-        if (result?.results && result.results.length > 0) {
-          return result.results[0];
+          if (result?.results && result.results.length > 0) {
+            return result.results[0];
+          }
+        } catch {
+          // EDA may return 5xx while the organization is still propagating.
         }
 
         await page.waitForTimeout(1000);

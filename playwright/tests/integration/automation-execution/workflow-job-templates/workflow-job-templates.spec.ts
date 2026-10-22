@@ -18,6 +18,7 @@ import {
   JobTemplate,
   WorkflowVisualizer,
 } from '@ansible/playwright/utils';
+import { waitForResourceCopyResponse } from '@ansible/playwright/utils/copyResourceName';
 
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
@@ -378,33 +379,24 @@ test.describe('Workflow Job Templates: Copy', () => {
       ).toBeVisible();
 
       // Set up API interception for copy
-      const copyResponsePromise = page.waitForResponse(
-        (response) =>
-          response.url().includes('/workflow_job_templates/') &&
-          response.url().includes('/copy/') &&
-          response.status() === 201
-      );
+      const copyResponsePromise = waitForResourceCopyResponse(page, workflowJobTemplateName, {
+        urlIncludes: '/workflow_job_templates/',
+      });
 
       // Click duplicate from kebab dropdown
       await page.getByLabel('kebab dropdown toggle').click();
       await page.waitForTimeout(1000);
       await page.getByRole('menuitem', { name: 'Duplicate template' }).click();
 
-      // Get the copied workflow job template from the API response
-      const copyResponse = await copyResponsePromise;
-      const copiedWfjt = (await copyResponse.json()) as WorkflowJobTemplateType;
-      expect(copyResponse.status()).toBe(201);
+      const copiedName = await copyResponsePromise;
 
       // Verify the copied template exists
       await navigateTo(page, 'Automation Execution', 'Templates');
-      await filterTable(
-        { filterLabel: 'Name', filterValue: copiedWfjt.name, clearFilters: true },
-        page
-      );
-      await expect(page.getByRole('link', { name: copiedWfjt.name, exact: true })).toBeVisible();
+      await filterTable({ filterLabel: 'Name', filterValue: copiedName, clearFilters: true }, page);
+      await expect(page.getByRole('link', { name: copiedName, exact: true })).toBeVisible();
 
       // Delete the copied template
-      await WorkflowJobTemplate.ui.delete(page, copiedWfjt.name);
+      await WorkflowJobTemplate.ui.delete(page, copiedName);
 
       // Verify we're back on the templates list
       await expect(

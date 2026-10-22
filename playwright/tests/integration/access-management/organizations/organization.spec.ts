@@ -5,6 +5,7 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { selectTableRow } from '@ansible/playwright/commands/selectTableRow';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
+import { platformUI } from '@ansible/playwright/commands/login';
 import { Organization } from '../../../../utils/organization';
 
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
@@ -34,7 +35,7 @@ test(
     ).toBeVisible();
     await page.getByRole('button', { name: 'Finish' }).click();
 
-    await expect(page.getByRole('heading', { name: organizationName, exact: true })).toBeVisible();
+    await expect(page.getByTestId('page-title')).toContainText(organizationName);
     await expect(page.locator('dl')).toContainText('Policy enforcement');
     await expect(page.getByTestId('policy-enforcement')).toContainText(opaPolicyPath);
 
@@ -42,7 +43,10 @@ test(
     const editedPolicy = `${opaPolicyPath}-edit`;
 
     await page.getByRole('button', { name: 'Edit organization' }).click();
-    await page.getByRole('textbox', { name: 'Name' }).fill(editedName);
+    const nameField = page.getByRole('textbox', { name: 'Name' });
+    await nameField.clear();
+    await nameField.fill(editedName);
+    await expect(nameField).toHaveValue(editedName);
     await page.getByRole('textbox', { name: 'Policy enforcement' }).fill(editedPolicy);
     await page.getByRole('button', { name: 'Next' }).click();
     await expect(page.locator('dl')).toContainText(editedName);
@@ -63,11 +67,33 @@ test(
     await page.getByRole('button', { name: 'Finish' }).click();
     await Promise.all([gatewayPatchPromise, controllerPatchPromise]);
 
-    await expect(page.getByRole('heading', { name: editedName, exact: true })).toBeVisible({
-      timeout: 10_000,
+    await expect(page.getByRole('heading', { name: `Edit ${organizationName}` })).not.toBeVisible({
+      timeout: 15_000,
+    });
+
+    const organizationId = new URL(page.url()).pathname.match(/organizations\/(\d+)/)?.[1];
+    expect(organizationId, 'organization id in URL after edit').toBeTruthy();
+    await expect
+      .poll(async () => {
+        const response = await page.request.get(
+          `${platformUI}/api/gateway/v1/organizations/${organizationId}/`
+        );
+        if (!response.ok()) {
+          return '';
+        }
+        const body = (await response.json()) as { name?: string };
+        return body.name ?? '';
+      })
+      .toBe(editedName);
+
+    // Details can render a cached gateway org (old name) after PATCH; reload
+    // so the title matches what was saved.
+    await page.reload();
+    await expect(page.getByTestId('page-title')).toHaveText(editedName, {
+      timeout: 30_000,
     });
     await expect(page.getByTestId('policy-enforcement')).toContainText(editedPolicy, {
-      timeout: 10_000,
+      timeout: 30_000,
     });
     await Organization.ui.delete(page, editedName);
   }

@@ -33,6 +33,21 @@ export interface ResourceType {
   };
 }
 
+function OrganizationLink(props: {
+  organizationName?: string;
+  organizationId?: string | number;
+  fallback: string;
+}) {
+  return props.organizationName ? (
+    <OrganizationUsersLink
+      organizationName={props.organizationName}
+      organizationId={props.organizationId}
+    />
+  ) : (
+    <>{props.fallback}</>
+  );
+}
+
 export function ManageResourceRoles(props: { resource?: ResourceType; user?: PlatformUser }) {
   const toolbarFilters = usePlatformRolesFilters();
   const { resource } = props;
@@ -41,6 +56,7 @@ export function ManageResourceRoles(props: { resource?: ResourceType; user?: Pla
   const progressDialog = useBulkActionDialog<UserAndPlatformRole>();
 
   const orgName = resource?.organization?.name ?? resource?.summary_fields?.organization?.name;
+  const orgId = resource?.organization?.id ?? resource?.summary_fields?.organization?.id;
 
   const params = useParams<{
     resource_type: string;
@@ -195,11 +211,15 @@ export function ManageResourceRoles(props: { resource?: ResourceType; user?: Pla
             }
           ),
           alertDescription: (
-            <Trans i18nKey="indirectRolesAlert">
+            <Trans>
               To view these indirectly assigned roles click the button below. To modify indirect
               assignments manage the team&apos;s assignments, to modify directly assigned
               organization roles, manage{' '}
-              {orgName ? <OrganizationUsersLink organizationName={orgName} /> : t('organization')}{' '}
+              <OrganizationLink
+                organizationName={orgName}
+                organizationId={orgId}
+                fallback={t('organization')}
+              />{' '}
               role assignments for this user.
             </Trans>
           ),

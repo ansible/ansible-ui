@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GatewaySettingsEdit } from './GatewaySettingsEdit';
@@ -129,16 +130,18 @@ describe('GatewaySettingsEdit Component', () => {
     });
 
     it('should allow admin to edit and submit settings', async () => {
+      const user = userEvent.setup();
       const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
       mockRequestPut.mockResolvedValue({});
 
       renderWithContext();
 
       const input = screen.getByLabelText('Gateway proxy url');
-      fireEvent.change(input, { target: { value: 'https://new-gateway.example.com' } });
+      await user.clear(input);
+      await user.type(input, 'https://new-gateway.example.com');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalledWith(
@@ -152,11 +155,12 @@ describe('GatewaySettingsEdit Component', () => {
       expect(mockPageNavigate).toHaveBeenCalledWith('platform-gateway-settings');
     });
 
-    it('should allow admin to cancel editing', () => {
+    it('should allow admin to cancel editing', async () => {
+      const user = userEvent.setup();
       renderWithContext();
 
       const cancelButton = screen.getByRole('button', { name: 'Cancel' });
-      fireEvent.click(cancelButton);
+      await user.click(cancelButton);
 
       expect(mockPageNavigate).toHaveBeenCalledWith('platform-gateway-settings');
     });
@@ -231,6 +235,7 @@ describe('GatewaySettingsEdit Component', () => {
     });
 
     it('should exclude CONFIRM_LOGIN_REDIRECT_OVERRIDE from form submission', async () => {
+      const user = userEvent.setup();
       const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
       mockRequestPut.mockResolvedValue({});
 
@@ -267,7 +272,7 @@ describe('GatewaySettingsEdit Component', () => {
       renderWithContext(contextWithRedirect, 'authentication');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalled();
@@ -278,9 +283,183 @@ describe('GatewaySettingsEdit Component', () => {
       expect(submittedData).not.toHaveProperty('CONFIRM_LOGIN_REDIRECT_OVERRIDE');
     });
   });
+  describe('float settings type', () => {
+    beforeEach(() => {
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'platform',
+          title: 'Platform gateway settings',
+          description: 'Edit platform gateway settings',
+          sections: [
+            {
+              title: 'Platform gateway',
+              options: {
+                resource_client_request_timeout: {
+                  type: 'float',
+                  label: 'Resource Client Request Timeout',
+                  help_text:
+                    'The timeout (in seconds) before the resource client will drop requests after forming connections.',
+                  default: 10,
+                  min_value: 0,
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+    });
+
+    const floatContext = {
+      options: {
+        GET: {
+          resource_client_request_timeout: {
+            type: 'float',
+            label: 'Resource Client Request Timeout',
+            help_text:
+              'The timeout (in seconds) before the resource client will drop requests after forming connections.',
+            default: 10,
+            min_value: 0,
+            required: false,
+            read_only: false,
+          },
+        },
+        PUT: {
+          resource_client_request_timeout: {
+            type: 'float',
+            label: 'Resource Client Request Timeout',
+            help_text:
+              'The timeout (in seconds) before the resource client will drop requests after forming connections.',
+            default: 10,
+            min_value: 0,
+            required: false,
+            read_only: false,
+          },
+        },
+      },
+      settings: {
+        resource_client_request_timeout: 10,
+      },
+      refresh: vi.fn(),
+    };
+
+    it('should render a number input for float settings', () => {
+      renderWithContext(floatContext);
+
+      expect(screen.getByLabelText('Resource Client Request Timeout')).toBeInTheDocument();
+      expect(screen.queryByText('Unsupported settings type')).not.toBeInTheDocument();
+    });
+
+    it('should submit a decimal float value', async () => {
+      const user = userEvent.setup();
+      const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
+      mockRequestPut.mockResolvedValue({});
+
+      renderWithContext(floatContext);
+
+      const input = screen.getByLabelText('Resource Client Request Timeout');
+      await user.clear(input);
+      await user.type(input, '18.5');
+
+      await user.click(screen.getByRole('button', { name: 'Save platform gateway settings' }));
+
+      await waitFor(() => {
+        expect(mockRequestPut).toHaveBeenCalledWith(
+          '/settings/all/',
+          expect.objectContaining({
+            resource_client_request_timeout: 18.5,
+          })
+        );
+      });
+    });
+  });
+
+  describe('OPTIONS-driven pattern validation', () => {
+    const patternDescription = 'Letters, numbers, underscores, and hyphens only';
+
+    beforeEach(() => {
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'platform',
+          title: 'Platform gateway settings',
+          description: 'Edit platform gateway settings',
+          sections: [
+            {
+              title: 'Platform gateway',
+              options: {
+                platform_analytics_state: {
+                  type: 'string',
+                  label: 'Platform analytics state',
+                  help_text: 'Analytics state identifier.',
+                  default: 'enabled',
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+    });
+
+    it('should show validation message on blur and block submit for invalid input', async () => {
+      const user = userEvent.setup();
+      const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
+      mockRequestPut.mockResolvedValue({});
+
+      const contextWithPattern = {
+        ...adminContext,
+        options: {
+          GET: {
+            platform_analytics_state: {
+              type: 'string',
+              label: 'Platform analytics state',
+              help_text: 'Analytics state identifier.',
+              default: 'enabled',
+            },
+          },
+          PUT: {
+            platform_analytics_state: {
+              type: 'string',
+              label: 'Platform analytics state',
+              help_text: 'Analytics state identifier.',
+              default: 'enabled',
+              required: false,
+              read_only: false,
+              pattern: '^[a-zA-Z0-9_-]+$',
+              pattern_description: patternDescription,
+            },
+          },
+        },
+        settings: {
+          platform_analytics_state: 'enabled',
+        },
+        refresh: vi.fn(),
+      };
+
+      renderWithContext(contextWithPattern);
+
+      const input = screen.getByLabelText('Platform analytics state');
+      await user.clear(input);
+      await user.type(input, 'invalid@name');
+      await user.tab();
+
+      await waitFor(() => {
+        expect(screen.getByText(patternDescription)).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Save platform gateway settings' }));
+
+      await waitFor(() => {
+        expect(mockRequestPut).not.toHaveBeenCalled();
+      });
+    });
+  });
 
   describe('Edge Cases', () => {
     it('should handle form submission errors gracefully', async () => {
+      const user = userEvent.setup();
       const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       mockRequestPut.mockRejectedValue(new Error('API Error'));
@@ -288,10 +467,11 @@ describe('GatewaySettingsEdit Component', () => {
       renderWithContext();
 
       const input = screen.getByLabelText('Gateway proxy url');
-      fireEvent.change(input, { target: { value: 'https://new-gateway.example.com' } });
+      await user.clear(input);
+      await user.type(input, 'https://new-gateway.example.com');
 
       const submitButton = screen.getByRole('button', { name: 'Save platform gateway settings' });
-      fireEvent.click(submitButton);
+      await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockRequestPut).toHaveBeenCalled();

@@ -1,6 +1,6 @@
 import { LoadingPage, PageTable } from '@ansible/ansible-ui-framework';
 import { AwxError } from '@ansible/awx-ui/common/AwxError';
-import { ActionsResponse, OptionsResponse } from '@ansible/awx-ui/interfaces/OptionsResponse';
+import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 import { UserAssignment } from '@ansible/common-ui/access/interfaces/UserAssignment';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';

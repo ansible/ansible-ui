@@ -43,7 +43,7 @@ export function useGetReportDetails(
     return params.toString();
   }, [toolbarFilters, filterState, queryParams]);
 
-  // Only construct URL if all required filters are valid, otherwise null to prevent fetch
+  // Defer fetch until required filters are valid
   const url = filtersValid ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;
   const fetcher = useFetcher();
   const response = useSWR<IDashboardDetails>(url, fetcher, { keepPreviousData: true });

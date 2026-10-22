@@ -292,6 +292,27 @@ describe('ProjectDetails', () => {
     });
   });
 
+  it('should not render a job output link when current_job has no numeric id and last_job is absent', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/projects/') && request.url.includes('/1'),
+        () =>
+          HttpResponse.json({
+            ...fullProject,
+            status: 'running',
+            summary_fields: {
+              ...fullProject.summary_fields,
+              current_job: { status: 'running' },
+              last_job: null,
+            },
+          })
+      )
+    );
+    renderProjectDetails();
+    const statusCell = await screen.findByTestId('running-status');
+    expect(statusCell.querySelector('a')).toBeNull();
+  });
+
   it('should render status without link when no job info', async () => {
     server.use(
       http.get(

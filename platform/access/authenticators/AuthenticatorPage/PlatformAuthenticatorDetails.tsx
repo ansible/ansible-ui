@@ -63,7 +63,7 @@ export function PlatformAuthenticatorDetails() {
     }
   });
   const isLegacyAuthenticator = authenticator?.type.includes('legacy') ?? false;
-  const type = getAuthenticatorTypeLabel(authenticator.type, t);
+  const type = getAuthenticatorTypeLabel(authenticator.type, t, plugins.authenticators);
   const formatBoolean = (value: boolean) => (value ? t('On') : t('Off'));
   return (
     <Scrollable>

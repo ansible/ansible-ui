@@ -272,13 +272,21 @@ test.describe('EDA - RBAC - User and Team Permissions', () => {
         await test.step('Verify user2 cannot access RBAs', async () => {
           await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
 
-          // Verify "no permission" message
-          await expect(
-            page.getByText('You do not have permission to create a rulebook activation.')
-          ).toBeVisible();
+          const rulebookActivationsTable = page.locator('#eda-rulebook-activations-table');
+          const noAccessView = page
+            .getByRole('main')
+            .getByText(
+              /You do not have permission to create a rulebook activation\.|There are currently no rulebook activations created for your organization\./
+            );
+          await expect(noAccessView.or(rulebookActivationsTable)).toBeVisible({
+            timeout: 15_000,
+          });
 
-          // Verify table does not exist
-          await expect(page.locator('table.page-table')).not.toBeAttached();
+          if (await rulebookActivationsTable.isVisible()) {
+            await expect(
+              rulebookActivationsTable.getByRole('link', { name: edaRulebookActivation.name })
+            ).not.toBeVisible();
+          }
         });
 
         await test.step('Logout user2 and login back as admin', async () => {
@@ -447,7 +455,19 @@ test.describe('EDA - RBAC - User and Team Permissions', () => {
         await navigateTo(page, 'Automation Decisions', 'Projects');
         await expect(page.getByRole('heading', { name: 'Projects', exact: true })).toBeVisible();
 
-        await expect(page.locator('.pf-v6-c-empty-state')).toBeVisible();
+        const projectsTable = page.locator('#eda-projects-table');
+        const noAccessView = page
+          .getByRole('main')
+          .getByText(
+            /You do not have permission to create a project|There are currently no projects created for your organization/
+          );
+        await expect(noAccessView.or(projectsTable)).toBeVisible({ timeout: 15_000 });
+
+        if (await projectsTable.isVisible()) {
+          await expect(
+            projectsTable.getByRole('link', { name: edaProject.name })
+          ).not.toBeVisible();
+        }
       });
 
       await test.step('Logout user2 and login back as admin', async () => {

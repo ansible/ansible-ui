@@ -20,7 +20,7 @@ test.describe('EDA Credentials Type - Tabs', () => {
     organization = await Organization.api.create(page);
     const ansibleId = organization.summary_fields?.resource?.ansible_id;
     if (!ansibleId) {
-      throw new Error('Platform organization missing ansible_id');
+      throw new Error(`Platform organization "${organization.name}" missing ansible_id`);
     }
     const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
     edaOrgId = edaOrganization.id;

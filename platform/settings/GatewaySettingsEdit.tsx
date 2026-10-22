@@ -5,6 +5,7 @@ import {
   PageLayout,
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
+import { PageFormOptionsData } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { requestPut } from '@ansible/common-ui/crud/Data';
@@ -87,6 +88,7 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
         onSubmit={handleSubmit}
         onCancel={() => pageNavigate(PlatformRoute.GatewaySettings)}
         defaultValue={settings}
+        optionsData={{ actions: { PUT: options.PUT } } as PageFormOptionsData}
         additionalActions={
           <Button
             variant="secondary"
@@ -136,6 +138,24 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
                   return (
                     <PageFormTextInput
                       type="number"
+                      key={key}
+                      name={key}
+                      label={option.label}
+                      labelHelp={option.help_text}
+                      isRequired={option.required}
+                      isReadOnly={option.read_only}
+                      defaultValue={option.default}
+                      enableUndo
+                      enableReset
+                    />
+                  );
+                case 'float':
+                  return (
+                    <PageFormTextInput
+                      type="number"
+                      step="any"
+                      min={option.min_value}
+                      max={option.max_value}
                       key={key}
                       name={key}
                       label={option.label}

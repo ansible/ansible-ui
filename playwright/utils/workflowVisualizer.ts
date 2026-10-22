@@ -29,6 +29,16 @@ export interface RenderWFVizWithMockDataOptions {
   page: Page;
 }
 
+/** Empty workflows expose two Add step controls; with nodes on canvas only one is shown. */
+async function clickWorkflowVisualizerAddStep(page: Page): Promise<void> {
+  const addStepButtons = page.getByRole('button', { name: 'Add step' });
+  await expect(addStepButtons.first()).toBeVisible({ timeout: 15_000 });
+  const addStepButton =
+    (await addStepButtons.count()) > 1 ? addStepButtons.nth(1) : addStepButtons.first();
+  await expect(addStepButton).toBeVisible();
+  await addStepButton.click();
+}
+
 export const WorkflowVisualizer = {
   api: {
     createNode: async (
@@ -125,6 +135,39 @@ export const WorkflowVisualizer = {
       await page.getByRole('link', { name: 'View workflow visualizer' }).click();
     },
 
+    /** Save pending visualizer edits; waits for toolbar Save to enable and surfaces API errors. */
+    saveAndDismissToast: async (page: Page): Promise<void> => {
+      // TopologyControlBar (Fit to Screen, zoom, etc.) is hidden when the workflow has no nodes.
+      const fitToScreen = page.getByRole('button', { name: 'Fit to Screen' });
+      if (await fitToScreen.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await fitToScreen.click();
+      }
+
+      const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
+      await expect(saveButton).toBeEnabled({ timeout: 30000 });
+      await saveButton.click();
+
+      const toaster = page.getByTestId('alert-toaster');
+      const toast = toaster.getByText('Successfully saved workflow visualizer');
+      const errorAlert = toaster.getByText('Failed to save workflow job template');
+      await expect(toast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
+
+      if (
+        await errorAlert
+          .first()
+          .isVisible()
+          .catch(() => false)
+      ) {
+        const alertText = await toaster.innerText();
+        throw new Error(`Workflow visualizer save failed: ${alertText.trim()}`);
+      }
+
+      const closeBtn = toaster.getByRole('button', { name: /Close.*alert/ });
+      if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await closeBtn.click();
+      }
+    },
+
     createVisualizerStep: async (
       page: Page,
       stepType: string,
@@ -171,26 +214,39 @@ export const WorkflowVisualizer = {
       }
     },
 
+    addWorkflowStepWithoutSave: async (
+      page: Page,
+      stepType: string,
+      stepResourceName: string,
+      resourceSelectInputLabel: string
+    ): Promise<void> => {
+      await clickWorkflowVisualizerAddStep(page);
+      await expect(page.getByRole('dialog')).toBeVisible();
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: stepType, exact: true }).click();
+      await page.getByLabel(`${resourceSelectInputLabel} *`).click();
+      if (stepType === 'Approval') {
+        await page.getByLabel('Name').fill(stepResourceName);
+      } else {
+        await page.getByLabel('Search input').fill(stepResourceName);
+        await page.getByRole('option', { name: stepResourceName }).click();
+      }
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
+    },
+
     createNode: async (
       page: Page,
       stepType: string,
       stepResourceName: string,
       resourceSelectInputLabel: string
     ): Promise<void> => {
-      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
-      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-      await page.getByRole('option', { name: `${stepType}`, exact: true }).click();
-      await page.getByLabel(`${resourceSelectInputLabel} *`).click();
-      if (stepType === 'Approval') {
-        await page.getByLabel('Name').fill(stepResourceName);
-      } else {
-        await page.getByLabel('Search input').fill(stepResourceName);
-        await page.getByRole('option', { name: `${stepResourceName}` }).click();
-      }
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
+      await WorkflowVisualizer.ui.addWorkflowStepWithoutSave(
+        page,
+        stepType,
+        stepResourceName,
+        resourceSelectInputLabel
+      );
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();

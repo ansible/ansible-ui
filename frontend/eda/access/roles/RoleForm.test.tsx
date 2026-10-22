@@ -4,7 +4,15 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { edaAPI } from '../../common/eda-utils';
 import { CreateRole, EditRole } from './RoleForm';
+
+const roleOptionsWithPost = {
+  actions: { POST: { name: { type: 'string' } } },
+};
+const roleOptionsWithPatch = {
+  actions: { PATCH: { name: { type: 'string' } } },
+};
 
 vi.mock('../../common/useEdaActiveUser', () => ({
   useEdaActiveUser: () => ({
@@ -28,7 +36,11 @@ const mockRole = {
 };
 
 describe('RoleForm', () => {
-  const server = setupServer();
+  const server = setupServer(
+    http.options(edaAPI`/role_definitions/`, () => HttpResponse.json(roleOptionsWithPost)),
+    http.options(edaAPI`/role_definitions/1/`, () => HttpResponse.json(roleOptionsWithPatch)),
+    http.get(edaAPI`/role_definitions/1/`, () => HttpResponse.json(mockRole))
+  );
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
   afterEach(() => server.resetHandlers());
@@ -62,12 +74,6 @@ describe('RoleForm', () => {
 
   describe('EditRole', () => {
     it('renders the edit form with preloaded data', async () => {
-      server.use(
-        http.get('*/role_definitions/1/', () => {
-          return HttpResponse.json(mockRole);
-        })
-      );
-
       render(
         <MemoryRouter initialEntries={['/roles/1/edit']}>
           <Routes>

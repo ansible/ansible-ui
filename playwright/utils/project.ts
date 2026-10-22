@@ -10,6 +10,7 @@ import { navigateTo } from '../commands/navigateTo';
 import { singleSelectByLabel } from '../commands/singleSelectByLabel';
 import { Project as ProjectType } from '@ansible/awx-ui/interfaces/Project';
 import { waitForJobStatus } from '../commands/waitForJobStatus';
+import { waitForResourceCopyResponse } from './copyResourceName';
 
 export interface CreateProjectOptions {
   name?: string;
@@ -25,22 +26,6 @@ export interface CreateProjectUIOptions {
   organizationName: string;
   scmType?: string;
   scmUrl?: string;
-}
-
-interface ProjectResponse {
-  name: string;
-  id: number;
-}
-
-function isProjectResponse(obj: unknown): obj is ProjectResponse {
-  return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    'name' in obj &&
-    typeof obj.name === 'string' &&
-    'id' in obj &&
-    typeof obj.id === 'number'
-  );
 }
 
 export const Project = {
@@ -173,29 +158,23 @@ export const Project = {
       );
 
       // Set up API interception to capture copied project name
-      const copyResponsePromise = page.waitForResponse(
-        (response) => response.url().includes('/copy/') && response.status() === 201
-      );
+      const copyResponsePromise = waitForResourceCopyResponse(page, projectName, {
+        urlIncludes: '/projects/',
+      });
 
       // Trigger copy from list row kebab menu
       const row = page.getByRole('row').filter({ hasText: projectName });
       await row.getByLabel('kebab dropdown toggle').click();
       await page.getByRole('menuitem', { name: 'Duplicate project' }).click();
 
-      // Get the exact copied name from API response
-      const copyResponse = await copyResponsePromise;
-      const responseData: unknown = await copyResponse.json();
-
-      if (!isProjectResponse(responseData)) {
-        throw new Error('Invalid project response from API');
-      }
+      const copiedName = await copyResponsePromise;
 
       // Wait for success alert to appear (copy from list stays on list page)
       await expect(page.getByTestId('alert-toaster')).toContainText('duplicated', {
         timeout: 10000,
       });
 
-      return responseData.name;
+      return copiedName;
     },
 
     sync: async (page: Page, projectName: string): Promise<void> => {

@@ -3,6 +3,11 @@
 Code patterns specific to this monorepo. Read this skill before writing or
 modifying any component, form, page, hook, or utility.
 
+Before choosing a PatternFly component or prop, consult the configured
+`patternfly-mcp` and search the existing `framework/` wrappers. For UI behavior
+changes, use Playwright MCP to inspect the running flow and Chrome DevTools MCP
+when browser console, network, layout, or performance evidence is needed.
+
 ---
 
 ## 1. API Path Helpers — Never Hardcode Paths
@@ -588,6 +593,20 @@ Key enforced rules from `.eslintrc.json`:
 - **`react-hooks/recommended`** — hook rules (deps arrays, ordering)
 - **Hardcoded API paths forbidden** — custom ESLint rule blocks `/api/v2/`,
   `/api/eda/v1/`, `/api/gateway/v1/`, `/api/galaxy/` literals
+
+CI also runs `npm run eslint:guardrails` as an **advisory** job
+(`continue-on-error`). **Source of truth for rules and thresholds is
+`.eslintrc.guardrails.json`** — do not copy numbers into skills or PRs. It does
+not fail the required `eslint` check today, but every warning still has to be
+cleaned up later. **Do not add new warnings** in `frontend/`, `platform/`, or
+`framework/` `.ts`/`.tsx` (tests and generated files are ignored). Split files,
+extract helpers, flatten conditionals. Do not `eslint-disable` these rules.
+
+Scoped check on files you touched:
+
+```bash
+npx eslint --no-eslintrc --config .eslintrc.guardrails.json --ext .ts,.tsx path/to/changed.tsx
+```
 
 ---
 

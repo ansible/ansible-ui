@@ -16,13 +16,15 @@ function isIsoDateString(value: string): boolean {
 export function getQueryString(
   view: IView,
   toolbarFilters: IToolbarFilter[],
-  queryParams: QueryParams
+  queryParams: QueryParams,
+  extraSearchParams?: [string, string][]
 ): string {
   const { page, perPage, sort, sortDirection, filterState } = view;
 
   const query = new URLSearchParams([
     ...paramsToSearchObj(queryParams),
     ...filtersToSearchObj(toolbarFilters, filterState),
+    ...(extraSearchParams ?? []),
   ]);
   if (sort && query.get('order_by') === null) {
     query.append('order_by', sortDirection === 'desc' ? `-${sort}` : sort);

@@ -52,7 +52,7 @@ describe('DashboardTableCard', () => {
       <DashboardTableCard
         {...defaultProps}
         items={[]}
-        error={new Error()}
+        error={new Error('test error')}
         errorStateTitle="Custom Error"
       />
     );

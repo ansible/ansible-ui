@@ -326,7 +326,9 @@ export function useSaveVisualizer(templateId: string) {
 
           setValue('all_parents_must_converge', resource.all_parents_must_converge);
           setValue('identifier', resource.identifier);
-          setValue('unified_job_template', unified_job_template.id);
+          if (launch_data?.original?.isTemplateChange) {
+            setValue('unified_job_template', unified_job_template.id);
+          }
 
           // Prompt values
           setValue('diff_mode', launch_data?.diff_mode, true);
@@ -650,12 +652,10 @@ const useProcessLabels = () => {
 
   return useCallback(
     async (nodeId: string, launch_data: GraphNodeData['launch_data'], phase: ProcessPhase) => {
-      const hasLabelsPrompt =
-        launch_data?.original?.launch_config?.ask_labels_on_launch ||
-        (launch_data?.labels && launch_data?.labels?.length > 0);
+      const askLabelsOnLaunch = Boolean(launch_data?.original?.launch_config?.ask_labels_on_launch);
       const existingLabels = launch_data?.original?.labels;
 
-      if (hasLabelsPrompt) {
+      if (askLabelsOnLaunch) {
         const { added, removed } = getAddedAndRemoved(
           launch_data?.original?.labels || [],
           launch_data?.labels || ([] as Label[])
@@ -702,12 +702,12 @@ const useProcessInstanceGroups = () => {
 
   return useCallback(
     async (nodeId: string, launch_data: GraphNodeData['launch_data'], phase: ProcessPhase) => {
-      const hasInstanceGroupsPrompt =
-        launch_data?.original?.launch_config?.ask_instance_groups_on_launch ||
-        (launch_data?.instance_groups && launch_data?.instance_groups?.length > 0);
+      const askInstanceGroupsOnLaunch = Boolean(
+        launch_data?.original?.launch_config?.ask_instance_groups_on_launch
+      );
       const existingInstanceGroups = launch_data?.original?.instance_groups;
 
-      if (hasInstanceGroupsPrompt) {
+      if (askInstanceGroupsOnLaunch) {
         const { added, removed } = getAddedAndRemoved(
           launch_data?.original?.instance_groups || [],
           launch_data?.instance_groups ? launch_data.instance_groups : ([] as { id: number }[])
@@ -753,11 +753,14 @@ const useProcessCredentials = () => {
 
   return useCallback(
     async (nodeId: string, launch_data: GraphNodeData['launch_data'], phase: ProcessPhase) => {
+      const askCredentialOnLaunch = Boolean(
+        launch_data?.original?.launch_config?.ask_credential_on_launch
+      );
       const promptCredentials = launch_data?.credentials || [];
       const templateCredentials = launch_data?.original?.launch_config?.defaults?.credentials || [];
       const nodeCredentials = launch_data?.original?.credentials || [];
 
-      if (launch_data?.credentials) {
+      if (askCredentialOnLaunch && launch_data?.credentials) {
         const { added, removed } = getAddedAndRemovedCredentials(
           nodeCredentials,
           promptCredentials,
@@ -782,6 +785,15 @@ const useProcessCredentials = () => {
             )
           );
         }
+      } else if (!askCredentialOnLaunch && nodeCredentials.length > 0 && phase === 'disassociate') {
+        await Promise.all(
+          nodeCredentials.map((credential: { id: number }) =>
+            postDisassociate(awxAPI`/workflow_job_template_nodes/${nodeId}/credentials/`, {
+              id: credential.id,
+              disassociate: true,
+            })
+          )
+        );
       }
     },
     [postDisassociate, postAssociateCredential]

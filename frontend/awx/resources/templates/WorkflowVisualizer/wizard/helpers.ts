@@ -1,10 +1,13 @@
 import { jsonToYaml, yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
+import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { stringIsUUID } from '../../../../common/util/strings';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { Survey } from '../../../../interfaces/Survey';
 import { RESOURCE_TYPE } from '../constants';
-import type { AllResources, UnifiedJobType } from '../types';
+import { EdgeStatus, type AllResources, type UnifiedJobType } from '../types';
 
 export function replaceIdentifier(identifier: string, alias: string): string {
   if (stringIsUUID(identifier) && typeof alias === 'string' && alias !== '') {
@@ -53,6 +56,17 @@ export function getValueBasedOnJobType(
   return nodeType === RESOURCE_TYPE.workflow_approval ? workflowValue : defaultValue;
 }
 
+export function getLinkEdgeStatus(nodeStatusType: EdgeStatus | undefined): EdgeStatus {
+  const linkStatus = nodeStatusType ?? EdgeStatus.info;
+  if (linkStatus === EdgeStatus.info) {
+    return EdgeStatus.info;
+  }
+  if (linkStatus === EdgeStatus.success) {
+    return EdgeStatus.success;
+  }
+  return EdgeStatus.danger;
+}
+
 export function getConvergenceType(convergence: boolean | null | undefined): 'any' | 'all' {
   if (convergence === undefined || convergence === null) {
     return 'any';
@@ -66,6 +80,60 @@ export function getNodeLabel(name: string, alias: string): string {
     return alias;
   }
   return name;
+}
+
+/**
+ * Prefer workflow step prompt arrays over launch defaults (nullish coalescing).
+ * Avoids duplicating values when NodeTypeStep re-merges after launch config loads.
+ */
+export function preservePromptList<T>(
+  stepValue: T[] | undefined,
+  launchValue: T[] | undefined
+): T[] {
+  return stepValue ?? launchValue ?? [];
+}
+
+/**
+ * Instance groups on a workflow node: an empty step list means no node associations yet,
+ * so JT launch defaults should still appear in the prompt UI.
+ */
+export function preservePromptInstanceGroups<T extends { id: number }>(
+  stepGroups: T[] | undefined,
+  launchGroups: T[] | undefined
+): T[] {
+  if (stepGroups !== undefined && stepGroups.length > 0) {
+    return stepGroups;
+  }
+  return launchGroups ?? stepGroups ?? [];
+}
+
+/** Prompt UI: node overrides, then JT defaults (launch or template associations). */
+export function resolveWorkflowInstanceGroups<T extends { id: number }>(
+  promptGroups: T[] | undefined,
+  nodeGroups: T[],
+  templateGroups: T[]
+): T[] {
+  if (promptGroups !== undefined && promptGroups.length > 0) {
+    return promptGroups;
+  }
+  if (nodeGroups.length > 0) {
+    return nodeGroups;
+  }
+  return templateGroups;
+}
+
+/** Launch defaults often omit IGs; read JT associations when needed for workflow prompts. */
+export async function fetchJobTemplateInstanceGroupDefaults(
+  jobTemplateId: number,
+  launchDefaultGroups: InstanceGroup[] | undefined
+): Promise<InstanceGroup[]> {
+  if (launchDefaultGroups && launchDefaultGroups.length > 0) {
+    return launchDefaultGroups;
+  }
+  const response = await requestGet<AwxItemsResponse<InstanceGroup>>(
+    awxAPI`/job_templates/${jobTemplateId.toString()}/instance_groups/`
+  );
+  return response.results ?? [];
 }
 
 export function shouldHideOtherStep(launchData: LaunchConfiguration) {

@@ -36,6 +36,9 @@ const mockCredentialType = {
 };
 
 const server = setupServer(
+  http.options(edaAPI`/credential-types/`, () =>
+    HttpResponse.json({ actions: { POST: { name: { type: 'string' } } } })
+  ),
   http.get(edaAPI`/credential-types/10/`, () => HttpResponse.json(mockCredentialType)),
   http.options(edaAPI`/credential-types/10/`, () => HttpResponse.json({ actions: { PATCH: {} } })),
   http.post(edaAPI`/credential-types/`, async ({ request }) => {

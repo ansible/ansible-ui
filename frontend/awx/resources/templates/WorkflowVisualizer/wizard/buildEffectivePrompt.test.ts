@@ -108,6 +108,39 @@ describe('buildEffectivePrompt', () => {
       });
       expect(effectivePrompt.credentials).toHaveLength(1);
     });
+
+    test('should clear unprompted related fields when adding a new node', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: undefined,
+        newResourceId: 2,
+        prompt: {
+          labels: [{ id: 9, name: 'jt-label' }],
+          credentials: [{ id: 1, name: 'cred', credential_type: 1, passwords_needed: [] }],
+        },
+        launchConfig: {
+          ...baseLaunchConfig,
+          ask_variables_on_launch: true,
+        },
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+      });
+      expect(effectivePrompt.labels).toEqual([]);
+      expect(effectivePrompt.instance_groups).toEqual([]);
+      expect(effectivePrompt.credentials).toEqual([]);
+    });
+
+    test('should preserve prompted related fields when adding a new node', () => {
+      const labels = [{ id: 9, name: 'jt-label' }];
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: undefined,
+        newResourceId: 2,
+        prompt: { labels },
+        launchConfig: { ...baseLaunchConfig, ask_labels_on_launch: true },
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+      });
+      expect(effectivePrompt.labels).toEqual(labels);
+    });
   });
 
   describe('original object construction', () => {
@@ -150,6 +183,78 @@ describe('buildEffectivePrompt', () => {
         resourceOrganization: undefined,
       });
       expect(effectivePrompt.original?.launch_config).toBe(baseLaunchConfig);
+    });
+  });
+
+  describe('inherited prompt defaults on existing nodes', () => {
+    const launchWithDefaults = {
+      ...baseLaunchConfig,
+      ask_timeout_on_launch: true,
+      ask_forks_on_launch: true,
+      defaults: {
+        timeout: 3000,
+        forks: 5,
+        credentials: [],
+      },
+    } as unknown as LaunchConfiguration;
+
+    test('should omit unchanged template defaults when the node had no API override', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt: { timeout: 3000, forks: 5 },
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null, forks: null },
+      });
+
+      expect(effectivePrompt.timeout).toBeUndefined();
+      expect(effectivePrompt.forks).toBeUndefined();
+    });
+
+    test('should keep values when the user overrides away from the template default', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt: { timeout: 120 },
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null },
+      });
+
+      expect(effectivePrompt.timeout).toBe(120);
+    });
+
+    test('should not strip inherited defaults when the template changes', () => {
+      const { effectivePrompt } = buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 2,
+        prompt: { timeout: 3000 },
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null },
+      });
+
+      expect(effectivePrompt.timeout).toBe(3000);
+    });
+
+    test('should not mutate the caller prompt object when stripping inherited defaults', () => {
+      const prompt = { timeout: 3000, forks: 5 };
+
+      buildEffectivePrompt({
+        originalTemplateId: 1,
+        newResourceId: 1,
+        prompt,
+        launchConfig: launchWithDefaults,
+        nodeOriginalResources: undefined,
+        resourceOrganization: undefined,
+        resourceNode: { timeout: null, forks: null },
+      });
+
+      expect(prompt).toEqual({ timeout: 3000, forks: 5 });
     });
   });
 

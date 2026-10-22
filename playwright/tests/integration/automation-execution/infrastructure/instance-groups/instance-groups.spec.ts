@@ -5,6 +5,7 @@ import { clickPageAction } from '@ansible/playwright/commands/clickPageAction';
 import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { clickTableRowAction } from '@ansible/playwright/commands/clickTableRowAction';
 import { createE2EName } from '@ansible/playwright/commands/createE2EName';
+import { expectJobOutputSuccess } from '@ansible/playwright/commands/jobOutputStatus';
 import { filterTable } from '@ansible/playwright/commands/filterTable';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
@@ -492,12 +493,8 @@ test.describe('Instance Groups: Jobs Tab', () => {
       const row = page.getByRole('row').filter({ hasText: jobTemplateName });
       await row.getByLabel('Launch template').click();
 
-      // Wait for job to complete - use page-title to avoid strict mode violation
-      await expect(page.getByTestId('page-title').filter({ hasText: jobTemplateName })).toBeVisible(
-        {
-          timeout: 30000,
-        }
-      );
+      await expect(page.getByRole('tab', { name: 'Output' })).toBeVisible({ timeout: 30000 });
+      await expectJobOutputSuccess(page);
 
       try {
         // Navigate to instance group jobs tab
@@ -510,7 +507,9 @@ test.describe('Instance Groups: Jobs Tab', () => {
 
         // Verify job appears in the instance group's jobs list
         await filterTable({ filterLabel: 'Name', filterValue: jobTemplateName }, page);
-        await expect(page.getByRole('link', { name: jobTemplateName })).toBeVisible();
+        await expect(page.getByRole('link', { name: jobTemplateName })).toBeVisible({
+          timeout: 30_000,
+        });
 
         // Delete the job - find the row and click the kebab action
         const jobRow = page.getByRole('row').filter({ hasText: jobTemplateName });
@@ -534,7 +533,9 @@ test.describe('Instance Groups: Jobs Tab', () => {
           await page.getByRole('menuitem', { name: 'Delete template' }).click();
           await page.locator('#confirm').click();
           await page.getByRole('dialog').getByRole('button', { name: 'Delete template' }).click();
-          await expect(page.getByRole('dialog')).toBeHidden({ timeout: 10000 });
+          await expect(
+            page.getByRole('dialog', { name: 'Permanently delete job template' })
+          ).toBeHidden({ timeout: 30_000 });
         }
 
         await Inventory.ui.delete(page, inventoryName);

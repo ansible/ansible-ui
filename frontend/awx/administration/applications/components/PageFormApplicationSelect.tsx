@@ -1,5 +1,11 @@
 import { FieldPath, FieldValues } from 'react-hook-form';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  awxApplicationListForbiddenMessage,
+  createApplicationListQueryErrorText,
+} from '../applicationListAccess';
+import { useApplicationListAccess } from '../hooks/useApplicationListAccess';
 import { PageFormSingleSelectAwxResource } from '../../../common/PageFormSingleSelectAwxResource';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { useApplicationsColumns } from '../hooks/useApplicationsColumns';
@@ -13,6 +19,17 @@ export function PageFormApplicationSelect<
   const { t } = useTranslation();
   const applicationColumns = useApplicationsColumns({ disableLinks: true });
   const applicationFilters = useApplicationsFilters();
+  const applicationsUrl = awxAPI`/applications/`;
+  const { canList } = useApplicationListAccess(applicationsUrl);
+  const forbiddenMessage = awxApplicationListForbiddenMessage(t);
+  const queryErrorText = useMemo(
+    () => createApplicationListQueryErrorText(t, forbiddenMessage),
+    [forbiddenMessage, t]
+  );
+  const listForbidden = canList === false;
+  const isDisabled = props.isDisabled ?? (listForbidden ? forbiddenMessage : undefined);
+  const helperText = props.helperText ?? (listForbidden ? forbiddenMessage : undefined);
+
   return (
     <PageFormSingleSelectAwxResource<Application, TFieldValues, TFieldName>
       name={props.name}
@@ -20,11 +37,13 @@ export function PageFormApplicationSelect<
       label={t('Application')}
       placeholder={t('Select application')}
       queryPlaceholder={t('Loading applications...')}
-      queryErrorText={t('Error loading applications')}
+      queryErrorText={queryErrorText}
+      noResultsMessage={t('No options currently available.')}
       isRequired={props.isRequired}
-      isDisabled={props.isDisabled}
-      helperText={props.helperText}
-      url={awxAPI`/applications/`}
+      isDisabled={isDisabled}
+      helperText={helperText}
+      enableBrowse={!listForbidden}
+      url={applicationsUrl}
       tableColumns={applicationColumns}
       toolbarFilters={applicationFilters}
     />

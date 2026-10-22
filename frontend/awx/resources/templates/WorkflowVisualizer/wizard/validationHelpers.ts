@@ -1,5 +1,8 @@
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { RESOURCE_TYPE } from '../constants';
 import { WizardFormValues } from '../types';
+import { fetchLaunchConfigLoadResult } from './fetchLaunchConfigLoadResult';
+import { ensureLaunchConfigLoad } from './launchConfigLoad';
 
 interface CredentialType {
   id: number;
@@ -17,39 +20,90 @@ export function validateRequiredCredentialTypes(
 
   const { prompt } = wizardData;
   const selectedCredentials = prompt?.credentials || [];
-  const selectedCredentialTypes = selectedCredentials.map(
-    (credential) => credential.credential_type
+  const selectedCredentialTypes = new Set(
+    selectedCredentials.map((credential) => credential.credential_type)
   );
   const missingTypes = requiredCredentialTypes.filter(
-    (requiredType) => !selectedCredentialTypes.includes(requiredType.id)
-  );
-  const extraTypes = selectedCredentialTypes.filter(
-    (selectedTypeId) => !requiredCredentialTypes.find((type) => type.id === selectedTypeId)
+    (requiredType) => !selectedCredentialTypes.has(requiredType.id)
   );
 
-  if (missingTypes.length || extraTypes.length) {
+  if (missingTypes.length) {
     // NOTE: multiple credentials of the same type are also disallowed,
     // but this is validated by the PageFormCredentialSelect component before
-    // this step validation runs, so no need to check for it here
-    let message = '';
-    if (missingTypes.length) {
-      const missingTypeNames = missingTypes.map((type) => type.name).join(', ');
-      message = t(
-        'Job Template default credentials must be replaced with ones of the same type. Please select a credential for the following types in order to proceed: {{types}}',
-        { types: missingTypeNames }
-      );
-    } else {
-      const requiredTypeNames = requiredCredentialTypes.map((type) => type.name).join(', ');
-      message = t(
-        'Job Template default credentials must be replaced with ones of the same type. Please select only credentials of the following types in order to proceed: {{types}}',
-        { types: requiredTypeNames }
-      );
-    }
+    // this step validation runs, so no need to check for it here.
+    //
+    // Only missing types are rejected. A credential whose type is not among
+    // the template defaults is additive, not a conflict: the API merges
+    // prompted credentials over the template's by type, keeping defaults for
+    // the types that were not prompted for. Rejecting those made workflow
+    // nodes stricter than launching the same template directly.
+    const missingTypeNames = missingTypes.map((type) => type.name).join(', ');
+    const message = t(
+      'Job Template default credentials must be replaced with ones of the same type. Please select a credential for the following types in order to proceed: {{types}}',
+      { types: missingTypeNames }
+    );
     const errors = {
       __all__: [message],
     };
     throw new RequestError('', '', 400, '', errors);
   }
+}
+
+export async function awaitNodeLaunchConfigForWizard(
+  wizardData: Partial<WizardFormValues>,
+  previousWizardData: Partial<WizardFormValues> = {}
+): Promise<Partial<WizardFormValues> | undefined> {
+  const { node_type, resourceId } = wizardData;
+  if (
+    !resourceId ||
+    (node_type !== RESOURCE_TYPE.job && node_type !== RESOURCE_TYPE.workflow_job)
+  ) {
+    return undefined;
+  }
+
+  const loadResult = await ensureLaunchConfigLoad(node_type, resourceId, () =>
+    fetchLaunchConfigLoadResult(node_type, resourceId)
+  );
+  if (loadResult) {
+    return {
+      launch_config: loadResult.launch_config,
+      resource: loadResult.resource,
+      resourceId: loadResult.resourceId,
+    };
+  }
+
+  // Drop stale prompt flags from a previously selected template when the new
+  // template's launch config is not available yet.
+  if (previousWizardData.launch_config && previousWizardData.resourceId !== resourceId) {
+    return { launch_config: null, resourceId, resource: undefined };
+  }
+
+  return undefined;
+}
+
+export function validateNodePromptsStep(
+  t: (key: string, params?: Record<string, unknown>) => string,
+  formData: Partial<WizardFormValues>,
+  wizardData: Partial<WizardFormValues>,
+  fallbackRequiredCredentialTypes: CredentialType[] = []
+) {
+  const merged = { ...wizardData, ...formData };
+  const requiredCredentialTypes =
+    merged.prompt?.requiredCredentialTypes ||
+    wizardData.prompt?.requiredCredentialTypes ||
+    fallbackRequiredCredentialTypes;
+  validateRequiredCredentialTypes(t, merged, requiredCredentialTypes);
+}
+
+export async function validateNodeTypeStep(
+  t: (key: string) => string,
+  formData: Partial<WizardFormValues>,
+  wizardData: Partial<WizardFormValues> = {}
+): Promise<Partial<WizardFormValues> | undefined> {
+  const merged = { ...wizardData, ...formData };
+  const supplemental = await awaitNodeLaunchConfigForWizard(merged, wizardData);
+  validateJobTemplateRequirements(t, { ...merged, ...supplemental });
+  return supplemental;
 }
 
 export function validateJobTemplateRequirements(

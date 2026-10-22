@@ -12,8 +12,9 @@ import { AwxRbacRole } from '@ansible/awx-ui/interfaces/AwxRbacRole';
 import { PlatformRoleAssignmentsReviewStep } from '@ansible/common-ui/access/RolesWizard/steps/PlatformRoleAssignmentsReviewStep';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { useGet } from '@ansible/common-ui/crud/useGet';
+import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { EdaRbacRole } from '@ansible/eda-ui/interfaces/EdaRbacRole';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
@@ -21,6 +22,7 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformSelectOrganizationRolesStep } from '../roles-wizard-steps/PlatformSelectOrganizationRolesStep';
+import { ROLE_TEAM_ASSIGNMENTS_CACHE_KEY } from '../hooks/orgTeamRoleAssignmentsUrl';
 import { PlatformSelectOrganizationTeamsStep } from '../roles-wizard-steps/PlatformSelectOrganizationTeamsStep';
 
 interface WizardFormValues {
@@ -44,9 +46,18 @@ export function PlatformOrganizationTeamsAddRoles() {
   const getPageUrl = useGetPageUrl();
   const pageNavigate = usePageNavigate();
   const progressDialog = useAwxBulkActionDialog<TeamAndAwxRole | TeamAndEdaRole>();
+  const { clearCacheByKey } = useClearCache();
   const { data: organization, isLoading } = useGet<PlatformOrganization>(
     gatewayAPI`/organizations/${params.id || ''}/`
   );
+
+  const navigateToOrganizationTeams = useCallback(() => {
+    if (!organization?.id) return;
+    clearCacheByKey(ROLE_TEAM_ASSIGNMENTS_CACHE_KEY);
+    pageNavigate(PlatformRoute.OrganizationTeams, {
+      params: { id: organization.id.toString() },
+    });
+  }, [clearCacheByKey, organization?.id, pageNavigate]);
 
   const steps = useMemo<PageWizardStep[]>(
     () => [
@@ -143,9 +154,7 @@ export function PlatformOrganizationTeamsAddRoles() {
           resolve();
         },
         onClose: () => {
-          pageNavigate(PlatformRoute.OrganizationTeams, {
-            params: { id: organization.id.toString() },
-          });
+          navigateToOrganizationTeams();
         },
       });
     });
@@ -172,6 +181,7 @@ export function PlatformOrganizationTeamsAddRoles() {
         steps={steps}
         onSubmit={onSubmit}
         onCancel={() => {
+          if (!organization?.id) return;
           pageNavigate(PlatformRoute.OrganizationTeams, {
             params: { id: organization.id.toString() },
           });

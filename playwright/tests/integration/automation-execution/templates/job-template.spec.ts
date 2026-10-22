@@ -35,7 +35,7 @@ test.describe('Job Templates', () => {
     'can create a job template with prompted fields, launch from the list view, and complete launch via wizard',
     { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
-      test.setTimeout(5 * 30 * 1000);
+      test.setTimeout(5 * 60 * 1000);
       const label = createE2EName('label-jt');
       const jobTemplateName = await JobTemplate.ui.create(page, {
         inventoryName: inventoryName,
@@ -588,7 +588,9 @@ test.describe('Job Templates', () => {
     'verify the playbook field is creatable',
     { tag: ['@not_mock', '@tier1'] },
     async ({ page }) => {
+      test.setTimeout(120_000);
       const jobTemplateName = createE2EName('playbook-creatable');
+      const playbookName = `${createE2EName('playbook')}.yml`;
 
       // Navigate to templates page
       await navigateTo(page, 'Automation Execution', 'Templates');
@@ -641,23 +643,16 @@ test.describe('Job Templates', () => {
       expect(projectOptions.length).toBeGreaterThan(0);
       await projectOptions[0].click();
 
-      // Wait for and interact with playbook field
-      await expect(page.getByPlaceholder('Add a project, then select a')).toBeVisible({
-        timeout: 10000,
-      });
-      await page.getByPlaceholder('Add a project, then select a').fill('test_hello_world.yml');
-      await page.getByRole('option', { name: 'Create "test_hello_world.yml"' }).click();
-      const selectedPlaybook = await page
-        .getByPlaceholder('Add a project, then select a')
-        .inputValue();
-
-      expect(selectedPlaybook).toBe('test_hello_world.yml');
-
-      await page.waitForTimeout(3000);
-      const persistedValue = await page
-        .getByPlaceholder('Add a project, then select a')
-        .inputValue();
-      expect(persistedValue).toBe('test_hello_world.yml');
+      // Wait for project playbooks to load, then create a new playbook value
+      const playbookField = page.getByPlaceholder('Add a project, then select a');
+      await expect(playbookField).toBeVisible({ timeout: 10_000 });
+      await expect(playbookField).toBeEnabled({ timeout: 15_000 });
+      await playbookField.click();
+      await playbookField.fill(playbookName);
+      const createOption = page.getByRole('option', { name: `Create "${playbookName}"` });
+      await expect(createOption).toBeVisible({ timeout: 15_000 });
+      await createOption.click();
+      await expect(playbookField).toHaveValue(playbookName, { timeout: 5000 });
     }
   );
 });

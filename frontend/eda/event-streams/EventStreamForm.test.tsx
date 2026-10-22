@@ -1,12 +1,30 @@
 /* eslint-disable i18next/no-literal-string */
 import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { edaAPI } from '../common/eda-utils';
-import { CreateEventStream } from './EventStreamForm';
+import { CreateEventStream, EditEventStream } from './EventStreamForm';
+
+const mockEventStream = {
+  id: 1,
+  name: 'Test Event Stream',
+  event_stream_type: 'basic',
+  organization: { id: 1, name: 'Default' },
+  eda_credential: { id: 2, name: 'Cred' },
+  test_mode: false,
+  additional_data_headers: '',
+};
+
+const mockEventStreamEditOptions = {
+  actions: {
+    PATCH: {
+      name: { type: 'string' },
+    },
+  },
+};
 
 const mockOrganizations = {
   results: [
@@ -39,8 +57,22 @@ const mockCredentials = {
   results: [],
 };
 
+const defaultOptionsResponse = {
+  actions: {
+    POST: {
+      name: { type: 'string', required: true },
+    },
+  },
+};
+
 const server = setupServer(
+  http.options(edaAPI`/event-streams/`, () => HttpResponse.json(defaultOptionsResponse)),
+  http.options(edaAPI`/event-streams/1/`, () => HttpResponse.json(mockEventStreamEditOptions)),
+  http.get(edaAPI`/event-streams/1/`, () => HttpResponse.json(mockEventStream)),
   http.get(edaAPI`/organizations/`, () => {
+    return HttpResponse.json(mockOrganizations);
+  }),
+  http.get(edaAPI`/organizations/*`, () => {
     return HttpResponse.json(mockOrganizations);
   }),
   http.get(edaAPI`/organizations/:id/`, () => {
@@ -93,7 +125,7 @@ describe('EventStreamForm', () => {
   });
 
   it('should show and require credential field after selecting Basic Event Stream type', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     render(
       <MemoryRouter>
@@ -136,5 +168,43 @@ describe('EventStreamForm', () => {
       },
       { timeout: 10000 }
     );
+  }, 20_000);
+
+  it('should render edit form when PATCH is allowed', async () => {
+    render(
+      <MemoryRouter initialEntries={['/event-streams/edit/1']}>
+        <Routes>
+          <Route path="/event-streams/edit/:id" element={<EditEventStream />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: /Edit Test Event Stream/i, level: 1 })
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('button', { name: /Save event stream/i })).toBeInTheDocument();
+  });
+
+  it('should show read-only warning when OPTIONS has no PATCH action', async () => {
+    server.use(
+      http.options(edaAPI`/event-streams/1/`, () => HttpResponse.json({ actions: { GET: {} } }))
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/event-streams/edit/1']}>
+        <Routes>
+          <Route path="/event-streams/edit/:id" element={<EditEventStream />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/you do not have permissions to edit this event stream/i)
+      ).toBeInTheDocument();
+    });
   });
 });
