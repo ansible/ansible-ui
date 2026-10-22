@@ -744,6 +744,94 @@ describe('NodeTypeStep', () => {
     expect(capturedPrompt).toMatchObject({ labels: [templateLabel] });
   });
 
+  it('should not duplicate job_tags when step data and launch config defaults share the same tag', async () => {
+    const tag = { name: 'deploy', label: 'deploy', value: 'deploy' };
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_tags_on_launch: true,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null, job_tags: 'deploy' },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    const stepStateWithTags = {
+      nodePromptsStep: {
+        prompt: { ...mockStepState.nodePromptsStep.prompt, job_tags: [tag] },
+      },
+    };
+
+    let capturedPrompt: { job_tags?: { name: string }[] } | undefined;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: typeof stepStateWithTags) => {
+            nodePromptsStep?: { prompt?: { job_tags?: { name: string }[] } };
+          }
+        )(stepStateWithTags);
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt?.job_tags).toHaveLength(1);
+    expect(capturedPrompt?.job_tags?.[0]?.name).toBe('deploy');
+  });
+
+  it('should show launch config instance groups when step instance groups are empty', async () => {
+    const defaultIg = { id: 10, name: 'default-ig' };
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_instance_groups_on_launch: true,
+          survey_enabled: false,
+          defaults: { credentials: [], inventory: null },
+        });
+      }
+      if (url.includes('/job_templates/') && url.includes('/instance_groups/')) {
+        return Promise.resolve({ count: 1, results: [defaultIg] });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    const stepStateWithEmptyIgs = {
+      nodePromptsStep: {
+        prompt: { ...mockStepState.nodePromptsStep.prompt, instance_groups: [] },
+      },
+    };
+
+    let capturedPrompt: { instance_groups?: { id: number; name: string }[] } | undefined;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: typeof stepStateWithEmptyIgs) => {
+            nodePromptsStep?: { prompt?: { instance_groups?: { id: number; name: string }[] } };
+          }
+        )(stepStateWithEmptyIgs);
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt?.instance_groups).toEqual([defaultIg]);
+  });
+
   it('registers launch config loads that can be awaited during wizard validation', async () => {
     render(
       <TestWrapper

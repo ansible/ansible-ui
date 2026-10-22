@@ -135,6 +135,39 @@ export const WorkflowVisualizer = {
       await page.getByRole('link', { name: 'View workflow visualizer' }).click();
     },
 
+    /** Save pending visualizer edits; waits for toolbar Save to enable and surfaces API errors. */
+    saveAndDismissToast: async (page: Page): Promise<void> => {
+      // TopologyControlBar (Fit to Screen, zoom, etc.) is hidden when the workflow has no nodes.
+      const fitToScreen = page.getByRole('button', { name: 'Fit to Screen' });
+      if (await fitToScreen.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await fitToScreen.click();
+      }
+
+      const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
+      await expect(saveButton).toBeEnabled({ timeout: 30000 });
+      await saveButton.click();
+
+      const toaster = page.getByTestId('alert-toaster');
+      const toast = toaster.getByText('Successfully saved workflow visualizer');
+      const errorAlert = toaster.getByText('Failed to save workflow job template');
+      await expect(toast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
+
+      if (
+        await errorAlert
+          .first()
+          .isVisible()
+          .catch(() => false)
+      ) {
+        const alertText = await toaster.innerText();
+        throw new Error(`Workflow visualizer save failed: ${alertText.trim()}`);
+      }
+
+      const closeBtn = toaster.getByRole('button', { name: /Close.*alert/ });
+      if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await closeBtn.click();
+      }
+    },
+
     createVisualizerStep: async (
       page: Page,
       stepType: string,

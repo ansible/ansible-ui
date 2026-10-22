@@ -27,6 +27,7 @@ import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { useAwxConfig } from '../../../../common/useAwxConfig';
 import type { Credential } from '../../../../interfaces/Credential';
+import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import type { SystemJobTemplate } from '../../../../interfaces/SystemJobTemplate';
@@ -41,7 +42,13 @@ import {
   useApprovalOptionsEndpoint,
 } from '../hooks/useApprovalOptionsEndpoint';
 import { getAggregateCredentials } from './getAggregateCredentials';
-import { getResourceURL, shouldHideOtherStep } from './helpers';
+import {
+  fetchJobTemplateInstanceGroupDefaults,
+  getResourceURL,
+  preservePromptInstanceGroups,
+  preservePromptList,
+  shouldHideOtherStep,
+} from './helpers';
 import { LaunchConfigLoadResult, registerLaunchConfigLoad } from './launchConfigLoad';
 
 export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
@@ -158,10 +165,19 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
       }
       const { job_tags, skip_tags, inventory, ...defaults } = launchConfigResults?.defaults || {};
 
+      let templateInstanceGroups: InstanceGroup[] = defaults.instance_groups ?? [];
+      if (nodeType === RESOURCE_TYPE.job && resourceId) {
+        templateInstanceGroups = await fetchJobTemplateInstanceGroupDefaults(
+          resourceId,
+          templateInstanceGroups
+        );
+      }
+
       launchConfigValue = {
         ...defaults,
         execution_environment: defaults.execution_environment,
         inventory: inventory?.id ? inventory : null,
+        instance_groups: templateInstanceGroups,
         job_tags: parseStringToTagArray(job_tags || ''),
         skip_tags: parseStringToTagArray(skip_tags || ''),
       };
@@ -211,13 +227,13 @@ export function NodeTypeStep(props: Readonly<{ hasSourceNode?: boolean }>) {
                   prompts?.extra_vars && prompts.extra_vars !== ''
                     ? prompts.extra_vars
                     : (launchConfigValue?.extra_vars ?? ''),
-                skip_tags: [...(prompts?.skip_tags || []), ...(launchConfigValue?.skip_tags || [])],
-                job_tags: [...(prompts?.job_tags || []), ...(launchConfigValue?.job_tags ?? [])],
-                instance_groups: [
-                  ...(prompts?.instance_groups ?? []),
-                  ...(launchConfigValue?.instance_groups ?? []),
-                ],
-                labels: prompts?.labels ?? launchConfigValue?.labels ?? [],
+                skip_tags: preservePromptList(prompts?.skip_tags, launchConfigValue?.skip_tags),
+                job_tags: preservePromptList(prompts?.job_tags, launchConfigValue?.job_tags),
+                instance_groups: preservePromptInstanceGroups(
+                  prompts?.instance_groups,
+                  launchConfigValue?.instance_groups
+                ),
+                labels: preservePromptList(prompts?.labels, launchConfigValue?.labels),
                 diff_mode: prompts?.diff_mode ?? launchConfigValue?.diff_mode,
                 forks: prompts?.forks ?? launchConfigValue?.forks,
                 limit: prompts?.limit ?? launchConfigValue?.limit,
