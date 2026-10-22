@@ -108,15 +108,14 @@ export function PageRoutedTabs(props: {
   );
 }
 
-function parseQuery(queryString: string) {
+export function parseQuery(queryString: string) {
+  // The persisted string comes from URLSearchParams.toString(), which encodes a
+  // space as '+'. decodeURIComponent does not decode '+', so hand-rolling the
+  // parse turned a search for "x y z" into the literal "x+y+z". URLSearchParams
+  // applies the matching decoding, and also handles values containing '='.
   const query: Record<string, string> = {};
-  const pairs = (queryString[0] === '?' ? queryString.substring(1) : queryString).split('&');
-  for (let i = 0; i < pairs.length; i++) {
-    const pair = pairs[i].split('=');
-    if (pair.length < 2) continue;
-    const key = decodeURIComponent(pair[0]);
-    const value = decodeURIComponent(pair[1] || '');
-    query[key] = decodeURIComponent(value);
+  for (const [key, value] of new URLSearchParams(queryString)) {
+    query[key] = value;
   }
   return query;
 }
