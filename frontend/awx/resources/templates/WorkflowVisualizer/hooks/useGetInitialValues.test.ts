@@ -753,6 +753,35 @@ describe('useGetInitialValues', () => {
     ]);
   });
 
+  it('should leave null resource tags unset so NodeTypeStep can apply inherited template defaults', async () => {
+    const nodeWithInheritedTags = {
+      getId: () => '42',
+      getData: () => ({
+        launch_data: {},
+        resource: {
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          job_tags: null,
+          skip_tags: null,
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Test Template',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+      }),
+    } as never;
+
+    const { result } = renderHook(() => useGetInitialValues());
+    const initialValues = await result.current(nodeWithInheritedTags);
+
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toBeUndefined();
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toBeUndefined();
+  });
+
   it('should preserve in-session cleared tags (empty array in prompt)', async () => {
     const nodeWithClearedTags = {
       getId: () => '42',
@@ -824,7 +853,7 @@ describe('useGetInitialValues', () => {
     ]);
   });
 
-  it('should use empty arrays when both resource and prompt have no job_tags/skip_tags', async () => {
+  it('should leave inherited tags unset when both resource and prompt have no values', async () => {
     const nodeWithNoTags = {
       getId: () => 'unsavedNode-tags',
       getData: () => ({
@@ -850,9 +879,8 @@ describe('useGetInitialValues', () => {
     const { result } = renderHook(() => useGetInitialValues());
     const initialValues = await result.current(nodeWithNoTags);
 
-    // When both defaults and prompt are undefined, parseStringToTagArray('') is called
-    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toEqual([]);
-    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toEqual([]);
+    expect(initialValues.nodePromptsStep?.prompt?.job_tags).toBeUndefined();
+    expect(initialValues.nodePromptsStep?.prompt?.skip_tags).toBeUndefined();
   });
 
   it('should prefill null node prompts from the job template launch defaults', async () => {
