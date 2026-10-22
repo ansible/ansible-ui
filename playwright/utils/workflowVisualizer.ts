@@ -39,6 +39,13 @@ async function clickWorkflowVisualizerAddStep(page: Page): Promise<void> {
   await addStepButton.click();
 }
 
+async function selectWorkflowNodeType(page: Page, stepType: string): Promise<void> {
+  const nodeTypeSelect = page.getByTestId('node-type');
+  await expect(nodeTypeSelect).toBeVisible();
+  await nodeTypeSelect.getByRole('button').click();
+  await nodeTypeSelect.getByRole('option', { name: stepType, exact: true }).click();
+}
+
 export const WorkflowVisualizer = {
   api: {
     createNode: async (
@@ -221,18 +228,18 @@ export const WorkflowVisualizer = {
       resourceSelectInputLabel: string
     ): Promise<void> => {
       await clickWorkflowVisualizerAddStep(page);
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
-      await page.getByRole('option', { name: stepType, exact: true }).click();
-      await page.getByLabel(`${resourceSelectInputLabel} *`).click();
+      const wizard = page.getByTestId('wizard');
+      await expect(wizard).toBeVisible();
+      await selectWorkflowNodeType(page, stepType);
+      await wizard.getByLabel(`${resourceSelectInputLabel} *`).click();
       if (stepType === 'Approval') {
-        await page.getByLabel('Name').fill(stepResourceName);
+        await wizard.getByLabel('Name').fill(stepResourceName);
       } else {
-        await page.getByLabel('Search input').fill(stepResourceName);
+        await wizard.getByLabel('Search input').fill(stepResourceName);
         await page.getByRole('option', { name: stepResourceName }).click();
       }
-      await page.getByRole('button', { name: 'Next' }).click();
-      await page.getByRole('button', { name: 'Finish' }).click();
+      await wizard.getByRole('button', { name: 'Next' }).click();
+      await wizard.getByRole('button', { name: 'Finish' }).click();
     },
 
     createNode: async (
