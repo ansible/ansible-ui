@@ -12,6 +12,7 @@ import { requestCommon } from '../../../../common/crud/requestCommon';
 import { downloadBlobFile } from '../../../../../framework/utils/download-file';
 import { ReportType } from '../types';
 import { filtersToSearchObj } from '../utils/queryString';
+import { isRequestTooLargeStatus } from '../utils/requestTooLarge';
 
 /**
  * Returns a stable async callback that fetches the CSV export for the current
@@ -55,7 +56,12 @@ export function useExportCsv(
           downloadBlobFile(filename, 'csv', blob);
         } else {
           error = true;
-          errorMsg = `${response.status} ${response.statusText}`;
+          // The filter values are sent in the URL: too many of them make the request too large.
+          errorMsg = isRequestTooLargeStatus(response.status)
+            ? t(
+                'Too many values are selected to export the data. Narrow the filters, for example by selecting fewer values.'
+              )
+            : `${response.status} ${response.statusText}`;
         }
       } catch (err) {
         error = true;

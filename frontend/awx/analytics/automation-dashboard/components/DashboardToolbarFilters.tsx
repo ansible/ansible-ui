@@ -1,33 +1,49 @@
 import {
   IFilterState,
-  IToolbarAsyncMultiSelectFilter,
   IToolbarDateRangeFilter,
-  IToolbarFilter,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
-import { PageAsyncMultiSelect } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncMultiSelect';
+import { PageSelectOption } from '@ansible/ansible-ui-framework/PageInputs/PageSelectOption';
 import { PageSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
 import { PageToolbarToggleGroup } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarToggleGroup';
 import { Flex, ToolbarFilter, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { FilterIcon } from '@patternfly/react-icons';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useReducer, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AutomationDashboardAsyncFilter } from '../common/useAutomationDashboardAsyncOptions';
 import { getToolbarLabelValue, removeFilter, removeFilterValue } from '../utils/filterStateUpdates';
+import { AutomationDashboardAsyncMultiSelectFilter } from './AutomationDashboardAsyncMultiSelectFilter';
 import { AutomationDashboardPeriodFilter } from './AutomationDashboardPeriodFilter';
+import { useKeepFocusWhileDisabled } from '../common/useKeepFocusWhileDisabled';
+
+/** The ids of the filter selector's toggle and of the selected filter's input (its toggle). */
+const FILTER_SELECTOR_ID = 'filter';
+const FILTER_INPUT_ID = 'filter-input';
 
 export interface DashboardToolbarFiltersProps {
-  /** Filters selectable in the filter group; only async multi-select filters are rendered. */
-  toolbarFilters?: IToolbarFilter[];
+  /** The filters selectable in the filter group. */
+  toolbarFilters?: AutomationDashboardAsyncFilter[];
   /** The period filter, rendered by the dashboard-local period control. */
   periodFilter?: IToolbarDateRangeFilter;
   filterState: IFilterState;
   setFilterState: Dispatch<SetStateAction<IFilterState>>;
+  /**
+   * Changes when the filter state is replaced as a whole ("Clear all filters", a saved report);
+   * cancels a running bulk action of the filter select.
+   */
+  filterResetCount?: number;
 }
 
-function isAsyncMultiSelectFilter(
-  filter: IToolbarFilter
-): filter is IToolbarAsyncMultiSelectFilter {
-  return filter.type === ToolbarFilterType.AsyncMultiSelect;
+/**
+ * Whether the filter can be rendered by the dashboard async multi-select. The types allow only
+ * those filters; this also skips another filter passed without its type (e.g. through a cast),
+ * which has no `queryOptions` and would throw when its select opens.
+ */
+function isAsyncMultiSelectFilter(filter: AutomationDashboardAsyncFilter) {
+  return (
+    (filter.type as ToolbarFilterType) === ToolbarFilterType.AsyncMultiSelect &&
+    typeof filter.queryOptions === 'function'
+  );
 }
 
 /**
@@ -40,6 +56,37 @@ export function DashboardToolbarFilters(props: Readonly<DashboardToolbarFiltersP
   const { t } = useTranslation();
   const filters = (props.toolbarFilters ?? []).filter(isAsyncMultiSelectFilter);
   const [firstFilter] = filters;
+  // The chips show the labels of the options the select loaded; other values (e.g. restored
+  // after a reload) query their label with `queryLabel`. Options loaded again update their
+  // label (e.g. a renamed one); the labels of options that are not loaded again stay until the
+  // page is reloaded, so the chips never query labels the select already loaded.
+  // The labels are kept in maps that are updated in place, re-rendering the chips on a change:
+  // copying a filter's labels for every loaded page would be quadratic with many options. The
+  // chips are re-rendered only when a label of a selected value changed, not for every page
+  // (a value selected later re-renders them with the filter state anyway).
+  const knownLabelsRef = useRef(new Map<string, Map<string, string>>());
+  const [, rerenderChips] = useReducer((count: number) => count + 1, 0);
+  const filterStateRef = useRef(filterState);
+  filterStateRef.current = filterState;
+  const getSelectedSet = useSelectedSetCache();
+  const addKnownLabels = useCallback(
+    (key: string, options: PageSelectOption<string>[]) => {
+      let labels = knownLabelsRef.current.get(key);
+      if (!labels) {
+        labels = new Map();
+        knownLabelsRef.current.set(key, labels);
+      }
+      const selected = getSelectedSet(filterStateRef.current[key]);
+      let hasSelectedLabelChanged = false;
+      for (const option of options) {
+        if (labels.get(option.value) === option.label) continue;
+        labels.set(option.value, option.label);
+        hasSelectedLabelChanged ||= selected.has(option.value);
+      }
+      if (hasSelectedLabelChanged) rerenderChips();
+    },
+    [getSelectedSet]
+  );
 
   if (filters.length === 0 && !periodFilter) return null;
 
@@ -52,7 +99,7 @@ export function DashboardToolbarFilters(props: Readonly<DashboardToolbarFiltersP
       // PatternFly breakpoint utilities: between `md` and `lg` the group spans the toolbar and
       // wraps, so the period (full width there) gets its own row; from `lg` up it is auto again.
       className="pf-m-wrap pf-v6-u-w-100-on-md pf-v6-u-w-auto-on-lg"
-      style={{ minWidth: 0, maxWidth: '100%' }}
+      style={{ minWidth: 0, maxWidth: '100%', alignItems: 'stretch' }}
     >
       {/* Only shown in the collapsed (below `md`) filter panel. The PatternFly utility class is
           used because the toggle group sets `display` on its items, which overrides the
@@ -66,6 +113,8 @@ export function DashboardToolbarFilters(props: Readonly<DashboardToolbarFiltersP
           defaultFilter={firstFilter}
           filterState={filterState}
           setFilterState={setFilterState}
+          filterResetCount={props.filterResetCount}
+          onOptionsLoaded={addKnownLabels}
         />
       )}
       {periodFilter && (
@@ -81,7 +130,8 @@ export function DashboardToolbarFilters(props: Readonly<DashboardToolbarFiltersP
           categoryName={filter.label}
           labels={(filterState[filter.key] ?? []).map((value) => ({
             key: value,
-            node: filter.queryLabel(value),
+            // An empty label (an option without a name) falls back to queryLabel.
+            node: knownLabelsRef.current.get(filter.key)?.get(value) || filter.queryLabel(value),
           }))}
           deleteLabel={(_category, label) => {
             const value = getToolbarLabelValue(label);
@@ -98,41 +148,69 @@ export function DashboardToolbarFilters(props: Readonly<DashboardToolbarFiltersP
   );
 }
 
+/**
+ * Returns the selected values as a set, built again only when the selection (array) changes, so
+ * checking every loaded page against a large selection does not rebuild it each time.
+ */
+function useSelectedSetCache() {
+  const cacheRef = useRef<{ values?: string[]; set: Set<string> }>({ set: new Set() });
+  return useCallback((values: string[] | undefined) => {
+    if (cacheRef.current.values !== values) cacheRef.current = { values, set: new Set(values) };
+    return cacheRef.current.set;
+  }, []);
+}
+
 /** The filter selector plus the input of the selected filter (a single filter shows its label instead). */
 function FilterGroup(
   props: Readonly<{
-    filters: IToolbarAsyncMultiSelectFilter[];
+    filters: AutomationDashboardAsyncFilter[];
     /** The filter shown until another one is selected. */
-    defaultFilter: IToolbarAsyncMultiSelectFilter;
+    defaultFilter: AutomationDashboardAsyncFilter;
     filterState: IFilterState;
     setFilterState: Dispatch<SetStateAction<IFilterState>>;
+    filterResetCount?: number;
+    /** Called with the options the selected filter loaded. */
+    onOptionsLoaded: (key: string, options: PageSelectOption<string>[]) => void;
   }>
 ) {
-  const { filters, defaultFilter, filterState, setFilterState } = props;
+  const { filters, defaultFilter, filterState, setFilterState, onOptionsLoaded } = props;
+  const { t } = useTranslation();
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  // Another filter remounts the input, which would abort a running bulk action.
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
+  // The filter selector is disabled meanwhile: its focus is kept on the filter input's toggle.
+  useKeepFocusWhileDisabled(isBulkLoading, FILTER_SELECTOR_ID, FILTER_INPUT_ID);
   const selectedFilter = filters.find((filter) => filter.key === selectedKey) ?? defaultFilter;
+  const filterKey = selectedFilter.key;
+  // Stable, so the select's callbacks that depend on it (e.g. the bulk actions) are too.
+  const onSelect = useCallback(
+    (setter: (values: string[] | undefined) => string[] | undefined) =>
+      setFilterState((prev) => {
+        const values = setter(prev[filterKey] ?? []);
+        // An empty selection drops the filter key, as removing the last chip does.
+        if (!values?.length) return removeFilter(prev, filterKey);
+        return { ...prev, [filterKey]: values };
+      }),
+    [setFilterState, filterKey]
+  );
+  const onSelectedOptionsLoaded = useCallback(
+    (options: PageSelectOption<string>[]) => onOptionsLoaded(filterKey, options),
+    [onOptionsLoaded, filterKey]
+  );
 
   const input = (
-    <PageAsyncMultiSelect<string>
+    <AutomationDashboardAsyncMultiSelectFilter
       key={selectedFilter.key}
-      id="filter-input"
+      id={FILTER_INPUT_ID}
       values={filterState[selectedFilter.key]}
-      onSelect={(setter) =>
-        setFilterState((prev) => ({
-          ...prev,
-          [selectedFilter.key]: setter(prev[selectedFilter.key] ?? []),
-        }))
-      }
+      onSelect={onSelect}
       placeholder={selectedFilter.placeholder ?? ''}
+      label={selectedFilter.label}
       queryOptions={selectedFilter.queryOptions}
       queryErrorText={selectedFilter.queryErrorText}
-      queryPlaceholder={selectedFilter.queryPlaceholder}
-      queryLabel={selectedFilter.queryLabel}
-      disableSortOptions={selectedFilter.disableSortOptions}
-      disableMaxDropdownWidth
-      // As in the framework filters: the toggle shows "N selected"; the values are the chips.
-      variant="count"
-      disableClearSelection
+      onOptionsLoaded={onSelectedOptionsLoaded}
+      onBulkLoadingChange={setIsBulkLoading}
+      resetKey={props.filterResetCount}
     />
   );
 
@@ -155,7 +233,7 @@ function FilterGroup(
     <ToolbarGroup variant="filter-group">
       <ToolbarItem>
         <PageSingleSelect
-          id="filter"
+          id={FILTER_SELECTOR_ID}
           value={selectedFilter.key}
           onSelect={setSelectedKey}
           icon={<FilterIcon />}
@@ -164,6 +242,11 @@ function FilterGroup(
           disableSortOptions
           isRequired
           disableMaxDropdownWidth
+          isDisabled={
+            isBulkLoading
+              ? t('The filter can be changed once the selection is updated.')
+              : undefined
+          }
         />
       </ToolbarItem>
       <ToolbarItem>{input}</ToolbarItem>
