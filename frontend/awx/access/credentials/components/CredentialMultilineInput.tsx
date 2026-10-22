@@ -15,6 +15,18 @@ import {
   validateSshKeyUnlockInput,
 } from '../utils/validateSshKeyUnlockInput';
 
+/** PageFormFileUpload types `validate` for File mode; `type="text"` passes strings at runtime. */
+function asTextFileUploadValidator(
+  validate: (value: string) => string | undefined
+): (value: File) => string | undefined {
+  return (value) => {
+    if (typeof value !== 'string') {
+      return undefined;
+    }
+    return validate(value);
+  };
+}
+
 export function CredentialMultilineInput({
   field,
   requiredFields,
@@ -141,7 +153,9 @@ export function CredentialMultilineInput({
         isDisabled={false}
         isClearButtonDisabled={!watchedFieldValue?.[field.id]}
         allowEditingUploadedText={true}
-        validate={validateSshKeyData}
+        validate={
+          validateSshKeyData ? asTextFileUploadValidator(validateSshKeyData) : undefined
+        }
         icon={
           kind !== 'external' ? (
             field.secret && watchedFieldValue?.[field.id] === '$encrypted$' ? (

@@ -6,14 +6,14 @@ export const SSH_KEY_UNLOCK_REQUIRED_MESSAGE = SSH_KEY_UNLOCK_REQUIRED_I18N_KEY;
 
 const SATISFIED_UNLOCK_VALUES = new Set(['ASK', '$encrypted$']);
 
-export type ValidateSshKeyUnlockOptions = {
+export type ValidateSshKeyUnlockOptions = Readonly<{
   /** Localized placeholder shown for unchanged encrypted secrets (`t('ENCRYPTED')`). */
   maskedSecretPlaceholder: string;
   /** Localized validation message (`t(SSH_KEY_UNLOCK_REQUIRED_I18N_KEY)`). */
   requiredMessage: string;
-};
+}>;
 
-function hasPassphraseValue(sshKeyUnlock: unknown, options: ValidateSshKeyUnlockOptions): boolean {
+function hasPassphraseValue(sshKeyUnlock: unknown, options: Readonly<ValidateSshKeyUnlockOptions>): boolean {
   if (typeof sshKeyUnlock !== 'string') {
     return false;
   }
@@ -34,7 +34,7 @@ function hasPassphraseValue(sshKeyUnlock: unknown, options: ValidateSshKeyUnlock
 export function validateSshKeyUnlockInput(
   sshKeyUnlock: unknown,
   formValues: Record<string, unknown>,
-  options: ValidateSshKeyUnlockOptions
+  options: Readonly<ValidateSshKeyUnlockOptions>
 ): true | string {
   if (formValues.ask_ssh_key_unlock === true) {
     return true;

@@ -18,7 +18,7 @@ export type PageFormFileUploadProps<
 > = {
   name: TFieldName;
   placeholder?: string;
-  validate?: (value: File | string) => string | undefined;
+  validate?: (value: File) => string | undefined;
   onInputChange?: (file: File) => Promise<void>;
   additionalHelperText?: ReactNode;
 } & PageFormGroupProps &
