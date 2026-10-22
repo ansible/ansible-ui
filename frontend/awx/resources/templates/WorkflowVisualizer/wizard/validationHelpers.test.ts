@@ -58,7 +58,10 @@ describe('validationHelpers', () => {
       ).not.toThrow();
     });
 
-    it('should fail validation when extra credential types are selected', () => {
+    it('should pass validation when a credential of an extra type is selected', () => {
+      // A type the template does not default to is additive -- the API merges
+      // prompted credentials over the template's by type -- so the node wizard
+      // must not be stricter than launching the template directly.
       const wizardData = {
         prompt: {
           credentials: [
@@ -71,15 +74,26 @@ describe('validationHelpers', () => {
 
       expect(() =>
         validateRequiredCredentialTypes(mockT, wizardData as WizardData, requiredCredentialTypes)
-      ).toThrow(RequestError);
+      ).not.toThrow();
+    });
 
-      try {
-        validateRequiredCredentialTypes(mockT, wizardData as WizardData, requiredCredentialTypes);
-      } catch (error) {
-        expect((error as RequestError).json).toEqual({
-          __all__: [expect.stringContaining('Please select only credentials')],
-        });
-      }
+    it('should pass validation when only extra types are added to a single default', () => {
+      // The reported case: a template prompting for credentials with one
+      // default, plus a credential of a different type added on the node.
+      const wizardData = {
+        prompt: {
+          credentials: [
+            { id: 1, name: 'SSH Key', credential_type: 1 },
+            { id: 9, name: 'AWS Keys', credential_type: 9 },
+          ],
+        },
+      };
+
+      expect(() =>
+        validateRequiredCredentialTypes(mockT, wizardData as WizardData, [
+          { id: 1, name: 'Machine' },
+        ])
+      ).not.toThrow();
     });
 
     it('should fail validation when required credential types are missing', () => {

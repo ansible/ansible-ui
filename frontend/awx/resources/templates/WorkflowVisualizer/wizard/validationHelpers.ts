@@ -20,34 +20,28 @@ export function validateRequiredCredentialTypes(
 
   const { prompt } = wizardData;
   const selectedCredentials = prompt?.credentials || [];
-  const selectedCredentialTypes = selectedCredentials.map(
-    (credential) => credential.credential_type
+  const selectedCredentialTypes = new Set(
+    selectedCredentials.map((credential) => credential.credential_type)
   );
   const missingTypes = requiredCredentialTypes.filter(
-    (requiredType) => !selectedCredentialTypes.includes(requiredType.id)
-  );
-  const extraTypes = selectedCredentialTypes.filter(
-    (selectedTypeId) => !requiredCredentialTypes.find((type) => type.id === selectedTypeId)
+    (requiredType) => !selectedCredentialTypes.has(requiredType.id)
   );
 
-  if (missingTypes.length || extraTypes.length) {
+  if (missingTypes.length) {
     // NOTE: multiple credentials of the same type are also disallowed,
     // but this is validated by the PageFormCredentialSelect component before
-    // this step validation runs, so no need to check for it here
-    let message = '';
-    if (missingTypes.length) {
-      const missingTypeNames = missingTypes.map((type) => type.name).join(', ');
-      message = t(
-        'Job Template default credentials must be replaced with ones of the same type. Please select a credential for the following types in order to proceed: {{types}}',
-        { types: missingTypeNames }
-      );
-    } else {
-      const requiredTypeNames = requiredCredentialTypes.map((type) => type.name).join(', ');
-      message = t(
-        'Job Template default credentials must be replaced with ones of the same type. Please select only credentials of the following types in order to proceed: {{types}}',
-        { types: requiredTypeNames }
-      );
-    }
+    // this step validation runs, so no need to check for it here.
+    //
+    // Only missing types are rejected. A credential whose type is not among
+    // the template defaults is additive, not a conflict: the API merges
+    // prompted credentials over the template's by type, keeping defaults for
+    // the types that were not prompted for. Rejecting those made workflow
+    // nodes stricter than launching the same template directly.
+    const missingTypeNames = missingTypes.map((type) => type.name).join(', ');
+    const message = t(
+      'Job Template default credentials must be replaced with ones of the same type. Please select a credential for the following types in order to proceed: {{types}}',
+      { types: missingTypeNames }
+    );
     const errors = {
       __all__: [message],
     };
