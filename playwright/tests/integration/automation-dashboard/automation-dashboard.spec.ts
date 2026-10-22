@@ -6,7 +6,8 @@ async function mockReportRoute(
   page: import('playwright').Page,
   status: number = 200
 ): Promise<void> {
-  await page.route(`**/api/metrics/v1/dashboard_reports/report/*`, async (route) => {
+  // The table is read with the POST query endpoint (the page and the ordering in the query string).
+  await page.route(`**/api/metrics/v1/dashboard_reports/report/query/**`, async (route) => {
     await route.fulfill({
       status: status,
       contentType: 'application/json',

@@ -1,6 +1,8 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { ReactNode } from 'react';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, test, expect, vi } from 'vitest';
 import { ToolbarFilterType } from '../../../../../framework';
 import { useGetReportDetails } from './useGetReportDetails';
@@ -30,17 +32,39 @@ const dashboardDetailsFixture: IDashboardDetails = {
   host_chart: { kind: 'day', items: [{ label: 'Mon', value: 2 }] },
 };
 
+/** The JSON body of a report query. */
+type ReportBody = Record<string, unknown>;
+
 const server = setupServer();
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
+/**
+ * SWR retrying as in the app (the test setup turns retries off), with its own cache and a short
+ * retry interval, so retries would happen within a test.
+ */
+function FastRetrySWRConfig(props: { children: ReactNode }) {
+  return (
+    <SWRConfig
+      value={{
+        provider: () => new Map(),
+        errorRetryInterval: 10,
+        dedupingInterval: 0,
+        shouldRetryOnError: true,
+      }}
+    >
+      {props.children}
+    </SWRConfig>
+  );
+}
+
 describe('useGetReportDetails', () => {
   describe('Loading state', () => {
     test('should return isLoading true while fetching data', async () => {
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, async () => {
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, async () => {
           await new Promise((resolve) => setTimeout(resolve, 50));
           return HttpResponse.json(dashboardDetailsFixture);
         })
@@ -56,7 +80,7 @@ describe('useGetReportDetails', () => {
   describe('Success state', () => {
     test('should return report details when data is fetched', async () => {
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, () =>
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () =>
           HttpResponse.json(dashboardDetailsFixture)
         )
       );
@@ -73,7 +97,7 @@ describe('useGetReportDetails', () => {
     test('should expose a refresh function', async () => {
       let callCount = 0;
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, () => {
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () => {
           callCount += 1;
           return HttpResponse.json(dashboardDetailsFixture);
         })
@@ -94,7 +118,7 @@ describe('useGetReportDetails', () => {
   describe('Error state', () => {
     test('should return error when API returns 500', async () => {
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, () =>
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () =>
           HttpResponse.json({ detail: 'Internal Server Error' }, { status: 500 })
         )
       );
@@ -109,7 +133,7 @@ describe('useGetReportDetails', () => {
 
     test('should return error when API returns 404', async () => {
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, () =>
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () =>
           HttpResponse.json({ detail: 'Not Found' }, { status: 404 })
         )
       );
@@ -122,7 +146,27 @@ describe('useGetReportDetails', () => {
     });
   });
 
-  describe('URL construction', () => {
+  describe('Too large requests', () => {
+    test('should not retry a request rejected as too large', async () => {
+      let requestCount = 0;
+      server.use(
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () => {
+          requestCount += 1;
+          return HttpResponse.json({}, { status: 431 });
+        })
+      );
+      const { result } = renderHook(() => useGetReportDetails([], {}), {
+        wrapper: FastRetrySWRConfig,
+      });
+      await waitFor(() => expect(result.current.error).toBeDefined());
+
+      await act(() => new Promise((resolve) => setTimeout(resolve, 300)));
+
+      expect(requestCount).toBe(1);
+    });
+  });
+
+  describe('Request', () => {
     test('should return label-filtered counts without retroactively including earlier runs', async () => {
       const labelFilter: IToolbarFilter = {
         key: 'label',
@@ -158,17 +202,16 @@ describe('useGetReportDetails', () => {
         end,
         organizationIds: [1, 2],
       });
-      let capturedUrl = '';
+      let capturedBody: ReportBody = {};
 
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, ({ request }) => {
-          capturedUrl = request.url;
-          const searchParams = new URL(request.url).searchParams;
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, async ({ request }) => {
+          capturedBody = (await request.json()) as ReportBody;
           const jobs = getLabelFilteredJobs(dashboardLabelAggregationJobs, {
-            labelId: Number(searchParams.get('label')),
+            labelId: (capturedBody.label as number[])[0],
             start,
             end,
-            organizationIds: searchParams.getAll('organization').map(Number),
+            organizationIds: capturedBody.organization as number[],
           });
           return HttpResponse.json(dashboardDetailsFromJobs(jobs));
         })
@@ -188,8 +231,8 @@ describe('useGetReportDetails', () => {
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
 
-      expect(new URL(capturedUrl).searchParams.get('label')).toBe('42');
-      expect(new URL(capturedUrl).searchParams.getAll('organization')).toEqual(['1', '2']);
+      expect(capturedBody.label).toEqual([42]);
+      expect(capturedBody.organization).toEqual([1, 2]);
       expect(result.current.reportDetails?.total_number_of_successful_jobs).toBe(
         expectedJobs.filter((job) => job.status === 'successful').length
       );
@@ -203,7 +246,7 @@ describe('useGetReportDetails', () => {
       let capturedUrl = '';
 
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, ({ request }) => {
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, ({ request }) => {
           capturedUrl = request.url;
           return HttpResponse.json(dashboardDetailsFixture);
         })
@@ -213,82 +256,45 @@ describe('useGetReportDetails', () => {
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
 
-      expect(capturedUrl).toContain('dashboard_reports/report/details/');
+      expect(capturedUrl).toContain('dashboard_reports/report/details/query/');
     });
 
-    test('should include queryParams in the URL', async () => {
-      let capturedUrl = '';
-
-      server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, ({ request }) => {
-          capturedUrl = request.url;
-          return HttpResponse.json(dashboardDetailsFixture);
-        })
-      );
-
-      const { result } = renderHook(() => useGetReportDetails([], {}, { tz: 'Europe/Ljubljana' }));
-
-      await waitFor(() => expect(result.current.reportDetails).toBeDefined());
-
-      expect(new URL(capturedUrl).searchParams.get('tz')).toBe('Europe/Ljubljana');
-    });
-
-    test('should include filter state params in the URL', async () => {
-      let capturedUrl = '';
-
-      const nameFilter: IToolbarFilter = {
-        key: 'template_name',
-        label: 'Name',
-        type: ToolbarFilterType.MultiText,
-        query: 'template_name',
-        comparison: 'contains',
-        placeholder: 'Filter by name',
+    test('should send the query params and the selection in the body', async () => {
+      let capturedBody: ReportBody = {};
+      const templateFilter: IToolbarFilter = {
+        key: 'template',
+        label: 'Template',
+        type: ToolbarFilterType.AsyncMultiSelect,
+        query: 'template',
+        placeholder: 'Select Template',
+        queryOptions: vi.fn(),
+        queryLabel: vi.fn(),
       };
-      const filterState: IFilterState = { template_name: ['my-template'] };
-
-      server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, ({ request }) => {
-          capturedUrl = request.url;
-          return HttpResponse.json(dashboardDetailsFixture);
-        })
-      );
-
-      const { result } = renderHook(() => useGetReportDetails([nameFilter], filterState));
-
-      await waitFor(() => expect(result.current.reportDetails).toBeDefined());
-
-      expect(new URL(capturedUrl).searchParams.get('template_name')).toBe('my-template');
-    });
-
-    test('should combine queryParams and filter state in the URL', async () => {
-      let capturedUrl = '';
-
-      const nameFilter: IToolbarFilter = {
-        key: 'template_name',
-        label: 'Name',
-        type: ToolbarFilterType.MultiText,
-        query: 'template_name',
-        comparison: 'contains',
-        placeholder: 'Filter by name',
+      const filterState: IFilterState = {
+        search_template: ['deploy'],
+        excluded_search_template: ['test'],
+        template: ['5'],
       };
-      const filterState: IFilterState = { template_name: ['automation-job'] };
 
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, ({ request }) => {
-          capturedUrl = request.url;
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, async ({ request }) => {
+          capturedBody = (await request.json()) as ReportBody;
           return HttpResponse.json(dashboardDetailsFixture);
         })
       );
 
       const { result } = renderHook(() =>
-        useGetReportDetails([nameFilter], filterState, { tz: 'UTC' })
+        useGetReportDetails([templateFilter], filterState, { tz: 'Europe/Ljubljana' })
       );
 
       await waitFor(() => expect(result.current.reportDetails).toBeDefined());
 
-      const url = new URL(capturedUrl);
-      expect(url.searchParams.get('tz')).toBe('UTC');
-      expect(url.searchParams.get('template_name')).toBe('automation-job');
+      expect(capturedBody).toEqual({
+        tz: 'Europe/Ljubljana',
+        template: [5],
+        search_template: ['deploy'],
+        excluded_search_template: ['test'],
+      });
     });
   });
 
@@ -309,7 +315,7 @@ describe('useGetReportDetails', () => {
     test('should not fetch when required filter has no value', async () => {
       let requestReceived = false;
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, () => {
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () => {
           requestReceived = true;
           return HttpResponse.json(dashboardDetailsFixture);
         })
@@ -326,7 +332,7 @@ describe('useGetReportDetails', () => {
     test('should not fetch when custom date range start date is not ISO formatted', async () => {
       let requestReceived = false;
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, () => {
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () => {
           requestReceived = true;
           return HttpResponse.json(dashboardDetailsFixture);
         })
@@ -344,7 +350,7 @@ describe('useGetReportDetails', () => {
 
     test('should fetch when custom date range has a valid ISO start date only', async () => {
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, () =>
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () =>
           HttpResponse.json(dashboardDetailsFixture)
         )
       );
@@ -358,7 +364,7 @@ describe('useGetReportDetails', () => {
 
     test('should fetch when custom date range has valid ISO start and end dates', async () => {
       server.use(
-        http.get(metricsAPI`/dashboard_reports/report/details/`, () =>
+        http.post(metricsAPI`/dashboard_reports/report/details/query/`, () =>
           HttpResponse.json(dashboardDetailsFixture)
         )
       );

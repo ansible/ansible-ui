@@ -9,6 +9,12 @@ import { useGetReportDetails } from './useGetReportDetails';
 import { useSubscriptionCostState } from './useSubscriptionCostState';
 import { useExportCsv } from './useExportCsv';
 import {
+  getSelectionFilterKeys,
+  getSelectionStateKeys,
+  normalizeSelectionState,
+} from '../utils/filterSelection';
+import { isRequestTooLargeError } from '../utils/requestTooLarge';
+import {
   IAutomationDashboardBaseView,
   useAutomationDashboardBaseView,
 } from '../common/useAutomationDashboardBaseView';
@@ -40,6 +46,63 @@ function isDefaultFilterState(filterState: IFilterState | undefined): boolean {
   return JSON.stringify(activeFilterState) === JSON.stringify(DEFAULT_FILTERS);
 }
 
+/**
+ * Whether the filter state is the default one; values that select nothing (e.g. an exclusion
+ * without a selection) do not count.
+ */
+function useIsFilterStateDefault(
+  filterState: IFilterState | undefined,
+  toolbarFilters: IToolbarFilter[]
+) {
+  return useMemo(
+    () =>
+      isDefaultFilterState(
+        filterState && normalizeSelectionState(filterState, getSelectionFilterKeys(toolbarFilters))
+      ),
+    [filterState, toolbarFilters]
+  );
+}
+
+/** The filters whose selection the URL query string (`search`) sets: a deep link to them. */
+function getLinkedFilters(toolbarFilters: IToolbarFilter[], search: string) {
+  const params = new URLSearchParams(search);
+  return toolbarFilters.filter((filter) =>
+    getSelectionStateKeys(filter.key).some((key) => params.has(key))
+  );
+}
+
+/**
+ * The persisted filter state without the selection of the filters a deep link sets: the view
+ * merges the URL into it key by key, and a selection is several keys (e.g. `search_template` of
+ * the link and `select_all_template` of the session would be mixed).
+ */
+function withoutLinkedSelections<T extends IFilterState>(
+  filterState: T,
+  toolbarFilters: IToolbarFilter[],
+  search: string
+): T {
+  const next = { ...filterState };
+  for (const filter of getLinkedFilters(toolbarFilters, search)) {
+    for (const key of getSelectionStateKeys(filter.key)) delete next[key];
+  }
+  return next;
+}
+
+/**
+ * Whether a request was rejected as too large, and whether all, some or none of the dashboard's
+ * data (the table, the cards) is still the data of the previous request. A request that was not
+ * rejected shows the data of the current filters (e.g. the shorter cards request may pass while
+ * the table request is too large). Each request is `[isTooLarge, isShowingPreviousData]`.
+ */
+function getFiltersTooLarge(
+  ...requests: [isTooLarge: boolean, isShowingPreviousData: boolean][]
+): IAutomationDashboardView['filtersTooLarge'] {
+  if (!requests.some(([isTooLarge]) => isTooLarge)) return undefined;
+  const showingCount = requests.filter(([, isShowing]) => isShowing).length;
+  if (showingCount === requests.length) return { previousData: 'all' };
+  return { previousData: showingCount > 0 ? 'some' : 'none' };
+}
+
 export function useAutomationDashboardView(options: {
   toolbarFilters: IToolbarFilter[];
 }): IAutomationDashboardView {
@@ -57,17 +120,39 @@ export function useAutomationDashboardView(options: {
   // the effect below seeds it once it resolves. The URL query string still wins
   // when present (deep links).
   const [initialFilters] = useState(() =>
-    userId !== undefined ? (readPersistedFilterState(userId) ?? DEFAULT_FILTERS) : DEFAULT_FILTERS
+    withoutLinkedSelections(
+      userId !== undefined
+        ? (readPersistedFilterState(userId) ?? DEFAULT_FILTERS)
+        : DEFAULT_FILTERS,
+      toolbarFilters,
+      window.location.search
+    )
   );
   const [initialSearch] = useState(() => window.location.search);
 
   const mainTableViewBase = useAutomationDashboardBaseView<IJobTemplate>({
-    url: metricsAPI`/dashboard_reports/report/`,
+    url: metricsAPI`/dashboard_reports/report/query/`,
     defaultFilters: initialFilters,
     toolbarFilters,
+    queryParams: QUERY_PARAMS,
   });
 
   const { filterState, setFilterState } = mainTableViewBase;
+
+  /**
+   * Counts the times the filter state was replaced as a whole (seeded for the user, "Clear all
+   * filters", a saved report). A replacement that leaves a filter's selection unchanged (e.g.
+   * empty) still cancels the running bulk action of its select. Every replacement goes through
+   * `replaceFilterState`, so none of them can miss the count.
+   */
+  const [filterResetCount, setFilterResetCount] = useState(0);
+  const replaceFilterState = useCallback(
+    (state: IFilterState) => {
+      setFilterState(state);
+      setFilterResetCount((count) => count + 1);
+    },
+    [setFilterState]
+  );
 
   // Which user the current filter state has been seeded for. Set up front when
   // the id was already known at mount (the common case — /me/ is cached).
@@ -81,19 +166,18 @@ export function useAutomationDashboardView(options: {
     // On the first seed, a deep link (filter params present in the URL when the
     // view mounted) takes precedence over the persisted state.
     if (isFirstSeed) {
-      const params = new URLSearchParams(initialSearch);
-      if (toolbarFilters.some((filter) => params.has(filter.key))) return;
+      if (getLinkedFilters(toolbarFilters, initialSearch).length > 0) return;
     }
 
     const persisted = readPersistedFilterState(userId);
     if (persisted) {
-      setFilterState(persisted);
+      replaceFilterState(persisted);
     } else if (!isFirstSeed) {
       // A different user with nothing saved — reset rather than keep the
       // previous user's filters.
-      setFilterState({ ...DEFAULT_FILTERS });
+      replaceFilterState({ ...DEFAULT_FILTERS });
     }
-  }, [userId, seededUserId, initialSearch, toolbarFilters, setFilterState]);
+  }, [userId, seededUserId, initialSearch, toolbarFilters, replaceFilterState]);
 
   // Persist every filter change for the active user so it can be restored after
   // a tab switch.
@@ -107,23 +191,37 @@ export function useAutomationDashboardView(options: {
 
   // Override clearAllFilters to retain the required 'period' filter and call toolbar callback
   const clearAllFilters = useCallback(() => {
-    setFilterState({ period: [AutomationDashboardDateRangeFilterPresets.last_7_days] });
+    replaceFilterState({ period: [AutomationDashboardDateRangeFilterPresets.last_7_days] });
 
     // Call toolbar callback to reset dropdown
     onClearFiltersCallback.current?.();
-  }, [setFilterState]);
+  }, [replaceFilterState]);
 
   // Function to register callback from toolbar
   const registerClearCallback = useCallback((callback: () => void) => {
     onClearFiltersCallback.current = callback;
   }, []);
 
+  // A request rejected as too large (a huge selection of explicit values) is shown as one alert
+  // below the filters. When there is data of a previous request, it stays and the error state
+  // is hidden; without it (e.g. the first request) the error state is shown.
+  const isTableRequestTooLarge = isRequestTooLargeError(mainTableViewBase.error);
+  const isTableShowingPreviousData =
+    isTableRequestTooLarge && mainTableViewBase.pageItems !== undefined;
   const mainTableView: IAutomationDashboardBaseView<IJobTemplate> = useMemo(
-    () => ({ ...mainTableViewBase, clearAllFilters }),
-    [mainTableViewBase, clearAllFilters]
+    () => ({
+      ...mainTableViewBase,
+      clearAllFilters,
+      error: isTableShowingPreviousData ? undefined : mainTableViewBase.error,
+    }),
+    [mainTableViewBase, clearAllFilters, isTableShowingPreviousData]
   );
 
   const detailsResponse = useGetReportDetails(toolbarFilters, filterState, QUERY_PARAMS);
+  const isDetailsRequestTooLarge = isRequestTooLargeError(detailsResponse.error);
+  const isDetailsShowingPreviousData =
+    isDetailsRequestTooLarge && detailsResponse.reportDetails !== undefined;
+
   const { costState, setCostState } = useSubscriptionCostState();
 
   const [loading, setLoading] = useState(false);
@@ -155,13 +253,13 @@ export function useAutomationDashboardView(options: {
   );
 
   // Compute whether filter state is default
-  const isFilterStateDefaultValue = useMemo(() => isDefaultFilterState(filterState), [filterState]);
+  const isFilterStateDefaultValue = useIsFilterStateDefault(filterState, toolbarFilters);
 
   return useMemo(
     () => ({
       mainTableView,
       details: detailsResponse.reportDetails,
-      detailsError: detailsResponse.error,
+      detailsError: isDetailsShowingPreviousData ? undefined : detailsResponse.error,
       detailsLoading: detailsResponse.isLoading,
       costState,
       setCostState,
@@ -170,6 +268,12 @@ export function useAutomationDashboardView(options: {
       exportCsv,
       isFilterStateDefault: isFilterStateDefaultValue,
       registerClearCallback,
+      replaceFilterState,
+      filterResetCount,
+      filtersTooLarge: getFiltersTooLarge(
+        [isTableRequestTooLarge, isTableShowingPreviousData],
+        [isDetailsRequestTooLarge, isDetailsShowingPreviousData]
+      ),
     }),
     [
       mainTableView,
@@ -183,6 +287,12 @@ export function useAutomationDashboardView(options: {
       exportCsv,
       isFilterStateDefaultValue,
       registerClearCallback,
+      replaceFilterState,
+      filterResetCount,
+      isTableRequestTooLarge,
+      isTableShowingPreviousData,
+      isDetailsRequestTooLarge,
+      isDetailsShowingPreviousData,
     ]
   );
 }

@@ -21,12 +21,14 @@ vi.mock('../../../../../framework/utils/download-file', () => ({
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 
-const nameFilter: IToolbarFilter = {
-  type: ToolbarFilterType.SingleText,
-  key: 'name',
-  label: 'Name',
-  query: 'name',
-  comparison: 'contains',
+const templateFilter: IToolbarFilter = {
+  type: ToolbarFilterType.AsyncMultiSelect,
+  key: 'template',
+  label: 'Template',
+  query: 'template',
+  placeholder: 'Select template',
+  queryOptions: vi.fn(),
+  queryLabel: (value: string) => value,
 };
 
 const periodFilter: IToolbarFilter = {
@@ -40,6 +42,8 @@ const periodFilter: IToolbarFilter = {
   ],
   placeholder: 'Filter by period',
 };
+
+const EXPORT_FAILED = 'Failed to export CSV.';
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
@@ -78,7 +82,7 @@ describe('useExportCsv', () => {
 
     expect(fetchSpy).toHaveBeenCalledOnce();
     expect(fetchSpy).toHaveBeenCalledWith(
-      expect.stringContaining('dashboard_reports/report/export/'),
+      expect.stringContaining('dashboard_reports/report/export/query/'),
       expect.anything()
     );
     expect(mockDownloadBlobFile).toHaveBeenCalledOnce();
@@ -96,79 +100,55 @@ describe('useExportCsv', () => {
     openSpy.mockRestore();
   });
 
-  // --- URL building ---
+  // --- Request ---
 
-  test('should include report_type param in the URL', async () => {
+  /** The url, method and JSON body of the export request. */
+  function getRequest() {
+    const [url, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+    return { url, method: init.method, body: JSON.parse(init.body as string) as unknown };
+  }
+
+  test('should post the report type and the CSV format to the export query endpoint', async () => {
     const { result } = renderHook(() => useExportCsv([], {}, {}));
 
     await act(async () => {
       await result.current('roi');
     });
 
-    const [url] = fetchSpy.mock.calls[0] as [string];
-    expect(url).toContain('report_type=roi');
-  });
-
-  test('should include export_format=csv param in the URL', async () => {
-    const { result } = renderHook(() => useExportCsv([], {}, {}));
-
-    await act(async () => {
-      await result.current('summary');
+    expect(getRequest()).toEqual({
+      url: expect.stringMatching(/dashboard_reports\/report\/export\/query\/$/) as unknown,
+      method: 'POST',
+      body: { report_type: 'roi', export_format: 'csv' },
     });
-
-    const [url] = fetchSpy.mock.calls[0] as [string];
-    expect(url).toContain('export_format=csv');
   });
 
-  test('should include queryParams in the URL', async () => {
-    const { result } = renderHook(() => useExportCsv([], {}, { period: 'last_7_days' }));
-
-    await act(async () => {
-      await result.current('summary');
-    });
-
-    const [url] = fetchSpy.mock.calls[0] as [string];
-    expect(url).toContain('period=last_7_days');
-  });
-
-  test('should include filter state values in the URL', async () => {
-    const { result } = renderHook(() => useExportCsv([nameFilter], { name: ['my-template'] }, {}));
-
-    await act(async () => {
-      await result.current('summary');
-    });
-
-    const [url] = fetchSpy.mock.calls[0] as [string];
-    expect(url).toContain('name=my-template');
-  });
-
-  test('should include both queryParams and filter state in the URL', async () => {
+  test('should send the query params, the period and the selection in the body', async () => {
     const { result } = renderHook(() =>
-      useExportCsv([nameFilter], { name: ['ansible'] }, { tz: 'Europe/Ljubljana' })
+      useExportCsv(
+        [periodFilter, templateFilter],
+        {
+          period: ['custom', '2024-01-01', '2024-01-31'],
+          select_all_template: ['true'],
+          excluded_template: ['4'],
+        },
+        { tz: 'Europe/Ljubljana' }
+      )
     );
 
     await act(async () => {
       await result.current('summary');
     });
 
-    const [url] = fetchSpy.mock.calls[0] as [string];
-    expect(url).toContain('tz=Europe%2FLjubljana');
-    expect(url).toContain('name=ansible');
-  });
-
-  test('should include start_date and end_date in the URL for a custom period filter', async () => {
-    const { result } = renderHook(() =>
-      useExportCsv([periodFilter], { period: ['custom', '2024-01-01', '2024-01-31'] }, {})
-    );
-
-    await act(async () => {
-      await result.current('summary');
+    expect(getRequest().body).toEqual({
+      tz: 'Europe/Ljubljana',
+      period: 'custom',
+      start_date: '2024-01-01',
+      end_date: '2024-01-31',
+      select_all_template: true,
+      excluded_template: [4],
+      report_type: 'summary',
+      export_format: 'csv',
     });
-
-    const [url] = fetchSpy.mock.calls[0] as [string];
-    expect(url).toContain('period=custom');
-    expect(url).toContain('start_date=2024-01-01');
-    expect(url).toContain('end_date=2024-01-31');
   });
 
   // --- Filename derivation ---
@@ -292,9 +272,44 @@ describe('useExportCsv', () => {
     });
 
     expect(mockAddAlert).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'danger', title: 'Failed to export CSV.' })
+      expect.objectContaining({ variant: 'danger', title: EXPORT_FAILED })
     );
     expect(mockDownloadBlobFile).not.toHaveBeenCalled();
+  });
+
+  test.each([431, 414, 413])(
+    'should ask to narrow the filters when the export is rejected as too large (%s)',
+    async (status) => {
+      fetchSpy.mockResolvedValue(new Response(null, { status }));
+      const { result } = renderHook(() => useExportCsv([], {}, {}));
+
+      await act(async () => {
+        await result.current('summary');
+      });
+
+      expect(mockAddAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'danger',
+          title: EXPORT_FAILED,
+          children: expect.stringContaining('Narrow the filters') as unknown,
+        })
+      );
+    }
+  );
+
+  test('should show the status of other failed exports', async () => {
+    fetchSpy.mockResolvedValue(
+      new Response(null, { status: 422, statusText: 'Unprocessable Entity' })
+    );
+    const { result } = renderHook(() => useExportCsv([], {}, {}));
+
+    await act(async () => {
+      await result.current('summary');
+    });
+
+    expect(mockAddAlert).toHaveBeenCalledWith(
+      expect.objectContaining({ children: '422 Unprocessable Entity' })
+    );
   });
 
   test('should show danger alert with error message when fetch throws a network error', async () => {
@@ -308,7 +323,7 @@ describe('useExportCsv', () => {
     expect(mockAddAlert).toHaveBeenCalledWith(
       expect.objectContaining({
         variant: 'danger',
-        title: 'Failed to export CSV.',
+        title: EXPORT_FAILED,
         children: 'Network error',
       })
     );

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import {
   IFilterState,
   IToolbarFilter,
-  paramsToSearchObj,
   QueryParams,
   usePageAlertToaster,
 } from '../../../../../framework';
@@ -11,7 +10,8 @@ import { metricsAPI } from '../../../common/api/metrics-utils';
 import { requestCommon } from '../../../../common/crud/requestCommon';
 import { downloadBlobFile } from '../../../../../framework/utils/download-file';
 import { ReportType } from '../types';
-import { filtersToSearchObj } from '../utils/queryString';
+import { getReportQueryBody, ReportQueryBody } from '../utils/reportQuery';
+import { isRequestTooLargeStatus } from '../utils/requestTooLarge';
 
 /**
  * Returns a stable async callback that fetches the CSV export for the current
@@ -28,13 +28,14 @@ export function useExportCsv(
   const alertToaster = usePageAlertToaster();
   const { t } = useTranslation();
   const downloadCsv = useCallback(
-    async (url: string, reportType: ReportType) => {
+    async (body: ReportQueryBody, reportType: ReportType) => {
       let errorMsg: string | undefined = undefined;
       let error = false;
       try {
         const response: Response = await requestCommon({
-          url,
-          method: 'GET',
+          url: metricsAPI`/dashboard_reports/report/export/query/`,
+          method: 'POST',
+          body,
         });
         if (response.ok) {
           const blob = await response.blob();
@@ -55,7 +56,12 @@ export function useExportCsv(
           downloadBlobFile(filename, 'csv', blob);
         } else {
           error = true;
-          errorMsg = `${response.status} ${response.statusText}`;
+          // The request is rejected as too large only for a huge selection of explicit values.
+          errorMsg = isRequestTooLargeStatus(response.status)
+            ? t(
+                'Too many values are selected to export the data. Narrow the filters, for example by selecting fewer values.'
+              )
+            : `${response.status} ${response.statusText}`;
         }
       } catch (err) {
         error = true;
@@ -75,14 +81,11 @@ export function useExportCsv(
 
   return useCallback(
     async (reportType: ReportType) => {
-      const params = new URLSearchParams([
-        ...paramsToSearchObj(queryParams),
-        ...filtersToSearchObj(toolbarFilters, filterState),
-        ['report_type', reportType],
-        ['export_format', 'csv'],
-      ]);
-      const url = metricsAPI`/dashboard_reports/report/export/?${params.toString()}`;
-      await downloadCsv(url, reportType);
+      const body = getReportQueryBody(toolbarFilters, filterState, queryParams, {
+        report_type: reportType,
+        export_format: 'csv',
+      });
+      await downloadCsv(body, reportType);
     },
     [toolbarFilters, filterState, queryParams, downloadCsv]
   );
