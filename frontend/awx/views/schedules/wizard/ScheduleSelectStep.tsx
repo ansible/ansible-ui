@@ -186,6 +186,8 @@ export function ScheduleSelectStep(props: {
         setWizardData((prev) => ({
           ...prev,
           launch_config: launchConfig,
+          resource,
+          resourceId: urlId,
         }));
         setValue('schedule_type', scheduleType);
         setValue('launch_config', launchConfig);
