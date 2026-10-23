@@ -156,7 +156,7 @@ describe('CreateRulebookActivation', () => {
     expect(screen.getByText(/Options/)).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /Skip audit events/ })).toBeInTheDocument();
     expect(
-      screen.getByRole('checkbox', { name: /Auto-restart on project update/ })
+      screen.getByRole('checkbox', { name: /Auto-restart on project sync if rulebook changes/ })
     ).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /Enable event persistence/ })).toBeInTheDocument();
   });
@@ -375,7 +375,7 @@ describe('EditRulebookActivation', () => {
     expect(screen.getByText(/Options/)).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /Skip audit events/ })).toBeInTheDocument();
     expect(
-      screen.getByRole('checkbox', { name: /Auto-restart on project update/ })
+      screen.getByRole('checkbox', { name: /Auto-restart on project sync if rulebook changes/ })
     ).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /Enable event persistence/ })).toBeInTheDocument();
   });
@@ -461,10 +461,10 @@ describe('EditRulebookActivation', () => {
       expect(persistenceCheckbox).toBeChecked();
     });
 
-    // Verify "Auto-restart on project update" checkbox is NOT checked (from existing data)
+    // Verify "Auto-restart on project sync if rulebook changes" checkbox is NOT checked (from existing data)
     await waitFor(() => {
       const autoRestartCheckbox = screen.getByRole('checkbox', {
-        name: /Auto-restart on project update/,
+        name: /Auto-restart on project sync if rulebook changes/,
       });
       expect(autoRestartCheckbox).not.toBeChecked();
     });
