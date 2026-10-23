@@ -266,24 +266,16 @@ export function handleNumberChange<
   value: string,
   params: {
     name: TFieldName;
-    max?: number | string;
-    min?: number | string;
     setValue: UseFormSetValue<TFieldValues>;
     onChange: (value: unknown) => void;
   }
 ) {
-  const { name, max, min, setValue, onChange } = params;
-  let numberValue = Number(value);
+  const { name, setValue, onChange } = params;
+  const numberValue = Number(value);
   if (value === '' || isNaN(numberValue)) {
     setValue(name, null as PathValue<TFieldValues, TFieldName>);
     onChange(null);
     return;
-  }
-  if (max !== undefined && numberValue > Number(max)) {
-    numberValue = Number(max);
-  }
-  if (min !== undefined && numberValue < Number(min)) {
-    numberValue = Number(min);
   }
   setValue(name, numberValue as unknown as PathValue<TFieldValues, TFieldName>);
   onChange(numberValue);
@@ -295,8 +287,6 @@ export function createChangeHandler<
 >(params: {
   type: TextInputType;
   name: TFieldName;
-  max?: number | string;
-  min?: number | string;
   setValue: UseFormSetValue<TFieldValues>;
   onChange: (value: unknown) => void;
 }) {
@@ -393,7 +383,7 @@ export function PageFormTextInput<
         );
 
         const parsedValue = resolveParsedValue(type, value);
-        const onChangeHandler = createChangeHandler({ type, name, max, min, setValue, onChange });
+        const onChangeHandler = createChangeHandler({ type, name, setValue, onChange });
 
         return (
           <PageFormGroup
