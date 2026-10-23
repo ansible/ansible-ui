@@ -4257,6 +4257,12 @@ export interface Project {
    */
   scm_update_on_launch?: boolean | null;
   /**
+   * Galaxy update on launch
+   * Bypass the ansible-galaxy response cache to fetch latest collection metadata when a job is launched that uses the project.
+   * @default false
+   */
+  galaxy_update_on_launch?: boolean | null;
+  /**
    * Scm update cache timeout
    * The number of seconds after the last project update ran that a new project update will be launched as a job dependency.
    * @min 0
