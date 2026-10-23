@@ -14,6 +14,7 @@ const breakpoints: Record<WindowSize, number> = {
   xl: 75 * BASE_FONT_SIZE,
   xxl: 90.625 * BASE_FONT_SIZE,
 };
+const windowSizes: WindowSize[] = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
 
 export function useWindowSize(): WindowSize {
   const [windowSize, setWindowSize] = useState<WindowSize>(() => {
@@ -47,55 +48,7 @@ export function useWindowSize(): WindowSize {
 /** Returns true if the window size is equal to or larger than the indicated size. */
 export function useBreakpoint(size: WindowSize): boolean {
   const windowSize = useWindowSize();
-  switch (size) {
-    case 'xs':
-      return true;
-    case 'sm':
-      switch (windowSize) {
-        case 'sm':
-        case 'md':
-        case 'lg':
-        case 'xl':
-        case 'xxl':
-          return true;
-        default:
-          return false;
-      }
-    case 'md':
-      switch (windowSize) {
-        case 'md':
-        case 'lg':
-        case 'xl':
-        case 'xxl':
-          return true;
-        default:
-          return false;
-      }
-    case 'lg':
-      switch (windowSize) {
-        case 'lg':
-        case 'xl':
-        case 'xxl':
-          return true;
-        default:
-          return false;
-      }
-    case 'xl':
-      switch (windowSize) {
-        case 'xl':
-        case 'xxl':
-          return true;
-        default:
-          return false;
-      }
-    case 'xxl':
-      switch (windowSize) {
-        case 'xxl':
-          return true;
-        default:
-          return false;
-      }
-  }
+  return windowSizes.indexOf(windowSize) >= windowSizes.indexOf(size);
 }
 
 export function useOrientation(): 'landscape' | 'portrait' {
