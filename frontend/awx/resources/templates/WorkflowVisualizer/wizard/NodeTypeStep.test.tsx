@@ -787,6 +787,62 @@ describe('NodeTypeStep', () => {
     expect(capturedPrompt?.job_tags?.[0]?.name).toBe('deploy');
   });
 
+  it('should not duplicate job_tags or skip_tags when step data already has the same template tags', async () => {
+    mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
+      if (url.includes('/launch/')) {
+        return Promise.resolve({
+          ask_credential_on_launch: true,
+          ask_tags_on_launch: true,
+          ask_skip_tags_on_launch: true,
+          survey_enabled: false,
+          defaults: {
+            credentials: [],
+            inventory: null,
+            job_tags: 'deploy,build',
+            skip_tags: 'skip1',
+          },
+        });
+      }
+      if (url.includes('/credentials/')) {
+        return Promise.resolve({ count: 0, results: [] });
+      }
+      return Promise.resolve({ id: 1, name: 'Demo Template', type: 'job_template' });
+    });
+
+    const existingJobTags = [{ name: 'deploy' }, { name: 'build' }];
+    const existingSkipTags = [{ name: 'skip1' }];
+    const stepStateWithTags = {
+      nodePromptsStep: {
+        prompt: {
+          ...mockStepState.nodePromptsStep.prompt,
+          job_tags: existingJobTags,
+          skip_tags: existingSkipTags,
+        },
+      },
+    };
+
+    let capturedPrompt: { job_tags?: { name: string }[]; skip_tags?: { name: string }[] } | undefined;
+    mockSetStepData.mockImplementation((updater: unknown) => {
+      if (typeof updater === 'function') {
+        const result = (
+          updater as (prev: typeof stepStateWithTags) => {
+            nodePromptsStep?: { prompt?: typeof capturedPrompt };
+          }
+        )(stepStateWithTags);
+        capturedPrompt = result?.nodePromptsStep?.prompt;
+      }
+    });
+
+    render(<TestWrapper defaultValues={{ node_type: RESOURCE_TYPE.job, resourceId: 1 }} />);
+
+    await waitFor(() => expect(mockSetStepData).toHaveBeenCalled(), { timeout: 5000 });
+
+    expect(capturedPrompt?.job_tags).toEqual(existingJobTags);
+    expect(capturedPrompt?.skip_tags).toEqual(existingSkipTags);
+    expect(capturedPrompt?.job_tags).toHaveLength(2);
+    expect(capturedPrompt?.skip_tags).toHaveLength(1);
+  });
+
   it('should show launch config instance groups when step instance groups are empty', async () => {
     const defaultIg = { id: 10, name: 'default-ig' };
     mockRequestGet.mockImplementation((url: string): Promise<Record<string, unknown>> => {
