@@ -20,7 +20,7 @@ jobs:
     with:
       build-directory: platform
       build-script: build
-      docker-context: platform
+      docker-context: .
       docker-file: _packaging/docker/platform/Dockerfile
       docker-target: platform-ui
       docker-image: platform-ui
