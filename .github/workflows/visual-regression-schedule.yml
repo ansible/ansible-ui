@@ -1,0 +1,100 @@
+name: Visual Regression Baseline Refresh
+
+on:
+  schedule:
+    - cron: '0 12 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: visual-regression-baseline-refresh
+  cancel-in-progress: false
+
+jobs:
+  build-platform-ui:
+    uses: ./.github/workflows/image.yml
+    with:
+      build-directory: platform
+      build-script: build
+      docker-context: platform
+      docker-file: _packaging/docker/platform/Dockerfile
+      docker-target: platform-ui
+      docker-image: platform-ui
+      upload-artifact: true
+    secrets: inherit
+
+  refresh-baselines:
+    needs: build-platform-ui
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      PLATFORM_UI: https://localhost:4100
+      PLATFORM_USERNAME: automation-admin
+      SKIP_COVERAGE: 'true'
+    steps:
+      - name: Checkout devel
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          ref: devel
+          fetch-depth: 0
+
+      - name: Download platform UI image
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: platform-ui.tar
+
+      - name: Run platform UI image
+        run: |
+          docker load --input platform-ui.tar
+          docker run -d --name platform-ui -p 4100:443 platform-ui
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e0 # v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Refresh Linux visual baselines
+        run: npx playwright test tests/visual --project "mock chromium" --workers=1 --retries=0 --update-snapshots=all
+
+      - name: Validate visual baseline coverage
+        run: npm run visual:check-baselines
+
+      - name: Detect baseline changes
+        id: baselines
+        run: |
+          git add playwright/tests/visual/*-snapshots/*.png
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+          git reset --quiet
+
+      - name: Open or update refresh pull request
+        if: steps.baselines.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: devel
+          branch: visual-regression/weekly-refresh
+          delete-branch: true
+          add-paths: playwright/tests/visual/*-snapshots/*.png
+          commit-message: 'test: refresh visual regression baselines'
+          title: 'Visual regression: weekly baseline refresh'
+          body: |
+            Automated refresh of Linux visual regression baselines from the current `devel` build.
+
+            - Full `tests/visual` suite ran serially against the built platform UI image and deterministic mock API.
+            - Baseline coverage was validated by `visual:check-baselines`.
+            - This workflow is scheduled weekly and can also be run manually.
+          labels: visual-regression

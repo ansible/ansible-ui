@@ -1,18 +1,25 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { installVisualMockApi } from './visualMockApi';
+import { stabilizeVisualPage } from './visualStabilization';
 
-test.beforeEach(setupBefore({ path: '/overview' }));
+test.beforeEach(async ({ page }) => {
+  await installVisualMockApi(page, ['platformOrganizations']);
+  await setupBefore({ path: '/overview' })({ page });
+  await stabilizeVisualPage(page);
+});
 test.afterEach(setupAfter);
 
 test.describe('Organization Create Wizard - Visual Regression', () => {
   test(
     'organization wizard details step has no visual regressions',
-    { tag: ['@visual', '@not_mock'] },
+    { tag: ['@visual'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
       await page.getByText('Create organization', { exact: true }).click();
       await expect(page.getByRole('heading', { name: 'Create organization' })).toBeVisible();
+      await stabilizeVisualPage(page);
 
       // Main content area screenshot (excludes sidebar to avoid layout shift flakiness)
       const mainContent = page.locator('.pf-v6-c-page__main');
@@ -25,7 +32,7 @@ test.describe('Organization Create Wizard - Visual Regression', () => {
 
   test(
     'organization wizard review step has no visual regressions',
-    { tag: ['@visual', '@not_mock'] },
+    { tag: ['@visual'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
       await page.getByText('Create organization', { exact: true }).click();
@@ -37,6 +44,7 @@ test.describe('Organization Create Wizard - Visual Regression', () => {
 
       // Wait for review step to render
       await expect(page.getByRole('button', { name: 'Finish', exact: true })).toBeVisible();
+      await stabilizeVisualPage(page);
 
       // Main content area screenshot (excludes sidebar to avoid layout shift flakiness)
       const mainContent = page.locator('.pf-v6-c-page__main');

@@ -3,6 +3,7 @@
 /.github
 /.husky
 /.nyc_output
+/playwright/.env
 /.vscode
 /Dockerfile
 /coverage

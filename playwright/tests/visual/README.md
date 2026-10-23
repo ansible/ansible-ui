@@ -24,13 +24,13 @@ All commands should be run from the `playwright/` directory.
 
 ```bash
 # Generate initial baselines (first time, or after intentional UI changes)
-npx playwright test tests/visual/ --project "live chromium" --update-snapshots
+npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
 
 # Run visual tests (compares against baselines)
-npx playwright test tests/visual/ --project "live chromium"
+npx playwright test tests/visual/ --project "mock chromium"
 
 # Run using the @visual tag filter
-TAGS=@visual npx playwright test --project "live chromium"
+TAGS=@visual npx playwright test --project "mock chromium"
 
 # View the HTML report (includes visual diffs on failure)
 npx playwright show-report playwright/html-report
@@ -55,11 +55,13 @@ npx playwright show-report playwright/html-report
 
 - **`maxDiffPixelRatio: 0.01`** — Allows up to 1% pixel difference to handle minor anti-aliasing and font rendering variance across environments.
 - **`animations: 'disabled'`** — Freezes CSS animations to prevent timing-based flakiness.
-- **`@not_mock` tag** — Tests are excluded from mock projects and only run against live instances.
+- **Mock-backed visual tests** — Every visual spec installs deterministic fixtures and runs in the `mock chromium` project; no AAP backend is required.
+- **Shared stabilization** — `stabilizeVisualPage()` freezes the clock, waits for network idle and loading indicators, disables motion, and clears focus before capture.
+- **Coverage registry** — `visualPageRegistry.ts` maps every visual spec and screenshot name to its route token and baseline directory. `npm run visual:check-baselines` validates the registry, app route source, missing baselines, and orphan PNGs.
 
 ## Upstream compatibility
 
-Screenshots deliberately **exclude the brand logo** so that baselines are portable across upstream and downstream builds. The brand logo differs between distributions, so including it would make baselines environment-specific.
+Content screenshots deliberately **exclude the brand logo** so that baselines are portable across upstream and downstream builds. Shell screenshots may include the masthead, but use `getBrandMasks(page)` and `maskColor: '#e8e8e8'` to cover distribution-specific branding while preserving the rest of the shell.
 
 ## Why we screenshot `.pf-v6-c-page__main`
 
@@ -72,15 +74,12 @@ When a visual change is intentional (e.g., a PatternFly upgrade, a redesigned co
 ### macOS (darwin) baselines
 
 ```bash
-npx playwright test tests/visual/ --project "live chromium" --update-snapshots
+npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
 ```
 
 ### Linux baselines (local via podman)
 
 ```bash
-PLATFORM_SERVER=https://your-aap-instance \
-PLATFORM_USERNAME=admin \
-PLATFORM_PASSWORD=your-password \
 ./scripts/update-visual-baselines.sh
 
 # Review and commit
@@ -88,7 +87,7 @@ git diff playwright/tests/visual/
 git add playwright/tests/visual/**/*-linux.png
 ```
 
-This workflow builds the UI inside a container using the official Playwright Linux image, serves it on https://localhost:4100, runs visual tests with --update-snapshots against your PLATFORM_SERVER for API calls, and writes updated -linux.png files directly to your working tree via volume mount.
+This workflow builds the UI inside a container using the official Playwright Linux image, serves it on https://localhost:4100, runs the mock-backed visual tests with --update-snapshots, and writes updated -linux.png files directly to your working tree via volume mount. It does not require an AAP server or credentials.
 
 Requires Podman or Docker installed locally.
 
@@ -96,36 +95,41 @@ Requires Podman or Docker installed locally.
 
 Playwright snapshots include a platform suffix (`-darwin` or `-linux`). The ephemeral AAP Playwright workflow runs on Linux runners, so it requires `-linux` baselines. Due to font rendering differences between environments, Linux baselines must be generated on Linux.
 
-If you don't have Podman/Docker locally, use the CI workflow:
+After the PR baseline workflows are available on `devel`, you can use either trigger below if you don't have Podman/Docker locally:
 
 1. Open a PR with your changes
-2. Comment `/run-aap-ui-playwright --update-snapshots` on the PR
-3. The CI workflow will run the visual tests with `--update-snapshots` on the `aap-dev` runner, then auto-commit the updated `-linux.png` baselines back to your branch
+2. Comment `/update-visual-baselines` on your PR
+3. The workflow checks out the PR merge result, generates Linux `mock chromium` snapshots without an AAP backend, and commits changed baseline PNGs to the PR branch
 
-> **Note:** The `--update-snapshots` flag can be combined with an AAP version: `/run-aap-ui-playwright 2.5-next --update-snapshots`
+This command accepts same-repository PRs only. The workflow runs the full visual suite and updates only `*-mock-chromium-linux.png` files. The broader `/run-aap-ui-playwright --update-snapshots` command remains available for the general AAP Playwright flow.
 
-Review the updated `.png` files in the `-snapshots/` directory before merging.
+The author-triggered run checks out the PR merge commit so the images include the current `devel` base. It rejects the result if the PR head changes during generation; comment again to refresh the new head.
+
+### Manual workflow dispatch
+
+After the workflow is available on `devel`, authors with repository write access can also start it from **Actions → Update PR visual baselines → Run workflow**. Select `devel` as the workflow branch, then provide:
+
+- `pr_number`: the PR number.
+- `pr_ref`: the PR's head branch name.
+- `pr_head_sha`: the full 40-character SHA of the PR's current head commit.
+
+The workflow accepts open, same-repository PRs targeting `devel`. It generates baselines from the PR merge result and commits changed Linux mock Chromium PNGs to the PR branch. If the PR head advances during the run, it stops; dispatch it again with the latest branch and SHA.
+
+After the workflow completes, review each updated PNG in the PR's **Files changed** tab against the intended UI change. Investigate unexpected image changes before merging.
 
 ## Stabilizing dynamic content
 
-Visual tests must account for dynamic content that changes between runs. We use two complementary strategies: **API interception** with `page.route()` to supply deterministic mock data, and **masking** with Playwright's `mask` option for residual dynamic elements.
+Visual tests must account for dynamic content that changes between runs. We use three complementary strategies: shared **API interception** with `installVisualMockApi()`, shared **stabilization** with `stabilizeVisualPage()`, and **masking** with Playwright's `mask` option for residual dynamic elements.
 
 ### Preferred: API interception with `page.route()`
 
-For pages where dynamic content covers a large area (table rows, resource counts, detail fields), intercept the API endpoint in `beforeEach` and return a deterministic inline fixture. This lets the test render real UI content — status badges, labels, type icons, counts — without masking it away.
+For pages where dynamic content covers a large area (table rows, resource counts, detail fields), register the page's deterministic fixture set in `beforeEach`. The shared `visualMockApi.ts` owns the response data and route interception, so multiple visual specs cannot drift into subtly different versions of the same fixture.
 
 ```ts
-const mockResponse = { count: 1, results: [{ id: 1, name: 'My Resource', ... }] };
-
 test.beforeEach(async ({ page }) => {
-  await page.route('**/api/controller/v2/my-endpoint/**', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(mockResponse),
-    });
-  });
+  await installVisualMockApi(page, ['templates']);
   await setupBefore({ path: '/my-page' })({ page });
+  await stabilizeVisualPage(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -137,7 +141,7 @@ test.afterEach(async ({ page }) => {
 **Fixture guidelines:**
 
 - Include only the fields the UI actually renders — trim `related`, `object_roles`, `url`, and other internal API fields
-- Inline fixtures in the test file — no separate fixture files to maintain
+- Keep deterministic fixtures in `visualMockApi.ts`; specs select only the page fixture they need
 - Register routes **before** navigation so intercepted responses are ready when the page loads
 
 ### Fallback: masking
@@ -181,21 +185,31 @@ await page.evaluate(() => {
 - **Wizard steps with controlled input** (e.g., Organization Create) — when we fill a fixed value like `"Visual Test Org"`, the content is deterministic.
 - **Element-level screenshots** (e.g., a `form`, `dl`, or toolbar locator) — these are scoped to a specific element and often avoid instability entirely.
 
+### Baseline refresh automation
+
+Authors can comment `/update-visual-baselines` on a same-repository PR to refresh its Linux mock Chromium baselines. The run uses the PR merge result and commits changed PNGs to the author's PR branch. The weekly refresh remains the full `devel` drift backstop.
+
+`.github/workflows/visual-regression-schedule.yml` runs the full mock-backed visual suite every Monday at 12:00 UTC with one worker on the Linux UI image and coverage collection disabled. It opens or updates `visual-regression/weekly-refresh` only when snapshots change. `workflow_dispatch` provides the same full refresh on demand without backend configuration.
+
 ## Where to add visual tests
 
-We use **dedicated visual test files** under `playwright/tests/visual/`, one per page. Each file targets a specific page that exercises a major framework component, and each test captures both a full-page screenshot and an element-level screenshot of the key component.
+We use **dedicated visual test files** under `playwright/tests/visual/`, one per page. Each file targets a specific page that exercises a major framework component, with a main-content screenshot and focused coverage of the page or application shell.
 
 ### Page selection strategy
 
 Rather than covering every page, we pick **one representative page per framework component** across different services (AWX, EDA, Platform). A visual regression in a shared framework component will be caught regardless of which page it surfaces on.
 
-| Framework component | Service  | Page                  | Test file                              |
-| ------------------- | -------- | --------------------- | -------------------------------------- |
-| Overview/Dashboard  | Platform | Overview              | `overview-visual.spec.ts`              |
-| PageTable/List      | AWX      | Templates List        | `templates-list-visual.spec.ts`        |
-| PageForm            | EDA      | EDA Credential Create | `eda-credential-create-visual.spec.ts` |
-| PageWizard          | Platform | Organization Create   | `organization-create-visual.spec.ts`   |
-| PageDetails         | AWX      | Inventory Details     | `inventory-details-visual.spec.ts`     |
+| Framework component | Service  | Page                  | Test file                                 |
+| ------------------- | -------- | --------------------- | ----------------------------------------- |
+| Overview/Dashboard  | Platform | Overview              | `overview-visual.spec.ts`                 |
+| PageTable/List      | AWX      | Templates List        | `templates-list-visual.spec.ts`           |
+| PageForm            | EDA      | EDA Credential Create | `eda-credential-create-visual.spec.ts`    |
+| PageWizard          | Platform | Organization Create   | `organization-create-visual.spec.ts`      |
+| PageDetails         | AWX      | Inventory Details     | `inventory-details-visual.spec.ts`        |
+| PageTable + shell   | AWX      | Credentials List      | `credentials-list-visual.spec.ts`         |
+| PageTable + shell   | EDA      | Rulebook Activations  | `eda-rulebook-activations-visual.spec.ts` |
+| PageTable + shell   | Platform | Users                 | `platform-users-visual.spec.ts`           |
+| PageTable + shell   | Platform | Organizations         | `platform-organizations-visual.spec.ts`   |
 
 ### File structure
 
@@ -211,6 +225,10 @@ playwright/tests/visual/
 ├── eda-credential-create-visual.spec.ts  # PageForm element
 ├── organization-create-visual.spec.ts    # PageWizard steps
 ├── inventory-details-visual.spec.ts      # PageDetails panel (mocked)
+├── credentials-list-visual.spec.ts       # PageTable and portable shell (mocked)
+├── eda-rulebook-activations-visual.spec.ts # EDA status/count table and shell (mocked)
+├── platform-users-visual.spec.ts          # Platform user table and shell (mocked)
+├── platform-organizations-visual.spec.ts  # Platform organization table and shell (mocked)
 └── README.md
 ```
 
@@ -221,20 +239,25 @@ When adding visual coverage for a new page:
 1. Create a new file named `<page>-visual.spec.ts` in this directory
 2. Choose a page that exercises a framework component not already covered, preferably from a service not already represented
 3. Include both a main content area and element-level screenshot test
-4. For pages with dynamic content, prefer `page.route()` API interception over masking — see "Stabilizing dynamic content" above
+4. Register deterministic API data through `installVisualMockApi()` and call `stabilizeVisualPage()` before screenshots
 5. Mask only residual dynamic elements (timestamps, charts) that aren't worth maintaining fixtures for
-6. Generate baselines with `--update-snapshots` and verify they pass on a second run
+6. Generate both platform baselines with `--update-snapshots` and verify they pass on a second run
+
+Run `npm run visual:check-baselines` before submitting baseline changes. It
+fails when a visual spec is missing from the registry, its route token is absent,
+its snapshot directory is missing, or a screenshot lacks either its Darwin or
+Linux baseline.
 
 ### Tagging
 
-All visual tests **must** include both `@visual` and `@not_mock` tags. This enables selective execution and filtering via the `TAGS` environment variable:
+All visual tests **must** include the `@visual` tag and use deterministic fixtures. This enables selective execution and filtering via the `TAGS` environment variable:
 
 ```bash
 # Run only visual tests
-TAGS=@visual npx playwright test --project "live chromium"
+TAGS=@visual npx playwright test --project "mock chromium"
 
 # Run everything except visual tests
-TAGS="not @visual" npx playwright test --project "live chromium"
+TAGS="not @visual" npx playwright test --project "mock chromium"
 ```
 
 ## Where to run visual tests
@@ -247,11 +270,11 @@ Ephemeral environments are the intended home for visual tests. They provide:
 - **Clean state**
 - **Isolated baselines** — Baselines are generated and compared in the same environment, eliminating cross-machine drift
 
-Use the `@visual` tag to scope visual tests to ephemeral-only workflows:
+Use the `@visual` tag to scope visual tests to visual workflows:
 
 ```bash
 # In the ephemeral pipeline
-TAGS=@visual npx playwright test --project "live chromium"
+TAGS=@visual npx playwright test --project "mock chromium"
 ```
 
 ### Jenkins
@@ -260,30 +283,18 @@ Visual tests **should be filtered out** of standard Jenkins runs.
 
 ```bash
 # In Jenkins — exclude visual tests from the regular suite
-TAGS="not @visual" npx playwright test --project "live chromium"
+TAGS="not @visual" npx playwright test --project "mock chromium"
 ```
 
 ## Adding new visual tests
 
-Follow the existing pattern. Use `page.route()` to intercept API endpoints with deterministic data, then screenshot `.pf-v6-c-page__main` (excludes sidebar and brand logo). Mask only residual dynamic elements like timestamps.
+Follow the existing pattern. Add the page to `visualPageRegistry.ts`, select a shared fixture set with `installVisualMockApi()`, call `stabilizeVisualPage()`, then screenshot `.pf-v6-c-page__main` (excludes sidebar and brand logo). Mask only residual dynamic elements like timestamps.
 
 ```ts
-const mockResponse = {
-  count: 1,
-  next: null,
-  previous: null,
-  results: [{ id: 1, name: 'My Resource' /* only fields the UI renders */ }],
-};
-
 test.beforeEach(async ({ page }) => {
-  await page.route('**/api/controller/v2/my-endpoint/**', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(mockResponse),
-    });
-  });
+  await installVisualMockApi(page, ['templates']);
   await setupBefore({ path: '/my-page' })({ page });
+  await stabilizeVisualPage(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -291,7 +302,7 @@ test.afterEach(async ({ page }) => {
   await setupAfter({ page });
 });
 
-test('my page has no visual regressions', { tag: ['@visual', '@not_mock'] }, async ({ page }) => {
+test('my page has no visual regressions', { tag: ['@visual'] }, async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Expected Title' })).toBeVisible();
 
   const mainContent = page.locator('.pf-v6-c-page__main');

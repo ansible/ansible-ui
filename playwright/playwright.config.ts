@@ -8,7 +8,7 @@ import path from 'path';
  * https://github.com/motdotla/dotenv
  */
 const __dirname = import.meta.dirname;
-dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -85,13 +85,14 @@ const config: PlaywrightTestConfig = {
 
       grepInvert: [
         /@upgrade/, // We should not run upgrade tests in this project
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
       name: 'mock chromium',
       use: { ...devices['Desktop Chrome'] },
       metadata: { mock: true },
-      dependencies: ['coverage setup'],
+      dependencies: process.env.SKIP_COVERAGE === 'true' ? [] : ['coverage setup'],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
       ],
@@ -101,6 +102,7 @@ const config: PlaywrightTestConfig = {
       use: { ...devices['Desktop Firefox'] },
       grepInvert: [
         /@upgrade/, // We should not run upgrade tests in this project
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -109,6 +111,7 @@ const config: PlaywrightTestConfig = {
       metadata: { mock: true },
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -116,6 +119,7 @@ const config: PlaywrightTestConfig = {
       use: { ...devices['Desktop Safari'] },
       grepInvert: [
         /@upgrade/, // We should not run upgrade tests in this project
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -125,6 +129,7 @@ const config: PlaywrightTestConfig = {
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
         /@upgrade/, // We should not run upgrade tests in this project - Webkit does not support the needed 301 redirects
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -139,6 +144,7 @@ const config: PlaywrightTestConfig = {
       ],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -174,6 +180,7 @@ const config: PlaywrightTestConfig = {
       dependencies: ['coverage setup'],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -183,6 +190,7 @@ const config: PlaywrightTestConfig = {
       dependencies: ['coverage setup'],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
   ],
