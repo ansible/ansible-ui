@@ -1,0 +1,12 @@
+{
+  "$schema": "./feature-flags.schema.json",
+  "flags": [
+    {
+      "name": "FEATURE_EXAMPLE_VIEW_ENABLED",
+      "enabled": false,
+      "description": "Example of an unfinished client-only view.",
+      "owner": "UI platform team",
+      "removalDate": "2026-12-31"
+    }
+  ]
+}
