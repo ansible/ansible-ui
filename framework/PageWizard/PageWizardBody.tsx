@@ -108,11 +108,30 @@ function RequestErrorAlert(props: { error?: unknown }) {
     return <Alert variant="danger" title={props.error.message} />;
   }
   if (error.json) {
+    const messageOccurrences = new Map<string, number>();
+    const titlePrefix = `${error.message}: `;
+    const messages = Object.entries(error.json).flatMap(([field, value]) =>
+      value.split('\n').map((message) => {
+        const messageKey = `${field}:${message}`;
+        const occurrence = messageOccurrences.get(messageKey) ?? 0;
+        messageOccurrences.set(messageKey, occurrence + 1);
+        return {
+          key: `${messageKey}:${occurrence}`,
+          value: message.startsWith(titlePrefix) ? message.slice(titlePrefix.length) : message,
+        };
+      })
+    );
     return (
       <Alert variant="danger" title={error.message} isInline>
-        {Object.values(error.json).map((value: string, index) => (
-          <div key={index}>{value}</div>
-        ))}
+        {messages.length > 1 ? (
+          <ul>
+            {messages.map((message) => (
+              <li key={message.key}>{message.value}</li>
+            ))}
+          </ul>
+        ) : (
+          messages.map((message) => <div key={message.key}>{message.value}</div>)
+        )}
       </Alert>
     );
   }

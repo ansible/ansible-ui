@@ -7,6 +7,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormCreatableSelect';
 import { yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
+import { ReactNode } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { PageFormCredentialSelect } from '../../../../access/credentials/components/PageFormCredentialSelect';
@@ -29,8 +30,10 @@ type NodePromptStepData = {
 
 export function NodePromptsStep({
   preventCredentialsThatNeedPasswordsOnLaunch = false,
+  labelsInput,
 }: {
   readonly preventCredentialsThatNeedPasswordsOnLaunch?: boolean;
+  readonly labelsInput?: ReactNode;
 }) {
   const { t } = useTranslation();
 
@@ -101,13 +104,15 @@ export function NodePromptsStep({
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_labels_on_launch}>
-        <PageFormLabelSelect<WizardFormValues>
-          labelHelpTitle={t('Labels')}
-          labelHelp={t(
-            `Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.`
-          )}
-          name="prompt.labels"
-        />
+        {labelsInput ?? (
+          <PageFormLabelSelect<WizardFormValues>
+            labelHelpTitle={t('Labels')}
+            labelHelp={t(
+              `Optional labels that describe this job template, such as 'dev' or 'test'. Labels can be used to group and filter job templates and completed jobs.`
+            )}
+            name="prompt.labels"
+          />
+        )}
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_forks_on_launch}>
         <PageFormTextInput<WizardFormValues>
