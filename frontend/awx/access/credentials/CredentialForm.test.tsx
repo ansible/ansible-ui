@@ -6,6 +6,14 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { CreateCredential, EditCredential } from './CredentialForm';
+import { SSH_KEY_UNLOCK_REQUIRED_MESSAGE } from './utils/validateSshKeyUnlockInput';
+
+const ENCRYPTED_RSA_KEY_FOR_FORM = `-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,00000000000000000000000000000000
+
+YWJjZA==
+-----END RSA PRIVATE KEY-----`;
 
 /**
  * Mock BecomeMethodField so that it registers become_method = { name: 'sudo' } by default.
@@ -154,7 +162,19 @@ const mockCredentialTypes = {
             secret: true,
             ask_at_runtime: true,
           },
-          { id: 'ssh_key_data', type: 'string', label: 'SSH Private Key', secret: true },
+          {
+            id: 'ssh_key_data',
+            type: 'string',
+            label: 'SSH Private Key',
+            secret: true,
+            multiline: true,
+          },
+          {
+            id: 'ssh_key_unlock',
+            type: 'string',
+            label: 'Private Key Passphrase',
+            secret: true,
+          },
           { id: 'become_method', type: 'string', label: 'Privilege Escalation Method' },
           { id: 'become_username', type: 'string', label: 'Privilege Escalation Username' },
         ],
@@ -527,6 +547,47 @@ describe('CredentialForm', () => {
 
       expect(postSpy).not.toHaveBeenCalled();
     });
+
+    it('shows validation when creating Machine credential with encrypted SSH key and no passphrase', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/create']}>
+          <Routes>
+            <Route path="/credentials/create" element={<CreateCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Create credential');
+      });
+
+      await user.type(screen.getByTestId('name'), 'machine-cred');
+
+      const credentialTypeToggle = await screen.findByTestId('credential-type');
+      await user.click(credentialTypeToggle);
+      await user.click(await screen.findByText('Machine'));
+
+      await waitFor(() => {
+        expect(screen.getByText('SSH Private Key')).toBeInTheDocument();
+      });
+
+      const sshKeyField = await screen.findByTestId('ssh-key-data');
+      const sshKeyTextarea = sshKeyField.querySelector('textarea');
+      expect(sshKeyTextarea).toBeTruthy();
+      await user.click(sshKeyTextarea!);
+      await user.clear(sshKeyTextarea!);
+      await user.paste(ENCRYPTED_RSA_KEY_FOR_FORM);
+      await user.tab();
+
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('ssh-key-data-form-group')).toHaveTextContent(
+          SSH_KEY_UNLOCK_REQUIRED_MESSAGE
+        );
+      });
+    }, 20000);
 
     it('should submit without TypeError when become_method is null', async () => {
       const postSpy = vi.fn();
@@ -1042,6 +1103,46 @@ describe('CredentialForm', () => {
         expect(screen.getByText('Username')).toBeInTheDocument();
         expect(screen.getByText('Password')).toBeInTheDocument();
       });
+    });
+
+    it('omits empty ssh_key_unlock from PATCH when saving Machine credential', async () => {
+      let patchBody: { inputs?: Record<string, string> } | undefined;
+      server.use(
+        http.get(awxAPI`/credentials/1/`, () =>
+          HttpResponse.json({
+            ...mockCredential,
+            credential_type: 1,
+            inputs: {
+              username: 'root',
+              ssh_key_data: '$encrypted$',
+            },
+          })
+        ),
+        http.patch(awxAPI`/credentials/1/`, async ({ request }) => {
+          patchBody = (await request.json()) as { inputs?: Record<string, string> };
+          return HttpResponse.json(mockCredential);
+        })
+      );
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/1/edit']}>
+          <Routes>
+            <Route path="/credentials/:id/edit" element={<EditCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('name')).toHaveValue('Test Credential');
+      });
+
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(() => {
+        expect(patchBody).toBeDefined();
+      });
+      expect(patchBody?.inputs?.ssh_key_unlock).toBeUndefined();
     });
 
     it('should display error alert when server returns 500 on save', async () => {
