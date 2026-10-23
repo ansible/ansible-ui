@@ -133,8 +133,8 @@ export function mungePromptData(
       result.skip_tags = stringifyTags(prompt.skip_tags);
     }
 
-    if (launchConfig.ask_limit_on_launch && prompt.limit) {
-      result.limit = prompt.limit;
+    if (launchConfig.ask_limit_on_launch) {
+      result.limit = prompt.limit ?? '';
     }
 
     if (launchConfig.ask_job_type_on_launch && prompt.job_type) {
