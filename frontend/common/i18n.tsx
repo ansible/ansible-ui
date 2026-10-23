@@ -33,8 +33,8 @@ void i18n
     detection: {
       order: [
         'querystring',
-        'cookie',
         'localStorage',
+        'cookie',
         'sessionStorage',
         'navigator',
         'htmlTag',
@@ -50,6 +50,8 @@ void i18n
       lookupQuerystring: 'lang',
       lookupCookie: 'lang',
       lookupLocalStorage: 'lang',
+      // PageSettingsProvider manages explicit language persistence.
+      caches: [],
     },
     fallbackLng: 'en', // use en if detected lng is not available
     supportedLngs: ['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh', 'zu'],
