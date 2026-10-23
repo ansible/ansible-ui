@@ -1,4 +1,4 @@
-# Claude Skill: SonarCloud Issue Remediation
+# SonarCloud Issue Remediation
 
 Fetch SonarCloud issues, analyze and group them, suggest fixes, and create focused PRs with human-in-the-loop review.
 
@@ -8,7 +8,7 @@ Fetch SonarCloud issues, analyze and group them, suggest fixes, and create focus
 
 ### Prerequisites
 
-- **`gh`** (GitHub CLI) or **`glab`** (GitLab CLI) — one must be installed and authenticated, matching the repo's hosting platform. Used by `/sonarcloud-fix` to create PRs/MRs and post comments. The skill auto-detects the platform from the git remote URL.
+- **`gh`** (GitHub CLI) or **`glab`** (GitLab CLI) — one must be installed and authenticated, matching the repo's hosting platform. Used by `sonarcloud-fix` to create PRs/MRs and post comments. The skill auto-detects the platform from the git remote URL.
 - **`python3`** (3.8+) — used by the fetch script (`scripts/sonarcloud-fetch.py`). Uses only Python stdlib (no external dependencies).
 
 ### Environment Variables
@@ -17,10 +17,10 @@ All variables can be set as environment variables beforehand **or** provided int
 
 | Variable | When needed | Purpose |
 |----------|-------------|---------|
-| `SONAR_BASE_URL` | Phase A, B (optional) | Base URL of the Sonar API. Defaults to `https://sonarcloud.io/api`. Set this to target a self-hosted SonarQube instance (e.g. `https://sonarqube.corp.redhat.com/api`). |
+| `SONAR_BASE_URL` | Phase A, B (optional) | Base URL of the Sonar API. Defaults to `https://sonarcloud.io/api`. Set this to target a self-hosted SonarQube instance (e.g. `https://sonarqube.example.com/api`). |
 | `SONAR_ORGANIZATION` | Phase A, B | SonarCloud organization slug. **Required for SonarCloud; optional for self-hosted SonarQube.** |
 | `SONAR_PROJECT_KEY` | Phase A, B | Sonar project key |
-| `SONARCLOUD_TOKEN` | Private projects only | API authentication token. **Must be set as an environment variable before starting Claude** — the skill will never prompt for or handle this value directly. Works with both SonarCloud and SonarQube tokens. |
+| `SONARCLOUD_TOKEN` | Private projects only | API authentication token. **Must be set as an environment variable before starting the agent session** — the skill will never prompt for or handle this value directly. Works with both SonarCloud and SonarQube tokens. |
 | `SONAR_DEFAULT_BRANCH` | Phase B | Base branch for fix PRs (e.g. `main`, `devel`) |
 | `SONAR_VALIDATE_COMMANDS` | Phase B | Validation commands that must pass before PR creation (e.g. `npm run tsc && npm run vitest`) |
 | `SONAR_PR_COMMENT` | Phase B (optional) | Comment to post automatically on each newly created PR/MR. Commonly used to trigger CI workflows (e.g. `/run-playwright`). If not provided, no comment is posted. Set to `none`, `skip`, `false`, or empty string `""` to explicitly disable. |
@@ -29,7 +29,7 @@ All variables can be set as environment variables beforehand **or** provided int
 
 ## Phase A — Analyze
 
-Invoked via `/sonarcloud-analyze`. Fetches all open issues and presents a prioritized, grouped report.
+Invoked via `sonarcloud-analyze`. Fetches all open issues and presents a prioritized, grouped report.
 
 ### Step 0: Collect Configuration
 
@@ -55,14 +55,14 @@ Check whether the required variables are available as environment variables. For
 
 1. If `SONAR_ORGANIZATION` is not set and the target is SonarCloud (no `SONAR_BASE_URL` override), ask: "What is your SonarCloud organization slug?" For self-hosted SonarQube instances, `SONAR_ORGANIZATION` is optional — skip this prompt.
 2. If `SONAR_PROJECT_KEY` is not set, ask: "What is your Sonar project key?"
-3. If `SONARCLOUD_TOKEN` is not set and the project is private, **do not prompt for the token**. Instead, guide the engineer to set it up themselves and restart Claude:
-   > "This project requires a `SONARCLOUD_TOKEN` for API access. Please set it as an environment variable and restart Claude:
+3. If `SONARCLOUD_TOKEN` is not set and the project is private, **do not prompt for the token**. Instead, guide the engineer to set it up themselves and restart the agent session:
+   > "This project requires a `SONARCLOUD_TOKEN` for API access. Please set it as an environment variable and restart the agent session:
    >
    > ```bash
    > export SONARCLOUD_TOKEN=<your-token>
    > ```
    >
-   > You can generate a token at your Sonar instance's account security page (e.g. https://sonarcloud.io/account/security for SonarCloud). Once the variable is set, restart Claude and re-run the command."
+   > You can generate a token at your Sonar instance's account security page (e.g. https://sonarcloud.io/account/security for SonarCloud). Once the variable is set, restart the agent session and run the sonarcloud-analyze skill again."
 
    Then **stop the workflow** — do not proceed without the token in the environment.
 
@@ -77,13 +77,13 @@ Use the collected values for the remainder of the session.
 Run the fetch script to retrieve all SonarCloud data. If `SONAR_ORGANIZATION` or `SONAR_PROJECT_KEY` were provided interactively (not via environment variables), pass them as inline environment variables. **Never pass `SONARCLOUD_TOKEN` on the command line** — it must already be in the environment.
 
 ```bash
-SONAR_PROJECT_KEY=<value> SONAR_ORGANIZATION=<value> python3 .claude/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py
+SONAR_PROJECT_KEY=<value> SONAR_ORGANIZATION=<value> python3 .agents/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py
 ```
 
 If all values are already set as environment variables, run the script directly:
 
 ```bash
-python3 .claude/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py
+python3 .agents/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py
 ```
 
 The script handles pagination, authentication, and categorization automatically. It outputs JSON to stdout with this structure:
@@ -153,7 +153,7 @@ Within each category, sort groups by this priority order. Match by rule ID suffi
 4. Unused function parameters (`S1172`)
 5. Commented-out code (`S125`)
 6. Simple type safety improvements (`S4325`, `S4204`, `S1874`)
-7. Cognitive complexity (`S3776`) — also warned by `npm run eslint:guardrails` (threshold in `.eslintrc.guardrails.json`). Do not add new hits in changed files.
+7. Cognitive complexity (`S3776`) — also warned by `npm run eslint:guardrails` (threshold in `eslint.guardrails.config.mjs`). Do not add new hits in changed files.
 8. Security hotspot rules
 9. Reliability / bug rules
 10. All other rules
@@ -175,7 +175,7 @@ For each group, estimate the lines of code that will change:
 
 Display one table per category. Include total issue count in the heading.
 
-**CRITICAL: Use a single continuous numbering sequence across all categories.** The group `#` is the ID that `/sonarcloud-fix` uses to select groups. It must be globally unique, not reset per category. All rows — including security hotspots — must use the same table format with the rule or category identifier in parentheses.
+**CRITICAL: Use a single continuous numbering sequence across all categories.** The group `#` is the ID that `sonarcloud-fix` uses to select groups. It must be globally unique, not reset per category. All rows — including security hotspots — must use the same table format with the rule or category identifier in parentheses.
 
 ```
 ## Maintainability (847 issues)
@@ -217,11 +217,11 @@ Duplicated lines density: 3.2%  |  Duplicated blocks: 47  |  Duplicated files: 1
 
 Flag any group where Est. LOC > 200 with "Will split" in the Note column.
 
-At the end of the report, suggest low-risk starting groups for `/sonarcloud-fix` using their group numbers:
+At the end of the report, suggest low-risk starting groups for `sonarcloud-fix` using their group numbers:
 ```
-Good starting groups for `/sonarcloud-fix`:
-  /sonarcloud-fix 1   — Unused imports (45 issues, ~45 LOC, Low risk)
-  /sonarcloud-fix 2   — Dead stores (23 issues, ~35 LOC, Low risk)
+Good starting groups for `sonarcloud-fix`:
+  sonarcloud-fix 1   — Unused imports (45 issues, ~45 LOC, Low risk)
+  sonarcloud-fix 2   — Dead stores (23 issues, ~35 LOC, Low risk)
 ```
 
 **Tip:** If you plan to fix issues after analysis, it's best to have `SONAR_DEFAULT_BRANCH` and `SONAR_VALIDATE_COMMANDS` ready. You can set them as environment variables beforehand, or provide them interactively when Phase B starts.
@@ -237,7 +237,7 @@ If the user provides flags, apply them before grouping:
 
 ## Phase B — Fix
 
-Invoked via `/sonarcloud-fix`. The engineer selects groups from the analyze output and the skill applies fixes with approval.
+Invoked via `sonarcloud-fix`. The engineer selects groups from the analyze output and the skill applies fixes with approval.
 
 ### Step 0: Configuration Pre-Check
 
@@ -290,7 +290,7 @@ Then ask: "Do these settings look correct? If any need updating, let me know."
 If the user provided a group number or name as an argument, use that.
 
 If no group was specified, prompt interactively:
-1. If no `/sonarcloud-analyze` was run in this session, run it first to generate the group table
+1. If no `sonarcloud-analyze` was run in this session, run it first to generate the group table
 2. Display the available groups (or remind the user of the table)
 3. Ask which group(s) to fix — accept by number from the analyze table, by rule key, or by name
 4. Multiple groups can be selected at once
@@ -508,7 +508,7 @@ export SONAR_VALIDATE_COMMANDS="make lint && make test"    # your validation pip
 export SONAR_PR_COMMENT="/run-e2e"                         # your PR comment, or "none" to disable
 ```
 
-Then use `/sonarcloud-analyze` and `/sonarcloud-fix`.
+Then use `sonarcloud-analyze` and `sonarcloud-fix`.
 
 ---
 
@@ -518,7 +518,7 @@ Then use `/sonarcloud-analyze` and `/sonarcloud-fix`.
 |---------|-------|-----|
 | Prompted for organization/project key | Not set as env vars | Set env vars beforehand, or provide values when prompted interactively |
 | Empty results from API | Wrong project key or org | Verify the project exists on your Sonar instance (e.g. `https://sonarcloud.io/project/overview?id=<PROJECT_KEY>` for SonarCloud, or `<SONAR_BASE_URL>/dashboard?id=<PROJECT_KEY>` for self-hosted) |
-| 401 from API | Private project without token | Set `SONARCLOUD_TOKEN` as an environment variable (`export SONARCLOUD_TOKEN=<your-token>`), then restart Claude. Generate a token from your Sonar instance's account security page |
+| 401 from API | Private project without token | Set `SONARCLOUD_TOKEN` as an environment variable (`export SONARCLOUD_TOKEN=<your-token>`), then restart the agent session. Generate a token from your Sonar instance's account security page |
 | Connection error to self-hosted instance | Wrong URL or TLS issue | Verify `SONAR_BASE_URL` is correct (include `/api` suffix). For self-signed certificates, set `SONAR_INSECURE=1` |
 | Prompted for Phase B config | Not set as env vars | Set env vars beforehand, or provide values when prompted. You can also provide Phase B values during Phase A to avoid a second prompt. |
 | Validation command fails after fix | Fix introduced a build/lint/type error | Review the error, adjust the fix, re-run `SONAR_VALIDATE_COMMANDS` |

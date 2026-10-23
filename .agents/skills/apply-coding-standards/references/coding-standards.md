@@ -8,6 +8,11 @@ Before choosing a PatternFly component or prop, consult the configured
 changes, use Playwright MCP to inspect the running flow and Chrome DevTools MCP
 when browser console, network, layout, or performance evidence is needed.
 
+For UI composition, use this order: an existing `framework/` wrapper, then a
+PatternFly component, then semantic native HTML when no suitable component
+exists. Create a custom component only when those options cannot meet the
+required behavior or accessibility, and document why.
+
 ---
 
 ## 1. API Path Helpers — Never Hardcode Paths
@@ -582,7 +587,7 @@ EDA equivalents: `useEdaBulkActionDialog`, `useEdaBulkConfirmation`.
 
 ## 15. ESLint Rules to Know
 
-Key enforced rules from `.eslintrc.json`:
+Key enforced rules from `eslint.config.mjs`:
 
 - **`eqeqeq: "error"`** — strict equality (`===`) always
 - **`no-console: "error"`** — no `console.log` in production code
@@ -596,7 +601,7 @@ Key enforced rules from `.eslintrc.json`:
 
 CI also runs `npm run eslint:guardrails` as an **advisory** job
 (`continue-on-error`). **Source of truth for rules and thresholds is
-`.eslintrc.guardrails.json`** — do not copy numbers into skills or PRs. It does
+`eslint.guardrails.config.mjs`** — do not copy numbers into skills or PRs. It does
 not fail the required `eslint` check today, but every warning still has to be
 cleaned up later. **Do not add new warnings** in `frontend/`, `platform/`, or
 `framework/` `.ts`/`.tsx` (tests and generated files are ignored). Split files,
@@ -605,7 +610,7 @@ extract helpers, flatten conditionals. Do not `eslint-disable` these rules.
 Scoped check on files you touched:
 
 ```bash
-npx eslint --no-eslintrc --config .eslintrc.guardrails.json --ext .ts,.tsx path/to/changed.tsx
+npx eslint --config eslint.guardrails.config.mjs --ext .ts,.tsx path/to/changed.tsx
 ```
 
 ---
@@ -707,13 +712,13 @@ render.)
 An inline `style={{ ... }}` object is a new object every render (breaks
 memoization and PatternFly's own bailouts). Prefer PatternFly layout components
 and utility classes, or a `styled-components` style — the repo's styling
-approach (see `library_references.md`); when a dynamic inline style is
+approach (see `library-references skill`); when a dynamic inline style is
 unavoidable, memoize the object with `useMemo`.
 
 ### Never `eslint-disable` in new or modified code
 
 Disabling a rule ships the problem plus a suppression to maintain. Fix the
-cause. (This repo forbids it outright — see `CLAUDE.md`.)
+cause. (This repo forbids it outright — see `AGENTS.md`.)
 
 ### Build `ReactNode` lists, not joined strings
 
@@ -750,6 +755,6 @@ const hasResults = !isLoading && !error && items.length > 0;
 ### Prefer native/browser APIs
 
 Reach for the platform before writing (or importing) custom code — see
-`pr_review.md` for the review grep. Deep copy → `structuredClone(obj)`; query
+`review-pr skill` for the review grep. Deep copy → `structuredClone(obj)`; query
 strings → `URLSearchParams`; request cancellation → `AbortController`; URL
 parsing → `new URL(...)`.

@@ -25,13 +25,15 @@
 /storybook-static
 results.xml
 /playwright/playwright/html-report/
-# Local agent runtime; keep shared skills/commands (see AI_AGENT_POLICY.md)
+# Shared agent instructions and skills; see AI_AGENT_POLICY.md
+.agents/*
+!.agents/skills/
+!.agents/skills/**
+# Keep local agent runtime files out; allow the Claude review adapter only
 .claude/*
-!.claude/skills/
-!.claude/skills/**
 !.claude/commands/
-!.claude/commands/**
-!.claude/skill-triggers.json
+.claude/commands/*
+!.claude/commands/review-pr.md
 .cursor/
 .gemini/
 CLAUDE.local.md
