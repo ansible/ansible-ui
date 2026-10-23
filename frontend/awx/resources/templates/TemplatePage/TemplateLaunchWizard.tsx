@@ -12,19 +12,22 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
-import { SurveyStep } from '../../../common/SurveyStep';
+import { SurveyStep, getSurveyPageLabel, getSurveyPages } from '../../../common/SurveyStep';
 import {
   awxErrorAdapter,
   useAwxErrorMessageParser,
 } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { pruneSurveyByConditions } from '../../../common/surveyConditions';
 import { Credential } from '../../../interfaces/Credential';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { Survey } from '../../../interfaces/Survey';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../main/AwxRoutes';
@@ -105,12 +108,23 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
     error: getLaunchError,
     refresh: getLaunchRefresh,
   } = useGet<LaunchConfiguration>(awxAPI`/${jobType}/${resourceId}/launch/`);
-  const error = getTemplateError || getLaunchError;
-  const refresh = getTemplateRefresh || getLaunchRefresh;
+  // Only fetch the survey spec once we know the template has an enabled survey.
+  const {
+    data: surveySpec,
+    error: getSurveySpecError,
+    refresh: getSurveySpecRefresh,
+  } = useGet<Survey>(
+    config?.survey_enabled ? awxAPI`/${jobType}/${resourceId}/survey_spec/` : undefined
+  );
+  const error = getTemplateError || getLaunchError || getSurveySpecError;
+  let refresh = getSurveySpecRefresh;
+  if (getTemplateError) refresh = getTemplateRefresh;
+  else if (getLaunchError) refresh = getLaunchRefresh;
   const getJobOutputUrl = useGetJobOutputUrl();
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
   if (!config || !template) return <LoadingPage breadcrumbs tabs />;
+  if (config.survey_enabled && !surveySpec) return <LoadingPage breadcrumbs tabs />;
   const handleSubmit = async (formValues: TemplateLaunch) => {
     if (formValues) {
       const { credential_passwords = {}, prompt = undefined, survey } = formValues;
@@ -171,9 +185,12 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           const extraVarsObj = prompt?.extra_vars
             ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
             : {};
+          const visibleSurvey = pruneSurveyByConditions(survey, surveySpec?.spec, {
+            ...extraVarsObj,
+          });
           setValue('extra_vars', {
             ...extraVarsObj,
-            ...survey,
+            ...visibleSurvey,
           });
         }
 
@@ -181,10 +198,13 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
           const extraVarsObj = prompt?.extra_vars
             ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
             : {};
+          const visibleSurvey = pruneSurveyByConditions(survey, surveySpec?.spec, {
+            ...extraVarsObj,
+          });
 
           payload = {
             ...payload,
-            extra_vars: { ...extraVarsObj, ...survey },
+            extra_vars: { ...extraVarsObj, ...visibleSurvey },
           };
         }
 
@@ -229,6 +249,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
       config={config}
       handleSubmit={handleSubmit}
       jobType={jobType}
+      surveySpec={surveySpec}
     />
   );
 }
@@ -238,11 +259,13 @@ export function LaunchWizard({
   config,
   handleSubmit,
   jobType,
+  surveySpec,
 }: Readonly<{
   template: JobTemplate | WorkflowJobTemplate;
   config: LaunchConfiguration;
   handleSubmit: (values: TemplateLaunch) => Promise<void>;
   jobType: string;
+  surveySpec?: Survey;
 }>) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
@@ -256,6 +279,37 @@ export function LaunchWizard({
     ...label,
     isReadOnly: true,
   }));
+
+  // One wizard step per survey page; a survey without pages keeps the single "Survey" step.
+  const surveySteps: PageWizardStep[] = useMemo(() => {
+    const spec = surveySpec?.spec;
+    if (!config?.survey_enabled || !spec?.length) return [];
+    const templateId = template.id.toString();
+    const pages = getSurveyPages(spec);
+    if (pages.length <= 1) {
+      return [
+        {
+          id: 'survey',
+          label: getSurveyPageLabel(spec, pages[0] ?? 1) ?? t('Survey'),
+          inputs: (
+            <SurveyStep jobType={jobType} templateId={templateId} surveySpecData={surveySpec} />
+          ),
+        },
+      ];
+    }
+    return pages.map((pageNum) => ({
+      id: `survey_page_${pageNum}`,
+      label: getSurveyPageLabel(spec, pageNum) ?? t('Survey ({{page}})', { page: pageNum }),
+      inputs: (
+        <SurveyStep
+          jobType={jobType}
+          templateId={templateId}
+          pageNumber={pageNum}
+          surveySpecData={surveySpec}
+        />
+      ),
+    }));
+  }, [config?.survey_enabled, surveySpec, jobType, template.id, t]);
 
   const initialValues: { [stepId: string]: Partial<TemplateLaunch> } = {
     nodePromptsStep: {
@@ -281,7 +335,7 @@ export function LaunchWizard({
       launch_config: config,
     },
     credential_passwords: {},
-    survey: {},
+    ...Object.fromEntries(surveySteps.map((step) => [step.id, {}])),
   };
 
   const steps: PageWizardStep[] = [
@@ -330,16 +384,11 @@ export function LaunchWizard({
       },
       inputs: <CredentialPasswordsStep<LaunchConfiguration> config={config} />,
     },
-    {
-      id: 'survey',
-      label: t('Survey'),
-      hidden: () => !config?.survey_enabled,
-      inputs: <SurveyStep jobType={jobType} templateId={template.id.toString()} />,
-    },
+    ...surveySteps,
     {
       id: 'review',
       label: t('Review'),
-      element: <TemplateLaunchReviewStep template={template} />,
+      element: <TemplateLaunchReviewStep template={template} surveySpec={surveySpec} />,
     },
   ];
 
