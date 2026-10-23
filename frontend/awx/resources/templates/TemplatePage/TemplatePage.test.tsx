@@ -69,6 +69,35 @@ describe('TemplatePage', () => {
     await waitFor(() => expect(screen.getByText('Notifications')).toBeInTheDocument());
   });
 
+  it('hides Notifications when the user is an auditor of a different organization', async () => {
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('organizations'),
+        ({ request }) =>
+          HttpResponse.json({
+            count: 1,
+            results:
+              new URL(request.url).searchParams.get('role_level') === 'auditor_role'
+                ? [{ id: 99, name: 'Other Organization' }]
+                : [],
+            next: null,
+            previous: null,
+          })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/templates/job-template/1']}>
+        <Routes>
+          <Route path="/templates/job-template/:id" element={<TemplatePage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByTestId('Test Job Template')).toBeInTheDocument());
+    expect(screen.queryByText('Notifications')).not.toBeInTheDocument();
+  });
+
   it('should render template page with template name', async () => {
     render(
       <MemoryRouter initialEntries={['/templates/job-template/1']}>
