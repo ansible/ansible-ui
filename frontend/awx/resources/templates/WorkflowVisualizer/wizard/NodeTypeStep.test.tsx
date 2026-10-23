@@ -828,7 +828,9 @@ describe('NodeTypeStep', () => {
       if (typeof updater === 'function') {
         const result = (
           updater as (prev: typeof stepStateWithTags) => {
-            nodePromptsStep?: { prompt?: typeof capturedPrompt };
+            nodePromptsStep?: {
+              prompt?: { job_tags?: { name: string }[]; skip_tags?: { name: string }[] };
+            };
           }
         )(stepStateWithTags);
         capturedPrompt = result?.nodePromptsStep?.prompt;
