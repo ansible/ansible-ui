@@ -50,11 +50,11 @@ export function PageFormMultiSelect<
       control={control}
       shouldUnregister
       render={({ field: { value, onChange }, fieldState: { error } }) => {
-        const helperTextInvalid = error?.message
-          ? props.validate && isValidating
-            ? translations.validating
-            : error?.message
-          : undefined;
+        let helperTextInvalid: string | undefined;
+        if (error?.message) {
+          helperTextInvalid =
+            props.validate && isValidating ? translations.validating : error.message;
+        }
         let isDisabled = props.isDisabled;
         if (!isDisabled && props.isReadOnly) {
           isDisabled = t('Readonly');
