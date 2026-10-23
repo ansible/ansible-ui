@@ -821,7 +821,9 @@ describe('NodeTypeStep', () => {
       },
     };
 
-    let capturedPrompt: { job_tags?: { name: string }[]; skip_tags?: { name: string }[] } | undefined;
+    let capturedPrompt:
+      | { job_tags?: { name: string }[]; skip_tags?: { name: string }[] }
+      | undefined;
     mockSetStepData.mockImplementation((updater: unknown) => {
       if (typeof updater === 'function') {
         const result = (
