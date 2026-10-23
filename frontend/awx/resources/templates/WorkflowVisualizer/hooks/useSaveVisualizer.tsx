@@ -260,6 +260,11 @@ export function useSaveVisualizer(templateId: string) {
 
         if (!newNode.id) return;
         const newNodeId = newNode.id.toString();
+        reconcileLaunchDataSnapshot({
+          node,
+          workflowNode: newNode,
+          patchPayload: createNodePayload,
+        });
         // For new nodes the node already exists on the correct template, so
         // only associations are needed (nothing to disassociate on a brand new node).
         await processLabels(newNodeId, launch_data, 'associate');
@@ -370,25 +375,37 @@ export function useSaveVisualizer(templateId: string) {
           await processInstanceGroups(nodeId, launch_data, 'disassociate');
           await processCredentials(nodeId, launch_data, 'disassociate');
 
-          // Clear extra_data in a separate PATCH before changing the template.
-          // AWX ignores extra_data updates when unified_job_template changes in
-          // the same request because the old template's ask_variables_on_launch
-          // flag governs field writability during validation.
-          if (
-            launch_data?.original?.isTemplateChange &&
+          const persistedExtraData = launch_data?.original?.extra_data ?? resource.extra_data;
+          const hasPersistedExtraData = Object.keys(persistedExtraData ?? {}).length > 0;
+          const clearsExtraData =
             'extra_data' in updatedNodePayload &&
-            Object.keys(updatedNodePayload.extra_data as object).length === 0
-          ) {
-            await patchWorkflowNode(awxAPI`/workflow_job_template_nodes/${nodeId}/`, {
-              extra_data: {},
-            });
+            Object.keys(updatedNodePayload.extra_data as object).length === 0;
+
+          if (launch_data?.original?.isTemplateChange && clearsExtraData) {
+            // Empty persisted data needs no clear; stale variables must be cleared before changing templates.
+            if (hasPersistedExtraData) {
+              const clearedNode = await patchWorkflowNode(
+                awxAPI`/workflow_job_template_nodes/${nodeId}/`,
+                { extra_data: {} }
+              );
+              reconcileLaunchDataSnapshot({
+                node,
+                workflowNode: clearedNode,
+                patchPayload: { extra_data: {} },
+              });
+            }
             delete updatedNodePayload.extra_data;
           }
 
-          await patchWorkflowNode(
+          const updatedNode = await patchWorkflowNode(
             awxAPI`/workflow_job_template_nodes/${nodeId}/`,
             updatedNodePayload
           );
+          reconcileLaunchDataSnapshot({
+            node,
+            workflowNode: updatedNode,
+            patchPayload: updatedNodePayload,
+          });
 
           // Associate new resources AFTER patching the template. The new template must be
           // in place before AWX will accept associations (e.g. ask_credential_on_launch=true).
@@ -621,6 +638,53 @@ export function useSaveVisualizer(templateId: string) {
     processLabels,
     workflowNodeRefresh,
   ]);
+}
+
+interface ReconcileLaunchDataSnapshotOptions {
+  node: GraphNode;
+  workflowNode: Partial<WorkflowNode> | undefined;
+  patchPayload: Partial<CreateWorkflowNodePayload>;
+}
+
+function reconcileLaunchDataSnapshot({
+  node,
+  workflowNode,
+  patchPayload,
+}: ReconcileLaunchDataSnapshotOptions) {
+  const persistedExtraData =
+    workflowNode?.extra_data ??
+    ('extra_data' in patchPayload
+      ? (patchPayload.extra_data as WorkflowNode['extra_data'])
+      : undefined);
+  const persistedTemplateId =
+    workflowNode?.summary_fields?.unified_job_template?.id ?? patchPayload.unified_job_template;
+
+  if (persistedExtraData === undefined && persistedTemplateId === undefined) {
+    return;
+  }
+
+  action(() => {
+    const currentNodeData = node.getData() as GraphNodeData;
+    const currentTemplateId =
+      currentNodeData.resource.summary_fields?.unified_job_template?.id ??
+      patchPayload.unified_job_template;
+    const isTemplateChange =
+      persistedTemplateId === undefined || currentTemplateId === undefined
+        ? undefined
+        : persistedTemplateId !== currentTemplateId;
+    node.setData({
+      ...currentNodeData,
+      launch_data: {
+        ...currentNodeData.launch_data,
+        original: {
+          ...currentNodeData.launch_data?.original,
+          ...(persistedExtraData === undefined ? {} : { extra_data: { ...persistedExtraData } }),
+          ...(persistedTemplateId === undefined ? {} : { template_id: persistedTemplateId }),
+          ...(isTemplateChange === undefined ? {} : { isTemplateChange }),
+        },
+      },
+    });
+  })();
 }
 
 export function toKeyedObject(
