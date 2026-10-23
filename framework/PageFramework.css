@@ -34,6 +34,21 @@ table tbody tr td.expanded {
   margin-inline-start: 0 !important;
 }
 
+/* Keep compact form helpers (error, warning, etc.) inside the field column and wrap long values. */
+.pf-v6-c-form__helper-text,
+.pf-v6-c-form__helper-text .pf-v6-c-helper-text,
+.pf-v6-c-form__helper-text .pf-v6-c-helper-text__item {
+  min-width: 0;
+  max-width: 100%;
+}
+.pf-v6-c-form__helper-text .pf-v6-c-helper-text__item {
+  align-items: flex-start;
+}
+.pf-v6-c-form__helper-text .pf-v6-c-helper-text__item-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 :root:where(.pf-v6-theme-dark) .pf-topology-content {
   background: var(--pf-topology-visualization-surface--BackgroundColor);
 }
