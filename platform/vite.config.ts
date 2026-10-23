@@ -7,7 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import selfsigned from 'selfsigned';
-import { type PluginOption, type UserConfig } from 'vite';
+import { createLogger, type PluginOption, type UserConfig } from 'vite';
 import { defineConfig } from 'vitest/config';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
@@ -162,7 +162,9 @@ if (DEV_SERVER_PROTOCOL !== 'http') {
 }
 
 if (isE2eSidecar) {
-  console.log('E2E sidecar: serving platform/dist (build has PLATFORM_SERVER baked in)');
+  createLogger('info', { prefix: '[platform]' }).info(
+    'E2E sidecar: serving platform/dist (build has PLATFORM_SERVER baked in)'
+  );
   config.optimizeDeps = { noDiscovery: true, include: [] };
   config.server = {
     ...config.server,
