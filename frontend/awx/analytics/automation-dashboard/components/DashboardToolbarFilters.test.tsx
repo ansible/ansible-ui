@@ -2,17 +2,20 @@
 import {
   IFilterState,
   IToolbarDateRangeFilter,
-  IToolbarFilter,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
 import { Toolbar, ToolbarContent } from '@patternfly/react-core';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import type { PageAsyncSelectQueryResult } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import type { AutomationDashboardAsyncFilter } from '../common/useAutomationDashboardAsyncOptions';
 import { DashboardToolbarFilters } from './DashboardToolbarFilters';
 
-function asyncFilter(key: string, label: string): IToolbarFilter {
+type AsyncQueryResult = PageAsyncSelectQueryResult<string>;
+
+function asyncFilter(key: string, label: string): AutomationDashboardAsyncFilter {
   return {
     type: ToolbarFilterType.AsyncMultiSelect,
     key,
@@ -41,8 +44,20 @@ const periodFilter: IToolbarDateRangeFilter = {
   ],
 };
 
+/** Query options with two pages: "Template A" (1), then "Template B" (2). */
+function createTwoPageQueryOptions() {
+  return vi.fn(
+    ({ next }: { next?: number | string }): Promise<AsyncQueryResult> =>
+      Promise.resolve(
+        Number(next ?? 1) === 1
+          ? { options: [{ label: 'Template A', value: '1' }], remaining: 1, next: 2 }
+          : { options: [{ label: 'Template B', value: '2' }], remaining: 0, next: 3 }
+      )
+  );
+}
+
 interface RenderFiltersProps {
-  toolbarFilters?: IToolbarFilter[];
+  toolbarFilters?: AutomationDashboardAsyncFilter[];
   periodFilter?: IToolbarDateRangeFilter;
   initialFilterState: IFilterState;
 }
@@ -74,7 +89,9 @@ function renderFilters(props: RenderFiltersProps) {
   return { getFilterState: () => latest };
 }
 
-describe('DashboardToolbarFilters', () => {
+// Some tests open the filter select and pick options: they get more time than the default
+// 5 seconds for slower, parallel CI runs, as in AutomationDashboardAsyncMultiSelectFilter.test.
+describe('DashboardToolbarFilters', { timeout: 15000 }, () => {
   it('renders the filter selector, the selected filter input and the period control', () => {
     renderFilters({
       toolbarFilters: [templateFilter, projectFilter],
@@ -96,7 +113,7 @@ describe('DashboardToolbarFilters', () => {
 
   it('adds the values picked in the filter input to filterState', async () => {
     const user = userEvent.setup();
-    const filterWithOptions: IToolbarFilter = {
+    const filterWithOptions: AutomationDashboardAsyncFilter = {
       ...templateFilter,
       queryOptions: vi.fn().mockResolvedValue({
         options: [
@@ -106,18 +123,197 @@ describe('DashboardToolbarFilters', () => {
         remaining: 0,
         next: '',
       }),
-    } as IToolbarFilter;
+    } as AutomationDashboardAsyncFilter;
     const { getFilterState } = renderFilters({
       toolbarFilters: [filterWithOptions],
       initialFilterState: { period: ['last_7_days'] },
     });
 
     await user.click(screen.getByText('Select Template'));
-    await user.click(await screen.findByText('Template A'));
+    await user.click(await screen.findByLabelText('Template A'));
     expect(getFilterState()).toEqual({ period: ['last_7_days'], template: ['1'] });
 
-    await user.click(screen.getByText('Template B'));
+    await user.click(screen.getByLabelText('Template B'));
     expect(getFilterState()).toEqual({ period: ['last_7_days'], template: ['1', '2'] });
+  });
+
+  it('drops the filter key when the last value is deselected in the filter input', async () => {
+    const user = userEvent.setup();
+    const filterWithOptions: AutomationDashboardAsyncFilter = {
+      ...templateFilter,
+      queryOptions: vi.fn().mockResolvedValue({
+        options: [{ label: 'Template A', value: '1' }],
+        remaining: 0,
+        next: '',
+      }),
+    } as AutomationDashboardAsyncFilter;
+    const { getFilterState } = renderFilters({
+      toolbarFilters: [filterWithOptions],
+      initialFilterState: { period: ['last_7_days'], template: ['1'] },
+    });
+
+    await user.click(screen.getByText('1 selected'));
+    await user.click(await screen.findByLabelText('Template A'));
+
+    expect(getFilterState()).toEqual({ period: ['last_7_days'] });
+  });
+
+  it('updates the labels of options loaded again and keeps the others', async () => {
+    const user = userEvent.setup();
+    const queryLabel = vi.fn((value: string) => `Queried ${value}`);
+    // Template 1 is renamed; template 2 is not on the first page any more.
+    const queryOptions = vi
+      .fn()
+      .mockResolvedValueOnce({
+        options: [
+          { label: 'Old name', value: '1' },
+          { label: 'Second', value: '2' },
+        ],
+        remaining: 0,
+        next: '',
+      })
+      .mockResolvedValue({ options: [{ label: 'New name', value: '1' }], remaining: 0, next: '' });
+    renderFilters({
+      toolbarFilters: [{ ...templateFilter, queryLabel, queryOptions }],
+      initialFilterState: { period: ['last_7_days'], template: ['1', '2'] },
+    });
+    await user.click(screen.getByText('2 selected'));
+    await screen.findByLabelText('Old name');
+    queryLabel.mockClear();
+
+    await user.click(screen.getByText('2 selected'));
+    await user.click(screen.getByText('2 selected'));
+    await screen.findByLabelText('New name');
+
+    expect(screen.getAllByRole('button', { name: 'Close New name' }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole('button', { name: 'Close Second' }).length).toBeGreaterThan(0);
+    expect(queryLabel).not.toHaveBeenCalledWith('2');
+  });
+
+  it('disables the filter selector while a bulk action loads', async () => {
+    const user = userEvent.setup();
+    let resolveBulk = () => {};
+    const queryOptions = vi.fn(async (query: { pageSize?: number }): Promise<AsyncQueryResult> => {
+      if (query.pageSize) await new Promise<void>((resolve) => (resolveBulk = resolve));
+      // The first page has more options; the bulk load gets every option in one page.
+      const remaining = query.pageSize ? 0 : 5;
+      return { options: [{ label: 'Template A', value: '1' }], remaining, next: 2 };
+    });
+    renderFilters({
+      toolbarFilters: [{ ...templateFilter, queryOptions }, projectFilter],
+      initialFilterState: { period: ['last_7_days'] },
+    });
+    await user.click(screen.getByText('Select Template'));
+    await screen.findByLabelText('Template A');
+
+    await user.click(screen.getByLabelText('Bulk selection'));
+    await user.click(screen.getByText('Select all'));
+
+    expect(screen.getByRole('button', { name: 'Template' })).toBeDisabled();
+    act(() => resolveBulk());
+    // Longer than the default 1 second, for slower, parallel CI runs.
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Template' })).toBeEnabled(), {
+      timeout: 5000,
+    });
+  });
+
+  it('keeps the focus of the filter selector on the filter input while a bulk action loads', async () => {
+    const user = userEvent.setup();
+    let resolveBulk = () => {};
+    const queryOptions = vi.fn(async (query: { pageSize?: number }): Promise<AsyncQueryResult> => {
+      if (query.pageSize) await new Promise<void>((resolve) => (resolveBulk = resolve));
+      const remaining = query.pageSize ? 0 : 5;
+      return { options: [{ label: 'Template A', value: '1' }], remaining, next: 2 };
+    });
+    renderFilters({
+      toolbarFilters: [{ ...templateFilter, queryOptions }, projectFilter],
+      initialFilterState: { period: ['last_7_days'] },
+    });
+    await user.click(screen.getByText('Select Template'));
+    await screen.findByLabelText('Template A');
+    await user.click(screen.getByLabelText('Bulk selection'));
+    const selector = document.getElementById('filter')!;
+    selector.focus();
+
+    // A click that does not move the focus (as in Safari, or a menu that cancels the mousedown):
+    // the selector has it when the bulk action starts.
+    const selectAll = screen.getByText('Select all');
+    selectAll.addEventListener('mousedown', (event) => event.preventDefault());
+    await user.click(selectAll);
+
+    await waitFor(() => expect(selector).toBeDisabled());
+    expect(document.getElementById('filter-input')).toHaveFocus();
+    act(() => resolveBulk());
+    await waitFor(() => expect(selector).toBeEnabled(), { timeout: 5000 });
+    expect(selector).toHaveFocus();
+  });
+
+  it('queries the chip label of a loaded option without a name', async () => {
+    const user = userEvent.setup();
+    const filterWithOptions: AutomationDashboardAsyncFilter = {
+      ...templateFilter,
+      queryLabel: (value: string) => `Queried ${value}`,
+      queryOptions: vi.fn().mockResolvedValue({
+        options: [{ label: '', value: '1' }],
+        remaining: 0,
+        next: '',
+      }),
+    } as AutomationDashboardAsyncFilter;
+    renderFilters({
+      toolbarFilters: [filterWithOptions],
+      initialFilterState: { period: ['last_7_days'], template: ['1'] },
+    });
+
+    await user.click(screen.getByText('1 selected'));
+    // The option without a name is loaded: its checkbox has no accessible name.
+    await screen.findByRole('checkbox', { name: '' });
+
+    expect(screen.getAllByRole('button', { name: 'Close Queried 1' }).length).toBeGreaterThan(0);
+  });
+
+  it('shows the labels of the loaded options in the chips instead of querying them', async () => {
+    const user = userEvent.setup();
+    const queryLabel = vi.fn((value: string) => `Queried ${value}`);
+    const filterWithOptions: AutomationDashboardAsyncFilter = {
+      ...templateFilter,
+      queryLabel,
+      queryOptions: vi.fn().mockResolvedValue({
+        options: [{ label: 'Template A', value: '1' }],
+        remaining: 0,
+        next: '',
+      }),
+    } as AutomationDashboardAsyncFilter;
+    renderFilters({
+      toolbarFilters: [filterWithOptions],
+      initialFilterState: { period: ['last_7_days'], template: ['9'] },
+    });
+    // A value that is not loaded yet gets its label from queryLabel.
+    expect(screen.getAllByRole('button', { name: 'Close Queried 9' }).length).toBeGreaterThan(0);
+
+    await user.click(screen.getByText('1 selected'));
+    await user.click(await screen.findByLabelText('Template A'));
+
+    expect(screen.getAllByRole('button', { name: 'Close Template A' }).length).toBeGreaterThan(0);
+    expect(queryLabel).not.toHaveBeenCalledWith('1');
+  });
+
+  it('does not re-render the chips for loaded options that are not selected', async () => {
+    const user = userEvent.setup();
+    const queryLabel = vi.fn((value: string) => `Queried ${value}`);
+    const queryOptions = createTwoPageQueryOptions();
+    renderFilters({
+      toolbarFilters: [{ ...templateFilter, queryLabel, queryOptions }],
+      initialFilterState: { period: ['last_7_days'], template: ['9'] },
+    });
+    await user.click(screen.getByText('1 selected'));
+    await screen.findByLabelText('Template A');
+    queryLabel.mockClear();
+
+    await user.click(screen.getByText('Load more'));
+    await screen.findByLabelText('Template B');
+
+    // The chip of the selected value queries its label on every render of the chips.
+    expect(queryLabel).not.toHaveBeenCalled();
   });
 
   it('switches the filter input when another filter is selected', async () => {
@@ -211,13 +407,13 @@ describe('DashboardToolbarFilters', () => {
     expect(getFilterState().template ?? []).toEqual([]);
   });
 
-  it('ignores filter types the dashboard does not use', () => {
-    const searchFilter: IToolbarFilter = {
+  it('ignores filters of other types passed without their type', () => {
+    const searchFilter = {
       type: ToolbarFilterType.Search,
       key: 'name',
       label: 'Name',
       query: 'name',
-    };
+    } as unknown as AutomationDashboardAsyncFilter;
     renderFilters({ toolbarFilters: [searchFilter], periodFilter, initialFilterState: {} });
 
     expect(screen.queryByText('Name')).not.toBeInTheDocument();

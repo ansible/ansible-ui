@@ -32,6 +32,9 @@ automation-dashboard/
 │   ├── useAutomationDashboardBaseView.ts
 │   ├── useAutomationDashboardCollectionStatus.tsx  # Collection status + canSeeDashboard/Leaderboard
 │   ├── useAutomationDashboardToolbarFilters.tsx
+│   ├── useAutomationDashboardAsyncOptions.ts  # Paged option loading for the async multi-select filter
+│   ├── useAutomationDashboardProgressiveOptions.ts  # Renders the select's options in batches of 200
+│   ├── useKeepFocusWhileDisabled.ts  # Keeps the focus of a control while it is disabled
 │   ├── useAutomationDashboardToolbarActions.tsx
 │   ├── useCreateToolbarFilterSet.tsx / useUpdateToolbarFilterSet.tsx / useRemoveToolbarFilterSet.tsx
 │   ├── useCreateEditToolbarFilterSetDialog.tsx
@@ -42,6 +45,9 @@ automation-dashboard/
 │   ├── DashboardToolbar.tsx         # Filter toolbar + "Select report" filter-set control
 │   ├── DashboardToolbarFilters.tsx  # Dashboard version of PageToolbarFilters (filters + period + chips)
 │   ├── AutomationDashboardPeriodFilter.tsx  # Period presets / Custom from–to control
+│   ├── AutomationDashboardAsyncMultiSelectFilter.tsx  # Async multi-select for template / label / organization / project (based on PageAsyncMultiSelect)
+│   ├── AutomationDashboardMultiSelect.tsx  # Multi-select with bulk selection (based on PageMultiSelect)
+│   ├── AutomationDashboardBulkSelect.tsx  # Bulk selector: Select all / Select none / Invert selection
 │   ├── DashboardLayout.tsx          # Scrollable grid wrapper + DashboardGridRow
 │   ├── DashboardValueCard.tsx       # KPI card
 │   ├── DashboardDetailsCard.tsx     # KPI card rendered as a PageDetail
@@ -72,6 +78,7 @@ automation-dashboard/
 ├── utils/
 │   ├── queryString.ts               # Filter <-> query-string helpers
 │   ├── filterStateUpdates.ts        # Pure filter-state updates (custom period values, chip removal)
+│   ├── requestTooLarge.ts           # Detects requests the API rejects as too large (431 / 414)
 │   └── persistedFilterState.ts      # Per-user sessionStorage persistence of toolbar state
 └── views/                           # Data / state hooks
     ├── useAutomationDashboardView.tsx      # Dashboard tab: central data + export hook
@@ -307,6 +314,11 @@ Streak-cell and badge colors that PatternFly does not tokenize live in `Automati
 The central view hook consumed by the Dashboard tab. Composes the sub-hooks and returns
 `IAutomationDashboardView`. Also seeds and persists the toolbar filter state per user (see
 **Session persistence** below).
+
+A request the API rejects as too large (431, or 414) sets `filtersTooLarge`, and an alert below
+the filters asks the user to narrow them. When the request has data from a previous request, that
+data stays and the error state is hidden. Without it (e.g. the first request), the error state is
+shown.
 
 ### `useAutomationLeaderboardsView`
 

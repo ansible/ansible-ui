@@ -136,6 +136,8 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     exportCsv: vi.fn(),
     isFilterStateDefault: true,
     registerClearCallback: vi.fn(),
+    replaceFilterState: vi.fn(),
+    filterResetCount: 0,
     ...overrides,
   };
 }

@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert } from '@patternfly/react-core';
+import styled from 'styled-components';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { AwxRoute } from '../../main/AwxRoutes';
 import {
@@ -14,6 +16,7 @@ import {
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { DashboardToolbar } from './components/DashboardToolbar';
 import { DashboardGridRow, DashboardLayout } from './components/DashboardLayout';
+import type { IAutomationDashboardView } from './types';
 
 /** Breakpoint range (in grid columns) where value cards switch from 'md' to 'xs' size. */
 const WIDE_LAYOUT_MIN_COLUMNS = 16;
@@ -43,6 +46,7 @@ export function AutomationDashboard() {
 
     return (
       <>
+        <FiltersTooLargeAlert filtersTooLarge={view.filtersTooLarge} />
         <DashboardGridRow>
           <DashboardValueCard
             id="successful-jobs-card"
@@ -192,8 +196,53 @@ export function AutomationDashboard() {
         {...view.mainTableView}
         keyFn={(item) => item.id}
         registerClearCallback={view.registerClearCallback}
+        replaceFilterState={view.replaceFilterState}
+        filterResetCount={view.filterResetCount}
       />
       <DashboardLayout>{renderDashboardContent}</DashboardLayout>
     </>
   );
 }
+
+/**
+ * Shown right below the filters (spanning the whole grid) when the API rejected a request as too
+ * large because of too many filter values. It tells whether the data of the previous request is
+ * shown; without it, the cards show their error states.
+ */
+function FiltersTooLargeAlert(
+  props: Readonly<{ filtersTooLarge: IAutomationDashboardView['filtersTooLarge'] }>
+) {
+  const { t } = useTranslation();
+  if (!props.filtersTooLarge) return null;
+  // Whole sentences per case, so each translates as a whole.
+  const text = {
+    all: t(
+      'Too many values are selected to load the data. Narrow the filters, for example by selecting fewer values. The data shown is from the previous filters.'
+    ),
+    some: t(
+      'Too many values are selected to load the data. Narrow the filters, for example by selecting fewer values. Some of the data shown is from the previous filters.'
+    ),
+    none: t(
+      'Too many values are selected to load the data. Narrow the filters, for example by selecting fewer values.'
+    ),
+  }[props.filtersTooLarge.previousData];
+  return (
+    <FullWidthGridCell>
+      <Alert
+        variant="danger"
+        isInline
+        // Announced when it appears, e.g. after selecting more values.
+        isLiveRegion
+        title={t('The filters are too large')}
+        data-testid="filters-too-large-alert"
+      >
+        {text}
+      </Alert>
+    </FullWidthGridCell>
+  );
+}
+
+/** A cell of the dashboard grid that spans every column. */
+const FullWidthGridCell = styled.div`
+  grid-column: 1 / -1;
+`;
