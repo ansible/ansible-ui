@@ -15,15 +15,18 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-echo 'Starting Vite preview server on https://localhost:4100...'
+preview_url='http://localhost:4100'
+export DEV_SERVER_PROTOCOL='http'
+export PLATFORM_UI="$preview_url"
+
+echo "Starting Vite preview server on $preview_url..."
 cd /work/platform
 npm run preview &
 server_pid=$!
 
-preview_url='https://localhost:4100'
 preview_ready=false
-for attempt in {1..30}; do
-  if curl --insecure --silent --fail --output /dev/null "$preview_url"; then
+for _ in {1..30}; do
+  if curl --silent --fail --output /dev/null "$preview_url"; then
     preview_ready=true
     break
   fi
