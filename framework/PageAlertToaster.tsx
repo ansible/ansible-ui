@@ -102,7 +102,7 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
     }
     function removeAlert(alert: AlertProps) {
       clearAlertTimeout(alert);
-      setToasterAlerts((alerts) => alerts.filter((a) => a !== alert));
+      setToasterAlerts((alerts) => alerts.filter((a) => !alertsMatch(a, alert)));
     }
 
     function prepareAlert(alert: AlertProps) {
