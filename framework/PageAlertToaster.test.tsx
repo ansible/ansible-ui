@@ -45,6 +45,12 @@ function TestConsumer() {
       </button>
       <button
         type="button"
+        onClick={() => toaster.removeAlert({ title: 'Timed Alert', variant: 'info' })}
+      >
+        Remove Timed Fresh
+      </button>
+      <button
+        type="button"
         onClick={() => toaster.addAlert({ title: 'Timed Alert', variant: 'info', timeout: 1000 })}
       >
         Add Timed
@@ -149,6 +155,29 @@ describe('PageAlertToaster', () => {
       await user.click(screen.getByRole('button', { name: 'Replace Timed' }));
 
       expect(screen.getByText('Timed Replaced')).toBeInTheDocument();
+      expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
+      expect(alertTimeoutId).toBeDefined();
+      expect(clearTimeoutSpy).toHaveBeenCalledWith(alertTimeoutId);
+    });
+
+    it('should remove a timed alert when removeAlert receives fresh props', async () => {
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+      const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add Timed For Replace' }));
+      const timeoutIndex = setTimeoutSpy.mock.calls.findIndex(([, delay]) => delay === 5000);
+      const alertTimeoutId = setTimeoutSpy.mock.results[timeoutIndex]?.value as
+        | ReturnType<typeof setTimeout>
+        | undefined;
+
+      await user.click(screen.getByRole('button', { name: 'Remove Timed Fresh' }));
+
       expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
       expect(alertTimeoutId).toBeDefined();
       expect(clearTimeoutSpy).toHaveBeenCalledWith(alertTimeoutId);
