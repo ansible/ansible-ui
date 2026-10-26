@@ -11,14 +11,14 @@ Load this skill before implementing, reviewing, or refactoring any frontend code
 
 Before writing any code, read these skills in order:
 
-1. **`.claude/skills/frontend-overlay/SKILL.md`** — this repo’s wrappers, API
+1. **`.agents/skills/apply-frontend-overlay/SKILL.md`** — this repo’s wrappers, API
    helpers, E2E paths
-2. **`.claude/skills/coding_standards.md`** — API helpers, PageForm wrappers,
+2. **`.agents/skills/apply-coding-standards/SKILL.md`** — API helpers, PageForm wrappers,
    view hooks, error adapters, CRUD hooks, framework component inventory,
    RBAC helpers, ESLint rules
-3. **`.claude/skills/testing_guidelines.md`** — Vitest + MSW patterns, accessible
+3. **`.agents/skills/testing-guidelines/SKILL.md`** — Vitest + MSW patterns, accessible
    queries, userEvent, FormProvider wrappers, hook testing, mock fixtures
-4. **`.claude/skills/library_references.md`** — Fetch llms.txt for any library
+4. **`.agents/skills/library-references/SKILL.md`** — Fetch llms.txt for any library
    you are about to use (React, Vitest, Vite, Zustand)
 
 ## Step 1.5: Consult MCPs Before Implementation
@@ -37,7 +37,7 @@ choosing a component or validating behavior:
 Use the repository wrappers and existing components together with MCP results;
 MCP documentation does not replace searching `framework/` and the relevant
 workspace. If an MCP is unavailable, use the official fallback URLs in
-`library_references.md` and mention the fallback in the handoff.
+`library-references skill` and mention the fallback in the handoff.
 
 ---
 
@@ -139,6 +139,11 @@ for components not in the framework.
 
 Only create new components as a last resort.
 
+Choose UI building blocks in order: existing `framework/` wrapper, PatternFly
+component, semantic native HTML where no component applies, then a custom
+component only when the earlier options cannot meet the required behavior or
+accessibility.
+
 ---
 
 ## Step 4: Core Standards
@@ -174,7 +179,7 @@ Only create new components as a last resort.
 - All user-facing strings wrapped in `t()` from `useTranslation`
 - Never compare translated display strings in logic — compare raw API values
 - ESLint enforces `i18next/no-literal-string` on JSX attributes
-- Full patterns: coding_standards § Internationalization
+- Full patterns: apply-coding-standards guide § Internationalization
 
 ### ESLint Rules
 - `eqeqeq: "error"` — strict equality always
@@ -184,9 +189,9 @@ Only create new components as a last resort.
 - Hardcoded API paths are ESLint errors — use tagged template helpers
 - `jsx-a11y/recommended` — accessibility enforced
 - Advisory guardrails: `npm run eslint:guardrails`. Rules and thresholds live
-  in `.eslintrc.guardrails.json` (source of truth — do not hardcode limits
+  in `eslint.guardrails.config.mjs` (source of truth — do not hardcode limits
   here). Do **not** introduce new warnings. Extract helpers instead of
-  disabling rules. See coding_standards §15.
+  disabling rules. See apply-coding-standards guide §15.
 
 ---
 
@@ -239,7 +244,7 @@ Only create new components as a last resort.
 
 ## Step 6: Implementation Workflow
 
-1. Read the skills (coding_standards, testing_guidelines, library_references)
+1. Read the skills (apply-coding-standards, testing-guidelines, library-references)
 2. Identify the correct workspace for the work
 3. Search for existing framework/PF/common components before creating new ones
    — prefer editing existing files over creating new ones

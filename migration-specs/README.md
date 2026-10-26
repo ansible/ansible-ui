@@ -1,6 +1,6 @@
 # Test Migration Specifications
 
-This directory contains structured specifications for migrating Cypress tests to Playwright. These specs are designed to be consumed by AI agents (Claude) or developers to ensure consistent, accurate migrations.
+This directory contains structured specifications for migrating Cypress tests to Playwright. These specs are designed for AI coding agents and developers to support consistent, accurate migrations.
 
 ## Directory Structure
 
@@ -19,17 +19,13 @@ migration-specs/
     └── ...
 ```
 
-## Using Migration Specs with Claude
+## Using Migration Specs with an AI coding agent
 
 ### Quick Start
 
 1. **Create a spec** using the template in `templates/migration-spec-template.yaml`
-2. **Invoke Claude** with the spec:
-   ```bash
-   /migrate-test --spec migration-specs/eda/roles.yaml
-   ```
-
-3. **Claude will**:
+2. **Ask the agent to migrate the test** using the spec path (for example, migration-specs/eda/roles.yaml).
+3. **The agent should**:
    - Read the spec
    - Understand the context (resources, utilities, API endpoints)
    - Migrate tests using verified patterns
@@ -146,7 +142,7 @@ notes: |
 
 ## Benefits of Using Specs
 
-### For AI Agents (Claude)
+### For AI Agents
 - **Pre-validated context**: All resources, utilities, and APIs documented upfront
 - **Reduced errors**: Known patterns and gotchas documented
 - **Faster execution**: No need to explore and discover utilities
@@ -174,12 +170,10 @@ notes: |
    - Confirm utility availability
    - Add notes about special cases
 
-3. **Execute Migration** (Claude)
-   ```bash
-   /migrate-test --spec migration-specs/eda/my-feature.yaml
-   ```
+3. **Execute Migration** (AI agent or developer)
+   Ask the agent to migrate the test described in migration-specs/eda/my-feature.yaml.
 
-4. **Verify & Commit** (Claude)
+4. **Verify & Commit** (with developer review)
    - All tests pass
    - No linting/TS errors
    - Single commit with all migrations
@@ -235,5 +229,4 @@ See `migration-specs/eda/roles.yaml` for a complete working example.
 ## Questions?
 
 - Check existing specs in this directory for patterns
-- Review `/migrate-test` skill in `.claude/commands/migrate-test.md`
 - Ask in #aap-ui-testing Slack channel

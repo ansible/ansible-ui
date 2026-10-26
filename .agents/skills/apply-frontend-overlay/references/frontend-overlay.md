@@ -1,9 +1,3 @@
----
-name: frontend-overlay
-description: >
-  Product-specific frontend wrappers, API clients, and paths for ansible-ui.
-  Use when implementing or reviewing UI in this monorepo.
----
 
 # Overlay — ansible-ui
 
@@ -28,12 +22,12 @@ description: >
 - E2E: `playwright/` (`playwright.config.ts`, `commands/`, `tests/`, `utils/`)
 - Storybook command and port: N/A — no Storybook
 - Check command: `npm test` (eslint + tsc + prettier + vitest). There is no `npm run check`
-- Also `npm run eslint:guardrails` on touched `frontend/` / `platform/` / `framework/` `.ts`/`.tsx`. Advisory in CI; thresholds in `.eslintrc.guardrails.json`; do not add new warnings (see coding_standards §15)
+- Also `npm run eslint:guardrails` on touched `frontend/` / `platform/` / `framework/` `.ts`/`.tsx`. Advisory in CI; its scoped flat config is `eslint.guardrails.config.mjs` (primary config: `eslint.config.mjs`). Do not add new warnings (see coding-standards §15)
 - Test command: `npm run vitest` (unit); Playwright from `playwright/`
 - Dev server: `npm start` (from `platform/`)
 - Build all workspaces: `npm run build`
 - Fix lint + formatting: `npm run fix` (`npm run prettier:fix` for formatting only)
-- Instruction files: `CLAUDE.md` (symlink `AGENTS.md`)
+- Instruction files: `AGENTS.md` (canonical; `CLAUDE.md` is a compatibility symlink)
 
 ## MCP-assisted implementation
 
@@ -57,7 +51,7 @@ before reaching for raw PatternFly or writing a new component.
 | List + table + pagination           | `PageTable` + `useAwxView` / `useEdaView` / `useHubView`           | Workspace view hook                                                                                     |
 | Empty (no data / no filter / error) | framework empty states                                             |                                                                                                         |
 | Confirmation                        | framework dialog / PF Modal                                        | Reversible vs destructive                                                                               |
-| Error with retry                    | workspace error adapter                                            | See coding_standards                                                                                    |
+| Error with retry                    | workspace error adapter                                            | See coding-standards                                                                                    |
 | Forms                               | `AwxPageForm` / `EdaPageForm` / `HubPageForm` / `PlatformPageForm` | See `framework/PageForm/` for shared primitives; use the workspace wrapper, not raw `PageForm`          |
 | Toast / alert helper                | framework alerts                                                   | `addAlert({ variant, title, children? })` — body is `children`, not `description`; always set `variant` |
 
@@ -69,7 +63,7 @@ before reaching for raw PatternFly or writing a new component.
 
 ## Permissions
 
-- Hook names: workspace RBAC helpers in coding_standards
+- Hook names: workspace RBAC helpers in coding-standards
 - Disabled-with-tooltip: existing page action patterns
 - Nav / route guards: workspace routing
 
@@ -93,7 +87,7 @@ before reaching for raw PatternFly or writing a new component.
 - Snapshot directory: `playwright/tests/visual/` Linux `-linux.png` suffix
 - Overlay module (`vr.overlay.ts`): N/A
 
-## E2E (see testing_guidelines for write rules)
+## E2E (see testing-guidelines for write rules)
 
 - Playwright config path: `playwright/playwright.config.ts`
 - Default mode: live (`npm run live` in `playwright/`) or mock (`npx playwright test --project 'mock chromium'`)
@@ -107,7 +101,7 @@ before reaching for raw PatternFly or writing a new component.
   - `npx playwright test tests/path/to/test.spec.ts --project 'live chromium'`
   - Fail-fast: add `--max-failures=1 --retries=0`
   - Debug: `--debug`; traces: `npx playwright show-trace trace.zip`
-- Write rules, table helpers, MCP SSL bypass (`thisisunsafe`): `.claude/skills/testing_guidelines.md`
+- Write rules, table helpers, MCP SSL bypass (`thisisunsafe`): `.agents/skills/testing-guidelines/SKILL.md`
 - Unique-name helper: `createE2EName()` in `playwright/commands/`
 - Cleanup helper: `setupAfter`, resource `*.api.delete`, `confirmAndAssertDeletion`
 

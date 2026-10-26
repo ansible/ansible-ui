@@ -1,4 +1,4 @@
-# Claude Skill: Pull Request Review
+# Pull Request Review
 
 Your goal is to review a pull request with high clarity, consistency, and alignment with the repo’s standards.
 
@@ -8,14 +8,14 @@ Your goal is to review a pull request with high clarity, consistency, and alignm
 
 Before reviewing the PR, read:
 
-- `CLAUDE.md` trigger table, then the matching skills (not the whole skill set)
-- `.claude/skills/frontend-overlay/SKILL.md` for wrappers and API helpers
-- Any domain-specific skill: coding_standards, testing_guidelines
+- `AGENTS.md` trigger table, then the matching skills (not the whole skill set)
+- `.agents/skills/apply-frontend-overlay/SKILL.md` for wrappers and API helpers
+- Any domain-specific skill: apply-coding-standards, testing-guidelines
 
 **Branch Strategy:**
 
 - Base branch: `devel` (unless specified otherwise)
-- Review diff: `git diff devel...HEAD` or `devel` → current branch
+- Review diff: `gh pr diff <N> --repo OWNER/REPO`
 - Focus on changes introduced by the current branch, not existing code in `devel`
 
 ### Identify PR Scope (CRITICAL)
@@ -24,20 +24,20 @@ Review only what the PR changes. Getting the scope wrong wastes effort and
 produces misleading feedback.
 
 - When GitHub CLI is available, start with `gh pr view <N> --json
-title,body,files,additions,deletions,baseRefName,headRefName` and
-  `gh pr diff <N> --name-only`. Then use `git diff --stat devel...HEAD` and
-  scoped `git diff` hunks for the detailed review. Confirm the file list
-  matches what the PR claims to change.
-- Use three-dot `devel...HEAD` so you see only this branch's changes, not
-  unrelated commits that landed on `devel` after it forked.
+  title,body,additions,deletions,baseRefName,headRefName` and
+  `gh api "repos/OWNER/REPO/pulls/<N>/files" --paginate --jq '.[].filename'`.
+  Then use `gh pr diff <N> --repo OWNER/REPO` for the detailed review. Confirm
+  the file list matches what the PR claims to change.
+- Use the PR-specific GitHub diff so a different local branch or base cannot
+  change which patch you review.
 - When the diff is large or surprising, confirm scope with the author before
   reviewing line-by-line.
 
-| Pitfall                              | Avoid by                                   |
-| ------------------------------------ | ------------------------------------------ |
-| Reviewing files the PR never touched | Diff the exact range; don't browse `devel` |
-| Stale diff after a rebase/force-push | `git fetch` and re-diff before commenting  |
-| Two-dot vs three-dot confusion       | Use `devel...HEAD` to isolate the branch   |
+| Pitfall                              | Avoid by                                                   |
+| ------------------------------------ | ---------------------------------------------------------- |
+| Reviewing files the PR never touched | Use the PR file list and `gh pr diff <N>`                  |
+| Stale diff after a rebase/force-push | Refresh with `gh pr diff <N>` before commenting            |
+| Local base/head mismatch             | Don't use local `devel...HEAD`; review the PR-specific diff |
 
 ---
 
@@ -164,8 +164,8 @@ When reviewing new components or logic, ask these critical questions:
 ### Rule Bypass Checks
 
 New code should not silence the tooling instead of fixing the problem. Grep the
-diff (`git diff devel...HEAD`) for each of these and review every hit in added
-lines:
+PR-specific diff (`gh pr diff <N> --repo OWNER/REPO`) for each of these and
+review every hit in added lines:
 
 | Pattern                                       | Review expectation               | Ask for instead                                                          |
 | --------------------------------------------- | -------------------------------- | ------------------------------------------------------------------------ |
@@ -174,13 +174,13 @@ lines:
 | `TODO` / `FIXME` / `HACK` / `XXX`             | Must not hide unfinished work    | Resolve, or file a tracked issue                                         |
 | Custom deep copy / query parsing / UUID       | Avoid re-inventing platform APIs | Native API (`structuredClone` / `URLSearchParams` / `crypto.randomUUID`) |
 
-Recipe: `git diff devel...HEAD | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expect-error)|TODO|FIXME|HACK|XXX'`
+Recipe: `gh pr diff <N> --repo OWNER/REPO | rg '^\+' | rg 'eslint-disable|@ts-(ignore|expect-error)|TODO|FIXME|HACK|XXX'`
 
 ### HTML → PatternFly 6 Component Mapping
 
-Prefer PF6 or existing framework components for standard controls and content.
-Retain semantic HTML where the framework markup requires it or no suitable
-component abstraction exists. Typical mappings:
+Review UI choices in this order: existing framework wrapper, PF6 component,
+semantic native HTML when no suitable component abstraction exists, then a
+custom component only as a documented last resort. Typical mappings:
 
 | Raw HTML          | Use       |
 | ----------------- | --------- |
@@ -213,112 +213,98 @@ Check whether:
 - The behavior is stable across browsers/devices
 - The test names clearly describe intent
 - E2E tests validate the full flow when needed
+- Async code covers loading, success, error, and empty states. For parallel
+  requests, include the out-of-order failure/success sequence so an early
+  error cannot replace a still-pending successful path.
+- A regression test would fail if the behavior being fixed were restored; a
+  test that merely passes is not sufficient.
+- Live E2E waits for post-filter or post-mutation data to settle and cleans up
+  resources in `try/finally` or the established suite helper.
 
-Generate a list of missing tests and suggested improvements.
-
----
-
-## 6. Explain the Changes Back (for Documentation)
-
-Generate a markdown summary file that explains:
-
-- What the PR does
-- Why the changes matter
-- Visual diagrams when relevant
-- Before/After examples
-- Known tradeoffs
-- Any follow-up tasks recommended
+For behavior-changing PRs, list missing regression coverage and focused test
+improvements. Skip test recommendations when they do not apply to the diff.
 
 ---
 
-## 7. Validation Commands
+## 6. Summarize When It Helps
 
-Run these project commands:
-
-```bash
-npm run prettier                  # Formatting
-cd platform && npm run eslint # Linting (required)
-cd platform && npm run tsc    # Type check
-```
-
-**No new guardrail warnings (review blocker).** CI `eslint-guardrails` is
-advisory, so reviewers must compare warning counts on the PR's changed files
-against the base branch (`devel` upstream, `stable-2.7` downstream). Head must
-not be higher than base. New files must be warning-free.
-
-```bash
-BASE="${BASE:-origin/devel}"
-mapfile -t files < <(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD -- frontend platform framework \
-  | rg '\.(ts|tsx)$' | rg -v '\.(test|cy|fixture)\.')
-if ((${#files[@]})); then
-  head_n=$(npx eslint --no-eslintrc --config .eslintrc.guardrails.json -f unix --no-error-on-unmatched-pattern "${files[@]}" 2>/dev/null | rg -c 'Warning/' || true)
-  base_n=0
-  for f in "${files[@]}"; do
-    git cat-file -e "$BASE:$f" 2>/dev/null || continue
-    c=$(git show "$BASE:$f" | npx eslint --no-eslintrc --config .eslintrc.guardrails.json --stdin --stdin-filename "$f" -f unix 2>/dev/null | rg -c 'Warning/' || true)
-    base_n=$((base_n + ${c:-0}))
-  done
-  echo "eslint:guardrails warnings  ${BASE}=${base_n}  head=${head_n:-0}"
-  if (( ${head_n:-0} > base_n )); then echo 'BLOCK: new guardrail warnings added'; exit 1; fi
-fi
-
-# No new ESLint suppressions in added lines (review blocker)
-if git diff "$BASE"...HEAD | rg '^\+' | rg -q 'eslint-disable'; then
-  echo 'BLOCK: new eslint-disable suppression added'
-  git diff "$BASE"...HEAD | rg '^\+' | rg 'eslint-disable'
-  exit 1
-fi
-```
-
-Then ask the user to confirm manually:
-
-- UI works in the browser
-- Forms, navigation, and modals behave as expected
-- No console errors appear
+When the PR description is unclear or the change needs a handoff, provide a
+concise summary in simplified technical English of what changed, why it matters,
+relevant tradeoffs, and any follow-up work. Create a separate Markdown document
+only when the change itself requires durable documentation; do not create one as
+a routine review deliverable.
 
 ---
 
-## 8. Final Deliverables
+## 7. CI and Focused Validation
 
-Output should include:
+Review current-head CI evidence first. Do not repeat checks that already passed.
+If a relevant check is missing or failed, select a focused check that covers the
+changed behavior and report its result.
 
-1. A structured PR review
-2. A list of issues to fix
-3. Recommendations for simplification
-4. Test coverage guidance
-5. A proposed `.md` explanation file for the PR
-6. `eslint:guardrails` warning count on changed files vs base (must not increase)
-7. No new `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line` in the diff
+Match validation to the diff:
 
----
+- **Documentation-only changes:** use a Markdown or link check if the repository
+  provides one. Application lint, type checks, unit tests, and Playwright are
+  not required when no application behavior changed.
+- **Code changes:** use checks scoped to changed paths. Review guardrail warnings
+  on changed TypeScript files against the base branch when CI does not provide
+  that comparison; do not accept added warnings or new ESLint suppressions.
+- **Browser behavior:** use Playwright or manual browser validation only when the
+  change affects a user flow and current CI does not already provide sufficient
+  evidence. Do not trigger E2E for unrelated or documentation-only changes.
 
-## 9. Self-Review Quality Gate
-
-Before posting, ask a fresh subagent that has not participated in the review to
-independently inspect the PR. Give it the PR URL, base branch, and head branch;
-do not provide the first review's conclusions. Compare its findings before
-posting:
-
-- Does every finding cite a file/line and a concrete reason?
-- Would the feedback still make sense to someone who did not see the diff?
-- Have you separated blocking issues from optional suggestions?
-- Did you run the validation commands (§7) rather than assuming they pass?
-- Did `eslint:guardrails` warning count on changed files stay at or below the base branch?
-- Did the diff add any `eslint-disable` / `eslint-disable-next-line` / `eslint-disable-line`? If yes, block.
-
-An independent pass from a clean context catches the assumptions the first pass
-carried in.
+If relevant CI evidence is incomplete, state that clearly rather than assuming
+success or running an unrelated suite. Ask for manual confirmation only when a
+behavior cannot be verified from available tests or evidence.
 
 ---
 
-## 10. CI, ESLint, and agent-skill PRs
+## 8. Review Output
+
+Put actionable findings first. Each finding should include a severity, file and
+line, concrete impact, and a concise explanation. Separate required fixes from
+optional suggestions. If there are no findings, say so and summarize the
+reviewed scope. Report only relevant CI and focused validation evidence; do not
+require a separate Markdown summary file for every PR.
+
+---
+
+## 9. Independent Re-check
+
+For complex or high-risk changes, use a second independent reviewer when one is
+available. Do not prime that reviewer with the first review's findings. Compare
+the results for concrete evidence, clear impact, correct severity, and
+actionable wording. For small documentation-only changes, a careful self-review
+against the diff and source documents is sufficient.
+
+---
+
+## 10. CI, ESLint, and shared agent-guidance PRs
 
 Extra checks when the diff touches `.github/workflows/`, eslint config, or
-`.claude/skills/`:
+`.agents/skills/`:
 
 | Area | Review for |
 | --- | --- |
 | GitHub Actions | Third-party actions pinned to **full SHAs** or immutable versions; treat workflow edits as security-sensitive. |
 | ESLint | Prefer **flat config** (`eslint.config.mjs`). Avoid new parallel `.eslintrc.*` unless there is a documented reason (e.g. isolated guardrails). |
-| Agent skills | No private product or org names. No meta lines like “moved here from CLAUDE.md”. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
+| Agent skills | Keep guidance provider-neutral and public-safe. Use one shared source of truth; tool-specific files should be thin adapters. Point to **`framework/`** for shared components; cite versions from **`package.json`** / **`.nvmrc`**, not memory. Prefer documenting bans via **ESLint** (or cite an existing rule) over long prose. |
 | Lockfile | Intentional `package-lock.json` churn should be obvious in the PR description. |
+
+## 11. Updating Review Guidance from PR Feedback
+
+When refreshing repository review guidance from recent pull request feedback:
+
+- Use the complete review window requested for the update, including submitted
+  reviews and inline review comments. Record the exact date range.
+- Include only human-authored feedback. Exclude GitHub accounts marked as bots,
+  known chatbot or AI-review accounts, and comments disclosed as AI-generated
+  or AI-assisted. If authorship is uncertain, do not use the comment as a source.
+- Preserve every distinct, actionable human observation. Deduplicate repeated
+  advice, but do not drop a finding just because it appears only once.
+- Check each proposed rule against current repository practice or authoritative
+  documentation before adding it. Keep rules general enough to help future
+  reviews; do not copy comments or reviewer names into the skill.
+- State the source window and human-only filtering in the PR description so the
+  review-guidance update can be audited.

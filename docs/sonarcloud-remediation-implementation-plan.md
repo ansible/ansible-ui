@@ -2,7 +2,7 @@
 
 ## Context
 
-SonarCloud shows ~2700 open issues for this project. Engineers currently triage and fix these manually — navigating the dashboard, reviewing each issue, researching fixes, and creating PRs by hand. This story delivers a Claude Code skill that automates analysis and remediation with human-in-the-loop review, starting with low-risk fix categories to build trust.
+SonarCloud shows ~2700 open issues for this project. Engineers currently triage and fix these manually — navigating the dashboard, reviewing each issue, researching fixes, and creating PRs by hand. This plan delivers an agent skill that automates analysis and remediation with human review, starting with low-risk fix categories to build trust.
 
 **Reference implementation**: [amazon.aws PR #2919](https://github.com/ansible-collections/amazon.aws/pull/2919) — proved that curl-based SonarCloud API calls in skill markdown work. We adapt this pattern for a TypeScript/React monorepo context.
 
@@ -16,7 +16,7 @@ Hybrid approach: a Python script handles the mechanical API fetching and categor
 
 ## Prerequisites
 
-- **`gh`** (GitHub CLI) — must be installed and authenticated (`gh auth login`). Used by `/sonarcloud-fix` to create PRs and post e2e trigger comments.
+- **`gh`** (GitHub CLI) — must be installed and authenticated (`gh auth login`). Used by the sonarcloud-fix skill to create PRs and post e2e trigger comments.
 - **`python3`** (3.8+) — used by the fetch script (`scripts/sonarcloud-fetch.py`). Uses only Python stdlib (no external dependencies).
 
 ---
@@ -24,18 +24,22 @@ Hybrid approach: a Python script handles the mechanical API fetching and categor
 ## File Structure
 
 ```
-.claude/
-  skills/
-    sonarcloud-remediation/
+.agents/skills/
+  sonarcloud-remediation/
+    SKILL.md                      — Short skill entrypoint
+    references/
       sonarcloud-remediation.md   — Full workflow logic (analyze + fix)
-      scripts/
-        sonarcloud-fetch.py       — API fetching + categorization (stdlib-only Python)
-  commands/
-    sonarcloud-analyze.md         — /sonarcloud-analyze command (thin wrapper)
-    sonarcloud-fix.md             — /sonarcloud-fix command (thin wrapper)
+    scripts/
+      sonarcloud-fetch.py         — API fetching + categorization (stdlib-only Python)
+  sonarcloud-analyze/
+    SKILL.md                    — Short analysis entrypoint
+    references/workflow.md      — Options and analysis guidance
+  sonarcloud-fix/
+    SKILL.md                    — Short fix entrypoint
+    references/workflow.md      — Approval and remediation guidance
 ```
 
-**Existing files unchanged**: `commands/migrate-test.md`, `commands/review-pr.md`, `skills/pr_review.md` (local `settings.json` is not committed; see `AI_AGENT_POLICY.md`)
+**Existing review and test guidance** remains in its own shared skills. Local tool settings are not committed; see `AI_AGENT_POLICY.md`.
 
 ---
 
@@ -58,7 +62,7 @@ The skill validates `SONAR_ORGANIZATION` and `SONAR_PROJECT_KEY` at runtime with
 
 ## Workflow
 
-### Phase A — Analyze (`/sonarcloud-analyze`)
+### Phase A — Analyze
 
 Both commands support a `--help` flag that displays usage information and exits without performing any action.
 
@@ -74,7 +78,7 @@ Both commands support a `--help` flag that displays usage information and exits 
    7. Cognitive complexity refactoring
    8. Security hotspot remediation
    9. Reliability bug fixes
-4. **Present a prioritized summary table** per category, using **continuous group numbering across all categories** (the group `#` is globally unique, not reset per category — this is the ID that `/sonarcloud-fix` uses to select groups):
+4. **Present a prioritized summary table** per category, using **continuous group numbering across all categories** (the group `#` is globally unique, not reset per category — this is the ID that `sonarcloud-fix skill` uses to select groups):
    ```
    ## Maintainability (847 issues)
 
@@ -88,7 +92,7 @@ Both commands support a `--help` flag that displays usage information and exits 
 5. **Flag groups exceeding 200 LOC** with a note that they will auto-split into multiple PRs
 6. **Support optional flags**: `--severity <level>` to filter by severity, `--module <name>` to filter by module
 
-### Phase B — Fix (`/sonarcloud-fix`)
+### Phase B — Fix
 
 The fix workflow uses a **2-step approval process** to give engineers full control:
 
@@ -132,7 +136,7 @@ The fix workflow uses a **2-step approval process** to give engineers full contr
 ## Scope
 
 ### In scope (this story):
-- **Skill creation**: `/sonarcloud-analyze` and `/sonarcloud-fix` skills + command wrappers
+- **Skill creation**: separate sonarcloud-analyze and sonarcloud-fix entry skills
 - **Documentation**: Setup instructions, env var configuration, troubleshooting, portability guide
 - **Validation testing**: Run the skills against 1-2 small groups (e.g., unused imports in one module) to verify end-to-end functionality — analyze, group-level approval, fix application, validation gates, branch/PR creation
 
@@ -173,11 +177,11 @@ The skill is designed for adoption beyond aap-ui:
 
 | AC | Deliverable |
 |----|-------------|
-| AC1 (Skill Installation) | `.claude/skills/sonarcloud-remediation/` (skill + fetch script) + commands in `.claude/commands/` |
+| AC1 (Skill Installation) | `.agents/skills/sonarcloud-remediation/` (entrypoint, reference guide, and fetch script) plus analyze/fix skills |
 | AC2 (Authentication) | Skill validates env vars at runtime; `SONARCLOUD_TOKEN` for private projects; no secrets committed |
-| AC3 (Issue Analysis) | `/sonarcloud-analyze` with 5-category grouping, rule+module sub-groups (auto-detected), priority sorting, severity/module flags |
+| AC3 (Issue Analysis) | `sonarcloud-analyze skill` with 5-category grouping, rule+module sub-groups (auto-detected), priority sorting, severity/module flags |
 | AC4 (Configuration) | Environment variables matching CI pipeline; configurable default branch |
-| AC5 (Documentation) | Skill header docs + command docs + setup/troubleshooting in skill preamble |
+| AC5 (Documentation) | Skill entrypoint metadata plus setup and troubleshooting in the reference guide |
 | AC6 (Validation) | Tested against project SonarCloud data during implementation |
 
 ---
@@ -193,19 +197,19 @@ The skill is designed for adoption beyond aap-ui:
 
 ## Files to Create
 
-1. **`.claude/skills/sonarcloud-remediation/sonarcloud-remediation.md`** — Main skill file (~400 lines). Contains: grouping/sorting logic, fix strategies, validation gates, PR creation workflow, portability notes. References the fetch script for API data.
-2. **`.claude/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py`** — Python script (~200 lines). Handles paginated SonarCloud API fetching, authentication, and categorization into 5 categories. Stdlib-only, outputs JSON to stdout.
-3. **`.claude/commands/sonarcloud-analyze.md`** — Thin command wrapper (~10-15 lines). Invokes the analyze phase of the skill.
-4. **`.claude/commands/sonarcloud-fix.md`** — Thin command wrapper (~10-15 lines). Invokes the fix phase of the skill.
+1. **`.agents/skills/sonarcloud-remediation/SKILL.md`** — Short discovery entrypoint; full workflow remains in `references/sonarcloud-remediation.md`.
+2. **`.agents/skills/sonarcloud-remediation/scripts/sonarcloud-fetch.py`** — Python script for paginated API fetching and categorization.
+3. **`.agents/skills/sonarcloud-analyze/SKILL.md`** — Short entrypoint; see references/workflow.md.
+4. **`.agents/skills/sonarcloud-fix/SKILL.md`** — Short entrypoint; see references/workflow.md.
 
 ---
 
 ## Verification
 
 1. Set env vars: `SONAR_ORGANIZATION=<your-org>`, `SONAR_PROJECT_KEY=<your-project-key>`
-2. Run `/sonarcloud-analyze --help` and `/sonarcloud-fix --help` — verify usage information is displayed
-3. Run `/sonarcloud-analyze` — verify it fetches issues, groups by 5 categories, sorts by priority, shows summary table with continuous group numbering
-4. Run `/sonarcloud-fix` — select a small group (e.g., unused imports in one module), verify group-level approval flow, LOC cap, branch creation, validation gates
+2. Ask each skill for its usage information and verify it returns the options without starting an analysis or fix
+3. Use the sonarcloud-analyze skill and verify that it fetches issues, groups by 5 categories, sorts by priority, shows summary table with continuous group numbering
+4. Use the sonarcloud-fix skill to select a small group (e.g., unused imports in one module), verify group-level approval flow, LOC cap, branch creation, validation gates
 5. Confirm validation commands pass before PR
 6. Verify Approval 1 pauses for engineer review before PR creation
 7. Verify Approval 2 presents PR summary and waits for explicit go-ahead

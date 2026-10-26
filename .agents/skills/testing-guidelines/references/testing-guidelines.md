@@ -4,7 +4,7 @@ Testing standards for this project. Read this skill before writing or reviewing
 any **Vitest** unit/component test file.
 
 For **Playwright E2E** (write, run, or debug), read
-`.claude/skills/frontend-playwright-e2e/SKILL.md` instead.
+`.agents/skills/write-playwright-e2e/SKILL.md` instead.
 
 ---
 
@@ -328,6 +328,12 @@ await waitFor(
   { timeout: 15000 }
 );
 ```
+
+When a hook or page combines parallel requests, cover an out-of-order result:
+one request fails while the other is still loading, then succeeds. Assert the
+loading state is retained until both requests settle, and that the eventual
+success clears the transient error. This prevents a full-page error or empty
+state from replacing a valid pending path.
 
 ---
 
