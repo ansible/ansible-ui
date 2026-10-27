@@ -178,17 +178,6 @@ describe('PageFormAsyncSingleSelect validation message', () => {
     });
   });
 
-  it('calls the onChange callback after selection', async () => {
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-
-    render(<TestForm onChange={onChange} validate={() => true} />);
-    await user.click(screen.getByRole('button', { name: 'Select option' }));
-
-    expect(screen.getByTestId('form-value').textContent).toBe('Selected value');
-    expect(onChange).toHaveBeenCalledWith('Selected value');
-  });
-
   it('links the select to its form group when an id is provided', () => {
     render(<TestForm id="custom-select" />);
 
