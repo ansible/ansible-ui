@@ -120,16 +120,19 @@ function makeGraphNode(
     survey_data: undefined,
     ...nodeData,
   } as GraphNodeData;
+  let currentNodeData = defaultNodeData;
 
   return {
     getId: () => currentId,
-    getData: () => defaultNodeData,
+    getData: () => currentNodeData,
     getState: () => ({ modified }),
     isVisible: () => visible,
     setId: vi.fn((newId: string) => {
       currentId = newId;
     }),
-    setData: vi.fn(),
+    setData: vi.fn((data: GraphNodeData) => {
+      currentNodeData = data;
+    }),
     setState: vi.fn(),
     setLabel: vi.fn(),
     getSourceEdges: () => sourceEdges,
@@ -609,7 +612,7 @@ describe('useSaveVisualizer', () => {
     ).toBe(true);
   });
 
-  test('should clear extra_data in a separate PATCH before the template-change PATCH when extra_data resolves empty', async () => {
+  test('should not send a standalone empty extra_data PATCH when persisted data is empty during a template swap', async () => {
     const editedNode = makeGraphNode({
       id: '42',
       visible: true,
@@ -625,8 +628,8 @@ describe('useSaveVisualizer', () => {
           success_nodes: [],
           summary_fields: {
             unified_job_template: {
-              id: 1,
-              name: 'Test Template',
+              id: 2,
+              name: 'JT B',
               unified_job_type: RESOURCE_TYPE.job,
             },
           },
@@ -634,7 +637,265 @@ describe('useSaveVisualizer', () => {
         launch_data: {
           original: {
             isTemplateChange: true,
+            extra_data: {},
             launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              ask_inventory_on_launch: true,
+              ask_variables_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+          inventory: { id: 99, name: 'Override Inventory' },
+          extra_vars: '{}',
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+
+    expect(nodePatchCalls).toHaveLength(1);
+
+    const mainPatchPayload = nodePatchCalls[0][1] as {
+      unified_job_template?: number;
+      inventory?: number;
+    };
+    expect(mainPatchPayload).toMatchObject({ unified_job_template: 2, inventory: 99 });
+    expect(mainPatchPayload).not.toHaveProperty('extra_data');
+    expect(
+      nodePatchCalls.some(
+        (call: unknown[]) => JSON.stringify(call[1]) === JSON.stringify({ extra_data: {} })
+      )
+    ).toBe(false);
+  });
+
+  test('should clear non-empty extra_data before the template-change PATCH when outgoing extra_data resolves empty', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 2,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            isTemplateChange: true,
+            extra_data: { existing_variable: 'old value' },
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              ask_inventory_on_launch: true,
+              ask_variables_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+          inventory: { id: 99, name: 'Override Inventory' },
+          extra_vars: '{}',
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+
+    expect(nodePatchCalls).toHaveLength(2);
+    expect(nodePatchCalls[0][1]).toEqual({ extra_data: {} });
+    expect(nodePatchCalls[1][1]).toMatchObject({ unified_job_template: 2, inventory: 99 });
+    expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
+  });
+
+  test('should reconcile persisted snapshot after a node PATCH before a later edge save fails', async () => {
+    let failEdgeAssociation = true;
+    mockPostFn.mockImplementation((url: string) => {
+      if (failEdgeAssociation && url.includes('/success_nodes/')) {
+        return Promise.reject(new Error('edge save failed'));
+      }
+      return Promise.resolve({ id: 100 });
+    });
+    mockPatchFn
+      .mockResolvedValueOnce({
+        id: 42,
+        extra_data: { saved_variable: 'persisted value' },
+        summary_fields: { unified_job_template: { id: 2 } },
+      })
+      .mockResolvedValue({
+        id: 42,
+        extra_data: {},
+        summary_fields: { unified_job_template: { id: 3 } },
+      });
+
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 2,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            isTemplateChange: true,
+            template_id: 1,
+            extra_data: {},
+            launch_config: {
+              ask_variables_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+          extra_vars: '{"saved_variable":"persisted value"}',
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+      sourceEdges: [
+        {
+          isVisible: () => true,
+          getData: () => ({ tagStatus: EdgeStatus.success }),
+          getTarget: () => ({ getId: () => '100' }),
+        },
+      ],
+    });
+    mockGraphNodes = [editedNode];
+
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await expect(result.current()).rejects.toThrow('edge save failed');
+
+    const savedNodeData = editedNode.getData() as GraphNodeData;
+    expect(savedNodeData.launch_data?.original).toMatchObject({
+      template_id: 2,
+      extra_data: { saved_variable: 'persisted value' },
+    });
+
+    const reopenedNodeData = editedNode.getData() as GraphNodeData;
+    editedNode.setData({
+      ...reopenedNodeData,
+      resource: {
+        ...reopenedNodeData.resource,
+        summary_fields: {
+          ...reopenedNodeData.resource.summary_fields,
+          unified_job_template: {
+            id: 3,
+            name: 'JT C',
+            description: '',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
+        },
+      },
+      launch_data: {
+        ...reopenedNodeData.launch_data,
+        original: {
+          ...reopenedNodeData.launch_data?.original,
+          isTemplateChange: true,
+        },
+        extra_vars: '{}',
+      },
+    });
+
+    failEdgeAssociation = false;
+    mockPatchFn.mockClear();
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (call: unknown[]) =>
+        typeof call[0] === 'string' && call[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatchCalls).toHaveLength(2);
+    expect(nodePatchCalls[0][1]).toEqual({ extra_data: {} });
+    expect(nodePatchCalls[1][1]).toMatchObject({ unified_job_template: 3 });
+    expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
+  });
+
+  test('should preserve edits made while a node PATCH is in flight', async () => {
+    let resolvePatch: (value: {
+      id: number;
+      extra_data: { saved_variable: string };
+      summary_fields: { unified_job_template: { id: number } };
+    }) => void = () => undefined;
+    const pendingPatch = new Promise<{
+      id: number;
+      extra_data: { saved_variable: string };
+      summary_fields: { unified_job_template: { id: number } };
+    }>((resolve) => {
+      resolvePatch = resolve;
+    });
+    mockPatchFn.mockImplementationOnce(() => pendingPatch);
+
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'original-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 2,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          extra_vars: '{"saved_variable":"persisted value"}',
+          original: {
+            launch_config: {
+              ask_variables_on_launch: true,
               ask_labels_on_launch: false,
               ask_instance_groups_on_launch: false,
               ask_credential_on_launch: false,
@@ -649,30 +910,322 @@ describe('useSaveVisualizer', () => {
       } as unknown as Partial<GraphNodeData>,
     });
     mockGraphNodes = [editedNode];
+
     const { result } = renderHook(() => useSaveVisualizer('123'));
+    const savePromise = result.current();
+    await vi.waitFor(() => expect(mockPatchFn).toHaveBeenCalledTimes(1));
+
+    editedNode.setData({
+      ...(editedNode.getData() as GraphNodeData),
+      resource: {
+        ...(editedNode.getData() as GraphNodeData).resource,
+        identifier: 'newer-node-edit',
+        summary_fields: {
+          ...(editedNode.getData() as GraphNodeData).resource.summary_fields,
+          unified_job_template: {
+            id: 3,
+            name: 'JT C',
+            description: '',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
+        },
+      },
+      launch_data: {
+        ...(editedNode.getData() as GraphNodeData).launch_data,
+        extra_vars: '{"new_variable":"newer value"}',
+      },
+    });
+
+    resolvePatch?.({
+      id: 42,
+      extra_data: { saved_variable: 'persisted value' },
+      summary_fields: { unified_job_template: { id: 2 } },
+    });
+    await savePromise;
+
+    const currentNodeData = editedNode.getData() as GraphNodeData;
+    expect(currentNodeData.resource.identifier).toBe('newer-node-edit');
+    expect(currentNodeData.resource.summary_fields.unified_job_template?.id).toBe(3);
+    expect(currentNodeData.launch_data?.extra_vars).toBe('{"new_variable":"newer value"}');
+    expect(currentNodeData.launch_data?.original).toMatchObject({
+      extra_data: { saved_variable: 'persisted value' },
+      template_id: 2,
+    });
+  });
+
+  test('should recompute template change after reverting while a node PATCH is in flight', async () => {
+    let resolvePatch: (value: {
+      id: number;
+      extra_data: { saved_variable: string };
+      summary_fields: { unified_job_template: { id: number } };
+    }) => void = () => undefined;
+    const pendingPatch = new Promise<{
+      id: number;
+      extra_data: { saved_variable: string };
+      summary_fields: { unified_job_template: { id: number } };
+    }>((resolve) => {
+      resolvePatch = resolve;
+    });
+    let failEdgeAssociation = true;
+    mockPatchFn
+      .mockImplementationOnce(() => pendingPatch)
+      .mockResolvedValue({
+        id: 42,
+        extra_data: {},
+        summary_fields: { unified_job_template: { id: 1 } },
+      });
+    mockPostFn.mockImplementation((url: string) => {
+      if (failEdgeAssociation && url.includes('/success_nodes/')) {
+        return Promise.reject(new Error('edge save failed'));
+      }
+      return Promise.resolve({ id: 100 });
+    });
+
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'test-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 2,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            template_id: 1,
+            extra_data: { saved_variable: 'persisted value' },
+            launch_config: {
+              ask_variables_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+          extra_vars: '{}',
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+      sourceEdges: [
+        {
+          isVisible: () => true,
+          getData: () => ({ tagStatus: EdgeStatus.success }),
+          getTarget: () => ({ getId: () => '100' }),
+        },
+      ],
+    });
+    mockGraphNodes = [editedNode];
+
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    const savePromise = result.current();
+    await vi.waitFor(() => expect(mockPatchFn).toHaveBeenCalledTimes(1));
+
+    editedNode.setData({
+      ...(editedNode.getData() as GraphNodeData),
+      resource: {
+        ...(editedNode.getData() as GraphNodeData).resource,
+        summary_fields: {
+          ...(editedNode.getData() as GraphNodeData).resource.summary_fields,
+          unified_job_template: {
+            id: 1,
+            name: 'JT A',
+            description: '',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
+        },
+      },
+    });
+
+    resolvePatch?.({
+      id: 42,
+      extra_data: { saved_variable: 'persisted value' },
+      summary_fields: { unified_job_template: { id: 2 } },
+    });
+    await expect(savePromise).rejects.toThrow('edge save failed');
+
+    expect((editedNode.getData() as GraphNodeData).launch_data?.original).toMatchObject({
+      template_id: 2,
+      isTemplateChange: true,
+    });
+
+    failEdgeAssociation = false;
+    mockPatchFn.mockClear();
     await result.current();
 
     const nodePatchCalls = mockPatchFn.mock.calls.filter(
-      (c: unknown[]) =>
-        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+      (call: unknown[]) =>
+        typeof call[0] === 'string' && call[0].includes('/workflow_job_template_nodes/42/')
     );
+    expect(nodePatchCalls).toHaveLength(2);
+    expect(nodePatchCalls[0][1]).toEqual({ extra_data: {} });
+    expect(nodePatchCalls[1][1]).toMatchObject({ unified_job_template: 1 });
+    expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
+  });
 
-    // One PATCH clears extra_data on its own, ahead of the template-change PATCH,
-    // because AWX ignores extra_data updates sent in the same request that changes
-    // unified_job_template.
-    const clearExtraDataCall = nodePatchCalls.find(
-      (c: unknown[]) => JSON.stringify(c[1]) === JSON.stringify({ extra_data: {} })
+  test('should reconcile a new node snapshot before a later edge save fails', async () => {
+    let failEdgeAssociation = true;
+    mockPostFn.mockImplementation((url: string) => {
+      if (url.includes('/workflow_nodes/')) {
+        return Promise.resolve({
+          id: 100,
+          extra_data: { created_variable: 'persisted value' },
+          summary_fields: { unified_job_template: { id: 5 } },
+        });
+      }
+      if (failEdgeAssociation && url.includes('/success_nodes/')) {
+        return Promise.reject(new Error('edge save failed'));
+      }
+      return Promise.resolve({ id: 100 });
+    });
+
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-created',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: 'created-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'JT B',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          extra_vars: '{"created_variable":"persisted value"}',
+          original: {
+            launch_config: {
+              ask_variables_on_launch: true,
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    const sourceNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'source-node',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 1,
+              name: 'Source JT',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          original: {
+            launch_config: {
+              ask_labels_on_launch: false,
+              ask_instance_groups_on_launch: false,
+              ask_credential_on_launch: false,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+      sourceEdges: [
+        {
+          isVisible: () => true,
+          getData: () => ({ tagStatus: EdgeStatus.success }),
+          getTarget: () => ({ getId: () => newNode.getId() }),
+        },
+      ],
+    });
+    mockGraphNodes = [sourceNode, newNode];
+
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await expect(result.current()).rejects.toThrow('edge save failed');
+
+    expect(newNode.getId()).toBe('100');
+    expect((newNode.getData() as GraphNodeData).launch_data?.original).toMatchObject({
+      template_id: 5,
+      extra_data: { created_variable: 'persisted value' },
+    });
+
+    const reopenedNodeData = newNode.getData() as GraphNodeData;
+    newNode.setData({
+      ...reopenedNodeData,
+      resource: {
+        ...reopenedNodeData.resource,
+        extra_data: {},
+        summary_fields: {
+          ...reopenedNodeData.resource.summary_fields,
+          unified_job_template: {
+            id: 6,
+            name: 'JT C',
+            description: '',
+            unified_job_type: RESOURCE_TYPE.job,
+          },
+        },
+      },
+      launch_data: {
+        ...reopenedNodeData.launch_data,
+        original: {
+          ...reopenedNodeData.launch_data?.original,
+          isTemplateChange: true,
+        },
+        extra_vars: '{}',
+      },
+    });
+
+    failEdgeAssociation = false;
+    mockPatchFn.mockClear().mockResolvedValue({
+      id: 100,
+      extra_data: {},
+      summary_fields: { unified_job_template: { id: 6 } },
+    });
+    await result.current();
+
+    const nodePatchCalls = mockPatchFn.mock.calls.filter(
+      (call: unknown[]) =>
+        typeof call[0] === 'string' && call[0].includes('/workflow_job_template_nodes/100/')
     );
-    expect(clearExtraDataCall).toBeDefined();
-
-    // The clearing PATCH must happen before the main node PATCH.
-    const clearIndex = nodePatchCalls.indexOf(clearExtraDataCall!);
-    expect(clearIndex).toBe(0);
-    expect(nodePatchCalls.length).toBeGreaterThan(1);
-
-    // The main PATCH should no longer carry extra_data (it was deleted after clearing).
-    const mainPatchCall = nodePatchCalls[nodePatchCalls.length - 1];
-    expect((mainPatchCall[1] as { extra_data?: unknown }).extra_data).toBeUndefined();
+    expect(nodePatchCalls).toHaveLength(2);
+    expect(nodePatchCalls[0][1]).toEqual({ extra_data: {} });
+    expect(nodePatchCalls[1][1]).toMatchObject({ unified_job_template: 6 });
+    expect(nodePatchCalls[1][1]).not.toHaveProperty('extra_data');
   });
 
   test('should not issue a separate extra_data PATCH when there is no template change', async () => {
