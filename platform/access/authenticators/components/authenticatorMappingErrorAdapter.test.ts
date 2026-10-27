@@ -237,4 +237,104 @@ describe('authenticatorMappingErrorAdapter', () => {
       fieldErrors: [],
     });
   });
+
+  test('concatenates distinct trigger errors that map onto the same field', () => {
+    const error = requestError({
+      triggers: {
+        'groups.has_or[0]': ['Group A is invalid'],
+        'groups.has_and[0]': ['Group B is invalid'],
+      },
+    });
+
+    expect(authenticatorMappingErrorAdapter(error).fieldErrors).toEqual([
+      { name: 'groups_value', message: 'Group A is invalid; Group B is invalid' },
+    ]);
+  });
+
+  test('does not duplicate the same trigger error mapped onto one field', () => {
+    const error = requestError({
+      triggers: {
+        'groups.has_or[0]': [CLEAN_TEXT_ERROR],
+        'groups.has_and[0]': [CLEAN_TEXT_ERROR],
+      },
+    });
+
+    expect(authenticatorMappingErrorAdapter(error).fieldErrors).toEqual([
+      { name: 'groups_value', message: CLEAN_TEXT_ERROR },
+    ]);
+  });
+
+  test('maps empty trigger field errors skipped by the nested collector onto the same field', () => {
+    const error = requestError({
+      'triggers.groups.has_or[0]': [''],
+      'triggers.groups.has_and[0]': [''],
+    });
+
+    expect(authenticatorMappingErrorAdapter(error).fieldErrors).toEqual([
+      { name: 'groups_value', message: '' },
+    ]);
+  });
+
+  test('treats attribute trigger errors as generic when the form has no attribute rows', () => {
+    const error = requestError({
+      triggers: {
+        'attributes.test.contains': [CLEAN_TEXT_ERROR],
+      },
+    });
+
+    expect(authenticatorMappingErrorAdapter(error)).toEqual({
+      genericErrors: [{ message: CLEAN_TEXT_ERROR }],
+      fieldErrors: [],
+    });
+    expect(authenticatorMappingErrorAdapter(error, { attributes: [] })).toEqual({
+      genericErrors: [{ message: CLEAN_TEXT_ERROR }],
+      fieldErrors: [],
+    });
+  });
+
+  test('surfaces an unmatched attribute-name error as generic when multiple rows exist', () => {
+    const error = requestError({
+      triggers: {
+        'attributes.unknown': [CLEAN_TEXT_ERROR],
+      },
+    });
+
+    expect(
+      authenticatorMappingErrorAdapter(error, {
+        attributes: [
+          { attribute: 'test', comparison: 'contains', value: 'one' },
+          { attribute: 'other', comparison: 'equals', value: 'two' },
+        ],
+      })
+    ).toEqual({
+      genericErrors: [{ message: CLEAN_TEXT_ERROR }],
+      fieldErrors: [],
+    });
+  });
+
+  test('maps a dotted attribute name that is not a comparison operator', () => {
+    const error = requestError({
+      triggers: {
+        'attributes.foo.bar': [CLEAN_TEXT_ERROR],
+      },
+    });
+
+    expect(
+      authenticatorMappingErrorAdapter(error, {
+        attributes: [{ attribute: 'foo.bar', comparison: 'equals', value: 'ok' }],
+      }).fieldErrors
+    ).toEqual([{ name: 'attributes.0.attribute', message: CLEAN_TEXT_ERROR }]);
+  });
+
+  test('stringifies non-string trigger error values', () => {
+    const error = requestError({
+      triggers: {
+        'groups.has_or[0]': [401],
+      },
+    });
+
+    expect(authenticatorMappingErrorAdapter(error).fieldErrors).toEqual([
+      { name: 'groups_value', message: '401' },
+    ]);
+  });
 });
