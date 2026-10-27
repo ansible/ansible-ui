@@ -15,20 +15,24 @@ test.afterEach(async ({ page }) => {
 });
 
 test.describe('Overview - Visual Regression', () => {
-  test('overview page has no visual regressions', { tag: ['@visual'] }, async ({ page }) => {
-    await expect(
-      page.getByRole('heading', { name: /Welcome to (?:the )?Ansible/, level: 1 })
-    ).toBeVisible();
+  test(
+    'should have no visual regressions on the overview page',
+    { tag: ['@visual'] },
+    async ({ page }) => {
+      await expect(
+        page.getByRole('heading', { name: /Welcome to (?:the )?Ansible/, level: 1 })
+      ).toBeVisible();
 
-    await expect(page.locator('.pf-v6-c-page__main')).toHaveScreenshot('overview-full-page.png', {
-      maxDiffPixelRatio: 0.002,
-      animations: 'disabled',
-      mask: [page.locator('#job-activity .page-chart'), page.getByRole('heading', { level: 1 })],
-    });
-  });
+      await expect(page.locator('.pf-v6-c-page__main')).toHaveScreenshot('overview-full-page.png', {
+        maxDiffPixelRatio: 0.002,
+        animations: 'disabled',
+        mask: [page.locator('#job-activity .page-chart'), page.getByRole('heading', { level: 1 })],
+      });
+    }
+  );
 
   test(
-    'overview resource counts card has no visual regressions',
+    'should have no visual regressions in the overview resource counts card',
     { tag: ['@visual'] },
     async ({ page }) => {
       await expect(

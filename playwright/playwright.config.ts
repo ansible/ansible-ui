@@ -15,6 +15,9 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
  */
 // Use verbose configuration by default for better debugging
 const isCI = !!process.env.CI;
+const visualTagExplicitlyIncluded = process.env.TAGS?.split(',').some(
+  (tag) => tag.trim() === '@visual'
+);
 const jobTimeoutMinutes = Number(process.env.TIMEOUT_MINUTES) || 120;
 // Playwright 1.57 accepts clipboard permissions on Chromium only.
 const chromiumClipboardPermissions = ['clipboard-read', 'clipboard-write'];
@@ -95,6 +98,7 @@ const config: PlaywrightTestConfig = {
       dependencies: process.env.SKIP_COVERAGE === 'true' ? [] : ['coverage setup'],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        ...(!visualTagExplicitlyIncluded ? [/@visual/] : []), // Keep visual tests opt-in and non-gating
       ],
     },
     {

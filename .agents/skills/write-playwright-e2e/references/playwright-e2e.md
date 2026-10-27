@@ -1,4 +1,3 @@
-
 # Playwright E2E
 
 Default to Vitest for unit/component work (see
@@ -255,11 +254,12 @@ await Organization.ui.create(page, { organizationName: 'Test Org' });
 ### Test tags
 
 - `@not_mock` — do not run against mocked data
-- `@visual` — mock-backed visual regression (mock Chromium only; not an automatic PR merge gate)
+- `@visual` — opt-in mock-backed visual regression (mock Chromium only; not an automatic PR merge gate)
 
-Visual specs live under `playwright/tests/visual/` and run in the `mock chromium`
-project. Authors can refresh PR baselines with `/update-visual-baselines`; the
-weekly full refresh on `devel` remains the drift backstop.
+Visual specs live under `playwright/tests/visual/`. Regular mock Chromium runs
+exclude them; set `TAGS=@visual` to run them explicitly. Authors can refresh PR
+baselines with `/update-visual-baselines`; the weekly full refresh on `devel`
+remains the drift backstop.
 
 ---
 

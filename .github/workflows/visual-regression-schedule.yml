@@ -6,8 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: visual-regression-baseline-refresh
@@ -16,6 +15,8 @@ concurrency:
 jobs:
   build-platform-ui:
     uses: ./.github/workflows/image.yml
+    permissions:
+      contents: read
     with:
       build-directory: platform
       build-script: build
@@ -24,12 +25,18 @@ jobs:
       docker-target: platform-ui
       docker-image: platform-ui
       upload-artifact: true
-    secrets: inherit
+    secrets:
+      PACKAGING_GITHUB_REPOSITORY: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
+      PACKAGING_REPO_TOKEN: ${{ secrets.PACKAGING_REPO_TOKEN }}
 
   refresh-baselines:
     needs: build-platform-ui
     runs-on: ubuntu-24.04
     timeout-minutes: 120
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: write
     env:
       PLATFORM_UI: https://localhost:4100
       PLATFORM_USERNAME: automation-admin
@@ -40,6 +47,7 @@ jobs:
         with:
           ref: devel
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Download platform UI image
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -64,6 +72,8 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Refresh Linux visual baselines
+        env:
+          TAGS: '@visual'
         run: npx playwright test tests/visual --project "mock chromium" --workers=1 --retries=0 --update-snapshots=all
 
       - name: Validate visual baseline coverage

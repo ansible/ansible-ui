@@ -10,27 +10,21 @@ Playwright screenshot tests that catch major layout and styling regressions — 
 
 ## Prerequisites
 
-Create a `playwright/.env` file with your live instance credentials:
-
-```
-PLATFORM_UI=https://your-aap-instance.example.com
-PLATFORM_USERNAME=admin
-PLATFORM_PASSWORD=your-password
-```
+Install dependencies with `npm ci` from the repository root. Mock-backed visual
+tests need no AAP server or credentials. Podman or Docker is needed only when
+generating Linux baselines locally; otherwise use the author-triggered workflow.
 
 ## Running the tests
 
-All commands should be run from the `playwright/` directory.
+Run Playwright commands from `playwright/`. Run
+`npm run visual:check-baselines` from the repository root.
 
 ```bash
 # Generate initial baselines (first time, or after intentional UI changes)
-npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
+TAGS=@visual npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
 
 # Run visual tests (compares against baselines)
-npx playwright test tests/visual/ --project "mock chromium"
-
-# Run using the @visual tag filter
-TAGS=@visual npx playwright test --project "mock chromium"
+TAGS=@visual npx playwright test tests/visual/ --project "mock chromium"
 
 # View the HTML report (includes visual diffs on failure)
 npx playwright show-report playwright/html-report
@@ -38,18 +32,9 @@ npx playwright show-report playwright/html-report
 
 ## Test structure
 
-| Test                              | What it captures                                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `overview page`                   | Main content area of the Overview/dashboard with mocked resource counts (chart and h1 masked)    |
-| `overview resource counts card`   | Element-level screenshot of the `#resource-counts` card with mocked dashboard data               |
-| `templates list page`             | Main content area of Templates list (PageTable) with mocked table rows (pagination masked)       |
-| `templates list toolbar`          | Element-level screenshot of the toolbar (filters, actions) with mocked data                      |
-| `eda credential create form`      | Main content area screenshot of EDA Credential create (PageForm)                                 |
-| `eda credential create form elem` | Element-level screenshot of the form element                                                     |
-| `organization wizard details`     | Main content area screenshot of Organization wizard step 1 (PageWizard)                          |
-| `organization wizard review`      | Main content area screenshot of Organization wizard review step                                  |
-| `inventory details page`          | Main content area of Inventory details (PageDetails) with mocked detail data (timestamps masked) |
-| `inventory details panel`         | Element-level screenshot of the details key-value panel with mocked data (timestamps masked)     |
+Each page has one spec file with a main-content screenshot and a focused
+component or shell screenshot. Specs use deterministic API fixtures and shared
+stabilization. See [Adding a screen](#adding-a-screen) for the complete setup.
 
 ## Configuration
 
@@ -80,7 +65,7 @@ npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=a
 ### Linux baselines (local via podman)
 
 ```bash
-./scripts/update-visual-baselines.sh
+../scripts/update-visual-baselines.sh
 
 # Review and commit
 git diff playwright/tests/visual/
@@ -232,16 +217,45 @@ playwright/tests/visual/
 └── README.md
 ```
 
-### Adding a new page
+### Adding a screen
 
-When adding visual coverage for a new page:
+When adding a screen, add one representative page for a framework component or
+service that is not covered yet. Keep the screen out of the suite if its value
+would be only a minor page-specific detail.
 
-1. Create a new file named `<page>-visual.spec.ts` in this directory
-2. Choose a page that exercises a framework component not already covered, preferably from a service not already represented
-3. Include both a main content area and element-level screenshot test
-4. Register deterministic API data through `installVisualMockApi()` and call `stabilizeVisualPage()` before screenshots
-5. Mask only residual dynamic elements (timestamps, charts) that aren't worth maintaining fixtures for
-6. Generate both platform baselines with `--update-snapshots` and verify they pass on a second run
+1. **Add deterministic data.** If an existing fixture set does not cover the
+   page, add a key to `VisualMockPage` and the required responses/routes in
+   `visualMockApi.ts`. The catch-all API route returns 404, so an unmocked
+   request fails visibly instead of reaching a live backend.
+2. **Create `<page>-visual.spec.ts`.** Follow the nearby specs: install fixtures,
+   navigate with `setupBefore`, call `stabilizeVisualPage`, and clean up with
+   `unrouteAll` plus `setupAfter`. Give each test a `should ...` name and the
+   `@visual` tag. Assert important content with accessible locators before
+   capturing screenshots.
+3. **Capture useful areas.** Add a main-content screenshot of
+   `.pf-v6-c-page__main` and a focused screenshot of the main framework
+   component or shell. Use explicit screenshot names. Mask only residual
+   dynamic regions; do not mask large areas that should remain covered.
+4. **Register the screen.** Add an entry to `visualPageRegistry.ts` with these
+   fields: `spec`, `baselineDirectory`, `routePath`, `routeSource`, `routeToken`,
+   and `screenshots`. Use the exact route token from `routeSource` (for example,
+   `id: PlatformRoute.Users`) and list each screenshot name without `.png`.
+5. **Generate both platform baselines.** From `playwright/`, replace
+   `<page>-visual.spec.ts` with the new spec filename:
+
+   ```bash
+   TAGS=@visual npx playwright test tests/visual/<page>-visual.spec.ts --project "mock chromium" --update-snapshots=all --workers=1 --retries=0
+   ../scripts/update-visual-baselines.sh tests/visual/<page>-visual.spec.ts
+   ```
+
+   The first command writes Darwin snapshots; the container script writes Linux
+   snapshots. Run the first command again without `--update-snapshots=all` to
+   compare against the generated Darwin baseline.
+
+6. **Check coverage and review the images.** From the repository root, run
+   `npm run visual:check-baselines`. Review the PNG diff and remove unrelated
+   snapshot changes before submitting. The checker catches missing registry
+   entries, stale route tokens, missing platform baselines, and orphan PNGs.
 
 Run `npm run visual:check-baselines` before submitting baseline changes. It
 fails when a visual spec is missing from the registry, its route token is absent,
@@ -256,8 +270,8 @@ All visual tests **must** include the `@visual` tag and use deterministic fixtur
 # Run only visual tests
 TAGS=@visual npx playwright test --project "mock chromium"
 
-# Run everything except visual tests
-TAGS="not @visual" npx playwright test --project "mock chromium"
+# Run a tagged suite while excluding visual tests
+NOT_TAGS=@visual npx playwright test --project "mock chromium"
 ```
 
 ## Where to run visual tests
@@ -279,44 +293,11 @@ TAGS=@visual npx playwright test --project "mock chromium"
 
 ### Jenkins
 
-Visual tests **should be filtered out** of standard Jenkins runs.
+Visual tests are excluded from the default `mock chromium` project. Keep them
+out of standard CI suites; the dedicated visual workflows opt in with
+`TAGS=@visual`.
 
 ```bash
-# In Jenkins — exclude visual tests from the regular suite
-TAGS="not @visual" npx playwright test --project "mock chromium"
-```
-
-## Adding new visual tests
-
-Follow the existing pattern. Add the page to `visualPageRegistry.ts`, select a shared fixture set with `installVisualMockApi()`, call `stabilizeVisualPage()`, then screenshot `.pf-v6-c-page__main` (excludes sidebar and brand logo). Mask only residual dynamic elements like timestamps.
-
-```ts
-test.beforeEach(async ({ page }) => {
-  await installVisualMockApi(page, ['templates']);
-  await setupBefore({ path: '/my-page' })({ page });
-  await stabilizeVisualPage(page);
-});
-
-test.afterEach(async ({ page }) => {
-  await page.unrouteAll({ behavior: 'ignoreErrors' });
-  await setupAfter({ page });
-});
-
-test('my page has no visual regressions', { tag: ['@visual'] }, async ({ page }) => {
-  await expect(page.getByRole('heading', { name: 'Expected Title' })).toBeVisible();
-
-  const mainContent = page.locator('.pf-v6-c-page__main');
-  await expect(mainContent).toHaveScreenshot('my-page.png', {
-    maxDiffPixelRatio: 0.01,
-    animations: 'disabled',
-    mask: [page.locator('.date-time')],
-  });
-
-  // Element-level screenshot of the key framework component
-  const detailsPanel = page.locator('dl').first();
-  await expect(detailsPanel).toHaveScreenshot('my-page-panel.png', {
-    maxDiffPixelRatio: 0.01,
-    animations: 'disabled',
-  });
-});
+# In Jenkins — explicitly exclude visual tests from a tagged suite
+NOT_TAGS=@visual npx playwright test --project "mock chromium"
 ```

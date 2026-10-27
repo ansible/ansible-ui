@@ -28,7 +28,7 @@ async function openInventory(page: Parameters<typeof navigateTo>[0]) {
 
 test.describe('Inventory Details - Visual Regression', () => {
   test(
-    'inventory details page has no visual regressions',
+    'should have no visual regressions on the inventory details page',
     { tag: ['@visual'] },
     async ({ page }) => {
       await openInventory(page);
@@ -44,7 +44,7 @@ test.describe('Inventory Details - Visual Regression', () => {
   );
 
   test(
-    'inventory details panel has no visual regressions',
+    'should have no visual regressions in the inventory details panel',
     { tag: ['@visual'] },
     async ({ page }) => {
       await openInventory(page);
