@@ -40,7 +40,7 @@ fi
 
 echo 'Running Playwright visual tests...'
 cd /work/playwright
-npx playwright test "${VISUAL_TEST_PATH:-tests/visual/}" \
+TAGS='@visual' npx playwright test "${VISUAL_TEST_PATH:-tests/visual/}" \
   --project 'mock chromium' \
   --workers=1 \
   --retries=0 \

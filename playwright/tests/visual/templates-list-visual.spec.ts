@@ -15,22 +15,26 @@ test.afterEach(async ({ page }) => {
 });
 
 test.describe('Templates List - Visual Regression', () => {
-  test('templates list page has no visual regressions', { tag: ['@visual'] }, async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible();
-    await expect(page.getByText('Demo Job Template')).toBeVisible();
+  test(
+    'should have no visual regressions on the templates list page',
+    { tag: ['@visual'] },
+    async ({ page }) => {
+      await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible();
+      await expect(page.getByText('Demo Job Template')).toBeVisible();
 
-    await expect(page.locator('.pf-v6-c-page__main')).toHaveScreenshot(
-      'templates-list-full-page.png',
-      {
-        maxDiffPixelRatio: 0.01,
-        animations: 'disabled',
-        mask: [page.locator('.pf-v6-c-pagination')],
-      }
-    );
-  });
+      await expect(page.locator('.pf-v6-c-page__main')).toHaveScreenshot(
+        'templates-list-full-page.png',
+        {
+          maxDiffPixelRatio: 0.01,
+          animations: 'disabled',
+          mask: [page.locator('.pf-v6-c-pagination')],
+        }
+      );
+    }
+  );
 
   test(
-    'templates list toolbar has no visual regressions',
+    'should have no visual regressions in the templates list toolbar',
     { tag: ['@visual'] },
     async ({ page }) => {
       await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible();

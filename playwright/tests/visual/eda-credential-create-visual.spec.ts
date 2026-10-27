@@ -12,7 +12,7 @@ test.afterEach(setupAfter);
 
 test.describe('EDA Credential Create Form - Visual Regression', () => {
   test(
-    'credential create form has no visual regressions',
+    'should have no visual regressions in the credential create form',
     { tag: ['@visual'] },
     async ({ page }) => {
       await expect(
@@ -30,7 +30,7 @@ test.describe('EDA Credential Create Form - Visual Regression', () => {
   );
 
   test(
-    'credential create form element has no visual regressions',
+    'should have no visual regressions in the credential create form element',
     { tag: ['@visual'] },
     async ({ page }) => {
       await expect(
