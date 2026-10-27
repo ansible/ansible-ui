@@ -12,6 +12,7 @@ import { useGet } from '@ansible/common-ui/crud/useGet';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -27,6 +28,10 @@ import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { PlatformRoute } from '../../../main/PlatformRoutes';
 import { PlatformPageForm } from '../../../common/PlatformPageForm';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+import {
+  authenticatorMappingErrorAdapter,
+  AuthenticatorMappingFormState,
+} from './authenticatorMappingErrorAdapter';
 import { MappingFields } from './MappingFields';
 import { ActionsResponse, OptionsResponse } from '@ansible/common-ui/interfaces/OptionsResponse';
 
@@ -63,12 +68,27 @@ interface MapAttributes extends MapBase {
 
 export type AuthenticatorMapValues = MapAlways | MapNever | MapGroups | MapAttributes;
 
+function useAuthenticatorMappingErrorAdapter() {
+  const submittedValuesRef = useRef<AuthenticatorMappingFormState>();
+  const errorAdapter = useCallback(
+    (error: unknown) => authenticatorMappingErrorAdapter(error, submittedValuesRef.current),
+    []
+  );
+  const captureSubmittedValues = (map: AuthenticatorMapValues) => {
+    submittedValuesRef.current = {
+      attributes: 'attributes' in map ? map.attributes : undefined,
+    };
+  };
+  return { errorAdapter, captureSubmittedValues };
+}
+
 export function CreateAuthenticatorMapping() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const postRequest = usePostRequest<AuthenticatorMapValues, AuthenticatorMap>();
   const params = useParams<{ id?: string }>();
   const pageNavigate = usePageNavigate();
+  const { errorAdapter, captureSubmittedValues } = useAuthenticatorMappingErrorAdapter();
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(
     gatewayAPI`/authenticator_maps/`
   );
@@ -79,6 +99,7 @@ export function CreateAuthenticatorMapping() {
   );
 
   const onSubmit: PageFormSubmitHandler<AuthenticatorMapValues> = async (map) => {
+    captureSubmittedValues(map);
     const data = {
       name: map.name,
       map_type: map.map_type,
@@ -120,6 +141,7 @@ export function CreateAuthenticatorMapping() {
         onCancel={() => void navigate(-1)}
         defaultValue={{ map_type: AuthenticatorMapType.allow }}
         optionsData={optionsData}
+        errorAdapter={errorAdapter}
       >
         <MappingInputs />
       </PlatformPageForm>
@@ -140,7 +162,9 @@ export function EditAuthenticatorMapping() {
     gatewayAPI`/authenticator_maps/`
   );
   const patchRequest = usePatchRequest<AuthenticatorMapValues, AuthenticatorMap>();
+  const { errorAdapter, captureSubmittedValues } = useAuthenticatorMappingErrorAdapter();
   const onSubmit: PageFormSubmitHandler<AuthenticatorMapValues> = async (map) => {
+    captureSubmittedValues(map);
     const data = {
       name: map.name,
       map_type: map.map_type,
@@ -198,6 +222,7 @@ export function EditAuthenticatorMapping() {
         onCancel={() => void navigate(-1)}
         defaultValue={initialValues as AuthenticatorMapValues}
         optionsData={optionsData}
+        errorAdapter={errorAdapter}
       >
         <MappingInputs />
       </PlatformPageForm>
