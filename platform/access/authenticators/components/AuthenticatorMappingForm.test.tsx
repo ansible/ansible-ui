@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -10,7 +10,7 @@ import authenticator from './mocks/authenticator.json';
 import authenticatorMapping from './mocks/authenticatorMapping.json';
 import roleDefinitions from './mocks/roleDefinitions.json';
 
-describe('AuthenticatorMappingForm', () => {
+describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
   const authMappingAttributesPayload = {
     id: 3,
     name: 'mapping one',
@@ -52,6 +52,9 @@ describe('AuthenticatorMappingForm', () => {
     }),
     http.patch(gatewayAPI`/authenticator_maps/3/`, () => {
       return HttpResponse.json(authenticatorMapping);
+    }),
+    http.options(gatewayAPI`/authenticator_maps/`, () => {
+      return HttpResponse.json({ actions: { POST: {} } });
     })
   );
 
@@ -347,4 +350,169 @@ describe('AuthenticatorMappingForm', () => {
       expect(patchPayload).not.toHaveProperty('order');
     });
   });
+
+  const cleanTextError =
+    "This field can't include HTML tags, script markup, or unsafe URI schemes.";
+
+  async function fillCreateAttributesForm(
+    user: ReturnType<typeof userEvent.setup>,
+    container: HTMLElement,
+    getByRole: ReturnType<typeof render>['getByRole'],
+    values: { name: string; attribute: string; value: string }
+  ) {
+    await waitFor(() => {
+      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+    });
+
+    const nameField = container.querySelector('[id="name"]') as HTMLInputElement;
+    await user.type(nameField, values.name);
+    await user.click(getByRole('button', { name: 'Select rule condition' }));
+    await user.click(getByRole('option', { name: 'Based on attributes' }));
+
+    await waitFor(() => {
+      expect(container.querySelector('[id="attributes-0-attribute"]')).toBeInTheDocument();
+    });
+
+    await user.click(getByRole('button', { name: 'Select condition type' }));
+    await user.click(getByRole('option', { name: 'at least one' }));
+
+    const attributeField = container.querySelector(
+      '[id="attributes-0-attribute"]'
+    ) as HTMLInputElement;
+    const valueField = container.querySelector('[id="attributes-0-value"]') as HTMLInputElement;
+    await user.type(attributeField, values.attribute);
+    await user.type(valueField, values.value);
+  }
+
+  test('should display API validation errors on attribute and value fields when creating', async () => {
+    server.use(
+      http.post(gatewayAPI`/authenticator_maps/`, () => {
+        return HttpResponse.json(
+          {
+            triggers: {
+              'attributes.badattr': [cleanTextError],
+              'attributes.badattr.contains': [cleanTextError],
+            },
+          },
+          { status: 400 }
+        );
+      })
+    );
+
+    const { container, getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/1/mappings/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/:id/mappings/create'}
+            element={<CreateAuthenticatorMapping />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const user = userEvent.setup({ delay: null });
+    await fillCreateAttributesForm(user, container, getByRole, {
+      name: 'Unsafe mapping',
+      attribute: 'badattr',
+      value: 'badvalue',
+    });
+    await user.click(getByRole('button', { name: 'Create mapping' }));
+
+    await waitFor(() => {
+      expect(screen.getAllByText(cleanTextError).length).toBeGreaterThanOrEqual(2);
+    });
+    expect(container.querySelector('[id="attributes-0-attribute-form-group"]')).toHaveTextContent(
+      cleanTextError
+    );
+    expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
+      cleanTextError
+    );
+  }, 15000);
+
+  test('should display API validation error on the value field when creating', async () => {
+    server.use(
+      http.post(gatewayAPI`/authenticator_maps/`, () => {
+        return HttpResponse.json(
+          {
+            triggers: {
+              'attributes.test.contains': [cleanTextError],
+            },
+          },
+          { status: 400 }
+        );
+      })
+    );
+
+    const { container, getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/1/mappings/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/:id/mappings/create'}
+            element={<CreateAuthenticatorMapping />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const user = userEvent.setup({ delay: null });
+    await fillCreateAttributesForm(user, container, getByRole, {
+      name: 'Value mapping',
+      attribute: 'test',
+      value: 'badvalue',
+    });
+    await user.click(getByRole('button', { name: 'Create mapping' }));
+
+    await waitFor(() => {
+      expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
+        cleanTextError
+      );
+    });
+    expect(
+      container.querySelector('[id="attributes-0-attribute-form-group"]')
+    ).not.toHaveTextContent(cleanTextError);
+  }, 15000);
+
+  test('should display API validation errors on attribute and value fields when editing', async () => {
+    server.use(
+      http.patch(gatewayAPI`/authenticator_maps/3/`, () => {
+        return HttpResponse.json(
+          {
+            triggers: {
+              'attributes.attribute one': [cleanTextError],
+              'attributes.attribute one.contains': [cleanTextError],
+            },
+          },
+          { status: 400 }
+        );
+      })
+    );
+
+    const { container, getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/1/mappings/3/edit']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/:id/mappings/:map_id/edit'}
+            element={<EditAuthenticatorMapping />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+    await user.click(getByRole('button', { name: 'Save mapping' }));
+
+    await waitFor(() => {
+      expect(screen.getAllByText(cleanTextError).length).toBeGreaterThanOrEqual(2);
+    });
+    expect(container.querySelector('[id="attributes-0-attribute-form-group"]')).toHaveTextContent(
+      cleanTextError
+    );
+    expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
+      cleanTextError
+    );
+  }, 15000);
 });
