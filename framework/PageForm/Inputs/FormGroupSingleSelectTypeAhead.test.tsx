@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -51,6 +52,96 @@ describe('FormGroupSingleSelectTypeAhead', () => {
 
     expect(screen.getByText('First')).toBeInTheDocument();
     expect(screen.getByText('Second')).toBeInTheDocument();
+  });
+
+  it('should select an existing option and close the menu', async () => {
+    const user = userEvent.setup({ delay: null });
+    const onHandleSelection = vi.fn();
+    const ControlledSelect = () => {
+      const [value, setValue] = useState<string | null>(null);
+
+      return (
+        <FormGroupSingleSelectTypeAhead
+          {...defaultProps}
+          value={value}
+          onHandleSelection={(selection) => {
+            onHandleSelection(selection);
+            setValue(selection.name);
+          }}
+        />
+      );
+    };
+    const { rerender } = render(<ControlledSelect />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.click(screen.getByRole('option', { name: 'Option 1' }));
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'option1' });
+    await waitFor(() => {
+      const updatedInput = screen.getByRole('textbox');
+      expect(updatedInput).toHaveValue('Option 1');
+      expect(updatedInput).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    rerender(<ControlledSelect />);
+    expect(screen.getByRole('textbox')).toHaveValue('Option 1');
+  });
+
+  it('should create a new option when creation is enabled', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    render(
+      <FormGroupSingleSelectTypeAhead {...defaultProps} onHandleSelection={onHandleSelection} />
+    );
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'New option');
+    await user.click(screen.getByRole('option', { name: 'Create new option "New option"' }));
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'New option' });
+    expect(input).toHaveValue('New option');
+  });
+
+  it('should not offer creation when creation is disabled', async () => {
+    const user = userEvent.setup();
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} allowCreate={false} />);
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'Unknown option');
+
+    expect(screen.queryByRole('option', { name: /Create new option/ })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('option', { name: 'No results found for "Unknown option"' })
+    ).toBeDisabled();
+  });
+
+  it('should show the required field indicator', () => {
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} isRequired />);
+
+    const label = screen.getByText('Test Select');
+    const requiredIndicator = label.parentElement?.querySelector('.pf-v6-c-form__label-required');
+
+    expect(requiredIndicator).toBeInTheDocument();
+  });
+
+  it('should show invalid helper text', () => {
+    render(
+      <FormGroupSingleSelectTypeAhead
+        {...defaultProps}
+        helperTextInvalid="This field is required."
+      />
+    );
+
+    expect(screen.getByText('This field is required.')).toBeInTheDocument();
+  });
+
+  it('should disable the input while submitting', () => {
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} isSubmitting />);
+
+    expect(screen.getByRole('textbox')).toBeDisabled();
   });
 
   it('should handle keyboard navigation with no options', async () => {
