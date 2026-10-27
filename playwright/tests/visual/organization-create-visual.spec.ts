@@ -13,7 +13,7 @@ test.afterEach(setupAfter);
 
 test.describe('Organization Create Wizard - Visual Regression', () => {
   test(
-    'organization wizard details step has no visual regressions',
+    'should have no visual regressions on the organization wizard details step',
     { tag: ['@visual'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
@@ -31,7 +31,7 @@ test.describe('Organization Create Wizard - Visual Regression', () => {
   );
 
   test(
-    'organization wizard review step has no visual regressions',
+    'should have no visual regressions on the organization wizard review step',
     { tag: ['@visual'] },
     async ({ page }) => {
       await navigateTo(page, 'Access Management', 'Organizations');
