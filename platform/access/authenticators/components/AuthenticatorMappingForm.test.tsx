@@ -10,6 +10,39 @@ import authenticator from './mocks/authenticator.json';
 import authenticatorMapping from './mocks/authenticatorMapping.json';
 import roleDefinitions from './mocks/roleDefinitions.json';
 
+const CLEAN_TEXT_ERROR =
+  "This field can't include HTML tags, script markup, or unsafe URI schemes.";
+
+async function fillCreateAttributesForm(
+  user: ReturnType<typeof userEvent.setup>,
+  container: HTMLElement,
+  getByRole: ReturnType<typeof render>['getByRole'],
+  values: { name: string; attribute: string; value: string }
+) {
+  await waitFor(() => {
+    expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+  });
+
+  const nameField = container.querySelector('[id="name"]') as HTMLInputElement;
+  await user.type(nameField, values.name);
+  await user.click(getByRole('button', { name: 'Select rule condition' }));
+  await user.click(getByRole('option', { name: 'Based on attributes' }));
+
+  await waitFor(() => {
+    expect(container.querySelector('[id="attributes-0-attribute"]')).toBeInTheDocument();
+  });
+
+  await user.click(getByRole('button', { name: 'Select condition type' }));
+  await user.click(getByRole('option', { name: 'at least one' }));
+
+  const attributeField = container.querySelector(
+    '[id="attributes-0-attribute"]'
+  ) as HTMLInputElement;
+  const valueField = container.querySelector('[id="attributes-0-value"]') as HTMLInputElement;
+  await user.type(attributeField, values.attribute);
+  await user.type(valueField, values.value);
+}
+
 describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
   const authMappingAttributesPayload = {
     id: 3,
@@ -351,47 +384,14 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     });
   });
 
-  const cleanTextError =
-    "This field can't include HTML tags, script markup, or unsafe URI schemes.";
-
-  async function fillCreateAttributesForm(
-    user: ReturnType<typeof userEvent.setup>,
-    container: HTMLElement,
-    getByRole: ReturnType<typeof render>['getByRole'],
-    values: { name: string; attribute: string; value: string }
-  ) {
-    await waitFor(() => {
-      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
-    });
-
-    const nameField = container.querySelector('[id="name"]') as HTMLInputElement;
-    await user.type(nameField, values.name);
-    await user.click(getByRole('button', { name: 'Select rule condition' }));
-    await user.click(getByRole('option', { name: 'Based on attributes' }));
-
-    await waitFor(() => {
-      expect(container.querySelector('[id="attributes-0-attribute"]')).toBeInTheDocument();
-    });
-
-    await user.click(getByRole('button', { name: 'Select condition type' }));
-    await user.click(getByRole('option', { name: 'at least one' }));
-
-    const attributeField = container.querySelector(
-      '[id="attributes-0-attribute"]'
-    ) as HTMLInputElement;
-    const valueField = container.querySelector('[id="attributes-0-value"]') as HTMLInputElement;
-    await user.type(attributeField, values.attribute);
-    await user.type(valueField, values.value);
-  }
-
   test('should display API validation errors on attribute and value fields when creating', async () => {
     server.use(
       http.post(gatewayAPI`/authenticator_maps/`, () => {
         return HttpResponse.json(
           {
             triggers: {
-              'attributes.badattr': [cleanTextError],
-              'attributes.badattr.contains': [cleanTextError],
+              'attributes.badattr': [CLEAN_TEXT_ERROR],
+              'attributes.badattr.contains': [CLEAN_TEXT_ERROR],
             },
           },
           { status: 400 }
@@ -419,13 +419,13 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     await user.click(getByRole('button', { name: 'Create mapping' }));
 
     await waitFor(() => {
-      expect(screen.getAllByText(cleanTextError).length).toBeGreaterThanOrEqual(2);
+      expect(screen.getAllByText(CLEAN_TEXT_ERROR).length).toBeGreaterThanOrEqual(2);
     });
     expect(container.querySelector('[id="attributes-0-attribute-form-group"]')).toHaveTextContent(
-      cleanTextError
+      CLEAN_TEXT_ERROR
     );
     expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
-      cleanTextError
+      CLEAN_TEXT_ERROR
     );
   }, 15000);
 
@@ -435,7 +435,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
         return HttpResponse.json(
           {
             triggers: {
-              'attributes.test.contains': [cleanTextError],
+              'attributes.test.contains': [CLEAN_TEXT_ERROR],
             },
           },
           { status: 400 }
@@ -464,12 +464,12 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
 
     await waitFor(() => {
       expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
-        cleanTextError
+        CLEAN_TEXT_ERROR
       );
     });
     expect(
       container.querySelector('[id="attributes-0-attribute-form-group"]')
-    ).not.toHaveTextContent(cleanTextError);
+    ).not.toHaveTextContent(CLEAN_TEXT_ERROR);
   }, 15000);
 
   test('should display API validation errors on attribute and value fields when editing', async () => {
@@ -478,8 +478,8 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
         return HttpResponse.json(
           {
             triggers: {
-              'attributes.attribute one': [cleanTextError],
-              'attributes.attribute one.contains': [cleanTextError],
+              'attributes.attribute one': [CLEAN_TEXT_ERROR],
+              'attributes.attribute one.contains': [CLEAN_TEXT_ERROR],
             },
           },
           { status: 400 }
@@ -506,13 +506,13 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     await user.click(getByRole('button', { name: 'Save mapping' }));
 
     await waitFor(() => {
-      expect(screen.getAllByText(cleanTextError).length).toBeGreaterThanOrEqual(2);
+      expect(screen.getAllByText(CLEAN_TEXT_ERROR).length).toBeGreaterThanOrEqual(2);
     });
     expect(container.querySelector('[id="attributes-0-attribute-form-group"]')).toHaveTextContent(
-      cleanTextError
+      CLEAN_TEXT_ERROR
     );
     expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
-      cleanTextError
+      CLEAN_TEXT_ERROR
     );
   }, 15000);
 });
