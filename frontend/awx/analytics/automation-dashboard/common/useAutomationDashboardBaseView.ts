@@ -76,18 +76,16 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
     setItems(data?.results);
   }, [data?.results]);
 
-  const updateItem = useCallback(
-    (item: T) => {
-      if (!items) return;
-      const index = items?.findIndex((i) => i.id === item.id);
-      if (index !== -1) {
-        const newItems = [...items];
-        newItems[index] = item;
-        setItems(newItems);
-      }
-    },
-    [items]
-  );
+  // Functional update, so several items can be updated one after another in the same render.
+  const updateItem = useCallback((item: T) => {
+    setItems((currentItems) => {
+      const index = currentItems?.findIndex((i) => i.id === item.id) ?? -1;
+      if (!currentItems || index === -1) return currentItems;
+      const newItems = [...currentItems];
+      newItems[index] = item;
+      return newItems;
+    });
+  }, []);
 
   return useMemo<IAutomationDashboardBaseView<T>>(() => {
     return {

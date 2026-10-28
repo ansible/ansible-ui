@@ -11,6 +11,7 @@ import { DashboardTableInputFieldProps } from '../types';
 import { Help } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
 import { useDebounce } from '@ansible/ansible-ui-framework/hooks/useDebounce';
+import { getNumberInputError } from '../utils/numberInputValidation';
 
 export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
   const {
@@ -77,23 +78,16 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
     isEditingRef.current = true;
     setError(null);
     setValue(newValue);
+    const validationError = getNumberInputError(
+      newValue,
+      { min, max, isInteger: type === 'integer' },
+      t
+    );
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     const numberValue = Number(newValue);
-    if (newValue === '' || Number.isNaN(numberValue)) {
-      setError(t('Please enter a valid number.'));
-      return;
-    }
-    if (type === 'integer' && !Number.isInteger(numberValue)) {
-      setError(t('Please enter a valid integer.'));
-      return;
-    }
-    if (max !== undefined && numberValue > max) {
-      setError(t('Value must be less than or equal to {{max}}.', { max }));
-      return;
-    }
-    if (min !== undefined && numberValue < min) {
-      setError(t('Value must be greater than or equal to {{min}}.', { min }));
-      return;
-    }
     pendingValueRef.current = numberValue;
     setValueDebounced(numberValue);
   };

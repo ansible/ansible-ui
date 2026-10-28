@@ -202,6 +202,35 @@ describe('useAutomationDashboardView', () => {
     expect(result.current.loading).toBe(false);
   });
 
+  test('should keep loading until the last of overlapping refreshes finishes', async () => {
+    let finishFirst!: () => void;
+    let finishSecond!: () => void;
+    mockBaseViewRefresh
+      .mockReturnValueOnce(new Promise<void>((resolve) => (finishFirst = resolve)))
+      .mockReturnValueOnce(new Promise<void>((resolve) => (finishSecond = resolve)));
+    const { result } = renderHook(() => useAutomationDashboardView({ toolbarFilters: [] }));
+
+    let first!: Promise<void>;
+    let second!: Promise<void>;
+    act(() => {
+      first = result.current.refresh();
+      second = result.current.refresh();
+    });
+    expect(result.current.loading).toBe(true);
+
+    await act(async () => {
+      finishFirst();
+      await first;
+    });
+    expect(result.current.loading).toBe(true);
+
+    await act(async () => {
+      finishSecond();
+      await second;
+    });
+    expect(result.current.loading).toBe(false);
+  });
+
   // --- exportCsv ---
 
   test('should call exportCsvBase with reportType and manage loading on exportCsv', async () => {
