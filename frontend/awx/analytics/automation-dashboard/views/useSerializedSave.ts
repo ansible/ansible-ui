@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 type SaveKey = string | number;
 
@@ -13,6 +13,8 @@ interface ISerializedSaveOptions<T, R> {
 
 interface ISaveQueue<T> {
   next?: { value: T };
+  /** Settles once this queue has saved its last value and was removed. */
+  drained?: Promise<void>;
 }
 
 /**
@@ -22,6 +24,7 @@ interface ISaveQueue<T> {
  * - Values queued while a save is in flight are coalesced — only the latest one is sent.
  * - `onSuccess` / `onError` run only for the latest value, so a slow response for an
  *   older value never overwrites newer local state.
+ * - `waitForIdle` resolves once no save is in flight or queued for any key.
  */
 export function useSerializedSave<T, R>(options: ISerializedSaveOptions<T, R>) {
   const optionsRef = useRef(options);
@@ -31,7 +34,7 @@ export function useSerializedSave<T, R>(options: ISerializedSaveOptions<T, R>) {
 
   const queuesRef = useRef(new Map<SaveKey, ISaveQueue<T>>());
 
-  return useCallback((key: SaveKey, value: T) => {
+  const enqueue = useCallback((key: SaveKey, value: T) => {
     const running = queuesRef.current.get(key);
     if (running) {
       running.next = { value };
@@ -39,12 +42,32 @@ export function useSerializedSave<T, R>(options: ISerializedSaveOptions<T, R>) {
     }
     const queue: ISaveQueue<T> = { next: { value } };
     queuesRef.current.set(key, queue);
-    void drainQueue(
-      queue,
-      () => optionsRef.current,
-      () => queuesRef.current.delete(key)
+    const removeQueue = () => {
+      if (queuesRef.current.get(key) === queue) queuesRef.current.delete(key);
+    };
+    // Also remove the queue if draining throws (e.g. in onError), so waitForIdle cannot spin;
+    // the error is rethrown so it still surfaces instead of being swallowed.
+    queue.drained = drainQueue(queue, () => optionsRef.current, removeQueue).catch(
+      (error: unknown) => {
+        removeQueue();
+        throw error;
+      }
     );
   }, []);
+
+  const waitForIdle = useCallback(() => waitForQueues(queuesRef.current), []);
+
+  return useMemo(() => ({ enqueue, waitForIdle }), [enqueue, waitForIdle]);
+}
+
+/**
+ * Waits for every queue to drain, then recurses, since a key can be enqueued again
+ * while waiting; resolves only once no queue is left.
+ */
+async function waitForQueues<T>(queues: Map<SaveKey, ISaveQueue<T>>): Promise<void> {
+  if (queues.size === 0) return;
+  await Promise.allSettled([...queues.values()].map((queue) => queue.drained ?? Promise.resolve()));
+  await waitForQueues(queues);
 }
 
 /**
