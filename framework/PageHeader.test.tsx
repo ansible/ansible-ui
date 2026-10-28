@@ -5,6 +5,18 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, test } from 'vitest';
 import { PageHeader } from './PageHeader';
 describe('PageHeader', () => {
+  test('should show the title without a help button when help is not provided', () => {
+    const { getByRole, queryByRole } = render(<PageHeader title="Hello World" />);
+    expect(getByRole('heading', { name: 'Hello World' })).toBeVisible();
+    expect(queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  test.each([undefined, null, ''])('should not show a heading when title is %s', (title) => {
+    const { queryByRole } = render(<PageHeader title={title} titleHelp="Demo help content" />);
+    expect(queryByRole('heading')).not.toBeInTheDocument();
+    expect(queryByRole('button')).not.toBeInTheDocument();
+  });
+
   test('should show header with title, description, help text and doc link', async () => {
     const user = userEvent.setup();
     const { getByRole, getByText, queryByText } = render(
