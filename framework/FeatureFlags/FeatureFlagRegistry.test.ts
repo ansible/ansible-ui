@@ -36,8 +36,11 @@ const definitions = {
   experimentalView: {
     defaultValue: false,
     description: 'Example experimental view.',
+    kind: 'experiment',
     owner: 'UI platform team',
     removalDate: '2026-12-31',
+    scope: 'client-only',
+    status: 'proposed',
   },
 } satisfies FeatureFlagDefinitions;
 
@@ -66,6 +69,19 @@ describe('createFeatureFlagRegistry', () => {
     expect(() => createFeatureFlagRegistry(invalidDefinitions)).toThrow(
       'Feature flags must default off'
     );
+  });
+
+  it('rejects the local development provider in production', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
+    try {
+      expect(() => createLocalFeatureFlagProvider({ storage })).toThrow(
+        'only available in development and test'
+      );
+    } finally {
+      process.env.NODE_ENV = originalNodeEnv;
+    }
   });
 
   it('uses local overrides only through the explicit local provider', () => {

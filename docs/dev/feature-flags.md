@@ -12,7 +12,7 @@ to a product screen; it is a reviewable contract for discussion.
 - Keep flag evaluation behind an explicit provider boundary.
 - Store only non-sensitive per-user preferences in browser storage for local development.
 - Pass environment and targeting context to a provider without putting secrets in the client.
-- Record an owner and removal date for every flag.
+- Record lifecycle status, kind, scope, owner, and removal date for every flag.
 - Make unknown flags and malformed storage fail closed.
 - Keep feature flags separate from authorization, entitlement, secrets, and
   backend rollout controls.
@@ -70,7 +70,9 @@ The application owns one JSON config, one registry, and one React scope. The
 when the application is built and deployed; it is not a live runtime switch.
 `createFeatureFlagDefinitions` keeps the safe fallback at `false`, while
 `createFeatureFlagConfigProvider` supplies the checked-in JSON value. The
-`FEATURE_<NAME>_ENABLED` identifier follows the existing AWX convention.
+`FEATURE_<NAME>_ENABLED` identifier follows the existing AWX convention. Each
+catalog entry also records its lifecycle `status`, intended `kind`, and
+`client-only` `scope`.
 
 ## Provider boundary
 
@@ -85,19 +87,23 @@ evaluation reason.
 
 ## Public catalog
 
-The app-owned JSON is the source of truth for each shipped toggle. Validation
-rejects duplicate names, invalid boolean values, malformed removal dates, and
-unexpected fields. [`feature-flags.json`](./feature-flags.json) is the example
-config used by the tests; the companion [`feature-flags.schema.json`](./feature-flags.schema.json)
-provides editor validation. The JSON `enabled` value may be `true` or `false`;
-registry defaults and provider failures remain off. The value applies to builds
-that import that config; use environment-specific config files when development
-and production need different values.
+The app-owned JSON is the source of truth for each shipped toggle.
+[`feature-flags.json`](./feature-flags.json) is the example config used by the
+tests; the companion [`feature-flags.schema.json`](./feature-flags.schema.json)
+provides editor validation. Runtime catalog validation rejects duplicate or
+invalid names, invalid lifecycle metadata, malformed dates, non-boolean
+values, and unexpected fields. A `proposed` or `deprecated` flag cannot have
+`enabled: true`; both the JSON Schema and runtime validator enforce this.
+Registry fallback defaults and provider failures remain off. A true value for
+an `alpha`, `beta`, or `production` flag is an explicit promotion and should
+receive code-owner review. It applies to builds importing that config; use
+environment-specific files for different build-time values.
 
 ## Development workflow
 
-For a local experiment, a development build can use the local provider and
-enable a flag for a working session with the registry API:
+For a local experiment, development and test builds can use the local provider
+and enable a flag for a working session with the registry API. Creating this
+provider throws in other environments:
 
 ```ts
 import { createLocalFeatureFlagProvider } from '@ansible/ansible-ui-framework';
@@ -111,13 +117,25 @@ same override can be stored in the browser console:
 
 ```js
 localStorage.setItem('ui:feature-flags', '{"FEATURE_EXAMPLE_VIEW_ENABLED":true}');
+location.reload();
 ```
 
+Directly editing browser storage does not notify an already-created provider;
+reload to apply that change. For an immediate update in the running development
+session, call `localProvider.setOverride('FEATURE_EXAMPLE_VIEW_ENABLED', true)`.
 Do not commit local overrides. To change the shipped value, update the app-owned
 JSON in a PR and deploy that change. Remove the local override with
-`localProvider.resetOverride('FEATURE_EXAMPLE_VIEW_ENABLED')` or
-by clearing the `ui:feature-flags` browser-storage entry when testing the
-default-off path.
+`localProvider.resetOverride('FEATURE_EXAMPLE_VIEW_ENABLED')` or clear the
+`ui:feature-flags` storage entry when testing the default-off path.
+
+## Gate a route
+
+When an entire route is behind a flag, the consuming application should hide
+its navigation link and guard direct route entry using the same evaluated flag.
+Implement that guard with the application's router; this framework does not
+depend on a specific router. Test both the flag-off redirect and flag-on route.
+A client-side route guard controls navigation only; it does not authorize API
+requests or protect data.
 
 ## Safety boundaries
 

@@ -9,8 +9,11 @@ const definitions = {
   FEATURE_UNFINISHED_VIEW_ENABLED: {
     defaultValue: false,
     description: 'A default-off view.',
+    kind: 'experiment',
     owner: 'UI platform team',
     removalDate: '2026-12-31',
+    scope: 'client-only',
+    status: 'proposed',
   },
 } as const;
 

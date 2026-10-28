@@ -16,14 +16,17 @@ describe('feature flag catalog', () => {
       FEATURE_EXAMPLE_VIEW_ENABLED: {
         defaultValue: false,
         description: 'Example of an unfinished client-only view.',
+        kind: 'experiment',
         owner: 'UI platform team',
         removalDate: '2026-12-31',
+        scope: 'client-only',
+        status: 'proposed',
       },
     });
   });
 
   it('uses the JSON enabled value as the flag provider value', () => {
-    const enabledCatalog = [{ ...catalog[0], enabled: true }];
+    const enabledCatalog = [{ ...catalog[0], status: 'production' as const, enabled: true }];
     const provider = createFeatureFlagConfigProvider(enabledCatalog);
 
     expect(provider.evaluateBoolean(catalog[0].name, false)).toEqual({
@@ -55,9 +58,23 @@ describe('feature flag catalog', () => {
     expect(() => validateFeatureFlagCatalog(invalidCatalog)).toThrow(TypeError);
   });
 
+  it.each(['proposed', 'deprecated'] as const)(
+    'rejects an enabled %s flag in the source-controlled catalog',
+    (status) => {
+      const invalidCatalog = [{ ...catalog[0], status, enabled: true }];
+
+      expect(() => createFeatureFlagConfigProvider(invalidCatalog)).toThrow(
+        'Proposed or deprecated feature flags must be disabled'
+      );
+    }
+  );
+
   it.each([
     [{ ...catalog[0], name: 'invalid-name' }, 'Invalid feature flag name'],
     [[catalog[0], catalog[0]], 'Duplicate feature flag name'],
+    [{ ...catalog[0], status: 'invalid-status' }, 'Invalid feature flag status'],
+    [{ ...catalog[0], kind: 'invalid-kind' }, 'Invalid feature flag kind'],
+    [{ ...catalog[0], scope: 'server' }, 'Invalid feature flag scope'],
     [{ ...catalog[0], enabled: 'true' }, 'Invalid feature flag enabled value'],
     [{ ...catalog[0], description: ' ' }, 'Feature flag requires a description and owner'],
     [{ ...catalog[0], owner: ' ' }, 'Feature flag requires a description and owner'],

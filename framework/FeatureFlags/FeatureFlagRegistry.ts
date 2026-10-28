@@ -1,8 +1,17 @@
+export type FeatureFlagStatus = 'proposed' | 'alpha' | 'beta' | 'production' | 'deprecated';
+
+export type FeatureFlagKind = 'release' | 'experiment' | 'operational' | 'kill-switch';
+
+export type FeatureFlagScope = 'client-only';
+
 export interface FeatureFlagDefinition {
   readonly defaultValue: boolean;
   readonly description: string;
+  readonly kind: FeatureFlagKind;
   readonly owner: string;
   readonly removalDate: string;
+  readonly scope: FeatureFlagScope;
+  readonly status: FeatureFlagStatus;
 }
 
 export type FeatureFlagDefinitions = Readonly<Record<string, FeatureFlagDefinition>>;
@@ -123,6 +132,13 @@ function readOverrides(storage: Storage | undefined, storageKey: string): Stored
   }
 }
 
+function assertLocalFeatureFlagProviderEnvironment(): void {
+  const environment = process.env.NODE_ENV;
+  if (environment !== 'development' && environment !== 'test') {
+    throw new Error('The local feature flag provider is only available in development and test');
+  }
+}
+
 function createDefaultFeatureFlagProvider(): FeatureFlagProvider {
   return {
     name: 'default',
@@ -144,6 +160,7 @@ function isFeatureFlagEvaluation(
 export function createLocalFeatureFlagProvider(
   options: LocalFeatureFlagProviderOptions = {}
 ): LocalFeatureFlagProvider {
+  assertLocalFeatureFlagProviderEnvironment();
   const storage = options.storage ?? getDefaultStorage();
   const storageKey = options.storageKey ?? defaultStorageKey;
   const overrides = readOverrides(storage, storageKey);
