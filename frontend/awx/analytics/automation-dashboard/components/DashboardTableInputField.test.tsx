@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { DashboardTableInputField } from './DashboardTableInputField';
