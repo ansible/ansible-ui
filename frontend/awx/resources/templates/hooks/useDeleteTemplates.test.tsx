@@ -205,6 +205,21 @@ describe('useDeleteTemplates', () => {
     expect(callArgs.alertPrompts).toBeUndefined();
   });
 
+  test('should still open confirmation when workflow node count lookup fails', async () => {
+    server.use(
+      http.get('*/workflow_job_template_nodes/', () =>
+        HttpResponse.json({ detail: 'error' }, { status: 500 })
+      )
+    );
+    const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
+
+    await result.current([createMockJobTemplate({ id: 10 })]);
+
+    expect(mockBulkAction).toHaveBeenCalledTimes(1);
+    const callArgs = mockBulkAction.mock.calls[0][0] as { alertPrompts?: string[] };
+    expect(callArgs.alertPrompts).toBeUndefined();
+  });
+
   test('should warn generally when deleting multiple templates', async () => {
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 

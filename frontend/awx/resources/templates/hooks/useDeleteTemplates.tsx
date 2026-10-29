@@ -12,10 +12,15 @@ import { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { useTemplateColumns } from './useTemplateColumns';
 
 async function getWorkflowJobTemplateNodeCount(templateId: number) {
-  const relatedNodes = await requestGet<AwxItemsResponse<WorkflowNode>>(
-    awxAPI`/workflow_job_template_nodes/?unified_job_template=${templateId.toString()}`
-  );
-  return relatedNodes?.count ?? 0;
+  try {
+    const relatedNodes = await requestGet<AwxItemsResponse<WorkflowNode>>(
+      awxAPI`/workflow_job_template_nodes/?unified_job_template=${templateId.toString()}`
+    );
+    return relatedNodes?.count ?? 0;
+  } catch {
+    // Auxiliary check failed — open delete confirmation without an in-use warning.
+    return 0;
+  }
 }
 
 export function useDeleteTemplates(
