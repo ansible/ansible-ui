@@ -10,25 +10,41 @@ Playwright screenshot tests that catch major layout and styling regressions — 
 
 ## Prerequisites
 
-Install dependencies with `npm ci` from the repository root. Mock-backed visual
-tests need no AAP server or credentials. Podman or Docker is needed only when
-generating Linux baselines locally; otherwise use the author-triggered workflow.
+Use Node 24, install dependencies with `npm ci`, and install Chromium with
+`npx playwright install chromium` from the repository root. Mock-backed visual
+tests need a running UI, but no AAP backend or credentials. Podman or Docker is
+needed only when generating Linux baselines locally.
 
 ## Running the tests
 
-Run Playwright commands from `playwright/`. Run
-`npm run visual:check-baselines` from the repository root.
+Build and start the UI from the repository root:
 
 ```bash
-# Generate initial baselines (first time, or after intentional UI changes)
-TAGS=@visual npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
+npm run -w @ansible/platform-ui build
+DEV_SERVER_PROTOCOL=http npm run -w @ansible/platform-ui preview
+```
+
+Leave the preview running and use another terminal to run Playwright from
+`playwright/`. The mock user is `automation-admin`; it does not need a password.
+Set `PLATFORM_UI` to the preview URL, and set `TAGS=@visual` to include these
+opt-in tests. `SKIP_COVERAGE=true` avoids the coverage setup project.
+
+```bash
+cd playwright
+export PLATFORM_UI=http://localhost:4100 PLATFORM_USERNAME=automation-admin
+export TAGS=@visual SKIP_COVERAGE=true
 
 # Run visual tests (compares against baselines)
-TAGS=@visual npx playwright test tests/visual/ --project "mock chromium"
+npx playwright test tests/visual/ --project "mock chromium" --workers=1 --retries=0
 
 # View the HTML report (includes visual diffs on failure)
 npx playwright show-report playwright/html-report
 ```
+
+Run `npm run visual:check-baselines` from the repository root to check the
+registry and baseline files. Only update screenshots after reviewing an
+intentional visual change. Playwright selects the baseline for the current OS;
+fonts and rendering can vary between local machines and CI.
 
 ## Test structure
 
@@ -59,7 +75,7 @@ When a visual change is intentional (e.g., a PatternFly upgrade, a redesigned co
 ### macOS (darwin) baselines
 
 ```bash
-npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
+TAGS=@visual npx playwright test tests/visual/ --project "mock chromium" --update-snapshots=all
 ```
 
 ### Linux baselines (local via podman)
@@ -72,7 +88,7 @@ git diff playwright/tests/visual/
 git add playwright/tests/visual/**/*-linux.png
 ```
 
-This workflow builds the UI inside a container using the official Playwright Linux image, serves it on https://localhost:4100, runs the mock-backed visual tests with --update-snapshots, and writes updated -linux.png files directly to your working tree via volume mount. It does not require an AAP server or credentials.
+This workflow builds the UI inside a container using the official Playwright Linux image, serves it on http://localhost:4100, runs the mock-backed visual tests with --update-snapshots, and writes updated -linux.png files directly to your working tree via volume mount. It does not require an AAP server or credentials.
 
 Requires Podman or Docker installed locally.
 
