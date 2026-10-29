@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Validate PR and capture its head
         id: pr
-        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         with:
           github-token: ${{ github.token }}
           script: |
@@ -57,7 +57,7 @@ jobs:
 
       - name: Dispatch baseline update
         if: steps.pr.outcome == 'success'
-        uses: actions/github-script@373c709c69115d41ff229c7e5df9f8788daa9553 # v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         env:
           PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
           PR_REF: ${{ steps.pr.outputs.pr_ref }}
