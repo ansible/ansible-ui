@@ -267,10 +267,14 @@ export function EditCredential() {
           )
       );
       const updatedValues = [...filteredPrev, ...credentialPluginValues];
-      // mark any fields previously handled by a plugin that have been updated to use a different plugin for deletion
-      updatedValues.forEach((cp) => {
-        if (prev.some((prevValue) => prevValue.input_field_name === cp.input_field_name)) {
-          setPluginsToDelete((prev) => [...prev, cp.input_field_name]);
+      // Only delete the prior input source for fields the user is replacing via the plugin modal
+      credentialPluginValues.forEach((newValue) => {
+        if (prev.some((prevValue) => prevValue.input_field_name === newValue.input_field_name)) {
+          setPluginsToDelete((prevPlugins) =>
+            prevPlugins.includes(newValue.input_field_name)
+              ? prevPlugins
+              : [...prevPlugins, newValue.input_field_name]
+          );
         }
       });
 
