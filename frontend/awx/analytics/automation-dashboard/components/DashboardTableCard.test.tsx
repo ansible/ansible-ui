@@ -74,6 +74,22 @@ describe('DashboardTableCard', () => {
     expect(screen.getByRole('heading', { name: 'No data' })).toBeInTheDocument();
   });
 
+  test('renders 0 in the value cell when execution_count is 0', () => {
+    const items = [{ id: 1, name: 'Zero Count Item', execution_count: 0 }] as IDashboardTableItem[];
+    render(<DashboardTableCard {...defaultProps} items={items} />);
+    const row = screen.getByText('Zero Count Item').closest('tr');
+    const valueCell = row?.querySelectorAll('td')[1];
+    expect(valueCell).toHaveTextContent(/^0$/);
+  });
+
+  test('should render long names with PatternFly Truncate so the full name stays available', () => {
+    const longName = 'A very long project name that does not fit in the name column of the card';
+    const items = [{ id: 1, name: longName, execution_count: 1 }] as IDashboardTableItem[];
+    render(<DashboardTableCard {...defaultProps} items={items} />);
+    const nameElement = screen.getByText(longName);
+    expect(nameElement.closest('.pf-v6-c-truncate')).toBeInTheDocument();
+  });
+
   test('renders empty value cell when execution_count is undefined', () => {
     const items = [{ id: 1, name: 'No Count Item' }] as IDashboardTableItem[];
     render(<DashboardTableCard {...defaultProps} items={items} />);

@@ -9,7 +9,7 @@ const baseView = createLeaderboardsView({
   dimensions: {
     volume: { score: 487, rank: 3, totalRanked: 84 },
     breadth: { score: 12, rank: 1, totalRanked: 84 },
-    consistency: { score: 9, rank: 14, totalRanked: 84 },
+    consistency: { score: 18, rank: 14, totalRanked: 84 },
   },
   dimensionLeaderboards: {
     volume: [
@@ -82,7 +82,7 @@ describe('AutomationDimensions', () => {
     render(<AutomationDimensions />);
 
     const row = screen.getByText('Consistency').closest('li') as HTMLElement;
-    expect(within(row).getByText('9')).toBeInTheDocument();
+    expect(within(row).getByText('18')).toBeInTheDocument();
     expect(row).toHaveTextContent('Rank 14 of 84');
   });
 

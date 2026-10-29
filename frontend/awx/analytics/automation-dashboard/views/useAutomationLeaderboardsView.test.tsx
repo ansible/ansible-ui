@@ -27,6 +27,16 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 const DIMENSION_KEYS: DimensionKey[] = ['volume', 'breadth', 'consistency'];
 const STREAK_STATES = ['enterpriseAndOrg', 'enterpriseOnly', 'none'];
 
+// Computed the same way as the mapper, so this doesn't hardcode a locale-specific date format —
+// it only pins down the UTC month/day of each "YYYY-MM-DD" entry.
+function expectedStreakDate(isoDate: string): string {
+  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+}
+
 /**
  * Assertions that must hold for ANY `AutomationLeaderboardsData` the hook resolves to —
  * the mapped mock report, the empty-window defaults, or a real API payload tomorrow.
@@ -129,7 +139,7 @@ describe('mapLeaderboardReport', () => {
       const data = mapLeaderboardReport(MOCK_LEADERBOARD_REPORT);
 
       expect(data.streakCalendar[0]).toEqual({
-        dateStr: 'Aug 19',
+        dateStr: expectedStreakDate('2026-08-19'),
         state: 'enterpriseAndOrg',
         enterpriseRuns: 164,
         orgRuns: 96,
@@ -140,7 +150,7 @@ describe('mapLeaderboardReport', () => {
       const data = mapLeaderboardReport(MOCK_LEADERBOARD_REPORT);
 
       expect(data.streakCalendar[1]).toEqual({
-        dateStr: 'Aug 20',
+        dateStr: expectedStreakDate('2026-08-20'),
         state: 'enterpriseOnly',
         enterpriseRuns: 167,
         orgRuns: 0,
@@ -151,7 +161,7 @@ describe('mapLeaderboardReport', () => {
       const data = mapLeaderboardReport(MOCK_LEADERBOARD_REPORT);
 
       expect(data.streakCalendar[2]).toEqual({
-        dateStr: 'Aug 21',
+        dateStr: expectedStreakDate('2026-08-21'),
         state: 'none',
         enterpriseRuns: 0,
         orgRuns: 0,
