@@ -7,7 +7,12 @@ import type { SetStateAction } from 'react';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import type { CredentialPluginsModalProps } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
-import { CreateCredential, EditCredential } from './CredentialForm';
+import {
+  CreateCredential,
+  EditCredential,
+  getPluginInputFieldNamesToReplace,
+  mergeUniquePluginFieldNames,
+} from './CredentialForm';
 
 /**
  * Mock BecomeMethodField so that it registers become_method = { name: 'sudo' } by default.
@@ -419,6 +424,67 @@ const server = setupServer(
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
+
+describe('credential plugin input source replace helpers (AAP-94800)', () => {
+  it('should return only the confirmed field when sibling lookup links remain', () => {
+    const previousAccumulated = [
+      {
+        id: 10,
+        input_field_name: 'username',
+        source_credential: 2,
+        metadata: { object_query: 'user-query' },
+      },
+      {
+        id: 11,
+        input_field_name: 'password',
+        source_credential: 2,
+        metadata: { object_query: 'pass-query' },
+      },
+    ];
+    const confirmedPluginValues = [
+      {
+        input_field_name: 'username',
+        source_credential: 3,
+        metadata: { object_query: 'replacement-query' },
+      },
+    ];
+
+    expect(getPluginInputFieldNamesToReplace(previousAccumulated, confirmedPluginValues)).toEqual([
+      'username',
+    ]);
+  });
+
+  it('should return empty when the confirmed field was not previously linked', () => {
+    const previousAccumulated = [
+      {
+        id: 11,
+        input_field_name: 'password',
+        source_credential: 2,
+        metadata: {},
+      },
+    ];
+    const confirmedPluginValues = [
+      {
+        input_field_name: 'username',
+        source_credential: 3,
+        metadata: {},
+      },
+    ];
+
+    expect(getPluginInputFieldNamesToReplace(previousAccumulated, confirmedPluginValues)).toEqual(
+      []
+    );
+  });
+
+  it('should append unique field names for pluginsToDelete', () => {
+    expect(mergeUniquePluginFieldNames(['username'], ['username', 'password'])).toEqual([
+      'username',
+      'password',
+    ]);
+    expect(mergeUniquePluginFieldNames([], ['username'])).toEqual(['username']);
+    expect(mergeUniquePluginFieldNames(['password'], [])).toEqual(['password']);
+  });
+});
 
 describe('CredentialForm', () => {
   describe('CreateCredential', () => {
