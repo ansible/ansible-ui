@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import type { SetStateAction } from 'react';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import type { CredentialPluginsModalProps } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
@@ -2116,7 +2117,11 @@ describe('CredentialForm', () => {
       const useCredentialPluginsModalSpy = vi
         .spyOn(pluginDialog, 'useCredentialPluginsModal')
         .mockImplementation(() => {
-          return (props: CredentialPluginsModalProps) => {
+          return (value: SetStateAction<CredentialPluginsModalProps | undefined>) => {
+            const props = typeof value === 'function' ? value(undefined) : value;
+            if (!props) {
+              return;
+            }
             props.setCredentialPluginValues([
               {
                 input_field_name: props.field.id,
