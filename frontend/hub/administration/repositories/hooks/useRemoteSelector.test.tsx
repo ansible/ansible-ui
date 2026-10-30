@@ -37,6 +37,7 @@ describe('useRemoteSelector (useRemoteFilters)', () => {
       })
     );
 
-    await fetch(`${pulpAPI`/remotes/ansible/collection/`}?name__icontains=test`);
+    const remotesUrl = pulpAPI`/remotes/ansible/collection/`;
+    await fetch(`${remotesUrl}?name__icontains=test`);
   });
 });

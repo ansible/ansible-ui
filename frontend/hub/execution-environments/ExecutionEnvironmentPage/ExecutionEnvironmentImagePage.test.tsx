@@ -1,6 +1,7 @@
 /* eslint-disable i18next/no-literal-string */
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { http, HttpResponse } from 'msw';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { delay, http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -10,85 +11,40 @@ import {
 } from '../test/mockExecutionEnvironment';
 import { ExecutionEnvironmentImagePage } from './ExecutionEnvironmentImagePage';
 
-vi.mock('@ansible/common-ui/crud/useGet', () => ({
-  useGet: vi.fn((url: string | undefined) => {
-    if (url?.includes('execution-environments/repositories') && !url.includes('_content')) {
-      return {
-        data: mockExecutionEnvironment,
-        isLoading: false,
-        error: undefined,
-        refresh: () => undefined,
-      };
-    }
-    if (url?.includes('_content/images/')) {
-      return {
-        data: mockExecutionEnvironmentImage,
-        isLoading: false,
-        error: undefined,
-        refresh: () => undefined,
-      };
-    }
-    return { data: undefined, isLoading: true, error: undefined, refresh: () => undefined };
-  }),
-}));
+const isEERequest = ({ request }: { request: Request }) =>
+  request.url.includes('/v3/plugin/execution-environments/repositories/') &&
+  !request.url.includes('/_content/');
 
-import { useGet } from '@ansible/common-ui/crud/useGet';
+const isImageRequest = ({ request }: { request: Request }) =>
+  request.url.includes('/_content/images/') && !request.url.endsWith('/_content/images/');
+
+function renderPage() {
+  render(
+    <MemoryRouter
+      initialEntries={['/execution-environments/test-execution-environment/images/latest/']}
+    >
+      <Routes>
+        <Route
+          path="/execution-environments/:id/images/:tag/"
+          element={<ExecutionEnvironmentImagePage />}
+        />
+      </Routes>
+    </MemoryRouter>
+  );
+}
 
 describe('ExecutionEnvironmentImagePage', () => {
-  const server = setupServer();
+  const server = setupServer(
+    http.get(isEERequest, () => HttpResponse.json(mockExecutionEnvironment)),
+    http.get(isImageRequest, () => HttpResponse.json(mockExecutionEnvironmentImage))
+  );
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-  afterEach(() => {
-    server.resetHandlers();
-    vi.mocked(useGet).mockImplementation((url: string | undefined) => {
-      if (url?.includes('execution-environments/repositories') && !url.includes('_content')) {
-        return {
-          data: mockExecutionEnvironment,
-          isLoading: false,
-          error: undefined,
-          refresh: () => undefined,
-        };
-      }
-      if (url?.includes('_content/images/')) {
-        return {
-          data: mockExecutionEnvironmentImage,
-          isLoading: false,
-          error: undefined,
-          refresh: () => undefined,
-        };
-      }
-      return { data: undefined, isLoading: true, error: undefined, refresh: () => undefined };
-    });
-  });
+  afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
   it('renders image digest and tags in the page header', async () => {
-    server.use(
-      http.get(
-        ({ request }) =>
-          request.url.includes('/v3/plugin/execution-environments/repositories/') &&
-          !request.url.includes('/_content/'),
-        () => HttpResponse.json(mockExecutionEnvironment)
-      ),
-      http.get(
-        ({ request }) =>
-          request.url.includes('/_content/images/') && !request.url.endsWith('/_content/images/'),
-        () => HttpResponse.json(mockExecutionEnvironmentImage)
-      )
-    );
-
-    render(
-      <MemoryRouter
-        initialEntries={['/execution-environments/test-execution-environment/images/latest/']}
-      >
-        <Routes>
-          <Route
-            path="/execution-environments/:id/images/:tag/"
-            element={<ExecutionEnvironmentImagePage />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderPage();
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: 'Image layers' })).toBeInTheDocument();
@@ -98,87 +54,44 @@ describe('ExecutionEnvironmentImagePage', () => {
     expect(screen.getByText(/Size/i)).toBeInTheDocument();
   });
 
-  it('shows loading page while image request is in flight', () => {
-    vi.mocked(useGet).mockImplementation((url: string | undefined) => {
-      if (url?.includes('execution-environments/repositories') && !url.includes('_content')) {
-        return {
-          data: mockExecutionEnvironment,
-          isLoading: true,
-          error: undefined,
-          refresh: () => undefined,
-        };
-      }
-      return { data: undefined, isLoading: true, error: undefined, refresh: () => undefined };
-    });
-
-    render(
-      <MemoryRouter
-        initialEntries={['/execution-environments/test-execution-environment/images/latest/']}
-      >
-        <Routes>
-          <Route
-            path="/execution-environments/:id/images/:tag/"
-            element={<ExecutionEnvironmentImagePage />}
-          />
-        </Routes>
-      </MemoryRouter>
+  it('shows loading page while image request is in flight', async () => {
+    server.use(
+      http.get(isImageRequest, async () => {
+        await delay('infinite');
+        return HttpResponse.json(mockExecutionEnvironmentImage);
+      })
     );
 
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
   });
 
-  it('shows hub error when execution environment request fails', () => {
-    vi.mocked(useGet).mockImplementation((url: string | undefined) => {
-      if (url?.includes('execution-environments/repositories') && !url.includes('_content')) {
-        return {
-          data: undefined,
-          error: new Error('EE failed'),
-          isLoading: false,
-          refresh: () => undefined,
-        };
-      }
-      return {
-        data: mockExecutionEnvironmentImage,
-        isLoading: false,
-        error: undefined,
-        refresh: () => undefined,
-      };
-    });
-
-    render(
-      <MemoryRouter
-        initialEntries={['/execution-environments/test-execution-environment/images/latest/']}
-      >
-        <Routes>
-          <Route
-            path="/execution-environments/:id/images/:tag/"
-            element={<ExecutionEnvironmentImagePage />}
-          />
-        </Routes>
-      </MemoryRouter>
+  it('shows hub error when execution environment request fails', async () => {
+    server.use(
+      http.get(isEERequest, () =>
+        HttpResponse.json({ detail: 'EE failed' }, { status: 500, statusText: 'EE failed' })
+      )
     );
 
-    expect(screen.getByText('EE failed')).toBeInTheDocument();
+    renderPage();
+
+    await waitFor(() => {
+      expect(screen.getByText('EE failed')).toBeInTheDocument();
+    });
   });
 
   it('writes digest to clipboard from copy control', async () => {
+    const user = userEvent.setup();
     const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
 
-    render(
-      <MemoryRouter
-        initialEntries={['/execution-environments/test-execution-environment/images/latest/']}
-      >
-        <Routes>
-          <Route
-            path="/execution-environments/:id/images/:tag/"
-            element={<ExecutionEnvironmentImagePage />}
-          />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderPage();
 
     await screen.findByRole('heading', { name: 'Image layers' });
-    fireEvent.click(document.getElementById(mockExecutionEnvironmentImage.digest)!);
+    await user.click(screen.getByRole('button', { name: 'Copyable input' }));
+
     expect(writeText).toHaveBeenCalledWith(mockExecutionEnvironmentImage.digest);
     writeText.mockRestore();
   });

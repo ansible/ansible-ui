@@ -1,8 +1,11 @@
 /* eslint-disable i18next/no-literal-string */
 import { renderHook, act } from '@testing-library/react';
 import type { TFunction } from 'i18next';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
+import { pulpAPI } from '../../../common/api/formatPath';
 import { useApprovalActions, approveCollection } from './useApprovalActions';
 import { CollectionVersionSearch } from '../Approval';
 
@@ -23,11 +26,11 @@ vi.mock('./useApproveCollections', () => ({
   useApproveCollectionsFrameworkModal: () => mockApproveModal,
 }));
 
-vi.mock('@ansible/common-ui/crud/Data', () => ({
-  requestGet: vi.fn(),
-}));
+const server = setupServer();
 
-import { requestGet } from '@ansible/common-ui/crud/Data';
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 vi.mock('../../../main/HubRoutes', () => ({
   HubRoute: {
@@ -304,7 +307,11 @@ describe('useApprovalActions', () => {
   });
 
   it('runs approve action handler', async () => {
-    vi.mocked(requestGet).mockResolvedValue({ count: 1, results: [{}] });
+    server.use(
+      http.get(pulpAPI`/repositories/ansible/ansible/`, () =>
+        HttpResponse.json({ count: 1, results: [{}] })
+      )
+    );
     const { result } = renderUseApprovalActions();
     const approveAction = getAction(result.current, 'Approve collection');
 
@@ -421,16 +428,31 @@ describe('useApprovalActions', () => {
 
 describe('approveCollection', () => {
   it('opens approve modal when a single approved repository exists', async () => {
-    vi.mocked(requestGet).mockResolvedValue({ count: 1, results: [{}] });
+    let requestedUrl: string | undefined;
+    server.use(
+      http.get(pulpAPI`/repositories/ansible/ansible/`, ({ request }) => {
+        requestedUrl = request.url;
+        return HttpResponse.json({ count: 1, results: [{}] });
+      })
+    );
+
     approveCollection([mockCollection], mockCopyToRepository, mockApproveModal, false, mockT);
+
     await vi.waitFor(() => {
       expect(mockApproveModal).toHaveBeenCalledWith([mockCollection]);
     });
+    expect(requestedUrl).toContain('pulp_label_select=pipeline=approved');
   });
 
   it('delegates to copy flow when multiple approved repositories exist', async () => {
-    vi.mocked(requestGet).mockResolvedValue({ count: 2, results: [{}, {}] });
+    server.use(
+      http.get(pulpAPI`/repositories/ansible/ansible/`, () =>
+        HttpResponse.json({ count: 2, results: [{}, {}] })
+      )
+    );
+
     approveCollection([mockCollection], mockCopyToRepository, mockApproveModal, true, mockT);
+
     await vi.waitFor(() => {
       expect(mockCopyToRepository).toHaveBeenCalled();
     });
