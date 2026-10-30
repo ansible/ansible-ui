@@ -5,7 +5,7 @@ import { Settings } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
-test.describe('Job Settings', () => {
+test.describe('Job Settings', { tag: ['@settings'] }, () => {
   test(
     'should be able to edit job settings',
     { tag: ['@not_mock', '@tier1'] },

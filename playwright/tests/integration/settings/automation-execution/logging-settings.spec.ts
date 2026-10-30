@@ -5,7 +5,7 @@ import { Settings } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
-test.describe('Logging Settings', () => {
+test.describe('Logging Settings', { tag: ['@settings'] }, () => {
   test('should be able to edit job settings', { tag: ['@not_mock'] }, async ({ page }) => {
     await Settings.ui.revertAll(page, 'Logging');
     await expect(page.getByRole('heading', { name: 'Logging Settings' })).toBeVisible();

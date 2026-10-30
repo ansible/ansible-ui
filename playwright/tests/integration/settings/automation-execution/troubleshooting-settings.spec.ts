@@ -5,7 +5,7 @@ import { Settings } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
-test.describe('Troubleshooting Settings', () => {
+test.describe('Troubleshooting Settings', { tag: ['@settings'] }, () => {
   test(
     'should be able to edit troubleshooting settings',
     { tag: ['@not_mock'] },

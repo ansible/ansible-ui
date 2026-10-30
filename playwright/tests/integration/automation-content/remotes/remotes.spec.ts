@@ -13,7 +13,7 @@ import { promises as fs } from 'node:fs';
 test.beforeEach(setupBefore({ path: '/content/administration/remotes' }));
 test.afterEach(setupAfter);
 
-test.describe('Hub - Remotes', () => {
+test.describe('Hub - Remotes', { tag: ['@remote'] }, () => {
   test.beforeAll(() => {
     if (isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE)) {
       test.skip(true, 'Remotes not available on SaaS/Azure deployments');
