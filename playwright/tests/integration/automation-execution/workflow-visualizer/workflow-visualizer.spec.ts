@@ -19,6 +19,32 @@ import {
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
 test.setTimeout(2 * 60 * 1000);
+
+async function saveWorkflowVisualizer(page: import('@playwright/test').Page): Promise<void> {
+  const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
+  await expect(saveButton).toBeEnabled({ timeout: 30000 });
+  await saveButton.click();
+
+  const toaster = page.getByTestId('alert-toaster');
+  const successToast = toaster.getByText('Successfully saved workflow visualizer');
+  const errorAlert = toaster.getByText('Failed to save workflow job template');
+  await expect(successToast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
+
+  if (
+    await errorAlert
+      .first()
+      .isVisible()
+      .catch(() => false)
+  ) {
+    throw new Error(`Workflow visualizer save failed: ${(await toaster.innerText()).trim()}`);
+  }
+
+  const closeAlert = toaster.getByRole('button', { name: /Close.*alert/ });
+  if (await closeAlert.isVisible({ timeout: 3000 }).catch(() => false)) {
+    await closeAlert.click();
+  }
+}
+
 test.describe('Workflow Viz', () => {
   test(
     'Workflow Viz Add Nodes: Should render a workflow visualizer view with multiple nodes present',
@@ -97,9 +123,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await saveWorkflowVisualizer(page);
       await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
       await WorkflowVisualizer.ui.removeAllWorkflowVizNodes(page);
       await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);
@@ -310,16 +334,21 @@ test.describe('Workflow Viz', () => {
         .click();
       await page.getByRole('button', { name: 'Remove step' }).click();
       await expect(page.locator('[class*="action-icon__background"]')).toHaveCount(0);
-      await WorkflowVisualizer.ui.saveAndDismissToast(page);
-      await WorkflowVisualizer.ui.addWorkflowStepWithoutSave(
-        page,
-        'Project Sync',
-        projectTwo,
-        'Project'
-      );
+      await saveWorkflowVisualizer(page);
+      await expect(page.getByRole('button', { name: 'Add step' }).nth(1)).toBeVisible();
+      await page.getByRole('button', { name: 'Add step' }).nth(1).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
+      await page.getByRole('button', { name: 'Job Template', exact: true }).click();
+      await page.getByRole('option', { name: 'Project Sync' }).click();
+      await page.getByRole('button', { name: 'Project', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(projectTwo);
+      await page.getByRole('option', { name: projectTwo }).click();
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
-      await WorkflowVisualizer.ui.saveAndDismissToast(page);
+      await page.getByRole('button', { name: 'Fit to Screen' }).click();
+      await saveWorkflowVisualizer(page);
       await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
       await Project.ui.delete(page, projectTwo);
       await Project.ui.delete(page, projectOne);
