@@ -176,6 +176,7 @@ export interface JobSummaryFields {
     results: { id: number; name: string }[];
   };
   credentials?: SummaryFieldCredential[];
+  credential?: SummaryFieldCredential;
   workflow_job_template?: {
     id: number;
     name: string;
