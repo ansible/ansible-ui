@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlatformOrganizationTeamsAddRoles } from './PlatformOrganizationTeamsAddRoles';
 
@@ -66,10 +67,11 @@ describe('PlatformOrganizationTeamsAddRoles cache invalidation', () => {
     });
   });
 
-  it('clears role assignment cache before returning to the Teams tab', () => {
+  it('clears role assignment cache before returning to the Teams tab', async () => {
+    const user = userEvent.setup();
     render(<PlatformOrganizationTeamsAddRoles />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
     expect(progressDialogMock).toHaveBeenCalledTimes(1);
 
     const dialogOptions = progressDialogMock.mock.calls[0][0] as { onClose: () => void };
