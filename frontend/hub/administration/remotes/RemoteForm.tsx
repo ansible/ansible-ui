@@ -13,7 +13,7 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { useClearCache } from '@ansible/common-ui/useInvalidateCache/useInvalidateCache';
 import { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { HubError } from '../../common/HubError';
@@ -274,8 +274,17 @@ function HelperWrapper({ isNew }: Readonly<{ isNew?: boolean }>) {
   const {
     featureFlags: { collection_signing },
   } = useHubContext();
-  const [isCommunityRemote, setIsCommunityRemote] = useState(false);
   const [reload, setReload] = useState(0);
+  const isCommunityRemote = useWatch<RemoteFormProps, 'url', RemoteFormProps, boolean>({
+    name: 'url',
+    compute: (url) => {
+      try {
+        return new URL(url).hostname === 'galaxy.ansible.com';
+      } catch {
+        return false;
+      }
+    },
+  });
 
   const handleOnClear = (name: string) => {
     resetField(name, { defaultValue: null });
@@ -311,7 +320,6 @@ function HelperWrapper({ isNew }: Readonly<{ isNew?: boolean }>) {
         disableEditName={!isNew}
         handleOnClear={handleOnClear}
         isCommunityRemote={isCommunityRemote}
-        setIsCommunityRemote={setIsCommunityRemote}
         shouldHideField={shouldHideField}
       />
       <PageFormSection singleColumn>
