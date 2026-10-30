@@ -7,7 +7,10 @@ import { User, CreateUserUIOptions } from '../../../../utils/user';
 test.beforeEach(setupBefore({ path: '/access/users' }));
 test.afterEach(setupAfter);
 
-test.describe('User Types - Creates Users of Type Normal, Platform Auditor and System Admin', () => {
+test.describe(
+  'User Types - Creates Users of Type Normal, Platform Auditor and System Admin',
+  { tag: ['@user'] },
+  () => {
   test(
     'creates a system administrator in the ui and then deletes it',
     { tag: ['@not_mock', '@tier1'] },

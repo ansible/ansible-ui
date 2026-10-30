@@ -8,7 +8,7 @@ import { PlatformRole } from '@ansible/platform-ui/interfaces/PlatformRole';
 import { PlatformTeam } from '@ansible/platform-ui/interfaces/PlatformTeam';
 import { PlatformUser } from '@ansible/platform-ui/interfaces/PlatformUser';
 
-test.describe('System Role Assignment', () => {
+test.describe('System Role Assignment', { tag: ['@role', '@team', '@user'] }, () => {
   let systemRole: PlatformRole | undefined;
   let systemRoleName: string;
   let team: PlatformTeam | undefined;

@@ -20,7 +20,10 @@ test.afterEach(setupAfter);
  * Platform team create form; same OPTIONS-driven validation plumbing as AWX forms,
  * fetched via gatewayAPI against the gateway teams endpoint.
  */
-test.describe('Platform team OPTIONS-driven validation (create form)', () => {
+test.describe(
+  'Platform team OPTIONS-driven validation (create form)',
+  { tag: ['@team', '@organization'] },
+  () => {
   test(
     'shows OPTIONS-driven validation error on blur for name field',
     { tag: ['@not_mock', '@tier1'] },

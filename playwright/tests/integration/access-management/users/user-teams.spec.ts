@@ -6,7 +6,10 @@ import { Organization, Team, User } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/users' }));
 test.afterEach(setupAfter);
 
-test.describe('Users - Teams and Roles Tab Tests', () => {
+test.describe(
+  'Users - Teams and Roles Tab Tests',
+  { tag: ['@user', '@team', '@role'] },
+  () => {
   test(
     'should add and remove a team from teams tab',
     { tag: ['@not_mock', '@tier1'] },

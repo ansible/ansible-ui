@@ -6,7 +6,10 @@ import { User, Inventory } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/users' }));
 test.afterEach(setupAfter);
 
-test('should assign a user role', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
+test(
+  'should assign a user role',
+  { tag: ['@not_mock', '@tier1', '@user', '@role', '@inventory'] },
+  async ({ page }) => {
   const username = await User.ui.create(page).then((r) => (typeof r === 'string' ? r : r.userName));
   const inventory = await Inventory.ui.create(page);
   await page.getByRole('link', { name: 'Users' }).click();
@@ -34,4 +37,5 @@ test('should assign a user role', { tag: ['@not_mock', '@tier1'] }, async ({ pag
   await expect(page.locator('tbody')).toContainText(inventory);
   await User.ui.delete(page, username);
   await Inventory.ui.delete(page, inventory);
-});
+  }
+);

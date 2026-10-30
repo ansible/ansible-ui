@@ -5,7 +5,7 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import { User, Team, Organization, Inventory, Project } from '@ansible/playwright/utils';
 
-test.describe('Platform Teams - Role Inheritance', () => {
+test.describe('Platform Teams - Role Inheritance', { tag: ['@team', '@role'] }, () => {
   let orgName: string;
   let userName: string;
   let inventoryName: string;
