@@ -13,17 +13,17 @@ export interface ExecutionEnvironment {
       created_at: string;
       updated_at: string;
       pulp_labels: object;
-      remote: {
+      remote?: {
         id: string;
         pulp_href: string;
         name: string;
         upstream_name: string;
         registry: string;
         last_sync_task: {
-          state: string;
-          started_at: string;
-          finished_at: string;
-          error: {
+          state?: string;
+          started_at?: string;
+          finished_at?: string;
+          error?: {
             traceback: string;
             description: string;
           };

@@ -1,9 +1,47 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
-import { useCollectionVersionsActionsRemove } from './useRepositoryActions';
+import { useCollectionVersionsActionsRemove, useRepositoryActions } from './useRepositoryActions';
 import { Repository } from '../Repository';
+
+const mockDeleteRepositories = vi.fn();
+const mockSyncRepositories = vi.fn();
+const mockWriteToClipboard = vi.fn();
+const mockAddAlert = vi.fn();
+const mockPageNavigate = vi.fn();
+
+vi.mock('./useDeleteRepositories', () => ({
+  useDeleteRepositories: () => mockDeleteRepositories,
+}));
+
+vi.mock('./useSyncRepositories', () => ({
+  useSyncRepositories: () => mockSyncRepositories,
+}));
+
+vi.mock('@ansible/ansible-ui-framework', async () => {
+  const actual = await vi.importActual('@ansible/ansible-ui-framework');
+  return {
+    ...actual,
+    usePageAlertToaster: () => ({ addAlert: mockAddAlert }),
+    usePageNavigate: () => mockPageNavigate,
+  };
+});
+
+vi.mock('@ansible/ansible-ui-framework/hooks/useClipboard', () => ({
+  useClipboard: () => ({ writeToClipboard: mockWriteToClipboard }),
+}));
+
+vi.mock('../../../common/api/hub-api-utils', async () => {
+  const actual = await vi.importActual('../../../common/api/hub-api-utils');
+  return {
+    ...actual,
+    getRepositoryBasePath: vi.fn(),
+    getRepoURL: vi.fn((path: string) => `https://hub.example/${path}/`),
+  };
+});
+
+import { getRepositoryBasePath } from '../../../common/api/hub-api-utils';
 
 // Mock dependent hooks
 vi.mock('../../../collections/hooks/useDeleteCollectionsFromRepository', () => ({
@@ -143,5 +181,136 @@ describe('useCollectionVersionsActionsRemove', () => {
         expect(isActionHidden(getAction(result.current, 'Remove'))).toBe(false);
       });
     });
+  });
+});
+
+function getRepoAction(actions: ReturnType<typeof useRepositoryActions>, label: string) {
+  return actions.find((action) => 'label' in action && action.label === label);
+}
+
+function clickRepoAction(action: ReturnType<typeof getRepoAction>, item: Repository) {
+  if (action && 'onClick' in action) {
+    (action.onClick as (item: Repository) => unknown)(item);
+  }
+}
+
+function getRepoActionDisabledReason(action: ReturnType<typeof getRepoAction>, item: Repository) {
+  const isDisabled = action && 'isDisabled' in action ? action.isDisabled : undefined;
+  return typeof isDisabled === 'function'
+    ? (isDisabled as (item: Repository) => string | undefined)(item)
+    : isDisabled;
+}
+
+describe('useRepositoryActions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getRepositoryBasePath).mockResolvedValue('published');
+  });
+
+  it('returns edit, sync, copy CLI, and delete actions', () => {
+    const { result } = renderHook(() => useRepositoryActions({ onRepositoriesDeleted: vi.fn() }), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    expect(getRepoAction(result.current, 'Edit repository')).toBeDefined();
+    expect(getRepoAction(result.current, 'Sync repository')).toBeDefined();
+    expect(getRepoAction(result.current, 'Copy CLI configuration')).toBeDefined();
+    expect(getRepoAction(result.current, 'Delete repository')).toBeDefined();
+  });
+
+  it('navigates to edit repository', () => {
+    const { result } = renderHook(() => useRepositoryActions({ onRepositoriesDeleted: vi.fn() }), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    const editAction = getRepoAction(result.current, 'Edit repository');
+    act(() => {
+      clickRepoAction(editAction, mockRepository);
+    });
+
+    expect(mockPageNavigate).toHaveBeenCalled();
+  });
+
+  it('disables sync when repository has no remote', () => {
+    const { result } = renderHook(() => useRepositoryActions({ onRepositoriesDeleted: vi.fn() }), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    const syncAction = getRepoAction(result.current, 'Sync repository');
+    expect(getRepoActionDisabledReason(syncAction, mockRepository)).toContain('no remotes');
+  });
+
+  it('calls syncRepositories when remote is configured', () => {
+    const repoWithRemote = { ...mockRepository, remote: '/pulp/remotes/1/' };
+    const { result } = renderHook(() => useRepositoryActions({ onRepositoriesDeleted: vi.fn() }), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    const syncAction = getRepoAction(result.current, 'Sync repository');
+    act(() => {
+      clickRepoAction(syncAction, repoWithRemote);
+    });
+
+    expect(mockSyncRepositories).toHaveBeenCalledWith(repoWithRemote);
+  });
+
+  it('copies CLI configuration when distribution exists', async () => {
+    const { result } = renderHook(() => useRepositoryActions({ onRepositoriesDeleted: vi.fn() }), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    const copyAction = getRepoAction(result.current, 'Copy CLI configuration');
+    act(() => {
+      clickRepoAction(copyAction, mockRepository);
+    });
+
+    await waitFor(() => {
+      expect(mockWriteToClipboard).toHaveBeenCalled();
+    });
+  });
+
+  it('shows alert when copy CLI has no distribution', async () => {
+    vi.mocked(getRepositoryBasePath).mockRejectedValue(new Error('missing'));
+
+    const { result } = renderHook(() => useRepositoryActions({ onRepositoriesDeleted: vi.fn() }), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    const copyAction = getRepoAction(result.current, 'Copy CLI configuration');
+    act(() => {
+      clickRepoAction(copyAction, mockRepository);
+    });
+
+    await waitFor(() => {
+      expect(mockAddAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'danger',
+          title: 'There are no distributions associated with this repository.',
+        })
+      );
+    });
+  });
+
+  it('disables delete for protected repositories', () => {
+    const protectedRepo = { ...mockRepository, name: 'published' };
+    const { result } = renderHook(() => useRepositoryActions({ onRepositoriesDeleted: vi.fn() }), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    const deleteAction = getRepoAction(result.current, 'Delete repository');
+    expect(getRepoActionDisabledReason(deleteAction, protectedRepo)).toContain('Protected');
+  });
+
+  it('calls deleteRepositories on delete click', () => {
+    const { result } = renderHook(() => useRepositoryActions({ onRepositoriesDeleted: vi.fn() }), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    const deleteAction = getRepoAction(result.current, 'Delete repository');
+    act(() => {
+      clickRepoAction(deleteAction, mockRepository);
+    });
+
+    expect(mockDeleteRepositories).toHaveBeenCalledWith([mockRepository]);
   });
 });

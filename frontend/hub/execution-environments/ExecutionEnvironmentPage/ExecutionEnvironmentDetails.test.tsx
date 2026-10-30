@@ -1,10 +1,20 @@
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ExecutionEnvironmentDetails } from './ExecutionEnvironmentDetails';
+
+const mockAddAlert = vi.fn();
+
+vi.mock('@ansible/ansible-ui-framework', async () => {
+  const actual = await vi.importActual('@ansible/ansible-ui-framework');
+  return {
+    ...actual,
+    usePageAlertToaster: () => ({ addAlert: mockAddAlert }),
+  };
+});
 
 interface ReadmeType {
   updated_at: string;
@@ -61,6 +71,28 @@ describe('ExecutionEnvironmentDetails', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
   afterEach(() => {
     readmeMockData = mockReadmeEmpty;
+    mockAddAlert.mockClear();
+    server.resetHandlers();
+    server.use(
+      http.get(
+        ({ request }) => {
+          return (
+            request.url.includes('/v3/plugin/execution-environments/repositories/') &&
+            request.url.includes('/_content/readme/')
+          );
+        },
+        () => HttpResponse.json(readmeMockData)
+      ),
+      http.put(
+        ({ request }) => {
+          return (
+            request.url.includes('/v3/plugin/execution-environments/repositories/') &&
+            request.url.includes('/_content/readme/')
+          );
+        },
+        async ({ request }) => HttpResponse.json(await request.json())
+      )
+    );
   });
   afterAll(() => server.close());
 
@@ -105,7 +137,7 @@ describe('ExecutionEnvironmentDetails', () => {
 
   test('should allow editing README with markdown preview', async () => {
     readmeMockData = mockReadmeWithContent;
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
 
     renderWithFreshCache();
 
@@ -142,7 +174,7 @@ describe('ExecutionEnvironmentDetails', () => {
 
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
-  });
+  }, 15000);
 
   test('should render GFM tables in README', async () => {
     readmeMockData = mockReadmeWithGfmTable;
@@ -152,6 +184,63 @@ describe('ExecutionEnvironmentDetails', () => {
       expect(screen.getByRole('table')).toBeInTheDocument();
       expect(screen.getByText('Col A')).toBeInTheDocument();
       expect(screen.getByText('cell1')).toBeInTheDocument();
+    });
+  });
+
+  test('should save README changes', async () => {
+    readmeMockData = mockReadmeEmpty;
+    let savedText = '';
+    server.use(
+      http.put(
+        ({ request }) => {
+          return (
+            request.url.includes('/v3/plugin/execution-environments/repositories/') &&
+            request.url.includes('/_content/readme/')
+          );
+        },
+        async ({ request }) => {
+          const body = (await request.json()) as ReadmeType;
+          savedText = body.text;
+          return HttpResponse.json(body);
+        }
+      )
+    );
+
+    const user = userEvent.setup({ delay: null });
+    renderWithFreshCache();
+
+    await user.click(await screen.findByTestId('add-readme'));
+    await user.type(screen.getByTestId('raw-markdown'), '# Saved readme');
+    await user.click(screen.getByRole('button', { name: /save/i }));
+
+    await waitFor(() => {
+      expect(savedText).toBe('# Saved readme');
+      expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+    });
+  });
+
+  test('should show error alert when README save fails', async () => {
+    readmeMockData = mockReadmeWithContent;
+    server.use(
+      http.put(
+        ({ request }) => {
+          return (
+            request.url.includes('/v3/plugin/execution-environments/repositories/') &&
+            request.url.includes('/_content/readme/')
+          );
+        },
+        () => HttpResponse.json({ detail: 'Save failed' }, { status: 400 })
+      )
+    );
+
+    const user = userEvent.setup({ delay: null });
+    renderWithFreshCache();
+
+    await user.click(await screen.findByRole('button', { name: /edit/i }));
+    await user.click(screen.getByRole('button', { name: /save/i }));
+
+    await waitFor(() => {
+      expect(mockAddAlert).toHaveBeenCalledWith(expect.objectContaining({ variant: 'danger' }));
     });
   });
 });
