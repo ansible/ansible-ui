@@ -63,6 +63,63 @@ describe('RulebookActivationDetails - Options', () => {
     expect(await screen.findByText('Auto-restart on project update')).toBeInTheDocument();
   });
 
+  it('should display enabled debug log database storage for debug activations', async () => {
+    server.use(
+      http.get(edaAPI`/activations/1/`, () =>
+        HttpResponse.json({ ...mockActivation, log_level: 'debug', store_debug_logs: true })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Store debug logs in database')).toBeInTheDocument();
+    expect(screen.getByText('Enabled')).toBeInTheDocument();
+  });
+
+  it('should display disabled debug log database storage for debug activations', async () => {
+    server.use(
+      http.get(edaAPI`/activations/1/`, () =>
+        HttpResponse.json({ ...mockActivation, log_level: 'debug', store_debug_logs: false })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Store debug logs in database')).toBeInTheDocument();
+    expect(screen.getByText('Disabled')).toBeInTheDocument();
+  });
+
+  it('should not display debug log database storage for non-debug activations', async () => {
+    server.use(
+      http.get(edaAPI`/activations/1/`, () =>
+        HttpResponse.json({ ...mockActivation, log_level: 'info', store_debug_logs: true })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/rulebook-activations/1/details']}>
+        <Routes>
+          <Route path="/rulebook-activations/:id/details" element={<RulebookActivationDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await screen.findByText('Activation ID');
+    expect(screen.queryByText('Store debug logs in database')).not.toBeInTheDocument();
+  });
+
   it('should display skip audit events option when enabled', async () => {
     server.use(
       http.get(edaAPI`/activations/1/`, () =>
