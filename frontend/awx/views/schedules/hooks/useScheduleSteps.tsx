@@ -1,10 +1,10 @@
+import { PageWizardBasicStep } from '@ansible/ansible-ui-framework/PageWizard/types';
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { SurveyStep } from '../../../common/SurveyStep';
-import { WizardFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 import { shouldHideOtherStep } from '../../../resources/templates/WorkflowVisualizer/wizard/helpers';
 import { NodePromptsStep as PromptsStep } from '../../../resources/templates/WorkflowVisualizer/wizard/NodePromptsStep';
 import { RuleFields, ScheduleFormWizard } from '../types';
@@ -13,16 +13,33 @@ import { ExceptionsStep } from '../wizard/ExceptionsStep';
 import { RulesStep } from '../wizard/RulesStep';
 import { ScheduleReviewStep } from '../wizard/ScheduleReviewStep';
 import { ScheduleSelectStep } from '../wizard/ScheduleSelectStep';
+import { ScheduleLabelsInput } from '../components/ScheduleLabelsInput';
 import { useSetRRuleItemToRuleSet } from './useSetRRuleItemToRuleSet';
 
 export function useScheduleSteps() {
   const { t } = useTranslation();
   const getRuleSet = useSetRRuleItemToRuleSet();
   return useCallback(
-    (resourceEndPoint?: string, isTopLevelSchedule?: boolean) => [
+    (resourceEndPoint?: string, isTopLevelSchedule?: boolean): PageWizardBasicStep[] => [
       {
         id: 'details',
         label: t('Details'),
+        validate: (
+          formData: Partial<ScheduleFormWizard>,
+          wizardData: Partial<ScheduleFormWizard>
+        ) => {
+          const isTemplate = ['job_template', 'workflow_job_template'].includes(
+            formData.schedule_type ?? ''
+          );
+          if (
+            isTemplate &&
+            (!wizardData.launch_config ||
+              wizardData.resource?.id !== formData.resourceId ||
+              wizardData.resource?.type !== formData.schedule_type)
+          ) {
+            throw new Error(t('Wait for the schedule configuration to load.'));
+          }
+        },
         inputs: (
           <ScheduleSelectStep
             isTopLevelSchedule={isTopLevelSchedule}
@@ -33,7 +50,18 @@ export function useScheduleSteps() {
       {
         id: 'promptStep',
         label: t('Prompts'),
-        inputs: <PromptsStep preventCredentialsThatNeedPasswordsOnLaunch />,
+        inputs: (
+          <PromptsStep
+            preventCredentialsThatNeedPasswordsOnLaunch
+            labelsInput={<ScheduleLabelsInput />}
+          />
+        ),
+        validate: (
+          formData: Partial<ScheduleFormWizard>,
+          wizardData: Partial<ScheduleFormWizard>
+        ) => ({
+          prompt: { ...formData.prompt, labels: wizardData.prompt?.labels },
+        }),
         hidden: (wizardData: Partial<ScheduleFormWizard>) => {
           const { launch_config, resource, resourceId, schedule_type } = wizardData;
 
@@ -52,15 +80,9 @@ export function useScheduleSteps() {
         id: 'survey',
         label: t('Survey'),
         inputs: <SurveyStep />,
-        hidden: (wizardData: Partial<WizardFormValues>) => {
-          if (Object.keys(wizardData).length === 0) {
-            return true;
-          }
-          if (wizardData.launch_config?.survey_enabled) {
-            return false;
-          }
-          return true;
-        },
+        hidden: (wizardData: Partial<ScheduleFormWizard>) =>
+          !['job_template', 'workflow_job_template'].includes(wizardData.schedule_type ?? '') ||
+          !wizardData.launch_config?.survey_enabled,
       },
       {
         id: 'rules',

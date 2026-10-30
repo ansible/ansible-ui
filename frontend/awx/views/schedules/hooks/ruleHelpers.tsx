@@ -107,7 +107,7 @@ export function useGetMonthOptions() {
 }
 
 export function mungePromptData(
-  prompt: PromptFormValues,
+  prompt: Omit<PromptFormValues, 'labels'>,
   launchConfig?: LaunchConfiguration | null
 ): Record<string, unknown> {
   if (prompt === undefined) return {};

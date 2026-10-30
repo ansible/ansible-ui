@@ -4,6 +4,7 @@ import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/Pa
 import { usePageWizard } from '@ansible/ansible-ui-framework/PageWizard/PageWizardProvider';
 import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { useEffect, useState } from 'react';
+import { Label, LabelGroup } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AwxError } from '../../../common/AwxError';
@@ -103,7 +104,19 @@ export function ScheduleReviewStep() {
               {resource && 'scm_branch' in resource ? resource.scm_branch : undefined}
             </PageDetail>
           )}
-          {hasPromptDetails ? <PromptReviewDetails /> : null}
+          {hasPromptDetails ? (
+            <PromptReviewDetails />
+          ) : (
+            <PageDetail label={t('Labels')} isEmpty={!wizardData.prompt?.labels?.length}>
+              <LabelGroup>
+                {wizardData.prompt?.labels?.map((label) => (
+                  <Label key={label.id ?? `${label.organization}:${label.name}`}>
+                    {label.name}
+                  </Label>
+                ))}
+              </LabelGroup>
+            </PageDetail>
+          )}
         </PageDetails>
         <PageDetail fullWidth label={t('Toggle timezone')}>
           <TimezoneToggle isLocal={isLocal} setIsLocal={setIsLocal} localTimezone={timezone} />
