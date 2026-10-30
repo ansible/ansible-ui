@@ -43,7 +43,7 @@ export function CredentialMultilineInput({
       accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
     );
   };
-  const useGetSourceCredential = (id: number) => {
+  const useGetSourceCredential = (id: number | undefined) => {
     const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
     return data;
   };

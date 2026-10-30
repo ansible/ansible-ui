@@ -202,6 +202,7 @@ describe('FormGroupSingleSelectTypeAhead', () => {
       expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option0');
     });
     await user.keyboard('{ArrowDown}');
+    await user.keyboard('{ArrowDown}');
 
     expect(input).toBeInTheDocument();
   });
