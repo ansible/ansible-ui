@@ -1,11 +1,18 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import type { SetStateAction } from 'react';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
-import { CreateCredential, EditCredential } from './CredentialForm';
+import type { CredentialPluginsModalProps } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
+import {
+  CreateCredential,
+  EditCredential,
+  getPluginInputFieldNamesToReplace,
+  mergeUniquePluginFieldNames,
+} from './CredentialForm';
 
 /**
  * Mock BecomeMethodField so that it registers become_method = { name: 'sudo' } by default.
@@ -417,6 +424,67 @@ const server = setupServer(
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
+
+describe('credential plugin input source replacement', () => {
+  it('should return only the confirmed field when sibling lookup links remain', () => {
+    const previousAccumulated = [
+      {
+        id: 10,
+        input_field_name: 'username',
+        source_credential: 2,
+        metadata: { object_query: 'user-query' },
+      },
+      {
+        id: 11,
+        input_field_name: 'password',
+        source_credential: 2,
+        metadata: { object_query: 'pass-query' },
+      },
+    ];
+    const confirmedPluginValues = [
+      {
+        input_field_name: 'username',
+        source_credential: 3,
+        metadata: { object_query: 'replacement-query' },
+      },
+    ];
+
+    expect(getPluginInputFieldNamesToReplace(previousAccumulated, confirmedPluginValues)).toEqual([
+      'username',
+    ]);
+  });
+
+  it('should return empty when the confirmed field was not previously linked', () => {
+    const previousAccumulated = [
+      {
+        id: 11,
+        input_field_name: 'password',
+        source_credential: 2,
+        metadata: {},
+      },
+    ];
+    const confirmedPluginValues = [
+      {
+        input_field_name: 'username',
+        source_credential: 3,
+        metadata: {},
+      },
+    ];
+
+    expect(getPluginInputFieldNamesToReplace(previousAccumulated, confirmedPluginValues)).toEqual(
+      []
+    );
+  });
+
+  it('should append unique field names for pluginsToDelete', () => {
+    expect(mergeUniquePluginFieldNames(['username'], ['username', 'password'])).toEqual([
+      'username',
+      'password',
+    ]);
+    expect(mergeUniquePluginFieldNames([], ['username'])).toEqual(['username']);
+    expect(mergeUniquePluginFieldNames(['password'], [])).toEqual(['password']);
+  });
+});
 
 describe('CredentialForm', () => {
   describe('CreateCredential', () => {
@@ -2059,5 +2127,112 @@ describe('CredentialForm', () => {
         }
       }
     }, 25000);
+
+    it('should not delete other lookup links when replacing one field plugin on edit', async () => {
+      server.use(
+        http.get(awxAPI`/credentials/1/input_sources/`, () =>
+          HttpResponse.json({
+            count: 2,
+            next: null,
+            previous: null,
+            results: [
+              {
+                id: 10,
+                input_field_name: 'username',
+                source_credential: 2,
+                target_credential: 1,
+                metadata: { object_query: 'user-query' },
+              },
+              {
+                id: 11,
+                input_field_name: 'password',
+                source_credential: 2,
+                target_credential: 1,
+                metadata: { object_query: 'pass-query' },
+              },
+            ],
+          })
+        ),
+        http.get(awxAPI`/credentials/3/`, () =>
+          HttpResponse.json({
+            id: 3,
+            type: 'credential',
+            name: 'Replacement Lookup',
+            kind: 'cyberark',
+            credential_type: 23,
+            inputs: {},
+          })
+        )
+      );
+
+      const deletedInputSourceIds: string[] = [];
+      server.use(
+        http.delete(
+          ({ request }) => request.url.includes('/credential_input_sources/'),
+          ({ request }) => {
+            const match = request.url.match(/credential_input_sources\/(\d+)\//);
+            if (match?.[1]) {
+              deletedInputSourceIds.push(match[1]);
+            }
+            return HttpResponse.json({}, { status: 204 });
+          }
+        )
+      );
+
+      const pluginDialog = await import('./CredentialPlugins/hooks/useCredentialPluginsDialog');
+      const useCredentialPluginsModalSpy = vi
+        .spyOn(pluginDialog, 'useCredentialPluginsModal')
+        .mockImplementation(() => {
+          return (value: SetStateAction<CredentialPluginsModalProps | undefined>) => {
+            const props = typeof value === 'function' ? value(undefined) : value;
+            if (!props) {
+              return;
+            }
+            props.setCredentialPluginValues([
+              {
+                input_field_name: props.field.id,
+                source_credential: 3,
+                metadata: { object_query: 'replacement-query' },
+              },
+            ]);
+          };
+        });
+
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/credentials/1/edit']}>
+          <Routes>
+            <Route path="/credentials/:id/edit" element={<EditCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('name')).toHaveValue('Test Credential');
+      });
+
+      await waitFor(
+        () => {
+          expect(screen.getByTestId('username-form-group')).toBeInTheDocument();
+          expect(screen.getByTestId('password-form-group')).toBeInTheDocument();
+        },
+        { timeout: 10000 }
+      );
+
+      const usernameFormGroup = screen.getByTestId('username-form-group');
+      await user.click(within(usernameFormGroup).getByTestId('clear-secret-management-input'));
+      await user.click(within(usernameFormGroup).getByTestId('secret-management-input'));
+
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(
+        () => {
+          expect(deletedInputSourceIds).toEqual(['10']);
+        },
+        { timeout: 10000 }
+      );
+
+      useCredentialPluginsModalSpy.mockRestore();
+    }, 30000);
   });
 });
