@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useEffect } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -9,12 +10,21 @@ import {
 import { PageRoutedTabs, parseQuery } from './PageRoutedTabs';
 
 const mockSetTabBreadcrumb = vi.fn();
+const mockPageNavigate = vi.fn();
 vi.mock('@ansible/ansible-ui-framework/PageTabs/PageBreadcrumbs', () => ({
   usePageBreadcrumbs: () => ({
     setTabBreadcrumb: mockSetTabBreadcrumb,
     tabBreadcrumb: undefined,
   }),
 }));
+
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    usePageNavigate: () => mockPageNavigate,
+  };
+});
 
 describe('parseQuery', () => {
   it('should decode "+" in a value back to a space', () => {
@@ -170,5 +180,37 @@ describe('PageRoutedTabs shared query keys', () => {
       'href',
       expect.not.stringContaining('page=2')
     );
+  });
+
+  it('should navigate when a non-back tab is selected', async () => {
+    const user = userEvent.setup();
+    mockPageNavigate.mockClear();
+
+    render(
+      <MemoryRouter initialEntries={['/templates/1/details?status=failed']}>
+        <PageNavigationRoutesProvider>
+          <RegisterDetailRoutes>
+            <Routes>
+              <Route
+                path="/templates/:id/*"
+                element={
+                  <PageRoutedTabs
+                    sharedQueryKeys={['status']}
+                    tabs={[
+                      { label: 'Details', page: 'details', dataCy: 'details-tab' },
+                      { label: 'Jobs', page: 'jobs', dataCy: 'jobs-tab' },
+                    ]}
+                    params={{ id: 1 }}
+                  />
+                }
+              />
+            </Routes>
+          </RegisterDetailRoutes>
+        </PageNavigationRoutesProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByTestId('jobs-tab'));
+    expect(mockPageNavigate).toHaveBeenCalled();
   });
 });

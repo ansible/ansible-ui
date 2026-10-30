@@ -99,4 +99,30 @@ describe('AsyncQueryLabel', () => {
 
     await waitFor(() => expect(screen.getByText('Internal Server Error')).toBeInTheDocument());
   });
+
+  it('should fall back to id when field value is not a string or number', async () => {
+    server.use(
+      http.get('/api/v2/organizations/6/', () => HttpResponse.json({ name: { bad: true } }))
+    );
+
+    render(
+      <SwrTestWrapper>
+        <AsyncQueryLabel url="/api/v2/organizations/" id={6} field="name" />
+      </SwrTestWrapper>
+    );
+
+    await waitFor(() => expect(screen.getByText('6')).toBeInTheDocument());
+  });
+
+  it('should return null data as id string', async () => {
+    server.use(http.get('/api/v2/organizations/7/', () => HttpResponse.json(null)));
+
+    render(
+      <SwrTestWrapper>
+        <AsyncQueryLabel url="/api/v2/organizations/" id={7} />
+      </SwrTestWrapper>
+    );
+
+    await waitFor(() => expect(screen.getByText('7')).toBeInTheDocument());
+  });
 });

@@ -1,9 +1,69 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { ManageResourceRoles } from './ManageResourceRoles';
+
+const { mockProgressDialog, mockPlatformView } = vi.hoisted(() => {
+  const viewState = {
+    selectedItems: [
+      {
+        id: 11,
+        name: 'Project Auditor',
+        description: 'Read-only project access',
+        url: '/api/gateway/v1/role_definitions/11/',
+        managed: true,
+        content_type: 'awx.project',
+        permissions: ['awx.view_project'],
+      },
+    ],
+  };
+  return {
+    viewState,
+    mockProgressDialog: vi.fn(
+      (config: {
+        onComplete?: () => void;
+        actionFn?: (item: unknown, signal: AbortSignal) => Promise<unknown>;
+        items?: unknown[];
+      }) => {
+        void Promise.all(
+          (config.items ?? []).map((item) =>
+            Promise.resolve(config.actionFn?.(item, new AbortController().signal))
+          )
+        ).finally(() => config.onComplete?.());
+      }
+    ),
+    mockPlatformView: vi.fn(() => ({
+      get selectedItems() {
+        return viewState.selectedItems;
+      },
+      unselectAll: vi.fn(),
+      selectItems: vi.fn(),
+      pageItems: [],
+      itemCount: 0,
+    })),
+  };
+});
+
+vi.mock('@ansible/platform-ui/hooks/usePlatformView', () => ({
+  usePlatformView: mockPlatformView,
+}));
+
+vi.mock('@ansible/platform-ui/access/users/hooks/useGetPlatformRolesForUser', () => ({
+  useGetPlatformRolesForUser: () => ({
+    selectedRoles: [{ id: 10, name: 'Project Admin', roleAssignmentId: 100 }],
+  }),
+}));
+
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    useBulkActionDialog: () => mockProgressDialog,
+  };
+});
 
 vi.mock(
   '@ansible/common-ui/access/indirect-roles/hooks/useIndirectTeamRolesOnResourceView',
@@ -88,7 +148,10 @@ const mockResource = {
 };
 
 describe('ManageResourceRoles', () => {
-  const server = setupServer();
+  const server = setupServer(
+    http.get('*/service-index/role-permissions/*', () => HttpResponse.json({ results: [] })),
+    http.get('*/service-index/role-types/*', () => HttpResponse.json({ results: [] }))
+  );
 
   beforeAll(() => {
     vi.stubGlobal('localStorage', {
@@ -216,5 +279,77 @@ describe('ManageResourceRoles', () => {
     await waitFor(() => {
       expect(screen.getByRole('link', { name: 'Default' })).toBeInTheDocument();
     });
+  });
+
+  it('should show organization fallback text when organization name is missing', async () => {
+    server.use(
+      http.get('*/role_definitions/*', () => HttpResponse.json(mockRoleDefinitions)),
+      http.get('*/role_user_assignments/*', () => HttpResponse.json(mockRoleAssignments)),
+      http.get('*/role_user_access/*', () =>
+        HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
+      ),
+      http.get('*/users/*/teams/*', () => HttpResponse.json({ count: 0, results: [] })),
+      http.get('*/role_team_assignments/*', () =>
+        HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/resources/project/5/users/42/roles']}>
+        <Routes>
+          <Route
+            path="/resources/:resource_type/:resource_id/users/:user_id/roles"
+            element={
+              <ManageResourceRoles
+                resource={{
+                  id: '5',
+                  name: 'Demo Project',
+                  summary_fields: { organization: { id: '1', name: '' } },
+                }}
+                user={mockUser}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/organization role assignments for this user/i)).toBeInTheDocument();
+    });
+  });
+
+  it('should run bulk role changes when save roles is submitted', async () => {
+    const user = userEvent.setup();
+    let posted = false;
+    let deleted = false;
+
+    server.use(
+      http.get('*/role_definitions/*', () => HttpResponse.json(mockRoleDefinitions)),
+      http.get('*/role_user_assignments/*', () => HttpResponse.json(mockRoleAssignments)),
+      http.get('*/role_user_access/*', () =>
+        HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
+      ),
+      http.get('*/users/*/teams/*', () => HttpResponse.json({ count: 0, results: [] })),
+      http.get('*/role_team_assignments/*', () =>
+        HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
+      ),
+      http.post('*/role_user_assignments/', () => {
+        posted = true;
+        return HttpResponse.json({}, { status: 201 });
+      }),
+      http.delete('*/role_user_assignments/100/', () => {
+        deleted = true;
+        return new HttpResponse(null, { status: 204 });
+      })
+    );
+
+    renderComponent();
+    await waitFor(() => expect(screen.getByTestId('Submit')).toBeInTheDocument());
+    mockProgressDialog.mockClear();
+    await user.click(screen.getByTestId('Submit'));
+
+    await waitFor(() => expect(mockProgressDialog).toHaveBeenCalled());
+    await waitFor(() => expect(posted || deleted).toBe(true));
   });
 });
