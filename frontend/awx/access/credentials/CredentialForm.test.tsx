@@ -425,7 +425,7 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('credential plugin input source replace helpers (AAP-94800)', () => {
+describe('credential plugin input source replacement', () => {
   it('should return only the confirmed field when sibling lookup links remain', () => {
     const previousAccumulated = [
       {
@@ -2128,7 +2128,7 @@ describe('CredentialForm', () => {
       }
     }, 25000);
 
-    it('should not delete other lookup links when replacing one field plugin on edit (AAP-94800)', async () => {
+    it('should not delete other lookup links when replacing one field plugin on edit', async () => {
       server.use(
         http.get(awxAPI`/credentials/1/input_sources/`, () =>
           HttpResponse.json({
