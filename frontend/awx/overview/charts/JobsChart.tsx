@@ -3,6 +3,7 @@ import {
   PageDashboardChartVariant,
   PageDashboardChartVariantE,
 } from '@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart';
+import { EmptyStateError } from '@ansible/ansible-ui-framework/components/EmptyStateError';
 import { usePageChartColors } from '@ansible/ansible-ui-framework/PageDashboard/usePageChartColors';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { Bullseye, Spinner } from '@patternfly/react-core';
@@ -42,12 +43,20 @@ export function JobsChart(props: {
   const { t } = useTranslation();
   const { period, jobType } = props;
 
-  const { data, isLoading } = useSWR<IJobChartData>(
+  const {
+    data,
+    error: requestError,
+    isLoading,
+  } = useSWR<IJobChartData, Error>(
     awxAPI`/dashboard/graphs/jobs/?job_type=${jobType ?? 'all'}&period=${period ?? 'month'}`,
-    (url: string) => fetch(url).then((r) => r.json())
+    (url: string) =>
+      fetch(url).then((response) => {
+        if (!response.ok) throw new Error(`Jobs chart request failed: ${response.status}`);
+        return response.json();
+      })
   );
 
-  const [successful, error, failed, canceled] = alignJobChartSeriesByDay([
+  const [successful, errorSeries, failed, canceled] = alignJobChartSeriesByDay([
     mapJobChartTuples(data?.jobs?.successful, period),
     mapJobChartTuples(data?.jobs?.error, period),
     mapJobChartTuples(data?.jobs?.failed, period),
@@ -63,6 +72,8 @@ export function JobsChart(props: {
       </Bullseye>
     );
 
+  if (requestError) return <EmptyStateError message={requestError.message} />;
+
   return (
     <PageDashboardChart
       yLabel={t('Job count')}
@@ -77,7 +88,7 @@ export function JobsChart(props: {
         {
           label: t('Error'),
           color: errorColor,
-          values: error,
+          values: errorSeries,
           link: getPageUrl(AwxRoute.Jobs) + '?status=error',
         },
         {

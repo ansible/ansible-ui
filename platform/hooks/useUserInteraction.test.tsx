@@ -23,4 +23,31 @@ describe('useUserInteraction', () => {
 
     expect(callback).toHaveBeenCalledTimes(2);
   });
+
+  test('clears the throttle timer when unmounted', () => {
+    vi.useFakeTimers();
+    const callback = vi.fn();
+    const { unmount } = renderHook(() => useUserInteraction(1000, callback));
+
+    document.dispatchEvent(new Event('pointermove'));
+    expect(callback).toHaveBeenCalledTimes(1);
+
+    unmount();
+    vi.advanceTimersByTime(1000);
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  test('should call the latest callback after rerender', () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender } = renderHook(({ cb }) => useUserInteraction(0, cb), {
+      initialProps: { cb: first },
+    });
+
+    rerender({ cb: second });
+    document.dispatchEvent(new Event('pointermove'));
+
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledTimes(1);
+  });
 });

@@ -1,12 +1,30 @@
+import { act, renderHook, waitFor } from '@testing-library/react';
 import {
   DateRangeFilterPresets,
   ToolbarFilterType,
   type IFilterState,
   type IToolbarFilter,
 } from '@ansible/ansible-ui-framework';
-import { describe, expect, it, vi } from 'vitest';
-import { applyBatchedEvents, getFiltersQueryString } from './useJobOutput';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { requestGet } from '@ansible/common-ui/crud/Data';
+import type { Job } from '../../../interfaces/Job';
+import {
+  applyBatchedEvents,
+  getFiltersQueryString,
+  mergeJobEvents,
+  useJobOutput,
+} from './useJobOutput';
 import type { JobEvent } from '../../../interfaces/JobEvent';
+
+const mockWebSocketSubscription = vi.hoisted(() => vi.fn());
+
+vi.mock('../../../common/useAwxWebSocket', () => ({
+  useAwxWebSocketSubscription: mockWebSocketSubscription,
+}));
+
+vi.mock('@ansible/common-ui/crud/Data', () => ({
+  requestGet: vi.fn(),
+}));
 
 const textFilter = {
   key: 'search',
@@ -178,5 +196,84 @@ describe('getFiltersQueryString', () => {
   it('should handle empty toolbar filters array', () => {
     const filterState: IFilterState = { search: ['hello'] };
     expect(getFiltersQueryString([], filterState)).toBe('');
+  });
+});
+
+describe('mergeJobEvents', () => {
+  const makeEvent = (counter: number) => ({ counter }) as JobEvent;
+
+  it('merges unfiltered events by counter', () => {
+    const result = mergeJobEvents({ 1: makeEvent(1) }, [makeEvent(2)], false);
+
+    expect(result).toEqual({ 1: makeEvent(1), 2: makeEvent(2) });
+  });
+
+  it('appends filtered events after existing events', () => {
+    const result = mergeJobEvents({ 1: makeEvent(1) }, [makeEvent(7)], true);
+
+    expect(result).toEqual({ 1: makeEvent(1), 2: makeEvent(7) });
+  });
+});
+
+describe('useJobOutput', () => {
+  const job = { id: 7, type: 'job', status: 'successful' } as Job;
+  const reloadJob = vi.fn();
+  const toolbarFilters: IToolbarFilter[] = [];
+  const filterState: IFilterState = {};
+
+  beforeEach(() => {
+    vi.mocked(requestGet).mockReset();
+    mockWebSocketSubscription.mockReset();
+  });
+
+  it('merges fetched events into the current event map', async () => {
+    const initialEvent = { counter: 1 } as JobEvent;
+    const fetchedEvent = { counter: 2 } as JobEvent;
+    vi.mocked(requestGet)
+      .mockResolvedValueOnce({ results: [initialEvent], count: 1 } as never)
+      .mockResolvedValueOnce({ results: [initialEvent, fetchedEvent], count: 2 } as never);
+
+    const { result } = renderHook(() =>
+      useJobOutput(job, reloadJob, toolbarFilters, filterState, 10)
+    );
+    await waitFor(() => expect(requestGet).toHaveBeenCalledTimes(1));
+
+    void act(() => {
+      result.current.queryJobOutputEvent(1);
+    });
+
+    await waitFor(() => expect(result.current.jobEvents[2]).toBe(fetchedEvent));
+    expect(result.current.jobEvents[1]).toBe(initialEvent);
+  });
+
+  it('applies a batch of websocket events after the debounce timeout', async () => {
+    vi.useFakeTimers();
+    const initialEvent = { counter: 1 } as JobEvent;
+    vi.mocked(requestGet).mockResolvedValue({ results: [initialEvent], count: 1 } as never);
+    const { result } = renderHook(() =>
+      useJobOutput(job, reloadJob, toolbarFilters, filterState, 10)
+    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+    const handleMessage = mockWebSocketSubscription.mock.calls[0]?.[1] as
+      | ((message: unknown) => void)
+      | undefined;
+    expect(handleMessage).toBeDefined();
+
+    act(() => {
+      handleMessage?.({ group_name: 'job_events', counter: 2 });
+      handleMessage?.({ group_name: 'job_events', counter: 3 });
+    });
+    await act(() => vi.advanceTimersByTime(500));
+
+    expect(result.current.jobEvents[2]).toEqual({ group_name: 'job_events', counter: 2 });
+    expect(result.current.jobEvents[3]).toEqual({ group_name: 'job_events', counter: 3 });
+    expect(result.current.jobEventCount).toBe(3);
+    vi.useRealTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 });

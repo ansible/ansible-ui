@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { Project } from '../../../interfaces/Project';
 import { ManualSubForm } from './ManualSubForm';
 
@@ -66,5 +66,18 @@ describe('ManualSubForm', () => {
     await waitFor(() => {
       expect(screen.getByText('Type Details')).toBeInTheDocument();
     });
+  });
+
+  it('should render without config data when the config request fails', async () => {
+    const handler = vi.fn(() => new HttpResponse(null, { status: 500 }));
+    server.use(http.get(({ request }) => request.url.includes('/config/'), handler));
+
+    render(
+      <TestWrapper>
+        <ManualSubForm />
+      </TestWrapper>
+    );
+
+    await waitFor(() => expect(handler).toHaveBeenCalled());
   });
 });
