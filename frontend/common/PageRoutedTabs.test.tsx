@@ -1,12 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import { useEffect } from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { afterEach, describe, expect, it } from 'vitest';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   PageNavigationRoutesProvider,
   usePageNavigationRoutesContext,
 } from '@ansible/ansible-ui-framework/PageNavigation/PageNavigationRoutesProvider';
 import { PageRoutedTabs, parseQuery } from './PageRoutedTabs';
+
+const mockSetTabBreadcrumb = vi.fn();
+vi.mock('@ansible/ansible-ui-framework/PageTabs/PageBreadcrumbs', () => ({
+  usePageBreadcrumbs: () => ({
+    setTabBreadcrumb: mockSetTabBreadcrumb,
+    tabBreadcrumb: undefined,
+  }),
+}));
 
 describe('parseQuery', () => {
   it('should decode "+" in a value back to a space', () => {
@@ -49,14 +57,25 @@ function RegisterRoutes(props: { children: React.ReactNode }) {
   const [, setNavigation] = usePageNavigationRoutesContext();
   useEffect(
     () =>
-      setNavigation([{ id: 'templates', path: 'templates', label: 'Templates', element: <div /> }]),
+      setNavigation([
+        { id: 'templates', path: 'templates', label: 'Templates', element: <div /> },
+        {
+          id: 'template-details',
+          path: 'templates/:id/details',
+          label: 'Template details',
+          element: <div />,
+        },
+      ]),
     [setNavigation]
   );
   return <>{props.children}</>;
 }
 
 describe('PageRoutedTabs back tab', () => {
-  afterEach(() => sessionStorage.clear());
+  afterEach(() => {
+    sessionStorage.clear();
+    mockSetTabBreadcrumb.mockClear();
+  });
 
   function renderBackTab() {
     render(
@@ -94,5 +113,62 @@ describe('PageRoutedTabs back tab', () => {
     );
 
     expect(renderBackTab()).toHaveAttribute('href', '/templates?');
+  });
+
+  it('should set tab breadcrumb when an active tab is matched', () => {
+    renderBackTab();
+    expect(mockSetTabBreadcrumb).toHaveBeenCalledWith({ label: 'Details' });
+  });
+});
+
+describe('PageRoutedTabs shared query keys', () => {
+  afterEach(() => sessionStorage.clear());
+
+  function RegisterDetailRoutes(props: { children: React.ReactNode }) {
+    const [, setNavigation] = usePageNavigationRoutesContext();
+    useEffect(
+      () =>
+        setNavigation([
+          { id: 'details', path: 'templates/:id/details', label: 'Details', element: <div /> },
+          { id: 'jobs', path: 'templates/:id/jobs', label: 'Jobs', element: <div /> },
+        ]),
+      [setNavigation]
+    );
+    return <>{props.children}</>;
+  }
+
+  it('should preserve shared query keys in tab links', () => {
+    render(
+      <MemoryRouter initialEntries={['/templates/1/details?status=failed&page=2']}>
+        <PageNavigationRoutesProvider>
+          <RegisterDetailRoutes>
+            <Routes>
+              <Route
+                path="/templates/:id/*"
+                element={
+                  <PageRoutedTabs
+                    sharedQueryKeys={['status']}
+                    tabs={[
+                      { label: 'Details', page: 'details', dataCy: 'details-tab' },
+                      { label: 'Jobs', page: 'jobs', dataCy: 'jobs-tab' },
+                    ]}
+                    params={{ id: 1 }}
+                  />
+                }
+              />
+            </Routes>
+          </RegisterDetailRoutes>
+        </PageNavigationRoutesProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('jobs-tab')).toHaveAttribute(
+      'href',
+      expect.stringContaining('status=failed')
+    );
+    expect(screen.getByTestId('jobs-tab')).toHaveAttribute(
+      'href',
+      expect.not.stringContaining('page=2')
+    );
   });
 });

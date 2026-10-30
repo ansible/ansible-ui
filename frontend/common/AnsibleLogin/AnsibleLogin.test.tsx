@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnsibleLogin } from './AnsibleLogin';
@@ -191,6 +192,97 @@ describe('AnsibleLogin', () => {
 
       const footer = container.querySelector('.pf-v6-c-login__footer');
       expect(footer).not.toBeInTheDocument();
+    });
+  });
+
+  describe('login form validation and submit', () => {
+    it('should require username and password before submitting', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+      expect(screen.getByText('Username is required')).toBeInTheDocument();
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+      expect(screen.getByText('Password is required')).toBeInTheDocument();
+    });
+
+    it('should call onSuccess after successful login', async () => {
+      const user = userEvent.setup();
+      const onSuccess = vi.fn();
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
+        .mockResolvedValueOnce({ ok: true, status: 204 });
+      vi.stubGlobal('fetch', fetchMock);
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      render(
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <AnsibleLogin {...defaultProps} onSuccess={onSuccess} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(onSuccess).toHaveBeenCalled());
+      vi.unstubAllGlobals();
+    });
+
+    it('should show invalid credentials message for 401 response', async () => {
+      const user = userEvent.setup();
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(new Response(JSON.stringify({}), { status: 200 }))
+        .mockResolvedValueOnce(new Response(JSON.stringify({ detail: 'bad' }), { status: 401 }));
+      vi.stubGlobal('fetch', fetchMock);
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'wrong');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() =>
+        expect(
+          screen.getByText('Invalid username or password. Please try again.')
+        ).toBeInTheDocument()
+      );
+      vi.unstubAllGlobals();
+    });
+
+    it('should render other login options', async () => {
+      const user = userEvent.setup();
+      const onClick = vi.fn();
+      render(
+        <MemoryRouter>
+          <AnsibleLogin
+            {...defaultProps}
+            otherOptions={[{ label: 'Forgot password', onClick }]}
+            loginTitle="Log in"
+          />
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('link', { name: 'Forgot password' }));
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

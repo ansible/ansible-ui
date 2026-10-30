@@ -66,4 +66,24 @@ describe('useClearCache', () => {
       expect(mockCache.has('key3?query=string')).toBe(false);
     });
   });
+
+  it('should clear infinite-query cache keys that match the base key', async () => {
+    const user = userEvent.setup();
+    const mockCache = new Map();
+    mockCache.set('$inf$/api/items/', 'value1');
+    mockCache.set('other', 'value2');
+
+    render(
+      <SWRConfig value={{ provider: () => mockCache }}>
+        <ClearByKeyComponent cacheKey={'/api/items/'} />
+      </SWRConfig>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Clear Cache By Key' }));
+
+    await waitFor(() => {
+      expect(mockCache.has('$inf$/api/items/')).toBe(false);
+      expect(mockCache.has('other')).toBe(true);
+    });
+  });
 });
