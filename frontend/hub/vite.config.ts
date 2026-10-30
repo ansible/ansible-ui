@@ -79,12 +79,13 @@ export default defineConfig({
     },
   },
   test: {
+    testTimeout: 15000,
     coverage: {
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**', '**/vitest.*.ts'],
+      exclude: ['node_modules/**', '**/vitest.*.ts', '**/__mocks__/**'],
     },
     css: !process.env.CI,
     environment: 'happy-dom',

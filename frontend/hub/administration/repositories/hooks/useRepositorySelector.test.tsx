@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
+import { render, renderHook, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRepositoryColumns, useRepositoryFilters } from './useRepositorySelector';
@@ -35,6 +35,14 @@ describe('useRepositoryColumns', () => {
     });
     const descColumn = result.current.find((col) => col.header === 'Description');
     expect(descColumn).toBeDefined();
+    if (descColumn && 'cell' in descColumn && descColumn.cell) {
+      render(
+        <MemoryRouter>
+          {descColumn.cell({ name: 'repo', description: 'desc' } as never)}
+        </MemoryRouter>
+      );
+      expect(screen.getByText('desc')).toBeInTheDocument();
+    }
   });
 });
 
