@@ -38,7 +38,7 @@ export function useRemoveUsersFromResource() {
         organization: 'Remove user from organization',
         team: 'Remove user from team',
       };
-      const title = resource.type ? titleMap[resource.type] : 'Remove user';
+      const title = resource.type ? (titleMap[resource.type] ?? 'Remove user') : 'Remove user';
 
       removeUserConfirmationDialog({
         title: t(title, { count: users.length }),
