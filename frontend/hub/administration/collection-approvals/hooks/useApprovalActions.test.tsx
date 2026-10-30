@@ -1,22 +1,33 @@
 /* eslint-disable i18next/no-literal-string */
-import { renderHook } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
+import type { TFunction } from 'i18next';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest';
-import { useApprovalActions } from './useApprovalActions';
+import { useApprovalActions, approveCollection } from './useApprovalActions';
 import { CollectionVersionSearch } from '../Approval';
 
-// Mock dependent hooks
-vi.mock('../../../collections/hooks/useCopyToRepository', () => ({
-  useCopyToRepository: () => vi.fn(),
-}));
+const mockT = ((s: string) => s) as TFunction<'translation', undefined>;
 
-vi.mock('./useApproveCollections', () => ({
-  useApproveCollectionsFrameworkModal: () => vi.fn(),
+const mockApproveModal = vi.fn();
+const mockCopyToRepository = vi.fn();
+
+vi.mock('../../../collections/hooks/useCopyToRepository', () => ({
+  useCopyToRepository: () => mockCopyToRepository,
 }));
 
 vi.mock('./useRejectCollections', () => ({
   useRejectCollections: () => vi.fn(),
 }));
+
+vi.mock('./useApproveCollections', () => ({
+  useApproveCollectionsFrameworkModal: () => mockApproveModal,
+}));
+
+vi.mock('@ansible/common-ui/crud/Data', () => ({
+  requestGet: vi.fn(),
+}));
+
+import { requestGet } from '@ansible/common-ui/crud/Data';
 
 vi.mock('../../../main/HubRoutes', () => ({
   HubRoute: {
@@ -24,6 +35,16 @@ vi.mock('../../../main/HubRoutes', () => ({
     MyImports: 'MyImports',
   },
 }));
+
+const mockPageNavigate = vi.fn();
+
+vi.mock('@ansible/ansible-ui-framework', async () => {
+  const actual = await vi.importActual('@ansible/ansible-ui-framework');
+  return {
+    ...actual,
+    usePageNavigate: () => mockPageNavigate,
+  };
+});
 
 // Mock isInsightsMode
 vi.mock('../../../common/isInsights', () => ({
@@ -114,6 +135,7 @@ describe('useApprovalActions', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
+    mockPageNavigate.mockClear();
   });
 
   it('should return an array of actions', () => {
@@ -258,6 +280,43 @@ describe('useApprovalActions', () => {
     expect(getAction(result.current, 'View import logs')).toBeDefined();
   });
 
+  it('navigates when row actions are clicked', () => {
+    mockFeatureFlags.can_upload_signatures = true;
+    const { result } = renderUseApprovalActions();
+
+    const uploadAction = getAction(result.current, 'Upload signature');
+    act(() => {
+      uploadAction && 'onClick' in uploadAction && uploadAction.onClick(mockCollection as never);
+    });
+    expect(mockPageNavigate).toHaveBeenCalled();
+
+    mockPageNavigate.mockClear();
+    const logsAction = getAction(result.current, 'View import logs');
+    act(() => {
+      logsAction && 'onClick' in logsAction && logsAction.onClick(mockCollection as never);
+    });
+    expect(mockPageNavigate).toHaveBeenCalled();
+
+    const rejectAction = getAction(result.current, 'Reject collection');
+    act(() => {
+      rejectAction && 'onClick' in rejectAction && rejectAction.onClick(mockCollection as never);
+    });
+  });
+
+  it('runs approve action handler', async () => {
+    vi.mocked(requestGet).mockResolvedValue({ count: 1, results: [{}] });
+    const { result } = renderUseApprovalActions();
+    const approveAction = getAction(result.current, 'Approve collection');
+
+    act(() => {
+      approveAction && 'onClick' in approveAction && approveAction.onClick(mockCollection as never);
+    });
+
+    await vi.waitFor(() => {
+      expect(mockApproveModal).toHaveBeenCalledWith([mockCollection]);
+    });
+  });
+
   describe('Platform mode (non-Insights)', () => {
     beforeEach(() => {
       vi.mocked(isInsightsMode).mockReturnValue(false);
@@ -356,6 +415,24 @@ describe('useApprovalActions', () => {
         const rejectAction = getAction(result.current, 'Reject collection');
         expect(isActionHidden(rejectAction)).toBe(false);
       });
+    });
+  });
+});
+
+describe('approveCollection', () => {
+  it('opens approve modal when a single approved repository exists', async () => {
+    vi.mocked(requestGet).mockResolvedValue({ count: 1, results: [{}] });
+    approveCollection([mockCollection], mockCopyToRepository, mockApproveModal, false, mockT);
+    await vi.waitFor(() => {
+      expect(mockApproveModal).toHaveBeenCalledWith([mockCollection]);
+    });
+  });
+
+  it('delegates to copy flow when multiple approved repositories exist', async () => {
+    vi.mocked(requestGet).mockResolvedValue({ count: 2, results: [{}, {}] });
+    approveCollection([mockCollection], mockCopyToRepository, mockApproveModal, true, mockT);
+    await vi.waitFor(() => {
+      expect(mockCopyToRepository).toHaveBeenCalled();
     });
   });
 });

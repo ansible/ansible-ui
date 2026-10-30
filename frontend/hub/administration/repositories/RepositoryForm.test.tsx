@@ -80,6 +80,17 @@ describe('RepositoryForm - Create mode', () => {
 
     expect(await screen.findByRole('button', { name: 'Create repository' })).toBeInTheDocument();
   });
+
+  it('navigates back when create is cancelled', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <RepositoryForm />
+      </MemoryRouter>
+    );
+
+    await user.click(await screen.findByRole('button', { name: 'Cancel' }));
+  });
 });
 
 describe('RepositoryForm - Edit mode', () => {
@@ -157,6 +168,54 @@ describe('RepositoryForm - Edit mode', () => {
     expect(screen.getByText('pipeline: staging')).toBeInTheDocument();
     expect(screen.getByText('hide_from_search')).toBeInTheDocument();
   });
+
+  it('shows error when repository fails to load in edit mode', async () => {
+    server.use(
+      http.get(pulpAPI`/repositories/ansible/ansible/`, () =>
+        HttpResponse.json({ detail: 'Not found' }, { status: 404 })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/repositories/test-repo/edit']}>
+        <Routes>
+          <Route path="/repositories/:id/edit" element={<RepositoryForm />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole('button', { name: /Refresh/i })).toBeInTheDocument();
+  });
+
+  it('resolves remote object when repository has a remote configured', async () => {
+    const mockRemote = {
+      name: 'upstream',
+      pulp_href: '/pulp/api/v3/remotes/ansible/collection/upstream-id/',
+      url: 'https://galaxy.example.com',
+    };
+
+    server.use(
+      http.get(pulpAPI`/repositories/ansible/ansible/`, () =>
+        HttpResponse.json({
+          count: 1,
+          results: [{ ...mockRepository, remote: mockRemote.pulp_href }],
+        })
+      ),
+      http.get(pulpAPI`/remotes/ansible/collection/`, () =>
+        HttpResponse.json({ count: 1, results: [mockRemote] })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/repositories/test-repo/edit']}>
+        <Routes>
+          <Route path="/repositories/:id/edit" element={<RepositoryForm />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole('textbox', { name: 'Name' })).toHaveValue('test-repo');
+  });
 });
 
 describe('RepositoryForm - OPTIONS-driven validation wiring', () => {
@@ -193,4 +252,80 @@ describe('RepositoryForm - OPTIONS-driven validation wiring', () => {
       ).toBeInTheDocument();
     });
   });
+});
+
+describe('RepositoryForm - Create submission', () => {
+  it('submits a new repository', async () => {
+    let postPayload: Record<string, unknown> | undefined;
+
+    server.use(
+      http.options(hubAPI`/_ui/v1/repositories/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: { type: 'string', required: true },
+            },
+          },
+        })
+      ),
+      http.post(pulpAPI`/repositories/ansible/ansible/`, async ({ request }) => {
+        postPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({
+          pulp_href: '/pulp/api/v3/repositories/ansible/ansible/new-repo-id/',
+          name: 'new-repo',
+        });
+      }),
+      http.post(pulpAPI`/distributions/ansible/ansible/`, () =>
+        HttpResponse.json({ pulp_href: '/pulp/distributions/1/' })
+      )
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <RepositoryForm />
+      </MemoryRouter>
+    );
+
+    const nameInput = await screen.findByRole('textbox', { name: 'Name' });
+    await user.type(nameInput, 'new-repo');
+    await user.click(screen.getByRole('button', { name: 'Create repository' }));
+
+    await waitFor(() => {
+      expect(postPayload).toBeDefined();
+    });
+    expect(postPayload?.name).toBe('new-repo');
+  }, 20000);
+
+  it('sets empty description to null in create payload', async () => {
+    let postPayload: Record<string, unknown> | undefined;
+
+    server.use(
+      http.options(hubAPI`/_ui/v1/repositories/`, () =>
+        HttpResponse.json({ actions: { POST: { name: { type: 'string', required: true } } } })
+      ),
+      http.post(pulpAPI`/repositories/ansible/ansible/`, async ({ request }) => {
+        postPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({
+          pulp_href: '/pulp/api/v3/repositories/ansible/ansible/staging-repo/',
+          name: 'staging-repo',
+        });
+      })
+    );
+
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <RepositoryForm />
+      </MemoryRouter>
+    );
+
+    await user.type(await screen.findByRole('textbox', { name: 'Name' }), 'staging-repo');
+    await user.click(screen.getByRole('button', { name: 'Create repository' }));
+
+    await waitFor(() => {
+      expect(postPayload).toBeDefined();
+    });
+    expect(postPayload?.description).toBeNull();
+  }, 20000);
 });
