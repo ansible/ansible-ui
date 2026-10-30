@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { act, render } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
