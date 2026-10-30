@@ -72,6 +72,8 @@ spec:
       value: hub-insights-credentials-secret
     - name: frontend-proxy-routes-configmap
       value: hub-insights-dev-proxy-caddyfile
+    - name: enable-package-registry-proxy
+      value: "true"
   pipelineRef:
     resolver: git
     params:
