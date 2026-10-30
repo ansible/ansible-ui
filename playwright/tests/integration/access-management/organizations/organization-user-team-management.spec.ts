@@ -17,7 +17,10 @@ import { expect, test } from '@playwright/test';
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
 
-test.describe('Organization User and Team Management', () => {
+test.describe(
+  'Organization User and Team Management',
+  { tag: ['@organization', '@team', '@user'] },
+  () => {
   test.describe.configure({ timeout: 3 * 60 * 1000 });
 
   let organizationName: string;
@@ -585,4 +588,5 @@ test.describe('Organization User and Team Management', () => {
       await expect(page.getByTestId('page-title')).toContainText('Teams');
     }
   );
-});
+  }
+);

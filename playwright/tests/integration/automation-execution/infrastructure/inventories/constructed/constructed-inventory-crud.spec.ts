@@ -21,7 +21,7 @@ async function setSourceVarsYaml(page: Page, yaml: string) {
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
 
-test.describe('Constructed Inventory', () => {
+test.describe('Constructed Inventory', { tag: ['@inventory', '@organization', '@instancegroup'] }, () => {
   test(
     'should create constructed inventory with all fields and delete',
     { tag: ['@not_mock'] },

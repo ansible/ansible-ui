@@ -4,7 +4,10 @@ import { navigateTo } from '../../../../commands/navigateTo';
 import { setupAfter, setupBefore } from '../../../../commands/setup';
 import { Credential, Inventory } from '@ansible/playwright/utils';
 
-test.describe('Job Template Form - Validation', () => {
+test.describe(
+  'Job Template Form - Validation',
+  { tag: ['@jobtemplate', '@inventory', '@credential'] },
+  () => {
   test.beforeEach(async ({ page }) => {
     await setupBefore({ path: '/' })({ page });
   });

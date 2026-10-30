@@ -11,7 +11,7 @@ import { Organization, Inventory, InstanceGroup } from '@ansible/playwright/util
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
 
-test.describe('Regular Inventory', () => {
+test.describe('Regular Inventory', { tag: ['@inventory', '@organization', '@instancegroup'] }, () => {
   test(
     'can create inventory with all fields and delete from details',
     { tag: ['@not_mock'] },

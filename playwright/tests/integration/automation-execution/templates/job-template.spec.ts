@@ -8,7 +8,7 @@ import { selectTableFilter } from '@ansible/playwright/commands/selectTableFilte
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Inventory, Credential, JobTemplate } from '@ansible/playwright/utils';
 
-test.describe('Job Templates', () => {
+test.describe('Job Templates', { tag: ['@jobtemplate', '@inventory'] }, () => {
   let inventoryName: string;
 
   test.beforeEach(async ({ page }) => {
@@ -657,7 +657,7 @@ test.describe('Job Templates', () => {
   );
 });
 
-test.describe('Job Template - Copy/Duplicate', () => {
+test.describe('Job Template - Copy/Duplicate', { tag: ['@jobtemplate', '@inventory'] }, () => {
   let inventoryName: string;
 
   test.beforeEach(async ({ page }) => {
@@ -733,7 +733,10 @@ test.describe('Job Template - Copy/Duplicate', () => {
   );
 });
 
-test.describe('Job Template - Auto-populate from Project/Inventory', () => {
+test.describe(
+  'Job Template - Auto-populate from Project/Inventory',
+  { tag: ['@jobtemplate', '@inventory', '@project'] },
+  () => {
   test.beforeEach(setupBefore({ path: '/' }));
   test.afterEach(setupAfter);
 
