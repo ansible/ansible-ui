@@ -91,6 +91,13 @@ export function CollectionPage() {
         hubAPI`/v3/plugin/ansible/search/collection-versions/?name=${name}&namespace=${namespace}&repository_name=${repository}&version=${name}`
       );
       return collectionRequest.data;
+    },
+    (item) => {
+      // Browse confirmation receives the selected row. Store that row, matching
+      // the version dropdown. Replacing state with only the version string drops
+      // namespace, name, and repository, and the documentation route 404s.
+      setCollection(item);
+      setVersionParams(item);
     }
   );
 
@@ -366,14 +373,13 @@ export function CollectionPage() {
                       variant="link"
                       onClick={() => {
                         context.setOpen(false);
-                        singleSelectorBrowser?.((selection) => {
-                          setCollection({
-                            collection_version: { version: selection },
-                          } as Partial<CollectionVersionSearch>);
-                          setVersionParams({
-                            collection_version: { version: selection },
-                          } as Partial<CollectionVersionSearch>);
-                        }, collection.collection_version?.version);
+                        // Selection is applied by the adapter object handler above.
+                        // The string callback only receives the version and must not
+                        // replace collection state.
+                        singleSelectorBrowser?.(
+                          () => undefined,
+                          collection.collection_version?.version
+                        );
                       }}
                     >
                       {t`Browse`}
