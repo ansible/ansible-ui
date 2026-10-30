@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
@@ -45,7 +45,26 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
   return {
     ...actual,
     usePageNavigate: () => vi.fn(),
-    useGetPageUrl: () => (route: string) => `/mock-url/${route}`,
+    useGetPageUrl:
+      () =>
+      (
+        route: string,
+        options?: {
+          params?: Record<string, string | number | undefined>;
+          query?: Record<string, string | number | undefined>;
+        }
+      ) => {
+        if (!options?.params) return `/mock-url/${route}`;
+        const repository = options.params.repository ?? '';
+        const namespace = options.params.namespace ?? '';
+        const name = options.params.name ?? '';
+        const query = Object.entries(options.query ?? {})
+          .filter(([, value]) => value !== undefined && value !== '')
+          .map(([key, value]) => `${key}=${String(value)}`)
+          .join('&');
+        const path = `/mock-url/${route}/${repository}/${namespace}/${name}`;
+        return query ? `${path}?${query}` : path;
+      },
     usePageAlertToaster: () => ({
       addAlert: vi.fn(),
       removeAlerts: vi.fn(),
@@ -76,9 +95,13 @@ vi.mock('../hooks/useCollectionActions', () => ({
   useCollectionActions: () => [],
 }));
 
+const { openBrowse } = vi.hoisted(() => ({
+  openBrowse: vi.fn(),
+}));
+
 vi.mock('../hooks/useCollectionVersionSelector', () => ({
   useSelectCollectionVersionSingle: () => ({
-    openBrowse: vi.fn(),
+    openBrowse,
   }),
 }));
 
@@ -96,7 +119,10 @@ describe('CollectionPage', () => {
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
   afterAll(() => server.close());
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    openBrowse.mockReset();
+  });
 
   test('should render loading state initially', () => {
     render(
@@ -167,6 +193,74 @@ describe('CollectionPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Unsigned')).toBeInTheDocument();
     });
+  });
+
+  test('browse confirmation keeps the collection row for the selected version', async () => {
+    const currentVersion = mockCollection.collection_version;
+    if (!currentVersion) {
+      throw new Error('fixture is missing collection_version');
+    }
+    const browsedVersion: CollectionVersionSearch = {
+      ...mockCollection,
+      is_signed: true,
+      is_highest: false,
+      collection_version: {
+        ...currentVersion,
+        version: '2.0.0',
+        requires_ansible: '>=2.15',
+        pulp_created: '2024-06-01T00:00:00Z',
+        description: 'Browsed version description',
+      },
+    };
+
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/v3/plugin/ansible/search/collection-versions/'),
+        ({ request }) => {
+          const version = new URL(request.url).searchParams.get('version');
+          return HttpResponse.json({
+            meta: { count: 1 },
+            data: [version === '2.0.0' ? browsedVersion : mockCollection],
+          });
+        }
+      )
+    );
+
+    openBrowse.mockImplementation((onSelect: (item: CollectionVersionSearch) => void) => {
+      onSelect(browsedVersion);
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+        <CollectionPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+      ).toBeInTheDocument();
+    });
+    expect(screen.getByText('Unsigned')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('version-selector'));
+    const browseButton = await screen.findByTestId('browse-collection-version-button');
+    fireEvent.click(browseButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Signed')).toBeInTheDocument();
+      const documentation = screen.getByTestId('collection-documentation-tab');
+      expect(documentation.getAttribute('href')).toContain(
+        'published/testnamespace/testcollection'
+      );
+      expect(documentation.getAttribute('href')).toContain('version=2.0.0');
+    });
+
+    expect(
+      screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+    ).toBeInTheDocument();
+    expect(screen.getByText('Repository: published')).toBeInTheDocument();
+    expect(screen.queryByText('Unsigned')).not.toBeInTheDocument();
   });
 
   test('should handle error state when collection is not found', async () => {
