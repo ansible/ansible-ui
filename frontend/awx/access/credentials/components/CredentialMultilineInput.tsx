@@ -9,6 +9,23 @@ import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPluginsInputSource } from '../CredentialPlugins/hooks/useCredentialPluginsDialog';
+import { credentialKindUsesSshKeyUnlockValidation } from '../utils/credentialSshKeyValidation';
+import {
+  createSshKeyUnlockValidationOptions,
+  validateSshKeyUnlockInput,
+} from '../utils/validateSshKeyUnlockInput';
+
+/** PageFormFileUpload types `validate` for File mode; `type="text"` passes strings at runtime. */
+function asTextFileUploadValidator(
+  validate: (value: string) => string | undefined
+): (value: File) => string | undefined {
+  return (value) => {
+    if (typeof value !== 'string') {
+      return undefined;
+    }
+    return validate(value);
+  };
+}
 
 export function CredentialMultilineInput({
   field,
@@ -32,6 +49,21 @@ export function CredentialMultilineInput({
   const { t } = useTranslation();
   const [shouldHideField, setShouldHideField] = useState(field.secret);
   const { getValues, setValue, clearErrors } = useFormContext();
+  const sshKeyUnlockValidationOptions = createSshKeyUnlockValidationOptions(t);
+  const validateSshKeyData =
+    credentialKindUsesSshKeyUnlockValidation(kind) && field.id === 'ssh_key_data'
+      ? (value: string) => {
+          const result = validateSshKeyUnlockInput(
+            getValues('ssh_key_unlock'),
+            {
+              ...(getValues() as Record<string, unknown>),
+              ssh_key_data: value,
+            },
+            sshKeyUnlockValidationOptions
+          );
+          return result === true ? undefined : result;
+        }
+      : undefined;
   const watchedFieldValue = getValues();
   const onClear = () => {
     setValue(field.id, '', { shouldDirty: false });
@@ -121,6 +153,9 @@ export function CredentialMultilineInput({
         isDisabled={false}
         isClearButtonDisabled={!watchedFieldValue?.[field.id]}
         allowEditingUploadedText={true}
+        validate={
+          validateSshKeyData ? asTextFileUploadValidator(validateSshKeyData) : undefined
+        }
         icon={
           kind !== 'external' ? (
             field.secret && watchedFieldValue?.[field.id] === '$encrypted$' ? (
