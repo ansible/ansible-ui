@@ -10,10 +10,12 @@ import {
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
 import { AutomationDashboard } from './AutomationDashboard';
+import { DashboardToolbar } from './components/DashboardToolbar';
 import { useAutomationDashboardToolbar } from './components';
 import { DEFAULT_NUMBER_LOCALE } from './constants/common';
 import { useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { useAutomationDashboardToolbarActions } from './common/useAutomationDashboardToolbarActions';
+import type { AutomationDashboardAsyncFilter } from './common/useAutomationDashboardAsyncOptions';
 import type {
   IAutomationDashboardView,
   IDashboardDetails,
@@ -99,6 +101,12 @@ vi.mock('./common/useAutomationDashboardToolbarActions', async (importOriginal) 
     ...actual,
     useAutomationDashboardToolbarActions: vi.fn(actual.useAutomationDashboardToolbarActions),
   };
+});
+
+// The real toolbar, recorded to check the props passed to it.
+vi.mock('./components/DashboardToolbar', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./components/DashboardToolbar')>();
+  return { DashboardToolbar: vi.fn(actual.DashboardToolbar) };
 });
 
 vi.mock('./views/useAutomationDashboardView', () => ({
@@ -212,6 +220,8 @@ const mockView: IAutomationDashboardView = {
   exportCsv: vi.fn(),
   isFilterStateDefault: true,
   registerClearCallback: vi.fn(),
+  replaceFilterState: vi.fn(),
+  filterResetCount: 0,
 };
 
 // ─── Test wrapper ─────────────────────────────────────────────────────────────
@@ -269,7 +279,7 @@ describe('AutomationDashboard', () => {
   });
 
   test('should pass the period and toolbar filters through to DashboardMainTableCard and the view', () => {
-    const mockToolbarFilters: IToolbarFilter[] = [
+    const mockToolbarFilters: AutomationDashboardAsyncFilter[] = [
       {
         type: ToolbarFilterType.AsyncMultiSelect,
         key: 'template',
@@ -289,6 +299,51 @@ describe('AutomationDashboard', () => {
     );
     const viewFilters = vi.mocked(useAutomationDashboardView).mock.calls.at(-1)?.[0].toolbarFilters;
     expect(viewFilters?.map((filter) => filter.key)).toEqual(['period', 'template']);
+  });
+
+  test('should pass the filter state replacement of the view to the toolbar', () => {
+    const replaceFilterState = vi.fn();
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      replaceFilterState,
+      filterResetCount: 3,
+    });
+
+    render(testWrapper());
+
+    expect(vi.mocked(DashboardToolbar).mock.calls.at(-1)?.[0]).toMatchObject({
+      replaceFilterState,
+      filterResetCount: 3,
+    });
+  });
+
+  test.each([
+    ['all', 'The data shown is from the previous filters.'],
+    ['some', 'Some of the data shown is from the previous filters.'],
+    ['none', undefined],
+  ] as const)(
+    'should show an alert below the filters when the filters are too large (previous data: %s)',
+    (previousData, previousDataText) => {
+      vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+        ...mockView,
+        filtersTooLarge: { previousData },
+      });
+
+      render(testWrapper());
+
+      const alert = screen.getByTestId('filters-too-large-alert');
+      expect(alert).toHaveTextContent('The filters are too large');
+      // Announced by screen readers when it appears.
+      expect(alert).toHaveAttribute('aria-live', 'polite');
+      if (previousDataText) expect(alert).toHaveTextContent(previousDataText);
+      else expect(alert).not.toHaveTextContent('previous filters');
+    }
+  );
+
+  test('should not show the filters too large alert otherwise', () => {
+    render(testWrapper());
+
+    expect(screen.queryByTestId('filters-too-large-alert')).not.toBeInTheDocument();
   });
 
   test('should validate the report actions against the same filters as the view, period included', () => {

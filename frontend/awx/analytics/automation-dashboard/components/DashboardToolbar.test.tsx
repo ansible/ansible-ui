@@ -1,18 +1,14 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ReactNode } from 'react';
+import { ComponentProps, ReactNode } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   PageAlertToasterProvider,
   PageDialogProvider,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
-import type {
-  IFilterState,
-  IToolbarDateRangeFilter,
-  PageToolbarProps,
-} from '@ansible/ansible-ui-framework';
+import type { IFilterState, IToolbarDateRangeFilter } from '@ansible/ansible-ui-framework';
 import type { IDashboardFilterSet, IJobTemplate } from '../types';
 import { DashboardToolbar } from './DashboardToolbar';
 
@@ -50,6 +46,18 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     PageActions: (props: Record<string, unknown>) => {
       capturedPageActionsProps.push(props);
       return <div data-testid="page-actions" />;
+    },
+  };
+});
+
+// Record the reset count passed to the filters, rendering the real filters
+const capturedFilterResetCounts: (number | undefined)[] = [];
+vi.mock('./DashboardToolbarFilters', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./DashboardToolbarFilters')>();
+  return {
+    DashboardToolbarFilters: (props: ComponentProps<typeof actual.DashboardToolbarFilters>) => {
+      capturedFilterResetCounts.push(props.filterResetCount);
+      return <actual.DashboardToolbarFilters {...props} />;
     },
   };
 });
@@ -101,6 +109,8 @@ function makeFilterSetViewReturn(overrides = {}) {
   };
 }
 
+type DashboardToolbarProps = ComponentProps<typeof DashboardToolbar>;
+
 // ─── Wrapper ──────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: { children: ReactNode }) {
@@ -111,9 +121,7 @@ function Wrapper({ children }: { children: ReactNode }) {
   );
 }
 
-function buildProps(
-  overrides: Partial<PageToolbarProps<IJobTemplate>> = {}
-): PageToolbarProps<IJobTemplate> {
+function buildProps(overrides: Partial<DashboardToolbarProps> = {}): DashboardToolbarProps {
   return {
     toolbarFilters: [],
     filterState: { period: ['last_7_days'] },
@@ -125,7 +133,7 @@ function buildProps(
     disableListView: true,
     disableTableView: true,
     ...overrides,
-  } as unknown as PageToolbarProps<IJobTemplate>;
+  } as unknown as DashboardToolbarProps;
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -134,6 +142,7 @@ describe('DashboardToolbar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedPageActionsProps.length = 0;
+    capturedFilterResetCounts.length = 0;
     mockUseFilterSetView.mockReturnValue(makeFilterSetViewReturn());
   });
 
@@ -266,6 +275,39 @@ describe('DashboardToolbar', () => {
       // Verify dropdown and selected filter set are reset
       expect(mockSetValue).toHaveBeenCalledWith(undefined);
       expect(mockSetSelectedFilterSet).toHaveBeenCalledWith(undefined);
+    });
+
+    test('should pass filterResetCount to the filters', () => {
+      const { rerender } = render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} filterResetCount={1} />
+        </Wrapper>
+      );
+      expect(capturedFilterResetCounts.at(-1)).toBe(1);
+
+      rerender(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} filterResetCount={2} />
+        </Wrapper>
+      );
+      expect(capturedFilterResetCounts.at(-1)).toBe(2);
+    });
+
+    test('should replace the filter state with replaceFilterState when a report is selected', async () => {
+      const user = userEvent.setup();
+      const replaceFilterState = vi.fn();
+      render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} replaceFilterState={replaceFilterState} />
+        </Wrapper>
+      );
+
+      await user.selectOptions(screen.getByTestId('filterset-select'), '1');
+      expect(replaceFilterState).toHaveBeenLastCalledWith({ period: ['last_30_days'] });
+
+      await user.selectOptions(screen.getByTestId('filterset-select'), '');
+      expect(replaceFilterState).toHaveBeenLastCalledWith({ period: ['last_7_days'] });
+      expect(mockSetFilterState).not.toHaveBeenCalled();
     });
 
     test('should not error when registerClearCallback is not provided', () => {

@@ -180,6 +180,16 @@ export type IAutomationDashboardView = {
   exportCsv: (reportType: ReportType) => Promise<void>;
   isFilterStateDefault: boolean;
   registerClearCallback: (callback: () => void) => void;
+  /** Replaces the filter state as a whole; it cancels running bulk actions of the filters. */
+  replaceFilterState: (filterState: IFilterState) => void;
+  /** Changes with every `replaceFilterState`. */
+  filterResetCount: number;
+  /**
+   * Set when the API rejected a request as too large (too many filter values); its data is not
+   * updated. `previousData` tells whether all, some or none of the dashboard's data (the table,
+   * the cards) is still the data of the previous request.
+   */
+  filtersTooLarge?: { previousData: 'all' | 'some' | 'none' };
   toolbarFilters?: IToolbarFilter[];
   topCardsWidth?: PageDashboardCardWidth;
 };
