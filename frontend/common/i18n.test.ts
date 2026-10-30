@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('i18next-http-backend', () => ({
   default: class HttpBackend {
-    static type = 'backend';
+    static readonly type = 'backend';
     type = 'backend';
     init = vi.fn();
     read = (

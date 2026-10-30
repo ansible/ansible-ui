@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnsibleLogin } from './AnsibleLogin';
 
 const mockLocationReplace = vi.fn();
@@ -15,9 +17,18 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
   useFrameworkTranslations: () => [{ errorText: 'An error occurred' }],
 }));
 
+const server = setupServer();
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
 describe('AnsibleLogin', () => {
   const defaultProps = {
-    loginApiUrl: '/api/gateway/login/',
+    // Absolute URL: the `location` stub below (used for the externalLoginUrl
+    // redirect tests) has no `href`, so a relative URL cannot be resolved by
+    // the real `fetch` call the login submit tests exercise through MSW.
+    loginApiUrl: 'http://localhost/api/gateway/login/',
     brandImgAlt: 'Test Brand',
     showLoginForm: true,
     onSuccess: vi.fn(),
@@ -216,11 +227,10 @@ describe('AnsibleLogin', () => {
     it('should call onSuccess after successful login', async () => {
       const user = userEvent.setup();
       const onSuccess = vi.fn();
-      const fetchMock = vi
-        .fn()
-        .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
-        .mockResolvedValueOnce({ ok: true, status: 204 });
-      vi.stubGlobal('fetch', fetchMock);
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 204 }))
+      );
       document.cookie = 'csrftoken=test-token; path=/';
 
       render(
@@ -236,16 +246,16 @@ describe('AnsibleLogin', () => {
       await user.click(screen.getByRole('button', { name: 'Log in' }));
 
       await vi.waitFor(() => expect(onSuccess).toHaveBeenCalled());
-      vi.unstubAllGlobals();
     });
 
     it('should show invalid credentials message for 401 response', async () => {
       const user = userEvent.setup();
-      const fetchMock = vi
-        .fn()
-        .mockResolvedValueOnce(new Response(JSON.stringify({}), { status: 200 }))
-        .mockResolvedValueOnce(new Response(JSON.stringify({ detail: 'bad' }), { status: 401 }));
-      vi.stubGlobal('fetch', fetchMock);
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () =>
+          HttpResponse.json({ detail: 'bad' }, { status: 401 })
+        )
+      );
       document.cookie = 'csrftoken=test-token; path=/';
 
       render(
@@ -265,7 +275,6 @@ describe('AnsibleLogin', () => {
           screen.getByText('Invalid username or password. Please try again.')
         ).toBeInTheDocument()
       );
-      vi.unstubAllGlobals();
     });
 
     it('should render other login options', async () => {

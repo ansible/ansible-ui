@@ -121,21 +121,21 @@ describe('PageRoutedTabs back tab', () => {
   });
 });
 
+function RegisterDetailRoutes(props: { children: React.ReactNode }) {
+  const [, setNavigation] = usePageNavigationRoutesContext();
+  useEffect(
+    () =>
+      setNavigation([
+        { id: 'details', path: 'templates/:id/details', label: 'Details', element: <div /> },
+        { id: 'jobs', path: 'templates/:id/jobs', label: 'Jobs', element: <div /> },
+      ]),
+    [setNavigation]
+  );
+  return <>{props.children}</>;
+}
+
 describe('PageRoutedTabs shared query keys', () => {
   afterEach(() => sessionStorage.clear());
-
-  function RegisterDetailRoutes(props: { children: React.ReactNode }) {
-    const [, setNavigation] = usePageNavigationRoutesContext();
-    useEffect(
-      () =>
-        setNavigation([
-          { id: 'details', path: 'templates/:id/details', label: 'Details', element: <div /> },
-          { id: 'jobs', path: 'templates/:id/jobs', label: 'Jobs', element: <div /> },
-        ]),
-      [setNavigation]
-    );
-    return <>{props.children}</>;
-  }
 
   it('should preserve shared query keys in tab links', () => {
     render(
