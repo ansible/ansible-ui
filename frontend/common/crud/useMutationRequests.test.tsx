@@ -60,6 +60,18 @@ describe('usePutRequest', () => {
     const { result } = renderHook(() => usePutRequest(), { wrapper: SwrTestWrapper });
     await expect(result.current('/api/update/', { name: 'x' })).resolves.toBe('updated');
   });
+
+  it('should PUT and return application/json body', async () => {
+    server.use(http.put('/api/json/', () => HttpResponse.json({ updated: true })));
+    const { result } = renderHook(() => usePutRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/json/', {})).resolves.toEqual({ updated: true });
+  });
+
+  it('should throw on failed PUT', async () => {
+    server.use(http.put('/api/error/', () => HttpResponse.json({}, { status: 500 })));
+    const { result } = renderHook(() => usePutRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/error/', {})).rejects.toThrow();
+  });
 });
 
 describe('usePatchRequest', () => {
@@ -77,6 +89,12 @@ describe('usePatchRequest', () => {
     const response = await result.current('/api/patch/', { enabled: true });
     expect(response).toBeInstanceOf(Blob);
   });
+
+  it('should PATCH and return json body', async () => {
+    server.use(http.patch('/api/json/', () => HttpResponse.json({ ok: true })));
+    const { result } = renderHook(() => usePatchRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/json/', { enabled: true })).resolves.toEqual({ ok: true });
+  });
 });
 
 describe('useDeleteRequest', () => {
@@ -92,15 +110,14 @@ describe('useDeleteRequest', () => {
     await expect(result.current('/api/delete/2/')).resolves.toBeNull();
   });
 
-  it('should POST and parse application/json responses', async () => {
-    server.use(http.post('/api/json/', () => HttpResponse.json({ ok: true })));
-    const { result } = renderHook(() => usePostRequest(), { wrapper: SwrTestWrapper });
-    await expect(result.current('/api/json/', {})).resolves.toEqual({ ok: true });
-  });
-
-  it('should PUT and parse application/json responses', async () => {
-    server.use(http.put('/api/json/', () => HttpResponse.json({ updated: true })));
-    const { result } = renderHook(() => usePutRequest(), { wrapper: SwrTestWrapper });
-    await expect(result.current('/api/json/', {})).resolves.toEqual({ updated: true });
+  it('should DELETE and return text body', async () => {
+    server.use(
+      http.delete(
+        '/api/delete/3/',
+        () => new HttpResponse('deleted', { headers: { 'Content-Type': 'text/plain' } })
+      )
+    );
+    const { result } = renderHook(() => useDeleteRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/delete/3/')).resolves.toBe('deleted');
   });
 });

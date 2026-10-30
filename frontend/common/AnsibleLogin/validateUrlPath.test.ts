@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { validateUrlPath } from './validateUrlPath';
 
 describe('validateUrlPath', () => {
@@ -115,7 +115,6 @@ describe('validateUrlPath', () => {
       expect(validateUrlPath('http://example.com')).toBeNull();
     });
   });
-
   describe('invalid paths - protocol-relative URLs', () => {
     it('should return null for protocol-relative URL', () => {
       expect(validateUrlPath('//example.com')).toBeNull();
@@ -136,5 +135,37 @@ describe('validateUrlPath', () => {
     it('should return null for backslash protocol-relative URL', () => {
       expect(validateUrlPath('/\\example.com')).toBeNull();
     });
+  });
+
+  it('should return null when parsed URL origin is not the base origin', () => {
+    const originalURL = globalThis.URL;
+    class MockURL extends originalURL {
+      constructor(input: string | URL, base?: string | URL) {
+        super(input, base);
+        if (input === '/redirect-off-origin') {
+          Object.defineProperty(this, 'origin', { value: 'http://evil.example' });
+        }
+      }
+    }
+    vi.stubGlobal('URL', MockURL);
+    expect(validateUrlPath('/redirect-off-origin')).toBeNull();
+    vi.unstubAllGlobals();
+  });
+
+  it('should return null when URL constructor throws', () => {
+    const originalURL = globalThis.URL;
+    vi.stubGlobal(
+      'URL',
+      class extends originalURL {
+        constructor(input: string | URL, base?: string | URL) {
+          if (input === '/throws-on-parse') {
+            throw new TypeError('Invalid URL');
+          }
+          super(input, base);
+        }
+      }
+    );
+    expect(validateUrlPath('/throws-on-parse')).toBeNull();
+    vi.unstubAllGlobals();
   });
 });

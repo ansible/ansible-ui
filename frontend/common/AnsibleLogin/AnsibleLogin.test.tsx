@@ -224,6 +224,25 @@ describe('AnsibleLogin', () => {
       expect(screen.getByText('Password is required')).toBeInTheDocument();
     });
 
+    it('should show framework error when login page GET fails', async () => {
+      const user = userEvent.setup();
+      server.use(http.get(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 500 })));
+
+      render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(screen.getByText('Internal Server Error')).toBeInTheDocument());
+    });
+
     it('should call onSuccess after successful login', async () => {
       const user = userEvent.setup();
       const onSuccess = vi.fn();
@@ -275,6 +294,82 @@ describe('AnsibleLogin', () => {
           screen.getByText('Invalid username or password. Please try again.')
         ).toBeInTheDocument()
       );
+    });
+
+    it('should redirect to home when login succeeds on login path without next param', async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 204 }))
+      );
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      const locationRef = { href: '', pathname: '/login', search: '' };
+      Object.defineProperty(window, 'location', { configurable: true, value: locationRef });
+
+      render(
+        <MemoryRouter initialEntries={['/login']}>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(locationRef.href).toBe('/'));
+    });
+
+    it('should redirect to next query param after successful login', async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 204 }))
+      );
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      const locationRef = { href: '', pathname: '/login', search: '?next=/dashboard' };
+      Object.defineProperty(window, 'location', { configurable: true, value: locationRef });
+
+      render(
+        <MemoryRouter initialEntries={['/login?next=/dashboard']}>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(locationRef.href).toBe('/dashboard'));
+    });
+
+    it('should show generic invalid credentials message for non-Error failures', async () => {
+      const user = userEvent.setup();
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue('network down'));
+
+      render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() =>
+        expect(
+          screen.getByText('Invalid username or password. Please try again.')
+        ).toBeInTheDocument()
+      );
+      vi.unstubAllGlobals();
     });
 
     it('should render other login options', async () => {
