@@ -221,6 +221,121 @@ describe('SelectRolesStep', () => {
     expect(screen.getByText('Selected rulebook activations')).toBeInTheDocument();
   });
 
+  it('should render Selected rulebooks label', async () => {
+    const mod = await import('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider');
+    vi.mocked(mod.usePageWizard).mockReturnValue({
+      wizardData: {
+        resourceType: 'eda.rulebook',
+        resources: [{ id: 1, name: 'My Rulebook' }],
+      },
+    } as ReturnType<typeof mod.usePageWizard>);
+
+    render(
+      <MemoryRouter>
+        <SelectRolesStep
+          view={mockView}
+          tableColumns={mockTableColumns}
+          toolbarFilters={[]}
+          fieldNameForPreviousStep="resources"
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Selected rulebooks')).toBeInTheDocument();
+  });
+
+  it('should render Selected rulebook processes label', async () => {
+    const mod = await import('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider');
+    vi.mocked(mod.usePageWizard).mockReturnValue({
+      wizardData: {
+        resourceType: 'eda.rulebookprocess',
+        resources: [{ id: 1, name: 'My Process' }],
+      },
+    } as ReturnType<typeof mod.usePageWizard>);
+
+    render(
+      <MemoryRouter>
+        <SelectRolesStep
+          view={mockView}
+          tableColumns={mockTableColumns}
+          toolbarFilters={[]}
+          fieldNameForPreviousStep="resources"
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Selected rulebook processes')).toBeInTheDocument();
+  });
+
+  it('should render Selected credential types label', async () => {
+    const mod = await import('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider');
+    vi.mocked(mod.usePageWizard).mockReturnValue({
+      wizardData: {
+        resourceType: 'eda.credentialtype',
+        resources: [{ id: 1, name: 'My Type' }],
+      },
+    } as ReturnType<typeof mod.usePageWizard>);
+
+    render(
+      <MemoryRouter>
+        <SelectRolesStep
+          view={mockView}
+          tableColumns={mockTableColumns}
+          toolbarFilters={[]}
+          fieldNameForPreviousStep="resources"
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Selected credential types')).toBeInTheDocument();
+  });
+
+  it('should render Selected decision environments label', async () => {
+    const mod = await import('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider');
+    vi.mocked(mod.usePageWizard).mockReturnValue({
+      wizardData: {
+        resourceType: 'eda.decisionenvironment',
+        resources: [{ id: 1, name: 'My Environment' }],
+      },
+    } as ReturnType<typeof mod.usePageWizard>);
+
+    render(
+      <MemoryRouter>
+        <SelectRolesStep
+          view={mockView}
+          tableColumns={mockTableColumns}
+          toolbarFilters={[]}
+          fieldNameForPreviousStep="resources"
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Selected decision environments')).toBeInTheDocument();
+  });
+
+  it('should render Selected audit rules label', async () => {
+    const mod = await import('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider');
+    vi.mocked(mod.usePageWizard).mockReturnValue({
+      wizardData: {
+        resourceType: 'eda.auditrule',
+        resources: [{ id: 1, name: 'My Audit Rule' }],
+      },
+    } as ReturnType<typeof mod.usePageWizard>);
+
+    render(
+      <MemoryRouter>
+        <SelectRolesStep
+          view={mockView}
+          tableColumns={mockTableColumns}
+          toolbarFilters={[]}
+          fieldNameForPreviousStep="resources"
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Selected audit rules')).toBeInTheDocument();
+  });
+
   it('should hide header for system resource type', async () => {
     const mod = await import('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider');
     vi.mocked(mod.usePageWizard).mockReturnValue({

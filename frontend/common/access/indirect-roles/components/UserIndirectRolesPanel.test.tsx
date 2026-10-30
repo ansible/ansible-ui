@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
@@ -87,6 +88,37 @@ describe('UserIndirectRolesPanel', () => {
 
     await waitFor(() => {
       expect(screen.queryByText(/Indirectly assigned roles/)).not.toBeInTheDocument();
+    });
+  });
+
+  it('should open and close the indirect roles modal', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get('*/users/42/teams/*', () => HttpResponse.json(mockTeams)),
+      http.get('*/role_team_assignments/*', () => HttpResponse.json(mockTeamAssignments))
+    );
+
+    render(
+      <MemoryRouter>
+        <UserIndirectRolesPanel userId="42" username="alice" />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'View indirectly assigned roles' })
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'View indirectly assigned roles' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+    const dialog = screen.getByRole('dialog');
+    await user.click(within(dialog).getAllByRole('button', { name: 'Close' })[0]);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
   });
 });

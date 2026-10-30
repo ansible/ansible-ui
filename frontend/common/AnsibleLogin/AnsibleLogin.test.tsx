@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnsibleLogin } from './AnsibleLogin';
 
 const mockLocationReplace = vi.fn();
@@ -14,9 +17,18 @@ vi.mock('@ansible/ansible-ui-framework', () => ({
   useFrameworkTranslations: () => [{ errorText: 'An error occurred' }],
 }));
 
+const server = setupServer();
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
 describe('AnsibleLogin', () => {
   const defaultProps = {
-    loginApiUrl: '/api/gateway/login/',
+    // Absolute URL: the `location` stub below (used for the externalLoginUrl
+    // redirect tests) has no `href`, so a relative URL cannot be resolved by
+    // the real `fetch` call the login submit tests exercise through MSW.
+    loginApiUrl: 'http://localhost/api/gateway/login/',
     brandImgAlt: 'Test Brand',
     showLoginForm: true,
     onSuccess: vi.fn(),
@@ -191,6 +203,190 @@ describe('AnsibleLogin', () => {
 
       const footer = container.querySelector('.pf-v6-c-login__footer');
       expect(footer).not.toBeInTheDocument();
+    });
+  });
+
+  describe('login form validation and submit', () => {
+    it('should require username and password before submitting', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+      expect(screen.getByText('Username is required')).toBeInTheDocument();
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+      expect(screen.getByText('Password is required')).toBeInTheDocument();
+    });
+
+    it('should show framework error when login page GET fails', async () => {
+      const user = userEvent.setup();
+      server.use(http.get(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 500 })));
+
+      render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(screen.getByText('Internal Server Error')).toBeInTheDocument());
+    });
+
+    it('should call onSuccess after successful login', async () => {
+      const user = userEvent.setup();
+      const onSuccess = vi.fn();
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 204 }))
+      );
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      render(
+        <MemoryRouter initialEntries={['/dashboard']}>
+          <AnsibleLogin {...defaultProps} onSuccess={onSuccess} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(onSuccess).toHaveBeenCalled());
+    });
+
+    it('should show invalid credentials message for 401 response', async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () =>
+          HttpResponse.json({ detail: 'bad' }, { status: 401 })
+        )
+      );
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'wrong');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() =>
+        expect(
+          screen.getByText('Invalid username or password. Please try again.')
+        ).toBeInTheDocument()
+      );
+    });
+
+    it('should redirect to home when login succeeds on login path without next param', async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 204 }))
+      );
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      const locationRef = { href: '', pathname: '/login', search: '' };
+      Object.defineProperty(window, 'location', { configurable: true, value: locationRef });
+
+      render(
+        <MemoryRouter initialEntries={['/login']}>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(locationRef.href).toBe('/'));
+    });
+
+    it('should redirect to next query param after successful login', async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 204 }))
+      );
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      const locationRef = { href: '', pathname: '/login', search: '?next=/dashboard' };
+      Object.defineProperty(window, 'location', { configurable: true, value: locationRef });
+
+      render(
+        <MemoryRouter initialEntries={['/login?next=/dashboard']}>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(locationRef.href).toBe('/dashboard'));
+    });
+
+    it('should show generic invalid credentials message for non-Error failures', async () => {
+      const user = userEvent.setup();
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue('network down'));
+
+      render(
+        <MemoryRouter>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() =>
+        expect(
+          screen.getByText('Invalid username or password. Please try again.')
+        ).toBeInTheDocument()
+      );
+      vi.unstubAllGlobals();
+    });
+
+    it('should render other login options', async () => {
+      const user = userEvent.setup();
+      const onClick = vi.fn();
+      render(
+        <MemoryRouter>
+          <AnsibleLogin
+            {...defaultProps}
+            otherOptions={[{ label: 'Forgot password', onClick }]}
+            loginTitle="Log in"
+          />
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('link', { name: 'Forgot password' }));
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
   });
 });

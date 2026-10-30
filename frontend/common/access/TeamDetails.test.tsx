@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { TeamDetails, TeamDetailsType } from './TeamDetails';
@@ -127,7 +128,8 @@ describe('TeamDetails', () => {
     expect(screen.getByText('Last modified')).toBeInTheDocument();
   });
 
-  it('should render created_by user in the date cell', () => {
+  it('should render created_by user in the date cell', async () => {
+    const user = userEvent.setup();
     const team: TeamDetailsType = {
       ...baseTeam,
       created: '2024-01-15T10:30:00Z',
@@ -148,9 +150,11 @@ describe('TeamDetails', () => {
     );
 
     expect(screen.getByText('Created')).toBeInTheDocument();
+    await user.click(screen.getByText('admin'));
   });
 
-  it('should render modified_by user with link when modifiedByUserDetailsUrl provided', () => {
+  it('should render modified_by user with link when modifiedByUserDetailsUrl provided', async () => {
+    const user = userEvent.setup();
     const team: TeamDetailsType = {
       ...baseTeam,
       modified: '2024-03-15T12:00:00Z',
@@ -171,6 +175,7 @@ describe('TeamDetails', () => {
     );
 
     expect(screen.getByText('Last modified')).toBeInTheDocument();
+    await user.click(screen.getByText('editor'));
   });
 
   it('should render created_at date field', () => {

@@ -1,11 +1,13 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
+import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { ManageOrgRoles } from './useManageOrgRolesDialog';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ManageOrgRoles, useManageOrgRoles } from './useManageOrgRolesDialog';
+
+const mockSetDialog = vi.fn();
 
 vi.mock('@patternfly/react-core', async () => {
   const actual =
@@ -33,7 +35,7 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
   );
   return {
     ...actual,
-    usePageDialog: () => [undefined, vi.fn()],
+    usePageDialog: () => [undefined, mockSetDialog],
   };
 });
 
@@ -58,6 +60,10 @@ const mockOrgListProps = {
 } satisfies Parameters<typeof ManageOrgRoles>[0]['orgListsOptions'][number];
 
 describe('ManageOrgRoles', () => {
+  beforeEach(() => {
+    mockSetDialog.mockClear();
+  });
+
   it('should render the modal with user/team name in the title', async () => {
     server.use(
       http.get('*/role_user_assignments/*', () => HttpResponse.json({ count: 0, results: [] }))
@@ -123,5 +129,47 @@ describe('ManageOrgRoles', () => {
 
     await user.click(screen.getByText('Manage roles'));
     expect(onManageRolesClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should clear dialog when close button is clicked', async () => {
+    const user = userEvent.setup();
+
+    server.use(
+      http.get('*/role_user_assignments/*', () => HttpResponse.json({ count: 0, results: [] }))
+    );
+
+    render(
+      <MemoryRouter>
+        <ManageOrgRoles
+          orgListsOptions={[mockOrgListProps]}
+          onManageRolesClick={vi.fn()}
+          userOrTeamName="Admin User"
+        />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText('Close')).toBeInTheDocument());
+    await user.click(screen.getByText('Close'));
+    expect(mockSetDialog).toHaveBeenCalledWith(undefined);
+  });
+});
+
+describe('useManageOrgRoles', () => {
+  beforeEach(() => {
+    mockSetDialog.mockClear();
+  });
+
+  it('should open manage org roles dialog', () => {
+    const { result } = renderHook(() => useManageOrgRoles(), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    result.current({
+      orgListsOptions: [mockOrgListProps],
+      onManageRolesClick: vi.fn(),
+      userOrTeamName: 'Team Alpha',
+    });
+
+    expect(mockSetDialog).toHaveBeenCalled();
   });
 });
