@@ -16,10 +16,22 @@ import { Link } from 'react-router-dom';
 import { CredentialLabel } from '../../../common/CredentialLabel';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
+import { SummaryFieldCredential } from '../../../interfaces/summary-fields/summary-fields';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetLaunchedByDetails, useGetScheduleUrl } from '../jobUtils';
 import { useGetJobOutputUrl } from '../useGetJobOutputUrl';
+
+/** Prefer credentials[]; fall back to singular credential (ad hoc / Run Command jobs). */
+function getJobCredentials(job: UnifiedJob): SummaryFieldCredential[] {
+  if (job.summary_fields.credentials?.length) {
+    return job.summary_fields.credentials;
+  }
+  if (job.summary_fields.credential) {
+    return [job.summary_fields.credential];
+  }
+  return [];
+}
 
 export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?: boolean }) {
   const { t } = useTranslation();
@@ -303,11 +315,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         header: t('Credentials'),
         helpText: t('Credential(s) used to access the nodes this job will be ran against.'),
         cell: (job: UnifiedJob) => {
-          const credentials = job.summary_fields.credentials?.length
-            ? job.summary_fields.credentials
-            : job.summary_fields.credential
-              ? [job.summary_fields.credential]
-              : [];
+          const credentials = getJobCredentials(job);
           return (
             <LabelGroup
               numLabels={5}
@@ -322,8 +330,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
           );
         },
         value: (job: UnifiedJob) => {
-          const count =
-            job.summary_fields?.credentials?.length || (job.summary_fields?.credential ? 1 : 0);
+          const count = getJobCredentials(job).length;
           return count || undefined;
         },
         table: ColumnTableOption.expanded,
