@@ -10,7 +10,7 @@ import { DecisionEnvironment } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/decisions/decision-environments' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Decision Environments - CRUD Operations', () => {
+test.describe('EDA Decision Environments - CRUD Operations', { tag: ['@decisionenvironment'] }, () => {
   test(
     'should create a decision environment and assert the information showing on the details page',
     { tag: ['@not_mock'] },

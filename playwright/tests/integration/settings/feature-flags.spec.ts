@@ -10,7 +10,7 @@ const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1
 
 test.afterEach(setupAfter);
 
-test.describe('Feature Flags - Toggle', () => {
+test.describe('Feature Flags - Toggle', { tag: ['@featureflags'] }, () => {
   test(
     'should open confirmation dialog and toggle a feature flag',
     { tag: ['@tier1'] },
@@ -78,7 +78,7 @@ test.describe('Feature Flags - Toggle', () => {
   });
 });
 
-test.describe('Feature Flags - Private Flag Visibility', () => {
+test.describe('Feature Flags - Private Flag Visibility', { tag: ['@featureflags'] }, () => {
   const createMockFlag = (overrides: Record<string, unknown> & { id: number }) => ({
     url: `/api/gateway/v1/feature_flags/${String(overrides.id)}/`,
     related: {
@@ -238,7 +238,7 @@ test.describe('Feature Flags - Private Flag Visibility', () => {
   });
 });
 
-test.describe('Feature Flags - Access Control', () => {
+test.describe('Feature Flags - Access Control', { tag: ['@featureflags', '@team', '@user'] }, () => {
   let normalUser: PlatformUser;
   let auditorUser: PlatformUser;
   const userPassword = 'password';

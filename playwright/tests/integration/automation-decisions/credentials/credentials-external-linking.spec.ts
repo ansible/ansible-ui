@@ -17,7 +17,7 @@ test.beforeEach(() => {
   }
 });
 
-test.describe('EDA External Credentials - Creation and Testing', () => {
+test.describe('EDA External Credentials - Creation and Testing', { tag: ['@edacredential'] }, () => {
   test(
     'should create an external credential and test it',
     { tag: ['@not_mock'] },
@@ -103,7 +103,7 @@ test.describe('EDA External Credentials - Creation and Testing', () => {
   );
 });
 
-test.describe('EDA External Credentials - Linking', () => {
+test.describe('EDA External Credentials - Linking', { tag: ['@edacredential'] }, () => {
   test(
     'should disable password field when linked to external credential',
     { tag: ['@not_mock'] },
@@ -487,7 +487,7 @@ test.describe('EDA External Credentials - Linking', () => {
   );
 });
 
-test.describe('EDA External Credentials - Error Handling', () => {
+test.describe('EDA External Credentials - Error Handling', { tag: ['@edacredential'] }, () => {
   test(
     'should show appropriate error when external credential test fails',
     { tag: ['@not_mock'] },

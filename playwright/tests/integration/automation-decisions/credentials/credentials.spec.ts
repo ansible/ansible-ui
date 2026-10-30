@@ -10,7 +10,7 @@ test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credentials' }));
 test.afterEach(setupAfter);
 
 // EDA credentials are not available on SaaS deployments
-test.describe('EDA Credentials', () => {
+test.describe('EDA Credentials', { tag: ['@edacredential'] }, () => {
   // Skip all tests in this describe block on SaaS
   test.beforeEach(() => {
     if (isSaaS()) {

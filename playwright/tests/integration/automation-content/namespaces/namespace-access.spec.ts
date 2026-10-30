@@ -16,7 +16,7 @@ import { createE2EName } from '@ansible/playwright/commands/createE2EName';
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
-test.describe('Hub - Namespace - Team and User Access', () => {
+test.describe('Hub - Namespace - Team and User Access', { tag: ['@namespace', '@team', '@user'] }, () => {
   let namespaceName: string;
   let roleName: string;
   let organizationName: string;

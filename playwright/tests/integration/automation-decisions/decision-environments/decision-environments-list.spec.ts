@@ -9,7 +9,7 @@ import { DecisionEnvironment } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/decisions/decision-environments' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Decision Environments List', () => {
+test.describe('EDA Decision Environments List', { tag: ['@decisionenvironment'] }, () => {
   test(
     'should bulk delete Decision Environments from the list',
     { tag: ['@not_mock'] },
