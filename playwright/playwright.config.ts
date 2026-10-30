@@ -8,13 +8,16 @@ import path from 'path';
  * https://github.com/motdotla/dotenv
  */
 const __dirname = import.meta.dirname;
-dotenv.config({ path: path.resolve(__dirname, '.env'), override: true });
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 // Use verbose configuration by default for better debugging
 const isCI = !!process.env.CI;
+const visualTagExplicitlyIncluded = process.env.TAGS?.split(',').some(
+  (tag) => tag.trim() === '@visual'
+);
 const jobTimeoutMinutes = Number(process.env.TIMEOUT_MINUTES) || 120;
 // Playwright 1.57 accepts clipboard permissions on Chromium only.
 const chromiumClipboardPermissions = ['clipboard-read', 'clipboard-write'];
@@ -85,15 +88,17 @@ const config: PlaywrightTestConfig = {
 
       grepInvert: [
         /@upgrade/, // We should not run upgrade tests in this project
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
       name: 'mock chromium',
       use: { ...devices['Desktop Chrome'] },
       metadata: { mock: true },
-      dependencies: ['coverage setup'],
+      dependencies: process.env.SKIP_COVERAGE === 'true' ? [] : ['coverage setup'],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        ...(!visualTagExplicitlyIncluded ? [/@visual/] : []), // Keep visual tests opt-in and non-gating
       ],
     },
     {
@@ -101,6 +106,7 @@ const config: PlaywrightTestConfig = {
       use: { ...devices['Desktop Firefox'] },
       grepInvert: [
         /@upgrade/, // We should not run upgrade tests in this project
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -109,6 +115,7 @@ const config: PlaywrightTestConfig = {
       metadata: { mock: true },
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -116,6 +123,7 @@ const config: PlaywrightTestConfig = {
       use: { ...devices['Desktop Safari'] },
       grepInvert: [
         /@upgrade/, // We should not run upgrade tests in this project
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -125,6 +133,7 @@ const config: PlaywrightTestConfig = {
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
         /@upgrade/, // We should not run upgrade tests in this project - Webkit does not support the needed 301 redirects
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -139,6 +148,7 @@ const config: PlaywrightTestConfig = {
       ],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -174,6 +184,7 @@ const config: PlaywrightTestConfig = {
       dependencies: ['coverage setup'],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
     {
@@ -183,6 +194,7 @@ const config: PlaywrightTestConfig = {
       dependencies: ['coverage setup'],
       grepInvert: [
         /@not_mock/, // We should not run tests that are marked to not run againt a mock
+        /@visual/, // Visual baselines are generated only in mock Chromium
       ],
     },
   ],

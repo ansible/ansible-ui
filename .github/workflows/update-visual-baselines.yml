@@ -1,0 +1,311 @@
+name: Update PR visual baselines
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number
+        required: true
+        type: string
+      pr_ref:
+        description: PR head branch
+        required: true
+        type: string
+      pr_head_sha:
+        description: PR head SHA captured when the request was made
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: visual-baselines-${{ inputs.pr_number }}
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    name: Generate Linux mock baselines
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      changed: ${{ steps.collect.outputs.changed }}
+      file_count: ${{ steps.collect.outputs.file_count }}
+    steps:
+      - name: Validate PR and merge ref
+        id: verify
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          PR_REF: ${{ inputs.pr_ref }}
+          PR_HEAD_SHA: ${{ inputs.pr_head_sha }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const prNumberText = process.env.PR_NUMBER;
+            const prRef = process.env.PR_REF;
+            const prHeadSha = process.env.PR_HEAD_SHA;
+            if (!/^[0-9]+$/.test(prNumberText)) {
+              core.setFailed('Invalid PR number.');
+              return;
+            }
+            if (!/^[a-zA-Z0-9._/+=-]+$/.test(prRef)) {
+              core.setFailed('Invalid PR branch name.');
+              return;
+            }
+            if (!/^[0-9a-f]{40}$/.test(prHeadSha)) {
+              core.setFailed('Invalid PR head SHA.');
+              return;
+            }
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: Number(prNumberText),
+            });
+            const repository = context.repo.owner + '/' + context.repo.repo;
+            if (pr.state !== 'open' || pr.base.ref !== 'devel') {
+              core.setFailed('Visual baseline updates require an open PR targeting devel.');
+              return;
+            }
+            if (!pr.head.repo || pr.head.repo.full_name !== repository) {
+              core.setFailed('Visual baseline updates can only commit to a branch in this repository.');
+              return;
+            }
+            if (pr.head.ref !== prRef || pr.head.sha !== prHeadSha) {
+              core.setFailed('The PR changed after this request. Comment /update-visual-baselines again.');
+              return;
+            }
+
+            core.setOutput('merge_ref', 'refs/pull/' + prNumberText + '/merge');
+
+      - name: Check out the PR merge result
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          ref: ${{ steps.verify.outputs.merge_ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Confirm checked-out PR head
+        env:
+          PR_HEAD_SHA: ${{ inputs.pr_head_sha }}
+        run: |
+          actual_pr_head=$(git rev-parse HEAD^2)
+          if [[ "$actual_pr_head" != "$PR_HEAD_SHA" ]]; then
+            echo "The PR changed while the merge ref was being checked out. Comment /update-visual-baselines again."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate mock Chromium snapshots
+        env:
+          VISUAL_CONTAINER_RUNTIME: docker
+        run: scripts/update-visual-baselines.sh
+
+      - name: Validate baseline registry
+        run: npm run visual:check-baselines
+
+      - name: Collect changed Linux mock snapshots
+        id: collect
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact_root="$RUNNER_TEMP/visual-baseline-changes"
+          mkdir -p "$artifact_root"
+          git add -- playwright/tests/visual/*-snapshots/*.png
+
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No baseline changes were needed." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          file_count=0
+          while IFS= read -r -d '' file; do
+            if [[ ! "$file" =~ ^playwright/tests/visual/[^/]+\.spec\.ts-snapshots/[^/]+-mock-chromium-linux\.png$ ]]; then
+              echo "Unexpected changed file: $file"
+              exit 1
+            fi
+            mkdir -p "$artifact_root/$(dirname "$file")"
+            cp -- "$file" "$artifact_root/$file"
+            file_count=$((file_count + 1))
+          done < <(git diff --cached --name-only -z)
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "file_count=$file_count" >> "$GITHUB_OUTPUT"
+          echo "Generated $file_count Linux mock Chromium baseline image(s)." >> "$GITHUB_STEP_SUMMARY"
+
+
+      - name: Upload changed baseline images
+        if: steps.collect.outputs.changed == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: visual-baselines-${{ github.run_id }}
+          path: ${{ runner.temp }}/visual-baseline-changes
+          retention-days: 1
+
+      - name: Upload Playwright diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: visual-baseline-results-${{ github.run_id }}
+          path: |
+            playwright/test-results/
+            playwright/playwright/html-report/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  commit:
+    name: Commit baselines to PR branch
+    needs: generate
+    if: needs.generate.outputs.changed == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Download generated baseline images
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: visual-baselines-${{ github.run_id }}
+          path: ${{ runner.temp }}/visual-baseline-changes
+
+      - name: Commit validated images to PR branch
+        id: commit
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+          PR_REF: ${{ inputs.pr_ref }}
+          PR_HEAD_SHA: ${{ inputs.pr_head_sha }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const prNumber = Number(process.env.PR_NUMBER);
+            const prRef = process.env.PR_REF;
+            const prHeadSha = process.env.PR_HEAD_SHA;
+            if (!/^[0-9]+$/.test(process.env.PR_NUMBER) ||
+                !/^[a-zA-Z0-9._/+=-]+$/.test(prRef) ||
+                !/^[0-9a-f]{40}$/.test(prHeadSha)) {
+              throw new Error('Invalid PR update inputs.');
+            }
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            const repository = context.repo.owner + '/' + context.repo.repo;
+            if (pr.state !== 'open' || pr.base.ref !== 'devel' ||
+                !pr.head.repo || pr.head.repo.full_name !== repository ||
+                pr.head.ref !== prRef || pr.head.sha !== prHeadSha) {
+              throw new Error('The PR changed during baseline generation. Comment /update-visual-baselines again.');
+            }
+
+            const { data: branchRef } = await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'heads/' + prRef,
+            });
+            if (branchRef.object.sha !== prHeadSha) {
+              throw new Error('The PR branch advanced during baseline generation. Comment /update-visual-baselines again.');
+            }
+            const { data: parent } = await github.rest.git.getCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: prHeadSha,
+            });
+
+            const artifactRoot = path.resolve(process.env.RUNNER_TEMP, 'visual-baseline-changes');
+            const pngHeader = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+            const files = [];
+            function collect(directory) {
+              for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+                const absolutePath = path.join(directory, entry.name);
+                if (entry.isDirectory()) {
+                  collect(absolutePath);
+                } else if (entry.isFile()) {
+                  files.push(absolutePath);
+                } else {
+                  throw new Error('Unexpected non-file artifact entry: ' + absolutePath);
+                }
+              }
+            }
+            collect(artifactRoot);
+
+            if (files.length === 0) {
+              throw new Error('No baseline images were present in the workflow artifact.');
+            }
+
+            const treeEntries = [];
+            for (const absolutePath of files) {
+              const file = path.relative(artifactRoot, absolutePath).split(path.sep).join('/');
+              if (!/^playwright\/tests\/visual\/[^/]+\.spec\.ts-snapshots\/[^/]+-mock-chromium-linux\.png$/.test(file) ||
+                  file.includes('..')) {
+                throw new Error('Unexpected baseline path: ' + file);
+              }
+              const content = fs.readFileSync(absolutePath);
+              if (content.length > 25 * 1024 * 1024 ||
+                  !content.subarray(0, 8).equals(pngHeader)) {
+                throw new Error('Invalid PNG baseline artifact: ' + file);
+              }
+              const blob = await github.rest.git.createBlob({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                content: content.toString('base64'),
+                encoding: 'base64',
+              });
+              treeEntries.push({
+                path: file,
+                mode: '100644',
+                type: 'blob',
+                sha: blob.data.sha,
+              });
+            }
+
+            const tree = await github.rest.git.createTree({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base_tree: parent.tree.sha,
+              tree: treeEntries,
+            });
+            const commit = await github.rest.git.createCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              message: 'test: refresh Linux mock visual baselines',
+              tree: tree.data.sha,
+              parents: [prHeadSha],
+            });
+            await github.rest.git.updateRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'heads/' + prRef,
+              sha: commit.data.sha,
+              force: false,
+            });
+
+            core.setOutput('commit_sha', commit.data.sha);
+            core.setOutput('file_count', String(files.length));
+
+      - name: Summarize PR update
+        env:
+          COMMIT_SHA: ${{ steps.commit.outputs.commit_sha }}
+          FILE_COUNT: ${{ steps.commit.outputs.file_count }}
+          PR_REF: ${{ inputs.pr_ref }}
+        run: |
+          echo "Committed $FILE_COUNT Linux mock Chromium baseline image(s) to $PR_REF in $COMMIT_SHA." >> "$GITHUB_STEP_SUMMARY"
