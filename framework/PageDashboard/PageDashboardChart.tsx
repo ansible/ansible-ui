@@ -30,17 +30,19 @@ export enum PageDashboardChartVariantE {
 
 export type PageDashboardChartVariant = keyof typeof PageDashboardChartVariantE;
 
-export function PageDashboardChart(props: {
-  id?: string;
-  groups: {
-    label?: string;
-    color: string;
-    values: {
-      label: string;
-      value: number;
-    }[];
-    link?: string;
+export type PageDashboardChartGroup = {
+  label?: string;
+  color: string;
+  values: {
+    label: string;
+    value: number;
   }[];
+  link?: string;
+};
+
+export type PageDashboardChartProps = Readonly<{
+  id?: string;
+  groups: PageDashboardChartGroup[];
   // prevent y axis to show float values
   onlyIntegerTicks?: boolean;
   // minimal shown value
@@ -64,7 +66,9 @@ export function PageDashboardChart(props: {
   showLegendCount?: boolean;
 
   height?: number;
-}) {
+}>;
+
+export function PageDashboardChart(props: PageDashboardChartProps) {
   const { allowZero, xLabel, yLabel, minDomain, onlyIntegerTicks } = props;
   let { groups } = props;
   groups = allowZero
@@ -141,117 +145,18 @@ export function PageDashboardChart(props: {
       >
         <div style={{ height: '100%', margin: -16 }}>
           <PageChartContainer className="page-chart">
-            {(size) => (
-              <Chart
-                padding={padding}
-                colorScale={groups.map((group) => group.color)}
-                height={size.height}
-                width={size.width}
-                minDomain={minDomain}
-                maxDomain={{ y: maxDomainY }}
-                containerComponent={
-                  <CursorVoronoiContainer
-                    cursorDimension="x"
-                    labels={(point: { datum: { y: string | number } }) => point.datum.y.toString()}
-                    labelComponent={
-                      <ChartLegendTooltip
-                        // title={(datum: { x: number | string }) => datum.x}
-                        legendData={legendData}
-                        cornerRadius={8}
-                      />
-                    }
-                    mouseFollowTooltips
-                    voronoiDimension="x"
-                    voronoiPadding={50}
-                  />
-                }
-              >
-                <ChartAxis fixLabelOverlap />
-                <ChartAxis
-                  dependentAxis
-                  showGrid
-                  tickFormat={
-                    onlyIntegerTicks === false
-                      ? undefined
-                      : (t: number) => (Number.isInteger(t) ? t : '')
-                  }
-                />
-                {props.variant === PageDashboardChartVariantE.lineChart &&
-                  groups.map((group, index) => (
-                    <ChartLine
-                      key={index}
-                      name={index.toString()}
-                      style={{ data: { strokeWidth: 3, stroke: group.color } }}
-                      data={group.values.map((value) => ({ x: value.label, y: value.value }))}
-                      interpolation="monotoneX"
-                    />
-                  ))}
-                {props.variant === PageDashboardChartVariantE.lineChart &&
-                  groups.map((group, index) => (
-                    <ChartScatter
-                      key={'scatter-' + index}
-                      name={'scatter-' + index}
-                      data={group.values.map((value) => ({ x: value.label, y: value.value }))}
-                      size={({ active }) => (active ? 6 : 3)}
-                      style={{ data: { fill: group.color } }}
-                    />
-                  ))}
-                {props.variant === PageDashboardChartVariantE.stackedBarChart && (
-                  <ChartStack>
-                    {groups.map((group, index) => (
-                      <ChartBar
-                        key={index}
-                        name={index.toString()}
-                        style={{ data: { fill: group.color } }}
-                        data={group.values.map((value) => ({ x: value.label, y: value.value }))}
-                      />
-                    ))}
-                  </ChartStack>
-                )}
-                {props.variant === PageDashboardChartVariantE.barChart && (
-                  <ChartGroup offset={10}>
-                    {groups.map((group, index) => (
-                      <ChartBar
-                        key={index}
-                        name={index.toString()}
-                        style={{ data: { fill: group.color } }}
-                        data={group.values.map((value) => ({ x: value.label, y: value.value }))}
-                      />
-                    ))}
-                  </ChartGroup>
-                )}
-                {(!props.variant ||
-                  props.variant === PageDashboardChartVariantE.stackedAreaChart) && (
-                  <ChartStack>
-                    {groups.map((group, index) => (
-                      <ChartArea
-                        key={index}
-                        name={index.toString()}
-                        data={group.values.map((value) => ({ x: value.label, y: value.value }))}
-                        interpolation="monotoneX"
-                        style={{ data: { strokeWidth: 2 } }}
-                      />
-                    ))}
-                  </ChartStack>
-                )}
-                {(!props.variant ||
-                  props.variant === PageDashboardChartVariantE.stackedAreaChart) && (
-                  <ChartStack>
-                    {groups.map((group, index) => (
-                      <ChartScatter
-                        key={'scatter-' + index}
-                        name={'scatter-' + index}
-                        data={group.values.map((value) => ({
-                          x: value.label,
-                          y: value.value,
-                        }))}
-                        size={({ active }) => (active ? 6 : 3)}
-                      />
-                    ))}
-                  </ChartStack>
-                )}
-              </Chart>
-            )}
+            {(size) =>
+              renderPageDashboardChart({
+                groups,
+                variant: props.variant,
+                size,
+                padding,
+                minDomain,
+                maxDomainY,
+                legendData,
+                onlyIntegerTicks,
+              })
+            }
           </PageChartContainer>
         </div>
         {xLabel && (
@@ -266,6 +171,131 @@ export function PageDashboardChart(props: {
         />
       </div>
     </div>
+  );
+}
+
+function renderPageDashboardChart({
+  groups,
+  variant,
+  size,
+  padding,
+  minDomain,
+  maxDomainY,
+  legendData,
+  onlyIntegerTicks,
+}: {
+  groups: PageDashboardChartGroup[];
+  variant?: PageDashboardChartVariant;
+  size: { height: number; width: number };
+  padding: { top: number; bottom: number; left: number; right: number };
+  minDomain?: number | { x?: number; y?: number };
+  maxDomainY: number;
+  legendData: { childName: string; name?: string; symbol: { fill: string; type: string } }[];
+  onlyIntegerTicks?: boolean;
+}) {
+  return (
+    <Chart
+      padding={padding}
+      colorScale={groups.map((group) => group.color)}
+      height={size.height}
+      width={size.width}
+      minDomain={minDomain}
+      maxDomain={{ y: maxDomainY }}
+      containerComponent={
+        <CursorVoronoiContainer
+          cursorDimension="x"
+          labels={(point: { datum: { y: string | number } }) => point.datum.y.toString()}
+          labelComponent={
+            <ChartLegendTooltip
+              // title={(datum: { x: number | string }) => datum.x}
+              legendData={legendData}
+              cornerRadius={8}
+            />
+          }
+          mouseFollowTooltips
+          voronoiDimension="x"
+          voronoiPadding={50}
+        />
+      }
+    >
+      <ChartAxis fixLabelOverlap />
+      <ChartAxis
+        dependentAxis
+        showGrid
+        tickFormat={
+          onlyIntegerTicks === false ? undefined : (t: number) => (Number.isInteger(t) ? t : '')
+        }
+      />
+      {variant === PageDashboardChartVariantE.lineChart &&
+        groups.map((group, index) => (
+          <ChartLine
+            key={index}
+            name={index.toString()}
+            style={{ data: { strokeWidth: 3, stroke: group.color } }}
+            data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+            interpolation="monotoneX"
+          />
+        ))}
+      {variant === PageDashboardChartVariantE.lineChart &&
+        groups.map((group, index) => (
+          <ChartScatter
+            key={'scatter-' + index}
+            name={'scatter-' + index}
+            data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+            size={({ active }) => (active ? 6 : 3)}
+            style={{ data: { fill: group.color } }}
+          />
+        ))}
+      {variant === PageDashboardChartVariantE.stackedBarChart && (
+        <ChartStack>
+          {groups.map((group, index) => (
+            <ChartBar
+              key={index}
+              name={index.toString()}
+              style={{ data: { fill: group.color } }}
+              data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+            />
+          ))}
+        </ChartStack>
+      )}
+      {variant === PageDashboardChartVariantE.barChart && (
+        <ChartGroup offset={10}>
+          {groups.map((group, index) => (
+            <ChartBar
+              key={index}
+              name={index.toString()}
+              style={{ data: { fill: group.color } }}
+              data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+            />
+          ))}
+        </ChartGroup>
+      )}
+      {(!variant || variant === PageDashboardChartVariantE.stackedAreaChart) && (
+        <ChartStack>
+          {groups.map((group, index) => (
+            <ChartArea
+              key={index}
+              name={index.toString()}
+              data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+              interpolation="monotoneX"
+              style={{ data: { strokeWidth: 2 } }}
+            />
+          ))}
+        </ChartStack>
+      )}
+      {(!variant || variant === PageDashboardChartVariantE.stackedAreaChart) && (
+        <ChartStack>
+          {groups.map((group, index) => (
+            <ChartScatter
+              key={'scatter-' + index}
+              name={'scatter-' + index}
+              data={group.values.map((value) => ({ x: value.label, y: value.value }))}
+              size={({ active }) => (active ? 6 : 3)}
+            />
+          ))}
+        </ChartStack>
+      )}
+    </Chart>
   );
 }
 
