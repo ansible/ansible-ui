@@ -26,7 +26,8 @@ import {
 const mockPageNavigate = vi.fn();
 const mockGetPageUrl = vi.fn((_route: string, options?: { params?: Record<string, unknown> }) => {
   const id = options?.params?.id;
-  return `/resource/${String(id ?? '')}`;
+  const idText = typeof id === 'string' || typeof id === 'number' ? String(id) : '';
+  return `/resource/${idText}`;
 });
 
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
@@ -52,7 +53,9 @@ describe('shared column hooks', () => {
   it('useIdColumn should expose id cell and hidden table option by default', () => {
     const { result } = renderHook(() => useIdColumn());
     expect(result.current.header).toBe('ID');
-    const cell = result.current.cell as ((item: { id: number }) => number) | undefined;
+    const { cell } = result.current as unknown as {
+      cell?: (item: { id: number }) => number;
+    };
     expect(cell?.({ id: 9 })).toBe(9);
     expect(result.current.table).toBe(ColumnTableOption.hidden);
   });
@@ -60,10 +63,10 @@ describe('shared column hooks', () => {
   it('useNameColumn should map name and link target', () => {
     const to = (item: { name?: string }) => `/names/${item.name}`;
     const { result } = renderHook(() => useNameColumn({ to }));
-    const valueFn = result.current.value as
-      | ((item: { name?: string }) => string | undefined)
-      | undefined;
-    const toFn = result.current.to as ((item: { name?: string }) => string | undefined) | undefined;
+    const { value: valueFn, to: toFn } = result.current as unknown as {
+      value?: (item: { name?: string }) => string | undefined;
+      to?: (item: { name?: string }) => string | undefined;
+    };
     expect(valueFn?.({ name: 'demo' })).toBe('demo');
     expect(toFn?.({ name: 'demo' })).toBe('/names/demo');
   });
@@ -95,7 +98,9 @@ describe('shared column hooks', () => {
     renderWithRouter(
       <>
         {result.current.cell?.({
-          summary_fields: { credentials: [{ id: 1, name: 'Machine', kind: 'ssh' }] },
+          summary_fields: {
+            credentials: [{ id: 1, name: 'Machine', description: '', kind: 'ssh', cloud: false }],
+          },
         })}
       </>
     );
@@ -162,9 +167,11 @@ describe('shared column hooks', () => {
 
   it('useInventoryNameColumn should render inventory link', () => {
     const { result } = renderHook(() => useInventoryNameColumn('inventory-details'));
-    const cell = result.current.cell as (item: {
-      summary_fields?: { inventory?: { id: number; name: string; kind: string } };
-    }) => ReactNode;
+    const { cell } = result.current as unknown as {
+      cell: (item: {
+        summary_fields?: { inventory?: { id: number; name: string; kind: string } };
+      }) => ReactNode;
+    };
     renderWithRouter(
       <>
         {cell({
@@ -209,7 +216,9 @@ describe('shared column hooks', () => {
 
   it('useAddressColumn should render address text', () => {
     const { result } = renderHook(() => useAddressColumn());
-    const cell = result.current.cell as (item: { address: string }) => ReactNode;
+    const { cell } = result.current as unknown as {
+      cell: (item: { address: string }) => ReactNode;
+    };
     renderWithRouter(<>{cell({ address: 'node-1.example.com' })}</>);
     expect(screen.getByTestId('node-1.example.com-status')).toBeInTheDocument();
   });
