@@ -7,7 +7,7 @@ import { RemoteFormProps } from '../RemoteForm';
 import { RequirementsFile } from './RequirementsFile';
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
-  DataEditor: (props: { id?: string; value?: string; onChange?: (value: string) => void }) => (
+  DataEditor: (props: { value?: string; onChange?: (value: string) => void }) => (
     <textarea
       aria-label="Requirements file"
       value={props.value ?? ''}
