@@ -35,6 +35,7 @@ automation-dashboard/
 │   ├── useAutomationDashboardToolbarActions.tsx
 │   ├── useCreateToolbarFilterSet.tsx / useUpdateToolbarFilterSet.tsx / useRemoveToolbarFilterSet.tsx
 │   ├── useCreateEditToolbarFilterSetDialog.tsx
+│   ├── useSetTemplateValuesDialog.tsx  # "Set template values" modal: bulk PATCH of all template times
 │   └── useDashboardGridColumns.tsx  # Measures the responsive grid column count
 ├── components/
 │   ├── index.ts
@@ -48,9 +49,9 @@ automation-dashboard/
 │   ├── DashboardCardValue.tsx       # Shared value formatting / font-size helper
 │   ├── DashboardChartCard.tsx       # Bar / line chart card
 │   ├── DashboardMainTableCard.tsx   # Main editable cost/savings table card
-│   ├── DashboardTableToolbarRow.tsx # Cost controls + Export CSV
+│   ├── DashboardTableToolbarRow.tsx # Cost controls (hourly rate, monthly cost, creation-time toggle)
 │   ├── DashboardTableInputField.tsx # Inline numeric input
-│   ├── DashboardExportButton.tsx    # CSV export split button
+│   ├── DashboardMainTableActions.tsx # Main table header actions (set template values, CSV export)
 │   └── leaderboards/                # "Leaderboards" tab components (data via the view hook)
 │       ├── AutomationAtAGlance.tsx
 │       ├── AtAGlanceKpiMetric.tsx
@@ -245,12 +246,28 @@ Full-width card combining four KPI value cards, the cost-controls toolbar
 fields. Edits are saved via a PUT to the `template_metadata` endpoint and trigger a full refresh
 before showing the success alert.
 
-### `DashboardTableToolbarRow` / `DashboardTableInputField` / `DashboardExportButton`
+### `DashboardTableToolbarRow` / `DashboardTableInputField`
 
-Cost-calculation controls (two numeric inputs + a toggle) and the **Export as CSV** split button.
-Changes are POSTed to the `subscription_costs` endpoint; 422 field errors are surfaced beneath the
+Cost-calculation controls (two numeric inputs + a toggle). Changes are POSTed to the `subscription_costs` endpoint; 422 field errors are surfaced beneath the
 relevant input. `DashboardTableInputField` calls `onBlur` only when the value passes its inline
 validation (empty, NaN, integer checks).
+
+### `DashboardMainTableActions` / `useSetTemplateValuesDialog`
+
+The card-header actions of `DashboardMainTableCard`:
+
+- **Set template values** — shown only to superusers when the table has results, and disabled
+  while the report loads or required filters are invalid. Opens a modal (`useSetTemplateValuesDialog`)
+  that sends one PATCH to `template_metadata/` and overwrites the time estimates of every template,
+  including templates hidden by the current filters. **Apply** stays disabled until the user ticks
+  the confirmation checkbox, like the delete confirmations. Pending inline table saves are awaited first, so
+  they cannot overwrite the bulk values. On success the table shows the new values right away, and the report and
+  its details are reloaded.
+- **Export as CSV** — Summary / ROI / Trends. The tooltip of the disabled export explains why it is
+  unavailable, and a spinner replaces the icon while an export runs.
+
+Below the `md` breakpoint both collapse into a kebab, where the reports are listed directly instead
+of in a nested dropdown.
 
 ### `DashboardToolbar`
 

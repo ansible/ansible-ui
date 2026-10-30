@@ -188,11 +188,16 @@ export type IAutomationDashboardView = {
 
 export type ReportType = 'summary' | 'roi' | 'trends';
 
-// ─── Export Button Type ───────────────────────────────────────────────────────────
-export type IAutomationDashboardExportButton = {
-  exportType: 'csv' | 'html';
+// ─── Main Table Actions Type ─────────────────────────────────────────────────────
+export type IAutomationDashboardMainTableActions = {
   title: string;
   icon: ComponentClass;
-  isDisabled?: boolean;
+  /** When set, the export is disabled and this explains why in its tooltip. */
+  exportDisabledReason?: string;
   onExport: (reportType: ReportType) => Promise<void>;
+  /** Shows the "Set template values" action; only admins with table results may use it. */
+  canSetTemplateValues?: boolean;
+  /** When set, "Set template values" is disabled and this explains why in its tooltip. */
+  setTemplateValuesDisabledReason?: string;
+  onSetTemplateValues?: () => void;
 };
