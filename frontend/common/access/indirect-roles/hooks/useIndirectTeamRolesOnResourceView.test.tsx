@@ -139,8 +139,8 @@ describe('useIndirectTeamRolesOnResourceView', () => {
       }
     );
 
-    await waitFor(() => expect(result.current.view.pageItems.length).toBe(1));
-    const item = result.current.view.pageItems[0];
+    await waitFor(() => expect(result.current.view.pageItems?.length).toBe(1));
+    const item = result.current.view.pageItems![0];
     const { container } = render(<>{result.current.tableColumns[0].cell(item)}</>);
     expect(container).toBeEmptyDOMElement();
   });
