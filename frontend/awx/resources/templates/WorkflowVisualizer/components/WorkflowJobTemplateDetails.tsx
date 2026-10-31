@@ -15,6 +15,7 @@ import { GraphNodeData } from '../types';
 import { NodeCodeEditorDetail } from './NodeCodeEditorDetail';
 import { NodeTagDetail } from './NodeTagDetail';
 import { PromptDetail } from './PromptDetail';
+import { shouldInheritTemplateTags } from './resolveNodeFields';
 
 export function WorkflowJobTemplateDetails({
   node,
@@ -174,6 +175,11 @@ export function WorkflowJobTemplateDetails({
             : parseStringToTagArray(template.job_tags || '')
         }
         templateTags={parseStringToTagArray(template.job_tags || '')}
+        inheritTemplateTagsWhenEmpty={shouldInheritTemplateTags(
+          launchConfig?.ask_tags_on_launch,
+          promptValues?.job_tags,
+          nodeValues?.job_tags
+        )}
       />
       <NodeTagDetail
         label={t('Skip tags')}
@@ -183,6 +189,11 @@ export function WorkflowJobTemplateDetails({
             : parseStringToTagArray(template.skip_tags || '')
         }
         templateTags={parseStringToTagArray(template.skip_tags || '')}
+        inheritTemplateTagsWhenEmpty={shouldInheritTemplateTags(
+          launchConfig?.ask_skip_tags_on_launch,
+          promptValues?.skip_tags,
+          nodeValues?.skip_tags
+        )}
       />
       <NodeCodeEditorDetail
         label={t('Variables')}
