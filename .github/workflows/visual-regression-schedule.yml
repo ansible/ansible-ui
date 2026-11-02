@@ -100,7 +100,7 @@ jobs:
           delete-branch: true
           add-paths: playwright/tests/visual/*-snapshots/*.png
           commit-message: 'test: refresh visual regression baselines'
-          title: 'Visual regression: weekly baseline refresh'
+          title: 'test: refresh visual regression baselines'
           body: |
             Automated refresh of Linux visual regression baselines from the current `devel` build.
 
