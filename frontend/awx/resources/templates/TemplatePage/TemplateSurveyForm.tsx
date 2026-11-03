@@ -37,8 +37,6 @@ import {
 } from './TemplateSurveyValidation';
 
 export {
-  getFormattedChoices,
-  isMultiSelect,
   isLengthType,
   type ValidateMinMaxOptions,
   validateMax,
