@@ -13,13 +13,14 @@ const mockT = ((s: string) => s) as TFunction<'translation', undefined>;
 
 const mockApproveModal = vi.fn();
 const mockCopyToRepository = vi.fn();
+const mockRejectCollections = vi.fn();
 
 vi.mock('../../../collections/hooks/useCopyToRepository', () => ({
   useCopyToRepository: () => mockCopyToRepository,
 }));
 
 vi.mock('./useRejectCollections', () => ({
-  useRejectCollections: () => vi.fn(),
+  useRejectCollections: () => mockRejectCollections,
 }));
 
 vi.mock('./useApproveCollections', () => ({
@@ -300,10 +301,12 @@ describe('useApprovalActions', () => {
     });
     expect(mockPageNavigate).toHaveBeenCalled();
 
+    mockRejectCollections.mockClear();
     const rejectAction = getAction(result.current, 'Reject collection');
     act(() => {
       rejectAction && 'onClick' in rejectAction && rejectAction.onClick(mockCollection as never);
     });
+    expect(mockRejectCollections).toHaveBeenCalledWith([mockCollection]);
   });
 
   it('runs approve action handler', async () => {

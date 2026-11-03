@@ -9,12 +9,21 @@ import { hubAPI } from '../../common/api/formatPath';
 import { CreateRemoteRegistry, EditRemoteRegistry } from './RemoteRegistryForm';
 
 const mockPageNavigate = vi.fn();
+const mockNavigate = vi.fn();
 
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
   return {
     ...actual,
     usePageNavigate: () => mockPageNavigate,
+  };
+});
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
   };
 });
 
@@ -66,6 +75,7 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
 afterEach(() => {
   server.resetHandlers();
   mockPageNavigate.mockClear();
+  mockNavigate.mockClear();
 });
 afterAll(() => server.close());
 
@@ -186,7 +196,7 @@ describe('CreateRemoteRegistry', () => {
     );
 
     await user.click(await screen.findByRole('button', { name: 'Cancel' }));
-    expect(mockPageNavigate).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 });
 
@@ -347,7 +357,7 @@ describe('EditRemoteRegistry', () => {
     });
   }, 30000);
 
-  it('navigates to user access when edit is cancelled', async () => {
+  it('navigates back when edit is cancelled', async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={['/remote-registries/test-registry/edit']}>
@@ -358,5 +368,6 @@ describe('EditRemoteRegistry', () => {
     );
 
     await user.click(await screen.findByRole('button', { name: 'Cancel' }));
+    expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 });

@@ -152,8 +152,12 @@ describe('RemoteAssignTeams', () => {
 
   it('submits team role assignments from the wizard', async () => {
     useRemoteHandlers();
+    const assignmentPosts = vi.fn();
     server.use(
-      http.post('*/role_team_assignments/*', () => HttpResponse.json({ id: 99 }, { status: 201 }))
+      http.post('*/role_team_assignments/*', async ({ request }) => {
+        assignmentPosts(await request.json());
+        return HttpResponse.json({ id: 99 }, { status: 201 });
+      })
     );
 
     const user = userEvent.setup();
@@ -174,6 +178,7 @@ describe('RemoteAssignTeams', () => {
 
     await waitFor(
       () => {
+        expect(assignmentPosts).toHaveBeenCalled();
         expect(mockNavigate).toHaveBeenCalled();
       },
       { timeout: 20000 }

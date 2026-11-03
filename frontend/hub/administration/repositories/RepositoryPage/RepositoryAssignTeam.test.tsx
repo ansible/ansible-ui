@@ -167,8 +167,12 @@ describe('RepositoryAssignTeams', () => {
 
   it('submits team role assignments from the wizard', async () => {
     useRepositoryHandlers();
+    const assignmentPosts = vi.fn();
     server.use(
-      http.post('*/role_team_assignments/*', () => HttpResponse.json({ id: 99 }, { status: 201 }))
+      http.post('*/role_team_assignments/*', async ({ request }) => {
+        assignmentPosts(await request.json());
+        return HttpResponse.json({ id: 99 }, { status: 201 });
+      })
     );
 
     const user = userEvent.setup();
@@ -189,6 +193,7 @@ describe('RepositoryAssignTeams', () => {
 
     await waitFor(
       () => {
+        expect(assignmentPosts).toHaveBeenCalled();
         expect(mockNavigate).toHaveBeenCalled();
       },
       { timeout: 20000 }

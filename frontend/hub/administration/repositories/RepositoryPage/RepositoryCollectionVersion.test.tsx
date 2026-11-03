@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
@@ -10,6 +9,7 @@ import { Repository } from '../Repository';
 import { RepositoryCollectionVersion } from './RepositoryCollectionVersion';
 
 const mockRunAddModal = vi.fn();
+let capturedBulkConfirmation: { title?: string; isDanger?: boolean } | undefined;
 
 vi.mock('../hooks/useAddCollections', () => ({
   useAddCollections: () => mockRunAddModal,
@@ -28,7 +28,9 @@ vi.mock('../../../common/useHubContext', () => ({
 }));
 
 vi.mock('../../../common/useHubBulkConfirmation', () => ({
-  useHubBulkConfirmation: () => () => undefined,
+  useHubBulkConfirmation: () => (config: typeof capturedBulkConfirmation) => {
+    capturedBulkConfirmation = config;
+  },
 }));
 
 vi.mock('../../../common/isInsights', () => ({
@@ -292,13 +294,20 @@ describe('RepositoryCollectionVersion', () => {
       checkboxes.find((box) => box.getAttribute('name') !== 'select-all') ?? checkboxes[1];
     await user.click(rowCheckbox!);
 
+    capturedBulkConfirmation = undefined;
     const removeButton = screen.getByRole('button', { name: 'Remove collections' });
     expect(removeButton).toBeEnabled();
     await user.click(removeButton);
 
     await waitFor(() => {
-      expect(screen.getByText('collection')).toBeInTheDocument();
+      expect(capturedBulkConfirmation).toEqual(
+        expect.objectContaining({
+          title: 'Remove collections versions',
+          isDanger: true,
+        })
+      );
     });
+    expect(screen.getByText('collection')).toBeInTheDocument();
   }, 30000);
 
   it('runs add collections callback after toolbar add click', async () => {
