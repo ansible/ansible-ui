@@ -350,6 +350,9 @@ describe('ManageResourceRoles', () => {
     await user.click(screen.getByTestId('Submit'));
 
     await waitFor(() => expect(mockProgressDialog).toHaveBeenCalled());
-    await waitFor(() => expect(posted || deleted).toBe(true));
+    await waitFor(() => {
+      expect(deleted).toBe(true);
+      expect(posted).toBe(true);
+    });
   });
 });

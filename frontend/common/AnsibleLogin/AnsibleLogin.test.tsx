@@ -348,9 +348,36 @@ describe('AnsibleLogin', () => {
       await vi.waitFor(() => expect(locationRef.href).toBe('/dashboard'));
     });
 
-    it('should show generic invalid credentials message for non-Error failures', async () => {
+    it('should ignore unsafe next query param and redirect to home', async () => {
       const user = userEvent.setup();
-      vi.stubGlobal('fetch', vi.fn().mockRejectedValue('network down'));
+      server.use(
+        http.get(defaultProps.loginApiUrl, () => HttpResponse.json({})),
+        http.post(defaultProps.loginApiUrl, () => new HttpResponse(null, { status: 204 }))
+      );
+      document.cookie = 'csrftoken=test-token; path=/';
+
+      const locationRef = { href: '', pathname: '/login', search: '?next=//evil.com' };
+      Object.defineProperty(window, 'location', { configurable: true, value: locationRef });
+
+      render(
+        <MemoryRouter initialEntries={['/login?next=//evil.com']}>
+          <AnsibleLogin {...defaultProps} loginTitle="Log in" />
+        </MemoryRouter>
+      );
+
+      const usernameInput = document.querySelector('#pf-login-username-id') as HTMLInputElement;
+      const passwordInput = document.querySelector('#pf-login-password-id') as HTMLInputElement;
+      await user.type(usernameInput, 'admin');
+      await user.type(passwordInput, 'password');
+      await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+      await vi.waitFor(() => expect(locationRef.href).toBe('/'));
+      expect(locationRef.href).not.toContain('evil.com');
+    });
+
+    it('should show login error when the login page request fails with a network error', async () => {
+      const user = userEvent.setup();
+      server.use(http.get(defaultProps.loginApiUrl, () => HttpResponse.error()));
 
       render(
         <MemoryRouter>
@@ -364,12 +391,7 @@ describe('AnsibleLogin', () => {
       await user.type(passwordInput, 'password');
       await user.click(screen.getByRole('button', { name: 'Log in' }));
 
-      await vi.waitFor(() =>
-        expect(
-          screen.getByText('Invalid username or password. Please try again.')
-        ).toBeInTheDocument()
-      );
-      vi.unstubAllGlobals();
+      await vi.waitFor(() => expect(screen.getByText('Failed to fetch')).toBeInTheDocument());
     });
 
     it('should render other login options', async () => {

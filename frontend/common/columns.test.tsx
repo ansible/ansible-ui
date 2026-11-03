@@ -123,7 +123,9 @@ describe('shared column hooks', () => {
     expect(mockPageNavigate).toHaveBeenCalled();
   });
 
-  it('useModifiedColumn should skip navigation for system user', () => {
+  it('useModifiedColumn should skip navigation for system user', async () => {
+    mockPageNavigate.mockClear();
+    const user = userEvent.setup();
     const { result } = renderHook(() => useModifiedColumn());
     renderWithRouter(
       <>
@@ -133,7 +135,10 @@ describe('shared column hooks', () => {
         })}
       </>
     );
-    expect(screen.queryByText('_system')).toBeInTheDocument();
+    expect(screen.getByText('_system')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '_system' })).not.toBeInTheDocument();
+    await user.click(screen.getByText('_system'));
+    expect(mockPageNavigate).not.toHaveBeenCalled();
   });
 
   it('useOrganizationNameColumn should render organization name', () => {
