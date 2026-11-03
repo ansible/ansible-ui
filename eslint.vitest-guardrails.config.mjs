@@ -44,7 +44,7 @@ export default [
         },
       ],
       '@vitest/no-identical-title': 'warn',
-      'testing-library/no-debugging-utils': 'warn',
+      'testing-library/no-debugging-utils': 'error',
       'testing-library/prefer-user-event': 'warn',
       'testing-library/no-node-access': 'warn',
     },
