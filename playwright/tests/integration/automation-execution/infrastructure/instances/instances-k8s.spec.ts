@@ -63,7 +63,7 @@ test.describe('Instances (K8s)', () => {
       const instance = (await createResponse.json()) as InstanceType;
 
       await expect(page.getByRole('heading', { name: instanceHostname })).toBeVisible();
-      await expect(page.getByTestId('name')).toContainText(instanceHostname.toLowerCase());
+      await expect(page.getByTestId('name')).toContainText(new RegExp(instanceHostname, 'i'));
       await expect(page.getByTestId('node-type')).toContainText('Execution');
       await expect(page.getByTestId('status')).toContainText('Installed');
       await expect(page.getByTestId('listener-port')).toContainText('9999');

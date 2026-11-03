@@ -148,12 +148,15 @@ export const InventoryHost = {
       await confirmAndAssertDeletion(page);
     },
 
-    bulkDelete: async (page: Page, inventoryName: string): Promise<void> => {
+    bulkDelete: async (page: Page, inventoryName: string, hostNames: string[]): Promise<void> => {
       await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
 
       await clearTableFilters(page);
       const rowCheckboxes = page.getByRole('checkbox', { name: 'Select row' });
-      await expect(rowCheckboxes).not.toHaveCount(0);
+      await expect(rowCheckboxes).toHaveCount(hostNames.length, { timeout: 30_000 });
+      for (const hostName of hostNames) {
+        await expect(await getTableRow(page, hostName)).toBeVisible({ timeout: 30_000 });
+      }
       for (const checkbox of await rowCheckboxes.all()) {
         await checkbox.check();
       }
@@ -169,21 +172,20 @@ export const InventoryHost = {
       await waitForBulkActionDialog(page);
 
       await clearTableFilters(page);
-      await expect
-        .poll(
-          async () => {
-            const count = await rowCheckboxes.count();
-            if (count === 0) {
-              return 0;
-            }
-            await page.reload();
-            await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
-            await clearTableFilters(page);
-            return await rowCheckboxes.count();
-          },
-          { timeout: 60000, message: 'inventory hosts still listed after bulk delete' }
-        )
-        .toBe(0);
+      try {
+        await expect
+          .poll(() => rowCheckboxes.count(), {
+            timeout: 10_000,
+            message: 'inventory hosts still listed after bulk delete',
+          })
+          .toBe(0);
+      } catch {
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        await expect(page.locator('.pf-v6-c-nav')).toBeVisible({ timeout: 30_000 });
+        await InventoryHost.ui.navigateToInventoryHostsTab(inventoryName, page);
+        await clearTableFilters(page);
+        await expect(rowCheckboxes).toHaveCount(0, { timeout: 30_000 });
+      }
     },
   },
 };
