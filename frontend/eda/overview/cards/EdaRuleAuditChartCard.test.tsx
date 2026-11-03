@@ -25,27 +25,68 @@ vi.mock('@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart', () => 
 
 const server = setupServer();
 
+function renderChart(cache: Map<unknown, unknown>) {
+  return render(
+    <SWRConfig
+      value={{
+        provider: () => cache,
+        dedupingInterval: 0,
+        shouldRetryOnError: false,
+        revalidateOnMount: true,
+      }}
+    >
+      <MemoryRouter>
+        <RuleAuditChart />
+      </MemoryRouter>
+    </SWRConfig>
+  );
+}
+
+function firedAudit(id: number, status: 'successful' | 'failed', when: Date) {
+  return { id, status, fired_at: when.toISOString() };
+}
+
+async function expectLoadedChartThenEmpty(
+  emptyResults: { id: number; status: string; fired_at?: string }[]
+) {
+  const cache = new Map();
+  const today = new Date();
+  server.use(
+    http.get(/audit-rules/, () =>
+      HttpResponse.json({
+        count: 1,
+        results: [firedAudit(1, 'successful', today)],
+      })
+    )
+  );
+
+  const loaded = renderChart(cache);
+  await waitFor(() => {
+    expect(screen.getByText('Rule Audit')).toBeInTheDocument();
+  });
+  loaded.unmount();
+
+  server.use(
+    http.get(/audit-rules/, () =>
+      HttpResponse.json({ count: emptyResults.length, results: emptyResults })
+    )
+  );
+
+  const emptied = renderChart(cache);
+  expect(screen.getByText('Rule Audit')).toBeInTheDocument();
+  await waitFor(() => {
+    expect(screen.queryByText('Rule Audit')).not.toBeInTheDocument();
+    expect(emptied.container).toHaveTextContent('');
+  });
+}
+
 describe('EdaRuleAuditChartCard', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
   it('should render nothing when there are no fired audits', async () => {
-    server.use(http.get(/audit-rules/, () => HttpResponse.json({ count: 0, results: [] })));
-
-    const { container } = render(
-      <SWRConfig
-        value={{ provider: () => new Map(), dedupingInterval: 0, shouldRetryOnError: false }}
-      >
-        <MemoryRouter>
-          <RuleAuditChart />
-        </MemoryRouter>
-      </SWRConfig>
-    );
-
-    await waitFor(() => {
-      expect(container).toHaveTextContent('');
-    });
+    await expectLoadedChartThenEmpty([]);
   });
 
   it('should aggregate successful and failed runs onto the chart', async () => {
@@ -56,23 +97,15 @@ describe('EdaRuleAuditChartCard', () => {
         HttpResponse.json({
           count: 3,
           results: [
-            { id: 1, status: 'successful', fired_at: yesterday.toISOString() },
-            { id: 2, status: 'successful', fired_at: today.toISOString() },
-            { id: 3, status: 'failed', fired_at: today.toISOString() },
+            firedAudit(1, 'successful', yesterday),
+            firedAudit(2, 'successful', today),
+            firedAudit(3, 'failed', today),
           ],
         })
       )
     );
 
-    render(
-      <SWRConfig
-        value={{ provider: () => new Map(), dedupingInterval: 0, shouldRetryOnError: false }}
-      >
-        <MemoryRouter>
-          <RuleAuditChart />
-        </MemoryRouter>
-      </SWRConfig>
-    );
+    renderChart(new Map());
 
     await waitFor(() => {
       expect(screen.getByText('Rule Audit')).toBeInTheDocument();
@@ -82,30 +115,9 @@ describe('EdaRuleAuditChartCard', () => {
   });
 
   it('should ignore audits without a fired_at timestamp', async () => {
-    server.use(
-      http.get(/audit-rules/, () =>
-        HttpResponse.json({
-          count: 2,
-          results: [
-            { id: 1, status: 'successful' },
-            { id: 2, status: 'failed' },
-          ],
-        })
-      )
-    );
-
-    const { container } = render(
-      <SWRConfig
-        value={{ provider: () => new Map(), dedupingInterval: 0, shouldRetryOnError: false }}
-      >
-        <MemoryRouter>
-          <RuleAuditChart />
-        </MemoryRouter>
-      </SWRConfig>
-    );
-
-    await waitFor(() => {
-      expect(container).toHaveTextContent('');
-    });
+    await expectLoadedChartThenEmpty([
+      { id: 1, status: 'successful' },
+      { id: 2, status: 'failed' },
+    ]);
   });
 });

@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const render = vi.fn();

@@ -5,6 +5,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
+import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
 import { PageDialogProvider } from '@ansible/ansible-ui-framework/PageDialogs/PageDialog';
 import { FrameworkTranslationsProvider } from '@ansible/ansible-ui-framework/useFrameworkTranslations';
 import { edaAPI } from '../../common/eda-utils';
@@ -361,9 +362,11 @@ describe('EventStreamPage', () => {
 
     render(
       <MemoryRouter initialEntries={['/event-streams/1/details']}>
-        <Routes>
-          <Route path="/event-streams/:id/details" element={<EventStreamPage />} />
-        </Routes>
+        <PageAlertToasterProvider>
+          <Routes>
+            <Route path="/event-streams/:id/details" element={<EventStreamPage />} />
+          </Routes>
+        </PageAlertToasterProvider>
       </MemoryRouter>
     );
 
@@ -371,5 +374,10 @@ describe('EventStreamPage', () => {
       expect(screen.getByRole('heading', { name: 'Test Event Stream' })).toBeInTheDocument();
     });
     await user.click(await screen.findByRole('switch'));
+    await waitFor(() => {
+      expect(
+        screen.getByText('Failed to enable the forwarding of events for Test Event Stream')
+      ).toBeInTheDocument();
+    });
   });
 });

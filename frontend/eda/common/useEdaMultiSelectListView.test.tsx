@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { renderHook } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';

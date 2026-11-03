@@ -1,5 +1,4 @@
-/* eslint-disable i18next/no-literal-string */
-import { act, render, renderHook, screen } from '@testing-library/react';
+import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { PageDialogProvider } from '@ansible/ansible-ui-framework/PageDialogs/PageDialog';
@@ -35,8 +34,7 @@ const event = {
 } as EdaRuleAuditEvent;
 
 describe('EventPayloadDialog', () => {
-  it('should render event details and payload, then close', async () => {
-    const user = userEvent.setup();
+  it('should render event details and payload', () => {
     render(
       <PageDialogProvider>
         <EventPayloadDialog event={event} />
@@ -47,9 +45,6 @@ describe('EventPayloadDialog', () => {
     expect(screen.getByText('range')).toBeInTheDocument();
     expect(screen.getByText('ansible.eda.range')).toBeInTheDocument();
     expect(screen.getByText('Event log')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Close' }));
-    expect(screen.getByRole('button', { name: 'Close' })).toBeInTheDocument();
   });
 
   it('should omit the payload editor when payload is missing', () => {
@@ -63,20 +58,20 @@ describe('EventPayloadDialog', () => {
     expect(screen.queryByText('Event log')).not.toBeInTheDocument();
   });
 
-  it('should open and close the dialog through the hook', async () => {
-    const onClose = vi.fn();
+  it('should close the dialog when Close is clicked', async () => {
+    const user = userEvent.setup();
     const { result } = renderHook(() => useEventPayloadDialog(), {
       wrapper: ({ children }) => <PageDialogProvider>{children}</PageDialogProvider>,
     });
 
     act(() => {
-      result.current({ event, onClose });
+      result.current({ event });
     });
     expect(await screen.findByText('Event details')).toBeInTheDocument();
 
-    act(() => {
-      result.current(undefined);
+    await user.click(screen.getByRole('button', { name: 'Close' }));
+    await waitFor(() => {
+      expect(screen.queryByText('Event details')).not.toBeInTheDocument();
     });
-    expect(onClose).not.toHaveBeenCalled();
   });
 });

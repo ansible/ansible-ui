@@ -1,5 +1,4 @@
-/* eslint-disable i18next/no-literal-string */
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
@@ -14,11 +13,13 @@ import { EdaRoute } from '../../main/EdaRoutes';
 import { useEventStreamActions } from './useEventStreamActions';
 
 const pageNavigate = vi.fn();
+const addAlert = vi.fn();
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
   return {
     ...actual,
     usePageNavigate: () => pageNavigate,
+    usePageAlertToaster: () => ({ addAlert }),
   };
 });
 
@@ -45,17 +46,18 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('useEventStreamActions', () => {
+  const unselectItemsAndRefresh = vi.fn();
+  const view = { unselectItemsAndRefresh } as unknown as IEdaView<EdaEventStream>;
+  const eventStream = { id: 3, name: 'Stream 3', test_mode: true } as EdaEventStream;
+
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
   afterEach(() => {
     server.resetHandlers();
     pageNavigate.mockClear();
+    addAlert.mockClear();
+    unselectItemsAndRefresh.mockClear();
   });
   afterAll(() => server.close());
-
-  const view = {
-    unselectItemsAndRefresh: vi.fn(),
-  } as unknown as IEdaView<EdaEventStream>;
-  const eventStream = { id: 3, name: 'Stream 3', test_mode: true } as EdaEventStream;
 
   it('should return switch, edit, and delete actions', () => {
     const { result } = renderHook(() => useEventStreamActions(view), { wrapper });
@@ -78,11 +80,18 @@ describe('useEventStreamActions', () => {
     const edit = result.current[1] as { onClick: (item: EdaEventStream) => void };
     const remove = result.current[3] as { onClick: (item: EdaEventStream) => void };
 
-    await act(async () => {
+    act(() => {
       enable.onToggle(eventStream, true);
-      await new Promise((resolve) => setTimeout(resolve, 50));
     });
-    expect(view.unselectItemsAndRefresh).toHaveBeenCalledWith([eventStream]);
+    await waitFor(() => {
+      expect(addAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'success',
+          title: 'Stream 3  switched to production mode.',
+        })
+      );
+    });
+    expect(unselectItemsAndRefresh).toHaveBeenCalledWith([eventStream]);
 
     edit.onClick(eventStream);
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.EditEventStream, { params: { id: 3 } });
@@ -105,11 +114,17 @@ describe('useEventStreamActions', () => {
     const { result } = renderHook(() => useEventStreamActions(view), { wrapper });
     const enable = result.current[0] as { onToggle: (item: EdaEventStream, mode: boolean) => void };
 
-    await act(async () => {
+    act(() => {
       enable.onToggle(eventStream, true);
       enable.onToggle({ name: 'orphan' } as EdaEventStream, true);
-      await new Promise((resolve) => setTimeout(resolve, 50));
     });
-    expect(view.unselectItemsAndRefresh).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(addAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'danger',
+          title: 'Failed to enable the forwarding of events for Stream 3',
+        })
+      );
+    });
   });
 });

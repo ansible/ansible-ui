@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { ITableColumn } from '@ansible/ansible-ui-framework';
 import { render, renderHook, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';

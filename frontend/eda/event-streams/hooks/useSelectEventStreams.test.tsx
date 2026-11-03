@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { EdaRulebook } from '../../interfaces/EdaRulebook';
