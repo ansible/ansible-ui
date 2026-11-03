@@ -269,7 +269,7 @@ test.describe('Workflow Viz', () => {
     'Can manually delete all nodes, save the visualizer, then add new nodes, and successfully save again.',
     { tag: ['@not_mock', '@compare', '@tier1'] },
     async ({ page }) => {
-      test.setTimeout(5 * 60 * 1000);
+      test.setTimeout(10 * 60 * 1000);
       const projectOneName = createE2EName();
       const projectTwoName = createE2EName();
       const projectOne = await Project.ui.create(page, {
@@ -321,6 +321,8 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Legend' }).click();
       await WorkflowVisualizer.ui.saveAndDismissToast(page);
       await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
+      await Project.ui.sync(page, projectTwo, 5 * 60 * 1000);
+      await Project.ui.sync(page, projectOne, 5 * 60 * 1000);
       await Project.ui.delete(page, projectTwo);
       await Project.ui.delete(page, projectOne);
     }

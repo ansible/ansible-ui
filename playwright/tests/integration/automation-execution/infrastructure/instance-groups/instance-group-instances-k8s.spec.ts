@@ -28,7 +28,7 @@ test.describe('Instance Groups - Instances Tab (K8s)', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const instanceGroupName = createE2EName();
-      const instanceHostname = createE2EName('', { noWhitespace: true });
+      const instanceHostname = createE2EName('', { noWhitespace: true }).toLowerCase();
 
       await test.step('Create instance and instance group', async () => {
         await Instance.ui.create(page, { hostname: instanceHostname });
