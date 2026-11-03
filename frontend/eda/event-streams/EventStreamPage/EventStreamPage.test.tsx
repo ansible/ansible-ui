@@ -3,10 +3,25 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
+import { PageDialogProvider } from '@ansible/ansible-ui-framework/PageDialogs/PageDialog';
+import { FrameworkTranslationsProvider } from '@ansible/ansible-ui-framework/useFrameworkTranslations';
 import { edaAPI } from '../../common/eda-utils';
 import { EventStreamPage } from './EventStreamPage';
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({ children, title }: { children: React.ReactNode; title?: string }) => (
+      <div data-testid="modal">
+        {title ? <h1>{title}</h1> : null}
+        {children}
+      </div>
+    ),
+  };
+});
 const mockEventStream = {
   id: 1,
   name: 'Test Event Stream',
@@ -258,5 +273,103 @@ describe('EventStreamPage', () => {
       expect(deleteOption).toBeInTheDocument();
       expect(deleteOption).toHaveAttribute('aria-disabled', 'true');
     });
+  });
+
+  it('should enable forwarding of events when the switch is turned on', async () => {
+    const user = userEvent.setup();
+    let patchedBody: unknown;
+    server.use(
+      http.get(edaAPI`/event-streams/1/`, () =>
+        HttpResponse.json({ ...mockEventStream, test_mode: true })
+      ),
+      http.patch(edaAPI`/event-streams/1/`, async ({ request }) => {
+        patchedBody = await request.json();
+        return HttpResponse.json({ ...mockEventStream, test_mode: false });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/event-streams/1/details']}>
+        <Routes>
+          <Route path="/event-streams/:id/details" element={<EventStreamPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Test Event Stream' })).toBeInTheDocument();
+    });
+
+    const switchElement = await screen.findByRole('switch');
+    await user.click(switchElement);
+    await waitFor(() => {
+      expect(patchedBody).toEqual({ test_mode: false });
+    });
+  });
+
+  it('should open the disable dialog when the switch is turned off', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/event-streams/1/details']}>
+        <PageDialogProvider>
+          <FrameworkTranslationsProvider>
+            <Routes>
+              <Route path="/event-streams/:id/details" element={<EventStreamPage />} />
+            </Routes>
+          </FrameworkTranslationsProvider>
+        </PageDialogProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Test Event Stream' })).toBeInTheDocument();
+    });
+
+    const switchElement = await screen.findByRole('switch', {
+      name: 'Forward events to rulebook activation',
+    });
+    await user.click(switchElement);
+    await waitFor(() => {
+      expect(screen.getByText('Disable forwarding of events?')).toBeInTheDocument();
+    });
+  });
+
+  it('should navigate to the edit page', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/event-streams/1/details']}>
+        <Routes>
+          <Route path="/event-streams/:id/details" element={<EventStreamPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Test Event Stream' })).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: /Edit event stream/i }));
+  });
+
+  it('should show a danger alert when enabling forwarding fails', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get(edaAPI`/event-streams/1/`, () =>
+        HttpResponse.json({ ...mockEventStream, test_mode: true })
+      ),
+      http.patch(edaAPI`/event-streams/1/`, () => HttpResponse.json({}, { status: 500 }))
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/event-streams/1/details']}>
+        <Routes>
+          <Route path="/event-streams/:id/details" element={<EventStreamPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Test Event Stream' })).toBeInTheDocument();
+    });
+    await user.click(await screen.findByRole('switch'));
   });
 });

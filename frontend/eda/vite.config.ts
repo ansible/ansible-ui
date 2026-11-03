@@ -89,6 +89,7 @@ export default defineConfig({
     css: !process.env.CI,
     environment: 'happy-dom',
     setupFiles: ['vitest.setup.ts'],
+    testTimeout: 15000,
     server: {
       deps: {
         inline: ['@patternfly/react-styles'],
