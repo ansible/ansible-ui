@@ -6,6 +6,8 @@
   "ignore": [
     "frontend/hub/insights-tests/eslint.config.mjs",
     "**/vite.config.ts",
+    "framework/vite.chunkGroups.ts",
+    "build-tools/test/test-fixtures/**",
     "vitest.config.ts",
     "**/vitest.setup.ts",
     "framework/vitest.i18n.ts",

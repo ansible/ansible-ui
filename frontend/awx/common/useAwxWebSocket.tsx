@@ -8,8 +8,17 @@ import {
   useEffect,
   useState,
 } from 'react';
-import useReactWebSocket, { ReadyState } from 'react-use-websocket';
+import rawUseWebSocket, { ReadyState } from 'react-use-websocket';
 import { WebSocketHook } from 'react-use-websocket/dist/lib/types';
+
+// Vite 8 / Rolldown: CJS packages with __esModule + default are imported as
+// the whole module.exports object from type:module files. Unwrap both shapes:
+// https://rolldown.rs/in-depth/bundling-cjs#ambiguous-default-import-from-cjs-modules
+type UseWebSocketFn = typeof import('react-use-websocket').default;
+const useReactWebSocket: UseWebSocketFn =
+  typeof rawUseWebSocket === 'function'
+    ? rawUseWebSocket
+    : (rawUseWebSocket as unknown as { default: UseWebSocketFn }).default;
 
 interface Subscriptions {
   [group: string]: { [event: string]: number };

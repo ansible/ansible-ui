@@ -8,6 +8,7 @@ import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
+import { vendorChunkGroups } from '../../framework/vite.chunkGroups';
 import { getVitestAliases } from '../../framework/vitest.shared';
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
@@ -43,6 +44,7 @@ export default defineConfig({
     compression(),
   ],
   define: { 'process.env': environment },
+  legacy: { inconsistentCjsInterop: true },
   server: {
     cors: false,
     proxy: {
@@ -56,24 +58,13 @@ export default defineConfig({
       },
     },
   },
-  esbuild: { legalComments: 'none' },
   build: {
     commonjsOptions: { transformMixedEsModules: true },
     rollupOptions: {
       output: {
-        manualChunks: {
-          patternfly: [
-            '@patternfly/react-core',
-            '@patternfly/react-icons',
-            '@patternfly/react-styles',
-            '@patternfly/react-table',
-            '@patternfly/react-tokens',
-          ],
-          pfcharts: ['@patternfly/react-charts/victory'],
-          pfquickstarts: ['@patternfly/quickstarts'],
-          pftopology: ['@patternfly/react-topology'],
-          'monaco-editor': ['monaco-editor'],
-          'monaco-yaml': ['monaco-yaml'],
+        legalComments: 'none',
+        codeSplitting: {
+          groups: vendorChunkGroups,
         },
       },
     },
