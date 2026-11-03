@@ -214,6 +214,7 @@ test.describe('Project - Job Templates', () => {
 
       // Change project
       await page.locator('#project-select').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(projectName2);
       await page.getByRole('option', { name: projectName2 }).click();
       await page.waitForTimeout(1000);
 

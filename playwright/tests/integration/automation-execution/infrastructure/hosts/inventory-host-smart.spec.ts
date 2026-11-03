@@ -135,6 +135,7 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
 
       // Select project
       await page.locator('#project-select').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(projectName);
       await page.getByRole('option', { name: projectName }).click();
 
       // Select playbook

@@ -9,7 +9,7 @@ test(
   'execution environment - create and delete',
   { tag: ['@executionenvironment'] },
   async ({ page }) => {
-  const executionEnvName = await ExecutionEnvironment.ui.create(page);
-  await ExecutionEnvironment.ui.delete(page, executionEnvName);
+    const executionEnvName = await ExecutionEnvironment.ui.create(page);
+    await ExecutionEnvironment.ui.delete(page, executionEnvName);
   }
 );
