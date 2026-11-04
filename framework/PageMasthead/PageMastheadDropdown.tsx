@@ -16,7 +16,7 @@ export function PageMastheadDropdown(props: {
   id: string;
   icon: ReactNode;
   label?: string;
-  /** Optional tooltip content used to render a tooltip around the dropdown */
+  /** Optional tooltip; pass a string for icon-only menus so the toggle has an accessible name. */
   tooltipContent?: TooltipProps['content'];
   /** Optional tooltip position. Has no effect if no `tooltipContent` prop is supplied */
   tooltipPosition?: TooltipProps['position'];
@@ -61,6 +61,7 @@ export function PageMastheadDropdown(props: {
   );
 }
 
+/** Callers should pass a string tooltipContent for icon-only menus. */
 function getToggleAriaLabel(
   showLabel: boolean,
   label: string | undefined,
