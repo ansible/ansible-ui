@@ -46,7 +46,7 @@ describe('Domains', () => {
 
     const firstDomain = getTranslatedDomains()[0];
     const domainToggle = screen
-      .getAllByRole('button', { name: firstDomain.name, exact: true })
+      .getAllByRole('button', { name: firstDomain.name })
       .find((button) => button.hasAttribute('aria-pressed'));
     expect(domainToggle).toBeDefined();
     if (!domainToggle) {
