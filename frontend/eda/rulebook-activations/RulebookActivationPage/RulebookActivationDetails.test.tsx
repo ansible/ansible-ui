@@ -60,7 +60,9 @@ describe('RulebookActivationDetails - Options', () => {
     );
 
     expect(await screen.findByText('Enabled options')).toBeInTheDocument();
-    expect(await screen.findByText('Auto-restart on project sync if rulebook changes')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Auto-restart on project sync if rulebook changes')
+    ).toBeInTheDocument();
   });
 
   it('should display skip audit events option when enabled', async () => {
