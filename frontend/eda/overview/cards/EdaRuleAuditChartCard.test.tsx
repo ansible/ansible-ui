@@ -25,14 +25,14 @@ vi.mock('@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart', () => 
 const server = setupServer();
 
 function createChartCache(): Cache {
-  return new Map();
+  return new Map() as Cache;
 }
 
 function renderChart(cache: Cache) {
   return render(
     <SWRConfig
       value={{
-        provider: () => cache,
+        provider: (): Cache => cache,
         dedupingInterval: 0,
         shouldRetryOnError: false,
         revalidateOnMount: true,
