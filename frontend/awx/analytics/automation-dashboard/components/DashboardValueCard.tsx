@@ -31,7 +31,12 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
           </Content>
         </FlexItem>
       )}
-      <DashboardCardValueDisplay value={value} valueSuffix={valueSuffix} fontSize={fontSize} />
+      <DashboardCardValueDisplay
+        value={value}
+        valueSuffix={valueSuffix}
+        fontSize={fontSize}
+        testId={id ? `${id}-value` : undefined}
+      />
     </Flex>
   );
   return (

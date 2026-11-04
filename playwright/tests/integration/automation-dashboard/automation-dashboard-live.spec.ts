@@ -22,11 +22,8 @@ async function getSuccessfulJobsCountFromDashboard(page: Page): Promise<number> 
   const successfulJobsCard = page.getByTestId('successful-jobs-card');
   await expect(successfulJobsCard).toBeVisible();
 
-  // Get the value from the card body
-  // The value is in a span element inside .pf-v6-c-card__body (no data-testid/data-cy on the value itself)
-  const valueElement = successfulJobsCard.locator('.pf-v6-c-card__body span').filter({
-    hasText: /^[\d,.]+$/,
-  });
+  // Get the value element by test ID
+  const valueElement = page.getByTestId('successful-jobs-card-value');
 
   // Wait for the value element to exist and contain a number (dashboard might still be loading data)
   await expect(valueElement).toBeVisible({ timeout: 10000 });
