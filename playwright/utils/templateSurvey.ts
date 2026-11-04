@@ -11,8 +11,16 @@ export interface SurveyQuestion {
   question_name: string;
   question_description: string;
   variable: string;
-  default: string | number;
-  type: 'text' | 'textarea' | 'password' | 'integer' | 'float' | 'multiplechoice' | 'multiselect';
+  default: string | number | boolean;
+  type:
+    | 'text'
+    | 'textarea'
+    | 'password'
+    | 'integer'
+    | 'float'
+    | 'boolean'
+    | 'multiplechoice'
+    | 'multiselect';
   max?: number;
   min?: number;
   required?: boolean;
@@ -179,6 +187,7 @@ export function createTemplateSurveyHelper(templateType: TemplateType) {
             password: 'Password',
             integer: 'Integer',
             float: 'Float',
+            boolean: 'Boolean',
             multiplechoice: 'Multiple Choice (single select)',
             multiselect: 'Multiple Choice (multiple select)',
           };
@@ -197,6 +206,13 @@ export function createTemplateSurveyHelper(templateType: TemplateType) {
           }
 
           await page.getByTestId('question-default').fill(question.default.toString());
+        } else if (question.type === 'boolean') {
+          const defaultAnswer = page.getByTestId('question-default');
+          if (question.default) {
+            await defaultAnswer.check();
+          } else {
+            await defaultAnswer.uncheck();
+          }
         } else if (question.type === 'multiplechoice' || question.type === 'multiselect') {
           if (question.choices && question.choices.length > 0) {
             for (const choice of question.choices) {

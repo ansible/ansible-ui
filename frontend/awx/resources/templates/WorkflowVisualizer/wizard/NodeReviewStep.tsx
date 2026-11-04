@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { AwxError } from '../../../../common/AwxError';
 import { Survey } from '../../../../interfaces/Survey';
+import type { SurveyAnswer } from '../../../../interfaces/Survey';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { RESOURCE_TYPE } from '../constants';
 import { useGetNodeTypeDetail, useGetTimeoutString } from '../hooks';
@@ -42,7 +43,7 @@ function getSurveySpecUrl(template: AllResources | NodeResource | null) {
   }
 }
 
-function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys: string[]) {
+function maskPasswords(vars: { [key: string]: SurveyAnswer }, passwordKeys: string[]) {
   const updated = { ...vars };
   passwordKeys.forEach((key) => {
     if (typeof updated[key] !== 'undefined') {
@@ -53,10 +54,10 @@ function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys:
 }
 
 function processSurvey(
-  survey: { [key: string]: string | string[] },
+  survey: { [key: string]: SurveyAnswer },
   surveyConfig: Survey | null
 ): string {
-  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+  const updatedSurvey: { [key: string]: SurveyAnswer } = { ...survey };
 
   if (surveyConfig?.spec) {
     const passwordFields = surveyConfig.spec

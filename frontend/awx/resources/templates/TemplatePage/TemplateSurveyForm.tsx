@@ -235,7 +235,9 @@ export function TemplateSurveyForm(props: IProps) {
           ? Number(newQuestion.default)
           : newQuestion.type === 'float'
             ? parseFloat(newQuestion.default.toString())
-            : newQuestion?.default?.toString()
+            : newQuestion.type === 'boolean'
+              ? Boolean(newQuestion.default)
+              : newQuestion?.default?.toString()
         : '';
 
     let question: Spec = {
@@ -373,6 +375,7 @@ function TemplateSurveyInputs() {
           { value: 'multiselect', label: t('Multiple Choice (multiple select)') },
           { value: 'integer', label: t('Integer') },
           { value: 'float', label: t('Float') },
+          { value: 'boolean', label: t('Boolean') },
         ]}
         isRequired
         labelHelp={t`Choose an answer type or format you want as the prompt for the user. Refer to the Ansible Controller Documentation for more additional information about each option.`}
@@ -508,6 +511,9 @@ function SelectedAnswerType({ answer }: { answer: string }) {
           label={t`Default answer`}
           type="password"
         />
+      )}
+      {answer === 'boolean' && (
+        <PageFormCheckbox id="question-default" name="default" label={t`Default answer`} />
       )}
       {['multiplechoice', 'multiselect'].includes(answer) && (
         <MultipleChoiceField type={answer as MultipleChoiceFieldType} />

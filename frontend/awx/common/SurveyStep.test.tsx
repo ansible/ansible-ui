@@ -309,6 +309,33 @@ describe('SurveyStep', () => {
     });
   });
 
+  test('renders a Boolean survey answer with a false default', async () => {
+    const booleanSurvey = {
+      name: 'Boolean Survey',
+      description: '',
+      spec: [
+        {
+          question_name: 'Enabled?',
+          question_description: 'Enable this option',
+          required: false,
+          type: 'boolean',
+          variable: 'enabled',
+          default: false,
+          new_question: false,
+          choices: '',
+        },
+      ],
+    } as unknown as Survey;
+
+    renderSurveyStep(server, '111', booleanSurvey);
+
+    await waitFor(() => {
+      expect(screen.getByRole('checkbox', { name: 'Enabled?' })).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('checkbox', { name: 'Enabled?' })).not.toBeChecked();
+  });
+
   test('applies survey_spec OPTIONS pattern validation to text survey answers', async () => {
     const user = userEvent.setup();
     const textSurvey: Survey = {

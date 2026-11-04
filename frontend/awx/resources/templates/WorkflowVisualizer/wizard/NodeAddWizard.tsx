@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { awxErrorAdapter } from '../../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { SurveyStep } from '../../../../common/SurveyStep';
+import type { SurveyAnswer } from '../../../../interfaces/Survey';
 import { ActionsResponse, OptionsResponse } from '../../../../interfaces/OptionsResponse';
 import { greyBadgeLabel } from '../../../../views/jobs/WorkflowOutput/WorkflowOutput';
 import { NODE_DIAMETER, RESOURCE_TYPE, START_NODE_ID } from '../constants';
@@ -44,7 +45,7 @@ interface NewGraphNode extends NodeModel {
       };
     };
     launch_data: Partial<PromptFormValues>;
-    survey_data: { [key: string]: string | string[] };
+    survey_data: { [key: string]: SurveyAnswer };
   };
 }
 export function NodeAddWizard() {
