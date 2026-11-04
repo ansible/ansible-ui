@@ -14,6 +14,7 @@ import {
   renderAllTasksStatus,
   DEFAULT_NAMESPACE,
 } from './AnalyticsReportBuilderUtils';
+import { specificReportDefaultParams } from './constants';
 
 describe('AnalyticsReportBuilderUtils', () => {
   it('formats values by metric key', () => {
@@ -64,6 +65,7 @@ describe('AnalyticsReportBuilderUtils', () => {
     expect(navigate).toHaveBeenCalledWith('TestAnalyticsBuilder', {
       query: {
         reportName: 'module_usage_by_task',
+        ...specificReportDefaultParams('module_usage_by_task'),
         task_action_id: [5],
       },
     });
