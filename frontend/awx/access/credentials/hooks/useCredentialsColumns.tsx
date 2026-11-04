@@ -1,10 +1,16 @@
-import { ITableColumn, useGetPageUrl } from '@ansible/ansible-ui-framework';
+import {
+  ColumnModalOption,
+  ColumnTableOption,
+  ITableColumn,
+  useGetPageUrl,
+} from '@ansible/ansible-ui-framework';
 import {
   useCreatedColumn,
   useDescriptionColumn,
   useIdColumn,
   useModifiedColumn,
   useNameColumn,
+  useOrganizationNameColumn,
 } from '@ansible/common-ui/columns';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +36,20 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
   const descriptionColumn = useDescriptionColumn();
   const createdColumn = useCreatedColumn(options);
   const modifiedColumn = useModifiedColumn(options);
+  const organizationNameColumn = useOrganizationNameColumn<Credential>(
+    AwxRoute.OrganizationDetails,
+    options
+  );
+  const organizationColumn = useMemo(
+    () => ({
+      ...organizationNameColumn,
+      table: ColumnTableOption.expanded,
+      card: 'hidden' as const,
+      list: 'hidden' as const,
+      modal: ColumnModalOption.hidden,
+    }),
+    [organizationNameColumn]
+  );
 
   const { results: allCredTypes } = useAwxGetAllPages<CredentialType>(awxAPI`/credential_types/`);
 
@@ -52,6 +72,7 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
       idColumn,
       nameColumn,
       descriptionColumn,
+      organizationColumn,
       {
         id: 'credential_type',
         header: t('Credential type'),
@@ -66,7 +87,16 @@ export function useCredentialsColumns(options?: { disableSort?: boolean; disable
       createdColumn,
       modifiedColumn,
     ],
-    [idColumn, nameColumn, descriptionColumn, t, createdColumn, modifiedColumn, credentialTypesMap]
+    [
+      idColumn,
+      nameColumn,
+      descriptionColumn,
+      organizationColumn,
+      t,
+      createdColumn,
+      modifiedColumn,
+      credentialTypesMap,
+    ]
   );
   return tableColumns;
 }

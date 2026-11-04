@@ -294,7 +294,18 @@ export function useModifiedColumn(options?: {
   return column;
 }
 
-export function useOrganizationNameColumn(
+type OrganizationNameColumnItem = {
+  summary_fields?: {
+    organization?: {
+      id: number;
+      name: string;
+    } | null;
+  };
+};
+
+export function useOrganizationNameColumn<
+  T extends OrganizationNameColumnItem = OrganizationNameColumnItem,
+>(
   orgDetailsRoute: string,
   options?: {
     disableLinks?: boolean;
@@ -304,14 +315,7 @@ export function useOrganizationNameColumn(
 ) {
   const { t } = useTranslation();
   const getPageUrl = useGetPageUrl();
-  const column: ITableColumn<{
-    summary_fields?: {
-      organization?: {
-        id: number;
-        name: string;
-      };
-    };
-  }> = useMemo(
+  const column: ITableColumn<T> = useMemo(
     () => ({
       header: t('Organization'),
       cell: (item) => (
