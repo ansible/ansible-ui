@@ -293,7 +293,9 @@ test.describe('Rulebook Activations - Auto-restart on Project Sync if Rulebook C
 
       await test.step('Enable multiple options including auto-restart', async () => {
         await page.getByRole('checkbox', { name: 'Skip audit events' }).check();
-        await page.getByRole('checkbox', { name: 'Auto-restart on project sync if rulebook changes' }).check();
+        await page
+          .getByRole('checkbox', { name: 'Auto-restart on project sync if rulebook changes' })
+          .check();
         await page
           .getByRole('switch', { name: 'Rulebook activation enabled?' })
           .click({ force: true });
