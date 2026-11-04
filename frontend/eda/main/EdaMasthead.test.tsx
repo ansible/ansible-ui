@@ -79,7 +79,7 @@ describe('EdaMasthead', () => {
     expect(screen.getByTestId('eda-brand')).toBeInTheDocument();
 
     await user.click(document.getElementById('help-menu-menu-toggle')!);
-    expect(screen.getByTestId('masthead-documentation')).toHaveAttribute(
+    expect(screen.getByRole('menuitem', { name: 'Documentation' })).toHaveAttribute(
       'href',
       expect.stringContaining('documentation')
     );

@@ -46,7 +46,7 @@ export function EdaMasthead() {
               id="documentation"
               isExternalLink
               component="a"
-              href="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index"
+              to="https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/eda-getting-started-guide/index"
               data-cy="masthead-documentation"
               data-testid="masthead-documentation"
             >
