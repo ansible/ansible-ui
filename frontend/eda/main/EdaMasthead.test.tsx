@@ -1,8 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { PageDialogProvider } from '@ansible/ansible-ui-framework/PageDialogs/PageDialog';
+import { edaAPI } from '../common/eda-utils';
 import { EdaRoute } from './EdaRoutes';
 
 const { refreshActiveEdaUser, pageNavigate } = vi.hoisted(() => ({
@@ -50,24 +53,37 @@ vi.mock('@patternfly/react-core', async (importOriginal) => {
   };
 });
 
-vi.mock('@ansible/common-ui/crud/Data', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@ansible/common-ui/crud/Data')>();
-  return {
-    ...actual,
-    postRequest: vi.fn().mockResolvedValue({}),
-  };
-});
+vi.mock('@ansible/common-ui/PageRefreshIcon', () => ({
+  PageRefreshIcon: () => null,
+}));
 
 vi.mock('../../assets/eda-logo.svg?react', () => ({
   default: () => <div data-testid="eda-brand" />,
 }));
 
-import { postRequest } from '@ansible/common-ui/crud/Data';
 import { EdaMasthead } from './EdaMasthead';
 
+const server = setupServer();
+
 describe('EdaMasthead', () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+  afterEach(() => {
+    server.resetHandlers();
+    refreshActiveEdaUser.mockClear();
+    pageNavigate.mockClear();
+  });
+  afterAll(() => server.close());
+
   it('should render help and account menus for the active user', async () => {
     const user = userEvent.setup({ delay: null, pointerEventsCheck: 0 });
+    let logoutRequests = 0;
+    server.use(
+      http.post(edaAPI`/auth/session/logout/`, () => {
+        logoutRequests += 1;
+        return new HttpResponse(null, { status: 204 });
+      })
+    );
+
     render(
       <MemoryRouter>
         <PageDialogProvider>
@@ -93,7 +109,9 @@ describe('EdaMasthead', () => {
 
     await user.click(document.getElementById('account-menu-menu-toggle')!);
     await user.click(screen.getByText('Logout'));
-    expect(postRequest).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(logoutRequests).toBe(1);
+    });
     expect(refreshActiveEdaUser).toHaveBeenCalled();
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.Overview);
   });
