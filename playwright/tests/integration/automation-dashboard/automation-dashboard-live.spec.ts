@@ -25,7 +25,7 @@ async function getSuccessfulJobsCountFromDashboard(page: Page): Promise<number> 
   // Get the value from the card body
   // The value is in a span element inside .pf-v6-c-card__body (no data-testid/data-cy on the value itself)
   const valueElement = successfulJobsCard.locator('.pf-v6-c-card__body span').filter({
-    hasText: /^\d+$/,
+    hasText: /^[\d,.]+$/,
   });
 
   // Wait for the value element to exist and contain a number (dashboard might still be loading data)
@@ -33,8 +33,8 @@ async function getSuccessfulJobsCountFromDashboard(page: Page): Promise<number> 
 
   const valueText = await valueElement.textContent();
 
-  // Parse the number from the text
-  const count = parseInt(valueText?.trim() || '0', 10);
+  // Parse the number from the text (remove thousand separators)
+  const count = parseInt(valueText?.trim().replace(/[,.]/g, '') || '0', 10);
 
   if (isNaN(count)) {
     throw new Error(`Failed to parse successful jobs count from dashboard. Text: "${valueText}"`);
