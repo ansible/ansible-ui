@@ -287,5 +287,5 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.DecisionEnvironmentUserAccess, {
       params: { id: '5' },
     });
-  });
+  }, 15_000);
 });

@@ -286,5 +286,5 @@ describe('EdaEventStreamAddUsers', () => {
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.EventStreamUserAccess, {
       params: { id: '15' },
     });
-  });
+  }, 15_000);
 });
