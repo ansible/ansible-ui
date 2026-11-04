@@ -135,8 +135,11 @@ export const WorkflowVisualizer = {
       await page.getByRole('link', { name: 'View workflow visualizer' }).click();
     },
 
-    /** Save pending visualizer edits; waits for toolbar Save to enable and surfaces API errors. */
-    saveAndDismissToast: async (page: Page): Promise<void> => {
+    /** Save pending visualizer edits, surface API errors, and optionally assert the workflow-node POST status. */
+    saveAndDismissToast: async (
+      page: Page,
+      expectedWorkflowNodePostStatus?: number
+    ): Promise<void> => {
       // TopologyControlBar (Fit to Screen, zoom, etc.) is hidden when the workflow has no nodes.
       const fitToScreen = page.getByRole('button', { name: 'Fit to Screen' });
       if (await fitToScreen.isVisible({ timeout: 3000 }).catch(() => false)) {
@@ -145,12 +148,22 @@ export const WorkflowVisualizer = {
 
       const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
       await expect(saveButton).toBeEnabled({ timeout: 30000 });
+      const workflowNodePostPromise =
+        expectedWorkflowNodePostStatus === undefined
+          ? Promise.resolve(undefined)
+          : page.waitForResponse(
+              (response) =>
+                response.url().includes('/workflow_nodes/') && response.request().method() === 'POST'
+            );
       await saveButton.click();
 
       const toaster = page.getByTestId('alert-toaster');
       const toast = toaster.getByText('Successfully saved workflow visualizer');
       const errorAlert = toaster.getByText('Failed to save workflow job template');
-      await expect(toast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
+      const [workflowNodePostResponse] = await Promise.all([
+        workflowNodePostPromise,
+        expect(toast.or(errorAlert).first()).toBeVisible({ timeout: 60000 }),
+      ]);
 
       if (
         await errorAlert
@@ -160,6 +173,10 @@ export const WorkflowVisualizer = {
       ) {
         const alertText = await toaster.innerText();
         throw new Error(`Workflow visualizer save failed: ${alertText.trim()}`);
+      }
+
+      if (expectedWorkflowNodePostStatus !== undefined) {
+        expect(workflowNodePostResponse?.status()).toBe(expectedWorkflowNodePostStatus);
       }
 
       const closeBtn = toaster.getByRole('button', { name: /Close.*alert/ });
