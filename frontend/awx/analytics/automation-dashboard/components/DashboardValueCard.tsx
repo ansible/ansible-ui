@@ -35,7 +35,7 @@ export function DashboardValueCard(props: DashboardValueCardProps) {
         value={value}
         valueSuffix={valueSuffix}
         fontSize={fontSize}
-        testId={id ? `${id}-value` : undefined}
+        testId={`${id}-value`}
       />
     </Flex>
   );

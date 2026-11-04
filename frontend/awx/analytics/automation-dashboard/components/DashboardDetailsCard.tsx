@@ -24,6 +24,7 @@ export function DashboardDetailsCard(props: DashboardDetailsCardProps) {
               valueSuffix={valueSuffix}
               formatAsCurrency={formatAsCurrency}
               fontSize={fontSize}
+              testId={`${id}-value`}
             />
           )}
         </PageDetail>
