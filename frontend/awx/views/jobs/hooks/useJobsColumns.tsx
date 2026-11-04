@@ -8,6 +8,7 @@ import {
 } from '@ansible/ansible-ui-framework';
 import { ElapsedTimeCell } from '@ansible/ansible-ui-framework/PageCells/ElapsedTimeCell';
 import { StatusCell } from '@ansible/common-ui/Status';
+import { useOrganizationNameColumn } from '@ansible/common-ui/columns';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
 import { LabelGroup } from '@patternfly/react-core';
 import { useMemo } from 'react';
@@ -37,6 +38,17 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
 
   const getJobOutputUrl = useGetJobOutputUrl();
   const getLaunchedByDetails = useGetLaunchedByDetails();
+  const organizationNameColumn = useOrganizationNameColumn(AwxRoute.OrganizationDetails, options);
+  const organizationColumn = useMemo(
+    () => ({
+      ...organizationNameColumn,
+      table: ColumnTableOption.expanded,
+      card: 'hidden' as const,
+      list: 'hidden' as const,
+      modal: ColumnModalOption.hidden,
+    }),
+    [organizationNameColumn]
+  );
 
   const tableColumns = useMemo<ITableColumn<UnifiedJob>[]>(
     () => [
@@ -256,6 +268,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
         modal: ColumnModalOption.hidden,
         dashboard: 'hidden',
       },
+      organizationColumn,
       {
         header: t('Project'),
         helpText: t('The project containing the playbook this job will execute.'),
@@ -372,6 +385,7 @@ export function useJobsColumns(options?: { disableSort?: boolean; disableLinks?:
       t,
       getLaunchedByDetails,
       getScheduleUrl,
+      organizationColumn,
     ]
   );
   return tableColumns;
