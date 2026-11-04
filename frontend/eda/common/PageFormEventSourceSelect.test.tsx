@@ -59,7 +59,7 @@ describe('PageFormEventSourceSelect', () => {
     await user.click(screen.getByRole('button', { name: /Close GitHub/i }));
     expect(setSourceMappings).toHaveBeenCalledWith([]);
 
-    await user.click(screen.getByTestId('select-event-stream-button'));
+    await user.click(screen.getByRole('button', { name: 'Options menu' }));
     expect(selectEventStreams).toHaveBeenCalled();
   });
 
@@ -73,7 +73,7 @@ describe('PageFormEventSourceSelect', () => {
 
     renderSelect(mappings, true);
 
-    expect(screen.getByTestId('select-event-stream-button')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Options menu' })).toBeDisabled();
     expect(screen.getByText('Stream 0')).toBeInTheDocument();
   });
 });
