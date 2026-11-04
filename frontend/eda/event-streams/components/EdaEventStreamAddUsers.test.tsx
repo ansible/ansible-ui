@@ -274,11 +274,13 @@ describe('EdaEventStreamAddUsers', () => {
     expect(options.keyFn(options.items[0])).toBe('101_201');
     expect(options.actionColumns[0].cell(options.items[0])).toBe('testuser');
     expect(options.actionColumns[1].cell(options.items[0])).toBe('Event Stream Admin');
-    expect(capturedAssignment).toEqual({
-      user: 101,
-      role_definition: 201,
-      content_type: 'eda.eventstream',
-      object_id: 15,
+    await waitFor(() => {
+      expect(capturedAssignment).toEqual({
+        user: 101,
+        role_definition: 201,
+        content_type: 'eda.eventstream',
+        object_id: 15,
+      });
     });
     options.onClose();
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.EventStreamUserAccess, {

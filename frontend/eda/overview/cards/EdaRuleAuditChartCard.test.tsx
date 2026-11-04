@@ -1,9 +1,8 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { SWRConfig } from 'swr';
+import { SWRConfig, type Cache } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { RuleAuditChart } from './EdaRuleAuditChartCard';
 
@@ -25,7 +24,11 @@ vi.mock('@ansible/ansible-ui-framework/PageDashboard/PageDashboardChart', () => 
 
 const server = setupServer();
 
-function renderChart(cache: Map<unknown, unknown>) {
+function createChartCache(): Cache {
+  return new Map();
+}
+
+function renderChart(cache: Cache) {
   return render(
     <SWRConfig
       value={{
@@ -49,7 +52,7 @@ function firedAudit(id: number, status: 'successful' | 'failed', when: Date) {
 async function expectLoadedChartThenEmpty(
   emptyResults: { id: number; status: string; fired_at?: string }[]
 ) {
-  const cache = new Map();
+  const cache = createChartCache();
   const today = new Date();
   server.use(
     http.get(/audit-rules/, () =>
@@ -105,7 +108,7 @@ describe('EdaRuleAuditChartCard', () => {
       )
     );
 
-    renderChart(new Map());
+    renderChart(createChartCache());
 
     await waitFor(() => {
       expect(screen.getByText('Rule Audit')).toBeInTheDocument();

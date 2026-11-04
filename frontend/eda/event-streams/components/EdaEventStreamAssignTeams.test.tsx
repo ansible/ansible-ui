@@ -247,11 +247,13 @@ describe('EdaEventStreamAssignTeams', () => {
     expect(options.keyFn(options.items[0])).toBe('101_201');
     expect(options.actionColumns[0].cell(options.items[0])).toBe('Alpha Team');
     expect(options.actionColumns[1].cell(options.items[0])).toBe('Event Stream Use');
-    expect(capturedAssignment).toEqual({
-      team: 101,
-      role_definition: 201,
-      content_type: 'eda.eventstream',
-      object_id: 3,
+    await waitFor(() => {
+      expect(capturedAssignment).toEqual({
+        team: 101,
+        role_definition: 201,
+        content_type: 'eda.eventstream',
+        object_id: 3,
+      });
     });
     options.onClose();
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.EventStreamTeamAccess, {

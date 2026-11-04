@@ -275,11 +275,13 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
     expect(options.keyFn(options.items[0])).toBe('101_201');
     expect(options.actionColumns[0].cell(options.items[0])).toBe('testuser');
     expect(options.actionColumns[1].cell(options.items[0])).toBe('Decision Environment Admin');
-    expect(capturedAssignment).toEqual({
-      user: 101,
-      role_definition: 201,
-      content_type: 'eda.decision-environment',
-      object_id: 5,
+    await waitFor(() => {
+      expect(capturedAssignment).toEqual({
+        user: 101,
+        role_definition: 201,
+        content_type: 'eda.decision-environment',
+        object_id: 5,
+      });
     });
     options.onClose();
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.DecisionEnvironmentUserAccess, {

@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { mockUsePageWizard, mockUseEdaView } = vi.hoisted(() => ({
   mockUsePageWizard: vi.fn(),
@@ -32,6 +32,11 @@ function createWrapper() {
 }
 
 describe('useEdaMultiSelectListView', () => {
+  beforeEach(() => {
+    mockUseEdaView.mockClear();
+    mockUsePageWizard.mockClear();
+  });
+
   it('should not set a default selection when wizard and step data are empty', () => {
     mockUsePageWizard.mockReturnValue({
       wizardData: {},
@@ -116,7 +121,7 @@ describe('useEdaMultiSelectListView', () => {
       wrapper: createWrapper(),
     });
 
-    expect(mockUseEdaView).toHaveBeenCalledWith(
+    expect(mockUseEdaView).toHaveBeenLastCalledWith(
       expect.objectContaining({
         defaultSelection: [],
       })
