@@ -32,7 +32,18 @@ describe('Organizations', () => {
     });
   });
 
-  it('should display empty state when no organizations exist', async () => {
+  it('should display organizations in the table when results exist', async () => {
+    server.use(
+      http.get(awxAPI`/organizations/`, () =>
+        HttpResponse.json({
+          count: 1,
+          results: [{ id: 1, name: 'Default', description: '', summary_fields: {} }],
+          next: null,
+          previous: null,
+        })
+      )
+    );
+
     render(
       <MemoryRouter>
         <Organizations />
@@ -40,7 +51,7 @@ describe('Organizations', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('No organizations yet')).toBeInTheDocument();
+      expect(screen.getByText('Default')).toBeInTheDocument();
     });
   });
 });

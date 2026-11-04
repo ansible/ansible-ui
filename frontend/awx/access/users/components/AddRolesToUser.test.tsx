@@ -2,8 +2,35 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import type { PageWizardStep } from '@ansible/ansible-ui-framework';
 import { AddRolesToUser } from './AddRolesToUser';
+
+const wizardCapture = vi.hoisted(() => ({
+  onSubmit: undefined as ((data: unknown) => Promise<void>) | undefined,
+  steps: [] as PageWizardStep[],
+}));
+const mockProgressDialog = vi.hoisted(() => vi.fn());
+
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    PageWizard: <T,>(props: { onSubmit: (data: T) => Promise<void>; steps: PageWizardStep[] }) => {
+      wizardCapture.onSubmit = props.onSubmit as typeof wizardCapture.onSubmit;
+      wizardCapture.steps = props.steps;
+      return <div data-testid="wizard-capture" />;
+    },
+  };
+});
+
+vi.mock('../../../common/useAwxBulkActionDialog', () => ({
+  useAwxBulkActionDialog: () => mockProgressDialog,
+}));
+
+vi.mock('@ansible/common-ui/crud/Data', () => ({
+  postRequest: vi.fn(() => Promise.resolve({})),
+}));
 
 const user = {
   id: 1,
@@ -36,11 +63,28 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  mockProgressDialog.mockClear();
+});
 afterAll(() => server.close());
 
 describe('AddRolesToUser', () => {
-  it('should render wizard with Select a resource type step', { timeout: 15000 }, async () => {
+  it('validates wizard steps and submits assignments', async () => {
+    mockProgressDialog.mockImplementation(
+      (options: {
+        items: unknown[];
+        actionFn: (item: unknown) => void;
+        onComplete: () => void;
+      }) => {
+        const item = options.items[0];
+        if (item) {
+          void options.actionFn(item);
+        }
+        options.onComplete();
+      }
+    );
+
     render(
       <MemoryRouter initialEntries={['/users/1/roles/add-roles']}>
         <Routes>
@@ -49,12 +93,27 @@ describe('AddRolesToUser', () => {
       </MemoryRouter>
     );
 
-    await waitFor(
-      () => {
-        expect(screen.getByTestId('page-title')).toHaveTextContent('Add roles');
-        expect(screen.getByTestId('wizard')).toBeInTheDocument();
-      },
-      { timeout: 10000 }
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('page-title')).toHaveTextContent('Add roles');
+    });
+
+    const resourcesStep = wizardCapture.steps.find((step) => step.id === 'resources');
+    expect(() => {
+      if (!resourcesStep || !('validate' in resourcesStep) || !resourcesStep.validate) {
+        throw new Error('expected resources step');
+      }
+      void resourcesStep.validate({}, {});
+    }).toThrow(/Select at least one resource/);
+
+    if (!wizardCapture.onSubmit) {
+      throw new Error('expected onSubmit');
+    }
+    await wizardCapture.onSubmit({
+      resourceType: 'awx.project',
+      resources: [{ id: 10, name: 'Demo' }],
+      awxRoles: [{ id: 11, name: 'Use' }],
+    });
+
+    expect(mockProgressDialog).toHaveBeenCalled();
   });
 });

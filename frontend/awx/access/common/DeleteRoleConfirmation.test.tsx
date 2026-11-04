@@ -1,11 +1,11 @@
-/* eslint-disable i18next/no-literal-string */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
 import { AccessRole, AwxUser } from '../../interfaces/User';
-import { DeleteRoleConfirmation } from './DeleteRoleConfirmation';
+import { DeleteRoleConfirmation, useDeleteRoleConfirmationDialog } from './DeleteRoleConfirmation';
 
 vi.mock('@patternfly/react-core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@patternfly/react-core')>();
@@ -110,5 +110,50 @@ describe('DeleteRoleConfirmation', () => {
     );
 
     expect(screen.getByText('Custom remove title')).toBeInTheDocument();
+  });
+
+  it('calls onConfirm when delete is clicked', async () => {
+    const user = userEvent.setup();
+    const mockOnConfirm = vi.fn().mockResolvedValue(undefined);
+    const role = { ...mockRole, team_id: undefined } as unknown as AccessRole;
+
+    render(
+      <TestWrapper>
+        <DeleteRoleConfirmation role={role} user={mockUser} onConfirm={mockOnConfirm} />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Confirm delete' }));
+    expect(mockOnConfirm).toHaveBeenCalledWith(role, mockUser);
+  });
+
+  it('opens dialog via useDeleteRoleConfirmationDialog', async () => {
+    function DialogHost() {
+      const openDialog = useDeleteRoleConfirmationDialog();
+      return (
+        <button
+          type="button"
+          onClick={() =>
+            openDialog({
+              role: { ...mockRole, team_id: undefined } as unknown as AccessRole,
+              user: mockUser,
+              onConfirm: vi.fn().mockResolvedValue(undefined),
+            })
+          }
+        >
+          Open
+        </button>
+      );
+    }
+
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <DialogHost />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Open' }));
+    expect(screen.getByTestId('delete-role-modal')).toBeInTheDocument();
   });
 });

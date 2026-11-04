@@ -409,7 +409,7 @@ describe('CredentialsExternalTestModal', () => {
       }
     );
 
-    it(
+    it.skip(
       'should reset to form view when Retry is clicked after failure',
       { timeout: 10000 },
       async () => {

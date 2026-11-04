@@ -1,9 +1,22 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
-import { CreateOrganization } from './OrganizationForm';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
+import { awxAPI } from '../../common/api/awx-utils';
+import { CreateOrganization, EditOrganization } from './OrganizationForm';
+
+vi.mock('@ansible/common-ui/crud/usePostRequest');
+vi.mock('@ansible/common-ui/crud/Data', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/common-ui/crud/Data')>();
+  return {
+    ...actual,
+    requestPatch: vi.fn(),
+  };
+});
 
 const mockOrganizationsOptions = { actions: { GET: {}, POST: {} } };
 const mockInstanceGroups = { count: 0, results: [], next: null, previous: null };
@@ -30,10 +43,20 @@ const server = setupServer(
   http.get(
     ({ request }) => request.url.includes('/execution_environments/'),
     () => HttpResponse.json(mockExecutionEnvironments)
-  )
+  ),
+  http.get(awxAPI`/organizations/1/`, () =>
+    HttpResponse.json({ id: 1, name: 'Default', description: '' })
+  ),
+  http.get(awxAPI`/organizations/1/instance_groups/`, () => HttpResponse.json({ results: [] }))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+beforeEach(() => {
+  vi.mocked(usePostRequest).mockReturnValue(
+    vi.fn().mockResolvedValue({ id: 1, name: 'New Org' }) as ReturnType<typeof usePostRequest>
+  );
+  vi.mocked(requestPatch).mockResolvedValue({ id: 1, name: 'Default' });
+});
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -53,6 +76,59 @@ describe('OrganizationForm', () => {
       });
 
       expect(screen.getByTestId('name-form-group')).toBeInTheDocument();
+    });
+
+    it('submits create organization form', async () => {
+      const user = userEvent.setup();
+      const postRequest = vi.fn().mockResolvedValue({ id: 5, name: 'Acme' });
+      vi.mocked(usePostRequest).mockReturnValue(postRequest as ReturnType<typeof usePostRequest>);
+
+      render(
+        <MemoryRouter initialEntries={['/organizations/create']}>
+          <Routes>
+            <Route path="/organizations/create" element={<CreateOrganization />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('name-form-group')).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /name/i }), 'Acme');
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(() => {
+        expect(postRequest).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('EditOrganization', () => {
+    it('renders edit organization form when data is loaded', async () => {
+      render(
+        <MemoryRouter initialEntries={['/organizations/1/edit']}>
+          <Routes>
+            <Route path="/organizations/:id/edit" element={<EditOrganization />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Default');
+      });
+    });
+
+    it('shows header while organization is loading', () => {
+      server.use(http.get(awxAPI`/organizations/1/`, () => new Promise(() => {})));
+      render(
+        <MemoryRouter initialEntries={['/organizations/1/edit']}>
+          <Routes>
+            <Route path="/organizations/:id/edit" element={<EditOrganization />} />
+          </Routes>
+        </MemoryRouter>
+      );
+      expect(screen.getByRole('navigation', { name: /breadcrumb/i })).toBeInTheDocument();
     });
   });
 });
