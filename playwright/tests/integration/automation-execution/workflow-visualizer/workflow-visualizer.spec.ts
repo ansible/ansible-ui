@@ -20,15 +20,28 @@ test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
 test.setTimeout(2 * 60 * 1000);
 
-async function saveWorkflowVisualizer(page: import('@playwright/test').Page): Promise<void> {
+async function saveWorkflowVisualizer(
+  page: import('@playwright/test').Page,
+  expectedWorkflowNodePostStatus?: number
+): Promise<void> {
   const saveButton = page.getByTestId('workflow-visualizer-toolbar-save');
   await expect(saveButton).toBeEnabled({ timeout: 30000 });
+  const workflowNodePostPromise =
+    expectedWorkflowNodePostStatus === undefined
+      ? Promise.resolve(undefined)
+      : page.waitForResponse(
+          (response) =>
+            response.url().includes('/workflow_nodes/') && response.request().method() === 'POST'
+        );
   await saveButton.click();
 
   const toaster = page.getByTestId('alert-toaster');
   const successToast = toaster.getByText('Successfully saved workflow visualizer');
   const errorAlert = toaster.getByText('Failed to save workflow job template');
-  await expect(successToast.or(errorAlert).first()).toBeVisible({ timeout: 60000 });
+  const [workflowNodePostResponse] = await Promise.all([
+    workflowNodePostPromise,
+    expect(successToast.or(errorAlert).first()).toBeVisible({ timeout: 60000 }),
+  ]);
 
   if (
     await errorAlert
@@ -37,6 +50,10 @@ async function saveWorkflowVisualizer(page: import('@playwright/test').Page): Pr
       .catch(() => false)
   ) {
     throw new Error(`Workflow visualizer save failed: ${(await toaster.innerText()).trim()}`);
+  }
+
+  if (expectedWorkflowNodePostStatus !== undefined) {
+    expect(workflowNodePostResponse?.status()).toBe(expectedWorkflowNodePostStatus);
   }
 
   const closeAlert = toaster.getByRole('button', { name: /Close.*alert/ });
@@ -348,7 +365,8 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await saveWorkflowVisualizer(page);
+      await expect(page.getByText(projectTwoName, { exact: true })).toBeVisible();
+      await saveWorkflowVisualizer(page, 201);
       await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, wfJobTemplate);
       await Project.ui.sync(page, projectTwo, 5 * 60 * 1000);
       await Project.ui.sync(page, projectOne, 5 * 60 * 1000);
