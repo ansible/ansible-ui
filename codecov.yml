@@ -21,7 +21,7 @@ coverage:
     - "**/package-lock.json"
     - "**/platform/interfaces/**"
     - "**/platform/main/Platform.tsx"
-    - "**/platform/**/__mocks__/**"
+    - "**/__mocks__/**"
 
 flags:
   unit-tests:

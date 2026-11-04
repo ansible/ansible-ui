@@ -25,7 +25,7 @@ export interface ExecutionEnvironmentImage {
       history?: {
         created: string;
         created_by: string;
-        empty_layer: boolean;
+        empty_layer?: boolean;
       }[];
       config?: {
         Env: string[];
