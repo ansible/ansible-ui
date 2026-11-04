@@ -167,7 +167,7 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
   });
 
   it('should fetch roles filtered by eda.decisionenvironment content type', async () => {
-    const user = userEvent.setup({ delay: null, pointerEventsCheck: 0 });
+    const user = userEvent.setup({ delay: null });
     renderComponent();
 
     await waitFor(() => {
@@ -199,7 +199,7 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
   });
 
   it('should validate that at least one user is selected', async () => {
-    const user = userEvent.setup({ delay: null, pointerEventsCheck: 0 });
+    const user = userEvent.setup({ delay: null });
     renderComponent();
 
     await waitFor(() => {
@@ -212,7 +212,7 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
   });
 
   it('should cancel back to user access', async () => {
-    const user = userEvent.setup({ delay: null, pointerEventsCheck: 0 });
+    const user = userEvent.setup({ delay: null });
     renderComponent();
 
     await waitFor(() => {
@@ -225,7 +225,7 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
   });
 
   it('should validate that at least one role is selected', async () => {
-    const user = userEvent.setup({ delay: null, pointerEventsCheck: 0 });
+    const user = userEvent.setup({ delay: null });
     renderComponent();
 
     await waitFor(() => {
@@ -243,7 +243,7 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
   });
 
   it('should assign selected users and roles', async () => {
-    const user = userEvent.setup({ delay: null, pointerEventsCheck: 0 });
+    const user = userEvent.setup({ delay: null });
     renderComponent();
 
     await waitFor(() => {

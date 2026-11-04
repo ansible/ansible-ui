@@ -75,7 +75,7 @@ describe('EdaMasthead', () => {
   afterAll(() => server.close());
 
   it('should render help and account menus for the active user', async () => {
-    const user = userEvent.setup({ delay: null, pointerEventsCheck: 0 });
+    const user = userEvent.setup({ delay: null });
     let logoutRequests = 0;
     server.use(
       http.post(edaAPI`/auth/session/logout/`, () => {
