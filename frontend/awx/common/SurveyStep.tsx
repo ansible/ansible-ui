@@ -217,7 +217,6 @@ export function SurveyStep({
               name={`survey.${element.variable}`}
               label={element.question_name}
               labelHelp={element.question_description}
-              isRequired={element.required}
             />
           ) : undefined
         )}
