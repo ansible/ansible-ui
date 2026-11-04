@@ -94,7 +94,7 @@ describe('EdaMasthead', () => {
 
     expect(screen.getByTestId('eda-brand')).toBeInTheDocument();
 
-    await user.click(document.getElementById('help-menu-menu-toggle')!);
+    await user.click(screen.getByRole('button', { name: 'Help' }));
     expect(screen.getByRole('menuitem', { name: 'Documentation' })).toHaveAttribute(
       'href',
       expect.stringContaining('documentation')
@@ -103,12 +103,12 @@ describe('EdaMasthead', () => {
     await user.click(screen.getByRole('menuitem', { name: 'About' }));
     expect(await screen.findByTestId('about-modal')).toBeInTheDocument();
 
-    await user.click(document.getElementById('account-menu-menu-toggle')!);
-    await user.click(screen.getByText('User details'));
+    await user.click(screen.getByRole('button', { name: 'eda-admin' }));
+    await user.click(screen.getByRole('menuitem', { name: 'User details' }));
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.MyPage);
 
-    await user.click(document.getElementById('account-menu-menu-toggle')!);
-    await user.click(screen.getByText('Logout'));
+    await user.click(screen.getByRole('button', { name: 'eda-admin' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Logout' }));
     await waitFor(() => {
       expect(logoutRequests).toBe(1);
     });

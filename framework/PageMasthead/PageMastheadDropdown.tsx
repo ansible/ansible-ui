@@ -61,6 +61,20 @@ export function PageMastheadDropdown(props: {
   );
 }
 
+function getToggleAriaLabel(
+  showLabel: boolean,
+  label: string | undefined,
+  tooltipContent: TooltipProps['content'] | undefined
+): string | undefined {
+  if (showLabel && label) {
+    return undefined;
+  }
+  if (typeof tooltipContent === 'string' && tooltipContent) {
+    return tooltipContent;
+  }
+  return label;
+}
+
 function Toggle({
   icon,
   id,
@@ -84,6 +98,7 @@ function Toggle({
 }) {
   const showLabel = useBreakpoint('md');
   const [isHovered, setIsHovered] = useState(false);
+  const ariaLabel = getToggleAriaLabel(showLabel, label, tooltipContent);
 
   const toggle = (
     <MenuToggle
@@ -92,6 +107,7 @@ function Toggle({
       onClick={onToggle}
       ref={toggleRef}
       variant="plain"
+      aria-label={ariaLabel}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
@@ -102,7 +118,9 @@ function Toggle({
         flexWrap={{ default: 'nowrap' }}
         spaceItems={{ default: 'spaceItemsSm' }}
       >
-        <FlexItem>{<Icon>{icon}</Icon>}</FlexItem>
+        <FlexItem>
+          <Icon aria-hidden="true">{icon}</Icon>
+        </FlexItem>
         {showLabel && label && <FlexItem wrap="nowrap">{label}</FlexItem>}
       </Flex>
     </MenuToggle>

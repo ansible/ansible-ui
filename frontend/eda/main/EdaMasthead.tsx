@@ -39,7 +39,7 @@ export function EdaMasthead() {
           <PageMastheadDropdown
             id="help-menu"
             icon={<QuestionCircleIcon />}
-            tooltipContent={t`Help`}
+            tooltipContent={t('Help')}
             tooltipPosition="bottom"
           >
             <DropdownItem
