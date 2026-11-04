@@ -70,6 +70,27 @@ type CredentialTypes = {
   [key: number]: CredentialType;
 };
 
+/** Field names whose persisted credential_input_sources should be deleted after a plugin modal confirm. */
+export function getPluginInputFieldNamesToReplace(
+  previousAccumulated: CredentialPluginsInputSource[],
+  confirmedPluginValues: CredentialPluginsInputSource[]
+): string[] {
+  return confirmedPluginValues
+    .filter((newValue) =>
+      previousAccumulated.some(
+        (prevValue) => prevValue.input_field_name === newValue.input_field_name
+      )
+    )
+    .map((newValue) => newValue.input_field_name);
+}
+
+export function mergeUniquePluginFieldNames(existing: string[], additions: string[]): string[] {
+  return additions.reduce<string[]>(
+    (acc, fieldName) => (acc.includes(fieldName) ? acc : [...acc, fieldName]),
+    existing
+  );
+}
+
 export function CreateCredential() {
   const { t } = useTranslation();
   const pageNavigate = usePageNavigate();
@@ -267,12 +288,10 @@ export function EditCredential() {
           )
       );
       const updatedValues = [...filteredPrev, ...credentialPluginValues];
-      // mark any fields previously handled by a plugin that have been updated to use a different plugin for deletion
-      updatedValues.forEach((cp) => {
-        if (prev.some((prevValue) => prevValue.input_field_name === cp.input_field_name)) {
-          setPluginsToDelete((prev) => [...prev, cp.input_field_name]);
-        }
-      });
+      const fieldNamesToReplace = getPluginInputFieldNamesToReplace(prev, credentialPluginValues);
+      setPluginsToDelete((prevPlugins) =>
+        mergeUniquePluginFieldNames(prevPlugins, fieldNamesToReplace)
+      );
 
       return updatedValues;
     });
