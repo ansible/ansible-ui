@@ -44,11 +44,15 @@ describe('Domains', () => {
       </MemoryRouter>
     );
 
-    const toggleButton = screen
-      .getAllByRole('button')
-      .find((button) => button.getAttribute('aria-pressed') !== null);
-    expect(toggleButton).toBeDefined();
-    await user.click(toggleButton as HTMLButtonElement);
+    const firstDomain = getTranslatedDomains()[0];
+    const domainToggle = screen
+      .getAllByRole('button', { name: firstDomain.name, exact: true })
+      .find((button) => button.hasAttribute('aria-pressed'));
+    expect(domainToggle).toBeDefined();
+    if (!domainToggle) {
+      throw new Error(`Missing toggle for domain ${firstDomain.name}`);
+    }
+    await user.click(domainToggle);
     expect(useDomainsStore.getState().activeDomains).toHaveLength(1);
 
     await user.click(screen.getByRole('button', { name: 'Clear Active Domains' }));

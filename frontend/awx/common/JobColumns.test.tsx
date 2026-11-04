@@ -128,9 +128,9 @@ describe('JobColumns hooks', () => {
       [{ type: 'system_job' }, 'Management job'],
       [{ type: 'workflow_job' }, 'Workflow job'],
     ];
-    for (const [overrides] of types) {
+    for (const [overrides, expectedText] of types) {
       const { container } = renderCell(columnCellNode(result.current, baseJob(overrides)));
-      expect(container.textContent).toBeTruthy();
+      expect(container.textContent).toContain(expectedText);
     }
   });
 
