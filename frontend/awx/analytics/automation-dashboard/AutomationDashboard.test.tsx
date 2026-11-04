@@ -213,6 +213,7 @@ const mockView: IAutomationDashboardView = {
   useGlobalSettings: false,
   settingsOrganizationId: undefined,
   canEditSettings: false,
+  canSaveReports: false,
   loading: false,
   refresh: vi.fn(),
   exportCsv: vi.fn(),

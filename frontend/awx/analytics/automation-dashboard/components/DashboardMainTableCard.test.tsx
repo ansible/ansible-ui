@@ -128,6 +128,7 @@ function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomat
     useGlobalSettings: false,
     settingsOrganizationId: 1,
     canEditSettings: true,
+    canSaveReports: true,
     loading: false,
     refresh: mockRefresh,
     exportCsv: vi.fn(),

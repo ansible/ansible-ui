@@ -86,7 +86,8 @@ const mockOnSave = vi.fn();
 function renderActions(
   filterState: IFilterState | undefined,
   selectedFilterSet: IDashboardFilterSet | undefined,
-  toolbarFilters?: IToolbarFilter[]
+  toolbarFilters?: IToolbarFilter[],
+  canSaveReports?: boolean
 ) {
   return renderHook(() =>
     useAutomationDashboardToolbarActions({
@@ -95,6 +96,7 @@ function renderActions(
       selectedFilterSet,
       onDelete: mockOnDelete,
       onSave: mockOnSave,
+      canSaveReports,
     })
   ).result.current;
 }
@@ -162,6 +164,32 @@ describe('useAutomationDashboardToolbarActions', () => {
       const action = renderActions(nonDefaultFilterState, undefined)[0] as IPageActionButton;
 
       expect(action.isDisabled).toBeTruthy();
+    });
+
+    test('should enable create when canSaveReports is true even for a non-superuser', () => {
+      mockActiveAwxUser.is_superuser = false;
+
+      const action = renderActions(
+        nonDefaultFilterState,
+        undefined,
+        undefined,
+        true
+      )[0] as IPageActionButton;
+
+      expect(action.isDisabled).toBeFalsy();
+    });
+
+    test('should disable create with change-permission message when canSaveReports is false', () => {
+      const action = renderActions(
+        nonDefaultFilterState,
+        undefined,
+        undefined,
+        false
+      )[0] as IPageActionButton;
+
+      expect(action.isDisabled).toBe(
+        'You need change permission on the selected organizations to save reports'
+      );
     });
 
     test('should call createToolbarFilterSet on click', () => {
@@ -297,6 +325,38 @@ describe('useAutomationDashboardToolbarActions', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
       const subAction = getDropdownSubAction(action, 'Update report');
       expect(subAction?.isDisabled).toBe('Only administrators can save reports');
+    });
+
+    test('should enable report actions for an organization editor', () => {
+      mockActiveAwxUser.is_superuser = false;
+      const action = renderActions(
+        nonDefaultFilterState,
+        filterSet,
+        undefined,
+        true
+      )[0] as Dropdown;
+
+      expect(getDropdownSubAction(action, 'Create new report').isDisabled).toBeFalsy();
+      expect(getDropdownSubAction(action, 'Update report').isDisabled).toBeFalsy();
+      expect(getDropdownSubAction(action, 'Delete report').isDisabled).toBeFalsy();
+    });
+
+    test('should disable report actions for a view-only organization member', () => {
+      mockActiveAwxUser.is_superuser = false;
+      const action = renderActions(
+        nonDefaultFilterState,
+        filterSet,
+        undefined,
+        false
+      )[0] as Dropdown;
+      const saveMessage =
+        'You need change permission on the selected organizations to save reports';
+
+      expect(getDropdownSubAction(action, 'Create new report').isDisabled).toBe(saveMessage);
+      expect(getDropdownSubAction(action, 'Update report').isDisabled).toBe(saveMessage);
+      expect(getDropdownSubAction(action, 'Delete report').isDisabled).toBe(
+        'You need change permission on the selected organizations to delete reports'
+      );
     });
 
     test('should contain exactly 3 sub-actions', () => {

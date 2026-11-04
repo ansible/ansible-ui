@@ -240,6 +240,7 @@ export function AutomationDashboard() {
             {...view.mainTableView}
             keyFn={(item) => item.id}
             registerClearCallback={view.registerClearCallback}
+            canSaveReports={view.canSaveReports}
           />
           {access?.scope === 'organization' &&
             access.organizations.length > 1 &&

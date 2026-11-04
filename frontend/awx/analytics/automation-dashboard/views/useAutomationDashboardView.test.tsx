@@ -100,6 +100,7 @@ describe('useAutomationDashboardView', () => {
     expect(view.useGlobalSettings).toBe(false);
     expect(view.settingsOrganizationId).toBeUndefined();
     expect(view.canEditSettings).toBe(false);
+    expect(view.canSaveReports).toBe(false);
     expect(view.loading).toBe(false);
     expect(view.refresh).toBeTypeOf('function');
     expect(view.setCostState).toBeTypeOf('function');
@@ -121,6 +122,7 @@ describe('useAutomationDashboardView', () => {
 
     expect(result.current.settingsOrganizationId).toBe(42);
     expect(result.current.canEditSettings).toBe(true);
+    expect(result.current.canSaveReports).toBe(true);
   });
 
   test('should preserve global settings for a platform superuser', () => {
@@ -134,6 +136,7 @@ describe('useAutomationDashboardView', () => {
     expect(result.current.useGlobalSettings).toBe(true);
     expect(result.current.settingsOrganizationId).toBeUndefined();
     expect(result.current.canEditSettings).toBe(true);
+    expect(result.current.canSaveReports).toBe(true);
   });
 
   test('should preserve global settings read-only for an auditor when access lookup fails', () => {
@@ -146,6 +149,7 @@ describe('useAutomationDashboardView', () => {
 
     expect(result.current.useGlobalSettings).toBe(true);
     expect(result.current.canEditSettings).toBe(false);
+    expect(result.current.canSaveReports).toBe(false);
   });
 
   // --- clearAllFilters override ---

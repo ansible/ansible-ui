@@ -59,10 +59,16 @@ export function useAutomationDashboardToolbarActions(props: {
   selectedFilterSet?: IDashboardFilterSet;
   onDelete: (deletedFilterSet: IDashboardFilterSet) => void;
   onSave: (filterSet: IDashboardFilterSet) => void;
+  /**
+   * Whether the caller may save reports for the current organization scope.
+   * When omitted, falls back to the legacy superuser-only behavior.
+   */
+  canSaveReports?: boolean;
 }) {
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
-  const { filterState, toolbarFilters, selectedFilterSet, onDelete, onSave } = props;
+  const { filterState, toolbarFilters, selectedFilterSet, onDelete, onSave, canSaveReports } =
+    props;
   const createToolbarFilterSet = useCreateToolbarFilterSet(onSave);
   const updateToolbarFilterSet = useUpdateToolbarFilterSet(onSave);
   const removeToolbarFilterSet = useRemoveToolbarFilterSet((deleted) => {
@@ -70,16 +76,21 @@ export function useAutomationDashboardToolbarActions(props: {
   });
   const validFilters = hasValidRequiredFilters(toolbarFilters, filterState);
 
-  const superuserDisabledReason = activeAwxUser?.is_superuser
+  const hasSavePermission = canSaveReports ?? activeAwxUser?.is_superuser === true;
+  const permissionDisabledReason = hasSavePermission
     ? undefined
-    : t('Only administrators can save reports');
+    : canSaveReports === undefined
+      ? t('Only administrators can save reports')
+      : t('You need change permission on the selected organizations to save reports');
 
-  const superuserDeleteDisabledReason = activeAwxUser?.is_superuser
+  const deleteDisabledReason = hasSavePermission
     ? undefined
-    : t('Only administrators can delete reports');
+    : canSaveReports === undefined
+      ? t('Only administrators can delete reports')
+      : t('You need change permission on the selected organizations to delete reports');
 
   const saveDisabledReason = getSaveDisabledReason(
-    superuserDisabledReason,
+    permissionDisabledReason,
     validFilters,
     filterState,
     t
@@ -88,7 +99,7 @@ export function useAutomationDashboardToolbarActions(props: {
   // Editing a report's name and/or persisting the current filter state to it is
   // valid regardless of the default/non-default filter state, but the current
   // filter state must still be valid to be persisted.
-  const editDisabledReason = getEditDisabledReason(superuserDisabledReason, validFilters, t);
+  const editDisabledReason = getEditDisabledReason(permissionDisabledReason, validFilters, t);
 
   return useMemo<IPageAction<IJobTemplate>[]>(
     () =>
@@ -127,7 +138,7 @@ export function useAutomationDashboardToolbarActions(props: {
                   label: t('Delete report'),
                   onClick: () => removeToolbarFilterSet(selectedFilterSet),
                   icon: TrashIcon,
-                  isDisabled: superuserDeleteDisabledReason,
+                  isDisabled: deleteDisabledReason,
                   isDanger: true,
                 },
               ],
@@ -150,7 +161,7 @@ export function useAutomationDashboardToolbarActions(props: {
       t,
       saveDisabledReason,
       editDisabledReason,
-      superuserDeleteDisabledReason,
+      deleteDisabledReason,
       filterState,
       createToolbarFilterSet,
       updateToolbarFilterSet,

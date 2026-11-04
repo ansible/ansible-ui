@@ -55,6 +55,8 @@ export function DashboardToolbar(
   props: Readonly<
     PageToolbarProps<IJobTemplate> & {
       registerClearCallback?: (callback: () => void) => void;
+      /** Whether the caller may save/update/delete reports for the current filter scope. */
+      canSaveReports?: boolean;
     }
   >
 ) {
@@ -133,6 +135,7 @@ export function DashboardToolbar(
     selectedFilterSet,
     onDelete: onFilterSetDelete,
     onSave,
+    canSaveReports: props.canSaveReports,
   });
 
   const onSelect = useCallback(

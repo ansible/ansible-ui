@@ -196,6 +196,7 @@ export type IAutomationDashboardView = {
   useGlobalSettings: boolean;
   settingsOrganizationId: number | undefined;
   canEditSettings: boolean;
+  canSaveReports: boolean;
   loading: boolean;
   refresh: () => Promise<void>;
   exportCsv: (reportType: ReportType) => Promise<void>;

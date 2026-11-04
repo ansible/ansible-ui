@@ -11,7 +11,10 @@ import {
 import { useGetReportDetails } from './useGetReportDetails';
 import { useSubscriptionCostState } from './useSubscriptionCostState';
 import { useExportCsv } from './useExportCsv';
-import { getDashboardSettingsContext } from '../common/useAutomationDashboardAccess';
+import {
+  getCanSaveReports,
+  getDashboardSettingsContext,
+} from '../common/useAutomationDashboardAccess';
 import {
   IAutomationDashboardBaseView,
   useAutomationDashboardBaseView,
@@ -89,6 +92,10 @@ export function useAutomationDashboardView(options: {
     () => getDashboardSettingsContext(access, filterState, isPlatformSuperuser, isPlatformAuditor),
     [access, filterState, isPlatformSuperuser, isPlatformAuditor]
   );
+  const canSaveReports = useMemo(
+    () => getCanSaveReports(access, filterState, isPlatformSuperuser, isPlatformAuditor),
+    [access, filterState, isPlatformSuperuser, isPlatformAuditor]
+  );
   const detailsResponse = useGetReportDetails(toolbarFilters, filterState, QUERY_PARAMS);
   const { costState, setCostState } = useSubscriptionCostState(
     settingsContext.organization?.id,
@@ -134,6 +141,7 @@ export function useAutomationDashboardView(options: {
       useGlobalSettings: settingsContext.useGlobalSettings,
       settingsOrganizationId: settingsContext.organization?.id,
       canEditSettings: settingsContext.canEditSettings,
+      canSaveReports,
       loading,
       refresh,
       exportCsv,
@@ -148,6 +156,7 @@ export function useAutomationDashboardView(options: {
       costState,
       setCostState,
       settingsContext,
+      canSaveReports,
       loading,
       refresh,
       exportCsv,
