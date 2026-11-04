@@ -13,4 +13,13 @@ describe('ActivityStreamIcon', () => {
     const button = screen.getByRole('button');
     expect(button).toBeInTheDocument();
   });
+
+  it('should render activity stream icon for job templates', () => {
+    render(
+      <MemoryRouter>
+        <ActivityStreamIcon type="job_template" />
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
 });

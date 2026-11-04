@@ -1,38 +1,31 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, test } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import { UserDateDetail } from './UserDateDetail';
 
-const mockUser = {
-  id: 42,
-  username: 'testuser',
-  first_name: 'Test',
-  last_name: 'User',
-};
+const pageNavigate = vi.fn();
+
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    usePageNavigate: () => pageNavigate,
+  };
+});
 
 describe('UserDateDetail', () => {
-  const createdLabel = 'Created';
-  const modifiedLabel = 'Modified';
-
-  test('should render label and date', () => {
+  it('renders date detail and navigates to user on click', async () => {
+    const user = userEvent.setup();
     render(
-      <MemoryRouter>
-        <UserDateDetail label={createdLabel} date="2024-01-15T10:30:00Z" user={mockUser} />
-      </MemoryRouter>
+      <UserDateDetail
+        label="Modified"
+        date="2025-01-01T12:00:00Z"
+        user={{ id: 9, username: 'admin', first_name: 'A', last_name: 'B' }}
+      />
     );
 
-    expect(screen.getByText(createdLabel)).toBeInTheDocument();
-    expect(screen.getByText('testuser')).toBeInTheDocument();
-  });
-
-  test('should render user name', () => {
-    render(
-      <MemoryRouter>
-        <UserDateDetail label={modifiedLabel} date="2024-01-15T10:30:00Z" user={mockUser} />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText('testuser')).toBeInTheDocument();
+    expect(screen.getByText('Modified')).toBeInTheDocument();
+    await user.click(screen.getByText('admin'));
+    expect(pageNavigate).toHaveBeenCalledWith(expect.anything(), { params: { id: 9 } });
   });
 });
