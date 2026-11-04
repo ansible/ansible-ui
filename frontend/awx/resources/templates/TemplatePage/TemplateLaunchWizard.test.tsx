@@ -11,6 +11,7 @@ import {
   LaunchConfigCredential,
 } from '../../../interfaces/LaunchConfiguration';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
+import { Spec, Survey } from '../../../interfaces/Survey';
 import { LaunchTemplate, LaunchWizard } from './TemplateLaunchWizard';
 
 const mockAddAlert = vi.fn<(alert: AlertProps) => void>();
@@ -123,6 +124,63 @@ const mockWJT = {
     user_capabilities: { edit: true, start: true },
   },
 } as unknown as JobTemplate;
+
+const surveyQuestion = (overrides: Partial<Spec>): Spec => ({
+  question_name: '',
+  question_description: '',
+  required: false,
+  type: 'text',
+  variable: '',
+  min: 0,
+  max: 1024,
+  default: '',
+  choices: '',
+  new_question: false,
+  ...overrides,
+});
+
+const conditionalSurvey: Survey = {
+  name: '',
+  description: '',
+  spec: [
+    surveyQuestion({
+      question_name: 'Database mode',
+      variable: 'db_mode',
+      type: 'multiplechoice',
+      choices: ['internal', 'external'],
+      default: 'internal',
+    }),
+    surveyQuestion({
+      question_name: 'Database host',
+      variable: 'db_host',
+      required: true,
+      conditions: [{ variable: 'db_mode', operator: 'eq', value: 'external' }],
+    }),
+  ],
+};
+
+const multiPageSurvey: Survey = {
+  name: '',
+  description: '',
+  spec: [
+    surveyQuestion({
+      question_name: 'Hostname',
+      variable: 'hostname',
+      page: 1,
+      category: 'Network',
+    }),
+    surveyQuestion({ question_name: 'Owner', variable: 'owner', page: 2 }),
+  ],
+};
+
+function surveySpecHandlers(jobType: string, survey: Survey) {
+  return [
+    http.get(awxAPI`/${jobType}/1/survey_spec/`, () => HttpResponse.json(survey)),
+    http.options(awxAPI`/${jobType}/1/survey_spec/`, () =>
+      HttpResponse.json({ actions: { POST: {} } })
+    ),
+  ];
+}
 
 const server = setupServer(
   http.options(awxAPI`/job_templates/1/launch/`, () =>
@@ -667,6 +725,7 @@ describe('TemplateLaunchWizard', () => {
           http.get(awxAPI`/job_templates/1/launch/`, () =>
             HttpResponse.json(makeConfig({ survey_enabled: true }))
           ),
+          ...surveySpecHandlers('job_templates', conditionalSurvey),
           http.post(awxAPI`/job_templates/1/launch/`, async ({ request }) => {
             capturedPayload = (await request.json()) as Record<string, unknown>;
             return HttpResponse.json({ id: 100, type: 'job' });
@@ -686,6 +745,9 @@ describe('TemplateLaunchWizard', () => {
         );
 
         await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('Database mode')).toBeInTheDocument());
+        // The conditional question is hidden because its condition (db_mode eq external) is unmet.
+        expect(screen.queryByText('Database host')).not.toBeInTheDocument();
         await waitFor(() => expect(screen.getByTestId('Submit')).toBeInTheDocument());
         await user.click(screen.getByTestId('Submit'));
         await waitFor(() => expect(screen.getByTestId('wizard-next')).toBeInTheDocument());
@@ -694,8 +756,60 @@ describe('TemplateLaunchWizard', () => {
         await waitFor(() => {
           expect(capturedPayload).toHaveProperty('extra_vars');
         });
+        // The hidden question is required and has an empty default, yet it did not block
+        // the launch, and its value is not submitted.
+        expect(capturedPayload.extra_vars).toEqual({ db_mode: 'internal' });
       }
     );
+
+    it('should not fetch the survey spec when the survey is disabled', async () => {
+      let surveySpecRequested = false;
+      server.use(
+        http.get(awxAPI`/job_templates/1/survey_spec/`, () => {
+          surveySpecRequested = true;
+          return HttpResponse.json(conditionalSurvey);
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+          <Routes>
+            <Route
+              path="/job-templates/:id/launch"
+              element={<LaunchTemplate jobType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => expect(screen.getByText('Prompt on Launch')).toBeInTheDocument());
+      expect(surveySpecRequested).toBe(false);
+    });
+
+    it('should render one wizard step per survey page', async () => {
+      server.use(
+        http.get(awxAPI`/job_templates/1/launch/`, () =>
+          HttpResponse.json(makeConfig({ survey_enabled: true }))
+        ),
+        ...surveySpecHandlers('job_templates', multiPageSurvey)
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/job-templates/1/launch']}>
+          <Routes>
+            <Route
+              path="/job-templates/:id/launch"
+              element={<LaunchTemplate jobType="job_templates" />}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => expect(screen.getAllByText('Network').length).toBeGreaterThan(0));
+      expect(screen.getAllByText('Survey (2)').length).toBeGreaterThan(0);
+      expect(screen.getByLabelText('Hostname')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Owner')).not.toBeInTheDocument();
+    });
 
     it(
       'should include credential_passwords in payload when passwords_needed_to_start is set',
