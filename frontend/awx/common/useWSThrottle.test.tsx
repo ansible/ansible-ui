@@ -31,6 +31,16 @@ describe('useWSThrottle', () => {
     expect(result.current).toEqual(second);
   });
 
+  it('sets throttled value when initial state was undefined and value arrives', () => {
+    const message = { type: 'job', payload: 1 };
+    const { result, rerender } = renderHook(({ value }) => useWSThrottle({ value, limit: 1000 }), {
+      initialProps: { value: undefined as typeof message | undefined },
+    });
+    expect(result.current).toBeUndefined();
+    rerender({ value: message });
+    expect(result.current).toEqual(message);
+  });
+
   it('returns undefined when throttled value is undefined', () => {
     const { result } = renderHook(() => useWSThrottle({ value: undefined, limit: 500 }));
     expect(result.current).toBeUndefined();

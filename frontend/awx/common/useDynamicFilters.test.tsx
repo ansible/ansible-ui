@@ -42,7 +42,7 @@ describe('useDynamicFilters', () => {
 
   describe('useFilters', () => {
     it('returns empty array when actions are undefined', () => {
-      const { result } = renderHook(() => useFilters(undefined), { wrapper });
+      const { result } = renderHook(() => useFilters(), { wrapper });
       expect(result.current).toEqual([]);
     });
 
@@ -140,6 +140,77 @@ describe('useDynamicFilters', () => {
       await waitFor(() => {
         expect(result.current.some((filter) => filter.key === 'custom')).toBe(true);
       });
+    });
+
+    it('maps boolean fields to single-select filters', async () => {
+      const { result } = renderHook(
+        () =>
+          useDynamicToolbarFilters({
+            optionsPath: 'jobs',
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        const enabledFilter = result.current.find((filter) => filter.key === 'enabled');
+        expect(enabledFilter?.type).toBe(ToolbarFilterType.SingleSelect);
+      });
+    });
+
+    it('maps string fields without async keys to multi-text filters', async () => {
+      const { result } = renderHook(
+        () =>
+          useDynamicToolbarFilters({
+            optionsPath: 'jobs',
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        const nameFilter = result.current.find((filter) => filter.key === 'name');
+        expect(nameFilter?.type).toBe(ToolbarFilterType.MultiText);
+      });
+    });
+
+    it('requests the next page of async options when next is set', async () => {
+      const requestedUrls: string[] = [];
+      server.use(
+        http.get(awxAPI`/organizations/`, ({ request }) => {
+          requestedUrls.push(request.url);
+          if (request.url.includes('organization__gt=5')) {
+            return HttpResponse.json({
+              count: 2,
+              results: [{ id: 10, name: 'Next Org' }],
+            });
+          }
+          return HttpResponse.json({
+            count: 2,
+            results: [{ id: 5, name: 'Default' }],
+          });
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useDynamicToolbarFilters({
+            optionsPath: 'jobs',
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.some((filter) => filter.key === 'organization')).toBe(true);
+      });
+
+      const organizationFilter = result.current.find((filter) => filter.key === 'organization');
+      if (organizationFilter?.type === ToolbarFilterType.AsyncMultiSelect) {
+        await organizationFilter.queryOptions({
+          search: '',
+          next: '5',
+          signal: new AbortController().signal,
+        });
+        expect(requestedUrls.some((url) => url.includes('id__gt=5'))).toBe(true);
+      }
     });
   });
 

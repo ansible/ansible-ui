@@ -44,10 +44,11 @@ describe('Domains', () => {
       </MemoryRouter>
     );
 
-    const toggleButtons = screen
+    const toggleButton = screen
       .getAllByRole('button')
-      .filter((button) => button.getAttribute('aria-pressed') !== null);
-    await user.click(toggleButtons[0]);
+      .find((button) => button.getAttribute('aria-pressed') !== null);
+    expect(toggleButton).toBeDefined();
+    await user.click(toggleButton as HTMLButtonElement);
     expect(useDomainsStore.getState().activeDomains).toHaveLength(1);
 
     await user.click(screen.getByRole('button', { name: 'Clear Active Domains' }));
@@ -96,5 +97,52 @@ describe('Domains', () => {
     await user.click(screen.getByRole('button', { name: /Configure Domains/i }));
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  test('should reject duplicate domain names on submit', async () => {
+    const user = userEvent.setup();
+    useDomainsStore.setState({
+      domains: [
+        { name: 'Ops', labels: [] },
+        { name: 'Ops', labels: [] },
+      ],
+      activeDomains: [],
+    });
+
+    render(
+      <MemoryRouter>
+        <Domains />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: /Configure Domains/i }));
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    expect(screen.getByText('Each domain name must be unique.')).toBeInTheDocument();
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  test('should add and remove a domain in configure modal', async () => {
+    const user = userEvent.setup();
+    useDomainsStore.setState({
+      domains: [
+        { name: 'Alpha', labels: [{ name: 'a' }] },
+        { name: 'Beta', labels: [{ name: 'b' }] },
+      ],
+      activeDomains: [],
+    });
+
+    render(
+      <MemoryRouter>
+        <Domains />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: /Configure Domains/i }));
+    await user.click(screen.getByRole('button', { name: 'Add Domain' }));
+    await user.click(screen.getAllByRole('button', { name: 'Remove' })[0]);
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    expect(useDomainsStore.getState().domains).toHaveLength(1);
   });
 });

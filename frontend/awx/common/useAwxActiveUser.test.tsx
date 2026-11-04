@@ -58,6 +58,23 @@ describe('useAwxActiveUser', () => {
     });
   });
 
+  it('returns null when /me/ responds with no users', async () => {
+    server.use(
+      http.get(awxAPI`/me/`, () =>
+        HttpResponse.json({
+          count: 0,
+          results: [],
+        })
+      )
+    );
+
+    const { result } = renderHook(() => useAwxActiveUser(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.activeAwxUser).toBeNull();
+    });
+  });
+
   it('AwxActiveUserProvider skips fetching when disabled', () => {
     const { result } = renderHook(() => useAwxActiveUser(), {
       wrapper: ({ children }) => (

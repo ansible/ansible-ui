@@ -92,4 +92,71 @@ describe('MultipleChoiceField', () => {
     );
     expect(screen.getByText('Default option')).toBeInTheDocument();
   });
+
+  it('shows validation when adding an empty choice', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <MultipleChoiceField type="multiplechoice" />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByTestId('add-choice-input'));
+    await user.keyboard('{Enter}');
+    expect(screen.getByText('Choice option cannot be empty.')).toBeInTheDocument();
+  });
+
+  it('shows validation when adding a duplicate choice', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <MultipleChoiceField type="multiplechoice" />
+      </TestWrapper>
+    );
+
+    await user.type(screen.getByTestId('add-choice-input'), 'dup');
+    await user.click(screen.getByRole('button', { name: 'Add choice' }));
+    await user.type(screen.getByTestId('add-choice-input'), 'dup{Enter}');
+
+    expect(screen.getByText('Choice option already exists.')).toBeInTheDocument();
+  });
+
+  it('adds a choice when pressing Enter in the input', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <MultipleChoiceField type="multiplechoice" />
+      </TestWrapper>
+    );
+
+    await user.type(screen.getByTestId('add-choice-input'), 'enter-choice{Enter}');
+    expect(screen.getByDisplayValue('enter-choice')).toBeInTheDocument();
+  });
+
+  it('sets default choice via radio', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapperWithChoice>
+        <MultipleChoiceField type="multiplechoice" />
+      </TestWrapperWithChoice>
+    );
+
+    const radio = screen.getByTestId('choice-radio-0');
+    await user.click(radio);
+    expect(radio).toBeChecked();
+  });
+
+  it('toggles multiselect default via checkbox', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapperWithChoice>
+        <MultipleChoiceField type="multiselect" />
+      </TestWrapperWithChoice>
+    );
+
+    const checkbox = screen.getByTestId('choice-checkbox-0');
+    expect(checkbox).not.toBeChecked();
+    await user.click(checkbox);
+    expect(checkbox).toBeChecked();
+  });
 });

@@ -48,4 +48,34 @@ describe('ExecutionEnvironmentDetail', () => {
 
     expect(screen.getByText('Missing resource')).toBeInTheDocument();
   });
+
+  test('should warn when virtual environment must be replaced', () => {
+    render(
+      <MemoryRouter>
+        <ExecutionEnvironmentDetail
+          executionEnvironment={undefined}
+          isDefaultEnvironment={false}
+          virtualEnvironment="custom-venv"
+          verifyMissingVirtualEnv
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Missing resource')).toBeInTheDocument();
+  });
+
+  test('returns null when only virtual environment is set without verification', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <ExecutionEnvironmentDetail
+          executionEnvironment={undefined}
+          isDefaultEnvironment={false}
+          virtualEnvironment="legacy-venv"
+          verifyMissingVirtualEnv={false}
+        />
+      </MemoryRouter>
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
 });
