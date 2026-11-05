@@ -1,19 +1,27 @@
 import { ITableColumn, PageDashboardCard, PageTable } from '@ansible/ansible-ui-framework';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TFunction } from 'i18next';
 import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarRow } from './DashboardTableToolbarRow';
 import { currencyFormatter } from '../../utilities/currencyFormatter';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { AwxUser } from '../../../interfaces/User';
 import { useResizeObserver } from '@ansible/ansible-ui-framework/hooks/useResizeObserver';
 import { CardBody } from '@patternfly/react-core';
 import styled from 'styled-components';
 import { ExportIcon } from '@patternfly/react-icons';
-import { DashboardExportButton } from './DashboardExportButton';
+import { DashboardMainTableActions } from './DashboardMainTableActions';
 import { hasValidRequiredFilters } from '../utils/queryString';
 import { DashboardDetailsCard } from './DashboardDetailsCard';
-import { IJobTemplateModify, useTemplateTimesSave } from '../views/useTemplateTimesSave';
+import {
+  IJobTemplateModify,
+  TEMPLATE_TIME_MAX_MINUTES,
+  TEMPLATE_TIME_MIN_MINUTES,
+  useTemplateTimesSave,
+} from '../views/useTemplateTimesSave';
+import { useSetTemplateValuesDialog } from '../common/useSetTemplateValuesDialog';
 
 // Uses 1610px instead of PageDashboard's 1662px to account for card padding
 const GRID_COLUMN_WIDTH = 1610 / 24; // ~67px per column
@@ -32,6 +40,33 @@ const TdWrapper = styled.div`
   padding-block-start: var(--pf-t--global--spacer--control--vertical--default);
   padding-block-end: var(--pf-t--global--spacer--control--vertical--default);
 `;
+
+/** Explains why the export is unavailable, or undefined when it can be used. */
+function getExportUnavailableReason(
+  t: TFunction,
+  state: { loading: boolean; hasItems: boolean; hasCostState: boolean; filtersValid: boolean }
+) {
+  if (state.loading) return t('Report data is loading.');
+  if (!state.filtersValid) return t('Select values for all required filters to export.');
+  if (!state.hasItems) return t('No data available to export.');
+  if (!state.hasCostState) return t('Cost settings are not available.');
+  return undefined;
+}
+
+/** Keeps the bulk update off while the table may show stale data or invalid filters. */
+function getSetTemplateValuesDisabledReason(
+  t: TFunction,
+  state: { loading: boolean; filtersValid: boolean }
+) {
+  if (state.loading) return t('Report data is loading.');
+  if (!state.filtersValid) return t('Select values for all required filters.');
+  return undefined;
+}
+
+/** Only admins may set template values, and only when the table has results. */
+function canSetTemplateValues(user: AwxUser | null | undefined, hasItems: boolean) {
+  return !!user?.is_superuser && hasItems;
+}
 
 export function DashboardMainTableCard(props: IAutomationDashboardView) {
   const {
@@ -53,6 +88,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
   const ref = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState(1);
   const filtersValid = hasValidRequiredFilters(toolbarFilters, mainTableView.filterState);
+  const hasItems = (mainTableView.itemCount ?? 0) > 0;
   const calculateGridColumns = (width: number) =>
     Math.max(1, Math.floor(width / GRID_COLUMN_WIDTH));
 
@@ -64,14 +100,18 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     setColumns(calculateGridColumns(entry.contentRect.width));
   });
 
-  const { errors, onTableInputChange } = useTemplateTimesSave(mainTableView, refresh);
+  const templateTimes = useTemplateTimesSave(mainTableView, refresh);
+  const { errors, onTableInputChange, editVersion } = templateTimes;
+  const openSetTemplateValuesDialog = useSetTemplateValuesDialog(refresh, templateTimes);
 
   const tableInputField = (columnKey: keyof IJobTemplateModify, item: IJobTemplate) => (
     <div style={{ width: `${TIME_COLUMN_WIDTH}px` }}>
       <DashboardTableInputField
+        // Remounts after a bulk update, dropping any unsaved or invalid local edit
+        key={`${columnKey}_${item.id}_${editVersion}`}
         id={`${columnKey}_${item.id}`}
-        min={1}
-        max={1000000}
+        min={TEMPLATE_TIME_MIN_MINUTES}
+        max={TEMPLATE_TIME_MAX_MINUTES}
         type={'integer'}
         value={item[columnKey]}
         onChange={(value: number) => onTableInputChange(item, columnKey, value)}
@@ -180,14 +220,24 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
     },
   ];
 
-  const exportButton = (
-    <DashboardExportButton
-      exportType={'csv'}
+  const tableActions = (
+    <DashboardMainTableActions
       title={t('Export as CSV')}
       icon={ExportIcon}
-      isDisabled={loading || !(mainTableView.itemCount ?? 0) || !costState || !filtersValid}
+      exportDisabledReason={getExportUnavailableReason(t, {
+        loading,
+        hasItems,
+        hasCostState: !!costState,
+        filtersValid,
+      })}
       onExport={exportCsv}
-    ></DashboardExportButton>
+      canSetTemplateValues={canSetTemplateValues(activeAwxUser, hasItems)}
+      setTemplateValuesDisabledReason={getSetTemplateValuesDisabledReason(t, {
+        loading,
+        filtersValid,
+      })}
+      onSetTemplateValues={openSetTemplateValuesDialog}
+    ></DashboardMainTableActions>
   );
 
   return (
@@ -198,7 +248,7 @@ export function DashboardMainTableCard(props: IAutomationDashboardView) {
       canCollapse={false}
       disableBodyPadding
       style={{ gridColumn: `span ${MAIN_TABLE_FULL_SPAN}` }}
-      headerControls={exportButton}
+      headerControls={tableActions}
     >
       <CardBody>
         <DashboardTableToolbarRow

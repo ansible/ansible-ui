@@ -1,11 +1,15 @@
 import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { IAutomationDashboardView, IJobTemplate } from '../types';
 import { useSerializedSave } from './useSerializedSave';
+
+/** Allowed range (minutes) for the editable template times, inline and in bulk. */
+export const TEMPLATE_TIME_MIN_MINUTES = 1;
+export const TEMPLATE_TIME_MAX_MINUTES = 1000000;
 
 export interface IJobTemplateModify {
   time_taken_manually_execute_minutes: number;
@@ -38,7 +42,13 @@ export function useTemplateTimesSave(
   // columns of a row cannot resend a stale value for the other column.
   const unsavedTemplateTimesRef = useRef(new Map<number, IJobTemplateModify>());
 
-  const enqueueTemplateSave = useSerializedSave<ITemplateTimesSave, IJobTemplateModify>({
+  // Bumped after a bulk update so the table inputs remount and drop local edits and errors.
+  const [editVersion, setEditVersion] = useState(0);
+
+  const { enqueue: enqueueTemplateSave, waitForIdle } = useSerializedSave<
+    ITemplateTimesSave,
+    IJobTemplateModify
+  >({
     save: ({ item, data }) =>
       putRequest(metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/`, data),
     onSuccess: async (updatedData, { item }) => {
@@ -99,5 +109,28 @@ export function useTemplateTimesSave(
     enqueueTemplateSave(item.id, { item, data });
   };
 
-  return { errors, onTableInputChange };
+  /**
+   * Shows bulk-applied values in every row right away and drops local edits and errors, so
+   * the cells reflect the new values before the refresh returns.
+   */
+  const { pageItems, updateItem } = mainTableView;
+  const applyBulkValues = useCallback(
+    (values: Partial<IJobTemplateModify>) => {
+      pageItems?.forEach((item) => updateItem({ ...item, ...values }));
+      unsavedTemplateTimesRef.current.clear();
+      setErrors(null);
+      setEditVersion((version) => version + 1);
+    },
+    [pageItems, updateItem]
+  );
+
+  return {
+    errors,
+    onTableInputChange,
+    // Lets a bulk update wait for in-flight PUTs. Their follow-up refreshes are not awaited:
+    // the bulk refresh starts later, and SWR discards responses of older requests.
+    waitForPendingSaves: waitForIdle,
+    applyBulkValues,
+    editVersion,
+  };
 }

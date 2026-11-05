@@ -36,7 +36,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
     setUnsavedCostState(value);
   };
 
-  const enqueueSave = useSerializedSave<ISubscriptionCosts, ISubscriptionCosts>({
+  const { enqueue: enqueueSave } = useSerializedSave<ISubscriptionCosts, ISubscriptionCosts>({
     save: (updatedCostState) =>
       putRequest(
         metricsAPI`/dashboard_reports/subscription_costs/${updatedCostState.id}/`,
@@ -148,7 +148,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
         <Switch
           id={SWITCH_ID + '-toggle'}
           data-testid={SWITCH_ID + '-toggle'}
-          label={t('Include time taken to create automation into calculation')}
+          label={t('Include time taken to create automation in calculations')}
           isChecked={
             (unsavedCostState ?? costState)?.include_template_creation_time_in_costs === true
           }

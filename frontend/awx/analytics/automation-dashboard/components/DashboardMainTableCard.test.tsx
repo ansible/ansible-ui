@@ -1,18 +1,15 @@
-/* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter } from 'react-router-dom';
-import { ReactNode } from 'react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
-  IToolbarFilter,
-  PageAlertToasterProvider,
-  ToolbarFilterType,
-} from '@ansible/ansible-ui-framework';
-import { DashboardMainTableCard } from './DashboardMainTableCard';
-import type { IAutomationDashboardView, IDashboardDetails, IJobTemplate } from '../types';
+  buildMainTableView,
+  buildProps,
+  mockDetails,
+  mockRefresh,
+  renderCard,
+} from './DashboardMainTableCard.testUtils';
 
 // ─── Hoisted mocks ────────────────────────────────────────────────────────────
 
@@ -39,118 +36,6 @@ const server = setupServer(
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-
-// ─── Fixtures ─────────────────────────────────────────────────────────────────
-
-const mockItem: IJobTemplate = {
-  id: 1,
-  template_name: 'Test Template',
-  runs: 5,
-  num_hosts: 3,
-  time_taken_manually_execute_minutes: 30,
-  time_taken_create_automation_minutes: 60,
-  elapsed: '1800',
-  elapsed_str: '00:30:00',
-  automated_costs: 100,
-  manual_costs: 200,
-  savings: 100,
-  time_savings: 3600,
-  time_savings_str: '01:00:00',
-};
-
-const mockDetails: IDashboardDetails = {
-  total_number_of_successful_jobs: 10,
-  total_number_of_failed_jobs: 2,
-  total_number_of_unique_hosts: 5,
-  cost_of_automated_execution: 500,
-  cost_of_manual_automation: 1000,
-  total_hours_of_automation: 100,
-  total_saving: 500,
-  total_time_saving: 50,
-  total_number_of_host_job_runs: 15,
-  total_number_of_job_runs: 12,
-  top_projects: [{ id: 1, name: 'Project A', execution_count: 3 }],
-  top_users: [{ id: 1, name: 'User A', execution_count: 2 }],
-  job_chart: { kind: 'day', items: [{ label: '2024-01-01', value: 1 }] },
-  host_chart: { kind: 'day', items: [{ label: '2024-01-01', value: 1 }] },
-};
-
-const mockRefresh = vi.fn();
-
-const mockToolbarFilters: IToolbarFilter[] = [
-  {
-    type: ToolbarFilterType.DateRange,
-    key: 'period',
-    label: 'Period',
-    query: 'period',
-    options: [
-      { label: 'Last 7 days', value: 'last_7_days' },
-      { label: 'Custom', value: 'custom', isCustom: true },
-    ],
-    placeholder: 'Filter by period',
-    isRequired: true,
-  },
-];
-
-type MainTableView = IAutomationDashboardView['mainTableView'];
-
-function buildMainTableView(overrides: Partial<MainTableView> = {}): MainTableView {
-  const base: MainTableView = {
-    page: 1,
-    setPage: vi.fn(),
-    perPage: 10,
-    setPerPage: vi.fn(),
-    sort: 'template_name',
-    setSort: vi.fn(),
-    sortDirection: 'asc',
-    setSortDirection: vi.fn(),
-    filterState: { period: ['last_7_days'] },
-    setFilterState: vi.fn(),
-    clearAllFilters: vi.fn(),
-    itemCount: 1,
-    pageItems: [mockItem],
-    refresh: vi.fn(),
-    limitFiltersToOneOrOperation: true,
-    updateItem: vi.fn(),
-    error: undefined,
-  };
-  return { ...base, ...overrides } as MainTableView;
-}
-
-function buildProps(overrides: Partial<IAutomationDashboardView> = {}): IAutomationDashboardView {
-  return {
-    mainTableView: buildMainTableView(),
-    toolbarFilters: mockToolbarFilters,
-    details: mockDetails,
-    detailsError: undefined,
-    detailsLoading: false,
-    costState: {
-      id: 1,
-      monthly_subscription_cost: 100,
-      engineer_avg_hourly_rate: 50,
-      include_template_creation_time_in_costs: false,
-    },
-    setCostState: vi.fn(),
-    loading: false,
-    refresh: mockRefresh,
-    exportCsv: vi.fn(),
-    isFilterStateDefault: true,
-    registerClearCallback: vi.fn(),
-    ...overrides,
-  };
-}
-
-function Wrapper({ children }: { children: ReactNode }) {
-  return (
-    <MemoryRouter>
-      <PageAlertToasterProvider>{children}</PageAlertToasterProvider>
-    </MemoryRouter>
-  );
-}
-
-function renderCard(props: IAutomationDashboardView = buildProps()) {
-  return render(<DashboardMainTableCard {...props} />, { wrapper: Wrapper });
-}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -411,24 +296,38 @@ describe('DashboardMainTableCard', () => {
 
   // --- Toolbar row ---
 
-  test('should disable export CSV button when loading is true', () => {
+  test('should disable export CSV button when loading is true', async () => {
+    const user = userEvent.setup();
     renderCard(buildProps({ loading: true }));
-    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
+    const exportButton = screen.getByTestId('export-as-csv');
+    expect(exportButton).toHaveAttribute('aria-disabled', 'true');
+    await user.hover(exportButton);
+    expect(await screen.findByText('Report data is loading.')).toBeInTheDocument();
   });
 
   test('should enable export CSV button for superuser with data', () => {
     renderCard();
-    expect(screen.getByTestId('export-as-csv')).not.toBeDisabled();
+    expect(screen.getByTestId('export-as-csv')).not.toHaveAttribute('aria-disabled', 'true');
   });
 
-  test('should disable export CSV when itemCount is 0', () => {
+  test('should disable export CSV when itemCount is 0', async () => {
+    const user = userEvent.setup();
     renderCard(buildProps({ mainTableView: buildMainTableView({ itemCount: 0, pageItems: [] }) }));
-    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
+    const exportButton = screen.getByTestId('export-as-csv');
+    expect(exportButton).toHaveAttribute('aria-disabled', 'true');
+    await user.hover(exportButton);
+    expect(await screen.findByText('No data available to export.')).toBeInTheDocument();
   });
 
-  test('should disable export CSV when a required toolbar filter is missing a value', () => {
+  test('should disable export CSV when a required toolbar filter is missing a value', async () => {
+    const user = userEvent.setup();
     renderCard(buildProps({ mainTableView: buildMainTableView({ filterState: {} }) }));
-    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
+    const exportButton = screen.getByTestId('export-as-csv');
+    expect(exportButton).toHaveAttribute('aria-disabled', 'true');
+    await user.hover(exportButton);
+    expect(
+      await screen.findByText('Select values for all required filters to export.')
+    ).toBeInTheDocument();
   });
 
   test('should disable export CSV when mainTableView itemCount is undefined', () => {
@@ -437,7 +336,7 @@ describe('DashboardMainTableCard', () => {
         mainTableView: buildMainTableView({ itemCount: undefined as unknown as number }),
       })
     );
-    expect(screen.getByTestId('dashboard-export-button-csv')).toBeDisabled();
+    expect(screen.getByTestId('export-as-csv')).toHaveAttribute('aria-disabled', 'true');
   });
 
   test('should call exportCsv with reportType when dropdown option is selected', async () => {

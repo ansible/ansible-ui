@@ -374,6 +374,24 @@ describe('useAutomationDashboardBaseView', () => {
     });
   });
 
+  test('should apply several updateItem calls made one after another', async () => {
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+      })
+    );
+
+    await waitFor(() => expect(result.current.pageItems).toBeDefined());
+
+    act(() => {
+      result.current.updateItem({ id: 1, name: 'Updated Item 1' });
+      result.current.updateItem({ id: 2, name: 'Updated Item 2' });
+    });
+
+    expect(result.current.pageItems?.find((i) => i.id === 1)?.name).toBe('Updated Item 1');
+    expect(result.current.pageItems?.find((i) => i.id === 2)?.name).toBe('Updated Item 2');
+  });
+
   test('should handle updateItem without throwing errors', async () => {
     const { result } = renderHook(() =>
       useAutomationDashboardBaseView<TestItem>({
