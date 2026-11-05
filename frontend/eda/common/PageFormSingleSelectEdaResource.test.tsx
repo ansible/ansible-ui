@@ -40,9 +40,15 @@ interface FormValues {
   resource_id: number | null;
 }
 
-function FormWrapper({ children }: { children: React.ReactNode }) {
+function FormWrapper({
+  children,
+  defaultValues,
+}: {
+  children: React.ReactNode;
+  defaultValues?: FormValues;
+}) {
   const methods = useForm<FormValues>({
-    defaultValues: {
+    defaultValues: defaultValues ?? {
       resource_id: null,
     },
   });
@@ -513,5 +519,55 @@ describe('PageFormSingleSelectEdaResource', () => {
     });
     expect(screen.getByText('Full description without period')).toBeInTheDocument();
     expect(screen.getByText('First sentence')).toBeInTheDocument();
+  });
+
+  it('should resolve the selected resource name asynchronously', async () => {
+    server.use(
+      http.get('*/test-resources/1/', () =>
+        HttpResponse.json({ id: 1, name: 'Regular Resource', description: 'Loaded.' })
+      )
+    );
+
+    render(
+      <MemoryRouter>
+        <FormWrapper defaultValues={{ resource_id: 1 }}>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Regular Resource')).toBeInTheDocument();
+  });
+
+  it('should show not found when the selected resource cannot be loaded', async () => {
+    server.use(http.get('*/test-resources/1/', () => HttpResponse.json({}, { status: 404 })));
+
+    render(
+      <MemoryRouter>
+        <FormWrapper defaultValues={{ resource_id: 1 }}>
+          <PageFormSingleSelectEdaResource<TestResource, FormValues, 'resource_id'>
+            name="resource_id"
+            id="test-resource-select"
+            label="Test Resource"
+            placeholder="Select a resource"
+            queryPlaceholder="Loading resources..."
+            queryErrorText="Error loading resources"
+            url="/api/eda/v1/test-resources/"
+            tableColumns={[]}
+          />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Not found')).toBeInTheDocument();
   });
 });

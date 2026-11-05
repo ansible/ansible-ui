@@ -92,4 +92,27 @@ describe('EventStreams', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('displays a permission empty state when the user cannot create event streams', async () => {
+    server.use(
+      http.get('*/event-streams/*', () => {
+        return HttpResponse.json({ count: 0, results: [] });
+      }),
+      http.options('*/event-streams/', () => {
+        return HttpResponse.json({ actions: { GET: {} } });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <EventStreams />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/You do not have permission to create an event stream/i)
+      ).toBeInTheDocument();
+    });
+  });
 });
