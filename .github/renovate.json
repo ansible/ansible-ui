@@ -6,6 +6,19 @@
     "automerge": false,
     "schedule": ["* 0-5 * * 5"]
   },
+  "packageRules": [
+    {
+      "description": "Skip pipeline-migration-tool for pipeline runs that use pipeline bundles",
+      "matchManagers": ["tekton"],
+      "matchFileNames": [
+        ".tekton/aap-ui-e2e.yaml",
+        ".tekton/aap-ui-e2e-coverage-push.yaml"
+      ],
+      "postUpgradeTasks": {
+        "commands": []
+      }
+    }
+  ],
   "git-submodules": {
     "enabled": true,
     "automerge": false,
