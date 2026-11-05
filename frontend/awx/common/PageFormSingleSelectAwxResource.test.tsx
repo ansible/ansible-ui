@@ -1,4 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
+import { PageDialogProvider } from '@ansible/ansible-ui-framework';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
@@ -29,7 +30,9 @@ function TestWrapper({ children }: { children: React.ReactNode }) {
   const methods = useForm();
   return (
     <MemoryRouter>
-      <FormProvider {...methods}>{children}</FormProvider>
+      <PageDialogProvider>
+        <FormProvider {...methods}>{children}</FormProvider>
+      </PageDialogProvider>
     </MemoryRouter>
   );
 }
@@ -224,5 +227,60 @@ describe('PageFormSingleSelectAwxResource', () => {
 
     const params = new URL(requestUrls[0]).searchParams;
     expect(params.getAll('organization')).toEqual(['1', '2']);
+  });
+
+  it('loads inventory options when the select is opened', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <PageFormSingleSelectAwxResource<MockResource>
+          name="inventory"
+          label="Inventory"
+          url="/api/v2/inventories/"
+          tableColumns={[{ header: 'Name', cell: (r) => r.name }]}
+          placeholder="Select inventory"
+          queryPlaceholder="Loading..."
+          queryErrorText="Error loading inventories"
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('inventory')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId('inventory'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Inventory A')).toBeInTheDocument();
+    });
+  });
+
+  it('opens browse dialog for inventory selection', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <PageFormSingleSelectAwxResource<MockResource>
+          name="inventory"
+          label="Inventory"
+          url="/api/v2/inventories/"
+          tableColumns={[{ header: 'Name', cell: (r) => r.name }]}
+          placeholder="Select inventory"
+          queryPlaceholder="Loading..."
+          queryErrorText="Error loading inventories"
+        />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('inventory')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId('inventory'));
+    await user.click(screen.getByRole('button', { name: 'Browse' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
   });
 });

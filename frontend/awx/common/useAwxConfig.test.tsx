@@ -4,7 +4,12 @@ import { setupServer } from 'msw/node';
 import { ReactNode } from 'react';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { awxAPI } from './api/awx-utils';
-import { AwxConfigProviderInternal, useAwxConfigState } from './useAwxConfig';
+import {
+  AwxConfigProvider,
+  AwxConfigProviderInternal,
+  useAwxConfig,
+  useAwxConfigState,
+} from './useAwxConfig';
 
 const mockConfig = {
   version: '4.5.0',
@@ -25,6 +30,37 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('useAwxConfig', () => {
+  test('useAwxConfig returns config from provider', async () => {
+    server.use(
+      http.get(awxAPI`/config/`, () => {
+        return HttpResponse.json(mockConfig);
+      })
+    );
+
+    const { result } = renderHook(
+      () => ({
+        config: useAwxConfig(),
+        state: useAwxConfigState(),
+      }),
+      { wrapper }
+    );
+
+    await waitFor(() => {
+      expect(result.current.config?.version).toBe('4.5.0');
+    });
+  });
+
+  test('AwxConfigProvider skips fetch when disabled', () => {
+    const disabledWrapper = ({ children }: { children: ReactNode }) => (
+      <AwxConfigProvider disabled>{children}</AwxConfigProvider>
+    );
+
+    const { result } = renderHook(() => useAwxConfigState(), { wrapper: disabledWrapper });
+
+    expect(result.current.awxConfig).toBeUndefined();
+    expect(result.current.refreshAwxConfig).toBeUndefined();
+  });
+
   describe('serviceDown flag', () => {
     test('should set serviceDown to false when config loads successfully', async () => {
       server.use(
