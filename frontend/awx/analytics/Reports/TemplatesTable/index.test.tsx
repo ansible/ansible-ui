@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { buildChartLegendEntry } from './chartLegendEntry.fixture';
 import { TopTemplates } from './index';
-import type { ChartLegendEntry } from '@ansible/react-json-chart-builder';
 
-const template: ChartLegendEntry = {
-  id: '1',
+const template = buildChartLegendEntry({
+  id: 1,
   name: 'Deploy',
-  enabled: true,
+  enabled: 1,
   monetary_gain: 100,
   manual_effort_minutes: 30,
   successful_hosts_total: 2,
@@ -19,7 +19,7 @@ const template: ChartLegendEntry = {
   total_org_count: 1,
   total_cluster_count: 1,
   total_inventory_count: 1,
-} as unknown as ChartLegendEntry;
+});
 
 describe('TopTemplates table', () => {
   beforeEach(() => {
