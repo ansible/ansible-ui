@@ -157,6 +157,11 @@ export const InventoryHost = {
       for (const hostName of hostNames) {
         await expect(await getTableRow(page, hostName)).toBeVisible({ timeout: 30_000 });
       }
+      await clearTableFilters(page);
+      await expect(rowCheckboxes).toHaveCount(hostNames.length, { timeout: 30_000 });
+      for (const hostName of hostNames) {
+        await expect(page.getByText(hostName, { exact: true })).toBeVisible({ timeout: 30_000 });
+      }
       for (const checkbox of await rowCheckboxes.all()) {
         await checkbox.check();
       }
