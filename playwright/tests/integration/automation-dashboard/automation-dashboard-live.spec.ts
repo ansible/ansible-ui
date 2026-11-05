@@ -216,8 +216,8 @@ test.describe('Automation Dashboard', () => {
         // Get final jobs count
         const finalAwxJobs = await awxAPI.get<{ count: number; results: unknown[] }>(page, 'jobs/');
         const finalAwxCount = finalAwxJobs?.count || 0;
-        // Verify at least one job was created
-        expect(finalAwxCount).toEqual(initialAwxCount + 1);
+        // Verify at least one job was created. Use >= to tolerate jobs created by parallel test shards in CI.
+        expect(finalAwxCount).toBeGreaterThanOrEqual(initialAwxCount + 1);
       });
 
       await test.step('Trigger initial data collection and wait for completion', async () => {
