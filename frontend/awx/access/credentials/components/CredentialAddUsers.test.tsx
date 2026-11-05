@@ -28,10 +28,6 @@ vi.mock('../../../common/useAwxBulkActionDialog', () => ({
   useAwxBulkActionDialog: () => mockProgressDialog,
 }));
 
-vi.mock('@ansible/common-ui/crud/Data', () => ({
-  postRequest: vi.fn(() => Promise.resolve({})),
-}));
-
 const credential = {
   id: 1,
   type: 'credential',
@@ -55,6 +51,10 @@ const server = setupServer(
   http.get(
     ({ request }) => request.url.includes('/api/gateway/v1/users'),
     () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
+  ),
+  http.post(
+    ({ request }) => request.url.includes('role_user_assignments'),
+    () => HttpResponse.json({})
   )
 );
 

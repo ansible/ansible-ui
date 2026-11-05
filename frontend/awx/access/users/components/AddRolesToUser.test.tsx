@@ -4,6 +4,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { PageWizardStep } from '@ansible/ansible-ui-framework';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { AddRolesToUser } from './AddRolesToUser';
 
 const wizardCapture = vi.hoisted(() => ({
@@ -26,10 +27,6 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
 
 vi.mock('../../../common/useAwxBulkActionDialog', () => ({
   useAwxBulkActionDialog: () => mockProgressDialog,
-}));
-
-vi.mock('@ansible/common-ui/crud/Data', () => ({
-  postRequest: vi.fn(() => Promise.resolve({})),
 }));
 
 const user = {
@@ -59,7 +56,8 @@ const server = setupServer(
   http.get(
     ({ request }) => request.url.includes('role_definitions'),
     () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
-  )
+  ),
+  http.post(awxAPI`/role_user_assignments/`, () => HttpResponse.json({}))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));

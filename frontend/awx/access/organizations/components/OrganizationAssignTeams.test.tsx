@@ -4,6 +4,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import type { PageWizardStep } from '@ansible/ansible-ui-framework';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { OrganizationAssignTeams } from './OrganizationAssignTeams';
 
 const wizardCapture = vi.hoisted(() => ({
@@ -28,10 +29,6 @@ vi.mock('../../../common/useAwxBulkActionDialog', () => ({
   useAwxBulkActionDialog: () => mockProgressDialog,
 }));
 
-vi.mock('@ansible/common-ui/crud/Data', () => ({
-  postRequest: vi.fn(() => Promise.resolve({})),
-}));
-
 const mockOrganization = {
   id: 1,
   name: 'Test Org',
@@ -52,7 +49,8 @@ const server = setupServer(
   http.get(
     ({ request }) => request.url.includes('/teams/') && !request.url.includes('organizations'),
     () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
-  )
+  ),
+  http.post(awxAPI`/role_team_assignments/`, () => HttpResponse.json({}))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
