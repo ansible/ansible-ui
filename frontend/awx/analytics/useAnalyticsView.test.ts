@@ -1,7 +1,8 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ToolbarFilterType, type IToolbarFilter } from '@ansible/ansible-ui-framework';
-import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { fillFilters, getQueryString, useAnalyticsView } from './useAnalyticsView';
 
 type AnalyticsLegendResponse = {
@@ -22,13 +23,17 @@ type MockUseViewReturn = {
   clearAllFilters: ReturnType<typeof vi.fn>;
 };
 
+const reportPath = '/analytics/report/test/';
 const legendFromResponse = (data: AnalyticsLegendResponse) => data.meta.legend;
 const countFromResponse = (data: AnalyticsLegendResponse) => data.meta.count;
 
 const mockSetPage = vi.fn();
-const mockPostRequest =
-  vi.fn<(url: string, payload?: unknown) => Promise<AnalyticsLegendResponse>>();
-const mockRequestGet = vi.fn<(url: string) => Promise<AnalyticsLegendResponse>>();
+const postRequestUrls: string[] = [];
+const getRequestUrls: string[] = [];
+
+const defaultPostResponse: AnalyticsLegendResponse = {
+  meta: { count: 2, legend: [{ id: 1 }, { id: 2 }] },
+};
 
 const mockUseView = vi.fn(
   (): MockUseViewReturn => ({
@@ -44,6 +49,23 @@ const mockUseView = vi.fn(
     setFilterState: vi.fn(),
     clearAllFilters: vi.fn(),
   })
+);
+
+const server = setupServer(
+  http.post(
+    ({ request }) => new URL(request.url).pathname.startsWith(reportPath),
+    ({ request }) => {
+      postRequestUrls.push(request.url);
+      return HttpResponse.json(defaultPostResponse);
+    }
+  ),
+  http.get(
+    ({ request }) => new URL(request.url).pathname.startsWith(reportPath),
+    ({ request }) => {
+      getRequestUrls.push(request.url);
+      return HttpResponse.json({ meta: { count: 1, legend: [{ id: 3 }] } });
+    }
+  )
 );
 
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
@@ -62,11 +84,6 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   };
 });
 
-vi.mock('@ansible/common-ui/crud/Data', () => ({
-  postRequest: (url: string, payload?: unknown) => mockPostRequest(url, payload),
-  requestGet: (url: string) => mockRequestGet(url),
-}));
-
 vi.mock('./AnalyticsReportBuilder/AnalyticsReportBuilder', async (importOriginal) => {
   const actual =
     await importOriginal<typeof import('./AnalyticsReportBuilder/AnalyticsReportBuilder')>();
@@ -75,6 +92,14 @@ vi.mock('./AnalyticsReportBuilder/AnalyticsReportBuilder', async (importOriginal
     computeMainFilterKeys: vi.fn(() => [{ key: 'org_id', value: 'org_id' }]),
   };
 });
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+afterEach(() => {
+  server.resetHandlers();
+  postRequestUrls.length = 0;
+  getRequestUrls.length = 0;
+});
+afterAll(() => server.close());
 
 describe('getQueryString', () => {
   it('encodes query parameters', () => {
@@ -131,15 +156,12 @@ describe('useAnalyticsView', () => {
       setFilterState: vi.fn(),
       clearAllFilters: vi.fn(),
     });
-    mockPostRequest.mockResolvedValue({
-      meta: { count: 2, legend: [{ id: 1 }, { id: 2 }] },
-    });
   });
 
   it('loads data with POST and maps items', async () => {
     const { result } = renderHook(() =>
       useAnalyticsView({
-        url: '/analytics/report/test/',
+        url: reportPath,
         keyFn: (item: { id: number }) => item.id,
         requestMethod: 'post',
         getItems: legendFromResponse,
@@ -150,18 +172,14 @@ describe('useAnalyticsView', () => {
 
     await waitFor(() => expect(result.current.pageItems).toHaveLength(2));
     expect(result.current.itemCount).toBe(2);
-    expect(mockPostRequest).toHaveBeenCalled();
-    expect(String(mockPostRequest.mock.calls[0]?.[0])).toContain('offset=0');
+    expect(postRequestUrls.length).toBeGreaterThan(0);
+    expect(postRequestUrls[0]).toContain('offset=0');
   });
 
   it('uses GET when requestMethod is get', async () => {
-    mockRequestGet.mockResolvedValue({
-      meta: { count: 1, legend: [{ id: 3 }] },
-    });
-
     const { result } = renderHook(() =>
       useAnalyticsView({
-        url: '/analytics/report/test/',
+        url: reportPath,
         keyFn: (item: { id: number }) => item.id,
         requestMethod: 'get',
         getItems: legendFromResponse,
@@ -170,7 +188,7 @@ describe('useAnalyticsView', () => {
     );
 
     await waitFor(() => expect(result.current.pageItems).toHaveLength(1));
-    expect(mockRequestGet).toHaveBeenCalled();
+    expect(getRequestUrls.length).toBeGreaterThan(0);
   });
 
   it('resets page when a 404 occurs on later pages', async () => {
@@ -187,13 +205,16 @@ describe('useAnalyticsView', () => {
       setFilterState: vi.fn(),
       clearAllFilters: vi.fn(),
     });
-    mockPostRequest.mockRejectedValue(
-      new RequestError('missing', undefined, 404, undefined, undefined)
+    server.use(
+      http.post(
+        ({ request }) => new URL(request.url).pathname.startsWith(reportPath),
+        () => HttpResponse.json({ detail: 'missing' }, { status: 404 })
+      )
     );
 
     renderHook(() =>
       useAnalyticsView({
-        url: '/analytics/report/test/',
+        url: reportPath,
         keyFn: (item: { id: number }) => item.id,
         requestMethod: 'post',
         getItems: legendFromResponse,
@@ -207,7 +228,7 @@ describe('useAnalyticsView', () => {
   it('does not fetch when disableLoading is true', async () => {
     renderHook(() =>
       useAnalyticsView({
-        url: '/analytics/report/test/',
+        url: reportPath,
         keyFn: (item: { id: number }) => item.id,
         requestMethod: 'post',
         disableLoading: true,
@@ -219,7 +240,7 @@ describe('useAnalyticsView', () => {
     await act(async () => {
       await Promise.resolve();
     });
-    expect(mockPostRequest).not.toHaveBeenCalled();
+    expect(postRequestUrls).toHaveLength(0);
   });
 
   it('applies builder filter keys and sort query parameters', async () => {
@@ -239,7 +260,7 @@ describe('useAnalyticsView', () => {
 
     renderHook(() =>
       useAnalyticsView({
-        url: '/analytics/report/test/',
+        url: reportPath,
         keyFn: (item: { id: number }) => item.id,
         requestMethod: 'post',
         sortableColumns: ['custom_sort'],
@@ -253,8 +274,8 @@ describe('useAnalyticsView', () => {
       })
     );
 
-    await waitFor(() => expect(mockPostRequest).toHaveBeenCalled());
-    const requestUrl = String(mockPostRequest.mock.calls.at(-1)?.[0]);
+    await waitFor(() => expect(postRequestUrls.length).toBeGreaterThan(0));
+    const requestUrl = postRequestUrls.at(-1) ?? '';
     expect(requestUrl).toContain('sort_by=custom_sort:asc');
     expect(requestUrl).toContain('reportName=demo');
   });
