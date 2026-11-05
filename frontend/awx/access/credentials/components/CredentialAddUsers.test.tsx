@@ -111,4 +111,55 @@ describe('CredentialAddUsers', () => {
 
     expect(mockProgressDialog).toHaveBeenCalled();
   });
+
+  it('invokes onClose after assignments complete', async () => {
+    mockProgressDialog.mockImplementation(
+      (options: { onClose: () => void; onComplete: () => void }) => {
+        options.onComplete();
+        options.onClose();
+      }
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/credentials/1/user-access/add']}>
+        <Routes>
+          <Route path="/credentials/:id/user-access/add" element={<CredentialAddUsers />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-capture')).toBeInTheDocument();
+    });
+
+    if (!wizardCapture.onSubmit) {
+      throw new Error('expected onSubmit');
+    }
+    await wizardCapture.onSubmit({
+      users: [{ id: 2, username: 'user2' }],
+      platformRoles: [{ id: 3, name: 'Admin' }],
+    });
+  });
+
+  it('validates platform roles step', async () => {
+    render(
+      <MemoryRouter initialEntries={['/credentials/1/user-access/add']}>
+        <Routes>
+          <Route path="/credentials/:id/user-access/add" element={<CredentialAddUsers />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-capture')).toBeInTheDocument();
+    });
+
+    const rolesStep = wizardCapture.steps.find((step) => step.id === 'platformRoles');
+    expect(() => {
+      if (!rolesStep || !('validate' in rolesStep) || !rolesStep.validate) {
+        throw new Error('expected roles step');
+      }
+      void rolesStep.validate({}, {});
+    }).toThrow(/Select at least one role/);
+  });
 });

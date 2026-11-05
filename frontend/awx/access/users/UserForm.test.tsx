@@ -5,15 +5,26 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
+import { requestPatch } from '@ansible/common-ui/crud/Data';
 import { CreateUser, EditUser } from './UserForm';
 
 vi.mock('@ansible/common-ui/crud/usePostRequest');
+vi.mock('@ansible/common-ui/crud/Data', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/common-ui/crud/Data')>();
+  return { ...actual, requestPatch: vi.fn() };
+});
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
   return {
     ...actual,
     usePageNavigate: () => vi.fn(),
   };
+});
+
+const navigateMock = vi.fn();
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return { ...actual, useNavigate: () => navigateMock };
 });
 
 const mockOrganizations = {
@@ -54,6 +65,8 @@ const server = setupServer(
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 beforeEach(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
+  navigateMock.mockClear();
+  vi.mocked(requestPatch).mockResolvedValue({ id: 1, username: 'edituser' });
   vi.mocked(usePostRequest).mockReturnValue(
     vi.fn().mockResolvedValue({ id: 99, username: 'newuser' }) as ReturnType<typeof usePostRequest>
   );
@@ -119,9 +132,84 @@ describe('UserForm', () => {
       });
     });
 
+    it('shows validation error when confirm password does not match on create', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+      render(
+        <MemoryRouter initialEntries={['/users/create']}>
+          <Routes>
+            <Route path="/users/create" element={<CreateUser />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: /username/i })).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /username/i }), 'newbie');
+      await user.type(screen.getByLabelText(/^Password/i), 'secret');
+      await user.type(screen.getByLabelText(/Confirm password/i), 'different');
+      await user.click(screen.getByTestId('organization'));
+      await waitFor(() => {
+        expect(screen.getByRole('option', { name: 'Default' })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('option', { name: 'Default' }));
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Password does not match.')).toBeInTheDocument();
+      });
+    });
+
+    it('navigates back when cancel is clicked on create', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+      render(
+        <MemoryRouter initialEntries={['/users/create']}>
+          <Routes>
+            <Route path="/users/create" element={<CreateUser />} />
+          </Routes>
+        </MemoryRouter>
+      );
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
+      expect(navigateMock).toHaveBeenCalledWith(-1);
+    });
+
+    it('creates user when required fields and matching passwords are provided', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+      const postRequest = vi.fn().mockResolvedValue({ id: 99, username: 'newbie' });
+      vi.mocked(usePostRequest).mockReturnValue(postRequest as ReturnType<typeof usePostRequest>);
+
+      render(
+        <MemoryRouter initialEntries={['/users/create']}>
+          <Routes>
+            <Route path="/users/create" element={<CreateUser />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: /username/i })).toBeInTheDocument();
+      });
+
+      await user.type(screen.getByRole('textbox', { name: /username/i }), 'newbie');
+      await user.type(screen.getByLabelText(/^Password/i), 'secret');
+      await user.type(screen.getByLabelText(/Confirm password/i), 'secret');
+      await user.click(screen.getByTestId('organization'));
+      await waitFor(() => {
+        expect(screen.getByRole('option', { name: 'Default' })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('option', { name: 'Default' }));
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(() => {
+        expect(postRequest).toHaveBeenCalled();
+      });
+    });
+
     it.skip('submits create user when passwords match', async () => {
       const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
       const postRequest = vi.fn().mockResolvedValue({ id: 99, username: 'newbie' });
+      vi.mocked(requestPatch).mockResolvedValue({ id: 1, username: 'edituser' });
       vi.mocked(usePostRequest).mockReturnValue(postRequest as ReturnType<typeof usePostRequest>);
 
       render(
@@ -183,6 +271,85 @@ describe('UserForm', () => {
         </MemoryRouter>
       );
       expect(screen.getByText('Edit User')).toBeInTheDocument();
+    });
+
+    it('submits edit user without changing password', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+      render(
+        <MemoryRouter initialEntries={['/users/1/edit']}>
+          <Routes>
+            <Route path="/users/:id/edit" element={<EditUser />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Edit edituser');
+      });
+
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(() => {
+        expect(requestPatch).toHaveBeenCalled();
+      });
+    });
+
+    it('shows password mismatch error on edit when passwords differ', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+      render(
+        <MemoryRouter initialEntries={['/users/1/edit']}>
+          <Routes>
+            <Route path="/users/:id/edit" element={<EditUser />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Edit edituser');
+      });
+
+      await user.type(screen.getByLabelText(/^Password/i), 'newpass');
+      await user.type(screen.getByLabelText(/Confirm password/i), 'other');
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Password does not match.')).toBeInTheDocument();
+      });
+    });
+
+    it('submits edit user when password fields match', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+      render(
+        <MemoryRouter initialEntries={['/users/1/edit']}>
+          <Routes>
+            <Route path="/users/:id/edit" element={<EditUser />} />
+          </Routes>
+        </MemoryRouter>
+      );
+      await waitFor(() =>
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Edit edituser')
+      );
+      await user.type(screen.getByLabelText(/^Password/i), 'updated');
+      await user.type(screen.getByLabelText(/Confirm password/i), 'updated');
+      await user.click(screen.getByTestId('Submit'));
+      await waitFor(() => expect(requestPatch).toHaveBeenCalled());
+    });
+
+    it('navigates back when cancel is clicked on edit', async () => {
+      const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+      render(
+        <MemoryRouter initialEntries={['/users/1/edit']}>
+          <Routes>
+            <Route path="/users/:id/edit" element={<EditUser />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
+      expect(navigateMock).toHaveBeenCalledWith(-1);
     });
   });
 });

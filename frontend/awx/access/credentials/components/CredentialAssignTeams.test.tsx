@@ -111,4 +111,26 @@ describe('CredentialAssignTeams', () => {
 
     expect(mockProgressDialog).toHaveBeenCalled();
   });
+
+  it('validates platform roles step', async () => {
+    render(
+      <MemoryRouter initialEntries={['/credentials/1/team-access/add']}>
+        <Routes>
+          <Route path="/credentials/:id/team-access/add" element={<CredentialAssignTeams />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-capture')).toBeInTheDocument();
+    });
+
+    const rolesStep = wizardCapture.steps.find((step) => step.id === 'platformRoles');
+    expect(() => {
+      if (!rolesStep || !('validate' in rolesStep) || !rolesStep.validate) {
+        throw new Error('expected roles step');
+      }
+      void rolesStep.validate({}, {});
+    }).toThrow(/Select at least one role/);
+  });
 });

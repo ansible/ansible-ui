@@ -81,4 +81,21 @@ describe('useTeamActions', () => {
       expect(disabledReason).toMatch(/cannot be edited/i);
     }
   });
+
+  it('blocks add and remove users when user lacks edit capability', () => {
+    const { result } = renderHook(() => useTeamActions({ onTeamsDeleted: vi.fn() }));
+    const restrictedTeam = team({ edit: false });
+    const assignAction = result.current[2];
+    const removeAction = result.current[3];
+    if ('isDisabled' in assignAction && typeof assignAction.isDisabled === 'function') {
+      expect((assignAction.isDisabled as (t: Team) => string | undefined)(restrictedTeam)).toMatch(
+        /add users/i
+      );
+    }
+    if ('isDisabled' in removeAction && typeof removeAction.isDisabled === 'function') {
+      expect((removeAction.isDisabled as (t: Team) => string | undefined)(restrictedTeam)).toMatch(
+        /remove users/i
+      );
+    }
+  });
 });

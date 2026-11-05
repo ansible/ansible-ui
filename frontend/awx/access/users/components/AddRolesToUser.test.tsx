@@ -116,4 +116,26 @@ describe('AddRolesToUser', () => {
 
     expect(mockProgressDialog).toHaveBeenCalled();
   });
+
+  it('validates roles step', async () => {
+    render(
+      <MemoryRouter initialEntries={['/users/1/roles/add-roles']}>
+        <Routes>
+          <Route path="/users/:id/roles/add-roles" element={<AddRolesToUser />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('page-title')).toHaveTextContent('Add roles');
+    });
+
+    const rolesStep = wizardCapture.steps.find((step) => step.id === 'roles');
+    expect(() => {
+      if (!rolesStep || !('validate' in rolesStep) || !rolesStep.validate) {
+        throw new Error('expected roles step');
+      }
+      void rolesStep.validate({}, {});
+    }).toThrow(/Select at least one role/);
+  });
 });

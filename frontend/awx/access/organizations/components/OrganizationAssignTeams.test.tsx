@@ -111,4 +111,26 @@ describe('OrganizationAssignTeams', () => {
 
     expect(mockProgressDialog).toHaveBeenCalled();
   });
+
+  it('validates awx roles step', async () => {
+    render(
+      <MemoryRouter initialEntries={['/organizations/1/team-access/add']}>
+        <Routes>
+          <Route path="/organizations/:id/team-access/add" element={<OrganizationAssignTeams />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('wizard-capture')).toBeInTheDocument();
+    });
+
+    const rolesStep = wizardCapture.steps.find((step) => step.id === 'roles');
+    expect(() => {
+      if (!rolesStep || !('validate' in rolesStep) || !rolesStep.validate) {
+        throw new Error('expected roles step');
+      }
+      void rolesStep.validate({}, {});
+    }).toThrow(/Select at least one role/);
+  });
 });

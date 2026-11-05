@@ -72,4 +72,39 @@ describe('AwxSelectRolesStep', () => {
     render(<AwxSelectRolesStep contentType="team" title="Team roles" />);
     expect(screen.getByTestId('role-title')).toHaveTextContent('Team roles');
   });
+
+  it('shows instance group-specific role selection description', () => {
+    wizardState.resourceType = 'awx.instancegroup';
+    render(<AwxSelectRolesStep />);
+    expect(screen.getByTestId('role-description')).toHaveTextContent('instance groups');
+  });
+
+  it('shows job template-specific role selection description', () => {
+    wizardState.resourceType = 'awx.jobtemplate';
+    render(<AwxSelectRolesStep />);
+    expect(screen.getByTestId('role-description')).toHaveTextContent('job templates');
+  });
+
+  it('shows notification template-specific role selection description', () => {
+    wizardState.resourceType = 'awx.notificationtemplate';
+    render(<AwxSelectRolesStep />);
+    expect(screen.getByTestId('role-description')).toHaveTextContent('notification templates');
+  });
+
+  it('shows execution environment-specific role selection description', () => {
+    wizardState.resourceType = 'awx.executionenvironment';
+    render(<AwxSelectRolesStep />);
+    expect(screen.getByTestId('role-description')).toHaveTextContent('execution environments');
+  });
+
+  it('shows workflow job template-specific role selection description', () => {
+    wizardState.resourceType = 'awx.workflowjobtemplate';
+    render(<AwxSelectRolesStep />);
+    expect(screen.getByTestId('role-description')).toHaveTextContent('workflow job templates');
+  });
+
+  it('uses explicit descriptionForRoleSelection prop', () => {
+    render(<AwxSelectRolesStep descriptionForRoleSelection="Custom role copy" />);
+    expect(screen.getByTestId('role-description')).toHaveTextContent('Custom role copy');
+  });
 });

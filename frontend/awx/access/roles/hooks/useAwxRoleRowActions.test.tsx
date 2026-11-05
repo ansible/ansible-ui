@@ -43,11 +43,35 @@ describe('useAwxRoleRowActions', () => {
   it('disables edit for managed roles', () => {
     const { result } = renderHook(() => useAwxRoleRowActions(vi.fn()));
     const editAction = result.current[0];
+    const deleteAction = result.current[2];
     if ('isDisabled' in editAction && typeof editAction.isDisabled === 'function') {
-      const disabledReason = (editAction.isDisabled as (r: AwxRbacRole) => string | undefined)(
-        role({ managed: true })
+      expect(
+        (editAction.isDisabled as (r: AwxRbacRole) => string | undefined)(role({ managed: true }))
+      ).toMatch(/built-in/i);
+    }
+    if ('isDisabled' in deleteAction && typeof deleteAction.isDisabled === 'function') {
+      expect(
+        (deleteAction.isDisabled as (r: AwxRbacRole) => string | undefined)(role({ managed: true }))
+      ).toMatch(/built-in/i);
+    }
+  });
+
+  it('disables edit and delete when user is not a superuser', () => {
+    vi.mocked(useAwxActiveUser).mockReturnValue({
+      activeAwxUser: { is_superuser: false },
+    } as never);
+    const { result } = renderHook(() => useAwxRoleRowActions(vi.fn()));
+    const editAction = result.current[0];
+    const deleteAction = result.current[2];
+    if ('isDisabled' in editAction && typeof editAction.isDisabled === 'function') {
+      expect((editAction.isDisabled as (r: AwxRbacRole) => string | undefined)(role({}))).toMatch(
+        /permission/i
       );
-      expect(disabledReason).toMatch(/built-in/i);
+    }
+    if ('isDisabled' in deleteAction && typeof deleteAction.isDisabled === 'function') {
+      expect((deleteAction.isDisabled as (r: AwxRbacRole) => string | undefined)(role({}))).toMatch(
+        /permission/i
+      );
     }
   });
 });

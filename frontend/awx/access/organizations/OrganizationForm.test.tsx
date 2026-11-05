@@ -18,6 +18,12 @@ vi.mock('@ansible/common-ui/crud/Data', async (importOriginal) => {
   };
 });
 
+const navigateMock = vi.fn();
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return { ...actual, useNavigate: () => navigateMock };
+});
+
 const mockOrganizationsOptions = { actions: { GET: {}, POST: {} } };
 const mockInstanceGroups = { count: 0, results: [], next: null, previous: null };
 const mockExecutionEnvironments = { count: 0, results: [], next: null, previous: null };
@@ -52,6 +58,7 @@ const server = setupServer(
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 beforeEach(() => {
+  navigateMock.mockClear();
   vi.mocked(usePostRequest).mockReturnValue(
     vi.fn().mockResolvedValue({ id: 1, name: 'New Org' }) as ReturnType<typeof usePostRequest>
   );
@@ -102,6 +109,23 @@ describe('OrganizationForm', () => {
         expect(postRequest).toHaveBeenCalled();
       });
     });
+
+    it('navigates back when cancel is clicked on create', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/organizations/create']}>
+          <Routes>
+            <Route path="/organizations/create" element={<CreateOrganization />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
+      expect(navigateMock).toHaveBeenCalledWith(-1);
+    });
   });
 
   describe('EditOrganization', () => {
@@ -129,6 +153,39 @@ describe('OrganizationForm', () => {
         </MemoryRouter>
       );
       expect(screen.getByRole('navigation', { name: /breadcrumb/i })).toBeInTheDocument();
+    });
+
+    it('submits edit organization form', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/organizations/1/edit']}>
+          <Routes>
+            <Route path="/organizations/:id/edit" element={<EditOrganization />} />
+          </Routes>
+        </MemoryRouter>
+      );
+      await waitFor(() =>
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Default')
+      );
+      await user.click(screen.getByTestId('Submit'));
+      await waitFor(() => expect(requestPatch).toHaveBeenCalled());
+    });
+
+    it('navigates back when cancel is clicked on edit', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/organizations/1/edit']}>
+          <Routes>
+            <Route path="/organizations/:id/edit" element={<EditOrganization />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+      });
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
+      expect(navigateMock).toHaveBeenCalledWith(-1);
     });
   });
 });
