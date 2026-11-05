@@ -6,6 +6,12 @@ import {
   QueryParams,
 } from '@ansible/ansible-ui-framework';
 import { DateRangeFilterPresets } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarDateRangeFilter';
+import {
+  MILLISECONDS_PER_DAY,
+  MILLISECONDS_PER_HOUR,
+  MILLISECONDS_PER_MONTH,
+  MILLISECONDS_PER_WEEK,
+} from './dateRangeOffsets';
 
 export function buildQueryString(
   view: IView,
@@ -138,10 +144,10 @@ function getDateRangeParam(
   date.setSeconds(0);
   date.setMilliseconds(0);
   const offsets: Partial<Record<DateRangeFilterPresets, number>> = {
-    [DateRangeFilterPresets.LastHour]: 60 * 60 * 1000,
-    [DateRangeFilterPresets.Last24Hours]: 24 * 60 * 60 * 1000,
-    [DateRangeFilterPresets.LastWeek]: 7 * 24 * 60 * 60 * 1000,
-    [DateRangeFilterPresets.LastMonth]: 30 * 24 * 60 * 60 * 1000,
+    [DateRangeFilterPresets.LastHour]: MILLISECONDS_PER_HOUR,
+    [DateRangeFilterPresets.Last24Hours]: MILLISECONDS_PER_DAY,
+    [DateRangeFilterPresets.LastWeek]: MILLISECONDS_PER_WEEK,
+    [DateRangeFilterPresets.LastMonth]: MILLISECONDS_PER_MONTH,
   };
   const offset = Object.prototype.hasOwnProperty.call(offsets, values[0])
     ? offsets[values[0] as DateRangeFilterPresets]

@@ -329,6 +329,20 @@ describe('useAwxView', () => {
     });
   });
 
+  describe('unavailable URL', () => {
+    test('should not fetch or expose a URL when the base URL is undefined', () => {
+      const { result } = renderHook(() =>
+        useAwxView<AwxHost>({
+          url: undefined,
+          disableQueryString: true,
+        })
+      );
+
+      expect(result.current.pageItems).toBeUndefined();
+      expect(result.current.listUrl).toBe('');
+    });
+  });
+
   describe('serviceDown flag', () => {
     test('should not fetch when serviceDown is true', async () => {
       const requestUrls: string[] = [];
