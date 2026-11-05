@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, beforeEach } from 'vitest';
@@ -20,7 +19,7 @@ const template: ChartLegendEntry = {
   total_org_count: 1,
   total_cluster_count: 1,
   total_inventory_count: 1,
-} as ChartLegendEntry;
+} as unknown as ChartLegendEntry;
 
 describe('TopTemplates table', () => {
   beforeEach(() => {

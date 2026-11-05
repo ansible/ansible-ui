@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { describe, expect, it } from 'vitest';

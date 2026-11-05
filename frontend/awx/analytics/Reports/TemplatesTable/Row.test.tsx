@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -21,7 +20,7 @@ const template = {
   total_cluster_count: 1,
   total_inventory_count: 1,
   host_count: 3,
-} as ChartLegendEntry;
+} as unknown as ChartLegendEntry;
 
 describe('TemplatesTable Row', () => {
   beforeEach(() => {

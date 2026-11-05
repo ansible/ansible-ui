@@ -1,12 +1,25 @@
-/* eslint-disable i18next/no-literal-string */
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { ToolbarFilterType, type IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { fillFilters, getQueryString, useAnalyticsView } from './useAnalyticsView';
 
 type AnalyticsLegendResponse = {
   meta: { count: number; legend: { id: number }[] };
+};
+
+type MockUseViewReturn = {
+  page: number;
+  perPage: number;
+  sort: string | undefined;
+  sortDirection: 'asc' | 'desc';
+  filterState: Record<string, string[]>;
+  setPage: ReturnType<typeof vi.fn>;
+  setPerPage: ReturnType<typeof vi.fn>;
+  setSort: ReturnType<typeof vi.fn>;
+  setSortDirection: ReturnType<typeof vi.fn>;
+  setFilterState: ReturnType<typeof vi.fn>;
+  clearAllFilters: ReturnType<typeof vi.fn>;
 };
 
 const legendFromResponse = (data: AnalyticsLegendResponse) => data.meta.legend;
@@ -17,25 +30,27 @@ const mockPostRequest =
   vi.fn<(url: string, payload?: unknown) => Promise<AnalyticsLegendResponse>>();
 const mockRequestGet = vi.fn<(url: string) => Promise<AnalyticsLegendResponse>>();
 
-const mockUseView = vi.fn(() => ({
-  page: 2,
-  perPage: 5,
-  sort: 'name',
-  sortDirection: 'desc' as const,
-  filterState: { org_id: ['1'] },
-  setPage: mockSetPage,
-  setPerPage: vi.fn(),
-  setSort: vi.fn(),
-  setSortDirection: vi.fn(),
-  setFilterState: vi.fn(),
-  clearAllFilters: vi.fn(),
-}));
+const mockUseView = vi.fn(
+  (): MockUseViewReturn => ({
+    page: 2,
+    perPage: 5,
+    sort: 'name',
+    sortDirection: 'desc',
+    filterState: { org_id: ['1'] },
+    setPage: mockSetPage,
+    setPerPage: vi.fn(),
+    setSort: vi.fn(),
+    setSortDirection: vi.fn(),
+    setFilterState: vi.fn(),
+    clearAllFilters: vi.fn(),
+  })
+);
 
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
   return {
     ...actual,
-    useView: (...args: unknown[]) => mockUseView(...args) as ReturnType<typeof mockUseView>,
+    useView: () => mockUseView(),
     useSelected: vi.fn(() => ({
       selected: [],
       select: vi.fn(),
@@ -74,25 +89,28 @@ describe('getQueryString', () => {
 describe('fillFilters', () => {
   it('copies single-select filter values into payload', () => {
     const payload: Record<string, unknown> = {};
-    fillFilters(payload, { status: ['successful'] }, [
+    const filters = [
       { key: 'status', type: ToolbarFilterType.MultiSelect, label: 'Status', query: 'status' },
-    ]);
+    ] as IToolbarFilter[];
+    fillFilters(payload, { status: ['successful'] }, filters);
     expect(payload.status).toBe('successful');
   });
 
   it('appends multi-value filters to array payload fields', () => {
     const payload: Record<string, string[]> = { org_id: [] };
-    fillFilters(payload, { org_id: ['1', '2'] }, [
+    const filters = [
       { key: 'org_id', type: ToolbarFilterType.MultiSelect, label: 'Org', query: 'org_id' },
-    ]);
+    ] as IToolbarFilter[];
+    fillFilters(payload, { org_id: ['1', '2'] }, filters);
     expect(payload.org_id).toEqual(['1', '2']);
   });
 
   it('skips empty filter values', () => {
     const payload: Record<string, unknown> = { status: 'failed' };
-    fillFilters(payload, { status: [] }, [
+    const filters = [
       { key: 'status', type: ToolbarFilterType.MultiSelect, label: 'Status', query: 'status' },
-    ]);
+    ] as IToolbarFilter[];
+    fillFilters(payload, { status: [] }, filters);
     expect(payload.status).toBe('failed');
   });
 });
@@ -104,8 +122,8 @@ describe('useAnalyticsView', () => {
       page: 1,
       perPage: 10,
       sort: 'runs',
-      sortDirection: 'asc' as const,
-      filterState: {},
+      sortDirection: 'asc',
+      filterState: { org_id: [] },
       setPage: mockSetPage,
       setPerPage: vi.fn(),
       setSort: vi.fn(),
@@ -159,9 +177,9 @@ describe('useAnalyticsView', () => {
     mockUseView.mockReturnValue({
       page: 3,
       perPage: 10,
-      sort: undefined,
-      sortDirection: 'asc' as const,
-      filterState: {},
+      sort: 'runs',
+      sortDirection: 'desc',
+      filterState: { org_id: [] },
       setPage: mockSetPage,
       setPerPage: vi.fn(),
       setSort: vi.fn(),
@@ -209,8 +227,8 @@ describe('useAnalyticsView', () => {
       page: 1,
       perPage: 10,
       sort: 'custom_sort',
-      sortDirection: 'asc' as const,
-      filterState: {},
+      sortDirection: 'asc',
+      filterState: { org_id: [] },
       setPage: mockSetPage,
       setPerPage: vi.fn(),
       setSort: vi.fn(),

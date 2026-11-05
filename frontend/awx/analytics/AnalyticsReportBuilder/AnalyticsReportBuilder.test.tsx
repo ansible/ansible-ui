@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { describe, expect, it } from 'vitest';
 import { computeMainFilterKeys, FillDefaultProps } from './AnalyticsReportBuilder';
 
@@ -25,7 +24,10 @@ describe('AnalyticsReportBuilder helpers', () => {
       defaultDataParams: {},
       options: { org_id: [], cluster_id: [] },
     } as never);
-    expect(keys.map((item) => item.key).sort()).toEqual(['cluster_id', 'org_id']);
+    expect(keys.map((item) => item.key).sort((a, b) => a.localeCompare(b))).toEqual([
+      'cluster_id',
+      'org_id',
+    ]);
   });
 
   it('returns empty list when options and defaults are missing', () => {

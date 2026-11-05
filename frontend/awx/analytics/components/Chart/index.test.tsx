@@ -1,6 +1,6 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import type { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import { customFunctions, Chart } from './index';
 
 vi.mock('@ansible/react-json-chart-builder', () => ({
@@ -30,10 +30,14 @@ describe('Chart helpers', () => {
   });
 
   it('renders ChartBuilder with converted data', () => {
+    const schema = [{ type: 'line' }] as ChartSchemaElement[];
     render(
       <Chart
-        schema={[{ type: 'line' }]}
-        data={{ items: [{ id: '1' }], meta: { legend: [{ id: '1' }], count: 1 } }}
+        schema={schema}
+        data={{
+          items: [{ id: '1', name: 'Item 1' }],
+          meta: { legend: [{ id: '1', name: 'Serie 1' }], count: 1 },
+        }}
       />
     );
     expect(screen.getByTestId('chart-builder')).toBeInTheDocument();

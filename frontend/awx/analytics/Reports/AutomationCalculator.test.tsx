@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -6,7 +5,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
 import { awxAPI } from '../../common/api/awx-utils';
+import type { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import { AutomationCalculator, AutomationCalculatorInternal } from './AutomationCalculator';
+
+const chartSchema = [{ type: 'line' }] as ChartSchemaElement[];
 
 vi.mock('../components/Chart', () => ({
   Chart: () => <div data-testid="roi-chart" />,
@@ -71,7 +73,7 @@ function renderCalculator() {
   return render(
     <PageAlertToasterProvider>
       <MemoryRouter initialEntries={['/?sort=host_count']}>
-        <AutomationCalculator schema={[{ type: 'line' }]} />
+        <AutomationCalculator schema={chartSchema} />
       </MemoryRouter>
     </PageAlertToasterProvider>
   );
@@ -82,7 +84,7 @@ function renderInternal() {
     <PageAlertToasterProvider>
       <MemoryRouter initialEntries={['/?sort=host_count&page=1&per_page=10']}>
         <AutomationCalculatorInternal
-          schema={[{ type: 'line' }]}
+          schema={chartSchema}
           filterState={{ quick_date_range: ['roi_last_year'], org_id: ['2'] }}
           setFilterState={vi.fn()}
           sortOption={{ label: 'Host count', value: 'host_count' }}
