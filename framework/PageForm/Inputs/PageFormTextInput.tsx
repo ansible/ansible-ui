@@ -7,7 +7,6 @@ import {
   FieldPathValue,
   FieldValues,
   PathValue,
-  UseFormSetValue,
   Validate,
   ValidationRule,
   useFormContext,
@@ -17,7 +16,6 @@ import { PageActionSelection, PageActionType } from '../../PageActions/PageActio
 import { PageActions } from '../../PageActions/PageActions';
 import { useID } from '../../hooks/useID';
 import { useFrameworkTranslations } from '../../useFrameworkTranslations';
-import { capitalizeFirstLetter } from '../../utils/strings';
 import { usePageFormOptionsContext } from '../PageFormOptionsContext';
 import { createFieldValidate } from '../PageFormOptionsValidation';
 import { PageFormGroup } from './PageFormGroup';
@@ -30,6 +28,15 @@ import {
   SelectLookupButton,
 } from './PageFormTextInputHelpers';
 import { useRequiredValidationRule } from './validation-hooks';
+import { createTextInputRules } from './PageFormTextInputValidation';
+import type { TextInputType } from './PageFormTextInputTypes';
+import { createChangeHandler, resolveParsedValue } from './PageFormTextInputValue';
+
+export {
+  createChangeHandler,
+  handleNumberChange,
+  resolveParsedValue,
+} from './PageFormTextInputValue';
 
 /**
  * Base props for PageFormTextInput without conditional type logic
@@ -58,18 +65,7 @@ type PageFormTextInputBaseProps<
    *
    * If the type attribute is not specified, the default type is "text".
    */
-  type?:
-    | 'text'
-    | 'date'
-    | 'datetime-local'
-    | 'email'
-    | 'month'
-    | 'number'
-    | 'password'
-    | 'search'
-    | 'tel'
-    | 'time'
-    | 'url';
+  type?: TextInputType;
 
   /**
    * The <label> tag defines a label for several elements.
@@ -246,74 +242,6 @@ export type PageFormTextInputProps<
       }
   );
 
-type TextInputType = PageFormTextInputBaseProps['type'];
-
-/**
- * Converts a stored UTC datetime-local value into the local-time string the
- * `<input type="datetime-local">` control expects.
- */
-export function resolveParsedValue(type: TextInputType, value: string): string {
-  if (type !== 'datetime-local' || !value) return value;
-  const utcDate = new Date(value);
-  const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
-  return localDate.toISOString().slice(0, 16);
-}
-
-export function handleNumberChange<
-  TFieldValues extends FieldValues,
-  TFieldName extends FieldPath<TFieldValues>,
->(
-  value: string,
-  params: {
-    name: TFieldName;
-    max?: number | string;
-    min?: number | string;
-    setValue: UseFormSetValue<TFieldValues>;
-    onChange: (value: unknown) => void;
-  }
-) {
-  const { name, max, min, setValue, onChange } = params;
-  let numberValue = Number(value);
-  if (value === '' || isNaN(numberValue)) {
-    setValue(name, null as PathValue<TFieldValues, TFieldName>);
-    onChange(null);
-    return;
-  }
-  if (max !== undefined && numberValue > Number(max)) {
-    numberValue = Number(max);
-  }
-  if (min !== undefined && numberValue < Number(min)) {
-    numberValue = Number(min);
-  }
-  setValue(name, numberValue as unknown as PathValue<TFieldValues, TFieldName>);
-  onChange(numberValue);
-}
-
-export function createChangeHandler<
-  TFieldValues extends FieldValues,
-  TFieldName extends FieldPath<TFieldValues>,
->(params: {
-  type: TextInputType;
-  name: TFieldName;
-  max?: number | string;
-  min?: number | string;
-  setValue: UseFormSetValue<TFieldValues>;
-  onChange: (value: unknown) => void;
-}) {
-  return (value: string) => {
-    switch (params.type) {
-      case 'datetime-local':
-        params.onChange(new Date(value).toISOString());
-        return;
-      case 'number':
-        handleNumberChange(value, params);
-        return;
-      default:
-        params.onChange(value.trimStart());
-    }
-  };
-}
-
 /**
  * TextInput component that is used to render a text input field in a PageForm.
  *
@@ -489,54 +417,18 @@ export function PageFormTextInput<
           </PageFormGroup>
         );
       }}
-      rules={{
+      rules={createTextInputRules({
+        label,
         required,
         validate: createFieldValidate(fieldMetadata, validate, () =>
           getByPath(defaultValues as object, name)
         ),
-
-        minLength:
-          typeof label === 'string' && typeof minLength === 'number'
-            ? {
-                value: minLength,
-                message: `${capitalizeFirstLetter(
-                  label.toLocaleLowerCase()
-                )} must be at least ${minLength} characters.`,
-              }
-            : minLength,
-
-        maxLength:
-          typeof label === 'string' && typeof maxLength === 'number'
-            ? {
-                value: maxLength,
-                message: `${capitalizeFirstLetter(
-                  label.toLocaleLowerCase()
-                )} cannot be greater than ${maxLength} characters.`,
-              }
-            : maxLength,
-
-        min:
-          typeof label === 'string' && (typeof min === 'number' || typeof min === 'string')
-            ? {
-                value: min,
-                message: `${capitalizeFirstLetter(
-                  label.toLocaleLowerCase()
-                )} must be greater or equal to ${min}.`,
-              }
-            : min,
-
-        max:
-          typeof label === 'string' && (typeof max === 'number' || typeof max === 'string')
-            ? {
-                value: max,
-                message: `${capitalizeFirstLetter(
-                  label.toLocaleLowerCase()
-                )} cannot be greater than ${max}.`,
-              }
-            : max,
-
+        minLength,
+        maxLength,
+        min,
+        max,
         pattern,
-      }}
+      })}
     />
   );
 }
