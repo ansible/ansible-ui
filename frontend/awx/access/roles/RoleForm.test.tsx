@@ -66,6 +66,21 @@ describe('RoleForm', () => {
       expect(screen.getByTestId('name-form-group')).toBeInTheDocument();
     });
 
+    it('renders content type options from role metadata', async () => {
+      const user = userEvent.setup();
+      render(
+        <MemoryRouter initialEntries={['/roles/create']}>
+          <Routes>
+            <Route path="/roles/create" element={<CreateRole />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await user.click(screen.getByRole('button', { name: /content type/i }));
+      expect(await screen.findByRole('option', { name: 'Credential' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Project' })).toBeInTheDocument();
+    });
+
     it('navigates back when cancel is clicked', async () => {
       const user = userEvent.setup();
       render(
