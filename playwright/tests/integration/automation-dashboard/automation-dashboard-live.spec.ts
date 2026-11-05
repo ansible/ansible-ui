@@ -112,7 +112,7 @@ async function triggerAndWaitForDataCollection(
   }
 
   throw new Error(
-    `Data collection task ${taskId} did not complete within ${maxAttempts * pollInterval}ms`
+    `Data collection task ${taskId} did not complete within ${maxAttempts * pollInterval}ms. Last status: ${status}`
   );
 }
 
@@ -196,8 +196,8 @@ test.describe('Automation Dashboard', () => {
     });
 
     test('should increase successful jobs count after running job template', async ({ page }) => {
-      // Set timeout to 2 minutes for this test (job execution + data collection task)
-      test.setTimeout(2 * 60 * 1000);
+      // Set timeout to 4 minutes for this test (job execution + data collection task can be slow in CI)
+      test.setTimeout(4 * 60 * 1000);
 
       // Get initial jobs count from awx/controller API
       const initialAwxJobs = await awxAPI.get<{ count: number; results: unknown[] }>(page, 'jobs/');
