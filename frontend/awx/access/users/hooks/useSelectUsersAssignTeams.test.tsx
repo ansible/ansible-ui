@@ -23,8 +23,11 @@ describe('useSelectUsersAssignTeams', () => {
     const { result } = renderHook(() => useSelectUsersAssignTeams(onClose));
     const team = {
       id: 5,
-      summary_fields: { object_roles: { member_role: { id: 99 } } },
-    };
+      summary_fields: {
+        object_roles: { member_role: { id: 99 } },
+        user_capabilities: { edit: true },
+      },
+    } as Parameters<ReturnType<typeof useAddUsersToResources>>[1][number];
 
     result.current([team]);
 

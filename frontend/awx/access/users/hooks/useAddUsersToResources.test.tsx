@@ -22,8 +22,11 @@ describe('useAddUsersToResources', () => {
     const { result } = renderHook(() => useAddUsersToResources());
     const user = { id: 3, username: 'bob' } as AwxUser;
     const resource = {
-      summary_fields: { object_roles: { member_role: { id: 42 } } },
-    };
+      summary_fields: {
+        object_roles: { member_role: { id: 42 } },
+        user_capabilities: { edit: true },
+      },
+    } as Parameters<ReturnType<typeof useAddUsersToResources>>[1][number];
 
     result.current([user], [resource]);
 

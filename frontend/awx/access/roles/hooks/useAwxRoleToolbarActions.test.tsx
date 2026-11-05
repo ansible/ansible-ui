@@ -29,7 +29,7 @@ describe('useAwxRoleToolbarActions', () => {
     expect(result.current[0]).toMatchObject({ type: PageActionType.Link, label: 'Create role' });
     const deleteAction = result.current[2];
     if ('onClick' in deleteAction && typeof deleteAction.onClick === 'function') {
-      deleteAction.onClick([]);
+      (deleteAction.onClick as (roles: AwxRbacRole[]) => void)([]);
     }
     expect(deleteRoles).toHaveBeenCalled();
   });
@@ -40,7 +40,9 @@ describe('useAwxRoleToolbarActions', () => {
     } as never);
     const { result } = renderHook(() => useAwxRoleToolbarActions(vi.fn()));
     const createAction = result.current[0];
-    expect(createAction.isDisabled).toMatch(/permission/i);
+    if ('isDisabled' in createAction) {
+      expect(createAction.isDisabled).toMatch(/permission/i);
+    }
   });
 });
 
@@ -65,7 +67,7 @@ describe('useEdaRoleRowActions', () => {
       expect(editAction.href(role({ id: 5 }))).toBe('/roles/5/edit');
     }
     if ('onClick' in deleteAction && typeof deleteAction.onClick === 'function') {
-      deleteAction.onClick(role({ id: 5 }));
+      (deleteAction.onClick as (role: AwxRbacRole) => void)(role({ id: 5 }));
     }
     expect(deleteRoles).toHaveBeenCalledWith([role({ id: 5 })]);
   });

@@ -22,7 +22,7 @@ describe('useViewActivityStream', () => {
     const action = result.current[0];
     expect(action.type).toBe(PageActionType.Button);
     if ('onClick' in action && typeof action.onClick === 'function') {
-      action.onClick();
+      action.onClick({} as never);
     }
     expect(pageNavigate).toHaveBeenCalledWith(
       expect.anything(),

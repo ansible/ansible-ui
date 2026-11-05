@@ -40,7 +40,13 @@ describe('useDeleteTeams', () => {
 
   it('warns when teams lack delete permission', () => {
     const { result } = renderHook(() => useDeleteTeams(vi.fn()));
-    result.current([team({ summary_fields: { user_capabilities: { delete: false } } })]);
+    result.current([
+      team({
+        summary_fields: {
+          user_capabilities: { edit: false, delete: false },
+        } as Team['summary_fields'],
+      }),
+    ]);
 
     const callArgs = mockBulkAction.mock.calls[0]?.[0] as { alertPrompts?: string[] };
     expect(callArgs.alertPrompts?.[0]).toMatch(/cannot be deleted/i);

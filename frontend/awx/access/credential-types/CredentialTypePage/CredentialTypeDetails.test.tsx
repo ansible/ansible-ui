@@ -4,6 +4,7 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialTypeDetailInner } from './CredentialTypeDetails';
 
 const mockCredentialType = {
@@ -15,6 +16,8 @@ const mockCredentialType = {
   injectors: {},
   created: '2024-01-01T00:00:00Z',
   modified: '2024-01-02T00:00:00Z',
+  namespace: '',
+  related: {},
   summary_fields: {
     created_by: { id: 5, username: 'creator' },
     modified_by: { id: 6, username: 'editor' },
@@ -33,7 +36,9 @@ describe('CredentialTypeDetails', () => {
   it('renders managed credential type details with read-only label', () => {
     render(
       <MemoryRouter>
-        <CredentialTypeDetailInner credentialType={mockCredentialType} />
+        <CredentialTypeDetailInner
+          credentialType={mockCredentialType as unknown as CredentialType}
+        />
       </MemoryRouter>
     );
 
@@ -46,7 +51,9 @@ describe('CredentialTypeDetails', () => {
     render(
       <MemoryRouter>
         <CredentialTypeDetailInner
-          credentialType={{ ...mockCredentialType, managed: false, name: 'Editable' }}
+          credentialType={
+            { ...mockCredentialType, managed: false, name: 'Editable' } as unknown as CredentialType
+          }
         />
       </MemoryRouter>
     );

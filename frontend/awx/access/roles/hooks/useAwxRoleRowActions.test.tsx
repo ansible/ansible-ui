@@ -35,7 +35,7 @@ describe('useAwxRoleRowActions', () => {
       expect(editAction.href(role({ id: 9 }))).toBe('/roles/1/edit');
     }
     if ('onClick' in deleteAction && typeof deleteAction.onClick === 'function') {
-      deleteAction.onClick(role({}));
+      (deleteAction.onClick as (role: AwxRbacRole) => void)(role({}));
     }
     expect(deleteRoles).toHaveBeenCalledWith([role({})]);
   });

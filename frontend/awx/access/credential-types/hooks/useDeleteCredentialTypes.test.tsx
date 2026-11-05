@@ -46,7 +46,11 @@ describe('useDeleteCredentialTypes', () => {
     const { result } = renderHook(() => useDeleteCredentialTypes(vi.fn()));
     result.current([
       credentialType({ managed: true }),
-      credentialType({ summary_fields: { user_capabilities: { delete: false } } }),
+      credentialType({
+        summary_fields: {
+          user_capabilities: { edit: false, delete: false },
+        } as CredentialType['summary_fields'],
+      }),
     ]);
 
     const callArgs = mockBulkAction.mock.calls[0]?.[0] as { alertPrompts?: string[] };

@@ -25,7 +25,7 @@ describe('useUserAndTeamRolesLists', () => {
           direct_access: [{ role: userRole, descendant_roles: [] }],
           indirect_access: [{ role: teamRole, descendant_roles: [] }],
         },
-      } as AwxUser,
+      } as unknown as AwxUser,
     ];
 
     useUserAndTeamRolesLists(users);
@@ -42,7 +42,7 @@ describe('useUserAndTeamRolesLists', () => {
         user_roles: [role({ id: 99, name: 'Stale' })],
         team_roles: [],
         summary_fields: { direct_access: [], indirect_access: [] },
-      } as AwxUser,
+      } as unknown as AwxUser,
     ];
 
     useUserAndTeamRolesLists(users);

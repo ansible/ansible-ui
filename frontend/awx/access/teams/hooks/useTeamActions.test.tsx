@@ -48,25 +48,25 @@ describe('useTeamActions', () => {
 
     const editAction = actions[0];
     if ('onClick' in editAction && typeof editAction.onClick === 'function') {
-      editAction.onClick(editableTeam);
+      (editAction.onClick as (team: Team) => void)(editableTeam);
     }
     expect(pageNavigate).toHaveBeenCalled();
 
     const assignAction = actions[2];
     if ('onClick' in assignAction && typeof assignAction.onClick === 'function') {
-      assignAction.onClick(editableTeam);
+      (assignAction.onClick as (team: Team) => void)(editableTeam);
     }
     expect(assignUsers).toHaveBeenCalledWith([editableTeam]);
 
     const removeAction = actions[3];
     if ('onClick' in removeAction && typeof removeAction.onClick === 'function') {
-      removeAction.onClick(editableTeam);
+      (removeAction.onClick as (team: Team) => void)(editableTeam);
     }
     expect(removeUsers).toHaveBeenCalledWith(editableTeam);
 
     const deleteAction = actions[5];
     if ('onClick' in deleteAction && typeof deleteAction.onClick === 'function') {
-      deleteAction.onClick(editableTeam);
+      (deleteAction.onClick as (team: Team) => void)(editableTeam);
     }
     expect(deleteTeams).toHaveBeenCalledWith([editableTeam]);
   });

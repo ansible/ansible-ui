@@ -37,7 +37,13 @@ describe('useDeleteUsers', () => {
 
   it('shows alert when users cannot be deleted', () => {
     const { result } = renderHook(() => useDeleteUsers(vi.fn()));
-    result.current([user({ summary_fields: { user_capabilities: { delete: false } } })]);
+    result.current([
+      user({
+        summary_fields: {
+          user_capabilities: { edit: false, delete: false },
+        } as AwxUser['summary_fields'],
+      }),
+    ]);
 
     const callArgs = mockBulkAction.mock.calls[0]?.[0] as { alertPrompts?: string[] };
     expect(callArgs.alertPrompts?.[0]).toMatch(/cannot be deleted/i);

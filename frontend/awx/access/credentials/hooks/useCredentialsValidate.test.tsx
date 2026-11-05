@@ -10,13 +10,29 @@ vi.mock('@ansible/common-ui/crud/Data', () => ({
 }));
 
 function buildCredential(
-  overrides: Partial<Credential> & Pick<Credential, 'id' | 'name'>
+  overrides: Pick<Credential, 'id' | 'name'> &
+    Partial<Omit<Credential, 'id' | 'name' | 'summary_fields'>> & {
+      summary_fields?: Partial<Credential['summary_fields']>;
+    }
 ): Credential {
+  const baseSummary = {
+    credential_type: { name: 'Machine', id: 1 },
+    created_by: { id: 1, username: 'admin' },
+    modified_by: { id: 1, username: 'admin', first_name: '', last_name: '' },
+    object_roles: {
+      admin_role: { id: 1, name: 'Admin', description: '' },
+      read_role: { id: 2, name: 'Read', description: '' },
+      use_role: { id: 3, name: 'Use', description: '' },
+    },
+    owners: [],
+    user_capabilities: { edit: true, delete: true, copy: true, use: true },
+  };
+  const { summary_fields: summaryOverrides, ...rest } = overrides;
   return {
     kind: 'ssh',
     inputs: {},
-    summary_fields: { credential_type: { name: 'Machine', id: 1 } },
-    ...overrides,
+    summary_fields: { ...baseSummary, ...summaryOverrides },
+    ...rest,
   } as Credential;
 }
 

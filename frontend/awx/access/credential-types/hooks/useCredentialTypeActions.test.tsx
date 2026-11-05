@@ -37,7 +37,7 @@ describe('useCredentialTypeActions', () => {
     });
     const deleteAction = result.current[2];
     if ('onClick' in deleteAction && typeof deleteAction.onClick === 'function') {
-      deleteAction.onClick([]);
+      (deleteAction.onClick as (types: CredentialType[]) => void)([]);
     }
     expect(deleteTypes).toHaveBeenCalled();
   });
@@ -45,7 +45,10 @@ describe('useCredentialTypeActions', () => {
   it('disables create when POST is not allowed', () => {
     vi.mocked(useOptions).mockReturnValue({ data: { actions: {} } } as never);
     const { result } = renderHook(() => useCredentialTypeToolbarActions(vi.fn()));
-    expect(result.current[0].isDisabled).toMatch(/permission/i);
+    const createAction = result.current[0];
+    if ('isDisabled' in createAction) {
+      expect(createAction.isDisabled).toMatch(/permission/i);
+    }
   });
 
   it('returns row actions with edit and delete handlers', () => {
@@ -59,11 +62,11 @@ describe('useCredentialTypeActions', () => {
     const editAction = result.current[0];
     const deleteAction = result.current[2];
     if ('onClick' in editAction && typeof editAction.onClick === 'function') {
-      editAction.onClick(type);
+      (editAction.onClick as (type: CredentialType) => void)(type);
     }
     expect(pageNavigate).toHaveBeenCalled();
     if ('onClick' in deleteAction && typeof deleteAction.onClick === 'function') {
-      deleteAction.onClick(type);
+      (deleteAction.onClick as (type: CredentialType) => void)(type);
     }
     expect(deleteTypes).toHaveBeenCalledWith([type]);
   });
