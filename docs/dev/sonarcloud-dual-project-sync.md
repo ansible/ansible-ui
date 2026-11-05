@@ -58,6 +58,26 @@ export SONAR_DOWNSTREAM_PROJECT_KEY=ansible-automation-platform_aap-ui
 
 The script prints quality gate names, profile names per language, and rule differences between upstream and downstream profiles.
 
+## Sync canonical profile via API (Keith: `aap-ui-special`)
+
+SonarCloud supports **backup/restore** across organizations. Restore updates activations from the XML but may **not** deactivate extra rules on the target profile, so use the sync script (restore + reconcile):
+
+```bash
+export SONARCLOUD_TOKEN='…'   # Administer Quality Profiles on both orgs
+
+# Preview reconcile diff only
+python3 scripts/sync-sonar-quality-profile.py --language ts --dry-run
+python3 scripts/sync-sonar-quality-profile.py --language js --dry-run
+
+# Apply: backup aap-ui-special → restore to aap org → deactivate stragglers on AAP UI
+python3 scripts/sync-sonar-quality-profile.py --language ts
+python3 scripts/sync-sonar-quality-profile.py --language js
+```
+
+Save XML for audit: `--save-backup aap-ui-special-ts.xml`
+
+Manual alternative: **Policies → Quality profiles → ⋯ → Back up** on `ansible`, then **Restore** in `ansible-automation-platform` (same UI flow as the API).
+
 ## Checklist for Keith / Sonar admins (phase 1)
 
 - [ ] In SonarCloud, open **ansible_ansible-ui** → Quality Profiles → note TS + JS profile names and **deactivated** rules (especially duplication-related).
