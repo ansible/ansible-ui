@@ -4,16 +4,20 @@ import userEvent from '@testing-library/user-event';
 import { ReactNode } from 'react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
+  PageActionSelection,
+  PageActionType,
   PageAlertToasterProvider,
   PageDialogProvider,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
 import type {
   IFilterState,
+  IPageActionDropdown,
   IToolbarDateRangeFilter,
   PageToolbarProps,
 } from '@ansible/ansible-ui-framework';
 import type { IDashboardFilterSet, IJobTemplate } from '../types';
+import { useAutomationDashboardToolbarActions } from '../common/useAutomationDashboardToolbarActions';
 import { DashboardToolbar } from './DashboardToolbar';
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
@@ -134,6 +138,8 @@ describe('DashboardToolbar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedPageActionsProps.length = 0;
+    // mockReset restores the vi.fn implementation, so per-test return values never leak.
+    vi.mocked(useAutomationDashboardToolbarActions).mockReset();
     mockUseFilterSetView.mockReturnValue(makeFilterSetViewReturn());
   });
 
@@ -167,6 +173,46 @@ describe('DashboardToolbar', () => {
 
       const lastProps: Record<string, unknown> | undefined = capturedPageActionsProps.at(-1);
       expect(lastProps?.['actions']).toBe(mockToolbarActions);
+    });
+
+    const reportActions: IPageActionDropdown<IJobTemplate> = {
+      type: PageActionType.Dropdown,
+      selection: PageActionSelection.None,
+      label: 'Report actions',
+      actions: [],
+    };
+
+    test('should render the report actions dropdown instead of PageActions for a report', () => {
+      vi.mocked(useAutomationDashboardToolbarActions).mockReturnValue([reportActions]);
+
+      render(
+        <Wrapper>
+          <DashboardToolbar {...buildProps()} />
+        </Wrapper>
+      );
+
+      expect(screen.getByRole('button', { name: 'Report actions' })).toBeInTheDocument();
+      expect(screen.queryByTestId('page-actions')).not.toBeInTheDocument();
+    });
+
+    test('should keep the report actions in PageActions below the lg breakpoint', () => {
+      vi.mocked(useAutomationDashboardToolbarActions).mockReturnValue([reportActions]);
+      const originalWidth = window.innerWidth;
+      window.innerWidth = 800;
+
+      try {
+        render(
+          <Wrapper>
+            <DashboardToolbar {...buildProps()} />
+          </Wrapper>
+        );
+
+        expect(screen.getByTestId('page-actions')).toBeInTheDocument();
+        expect(capturedPageActionsProps.at(-1)?.['actions']).toEqual([reportActions]);
+        expect(screen.queryByRole('button', { name: 'Report actions' })).not.toBeInTheDocument();
+      } finally {
+        window.innerWidth = originalWidth;
+      }
     });
   });
 
