@@ -4,6 +4,10 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { PageAlertToasterProvider } from '@ansible/ansible-ui-framework';
+import {
+  resetTestSwrCache,
+  SwrTestWrapper,
+} from '@ansible/ansible-ui-framework/test-utils/swrTestWrapper';
 import { awxAPI } from '../../common/api/awx-utils';
 import type { ChartSchemaElement } from '@ansible/react-json-chart-builder';
 import { AutomationCalculator, AutomationCalculatorInternal } from './AutomationCalculator';
@@ -57,24 +61,20 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  resetTestSwrCache();
+});
 afterAll(() => server.close());
-
-vi.mock('swr', () => ({
-  default: vi.fn((key: string) => {
-    if (String(key).includes('roi_templates_options')) {
-      return { data: optionsResponse, isLoading: false, error: undefined };
-    }
-    return { data: undefined, isLoading: false, error: undefined };
-  }),
-}));
 
 function renderCalculator() {
   return render(
     <PageAlertToasterProvider>
-      <MemoryRouter initialEntries={['/?sort=host_count']}>
-        <AutomationCalculator schema={chartSchema} />
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/?sort=host_count']}>
+          <AutomationCalculator schema={chartSchema} />
+        </MemoryRouter>
+      </SwrTestWrapper>
     </PageAlertToasterProvider>
   );
 }
@@ -82,16 +82,18 @@ function renderCalculator() {
 function renderInternal() {
   return render(
     <PageAlertToasterProvider>
-      <MemoryRouter initialEntries={['/?sort=host_count&page=1&per_page=10']}>
-        <AutomationCalculatorInternal
-          schema={chartSchema}
-          filterState={{ quick_date_range: ['roi_last_year'], org_id: ['2'] }}
-          setFilterState={vi.fn()}
-          sortOption={{ label: 'Host count', value: 'host_count' }}
-          sortDirection="desc"
-          setSortDirection={vi.fn()}
-        />
-      </MemoryRouter>
+      <SwrTestWrapper>
+        <MemoryRouter initialEntries={['/?sort=host_count&page=1&per_page=10']}>
+          <AutomationCalculatorInternal
+            schema={chartSchema}
+            filterState={{ quick_date_range: ['roi_last_year'], org_id: ['2'] }}
+            setFilterState={vi.fn()}
+            sortOption={{ label: 'Host count', value: 'host_count' }}
+            sortDirection="desc"
+            setSortDirection={vi.fn()}
+          />
+        </MemoryRouter>
+      </SwrTestWrapper>
     </PageAlertToasterProvider>
   );
 }

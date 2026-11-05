@@ -1,11 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { buildChartLegendEntry } from './chartLegendEntry.fixture';
 import { Row } from './Row';
 
+const expandedRowTemplateId = 8723641;
+
 const template = buildChartLegendEntry({
-  id: 7,
+  id: expandedRowTemplateId,
   name: 'Configure',
   enabled: 1,
   monetary_gain: 80,
@@ -55,6 +57,8 @@ describe('TemplatesTable Row', () => {
     );
 
     await user.click(screen.getByRole('button', { name: /Details/i }));
-    expect(window.localStorage.getItem('7')).toBe('true');
+    await waitFor(() => {
+      expect(window.localStorage.getItem(String(expandedRowTemplateId))).toBe('true');
+    });
   });
 });
