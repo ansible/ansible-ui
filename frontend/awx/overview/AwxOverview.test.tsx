@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { AwxOverview } from './AwxOverview';
 
 const mockDashboardData = {
@@ -50,6 +50,21 @@ describe('AwxOverview', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Welcome to/)).toBeInTheDocument();
+    });
+  });
+
+  it('should render an error state when the dashboard request fails', async () => {
+    const handler = vi.fn(() => new HttpResponse(null, { status: 500 }));
+    server.use(http.get(({ request }) => request.url.includes('/dashboard/'), handler));
+
+    render(
+      <MemoryRouter>
+        <AwxOverview />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Overview request failed: 500')).toBeInTheDocument();
     });
   });
 });

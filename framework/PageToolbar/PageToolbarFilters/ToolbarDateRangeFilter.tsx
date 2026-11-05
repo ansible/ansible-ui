@@ -45,13 +45,15 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
   const selectedValue = filterValues && filterValues.length > 0 ? filterValues[0] : undefined;
   const selectedOption = props.options.find((option) => option.value === selectedValue);
 
-  const firstOption = props.options[0];
-  if (isRequired && !selectedOption && firstOption) {
-    setFilterValues(() => [
-      /* v8 ignore next */
-      defaultValue ?? firstOption.value,
-    ]);
-  }
+  useEffect(() => {
+    const firstOption = props.options[0];
+    if (isRequired && !selectedOption && firstOption) {
+      setFilterValues(() => [
+        /* v8 ignore next */
+        defaultValue ?? firstOption.value,
+      ]);
+    }
+  }, [defaultValue, isRequired, props.options, selectedOption, setFilterValues]);
 
   function onSelectChange(value: string | null) {
     if (value === null) return;
