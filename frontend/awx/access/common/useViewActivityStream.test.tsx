@@ -1,7 +1,6 @@
-import { PageActionType } from '@ansible/ansible-ui-framework';
+import { PageActionType, usePageNavigate } from '@ansible/ansible-ui-framework';
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { usePageNavigate } from '@ansible/ansible-ui-framework';
 import { useViewActivityStream } from './useViewActivityStream';
 
 vi.mock('@ansible/ansible-ui-framework', async () => ({

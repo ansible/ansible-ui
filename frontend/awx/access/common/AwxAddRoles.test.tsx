@@ -31,10 +31,6 @@ vi.mock('../../common/useAwxBulkActionDialog', () => ({
   useAwxBulkActionDialog: () => mockProgressDialog,
 }));
 
-vi.mock('@ansible/common-ui/crud/Data', () => ({
-  postRequest: vi.fn(() => Promise.resolve({})),
-}));
-
 const roleDefinitionsOptions = {
   actions: {
     GET: {
@@ -60,7 +56,9 @@ const server = setupServer(
         next: null,
         previous: null,
       })
-  )
+  ),
+  http.post(awxAPI`/role_user_assignments/`, () => HttpResponse.json({})),
+  http.post(awxAPI`/role_team_assignments/`, () => HttpResponse.json({}))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));

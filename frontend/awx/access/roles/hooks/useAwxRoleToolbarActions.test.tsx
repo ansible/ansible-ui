@@ -1,7 +1,6 @@
-import { PageActionType } from '@ansible/ansible-ui-framework';
+import { PageActionType, useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useGetPageUrl } from '@ansible/ansible-ui-framework';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { useDeleteAwxRoles } from './useDeleteAwxRoles';
 import { AwxRbacRole } from '../../../interfaces/AwxRbacRole';
