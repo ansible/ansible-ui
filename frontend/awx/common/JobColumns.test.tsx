@@ -136,29 +136,36 @@ describe('JobColumns hooks', () => {
 
   test('useJobDurationColumn renders elapsed time when started', () => {
     const { result } = renderHook(() => useJobDurationColumn(), { wrapper });
-    const { container } = renderCell(columnCellNode(result.current, baseJob()));
-    expect(container.textContent).toBeTruthy();
+    const job = baseJob();
+    const { container } = renderCell(columnCellNode(result.current, job));
+    expect(container.textContent).toContain('5');
+    expect(container.textContent).toContain('m');
+    expect(container.textContent).toContain('0');
+    expect(container.textContent).toContain('s');
     expect(columnCellNode(result.current, baseJob({ started: undefined }))).toBeFalsy();
   });
 
-  test('useJobStartedColumn and useJobFinishedColumn render date cells', () => {
+  test('useJobStartedColumn and useJobFinishedColumn render date cells', async () => {
+    const job = baseJob();
     const started = renderHook(() => useJobStartedColumn(), { wrapper });
     const finished = renderHook(() => useJobFinishedColumn(), { wrapper });
-    expect(
-      renderCell(columnCellNode(started.result.current, baseJob())).container.textContent
-    ).toBeTruthy();
-    expect(
-      renderCell(columnCellNode(finished.result.current, baseJob())).container.textContent
-    ).toBeTruthy();
+    const startedCell = renderCell(columnCellNode(started.result.current, job));
+    const finishedCell = renderCell(columnCellNode(finished.result.current, job));
+
+    await vi.waitFor(() => {
+      expect(startedCell.container.textContent).toMatch(/2025|Jan|1/);
+      expect(finishedCell.container.textContent).toMatch(/2025|Jan|1/);
+    });
     expect(finished.result.current.defaultSort).toBe(true);
   });
 
   test('useJobSourceColumn maps inventory source label', async () => {
     const { result } = renderHook(() => useJobSourceColumn(), { wrapper });
     await vi.waitFor(() => {
-      expect(columnCellNode(result.current, baseJob({ source: 'ec2' }))).toBeTruthy();
+      const { container } = renderCell(columnCellNode(result.current, baseJob({ source: 'aws' })));
+      expect(container.textContent).toContain('Amazon Web Services');
     });
-    expect(columnValue(result.current, baseJob({ source: 'ec2' }))).toBe(true);
+    expect(columnValue(result.current, baseJob({ source: 'aws' }))).toBe(true);
   });
 
   test('useJobScheduleColumn links to schedule when present', () => {
