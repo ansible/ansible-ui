@@ -4,5 +4,9 @@
     "noUncheckedSideEffectImports": true
   },
   "include": ["**/*", "../frontend/hub/**/*", "../types/*.d.ts", "vite.config.ts"],
-  "exclude": ["../frontend/hub/insights/**", "../frontend/hub/dist-insights/**"]
+  "exclude": [
+    "../frontend/hub/insights/**",
+    "../frontend/hub/dist-insights/**",
+    "dist/**"
+  ]
 }
