@@ -66,6 +66,35 @@ describe('useScheduleSteps', () => {
   });
 });
 
+describe('details step validate', () => {
+  let validate: ((formData: object, wizardData: object) => Promise<void> | void) | undefined;
+
+  beforeEach(() => {
+    const { result } = renderHook(() => useScheduleSteps());
+    validate = getStep(result.current(), 'details').validate;
+    expect(validate).toBeDefined();
+  });
+
+  it('allows non-template schedules without launch configuration', () => {
+    expect(() => validate!({ schedule_type: 'project' }, {})).not.toThrow();
+  });
+
+  it('requires matching launch configuration for template schedules', () => {
+    expect(() => validate!({ schedule_type: 'job_template', resourceId: 1 }, {})).toThrow(
+      'Wait for the schedule configuration to load.'
+    );
+  });
+
+  it('allows a template schedule with matching resource and configuration', () => {
+    expect(() =>
+      validate!(
+        { schedule_type: 'job_template', resourceId: 1 },
+        { launch_config: {}, resource: { id: 1, type: 'job_template' } }
+      )
+    ).not.toThrow();
+  });
+});
+
 describe('promptStep hidden', () => {
   let hidden: (data: object) => boolean;
   beforeEach(() => {
@@ -159,7 +188,9 @@ describe('survey step hidden', () => {
   });
 
   it('should be visible when launch_config.survey_enabled is true', () => {
-    expect(hidden({ launch_config: { survey_enabled: true } })).toBe(false);
+    expect(hidden({ schedule_type: 'job_template', launch_config: { survey_enabled: true } })).toBe(
+      false
+    );
   });
 });
 

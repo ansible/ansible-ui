@@ -66,6 +66,7 @@ export function useGetSchedulePromptValues() {
       if (!params.schedule_id) {
         return {
           ...config.defaults,
+          labels: [],
           skip_tags: parseStringToTagArray(config.defaults.skip_tags),
           job_tags: parseStringToTagArray(config.defaults.job_tags),
         };
@@ -157,14 +158,9 @@ function refinePromptValues(
       accumulator['instance_groups'] = instanceGroups;
       return accumulator;
     }
-    if (key === 'labels' && scheduleLabels?.length) {
-      accumulator['labels'] = scheduleLabels;
-      return accumulator;
-    }
-
     return { ...accumulator, [key]: value };
   }, {} as PromptFormValues);
-  return refinedValues;
+  return { ...refinedValues, labels: scheduleLabels ?? [] };
 }
 
 function isValueDefined(value: unknown): boolean {

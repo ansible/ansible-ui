@@ -1,13 +1,27 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { describe, expect, it } from 'vitest';
 import { PageFormTextInput } from '../PageForm/Inputs/PageFormTextInput';
 import { PageWizardBody } from './PageWizardBody';
 import { PageWizardProvider } from './PageWizardProvider';
 
+function SetFormError() {
+  const { setError } = useFormContext();
+  useEffect(() => {
+    setError('name', { message: 'Invalid name' });
+  }, [setError]);
+  return null;
+}
+
 describe('PageWizardBody', () => {
+  function LocationDisplay() {
+    return <div data-testid="location">{useLocation().pathname}</div>;
+  }
+
   it('should render the provided element within a page section', () => {
     render(
       <MemoryRouter>
@@ -112,5 +126,197 @@ describe('PageWizardBody', () => {
       },
       { timeout: 1000 }
     );
+  });
+
+  it('renders a list for multiple newline-separated request errors', async () => {
+    const user = userEvent.setup();
+    const onSubmit = () =>
+      Promise.reject(
+        Object.assign(new Error('Could not save'), {
+          json: { detail: 'First error\nSecond error' },
+        })
+      );
+
+    render(
+      <MemoryRouter>
+        <PageWizardProvider
+          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+          onSubmit={onSubmit}
+        >
+          <PageWizardBody onCancel={() => {}} />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+    expect(await screen.findByRole('list')).toBeInTheDocument();
+    const list = screen.getByRole('list');
+    expect(within(list).getByText('First error')).toBeInTheDocument();
+    expect(within(list).getByText('Second error')).toBeInTheDocument();
+  });
+
+  it('renders duplicate request errors as separate list items', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <PageWizardProvider
+          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+          onSubmit={() =>
+            Promise.reject(
+              Object.assign(new Error('Could not save'), {
+                json: { detail: 'Could not save: Repeated error\nRepeated error' },
+              })
+            )
+          }
+        >
+          <PageWizardBody onCancel={() => {}} />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+    expect(await screen.findAllByText('Repeated error')).toHaveLength(2);
+    expect(screen.queryByText('Could not save: Repeated error')).not.toBeInTheDocument();
+  });
+
+  it('renders an Error message when the request has no JSON payload', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <PageWizardProvider
+          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+          onSubmit={() => Promise.reject(new Error('Request failed'))}
+        >
+          <PageWizardBody onCancel={() => {}} />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+    expect(await screen.findByText('Request failed')).toBeInTheDocument();
+  });
+
+  it('navigates back when no cancel callback is provided', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter initialEntries={['/previous', '/current']} initialIndex={1}>
+        <LocationDisplay />
+        <PageWizardProvider
+          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+          onSubmit={() => Promise.resolve()}
+        >
+          <PageWizardBody />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(screen.getByTestId('location')).toHaveTextContent('/previous');
+  });
+
+  it('calls onCancel from the wizard footer', async () => {
+    const user = userEvent.setup();
+    let cancelled = false;
+
+    render(
+      <MemoryRouter>
+        <PageWizardProvider
+          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+          onSubmit={() => Promise.resolve()}
+        >
+          <PageWizardBody
+            onCancel={() => {
+              cancelled = true;
+            }}
+          />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(cancelled).toBe(true);
+  });
+
+  it('shows a spinner while submitting', async () => {
+    const user = userEvent.setup();
+    let resolveSubmit: () => void = () => undefined;
+    const submitting = new Promise<void>((resolve) => {
+      resolveSubmit = resolve;
+    });
+
+    render(
+      <MemoryRouter>
+        <PageWizardProvider
+          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+          onSubmit={() => submitting}
+        >
+          <PageWizardBody onCancel={() => {}} />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    resolveSubmit();
+  });
+
+  it('renders a single JSON request error without a list', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <PageWizardProvider
+          steps={[{ id: 'step1', label: 'Step 1', element: <p>Step 1</p> }]}
+          onSubmit={() =>
+            Promise.reject(
+              Object.assign(new Error('Could not save'), { json: { detail: 'One error' } })
+            )
+          }
+        >
+          <PageWizardBody onCancel={() => {}} />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+    expect(await screen.findByText('One error')).toBeInTheDocument();
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
+  });
+
+  it('tracks validation errors for an input step', async () => {
+    render(
+      <MemoryRouter>
+        <PageWizardProvider
+          steps={[
+            {
+              id: 'step1',
+              label: 'Step 1',
+              inputs: (
+                <>
+                  <SetFormError />
+                  <PageFormTextInput name="name" label="Name" />
+                </>
+              ),
+            },
+          ]}
+          onSubmit={() => Promise.resolve()}
+        >
+          <PageWizardBody onCancel={() => {}} />
+        </PageWizardProvider>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('name')).toHaveAttribute('aria-invalid', 'true');
+    });
   });
 });

@@ -43,12 +43,29 @@ const mockSchedule = {
   related: { unified_job_template: '/api/v2/job_templates/100/' },
 };
 
+const patchCalls: unknown[] = [];
+let patchShouldFail = false;
 const server = setupServer(
   http.options(awxAPI`/schedules/`, () => HttpResponse.json({ actions: { POST: {} } })),
+  http.patch(awxAPI`/schedules/1/`, async ({ request }) => {
+    patchCalls.push(await request.json());
+    if (patchShouldFail) {
+      return HttpResponse.json({ resources_needed_to_start: ['Need resource'] }, { status: 400 });
+    }
+    return HttpResponse.json(mockSchedule);
+  }),
   http.get(awxAPI`/schedules/zoneinfo/`, () => HttpResponse.json(zones)),
   http.get(awxAPI`/schedules/1/`, () => HttpResponse.json(mockSchedule)),
+  http.get(awxAPI`/schedules/1/labels/`, () => HttpResponse.json({ results: [], next: null })),
+  http.get(awxAPI`/labels/`, () => HttpResponse.json({ results: [], next: null })),
   http.get(awxAPI`/job_templates/100/`, () =>
-    HttpResponse.json({ id: 100, name: 'Mock Job Template', type: 'job_template' })
+    HttpResponse.json({
+      id: 100,
+      name: 'Mock Job Template',
+      type: 'job_template',
+      organization: 7,
+      scm_branch: 'main',
+    })
   ),
   http.get(awxAPI`/job_templates/100/launch/`, () =>
     HttpResponse.json({
@@ -75,7 +92,7 @@ function TestWrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
-async function renderEditWizard() {
+async function renderEditWizard(expectedTitle = 'Edit Test Schedule') {
   const user = userEvent.setup();
   render(
     <TestWrapper>
@@ -83,7 +100,7 @@ async function renderEditWizard() {
     </TestWrapper>
   );
   await waitFor(() => {
-    expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule');
+    expect(screen.getByTestId('page-title')).toHaveTextContent(expectedTitle);
   });
   // PageWizard sets activeStep in an effect, so the Next footer is not on first paint.
   await screen.findByRole('button', { name: /^Next$/ });
@@ -91,6 +108,7 @@ async function renderEditWizard() {
 }
 
 async function goToRulesStep(user: ReturnType<typeof userEvent.setup>) {
+  await waitFor(() => expect(screen.getByRole('textbox', { name: 'Labels' })).toBeEnabled());
   await user.click(await screen.findByRole('button', { name: /^Next$/ }));
   await waitFor(() => {
     expect(screen.getByText('Schedule Rules')).toBeInTheDocument();
@@ -99,8 +117,74 @@ async function goToRulesStep(user: ReturnType<typeof userEvent.setup>) {
 
 describe('ScheduleEditWizard', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    patchCalls.length = 0;
+    patchShouldFail = false;
+  });
   afterAll(() => server.close());
+
+  it('should show a loading state while the schedule is unavailable', async () => {
+    let resolveSchedule: () => void = () => undefined;
+    const scheduleReady = new Promise<void>((resolve) => {
+      resolveSchedule = resolve;
+    });
+    server.use(
+      http.get(awxAPI`/schedules/1/`, async () => {
+        await scheduleReady;
+        return HttpResponse.json(mockSchedule);
+      })
+    );
+
+    render(
+      <TestWrapper>
+        <ScheduleEditWizard resourceEndPoint={awxAPI`/job_templates/`} />
+      </TestWrapper>
+    );
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    resolveSchedule();
+    await waitFor(() =>
+      expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Test Schedule')
+    );
+  });
+
+  it('should submit an edited schedule from the review step', async () => {
+    const user = await renderEditWizard();
+    await goToRulesStep(user);
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await screen.findByRole('button', { name: 'Finish' });
+    expect(screen.getByText('Mock Job Template')).toBeInTheDocument();
+    expect(screen.getByText('Test Schedule')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+    await waitFor(() => expect(patchCalls).toHaveLength(1));
+  }, 30000);
+
+  it('should display a missing-resource error from schedule submission', async () => {
+    patchShouldFail = true;
+    const user = await renderEditWizard();
+    await goToRulesStep(user);
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await screen.findByRole('button', { name: 'Finish' });
+
+    await user.click(screen.getByRole('button', { name: 'Finish' }));
+
+    expect(await screen.findByText('Error')).toBeInTheDocument();
+  }, 30000);
+
+  it('uses a generic title when the schedule has no name', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/1/`, () => HttpResponse.json({ ...mockSchedule, name: undefined }))
+    );
+
+    await renderEditWizard('Schedule');
+
+    expect(screen.getByTestId('page-title')).toHaveTextContent('Schedule');
+  });
 
   it('should render wizard with correct steps on initial load', async () => {
     await renderEditWizard();
@@ -118,6 +202,20 @@ describe('ScheduleEditWizard', () => {
 
     expect(screen.getByTestId('page-title')).toBeInTheDocument();
   });
+
+  it('should display a resource error on the review step', async () => {
+    server.use(
+      http.get(awxAPI`/job_templates/100/`, () =>
+        HttpResponse.json({ detail: 'Permission denied' }, { status: 403 })
+      )
+    );
+    const user = await renderEditWizard();
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await user.click(await screen.findByRole('button', { name: /^Next$/ }));
+    await user.click(await screen.findByRole('button', { name: /^Next$/ }));
+
+    expect(await screen.findByRole('progressbar')).toBeInTheDocument();
+  }, 30000);
 
   it('should display rules when navigating to Rules step', async () => {
     const user = await renderEditWizard();
@@ -181,5 +279,5 @@ describe('ScheduleEditWizard', () => {
         .filter((r) => r.dataset.testid?.startsWith('row-id-'));
       expect(rows.length).toBeGreaterThan(initialRowCount);
     });
-  });
+  }, 15000);
 });

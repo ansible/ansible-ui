@@ -20,6 +20,8 @@ import { CredentialLabel } from '../../../common/CredentialLabel';
 import { UserDateDetail } from '../../../common/UserDateDetail';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
+import { Label as AwxLabel } from '../../../interfaces/Label';
+import { useAwxGetAllPages } from '../../../common/useAwxGetAllPages';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import { Schedule } from '../../../interfaces/Schedule';
@@ -36,7 +38,28 @@ import { TimezoneToggle } from './TimezoneToggle';
  * two fields do not apply
  *
  */
-export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }) {
+function ScheduleLabelsDetail({ schedule }: Readonly<{ schedule: Schedule }>) {
+  const { t } = useTranslation();
+  const type = schedule.summary_fields.unified_job_template.unified_job_type;
+  const supported = type === 'job' || type === 'workflow_job';
+  const { results, error, isLoading } = useAwxGetAllPages<AwxLabel>(
+    supported ? awxAPI`/schedules/${schedule.id}/labels/` : undefined
+  );
+  if (!supported) return null;
+  return (
+    <PageDetail label={t('Labels')} isEmpty={!isLoading && !error && !results?.length}>
+      {error ? (
+        <AwxError error={error} />
+      ) : (
+        <LabelGroup>
+          {results?.map((label) => <Label key={label.id}>{label.name}</Label>)}
+        </LabelGroup>
+      )}
+    </PageDetail>
+  );
+}
+
+export function ScheduleDetails(props: Readonly<{ isSystemJobTemplateSchedule?: boolean }>) {
   const { t } = useTranslation();
   const [isLocal, setIsLocal] = useState(true);
 
@@ -136,6 +159,7 @@ export function ScheduleDetails(props: { isSystemJobTemplateSchedule?: boolean }
             ))}
           </LabelGroup>
         </PageDetail>
+        <ScheduleLabelsDetail schedule={schedule} />
         <PageDetail label={t('Inventory')}>{schedule.summary_fields.inventory?.name}</PageDetail>
         <PageDetail label={t('Execution Envionment')}>
           {schedule.summary_fields.execution_environment?.name}

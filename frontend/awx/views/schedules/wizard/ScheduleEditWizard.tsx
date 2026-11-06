@@ -1,6 +1,13 @@
-import { PageHeader, PageLayout, PageWizard, usePageNavigate } from '@ansible/ansible-ui-framework';
+import {
+  LoadingPage,
+  PageHeader,
+  PageLayout,
+  PageWizard,
+  usePageNavigate,
+} from '@ansible/ansible-ui-framework';
 import { useGetPageUrl } from '@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl';
 import { dateToInputDateTime } from '@ansible/ansible-ui-framework/utils/dateTimeHelpers';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { RRule, RRuleSet, rrulestr } from 'rrule';
@@ -38,10 +45,17 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
 
   const { data: schedule } = useGetItem<Schedule>(awxAPI`/schedules/`, params.schedule_id);
   const { data: optionsData } = useOptions<OptionsResponse<ActionsResponse>>(awxAPI`/schedules/`);
+  const scheduleRef = useRef<{ id?: string; value?: Schedule }>({});
+  if (scheduleRef.current.id !== params.schedule_id) {
+    scheduleRef.current = { id: params.schedule_id, value: schedule };
+  } else if (schedule) {
+    scheduleRef.current.value = schedule;
+  }
+  const currentSchedule = schedule ?? scheduleRef.current.value;
 
   const [startDate, time]: string[] = dateToInputDateTime(
-    schedule?.dtstart as string,
-    schedule?.timezone
+    currentSchedule?.dtstart as string,
+    currentSchedule?.timezone
   );
 
   const handleSubmit = async (formValues: ScheduleFormWizard) => {
@@ -70,8 +84,8 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
   const onCancel = () => void navigate(-1);
   const steps = useScheduleSteps();
 
-  if (!schedule) return;
-  const ruleSet = rrulestr(schedule.rrule, { forceset: true }) as RRuleSet;
+  if (!currentSchedule) return <LoadingPage />;
+  const ruleSet = rrulestr(currentSchedule.rrule, { forceset: true }) as RRuleSet;
   const rules = ruleSet
     .rrules()
     .map((rule, i) => ({ rule: RRule.optionsToString({ ...rule.origOptions }), id: i + 1 }));
@@ -81,13 +95,13 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
 
   const currentValues = {
     details: {
-      name: schedule?.name,
-      description: schedule?.description,
-      schedule_type: schedule?.summary_fields.unified_job_template.unified_job_type,
+      name: currentSchedule.name,
+      description: currentSchedule.description,
+      schedule_type: currentSchedule.summary_fields.unified_job_template.unified_job_type,
       resource: undefined,
       startDateTime: { date: startDate, time: time },
-      timezone: schedule?.timezone,
-      schedule_days_to_keep: schedule.extra_data.days,
+      timezone: currentSchedule.timezone,
+      schedule_days_to_keep: currentSchedule.extra_data.days,
     } as Partial<ScheduleResources> as ScheduleResources,
     promptStep: {},
     rules: { ...RULES_DEFAULT_VALUES, rules },
@@ -98,15 +112,15 @@ export function ScheduleEditWizard(props: { resourceEndPoint: string }) {
     <PageLayout>
       <PageHeader
         title={
-          schedule?.name
-            ? t('Edit {{scheduleName}}', { scheduleName: schedule?.name })
+          currentSchedule.name
+            ? t('Edit {{scheduleName}}', { scheduleName: currentSchedule.name })
             : t('Schedule')
         }
         breadcrumbs={[
           { label: t('Schedules'), to: getPageUrl(AwxRoute.Schedules) },
           {
-            label: schedule?.name
-              ? t('Edit {{scheduleName}}', { scheduleName: schedule?.name })
+            label: currentSchedule.name
+              ? t('Edit {{scheduleName}}', { scheduleName: currentSchedule.name })
               : t('Schedule'),
           },
         ]}
