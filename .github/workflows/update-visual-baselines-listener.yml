@@ -1,0 +1,78 @@
+name: Request visual baseline update
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: write
+  pull-requests: read
+
+jobs:
+  dispatch:
+    name: Validate and dispatch
+    if: >-
+      github.event.issue.pull_request
+      && github.event.comment.body == '/update-visual-baselines'
+      && github.event.comment.user.type != 'Bot'
+      && github.event.comment.user.login == github.event.issue.user.login
+      && contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate PR and capture its head
+        id: pr
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const prNumber = context.issue.number;
+            const commenter = context.payload.comment.user.login;
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+            const repository = context.repo.owner + '/' + context.repo.repo;
+
+            if (pr.state !== 'open' || pr.base.ref !== 'devel') {
+              core.setFailed('Visual baseline updates require an open PR targeting devel.');
+              return;
+            }
+            if (pr.user.login !== commenter) {
+              core.setFailed('Only the PR author can request a visual baseline update.');
+              return;
+            }
+            if (!pr.head.repo || pr.head.repo.full_name !== repository) {
+              core.setFailed('Visual baseline updates can only commit to a branch in this repository.');
+              return;
+            }
+            if (!/^[a-zA-Z0-9._/+=-]+$/.test(pr.head.ref)) {
+              core.setFailed('The PR branch name contains unsupported characters.');
+              return;
+            }
+
+            core.setOutput('pr_number', String(prNumber));
+            core.setOutput('pr_ref', pr.head.ref);
+            core.setOutput('pr_head_sha', pr.head.sha);
+
+      - name: Dispatch baseline update
+        if: steps.pr.outcome == 'success'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+          PR_REF: ${{ steps.pr.outputs.pr_ref }}
+          PR_HEAD_SHA: ${{ steps.pr.outputs.pr_head_sha }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'update-visual-baselines.yml',
+              ref: 'devel',
+              inputs: {
+                pr_number: process.env.PR_NUMBER,
+                pr_ref: process.env.PR_REF,
+                pr_head_sha: process.env.PR_HEAD_SHA,
+              },
+            });
