@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import type { SetupServer } from 'msw/node';
 import { setupServer } from 'msw/node';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi, type Mock } from 'vitest';
 import { Survey } from '../interfaces/Survey';
@@ -178,9 +178,22 @@ vi.mock('@ansible/ansible-ui-framework/PageWizard/PageWizardProvider', () => ({
 }));
 
 // Test wrapper component
-function TestWrapper({ children }: { children: React.ReactNode }) {
+function TestWrapper({
+  children,
+  onSubmit,
+}: {
+  children: React.ReactNode;
+  onSubmit?: SubmitHandler<Record<string, unknown>>;
+}) {
   const form = useForm();
-  return <FormProvider {...form}>{children}</FormProvider>;
+  return (
+    <FormProvider {...form}>
+      <form onSubmit={onSubmit ? form.handleSubmit(onSubmit) : undefined}>
+        {children}
+        {onSubmit ? <button type="submit">Submit</button> : null}
+      </form>
+    </FormProvider>
+  );
 }
 
 const surveySpecOptionsWithPatterns = {
@@ -201,7 +214,10 @@ function renderSurveyStep(
   server: SetupServer,
   templateId: string,
   survey: Survey,
-  options?: { surveySpecOptions?: object }
+  options?: {
+    surveySpecOptions?: object;
+    onSubmit?: SubmitHandler<Record<string, unknown>>;
+  }
 ) {
   const apiPath = awxAPI`/job_templates/${templateId}/survey_spec/`;
 
@@ -225,7 +241,7 @@ function renderSurveyStep(
   } as unknown as ReturnType<typeof usePageWizard>);
 
   render(
-    <TestWrapper>
+    <TestWrapper onSubmit={options?.onSubmit}>
       <SurveyStep templateId={templateId} />
     </TestWrapper>
   );
@@ -306,6 +322,66 @@ describe('SurveyStep', () => {
 
     await waitFor(() => {
       expect(document.querySelector('.pf-v6-c-form')).toBeInTheDocument();
+    });
+  });
+
+  test('renders a Boolean survey answer with a false default', async () => {
+    const booleanSurvey = {
+      name: 'Boolean Survey',
+      description: '',
+      spec: [
+        {
+          question_name: 'Enabled?',
+          question_description: 'Enable this option',
+          required: false,
+          type: 'boolean',
+          variable: 'enabled',
+          default: false,
+          new_question: false,
+          choices: '',
+        },
+      ],
+    } as unknown as Survey;
+
+    renderSurveyStep(server, '111', booleanSurvey);
+
+    await waitFor(() => {
+      expect(screen.getByRole('checkbox', { name: 'Enabled?' })).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('checkbox', { name: 'Enabled?' })).not.toBeChecked();
+  });
+
+  test('submits false for a required Boolean survey answer', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const booleanSurvey = {
+      name: 'Boolean Survey',
+      description: '',
+      spec: [
+        {
+          question_name: 'Enabled?',
+          question_description: 'Enable this option',
+          required: true,
+          type: 'boolean',
+          variable: 'enabled',
+          default: false,
+          new_question: false,
+          choices: '',
+        },
+      ],
+    } as unknown as Survey;
+
+    renderSurveyStep(server, '222', booleanSurvey, { onSubmit });
+
+    await waitFor(() => {
+      expect(screen.getByRole('checkbox', { name: 'Enabled?' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({ survey: { enabled: false } }, expect.anything());
     });
   });
 

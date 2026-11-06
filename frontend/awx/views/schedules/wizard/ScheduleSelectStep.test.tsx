@@ -688,6 +688,7 @@ describe('ScheduleSelectStep', () => {
               { variable: 'string_var' },
               { variable: 'number_var' },
               { variable: 'array_var' },
+              { variable: 'boolean_var', type: 'boolean' },
             ],
           });
         }),
@@ -698,6 +699,7 @@ describe('ScheduleSelectStep', () => {
               string_var: 'test_string',
               number_var: 42,
               array_var: ['item1', 'item2'],
+              boolean_var: false,
               other_var: 'should_be_ignored',
             },
           });
@@ -721,6 +723,27 @@ describe('ScheduleSelectStep', () => {
 
       await waitFor(() => {
         expect(mockSetStepData).toHaveBeenCalled();
+      });
+
+      const resolvedUpdates = mockSetStepData.mock.calls.map(([update]) =>
+        typeof update === 'function'
+          ? (update as (previous: Record<string, unknown>) => unknown)({})
+          : update
+      );
+      const surveyUpdate = resolvedUpdates.find(
+        (update): update is { survey: { survey: Record<string, unknown> } } =>
+          typeof update === 'object' && update !== null && 'survey' in update
+      );
+
+      expect(surveyUpdate).toMatchObject({
+        survey: {
+          survey: {
+            string_var: 'test_string',
+            number_var: 42,
+            array_var: ['item1', 'item2'],
+            boolean_var: false,
+          },
+        },
       });
     });
 

@@ -1,4 +1,9 @@
-import { PageFormSelect, PageFormTextArea, PageFormTextInput } from '@ansible/ansible-ui-framework';
+import {
+  PageFormCheckbox,
+  PageFormSelect,
+  PageFormTextArea,
+  PageFormTextInput,
+} from '@ansible/ansible-ui-framework';
 import { PageFormMultiSelect } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiSelect';
 import { PageFormFieldMetadataProvider } from '@ansible/ansible-ui-framework/PageForm/PageFormOptionsContext';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
@@ -10,7 +15,7 @@ import { useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { ActionsResponse, OptionsResponse } from '../interfaces/OptionsResponse';
-import { Spec, Survey } from '../interfaces/Survey';
+import { SurveyAnswer, Spec, Survey } from '../interfaces/Survey';
 import { WizardFormValues } from '../resources/templates/WorkflowVisualizer/types';
 import { awxAPI } from './api/awx-utils';
 import {
@@ -69,17 +74,17 @@ export function SurveyStep({
   );
 
   useEffect(() => {
-    const survey: { [key: string]: string | string[] | number } = {};
+    const survey: { [key: string]: SurveyAnswer } = {};
     const surveyStep = stepData.survey as {
       survey: {
-        [key: string]: string | number | string[];
+        [key: string]: SurveyAnswer;
       };
     };
 
     survey_spec?.spec?.forEach((obj: Spec) => {
       const surveyVariable = surveyStep?.survey?.[obj?.variable];
 
-      if (surveyVariable) {
+      if (Object.prototype.hasOwnProperty.call(surveyStep?.survey ?? {}, obj.variable)) {
         survey[obj.variable] = surveyVariable;
         return;
       }
@@ -205,6 +210,13 @@ export function SurveyStep({
               labelHelpTitle=""
               options={getChoices(element.question_name)}
               isRequired={element.required}
+            />
+          ) : element.type === 'boolean' ? (
+            <PageFormCheckbox
+              key={index}
+              name={`survey.${element.variable}`}
+              label={element.question_name}
+              labelHelp={element.question_description}
             />
           ) : undefined
         )}

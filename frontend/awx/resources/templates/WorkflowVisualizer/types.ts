@@ -20,12 +20,13 @@ import type { WorkflowApproval } from '../../../interfaces/WorkflowApproval';
 import type { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
 import type { WorkflowNode } from '../../../interfaces/WorkflowNode';
 import { SummaryFieldInventory } from '../../../interfaces/summary-fields/summary-fields';
+import type { SurveyAnswer } from '../../../interfaces/Survey';
 
 export type GraphNode = Node<NodeModel, GraphNodeData>;
 export type GraphNodeData = {
   resource: WorkflowNode;
   launch_data: Partial<PromptFormValues>;
-  survey_data: { [key: string]: string | string[] | { name: string }[] };
+  survey_data: { [key: string]: SurveyAnswer | { name: string }[] };
 };
 export interface CustomNodeProps extends WithSelectionProps {
   element: GraphElement<
@@ -196,7 +197,7 @@ export interface WizardFormValues {
   prompt: Partial<PromptFormValues>;
   inventory?: Inventory;
   relatedJobTypeApiUrl?: string;
-  survey: { [key: string]: string | string[] };
+  survey: { [key: string]: SurveyAnswer };
 }
 
 export type UnifiedJobType =

@@ -579,6 +579,22 @@ test.describe('Workflow Job Templates Surveys', () => {
         expectedDefaultValue: '13.37',
       },
       {
+        type: 'boolean',
+        label: 'Boolean',
+        question: {
+          question_name: 'Boolean answer',
+          question_description: 'Boolean description.',
+          variable: 'boolean_answer',
+          default: true,
+          type: 'boolean',
+          max: 0,
+          min: 0,
+          required: true,
+          choices: [],
+        },
+        expectedDefaultValue: 'true',
+      },
+      {
         type: 'multiplechoice',
         label: 'Multiple Choice (single select)',
         question: {
@@ -691,6 +707,10 @@ test.describe('Workflow Job Templates Surveys', () => {
                 for (const defaultValue of defaults) {
                   await expect(formGroup.getByText(defaultValue, { exact: true })).toBeVisible();
                 }
+              } else if (surveyType.type === 'boolean') {
+                await expect(
+                  page.getByRole('checkbox', { name: surveyType.question.question_name })
+                ).toBeChecked();
               } else if (surveyType.type !== 'multiplechoice') {
                 const answerField = page.getByLabel(surveyType.question.question_name);
                 await expect(answerField).toHaveValue(surveyType.expectedDefaultValue);

@@ -17,7 +17,7 @@ import { ScheduleFormWizard, ScheduleResources } from '../types';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
 import { useTranslation } from 'react-i18next';
-import { Survey } from '../../../interfaces/Survey';
+import { Survey, SurveyAnswer } from '../../../interfaces/Survey';
 import { InstanceGroup } from '../../../interfaces/InstanceGroup';
 import { Label } from '../../../interfaces/Label';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
@@ -123,7 +123,7 @@ export function ScheduleSelectStep(props: {
         let instanceGroups: InstanceGroup[] = [];
         let scheduleLabels: Label[] = [];
         let surveySpec: Survey | undefined;
-        const surveyAnswers: { [key: string]: string | number | string[] } = {};
+        const surveyAnswers: { [key: string]: SurveyAnswer } = {};
         if (schedule_id) {
           if (launchConfig.ask_credential_on_launch) {
             const response = await requestGet<AwxItemsResponse<Credential>>(
@@ -154,9 +154,12 @@ export function ScheduleSelectStep(props: {
                 if (
                   value !== undefined &&
                   value !== null &&
-                  (typeof value === 'string' || typeof value === 'number' || Array.isArray(value))
+                  (typeof value === 'string' ||
+                    typeof value === 'number' ||
+                    typeof value === 'boolean' ||
+                    Array.isArray(value))
                 ) {
-                  surveyAnswers[spec.variable] = value as string | number | string[];
+                  surveyAnswers[spec.variable] = value as SurveyAnswer;
                 }
               });
             }

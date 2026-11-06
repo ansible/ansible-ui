@@ -2,6 +2,7 @@ import { parseVariableField } from '@ansible/ansible-ui-framework/utils/codeEdit
 import { useTranslation } from 'react-i18next';
 import { Frequency, Options, RRule } from 'rrule';
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
+import { SurveyAnswer } from '../../../interfaces/Survey';
 import { stringifyTags } from '../../../resources/templates/JobTemplateFormHelpers';
 import { PromptFormValues } from '../../../resources/templates/WorkflowVisualizer/types';
 
@@ -178,12 +179,12 @@ export function mungePromptData(
 }
 
 export function mungeSurveyAndExtraVarsData(
-  survey: { [key: string]: string | number | string[] },
+  survey: { [key: string]: SurveyAnswer },
   extra_vars: string
 ) {
   if (!survey && !extra_vars) return {};
 
-  const extraData: { [key: string]: string | number | string[] } = {};
+  const extraData: { [key: string]: SurveyAnswer } = {};
   Object.keys(survey).forEach((k: string) => {
     extraData[k] = survey[k];
   });

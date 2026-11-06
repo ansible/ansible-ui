@@ -15,7 +15,7 @@ import { Inventory } from '../../../../interfaces/Inventory';
 import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { LaunchConfigCredential } from '../../../../interfaces/LaunchConfiguration';
 import { SummaryFieldCredential } from '../../../../interfaces/summary-fields/summary-fields';
-import { Survey } from '../../../../interfaces/Survey';
+import { Survey, SurveyAnswer } from '../../../../interfaces/Survey';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import type { TemplateLaunch } from '../TemplateLaunchWizard';
@@ -32,7 +32,7 @@ function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
   }
 }
 
-function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys: string[]) {
+function maskPasswords(vars: { [key: string]: SurveyAnswer }, passwordKeys: string[]) {
   const updated = { ...vars };
   passwordKeys.forEach((key) => {
     if (typeof updated[key] !== 'undefined') {
@@ -44,11 +44,11 @@ function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys:
 
 function processSurvey(
   extra_vars: string | null,
-  survey: { [key: string]: string | string[] },
+  survey: { [key: string]: SurveyAnswer },
   surveyConfig: Survey | null
 ): string {
   const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
-  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+  const updatedSurvey: { [key: string]: SurveyAnswer } = { ...survey };
 
   if (surveyConfig?.spec) {
     const passwordFields = surveyConfig.spec
@@ -61,7 +61,7 @@ function processSurvey(
     });
   }
 
-  const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
+  const mergedData: { [key: string]: SurveyAnswer | { name: string }[] } = {
     ...extraVarsObj,
     ...updatedSurvey,
   };

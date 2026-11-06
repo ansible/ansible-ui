@@ -582,6 +582,43 @@ describe('TemplateSurveyForm', () => {
       expect(screen.getByText('Answer type')).toBeInTheDocument();
     });
 
+    test('should submit a native boolean default for a Boolean question', async () => {
+      const user = userEvent.setup();
+      let postBody: Survey | undefined;
+      const emptySurvey: Survey = { name: '', description: '', spec: [] };
+
+      server.use(
+        http.options(awxAPI`/job_templates/123/survey_spec/`, () =>
+          HttpResponse.json({ actions: { POST: {} } })
+        ),
+        http.post(awxAPI`/job_templates/123/survey_spec/`, async ({ request }) => {
+          postBody = (await request.json()) as Survey;
+          return HttpResponse.json({});
+        })
+      );
+
+      renderSurveyForm(server, emptySurvey, { mode: 'add' });
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Text' })).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Text' }));
+      await user.click(screen.getByText('Boolean'));
+      await user.type(screen.getByRole('textbox', { name: /question$/i }), 'Enabled?');
+      await user.type(screen.getByRole('textbox', { name: /answer variable name/i }), 'enabled');
+      await user.click(screen.getByRole('checkbox', { name: 'Default answer' }));
+      await user.click(screen.getByRole('button', { name: /create survey question/i }));
+
+      await waitFor(() => {
+        expect(postBody?.spec[0]).toMatchObject({
+          type: 'boolean',
+          variable: 'enabled',
+          default: true,
+        });
+      });
+    });
+
     test('should render required checkbox in add mode', async () => {
       const emptySurvey: Survey = { name: '', description: '', spec: [] };
 

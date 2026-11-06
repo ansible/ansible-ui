@@ -6,6 +6,7 @@ import { Project } from '../../interfaces/Project';
 import { SystemJobTemplate } from '../../interfaces/SystemJobTemplate';
 import { WorkflowJobTemplate } from '../../interfaces/WorkflowJobTemplate';
 import { AwxRoute } from '../../main/AwxRoutes';
+import { SurveyAnswer } from '../../interfaces/Survey';
 import { PromptFormValues } from '../../resources/templates/WorkflowVisualizer/types';
 
 export enum Frequency {
@@ -58,7 +59,7 @@ export interface ScheduleFormWizard {
   launch_config: LaunchConfiguration | null;
   prompt: PromptFormValues;
   schedule_days_to_keep: number;
-  survey: { [key: string]: string | number | string[] };
+  survey: { [key: string]: SurveyAnswer };
   enabled: boolean;
 }
 

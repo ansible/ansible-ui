@@ -27,6 +27,7 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { LaunchConfiguration } from '../../../interfaces/LaunchConfiguration';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { SurveyAnswer } from '../../../interfaces/Survey';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import { useGetJobOutputUrl } from '../../../views/jobs/useGetJobOutputUrl';
 import { parseStringToTagArray } from '../JobTemplateFormHelpers';
@@ -58,7 +59,7 @@ export const formFieldToLaunchConfig = {
 export interface TemplateLaunch {
   resource: JobTemplate | WorkflowJobTemplate;
   prompt: PromptFormValues;
-  survey: { [key: string]: string | string[] };
+  survey: { [key: string]: SurveyAnswer };
   credential_passwords: { [key: string]: string };
   launch_config: LaunchConfiguration;
 }
@@ -68,7 +69,7 @@ interface LaunchPayload {
   credential_passwords: { [key: string]: string };
   diff_mode: boolean;
   execution_environment: number;
-  extra_vars: string | { [key: string]: string | string[] };
+  extra_vars: string | { [key: string]: SurveyAnswer };
   forks: number;
   instance_groups: number[];
   inventory: number;

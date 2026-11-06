@@ -5,7 +5,7 @@ import { awxAPI } from '../../../../common/api/awx-utils';
 import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
 import { stringIsUUID } from '../../../../common/util/strings';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
-import { Survey } from '../../../../interfaces/Survey';
+import { Survey, SurveyAnswer } from '../../../../interfaces/Survey';
 import { RESOURCE_TYPE } from '../constants';
 import { EdgeStatus, type AllResources, type UnifiedJobType } from '../types';
 
@@ -160,11 +160,11 @@ export function shouldHideOtherStep(launchData: LaunchConfiguration) {
 
 export function processSurvey(
   extra_vars: string | null,
-  survey: { [key: string]: string | string[] },
+  survey: { [key: string]: SurveyAnswer },
   surveyConfig: Survey | null
 ): string {
   const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
-  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+  const updatedSurvey: { [key: string]: SurveyAnswer } = { ...survey };
 
   if (surveyConfig?.spec) {
     const passwordFields = surveyConfig.spec
@@ -177,7 +177,7 @@ export function processSurvey(
     });
   }
 
-  const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
+  const mergedData: { [key: string]: SurveyAnswer | { name: string }[] } = {
     ...extraVarsObj,
     ...updatedSurvey,
   };
@@ -185,7 +185,7 @@ export function processSurvey(
   return jsonToYaml(JSON.stringify(mergedData));
 }
 
-function maskPasswords(vars: { [key: string]: string | string[] }, passwordKeys: string[]) {
+function maskPasswords(vars: { [key: string]: SurveyAnswer }, passwordKeys: string[]) {
   const updated = { ...vars };
   passwordKeys.forEach((key) => {
     if (typeof updated[key] !== 'undefined') {

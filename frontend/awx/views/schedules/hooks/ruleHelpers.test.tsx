@@ -141,10 +141,10 @@ describe('mungeSurveyAndExtraVarsData', () => {
   });
 
   it('should handle survey data only', () => {
-    const survey = { color: 'blue' };
+    const survey = { color: 'blue', enabled: false };
     const result = mungeSurveyAndExtraVarsData(survey, '');
 
-    expect(result).toHaveProperty('color', 'blue');
+    expect(result).toEqual({ color: 'blue', enabled: false });
   });
 
   it('should handle extra_vars only', () => {

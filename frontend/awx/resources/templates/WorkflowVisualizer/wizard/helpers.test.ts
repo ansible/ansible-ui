@@ -182,6 +182,11 @@ describe('processSurvey', () => {
     expect(result).toContain('shown');
     expect(result).not.toContain('$encrypted$');
   });
+
+  test('should preserve boolean survey answers in generated YAML', () => {
+    const result = processSurvey(null, { enabled: false }, null);
+    expect(result).toContain('enabled: false');
+  });
 });
 
 describe('preservePromptList', () => {

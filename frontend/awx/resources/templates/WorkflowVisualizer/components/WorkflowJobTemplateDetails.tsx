@@ -8,6 +8,7 @@ import { CredentialLabel } from '../../../../common/CredentialLabel';
 import { Label as ILabel } from '../../../../interfaces/Label';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
+import type { SurveyAnswer } from '../../../../interfaces/Survey';
 import { AwxRoute } from '../../../../main/AwxRoutes';
 import { WebhookService } from '../../components/WebhookService';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
@@ -54,7 +55,7 @@ export function WorkflowJobTemplateDetails({
       });
     }
 
-    const mergedData: { [key: string]: string | string[] | { name: string }[] } = {
+    const mergedData: { [key: string]: SurveyAnswer | { name: string }[] } = {
       ...jsonObj,
       ...surveyValues,
     };

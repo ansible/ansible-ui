@@ -17,10 +17,11 @@ import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { CredentialDetail } from '../../TemplatePage/steps/TemplateLaunchReviewStep';
 import type { WizardFormValues } from '../types';
 import { processSurvey } from './helpers';
+import type { SurveyAnswer } from '../../../../interfaces/Survey';
 
 interface PromptWizardFormValues extends Omit<WizardFormValues, 'resource'> {
   resource: JobTemplate | WorkflowJobTemplate;
-  survey: { [key: string]: string | string[] };
+  survey: { [key: string]: SurveyAnswer };
 }
 
 function getSurveySpecUrl(template: JobTemplate | WorkflowJobTemplate) {
