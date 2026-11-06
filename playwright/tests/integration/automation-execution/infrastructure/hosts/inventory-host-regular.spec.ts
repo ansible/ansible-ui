@@ -147,7 +147,7 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
       await expect(page.locator('tbody')).toContainText(`${groupName1}-changed`);
       await expect(page.locator('tbody')).not.toContainText(groupName2);
 
-      await InventoryHost.ui.bulkDelete(page, inventoryName);
+      await InventoryHost.ui.bulkDelete(page, inventoryName, [hostName]);
     }
   );
 
@@ -212,10 +212,12 @@ test.describe('Inventory Host - Regular Inventory Tests', () => {
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
 
-      await InventoryHost.ui.create(page, inventoryName);
-      await InventoryHost.ui.create(page, inventoryName);
+      const hostNames = [
+        await InventoryHost.ui.create(page, inventoryName),
+        await InventoryHost.ui.create(page, inventoryName),
+      ];
 
-      await InventoryHost.ui.bulkDelete(page, inventoryName);
+      await InventoryHost.ui.bulkDelete(page, inventoryName, hostNames);
     }
   );
 

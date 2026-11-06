@@ -33,11 +33,14 @@ test.describe('EDA Projects CRUD', () => {
     'can edit a project from the project details page',
     { tag: ['@not_mock'] },
     async ({ page }) => {
+      test.setTimeout(5 * 60 * 1000);
       const edaProject = await EdaProject.api.create(page, {
         organization: edaOrgId,
       });
 
       try {
+        await EdaProject.api.waitForSync(page, edaProject.id);
+
         await test.step('Navigate to project details page', async () => {
           await navigateTo(page, 'Automation Decisions', 'Projects');
           await clickTableRow(

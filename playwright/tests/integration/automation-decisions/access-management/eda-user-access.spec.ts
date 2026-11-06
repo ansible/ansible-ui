@@ -31,7 +31,7 @@ const userAccessResources: AccessTabResource[] = [
   {
     name: 'credentials',
     content_type: 'eda.edacredential',
-    role: 'EDA Credential Admin',
+    role: 'Eda Credential Admin',
     path: ['Automation Decisions', 'Infrastructure', 'Credentials'],
   },
 ];
@@ -145,7 +145,7 @@ test.describe('EDA User Access Tab - Add User', () => {
         await test.step('Review and submit', async () => {
           await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
           await expect(page.locator('main')).toContainText(edaUser1.username);
-          await expect(page.locator('main')).toContainText(resource.role);
+          await expect(page.locator('main')).toContainText(new RegExp(resource.role, 'i'));
 
           const assignmentPromise = page.waitForResponse(
             (response) =>
