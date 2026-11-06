@@ -58,6 +58,20 @@ describe('useCreateConnector', () => {
     expect(mockCreateEdge).not.toHaveBeenCalled();
   });
 
+  it('should not create a self-edge', () => {
+    const source = makeSource('node');
+    const target = { _isNode: true, getId: () => 'node' };
+
+    const { result } = renderHook(() => useCreateConnector());
+    result.current(source as never, target as never);
+
+    expect(mockCreateEdge).not.toHaveBeenCalled();
+    expect(mockSetState).not.toHaveBeenCalled();
+    expect(mockControllerSetState).not.toHaveBeenCalled();
+    expect(mockFromModel).not.toHaveBeenCalled();
+    expect(mockLayout).not.toHaveBeenCalled();
+  });
+
   it('should create an edge between source and target', () => {
     const source = makeSource('src');
     const target = { _isNode: true, getId: () => 'tgt' };

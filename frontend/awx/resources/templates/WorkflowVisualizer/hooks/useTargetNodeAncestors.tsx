@@ -15,7 +15,7 @@ export function useTargetNodeAncestors() {
     const links = source.getGraph().getEdges();
     const newNodes = [...nodes];
     const parentMap: Record<string, { parents: string[]; traversed: boolean }> = {};
-    const invalidLinkTargetIds: string[] = [];
+    const invalidLinkTargetIds: string[] = [source.getId()];
     // Find and mark any ancestors as disabled to prevent cycles
     links.forEach((link) => {
       // id=1 is our artificial root node so we don't care about that
@@ -37,11 +37,11 @@ export function useTargetNodeAncestors() {
 
     const getAncestors = (id: string) => {
       if (parentMap[id] && !parentMap[id].traversed) {
+        parentMap[id].traversed = true;
         parentMap[id].parents.forEach((parentId) => {
           invalidLinkTargetIds.push(parentId);
           getAncestors(parentId);
         });
-        parentMap[id].traversed = true;
       }
     };
 
