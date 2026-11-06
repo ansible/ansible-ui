@@ -3,8 +3,12 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { CreateCredentialType, EditCredentialType } from './CredentialTypeForm';
+
+vi.mock('@ansible/common-ui/crud/usePatchRequest');
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
   const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
@@ -39,7 +43,12 @@ const server = setupServer(
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(usePatchRequest).mockReturnValue(
+    vi.fn().mockResolvedValue(mockCredentialType) as ReturnType<typeof usePatchRequest>
+  );
+});
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -111,6 +120,32 @@ describe('CredentialTypeForm', () => {
       });
 
       expect(screen.getByTestId('description')).toHaveValue('mock credential type description');
+    });
+
+    it('submits edit credential type form', async () => {
+      const user = userEvent.setup();
+      const patchRequest = vi.fn().mockResolvedValue(mockCredentialType);
+      vi.mocked(usePatchRequest).mockReturnValue(
+        patchRequest as ReturnType<typeof usePatchRequest>
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/credential-types/1/edit']}>
+          <Routes>
+            <Route path="/credential-types/:id/edit" element={<EditCredentialType />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Edit Mock Credential Type');
+      });
+
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(() => {
+        expect(patchRequest).toHaveBeenCalled();
+      });
     });
   });
 });

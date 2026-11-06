@@ -1,10 +1,35 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { awxAPI } from '../../common/api/awx-utils';
 import { Users } from './Users';
+
+const selectTeamsAddUsers = vi.fn();
+const selectTeamsRemoveUsers = vi.fn();
+const selectOrganizationsAddUsers = vi.fn();
+const selectOrganizationsRemoveUsers = vi.fn();
+const deleteUsers = vi.fn();
+const pageNavigate = vi.fn();
+vi.mock('./hooks/useDeleteUsers', () => ({ useDeleteUsers: () => deleteUsers }));
+vi.mock('../teams/hooks/useSelectTeamsAddUsers', () => ({
+  useSelectTeamsAddUsers: () => selectTeamsAddUsers,
+}));
+vi.mock('../teams/hooks/useSelectTeamsRemoveUsers', () => ({
+  useSelectTeamsRemoveUsers: () => selectTeamsRemoveUsers,
+}));
+vi.mock('../organizations/hooks/useSelectOrganizationsAddUsers', () => ({
+  useSelectOrganizationsAddUsers: () => selectOrganizationsAddUsers,
+}));
+vi.mock('../organizations/hooks/useSelectOrganizationsRemoveUsers', () => ({
+  useSelectOrganizationsRemoveUsers: () => selectOrganizationsRemoveUsers,
+}));
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return { ...actual, usePageNavigate: () => pageNavigate };
+});
 
 const mockUsers = {
   count: 2,
@@ -149,6 +174,67 @@ describe('Users', () => {
 
       const createButton = screen.getByRole('link', { name: /create user/i });
       expect(createButton).not.toHaveAttribute('aria-disabled', 'true');
+    });
+  });
+
+  describe('bulk toolbar actions', () => {
+    it('invokes bulk user management actions', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      renderUsers();
+      await waitFor(() => expect(screen.getByText('admin')).toBeInTheDocument());
+      const rowCheckboxes = screen.getAllByRole('checkbox', { name: /select row/i });
+      await user.click(rowCheckboxes[0] as HTMLElement);
+      await user.click(rowCheckboxes[1] as HTMLElement);
+      const toolbarActions = screen.getByRole('button', { name: /toolbar actions/i });
+      await user.click(toolbarActions);
+      await user.click(await screen.findByRole('menuitem', { name: /add users to teams/i }));
+      expect(selectTeamsAddUsers).toHaveBeenCalled();
+      await user.click(toolbarActions);
+      await user.click(await screen.findByRole('menuitem', { name: /remove users from teams/i }));
+      expect(selectTeamsRemoveUsers).toHaveBeenCalled();
+      await user.click(toolbarActions);
+      await user.click(
+        await screen.findByRole('menuitem', { name: /add users to organizations/i })
+      );
+      expect(selectOrganizationsAddUsers).toHaveBeenCalled();
+      await user.click(toolbarActions);
+      await user.click(
+        await screen.findByRole('menuitem', { name: /remove users from organizations/i })
+      );
+      expect(selectOrganizationsRemoveUsers).toHaveBeenCalled();
+      await user.click(toolbarActions);
+      await user.click(await screen.findByRole('menuitem', { name: /delete users/i }));
+      expect(deleteUsers).toHaveBeenCalled();
+    });
+  });
+
+  describe('row actions', () => {
+    it('invokes row user management actions', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      renderUsers();
+      await waitFor(() => expect(screen.getByText('normal_user')).toBeInTheDocument());
+      const row = screen.getByText('normal_user').closest('tr');
+      const rowScope = within(row as HTMLElement);
+      await user.click(rowScope.getByRole('button', { name: /edit user/i }));
+      expect(pageNavigate).toHaveBeenCalled();
+      const kebab = row?.querySelector('button[aria-label="kebab dropdown toggle"]');
+      await user.click(kebab as HTMLElement);
+      await user.click(await screen.findByRole('menuitem', { name: /add user to teams/i }));
+      expect(selectTeamsAddUsers).toHaveBeenCalled();
+      await user.click(kebab as HTMLElement);
+      await user.click(await screen.findByRole('menuitem', { name: /remove user from teams/i }));
+      expect(selectTeamsRemoveUsers).toHaveBeenCalled();
+      await user.click(kebab as HTMLElement);
+      await user.click(await screen.findByRole('menuitem', { name: /add user to organizations/i }));
+      expect(selectOrganizationsAddUsers).toHaveBeenCalled();
+      await user.click(kebab as HTMLElement);
+      await user.click(
+        await screen.findByRole('menuitem', { name: /remove user from organizations/i })
+      );
+      expect(selectOrganizationsRemoveUsers).toHaveBeenCalled();
+      await user.click(kebab as HTMLElement);
+      await user.click(await screen.findByRole('menuitem', { name: /^delete user$/i }));
+      expect(deleteUsers).toHaveBeenCalled();
     });
   });
 });

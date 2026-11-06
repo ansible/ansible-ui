@@ -1,11 +1,14 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { Credential } from '../../../interfaces/Credential';
-import { CredentialDetailsInner as CredentialDetails } from './CredentialDetails';
+import {
+  CredentialDetailsInner as CredentialDetails,
+  CredentialDetails as CredentialDetailsPage,
+} from './CredentialDetails';
 
 const mockCredential: Credential = {
   id: 2,
@@ -60,7 +63,8 @@ const server = setupServer(
   }),
   http.get(awxAPI`/credentials/2/input_sources/`, () => {
     return HttpResponse.json({ count: 0, results: [] });
-  })
+  }),
+  http.get(awxAPI`/credentials/2/`, () => HttpResponse.json(mockCredential))
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
@@ -78,5 +82,19 @@ describe('CredentialDetails', () => {
     await waitFor(() => {
       expect(screen.getByText('Ansible Galaxy')).toBeInTheDocument();
     });
+  });
+
+  it('shows loading page while credential route data is loading', () => {
+    server.use(http.get(awxAPI`/credentials/2/`, () => new Promise(() => {})));
+
+    render(
+      <MemoryRouter initialEntries={['/credentials/2/details']}>
+        <Routes>
+          <Route path="/credentials/:id/details" element={<CredentialDetailsPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('progressbar', { hidden: true })).toBeInTheDocument();
   });
 });
