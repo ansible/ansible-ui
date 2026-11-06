@@ -10,8 +10,10 @@ export function useTasksFilters() {
         key: 'name',
         label: t('Task name'),
         type: ToolbarFilterType.SingleText,
-        query: 'name__icontains',
-        comparison: 'contains',
+        // Pulp Task ViewSet supports exact `name` only; name__icontains returns HTTP 400.
+        query: 'name',
+        comparison: 'equals',
+        placeholder: t('Filter by name'),
       },
       {
         key: 'status',
