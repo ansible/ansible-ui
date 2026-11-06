@@ -1764,6 +1764,111 @@ describe('useSaveVisualizer', () => {
     expect(payload).toHaveProperty('limit', null);
   });
 
+  test('should send empty string for cleared job_tags and skip_tags on a new node', async () => {
+    const newNode = makeGraphNode({
+      id: 'unsavedNode-tags-clear',
+      visible: true,
+      modified: false,
+      nodeData: {
+        resource: {
+          id: 0,
+          identifier: 'tags-clear',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Deploy',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          job_tags: [],
+          skip_tags: [],
+          original: {
+            launch_config: {
+              ask_tags_on_launch: true,
+              ask_skip_tags_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [newNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const workflowNodeCall = mockPostFn.mock.calls.find(
+      (c: unknown[]) => typeof c[0] === 'string' && c[0].includes('/workflow_nodes/')
+    );
+    expect(workflowNodeCall).toBeDefined();
+    const payload = (workflowNodeCall as unknown[])[1] as Record<string, unknown>;
+    expect(payload).toHaveProperty('job_tags', '');
+    expect(payload).toHaveProperty('skip_tags', '');
+  });
+
+  test('should send empty string for cleared job_tags and skip_tags on an existing node', async () => {
+    const editedNode = makeGraphNode({
+      id: '42',
+      visible: true,
+      modified: true,
+      nodeData: {
+        resource: {
+          id: 42,
+          identifier: 'tags-clear-edit',
+          all_parents_must_converge: false,
+          extra_data: {},
+          always_nodes: [],
+          failure_nodes: [],
+          success_nodes: [],
+          summary_fields: {
+            unified_job_template: {
+              id: 5,
+              name: 'Deploy',
+              unified_job_type: RESOURCE_TYPE.job,
+            },
+          },
+        },
+        launch_data: {
+          job_tags: [],
+          skip_tags: [],
+          original: {
+            launch_config: {
+              ask_tags_on_launch: true,
+              ask_skip_tags_on_launch: true,
+              defaults: { credentials: [] },
+            },
+            labels: [],
+            instance_groups: [],
+            credentials: [],
+          },
+        },
+        survey_data: undefined,
+      } as unknown as Partial<GraphNodeData>,
+    });
+    mockGraphNodes = [editedNode];
+    const { result } = renderHook(() => useSaveVisualizer('123'));
+    await result.current();
+
+    const nodePatch = mockPatchFn.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && c[0].includes('/workflow_job_template_nodes/42/')
+    );
+    expect(nodePatch).toBeDefined();
+    const payload = (nodePatch as unknown[])[1] as Record<string, unknown>;
+    expect(payload).toHaveProperty('job_tags', '');
+    expect(payload).toHaveProperty('skip_tags', '');
+  });
+
   test('should not send cleared scm_branch when ask_scm_branch_on_launch is false on a new node', async () => {
     const newNode = makeGraphNode({
       id: 'unsavedNode-scm2',
