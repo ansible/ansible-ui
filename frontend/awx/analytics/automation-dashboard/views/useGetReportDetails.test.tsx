@@ -1,6 +1,8 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { ReactNode } from 'react';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, test, expect } from 'vitest';
 import { ToolbarFilterType } from '../../../../../framework';
 import { useGetReportDetails } from './useGetReportDetails';
@@ -30,6 +32,25 @@ const server = setupServer();
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
+
+/**
+ * SWR retrying as in the app (the test setup turns retries off), with its own cache and a short
+ * retry interval, so retries would happen within a test.
+ */
+function FastRetrySWRConfig(props: { children: ReactNode }) {
+  return (
+    <SWRConfig
+      value={{
+        provider: () => new Map(),
+        errorRetryInterval: 10,
+        dedupingInterval: 0,
+        shouldRetryOnError: true,
+      }}
+    >
+      {props.children}
+    </SWRConfig>
+  );
+}
 
 describe('useGetReportDetails', () => {
   describe('Loading state', () => {
@@ -114,6 +135,26 @@ describe('useGetReportDetails', () => {
       await waitFor(() => expect(result.current.error).toBeDefined());
 
       expect(result.current.reportDetails).toBeUndefined();
+    });
+  });
+
+  describe('Too large requests', () => {
+    test('should not retry a request rejected as too large', async () => {
+      let requestCount = 0;
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, () => {
+          requestCount += 1;
+          return HttpResponse.json({}, { status: 431 });
+        })
+      );
+      const { result } = renderHook(() => useGetReportDetails([], {}), {
+        wrapper: FastRetrySWRConfig,
+      });
+      await waitFor(() => expect(result.current.error).toBeDefined());
+
+      await act(() => new Promise((resolve) => setTimeout(resolve, 300)));
+
+      expect(requestCount).toBe(1);
     });
   });
 
