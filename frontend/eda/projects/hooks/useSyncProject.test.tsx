@@ -106,7 +106,7 @@ describe('useSyncProject hook', () => {
 
     expect(
       screen.getByText(
-        /The following Rulebook Activations are configured to restart on project sync/
+        /The following Rulebook Activations are configured to restart if their selected rulebooks change during this project sync/
       )
     ).toBeInTheDocument();
     expect(screen.getByText(/Activation 1, Activation 2/)).toBeInTheDocument();
