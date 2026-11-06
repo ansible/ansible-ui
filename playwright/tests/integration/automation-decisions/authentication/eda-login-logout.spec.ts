@@ -11,7 +11,7 @@ test.afterEach(setupAfter);
 test.describe('Platform - Cross-Service User Authentication', () => {
   test(
     'should display linked EDA username after platform login',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@user'] },
     async ({ page }) => {
       const username = 'E2EUser' + createE2EUsername('user');
       const password = 'E2EUserPassword';

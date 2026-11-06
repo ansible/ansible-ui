@@ -87,23 +87,27 @@ test.describe('Overview - Job Activity chart', () => {
 
   test.afterEach(setupAfter);
 
-  test('should render the current-day category on the job activity chart', async ({ page }) => {
-    await expect(
-      page.getByRole('heading', { name: /Welcome to (?:the )?Ansible/, level: 1 })
-    ).toBeVisible({ timeout: 60_000 });
+  test(
+    'should render the current-day category on the job activity chart',
+    { tag: ['@dashboard', '@job'] },
+    async ({ page }) => {
+      await expect(
+        page.getByRole('heading', { name: /Welcome to (?:the )?Ansible/, level: 1 })
+      ).toBeVisible({ timeout: 60_000 });
 
-    const awxSectionState = await waitForOverviewAwxSection(page);
-    if (awxSectionState === 'absent') {
-      await expect(page.locator('#job-activity')).not.toBeVisible();
-      return;
+      const awxSectionState = await waitForOverviewAwxSection(page);
+      if (awxSectionState === 'absent') {
+        await expect(page.locator('#job-activity')).not.toBeVisible();
+        return;
+      }
+
+      await expect(page.locator('#platform-awx')).toBeVisible({ timeout: 60_000 });
+
+      const jobActivityChart = page.locator('#job-activity .page-chart');
+      await expect(jobActivityChart).toBeVisible({ timeout: 60_000 });
+      await expect(
+        jobActivityChart.getByText(jobsGraphFixture.expectedLastLabel, { exact: true })
+      ).toBeVisible();
     }
-
-    await expect(page.locator('#platform-awx')).toBeVisible({ timeout: 60_000 });
-
-    const jobActivityChart = page.locator('#job-activity .page-chart');
-    await expect(jobActivityChart).toBeVisible({ timeout: 60_000 });
-    await expect(
-      jobActivityChart.getByText(jobsGraphFixture.expectedLastLabel, { exact: true })
-    ).toBeVisible();
-  });
+  );
 });

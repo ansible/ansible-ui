@@ -204,7 +204,7 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(setupAfter);
 
-test.describe('Automation Dashboard', () => {
+test.describe('Automation Dashboard', { tag: ['@metrics'] }, () => {
   test('Automation dashboard view for System Administrator', async ({ page }) => {
     await expect(
       page.getByTestId('page-title').filter({ hasText: 'Automation Dashboard' })
@@ -245,7 +245,7 @@ test.describe('Automation Dashboard', () => {
   });
 });
 
-test.describe('Automation Dashboard - Leaderboards tab', () => {
+test.describe('Automation Dashboard - Leaderboards tab', { tag: ['@metrics'] }, () => {
   test.beforeEach(async ({ page }) => {
     await mockLeaderboardRoute(page);
   });

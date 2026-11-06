@@ -22,7 +22,7 @@ test.setTimeout(2 * 60 * 1000);
 test.describe('Workflow Viz', () => {
   test(
     'Workflow Viz Add Nodes: Should render a workflow visualizer view with multiple nodes present',
-    { tag: ['@not_e2e', '@not_mock', '@compare', '@tier1'] },
+    { tag: ['@not_e2e', '@not_mock', '@compare', '@tier1', '@workflowjobtemplate'] },
     async ({ page }) => {
       test.setTimeout(8 * 60 * 1000);
 
@@ -43,7 +43,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Workflow Viz Add Nodes: Should create a workflow job template and then navigate to the visualizer, and then navigate to the details view after clicking cancel',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    { tag: ['@not_mock', '@compare', '@tier1', '@workflowjobtemplate'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
@@ -74,7 +74,7 @@ test.describe('Workflow Viz', () => {
   //Unskip this test when https://issues.redhat.com/browse/AAP-42422 is fixed
   test.skip(
     'Adds a new Job Template node linked to an existing node with on-success status, save the visualizer, then remove all nodes',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@project', '@jobtemplate', '@workflowjobtemplate'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectName = createE2EName();
@@ -110,7 +110,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Can edit a node resource on a workflow visualizer already containing existing nodes',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    { tag: ['@not_mock', '@compare', '@tier1', '@project', '@workflowjobtemplate'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectOneName = createE2EName();
@@ -141,7 +141,17 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Click on edge context menu option to change link type and close visualizer to show unsaved changes modal',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@compare',
+        '@tier1',
+        '@project',
+        '@inventory',
+        '@jobtemplate',
+        '@workflowjobtemplate',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const jobTemplateName = createE2EName();
@@ -189,7 +199,18 @@ test.describe('Workflow Viz', () => {
   //Unskip this test when https://issues.redhat.com/browse/AAP-42422 is fixed
   test.skip(
     'Create a job template node using a JT with multiple dependencies and then edit the node to use a different resource',
-    { tag: ['@not_mock', '@compare'] },
+    {
+      tag: [
+        '@not_mock',
+        '@compare',
+        '@inventory',
+        '@executionenvironment',
+        '@credential',
+        '@instancegroup',
+        '@jobtemplate',
+        '@workflowjobtemplate',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const jobTemplateName = createE2EName();
@@ -267,7 +288,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Can manually delete all nodes, save the visualizer, then add new nodes, and successfully save again.',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    { tag: ['@not_mock', '@compare', '@tier1', '@project', '@workflowjobtemplate'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectOneName = createE2EName();
@@ -352,7 +373,17 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Can remove all existing nodes on a visualizer using the button in the toolbar kebab, save the visualizer, then add 2 new nodes and save the visualizer again',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@compare',
+        '@tier1',
+        '@project',
+        '@inventory',
+        '@jobtemplate',
+        '@workflowjobtemplate',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectName = createE2EName();
@@ -396,7 +427,9 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Adds a labeled job template via Add step and link when labels are not prompted on launch, then saves as a sequential child',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    {
+      tag: ['@not_mock', '@compare', '@tier1', '@project', '@jobtemplate', '@workflowjobtemplate'],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectName = createE2EName();
@@ -474,7 +507,16 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Can delete one single node and save the visualizer',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@compare',
+        '@tier1',
+        '@organization',
+        '@inventory',
+        '@workflowjobtemplate',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const sourceName = createE2EName();
@@ -509,7 +551,7 @@ test.describe('Workflow Viz', () => {
   //Unskip this test when https://issues.redhat.com/browse/AAP-42422 is fixed
   test.skip(
     'Can access an existing workflow visualizer and delete the link between two nodes',
-    { tag: ['@not_mock', '@compare'] },
+    { tag: ['@not_mock', '@compare', '@project', '@workflowjobtemplate'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const projectOneName = createE2EName();
@@ -547,7 +589,16 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Should update skip tags',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@compare',
+        '@tier1',
+        '@inventory',
+        '@jobtemplate',
+        '@workflowjobtemplate',
+      ],
+    },
     async ({ page }) => {
       const jtName = createE2EName();
       const inventoryName = await Inventory.ui.create(page);
@@ -606,7 +657,18 @@ test.describe('Workflow Viz', () => {
   //Unskip this test when https://issues.redhat.com/browse/AAP-42422 is fixed
   test.skip(
     'Should display the saved extra_vars, execution_env, inv. group in the Edit node prompt step',
-    { tag: ['@not_mock', '@compare'] },
+    {
+      tag: [
+        '@not_mock',
+        '@compare',
+        '@inventory',
+        '@executionenvironment',
+        '@credential',
+        '@instancegroup',
+        '@jobtemplate',
+        '@workflowjobtemplate',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const jobTemplateName = createE2EName();
@@ -703,7 +765,16 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Create a job template node using a JT with a survey enabled',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@compare',
+        '@tier1',
+        '@inventory',
+        '@jobtemplate',
+        '@workflowjobtemplate',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const inventoryName = await Inventory.ui.create(page);
@@ -744,7 +815,7 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Should display review step fields when adding an approval node',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    { tag: ['@not_mock', '@compare', '@tier1', '@workflowjobtemplate'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const wfJobTemplate = await WorkflowVisualizer.ui.createWorkflowJobTemplate(page);
@@ -783,7 +854,17 @@ test.describe('Workflow Viz', () => {
 
   test(
     'Should save and persist credentials when workflow node has empty credential override',
-    { tag: ['@not_mock', '@compare', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@compare',
+        '@tier1',
+        '@credential',
+        '@inventory',
+        '@jobtemplate',
+        '@workflowjobtemplate',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 

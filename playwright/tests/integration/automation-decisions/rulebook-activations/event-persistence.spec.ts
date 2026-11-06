@@ -38,306 +38,328 @@ async function enableEventPersistence(page: Page, credentialName: string) {
   await expect(credentialToggle).toContainText(credentialName);
 }
 
-test.describe('Rulebook Activations - Event Persistence', () => {
-  test.describe.configure({ timeout: 300000 });
+test.describe(
+  'Rulebook Activations - Event Persistence',
+  {
+    tag: ['@activation', '@organization', '@project', '@edacredential', '@decisionenvironment'],
+  },
+  () => {
+    test.describe.configure({ timeout: 300000 });
 
-  let organizationName: string;
-  let projectName: string;
-  let credentialName: string;
-  let ruleEngineCredentialName: string;
-  let decisionEnvironmentName: string;
+    let organizationName: string;
+    let projectName: string;
+    let credentialName: string;
+    let ruleEngineCredentialName: string;
+    let decisionEnvironmentName: string;
 
-  test.beforeEach(async ({ page }) => {
-    test.setTimeout(300000);
+    test.beforeEach(async ({ page }) => {
+      test.setTimeout(300000);
 
-    const organization = await Organization.api.create(page);
-    organizationName = organization.name;
-    const ansibleId = organization.summary_fields?.resource?.ansible_id;
-    if (!ansibleId) {
-      throw new Error(`Platform organization "${organization.name}" missing ansible_id`);
-    }
-    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
+      const organization = await Organization.api.create(page);
+      organizationName = organization.name;
+      const ansibleId = organization.summary_fields?.resource?.ansible_id;
+      if (!ansibleId) {
+        throw new Error(`Platform organization "${organization.name}" missing ansible_id`);
+      }
+      const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
 
-    const project = await EdaProject.api.create(page, { organization: edaOrganization.id });
-    await EdaProject.api.waitForSync(page, project.id);
-    projectName = project.name;
+      const project = await EdaProject.api.create(page, { organization: edaOrganization.id });
+      await EdaProject.api.waitForSync(page, project.id);
+      projectName = project.name;
 
-    const credential = await EdaCredential.api.create(page, {
-      name: createE2EName('credential'),
-      organizationId: edaOrganization.id,
-      credentialTypeName: 'Red Hat Ansible Automation Platform',
+      const credential = await EdaCredential.api.create(page, {
+        name: createE2EName('credential'),
+        organizationId: edaOrganization.id,
+        credentialTypeName: 'Red Hat Ansible Automation Platform',
+      });
+      credentialName = credential.name;
+
+      const decisionEnvironment = await DecisionEnvironment.api.create(page, {
+        organizationId: edaOrganization.id,
+      });
+      decisionEnvironmentName = decisionEnvironment.name;
+
+      const ruleEngineCredential = await EdaCredential.api.create(page, {
+        name: createE2EName('rule-engine-credential'),
+        organizationId: edaOrganization.id,
+        credentialTypeName: 'Event-Driven Ansible Rule Engine',
+      });
+      ruleEngineCredentialName = ruleEngineCredential.name;
     });
-    credentialName = credential.name;
 
-    const decisionEnvironment = await DecisionEnvironment.api.create(page, {
-      organizationId: edaOrganization.id,
+    test.afterEach(async ({ page }) => {
+      if (decisionEnvironmentName) {
+        await DecisionEnvironment.api.deleteByName(page, decisionEnvironmentName);
+      }
+      if (ruleEngineCredentialName) {
+        await EdaCredential.api.deleteByName(page, ruleEngineCredentialName);
+      }
+      if (credentialName) {
+        await EdaCredential.api.deleteByName(page, credentialName);
+      }
+      if (projectName) {
+        await EdaProject.api.deleteByName(page, projectName);
+      }
+      if (organizationName) {
+        await Organization.api.deleteByName(page, organizationName);
+      }
     });
-    decisionEnvironmentName = decisionEnvironment.name;
 
-    const ruleEngineCredential = await EdaCredential.api.create(page, {
-      name: createE2EName('rule-engine-credential'),
-      organizationId: edaOrganization.id,
-      credentialTypeName: 'Event-Driven Ansible Rule Engine',
-    });
-    ruleEngineCredentialName = ruleEngineCredential.name;
-  });
+    test(
+      'should create rulebook activation with event persistence and rule engine credential',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+        await page.getByText('Create rulebook activation').click();
 
-  test.afterEach(async ({ page }) => {
-    if (decisionEnvironmentName) {
-      await DecisionEnvironment.api.deleteByName(page, decisionEnvironmentName);
-    }
-    if (ruleEngineCredentialName) {
-      await EdaCredential.api.deleteByName(page, ruleEngineCredentialName);
-    }
-    if (credentialName) {
-      await EdaCredential.api.deleteByName(page, credentialName);
-    }
-    if (projectName) {
-      await EdaProject.api.deleteByName(page, projectName);
-    }
-    if (organizationName) {
-      await Organization.api.deleteByName(page, organizationName);
-    }
-  });
+        const activationName = createE2EName('event-persistence');
+        await fillRulebookActivationCreateForm(page, {
+          name: activationName,
+          organizationName,
+          projectName,
+          decisionEnvironmentName,
+        });
 
-  test(
-    'should create rulebook activation with event persistence and rule engine credential',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
-      await page.getByText('Create rulebook activation').click();
+        await setRulebookActivationEnabledSwitch(page, false);
+        await enableEventPersistence(page, ruleEngineCredentialName);
 
-      const activationName = createE2EName('event-persistence');
-      await fillRulebookActivationCreateForm(page, {
-        name: activationName,
-        organizationName,
-        projectName,
-        decisionEnvironmentName,
-      });
+        await submitRulebookActivationForm(page, {
+          buttonName: 'Create rulebook activation',
+          method: 'POST',
+        });
 
-      await setRulebookActivationEnabledSwitch(page, false);
-      await enableEventPersistence(page, ruleEngineCredentialName);
+        await expect(
+          page.getByRole('heading', { name: activationName, exact: true })
+        ).toBeVisible();
+        await expect(page.getByTestId('enable-persistence')).toBeVisible();
+        await expect(page.getByTestId('rule-engine-credential')).toHaveText(
+          ruleEngineCredentialName
+        );
 
-      await submitRulebookActivationForm(page, {
-        buttonName: 'Create rulebook activation',
-        method: 'POST',
-      });
+        await RulebookActivation.ui.delete(page, activationName);
+      }
+    );
 
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
-      await expect(page.getByTestId('enable-persistence')).toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
+    test(
+      'should edit rulebook activation to enable event persistence',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        const activationName = await RulebookActivation.ui.create(page, {
+          projectName,
+          credentialName,
+          decisionEnvironmentName,
+          organizationName,
+          disabled: true,
+        });
 
-      await RulebookActivation.ui.delete(page, activationName);
-    }
-  );
+        await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
 
-  test(
-    'should edit rulebook activation to enable event persistence',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      const activationName = await RulebookActivation.ui.create(page, {
-        projectName,
-        credentialName,
-        decisionEnvironmentName,
-        organizationName,
-        disabled: true,
-      });
+        await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
+        await enableEventPersistence(page, ruleEngineCredentialName);
 
-      await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
+        await submitRulebookActivationForm(page, {
+          buttonName: 'Save rulebook activation',
+          method: 'PATCH',
+        });
 
-      await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
-      await enableEventPersistence(page, ruleEngineCredentialName);
+        await expect(
+          page.getByRole('heading', { name: activationName, exact: true })
+        ).toBeVisible();
+        await expect(page.getByTestId('enable-persistence')).toBeVisible();
+        await expect(page.getByTestId('rule-engine-credential')).toHaveText(
+          ruleEngineCredentialName
+        );
 
-      await submitRulebookActivationForm(page, {
-        buttonName: 'Save rulebook activation',
-        method: 'PATCH',
-      });
+        await RulebookActivation.ui.delete(page, activationName);
+      }
+    );
 
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
-      await expect(page.getByTestId('enable-persistence')).toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
+    test(
+      'should disable event persistence and clear credential selection',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+        await page.getByText('Create rulebook activation').click();
 
-      await RulebookActivation.ui.delete(page, activationName);
-    }
-  );
+        const activationName = createE2EName('disable-persistence');
+        await fillRulebookActivationCreateForm(page, {
+          name: activationName,
+          organizationName,
+          projectName,
+          decisionEnvironmentName,
+        });
 
-  test(
-    'should disable event persistence and clear credential selection',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
-      await page.getByText('Create rulebook activation').click();
+        const persistenceCheckbox = page.getByRole('checkbox', {
+          name: /Enable event persistence/i,
+        });
+        await persistenceCheckbox.check();
 
-      const activationName = createE2EName('disable-persistence');
-      await fillRulebookActivationCreateForm(page, {
-        name: activationName,
-        organizationName,
-        projectName,
-        decisionEnvironmentName,
-      });
+        await expect(
+          page.getByRole('button', { name: /Event persistence credential/i })
+        ).toBeVisible();
 
-      const persistenceCheckbox = page.getByRole('checkbox', {
-        name: /Enable event persistence/i,
-      });
-      await persistenceCheckbox.check();
+        await page.getByRole('button', { name: /Event persistence credential/i }).click();
+        const credentialSearch = page.locator('#rule-engine-credential-select-search input');
+        await expect(credentialSearch).toBeVisible();
+        await credentialSearch.fill(ruleEngineCredentialName);
+        await page.getByRole('option', { name: ruleEngineCredentialName, exact: true }).click();
+        await dismissOpenSelectMenus(page);
 
-      await expect(
-        page.getByRole('button', { name: /Event persistence credential/i })
-      ).toBeVisible();
+        await expect(page.getByTestId('rule-engine-credential-select')).toContainText(
+          ruleEngineCredentialName
+        );
 
-      await page.getByRole('button', { name: /Event persistence credential/i }).click();
-      const credentialSearch = page.locator('#rule-engine-credential-select-search input');
-      await expect(credentialSearch).toBeVisible();
-      await credentialSearch.fill(ruleEngineCredentialName);
-      await page.getByRole('option', { name: ruleEngineCredentialName, exact: true }).click();
-      await dismissOpenSelectMenus(page);
+        await persistenceCheckbox.uncheck();
 
-      await expect(page.getByTestId('rule-engine-credential-select')).toContainText(
-        ruleEngineCredentialName
-      );
+        await expect(
+          page.getByRole('button', { name: /Event persistence credential/i })
+        ).not.toBeVisible();
+        await expect(page.getByTestId('rule-engine-credential-select')).not.toBeVisible();
 
-      await persistenceCheckbox.uncheck();
+        await persistenceCheckbox.check();
+        await expect(
+          page.getByRole('button', { name: /Event persistence credential/i })
+        ).toBeVisible();
+        await expect(page.getByTestId('rule-engine-credential-select')).not.toContainText(
+          ruleEngineCredentialName
+        );
+      }
+    );
 
-      await expect(
-        page.getByRole('button', { name: /Event persistence credential/i })
-      ).not.toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential-select')).not.toBeVisible();
+    // Skipped: AAP installs a hidden default rule engine credential (_DEFAULT_EDA_RULE_ENGINE_CREDS)
+    // that is filtered from API responses (eda-server eda_credential.py). Because this credential
+    // always exists at install time, enabling persistence without selecting a credential never
+    // produces an error — the backend silently uses the default. The test's expected error cannot
+    // be triggered unless the instance is built without a managed DB. Behavior is in flux (UXD
+    // discussions tracked under AAP-77521). Re-evaluate when default credential visibility changes.
+    test.skip(
+      'should show error when persistence enabled without credential and no default exists',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+        await page.getByText('Create rulebook activation').click();
 
-      await persistenceCheckbox.check();
-      await expect(
-        page.getByRole('button', { name: /Event persistence credential/i })
-      ).toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential-select')).not.toContainText(
-        ruleEngineCredentialName
-      );
-    }
-  );
+        const activationName = createE2EName('no-default-credential');
+        await fillRulebookActivationCreateForm(page, {
+          name: activationName,
+          organizationName,
+          projectName,
+          decisionEnvironmentName,
+        });
 
-  // Skipped: AAP installs a hidden default rule engine credential (_DEFAULT_EDA_RULE_ENGINE_CREDS)
-  // that is filtered from API responses (eda-server eda_credential.py). Because this credential
-  // always exists at install time, enabling persistence without selecting a credential never
-  // produces an error — the backend silently uses the default. The test's expected error cannot
-  // be triggered unless the instance is built without a managed DB. Behavior is in flux (UXD
-  // discussions tracked under AAP-77521). Re-evaluate when default credential visibility changes.
-  test.skip(
-    'should show error when persistence enabled without credential and no default exists',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
-      await page.getByText('Create rulebook activation').click();
+        const persistenceCheckbox = page.getByRole('checkbox', {
+          name: /Enable event persistence/i,
+        });
+        await persistenceCheckbox.check();
 
-      const activationName = createE2EName('no-default-credential');
-      await fillRulebookActivationCreateForm(page, {
-        name: activationName,
-        organizationName,
-        projectName,
-        decisionEnvironmentName,
-      });
+        await expect(
+          page.getByRole('button', { name: /Event persistence credential/i })
+        ).toBeVisible();
 
-      const persistenceCheckbox = page.getByRole('checkbox', {
-        name: /Enable event persistence/i,
-      });
-      await persistenceCheckbox.check();
+        await page.getByRole('button', { name: 'Create rulebook activation' }).click();
 
-      await expect(
-        page.getByRole('button', { name: /Event persistence credential/i })
-      ).toBeVisible();
+        await expect(page.getByText(/no default EDA Rule Engine credential found/i)).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: 'Create rulebook activation' })
+        ).toBeVisible();
+      }
+    );
 
-      await page.getByRole('button', { name: 'Create rulebook activation' }).click();
+    test(
+      'should allow submission when persistence is disabled without credential',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+        await page.getByText('Create rulebook activation').click();
 
-      await expect(page.getByText(/no default EDA Rule Engine credential found/i)).toBeVisible();
-      await expect(page.getByRole('heading', { name: 'Create rulebook activation' })).toBeVisible();
-    }
-  );
+        const activationName = createE2EName('no-persistence');
+        await fillRulebookActivationCreateForm(page, {
+          name: activationName,
+          organizationName,
+          projectName,
+          decisionEnvironmentName,
+        });
 
-  test(
-    'should allow submission when persistence is disabled without credential',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
-      await page.getByText('Create rulebook activation').click();
+        await setRulebookActivationEnabledSwitch(page, false);
 
-      const activationName = createE2EName('no-persistence');
-      await fillRulebookActivationCreateForm(page, {
-        name: activationName,
-        organizationName,
-        projectName,
-        decisionEnvironmentName,
-      });
+        const persistenceCheckbox = page.getByRole('checkbox', {
+          name: /Enable event persistence/i,
+        });
+        await expect(persistenceCheckbox).not.toBeChecked();
+        await expect(
+          page.getByRole('button', { name: /Event persistence credential/i })
+        ).not.toBeVisible();
 
-      await setRulebookActivationEnabledSwitch(page, false);
+        await submitRulebookActivationForm(page, {
+          buttonName: 'Create rulebook activation',
+          method: 'POST',
+        });
 
-      const persistenceCheckbox = page.getByRole('checkbox', {
-        name: /Enable event persistence/i,
-      });
-      await expect(persistenceCheckbox).not.toBeChecked();
-      await expect(
-        page.getByRole('button', { name: /Event persistence credential/i })
-      ).not.toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: activationName, exact: true })
+        ).toBeVisible();
+        await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
 
-      await submitRulebookActivationForm(page, {
-        buttonName: 'Create rulebook activation',
-        method: 'POST',
-      });
+        await RulebookActivation.ui.delete(page, activationName);
+      }
+    );
 
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
-      await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
+    test(
+      'should nullify credential when editing to disable persistence after credential was selected',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+        await page.getByText('Create rulebook activation').click();
 
-      await RulebookActivation.ui.delete(page, activationName);
-    }
-  );
+        const activationName = createE2EName('edit-disable-persistence');
+        await fillRulebookActivationCreateForm(page, {
+          name: activationName,
+          organizationName,
+          projectName,
+          decisionEnvironmentName,
+        });
 
-  test(
-    'should nullify credential when editing to disable persistence after credential was selected',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
-      await page.getByText('Create rulebook activation').click();
+        await setRulebookActivationEnabledSwitch(page, false);
+        await enableEventPersistence(page, ruleEngineCredentialName);
 
-      const activationName = createE2EName('edit-disable-persistence');
-      await fillRulebookActivationCreateForm(page, {
-        name: activationName,
-        organizationName,
-        projectName,
-        decisionEnvironmentName,
-      });
+        await submitRulebookActivationForm(page, {
+          buttonName: 'Create rulebook activation',
+          method: 'POST',
+        });
 
-      await setRulebookActivationEnabledSwitch(page, false);
-      await enableEventPersistence(page, ruleEngineCredentialName);
+        await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
+          timeout: 15_000,
+        });
+        await expect(page.getByTestId('enable-persistence')).toBeVisible();
+        await expect(page.getByTestId('rule-engine-credential')).toHaveText(
+          ruleEngineCredentialName
+        );
 
-      await submitRulebookActivationForm(page, {
-        buttonName: 'Create rulebook activation',
-        method: 'POST',
-      });
+        await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
 
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible({
-        timeout: 15_000,
-      });
-      await expect(page.getByTestId('enable-persistence')).toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential')).toHaveText(ruleEngineCredentialName);
+        const editPersistenceCheckbox = page.getByRole('checkbox', {
+          name: /Enable event persistence/i,
+        });
+        await expect(editPersistenceCheckbox).toBeChecked();
+        await editPersistenceCheckbox.uncheck();
 
-      await page.getByRole('button', { name: 'Edit rulebook activation' }).click();
+        await expect(
+          page.getByRole('button', { name: /Event persistence credential/i })
+        ).not.toBeVisible();
 
-      const editPersistenceCheckbox = page.getByRole('checkbox', {
-        name: /Enable event persistence/i,
-      });
-      await expect(editPersistenceCheckbox).toBeChecked();
-      await editPersistenceCheckbox.uncheck();
+        await submitRulebookActivationForm(page, {
+          buttonName: 'Save rulebook activation',
+          method: 'PATCH',
+        });
 
-      await expect(
-        page.getByRole('button', { name: /Event persistence credential/i })
-      ).not.toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: activationName, exact: true })
+        ).toBeVisible();
+        await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
+        await expect(page.getByTestId('rule-engine-credential')).not.toBeVisible();
 
-      await submitRulebookActivationForm(page, {
-        buttonName: 'Save rulebook activation',
-        method: 'PATCH',
-      });
-
-      await expect(page.getByRole('heading', { name: activationName, exact: true })).toBeVisible();
-      await expect(page.getByTestId('enable-persistence')).not.toBeVisible();
-      await expect(page.getByTestId('rule-engine-credential')).not.toBeVisible();
-
-      await RulebookActivation.ui.delete(page, activationName);
-    }
-  );
-});
+        await RulebookActivation.ui.delete(page, activationName);
+      }
+    );
+  }
+);

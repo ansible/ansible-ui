@@ -18,72 +18,76 @@ import { waitForResourceCopyResponse } from '@ansible/playwright/utils/copyResou
 test.beforeEach(setupBefore({ path: '/execution/projects' }));
 test.afterEach(setupAfter);
 
-test.describe('Project - Basic Operations', () => {
+test.describe('Project - Basic Operations', { tag: ['@project'] }, () => {
   test('project - Create, sync, and delete', async ({ page }) => {
     const projectName = await Project.ui.create(page, { organizationName: 'Default' });
     await Project.ui.sync(page, projectName);
     await Project.ui.delete(page, projectName);
   });
 
-  test('project - test user access organization link', { tag: ['@not_mock'] }, async ({ page }) => {
-    test.setTimeout(5 * 60 * 1000);
-    const organizationName = await Organization.ui.create(page);
-    const projectName = await Project.ui.create(page, { organizationName });
-    const userName = await User.ui
-      .create(page)
-      .then((r) => (typeof r === 'string' ? r : r.userName));
-    const teamName = await Team.ui.create(page, { organizationName });
+  test(
+    'project - test user access organization link',
+    { tag: ['@not_mock', '@organization', '@user', '@team'] },
+    async ({ page }) => {
+      test.setTimeout(5 * 60 * 1000);
+      const organizationName = await Organization.ui.create(page);
+      const projectName = await Project.ui.create(page, { organizationName });
+      const userName = await User.ui
+        .create(page)
+        .then((r) => (typeof r === 'string' ? r : r.userName));
+      const teamName = await Team.ui.create(page, { organizationName });
 
-    // Assign user to team
-    await page.getByRole('tab', { name: 'Users' }).click();
-    await page.getByRole('button', { name: 'Assign users' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill(userName);
-    await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
-    await page.getByRole('checkbox', { name: 'Select all rows' }).check();
-    await page.getByRole('button', { name: 'Assign users' }).click();
+      // Assign user to team
+      await page.getByRole('tab', { name: 'Users' }).click();
+      await page.getByRole('button', { name: 'Assign users' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).fill(userName);
+      await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
+      await page.getByRole('checkbox', { name: 'Select all rows' }).check();
+      await page.getByRole('button', { name: 'Assign users' }).click();
 
-    // assign project admin role to team
-    await navigateTo(page, 'Automation Execution', 'Projects');
-    await clickTableRow({ filterLabel: 'Name', text: projectName }, page);
-    await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
-    await page.getByRole('tab', { name: 'Team Access' }).click();
-    await page.getByRole('link', { name: 'Assign teams' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill(teamName);
-    await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
-    await page.getByRole('checkbox', { name: 'Select all rows' }).check();
-    await page.locator('button', { hasText: 'Next' }).click();
-    await page.getByRole('textbox', { name: 'Type to filter' }).fill('Project Admin');
-    await page.getByRole('button', { name: 'apply filter' }).click();
-    await page.getByRole('checkbox', { name: 'Select row' }).check();
-    await page.locator('button', { hasText: 'Next' }).click();
-    await page.getByRole('button', { name: 'Finish' }).click();
+      // assign project admin role to team
+      await navigateTo(page, 'Automation Execution', 'Projects');
+      await clickTableRow({ filterLabel: 'Name', text: projectName }, page);
+      await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
+      await page.getByRole('tab', { name: 'Team Access' }).click();
+      await page.getByRole('link', { name: 'Assign teams' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).fill(teamName);
+      await page.getByRole('textbox', { name: 'Type to filter' }).press('Enter');
+      await page.getByRole('checkbox', { name: 'Select all rows' }).check();
+      await page.locator('button', { hasText: 'Next' }).click();
+      await page.getByRole('textbox', { name: 'Type to filter' }).fill('Project Admin');
+      await page.getByRole('button', { name: 'apply filter' }).click();
+      await page.getByRole('checkbox', { name: 'Select row' }).check();
+      await page.locator('button', { hasText: 'Next' }).click();
+      await page.getByRole('button', { name: 'Finish' }).click();
 
-    // view the project user access role alert
-    await page.getByRole('tab', { name: 'User Access' }).click();
+      // view the project user access role alert
+      await page.getByRole('tab', { name: 'User Access' }).click();
 
-    // Wait for the user to appear in the table (indirect access through team)
-    await expect(page.getByRole('row', { name: userName })).toBeVisible({ timeout: 60000 });
+      // Wait for the user to appear in the table (indirect access through team)
+      await expect(page.getByRole('row', { name: userName })).toBeVisible({ timeout: 60000 });
 
-    await page
-      .getByRole('row', { name: userName })
-      .getByRole('button', { name: 'Manage roles' })
-      .click();
-    await expect(page.getByRole('heading', { name: 'Manage roles directly' })).toContainText(
-      `Manage roles directly assigned to ${userName} for ${projectName}`
-    );
-    await expect(page.getByRole('link', { name: organizationName })).toBeVisible();
-    await page.getByRole('link', { name: organizationName }).click();
-    await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
-    await Project.ui.delete(page, projectName);
-    await User.ui.delete(page, userName);
-    await Team.ui.delete(page, teamName);
-    await Organization.ui.delete(page, organizationName);
-  });
+      await page
+        .getByRole('row', { name: userName })
+        .getByRole('button', { name: 'Manage roles' })
+        .click();
+      await expect(page.getByRole('heading', { name: 'Manage roles directly' })).toContainText(
+        `Manage roles directly assigned to ${userName} for ${projectName}`
+      );
+      await expect(page.getByRole('link', { name: organizationName })).toBeVisible();
+      await page.getByRole('link', { name: organizationName }).click();
+      await expect(page.getByRole('heading', { name: organizationName })).toBeVisible();
+      await Project.ui.delete(page, projectName);
+      await User.ui.delete(page, userName);
+      await Team.ui.delete(page, teamName);
+      await Organization.ui.delete(page, organizationName);
+    }
+  );
 });
 
-test.describe('Project - Edit, Copy, and Sync', () => {
+test.describe('Project - Edit, Copy, and Sync', { tag: ['@project'] }, () => {
   test('Project - Edit project name', { tag: ['@not_mock'] }, async ({ page }) => {
     test.setTimeout(5 * 60 * 1000);
     const projectName = await Project.ui.create(page, { organizationName: 'Default' });
@@ -174,10 +178,10 @@ test.describe('Project - Edit, Copy, and Sync', () => {
   });
 });
 
-test.describe('Project - Job Templates', () => {
+test.describe('Project - Job Templates', { tag: ['@project'] }, () => {
   test(
     'Project - Associate with job template and view on templates tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@inventory', '@jobtemplate', '@job'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 

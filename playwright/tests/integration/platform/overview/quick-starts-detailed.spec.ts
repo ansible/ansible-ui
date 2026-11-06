@@ -21,7 +21,7 @@ test.describe('Overview - Quick Starts - Smoke', () => {
 
   test(
     'should display quick starts catalog with all expected items',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@platform'] },
     async ({ page }) => {
       await expect(page.getByRole('heading', { name: 'Quick Starts' })).toBeVisible();
 

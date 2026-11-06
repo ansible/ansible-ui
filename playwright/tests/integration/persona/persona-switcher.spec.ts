@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(setupAfter);
 
 // Persona switcher is not available on SaaS or Azure deployments
-test.describe('Persona Switcher', () => {
+test.describe('Persona Switcher', { tag: ['@aapflag', '@role'] }, () => {
   // Skip entire suite on SaaS or Azure
   test.skip(
     isTopology(TOPOLOGY_SAAS, TOPOLOGY_AZURE),
@@ -69,7 +69,7 @@ test.describe('Persona Switcher', () => {
     );
   });
 
-  test('Persona views for Normal User', { tag: ['@tier1'] }, async ({ page }) => {
+  test('Persona views for Normal User', { tag: ['@tier1', '@user'] }, async ({ page }) => {
     await expect(page.getByRole('button', { name: 'Administration View' })).toBeVisible();
     const username = await User.ui
       .create(page)

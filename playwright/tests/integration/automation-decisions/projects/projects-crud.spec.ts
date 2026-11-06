@@ -31,7 +31,7 @@ test.describe('EDA Projects CRUD', () => {
 
   test(
     'can edit a project from the project details page',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@organization', '@project'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
         organization: edaOrgId,
@@ -80,7 +80,7 @@ test.describe('EDA Projects CRUD', () => {
 
   test(
     'deletes a Project from kebab menu from the project details page',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@organization', '@project'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
         organization: edaOrgId,

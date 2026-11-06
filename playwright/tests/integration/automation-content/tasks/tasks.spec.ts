@@ -8,7 +8,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Task Management', () => {
   test(
     'should navigate to task details and display all page sections',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@task'] },
     async ({ page }) => {
       await navigateTo(page, 'Automation Content', 'Task Management');
       await expect(page.getByRole('heading', { name: 'Task Management' })).toBeVisible();

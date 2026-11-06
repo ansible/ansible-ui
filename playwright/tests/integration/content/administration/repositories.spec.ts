@@ -29,7 +29,7 @@ async function navigateToFirstRepository(page: Page): Promise<string> {
   return repositoryName!.trim();
 }
 
-test.describe('Repository Details - Last Synced Field', () => {
+test.describe('Repository Details - Last Synced Field', { tag: ['@repository'] }, () => {
   test(
     'should display "Last synced" field with proper data-testid attributes',
     { tag: ['@not_mock'] },

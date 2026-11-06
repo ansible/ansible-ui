@@ -25,7 +25,7 @@ test.beforeAll(async ({ request }) => {
 test.describe('Rule Audit List', () => {
   test(
     'should access rule audit data for a successful rulebook activation',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@activation', '@decisionenvironment', '@organization', '@project'] },
     async ({ page }) => {
       test.setTimeout(180000);
       const organizationName = await Organization.ui.create(page);

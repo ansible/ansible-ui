@@ -15,7 +15,7 @@ import { waitForResourceCopyResponse } from '@ansible/playwright/utils/copyResou
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/credentials' }));
 test.afterEach(setupAfter);
 
-test.describe('Credentials - List View', () => {
+test.describe('Credentials - List View', { tag: ['@credential'] }, () => {
   test(
     'can edit machine credential from the list row action',
     { tag: ['@not_mock'] },
@@ -127,7 +127,7 @@ test.describe('Credentials - List View', () => {
   });
 });
 
-test.describe('Credentials - Details View', () => {
+test.describe('Credentials - Details View', { tag: ['@credential'] }, () => {
   test('details page should render boolean field', { tag: ['@not_mock'] }, async ({ page }) => {
     const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
 
@@ -176,7 +176,7 @@ test.describe('Credentials - Details View', () => {
   );
 });
 
-test.describe('Credentials Create - External test modal', () => {
+test.describe('Credentials Create - External test modal', { tag: ['@credential'] }, () => {
   test(
     'can display error toast message when running a test from the create credential form',
     { tag: ['@not_mock'] },
@@ -195,7 +195,7 @@ test.describe('Credentials Create - External test modal', () => {
   );
 });
 
-test.describe('Credentials Edit - External test modal', () => {
+test.describe('Credentials Edit - External test modal', { tag: ['@credential'] }, () => {
   test(
     'can display error toast message when running a test from the edit credential form',
     { tag: ['@not_mock'] },
@@ -214,7 +214,7 @@ test.describe('Credentials Edit - External test modal', () => {
   );
 });
 
-test.describe('Credentials - Credential Types Tests', () => {
+test.describe('Credentials - Credential Types Tests', { tag: ['@credential'] }, () => {
   test(
     'cannot edit vault id for Vault credential type',
     { tag: ['@not_mock'] },
@@ -367,7 +367,7 @@ test.describe('Credentials - Credential Types Tests', () => {
   );
 });
 
-test.describe('Credentials - Job Templates Tab', () => {
+test.describe('Credentials - Job Templates Tab', { tag: ['@credential'] }, () => {
   test(
     'can create a job template within the context of credential job template tab',
     { tag: ['@not_mock'] },
@@ -383,217 +383,225 @@ test.describe('Credentials - Job Templates Tab', () => {
   );
 });
 
-test.describe('Credentials - External Credential Plugins (AAP-44813)', () => {
-  test(
-    'should not re-POST existing credential input sources when editing a credential',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      test.setTimeout(180000);
+test.describe(
+  'Credentials - External Credential Plugins (AAP-44813)',
+  { tag: ['@credential'] },
+  () => {
+    test(
+      'should not re-POST existing credential input sources when editing a credential',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        test.setTimeout(180000);
 
-      // Step 1: Create an external credential (HashiCorp Vault Secret Lookup)
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await page.getByText('Create credential', { exact: true }).click();
-      const externalCredentialName = createE2EName('external-cred');
-      await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
-      await page.getByPlaceholder('Enter credential name').fill(externalCredentialName);
+        // Step 1: Create an external credential (HashiCorp Vault Secret Lookup)
+        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+        await page.getByText('Create credential', { exact: true }).click();
+        const externalCredentialName = createE2EName('external-cred');
+        await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
+        await page.getByPlaceholder('Enter credential name').fill(externalCredentialName);
 
-      await page.getByRole('button', { name: 'Credential type' }).click();
-      await expect(page.getByRole('textbox', { name: 'Search input' })).toBeVisible();
-      await page.getByRole('textbox', { name: 'Search input' }).fill('HashiCorp Vault Secret');
-      await page
-        .getByRole('option', { name: 'HashiCorp Vault Secret Lookup', exact: true })
-        .click();
+        await page.getByRole('button', { name: 'Credential type' }).click();
+        await expect(page.getByRole('textbox', { name: 'Search input' })).toBeVisible();
+        await page.getByRole('textbox', { name: 'Search input' }).fill('HashiCorp Vault Secret');
+        await page
+          .getByRole('option', { name: 'HashiCorp Vault Secret Lookup', exact: true })
+          .click();
 
-      await expect(page.getByRole('textbox', { name: 'Server URL' })).toBeVisible();
-      await page
-        .getByRole('textbox', { name: 'Server URL' })
-        .fill('https://vault.example.com:8200');
-      await page.getByRole('textbox', { name: 'Token' }).fill('test-token');
+        await expect(page.getByRole('textbox', { name: 'Server URL' })).toBeVisible();
+        await page
+          .getByRole('textbox', { name: 'Server URL' })
+          .fill('https://vault.example.com:8200');
+        await page.getByRole('textbox', { name: 'Token' }).fill('test-token');
 
-      await page.getByRole('button', { name: 'Create credential' }).click();
-      await expect(
-        page.getByRole('heading', { name: externalCredentialName, exact: true })
-      ).toBeVisible();
+        await page.getByRole('button', { name: 'Create credential' }).click();
+        await expect(
+          page.getByRole('heading', { name: externalCredentialName, exact: true })
+        ).toBeVisible();
 
-      // Step 2: Create a Machine credential and link its password to the external credential
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await page.getByText('Create credential', { exact: true }).click();
-      const machineCredentialName = createE2EName('machine-cred-linked');
-      await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
-      await page.getByPlaceholder('Enter credential name').fill(machineCredentialName);
+        // Step 2: Create a Machine credential and link its password to the external credential
+        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+        await page.getByText('Create credential', { exact: true }).click();
+        const machineCredentialName = createE2EName('machine-cred-linked');
+        await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
+        await page.getByPlaceholder('Enter credential name').fill(machineCredentialName);
 
-      await page.getByRole('button', { name: 'Credential type' }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill('Machine');
-      await page.getByRole('option', { name: 'Machine', exact: true }).click();
+        await page.getByRole('button', { name: 'Credential type' }).click();
+        await page.getByRole('textbox', { name: 'Search input' }).fill('Machine');
+        await page.getByRole('option', { name: 'Machine', exact: true }).click();
 
-      await expect(page.getByText('Type Details')).toBeVisible();
-      await page.getByRole('textbox', { name: 'Username', exact: true }).fill('testuser');
+        await expect(page.getByText('Type Details')).toBeVisible();
+        await page.getByRole('textbox', { name: 'Username', exact: true }).fill('testuser');
 
-      // Click the secret management button for password field
-      const passwordFormGroup = page.locator('#password-form-group');
-      await passwordFormGroup.getByTestId('secret-management-input').click();
+        // Click the secret management button for password field
+        const passwordFormGroup = page.locator('#password-form-group');
+        await passwordFormGroup.getByTestId('secret-management-input').click();
 
-      // The Secret Management System modal should appear
-      await expect(page.getByRole('heading', { name: 'Secret Management System' })).toBeVisible();
+        // The Secret Management System modal should appear
+        await expect(page.getByRole('heading', { name: 'Secret Management System' })).toBeVisible();
 
-      // Select the external credential from the dropdown
-      await page.getByRole('button', { name: 'Credential' }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill(externalCredentialName);
-      await page.getByRole('option', { name: externalCredentialName }).click();
+        // Select the external credential from the dropdown
+        await page.getByRole('button', { name: 'Credential' }).click();
+        await page.getByRole('textbox', { name: 'Search input' }).fill(externalCredentialName);
+        await page.getByRole('option', { name: externalCredentialName }).click();
 
-      // Fill in the metadata fields required by HashiCorp Vault Secret Lookup
-      await expect(page.getByRole('textbox', { name: 'Path to Secret' })).toBeVisible();
-      await page.getByRole('textbox', { name: 'Path to Secret' }).fill('secret/data/test');
-      await page.getByRole('textbox', { name: 'Key Name' }).fill('password');
+        // Fill in the metadata fields required by HashiCorp Vault Secret Lookup
+        await expect(page.getByRole('textbox', { name: 'Path to Secret' })).toBeVisible();
+        await page.getByRole('textbox', { name: 'Path to Secret' }).fill('secret/data/test');
+        await page.getByRole('textbox', { name: 'Key Name' }).fill('password');
 
-      // Click Finish to complete the external credential link
-      await page.getByRole('button', { name: 'Finish' }).click();
-      await expect(
-        page.getByRole('heading', { name: 'Secret Management System' })
-      ).not.toBeVisible();
+        // Click Finish to complete the external credential link
+        await page.getByRole('button', { name: 'Finish' }).click();
+        await expect(
+          page.getByRole('heading', { name: 'Secret Management System' })
+        ).not.toBeVisible();
 
-      // Create the credential
-      await page.getByRole('button', { name: 'Create credential' }).click();
-      await expect(
-        page.getByRole('heading', { name: machineCredentialName, exact: true })
-      ).toBeVisible();
+        // Create the credential
+        await page.getByRole('button', { name: 'Create credential' }).click();
+        await expect(
+          page.getByRole('heading', { name: machineCredentialName, exact: true })
+        ).toBeVisible();
 
-      // Verify the credential was created - the Password field should show the external credential link
-      // The link displays as a label with the credential type and name (e.g., "Hashivault: credname")
-      await expect(page.getByText('Password').first()).toBeVisible();
-      await expect(page.getByText(externalCredentialName).first()).toBeVisible();
+        // Verify the credential was created - the Password field should show the external credential link
+        // The link displays as a label with the credential type and name (e.g., "Hashivault: credname")
+        await expect(page.getByText('Password').first()).toBeVisible();
+        await expect(page.getByText(externalCredentialName).first()).toBeVisible();
 
-      // Step 3: Edit the credential and verify no duplicate input sources are created
-      await page.getByRole('button', { name: 'Edit credential' }).click();
-      await expect(
-        page.getByRole('heading', { name: `Edit ${machineCredentialName}` })
-      ).toBeVisible();
+        // Step 3: Edit the credential and verify no duplicate input sources are created
+        await page.getByRole('button', { name: 'Edit credential' }).click();
+        await expect(
+          page.getByRole('heading', { name: `Edit ${machineCredentialName}` })
+        ).toBeVisible();
 
-      // Set up network request interception to track POST requests to credential_input_sources
-      const inputSourcePostRequests: string[] = [];
-      page.on('request', (request) => {
-        if (request.method() === 'POST' && request.url().includes('/credential_input_sources/')) {
-          inputSourcePostRequests.push(request.url());
-        }
-      });
+        // Set up network request interception to track POST requests to credential_input_sources
+        const inputSourcePostRequests: string[] = [];
+        page.on('request', (request) => {
+          if (request.method() === 'POST' && request.url().includes('/credential_input_sources/')) {
+            inputSourcePostRequests.push(request.url());
+          }
+        });
 
-      // Make a simple change (just update the description)
-      await page.getByRole('textbox', { name: 'Description' }).fill('Updated description');
+        // Make a simple change (just update the description)
+        await page.getByRole('textbox', { name: 'Description' }).fill('Updated description');
 
-      // Save the credential
-      await page.getByRole('button', { name: 'Save credential' }).click();
-      await expect(
-        page.getByRole('heading', { name: machineCredentialName, exact: true })
-      ).toBeVisible();
+        // Save the credential
+        await page.getByRole('button', { name: 'Save credential' }).click();
+        await expect(
+          page.getByRole('heading', { name: machineCredentialName, exact: true })
+        ).toBeVisible();
 
-      // Verify no POST requests were made to credential_input_sources
-      // (the fix ensures existing input sources are not re-POSTed)
-      expect(inputSourcePostRequests.length).toBe(0);
+        // Verify no POST requests were made to credential_input_sources
+        // (the fix ensures existing input sources are not re-POSTed)
+        expect(inputSourcePostRequests.length).toBe(0);
 
-      // Verify the credential still shows the external credential link
-      await expect(page.getByText('Password').first()).toBeVisible();
-      await expect(page.getByText(externalCredentialName).first()).toBeVisible();
+        // Verify the credential still shows the external credential link
+        await expect(page.getByText('Password').first()).toBeVisible();
+        await expect(page.getByText(externalCredentialName).first()).toBeVisible();
 
-      // Cleanup: Delete both credentials
-      await Credential.ui.delete(page, machineCredentialName);
-      await Credential.ui.delete(page, externalCredentialName);
-    }
-  );
+        // Cleanup: Delete both credentials
+        await Credential.ui.delete(page, machineCredentialName);
+        await Credential.ui.delete(page, externalCredentialName);
+      }
+    );
 
-  test(
-    'should POST new credential input sources when adding a new link during edit',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      test.setTimeout(180000);
+    test(
+      'should POST new credential input sources when adding a new link during edit',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        test.setTimeout(180000);
 
-      // Step 1: Create an external credential (HashiCorp Vault Secret Lookup)
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await page.getByText('Create credential', { exact: true }).click();
-      const externalCredentialName = createE2EName('external-cred');
-      await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
-      await page.getByPlaceholder('Enter credential name').fill(externalCredentialName);
+        // Step 1: Create an external credential (HashiCorp Vault Secret Lookup)
+        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+        await page.getByText('Create credential', { exact: true }).click();
+        const externalCredentialName = createE2EName('external-cred');
+        await expect(page.getByPlaceholder('Enter credential name')).toBeVisible();
+        await page.getByPlaceholder('Enter credential name').fill(externalCredentialName);
 
-      await page.getByRole('button', { name: 'Credential type' }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill('HashiCorp Vault Secret');
-      await page
-        .getByRole('option', { name: 'HashiCorp Vault Secret Lookup', exact: true })
-        .click();
+        await page.getByRole('button', { name: 'Credential type' }).click();
+        await page.getByRole('textbox', { name: 'Search input' }).fill('HashiCorp Vault Secret');
+        await page
+          .getByRole('option', { name: 'HashiCorp Vault Secret Lookup', exact: true })
+          .click();
 
-      await expect(page.getByRole('textbox', { name: 'Server URL' })).toBeVisible();
-      await page
-        .getByRole('textbox', { name: 'Server URL' })
-        .fill('https://vault.example.com:8200');
-      await page.getByRole('textbox', { name: 'Token' }).fill('test-token');
+        await expect(page.getByRole('textbox', { name: 'Server URL' })).toBeVisible();
+        await page
+          .getByRole('textbox', { name: 'Server URL' })
+          .fill('https://vault.example.com:8200');
+        await page.getByRole('textbox', { name: 'Token' }).fill('test-token');
 
-      await page.getByRole('button', { name: 'Create credential' }).click();
-      await expect(
-        page.getByRole('heading', { name: externalCredentialName, exact: true })
-      ).toBeVisible();
+        await page.getByRole('button', { name: 'Create credential' }).click();
+        await expect(
+          page.getByRole('heading', { name: externalCredentialName, exact: true })
+        ).toBeVisible();
 
-      // Step 2: Create a simple Machine credential WITHOUT any external links
-      const machineCredentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
+        // Step 2: Create a simple Machine credential WITHOUT any external links
+        const machineCredentialName = await Credential.ui.create(page, {
+          credentialType: 'Machine',
+        });
 
-      // Step 3: Edit the credential and add an external credential link
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
-      await clickTableRow({ filterLabel: 'Name', text: machineCredentialName }, page);
-      await page.getByRole('button', { name: 'Edit credential' }).click();
-      await expect(
-        page.getByRole('heading', { name: `Edit ${machineCredentialName}` })
-      ).toBeVisible();
+        // Step 3: Edit the credential and add an external credential link
+        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Credentials');
+        await clickTableRow({ filterLabel: 'Name', text: machineCredentialName }, page);
+        await page.getByRole('button', { name: 'Edit credential' }).click();
+        await expect(
+          page.getByRole('heading', { name: `Edit ${machineCredentialName}` })
+        ).toBeVisible();
 
-      // Set up network request interception to track POST requests to credential_input_sources
-      let inputSourcePostCount = 0;
-      page.on('request', (request) => {
-        if (request.method() === 'POST' && request.url().includes('/credential_input_sources/')) {
-          inputSourcePostCount++;
-        }
-      });
+        // Set up network request interception to track POST requests to credential_input_sources
+        let inputSourcePostCount = 0;
+        page.on('request', (request) => {
+          if (request.method() === 'POST' && request.url().includes('/credential_input_sources/')) {
+            inputSourcePostCount++;
+          }
+        });
 
-      // The password field has an encrypted value, so click Replace button first to enable editing
-      const passwordFormGroup = page.locator('#password-form-group');
-      await passwordFormGroup.getByRole('button', { name: 'Replace field with new value' }).click();
+        // The password field has an encrypted value, so click Replace button first to enable editing
+        const passwordFormGroup = page.locator('#password-form-group');
+        await passwordFormGroup
+          .getByRole('button', { name: 'Replace field with new value' })
+          .click();
 
-      // Now click the secret management button for password field
-      await passwordFormGroup.getByTestId('secret-management-input').click();
+        // Now click the secret management button for password field
+        await passwordFormGroup.getByTestId('secret-management-input').click();
 
-      await expect(page.getByRole('heading', { name: 'Secret Management System' })).toBeVisible();
+        await expect(page.getByRole('heading', { name: 'Secret Management System' })).toBeVisible();
 
-      // Select the external credential from the dropdown
-      await page.getByRole('button', { name: 'Credential' }).click();
-      await page.getByRole('textbox', { name: 'Search input' }).fill(externalCredentialName);
-      await page.getByRole('option', { name: externalCredentialName }).click();
+        // Select the external credential from the dropdown
+        await page.getByRole('button', { name: 'Credential' }).click();
+        await page.getByRole('textbox', { name: 'Search input' }).fill(externalCredentialName);
+        await page.getByRole('option', { name: externalCredentialName }).click();
 
-      // Fill in the metadata fields
-      await expect(page.getByRole('textbox', { name: 'Path to Secret' })).toBeVisible();
-      await page.getByRole('textbox', { name: 'Path to Secret' }).fill('secret/data/test');
-      await page.getByRole('textbox', { name: 'Key Name' }).fill('password');
+        // Fill in the metadata fields
+        await expect(page.getByRole('textbox', { name: 'Path to Secret' })).toBeVisible();
+        await page.getByRole('textbox', { name: 'Path to Secret' }).fill('secret/data/test');
+        await page.getByRole('textbox', { name: 'Key Name' }).fill('password');
 
-      await page.getByRole('button', { name: 'Finish' }).click();
-      await expect(
-        page.getByRole('heading', { name: 'Secret Management System' })
-      ).not.toBeVisible();
+        await page.getByRole('button', { name: 'Finish' }).click();
+        await expect(
+          page.getByRole('heading', { name: 'Secret Management System' })
+        ).not.toBeVisible();
 
-      // Save the credential
-      await page.getByRole('button', { name: 'Save credential' }).click();
-      await expect(
-        page.getByRole('heading', { name: machineCredentialName, exact: true })
-      ).toBeVisible();
+        // Save the credential
+        await page.getByRole('button', { name: 'Save credential' }).click();
+        await expect(
+          page.getByRole('heading', { name: machineCredentialName, exact: true })
+        ).toBeVisible();
 
-      // Verify exactly 1 POST request was made for the new input source
-      expect(inputSourcePostCount).toBe(1);
+        // Verify exactly 1 POST request was made for the new input source
+        expect(inputSourcePostCount).toBe(1);
 
-      // Verify the credential shows the external credential link
-      await expect(page.getByText('Password').first()).toBeVisible();
-      await expect(page.getByText(externalCredentialName).first()).toBeVisible();
+        // Verify the credential shows the external credential link
+        await expect(page.getByText('Password').first()).toBeVisible();
+        await expect(page.getByText(externalCredentialName).first()).toBeVisible();
 
-      // Cleanup: Delete both credentials
-      await Credential.ui.delete(page, machineCredentialName);
-      await Credential.ui.delete(page, externalCredentialName);
-    }
-  );
-});
+        // Cleanup: Delete both credentials
+        await Credential.ui.delete(page, machineCredentialName);
+        await Credential.ui.delete(page, externalCredentialName);
+      }
+    );
+  }
+);
 
-test.describe('Credentials - Team and User Access', () => {
+test.describe('Credentials - Team and User Access', { tag: ['@credential'] }, () => {
   let credential: CredentialType;
 
   test.beforeEach(async ({ page }) => {
@@ -607,7 +615,7 @@ test.describe('Credentials - Team and User Access', () => {
     }
   });
 
-  test.describe('Team Access', () => {
+  test.describe('Team Access', { tag: ['@team'] }, () => {
     let team: PlatformTeam;
 
     test.beforeEach(async ({ page }) => {
@@ -687,7 +695,7 @@ test.describe('Credentials - Team and User Access', () => {
     );
   });
 
-  test.describe('User Access', () => {
+  test.describe('User Access', { tag: ['@user'] }, () => {
     let user: PlatformUser;
 
     test.beforeEach(async ({ page }) => {

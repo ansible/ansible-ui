@@ -12,7 +12,7 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { expect, test } from 'playwright/test';
 import { CredentialType } from '@ansible/playwright/utils';
 
-test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => {
+test.describe('Credential Types', { tag: ['@not_mock', '@local_debug', '@credentialtype'] }, () => {
   test.beforeEach(setupBefore({ path: '/execution/infrastructure/credential-types' }));
   test.afterEach(setupAfter);
 
@@ -238,7 +238,7 @@ test.describe('Credential Types', { tag: ['@not_mock', '@local_debug'] }, () => 
   test.describe('Credential Types - Edit and Delete Actions', () => {
     test(
       'checks that editing a custom credential type which is being used by a credential and trying to add input/injector configs is not allowed',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@credential'] },
       async ({ page }) => {
         // Create a credential type without configs
         const credentialTypeName = await CredentialType.ui.create(page);

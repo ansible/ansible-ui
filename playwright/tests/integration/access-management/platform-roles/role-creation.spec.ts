@@ -6,7 +6,7 @@ import { Role, TEST_ROLE_CONFIGS } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
-test.describe('Role Creation Tests', () => {
+test.describe('Role Creation Tests', { tag: ['@role'] }, () => {
   test.describe('Basic Role Creation', () => {
     test(
       'should create a Galaxy namespace role',

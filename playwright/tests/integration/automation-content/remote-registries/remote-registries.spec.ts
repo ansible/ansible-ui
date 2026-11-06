@@ -8,7 +8,7 @@ import { getTableRow } from '@ansible/playwright/commands/getTableRow';
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
-test.describe('Hub - Remote Registries', () => {
+test.describe('Hub - Remote Registries', { tag: ['@containerregistryremote'] }, () => {
   test(
     'should explore different views and pagination',
     { tag: ['@not_mock', '@tier1'] },
@@ -105,7 +105,7 @@ test.describe('Hub - Remote Registries', () => {
 
   test(
     'should index execution environments',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@executionenvironment'] },
     async ({ page }) => {
       const remoteRegistryName = createE2EName('remote-registry');
       const remoteRegistry = await RemoteRegistry.api.create(page, {

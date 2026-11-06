@@ -17,7 +17,7 @@ test.beforeAll(() => {
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credential-types' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Credential Types - CRUD Operations', () => {
+test.describe('EDA Credential Types - CRUD Operations', { tag: ['@credentialtype'] }, () => {
   test('should create and edit a credential type', { tag: ['@not_mock'] }, async ({ page }) => {
     const name = createE2EName('credential_type');
 
@@ -153,69 +153,75 @@ test.describe('EDA Credential Types - CRUD Operations', () => {
   });
 });
 
-test.describe('EDA Credential Types - Custom Field Rendering', () => {
-  let organization: PlatformOrganization | undefined;
+test.describe(
+  'EDA Credential Types - Custom Field Rendering',
+  {
+    tag: ['@credentialtype', '@edacredential'],
+  },
+  () => {
+    let organization: PlatformOrganization | undefined;
 
-  test.beforeEach(async ({ page }) => {
-    organization = await Organization.api.create(page);
-  });
+    test.beforeEach(async ({ page }) => {
+      organization = await Organization.api.create(page);
+    });
 
-  test.afterEach(async ({ page }) => {
-    if (organization) {
-      await Organization.api.delete(page, organization.id);
-    }
-  });
-
-  test(
-    'should render custom credential type fields correctly in credential form',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      const credType = await EdaCredentialType.api.create(page, {
-        inputs: {
-          fields: [
-            { id: 'checkbox_field', type: 'boolean', label: 'Checkbox' },
-            {
-              id: 'username',
-              type: 'string',
-              label: 'Username',
-              default: 'default_value',
-            },
-            { id: 'required_field', type: 'string', label: 'Required Field' },
-          ],
-          required: ['required_field'],
-        },
-      });
-
-      try {
-        await test.step('Navigate to credential creation and select custom type', async () => {
-          await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
-          await expect(
-            page.getByRole('heading', { name: 'Credentials', exact: true })
-          ).toBeVisible();
-          await page.getByText('Create credential').click();
-          await page.getByPlaceholder('Enter credential name').fill(createE2EName('credential'));
-          await page.getByRole('button', { name: 'Credential type' }).click();
-          await page.getByRole('textbox', { name: 'Search input' }).fill(credType.name);
-          await page.getByRole('option', { name: credType.name }).click();
-        });
-
-        await test.step('Verify boolean field renders as checkbox', async () => {
-          const checkboxField = page.getByRole('checkbox', { name: 'Checkbox' });
-          await expect(checkboxField).toBeVisible();
-        });
-
-        await test.step('Verify default value is pre-populated', async () => {
-          const usernameField = page.getByRole('textbox', { name: 'Username' });
-          await expect(usernameField).toHaveValue('default_value');
-        });
-
-        await test.step('Verify required field validation', async () => {
-          await page.getByRole('button', { name: 'Create credential' }).click();
-          await expect(page.getByText('Required Field is required.')).toBeVisible();
-        });
-      } finally {
-        await EdaCredentialType.api.delete(page, credType.id);
+    test.afterEach(async ({ page }) => {
+      if (organization) {
+        await Organization.api.delete(page, organization.id);
       }
-    }
-  );
-});
+    });
+
+    test(
+      'should render custom credential type fields correctly in credential form',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        const credType = await EdaCredentialType.api.create(page, {
+          inputs: {
+            fields: [
+              { id: 'checkbox_field', type: 'boolean', label: 'Checkbox' },
+              {
+                id: 'username',
+                type: 'string',
+                label: 'Username',
+                default: 'default_value',
+              },
+              { id: 'required_field', type: 'string', label: 'Required Field' },
+            ],
+            required: ['required_field'],
+          },
+        });
+
+        try {
+          await test.step('Navigate to credential creation and select custom type', async () => {
+            await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
+            await expect(
+              page.getByRole('heading', { name: 'Credentials', exact: true })
+            ).toBeVisible();
+            await page.getByText('Create credential').click();
+            await page.getByPlaceholder('Enter credential name').fill(createE2EName('credential'));
+            await page.getByRole('button', { name: 'Credential type' }).click();
+            await page.getByRole('textbox', { name: 'Search input' }).fill(credType.name);
+            await page.getByRole('option', { name: credType.name }).click();
+          });
+
+          await test.step('Verify boolean field renders as checkbox', async () => {
+            const checkboxField = page.getByRole('checkbox', { name: 'Checkbox' });
+            await expect(checkboxField).toBeVisible();
+          });
+
+          await test.step('Verify default value is pre-populated', async () => {
+            const usernameField = page.getByRole('textbox', { name: 'Username' });
+            await expect(usernameField).toHaveValue('default_value');
+          });
+
+          await test.step('Verify required field validation', async () => {
+            await page.getByRole('button', { name: 'Create credential' }).click();
+            await expect(page.getByText('Required Field is required.')).toBeVisible();
+          });
+        } finally {
+          await EdaCredentialType.api.delete(page, credType.id);
+        }
+      }
+    );
+  }
+);

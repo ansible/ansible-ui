@@ -71,7 +71,7 @@ async function verifyGroupDetails(page: Page, isContainer: boolean) {
   { type: 'instance group', isContainer: false },
   { type: 'container group', isContainer: true },
 ].forEach(({ type, isContainer }) => {
-  test.describe(`${type} tests`, () => {
+  test.describe(`${type} tests`, { tag: ['@instancegroup'] }, () => {
     test.describe(`${type}: List view`, () => {
       test(
         `should create new ${type} from list view, verify details, and delete`,
@@ -280,7 +280,7 @@ async function verifyGroupDetails(page: Page, isContainer: boolean) {
       });
     });
 
-    test.describe(`${type}: Team access tab`, () => {
+    test.describe(`${type}: Team access tab`, { tag: ['@organization', '@team'] }, () => {
       test(
         `should assign and remove team access to ${type}`,
         { tag: ['@not_mock'] },
@@ -375,7 +375,7 @@ async function verifyGroupDetails(page: Page, isContainer: boolean) {
       );
     });
 
-    test.describe(`${type}: User access tab`, () => {
+    test.describe(`${type}: User access tab`, { tag: ['@user'] }, () => {
       test(`should assign user access to ${type}`, { tag: ['@not_mock'] }, async ({ page }) => {
         const userInfo = await User.ui.create(page);
         const groupName = createE2EName(isContainer ? 'container-group' : 'instance-group');
@@ -447,7 +447,16 @@ test.describe('Instance Groups: Jobs Tab', () => {
 
   test(
     'should launch job, view in instance group jobs tab, and delete',
-    { tag: ['@not_mock'] },
+    {
+      tag: [
+        '@not_mock',
+        '@instancegroup',
+        '@organization',
+        '@project',
+        '@inventory',
+        '@jobtemplate',
+      ],
+    },
     async ({ page }) => {
       const organizationName = await Organization.ui.create(page);
       const projectName = await Project.ui.create(page, { organizationName });

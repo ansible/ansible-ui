@@ -18,7 +18,17 @@ test.afterEach(setupAfter);
 test.describe('Hub - Execution Environments - User Access', () => {
   test(
     'should assign user and apply role to execution environment from User Access tab',
-    { tag: ['@not_mock', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@tier1',
+        '@containerregistryremote',
+        '@executionenvironment',
+        '@organization',
+        '@role',
+        '@user',
+      ],
+    },
     async ({ page }) => {
       const organization = await Organization.api.create(page);
       const role = await Role.api.create(page, {

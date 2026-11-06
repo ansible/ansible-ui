@@ -12,7 +12,17 @@ test.afterEach(setupAfter);
 test.describe('Hub - My Imports', () => {
   test(
     'should render empty states',
-    { tag: ['@not_mock', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@tier1',
+        '@collection',
+        '@collectionimport',
+        '@collectionversion',
+        '@namespace',
+        '@repository',
+      ],
+    },
     async ({ page, collection }) => {
       const namespaceName = await collection.createNamespace();
       const collectionName = `testcollection_${Date.now()}`.toLowerCase();
@@ -54,7 +64,17 @@ test.describe('Hub - My Imports', () => {
 
   test(
     'should display import details, browse namespaces, and filter imports',
-    { tag: ['@not_mock', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@tier1',
+        '@collection',
+        '@collectionimport',
+        '@collectionversion',
+        '@namespace',
+        '@repository',
+      ],
+    },
     async ({ page, collection }) => {
       const namespaceName = await collection.createNamespace();
       const collectionName = `testcollection_${Date.now()}`.toLowerCase();

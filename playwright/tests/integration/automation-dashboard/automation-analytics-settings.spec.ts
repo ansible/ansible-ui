@@ -52,7 +52,7 @@ async function selectLeaderboardOption(page: Page, option: 'Enabled' | 'Disabled
 
 test.afterEach(setupAfter);
 
-test.describe('Automation Analytics Settings', () => {
+test.describe('Automation Analytics Settings', { tag: ['@metrics'] }, () => {
   test('should show the leaderboard as enabled on the details page', async ({ page }) => {
     await mockCollectionStatus(page);
     await setupBefore()({ page });

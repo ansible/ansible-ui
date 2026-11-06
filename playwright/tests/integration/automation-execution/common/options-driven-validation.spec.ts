@@ -25,7 +25,7 @@ test.afterEach(setupAfter);
  * Simple flat ``optionsUrl`` form (/inventories/). Covers client blur validation and
  * representative server-side submit behavior. Nested survey_spec: job-template-survey-options-validation.spec.ts.
  */
-test.describe('Inventory OPTIONS-driven validation', () => {
+test.describe('Inventory OPTIONS-driven validation', { tag: ['@inventory'] }, () => {
   let organization: OrganizationType;
 
   test.beforeEach(async ({ page }) => {
@@ -80,7 +80,7 @@ test.describe('Inventory OPTIONS-driven validation', () => {
 
   test(
     'grandfathers existing invalid values on edit form until the field is dirty',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@organization'] },
     async ({ page }, testInfo) => {
       const nameField = await requireOptionsFieldPattern(page, '/inventories/', 'name', testInfo);
       const legacyName = findValueFailingPattern(nameField.pattern!, nameField.flags);
@@ -130,7 +130,7 @@ test.describe('Inventory OPTIONS-driven validation', () => {
 
   test(
     'shows server-side validation error on submit for duplicate name',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@organization'] },
     async ({ page }, testInfo) => {
       await requireOptionsFieldPattern(page, '/inventories/', 'name', testInfo);
       const validName = createE2EName('inv-dup');

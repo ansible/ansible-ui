@@ -11,7 +11,7 @@ test.afterEach(setupAfter);
 test.describe('Hub - Execution Environment - Details Page', () => {
   test(
     'should add README with markdown editor',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@containerregistryremote', '@executionenvironment'] },
     async ({ page }) => {
       const remoteRegistryName = createE2EName('remote-registry');
       const remoteRegistry = await RemoteRegistry.api.create(page, { name: remoteRegistryName });
@@ -89,7 +89,7 @@ test.describe('Hub - Execution Environment - Details Page', () => {
 
   test(
     'should update README content when edited',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@containerregistryremote', '@executionenvironment'] },
     async ({ page }) => {
       const remoteRegistryName = createE2EName('remote-registry');
       const remoteRegistry = await RemoteRegistry.api.create(page, { name: remoteRegistryName });

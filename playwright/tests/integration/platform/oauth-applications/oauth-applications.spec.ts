@@ -8,7 +8,7 @@ import { OAuthApplication, Organization } from '@ansible/playwright/utils';
 import { PlatformOrganization } from '@ansible/platform-ui/interfaces/PlatformOrganization';
 import { Application } from '@ansible/awx-ui/interfaces/Application';
 
-test.describe('OAuth Applications', () => {
+test.describe('OAuth Applications', { tag: ['@oauth2application', '@organization'] }, () => {
   let organization: PlatformOrganization;
 
   test.beforeEach(async ({ page }) => {

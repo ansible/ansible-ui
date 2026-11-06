@@ -15,7 +15,8 @@
     "prettier:fix": "prettier --write tests commands",
     "fix": "concurrently npm:eslint:fix npm:prettier:fix -c auto",
     "markdown": "tsx generate-test-summary.ts",
-    "migration-stats": "tsx scripts/migration-stats.ts"
+    "migration-stats": "tsx scripts/migration-stats.ts",
+    "tag-audit": "tsx scripts/audit-resource-tags.ts"
   },
   "dependencies": {
     "@ansible/awx-ui": "file:../frontend/awx",

@@ -21,7 +21,7 @@ import {
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/inventories' }));
 test.afterEach(setupAfter);
 
-test.describe('Inventory Groups - List View', () => {
+test.describe('Inventory Groups - List View', { tag: ['@inventory', '@group'] }, () => {
   test(
     'can create group with variables, view details, and delete from list',
     { tag: ['@not_mock'] },
@@ -125,43 +125,47 @@ test.describe('Inventory Groups - List View', () => {
     await Inventory.ui.delete(page, inventoryName);
   });
 
-  test('can run ad-hoc command against group', { tag: ['@not_mock'] }, async ({ page }) => {
-    test.setTimeout(90000);
-    const organizationName = await Organization.ui.create(page);
-    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-    const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
-      organizationName,
-    });
-    const inventoryName = await Inventory.ui.create(page, { organizationName });
-    await InventoryGroup.ui.createGroup(page, { inventoryName });
-    await page.getByRole('tab', { name: 'Back to Groups' }).click();
+  test(
+    'can run ad-hoc command against group',
+    { tag: ['@not_mock', '@credential', '@executionenvironment', '@organization'] },
+    async ({ page }) => {
+      test.setTimeout(90000);
+      const organizationName = await Organization.ui.create(page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
+      const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
+        organizationName,
+      });
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
+      await InventoryGroup.ui.createGroup(page, { inventoryName });
+      await page.getByRole('tab', { name: 'Back to Groups' }).click();
 
-    await page.getByRole('button', { name: 'Run command' }).click();
+      await page.getByRole('button', { name: 'Run command' }).click();
 
-    await runAdHocCommandWizard(
-      {
-        module: 'shell',
-        moduleArgs: 'echo "Hello World"',
-        verbosity: '0',
-        limit: 'all',
-        forks: 2,
-        showChanges: true,
-        becomeEnabled: true,
-        executionEnvironmentName,
-        credentialName,
-      },
-      page
-    );
+      await runAdHocCommandWizard(
+        {
+          module: 'shell',
+          moduleArgs: 'echo "Hello World"',
+          verbosity: '0',
+          limit: 'all',
+          forks: 2,
+          showChanges: true,
+          becomeEnabled: true,
+          executionEnvironmentName,
+          credentialName,
+        },
+        page
+      );
 
-    await Inventory.ui.delete(page, inventoryName);
-    await Credential.ui.delete(page, credentialName);
-    await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
-    await Organization.ui.delete(page, organizationName);
-  });
+      await Inventory.ui.delete(page, inventoryName);
+      await Credential.ui.delete(page, credentialName);
+      await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
+      await Organization.ui.delete(page, organizationName);
+    }
+  );
 
   test(
     'can run ad-hoc command with credential passwords (Prompt on launch)',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@credential', '@executionenvironment', '@organization'] },
     async ({ page }) => {
       test.setTimeout(90000);
       const organizationName = await Organization.ui.create(page);
@@ -205,7 +209,7 @@ test.describe('Inventory Groups - List View', () => {
   );
 });
 
-test.describe('Inventory Groups - Related Groups', () => {
+test.describe('Inventory Groups - Related Groups', { tag: ['@inventory', '@group'] }, () => {
   test(
     'can create and disassociate new related group',
     { tag: ['@not_mock'] },
@@ -308,59 +312,63 @@ test.describe('Inventory Groups - Related Groups', () => {
     }
   );
 
-  test('can run ad-hoc command against related group', { tag: ['@not_mock'] }, async ({ page }) => {
-    test.setTimeout(90000);
-    const organizationName = await Organization.ui.create(page);
-    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-    const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
-      organizationName,
-    });
+  test(
+    'can run ad-hoc command against related group',
+    { tag: ['@not_mock', '@credential', '@executionenvironment', '@organization'] },
+    async ({ page }) => {
+      test.setTimeout(90000);
+      const organizationName = await Organization.ui.create(page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
+      const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
+        organizationName,
+      });
 
-    const relatedGroupName = createE2EName('related-group');
-    const inventoryName = await Inventory.ui.create(page, { organizationName });
-    const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
+      const relatedGroupName = createE2EName('related-group');
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
+      const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
 
-    await page.getByRole('tab', { name: 'Related Groups' }).click();
-    await page.getByRole('button', { name: 'Create group' }).click();
+      await page.getByRole('tab', { name: 'Related Groups' }).click();
+      await page.getByRole('button', { name: 'Create group' }).click();
 
-    await page.getByRole('textbox', { name: 'Name', exact: true }).fill(relatedGroupName);
-    await page.getByRole('button', { name: 'Create group' }).click();
+      await page.getByRole('textbox', { name: 'Name', exact: true }).fill(relatedGroupName);
+      await page.getByRole('button', { name: 'Create group' }).click();
 
-    await expect(page.getByRole('heading', { name: groupName, exact: true })).toBeVisible();
-    await expect(page.getByRole('link', { name: relatedGroupName })).toBeVisible();
+      await expect(page.getByRole('heading', { name: groupName, exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: relatedGroupName })).toBeVisible();
 
-    await page.getByRole('tab', { name: 'Back to Groups' }).click();
-    await clickTableRow({ text: groupName }, page);
-    await page.getByRole('tab', { name: 'Related Groups' }).click();
+      await page.getByRole('tab', { name: 'Back to Groups' }).click();
+      await clickTableRow({ text: groupName }, page);
+      await page.getByRole('tab', { name: 'Related Groups' }).click();
 
-    const relatedGroupRow = await getTableRow(page, relatedGroupName);
-    await relatedGroupRow.getByRole('checkbox').check();
+      const relatedGroupRow = await getTableRow(page, relatedGroupName);
+      await relatedGroupRow.getByRole('checkbox').check();
 
-    await page.getByRole('button', { name: 'Run command' }).click();
+      await page.getByRole('button', { name: 'Run command' }).click();
 
-    await runAdHocCommandWizard(
-      {
-        module: 'shell',
-        moduleArgs: 'echo "Hello World"',
-        verbosity: '0',
-        limit: relatedGroupName,
-        forks: 2,
-        showChanges: true,
-        becomeEnabled: true,
-        executionEnvironmentName,
-        credentialName,
-      },
-      page
-    );
+      await runAdHocCommandWizard(
+        {
+          module: 'shell',
+          moduleArgs: 'echo "Hello World"',
+          verbosity: '0',
+          limit: relatedGroupName,
+          forks: 2,
+          showChanges: true,
+          becomeEnabled: true,
+          executionEnvironmentName,
+          credentialName,
+        },
+        page
+      );
 
-    await Inventory.ui.delete(page, inventoryName);
-    await Credential.ui.delete(page, credentialName);
-    await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
-    await Organization.ui.delete(page, organizationName);
-  });
+      await Inventory.ui.delete(page, inventoryName);
+      await Credential.ui.delete(page, credentialName);
+      await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
+      await Organization.ui.delete(page, organizationName);
+    }
+  );
 });
 
-test.describe('Inventory Groups - Hosts Tab', () => {
+test.describe('Inventory Groups - Hosts Tab', { tag: ['@inventory', '@group', '@host'] }, () => {
   test(
     'can add existing host, create new host in group, and delete host',
     { tag: ['@not_mock'] },
@@ -443,49 +451,53 @@ test.describe('Inventory Groups - Hosts Tab', () => {
     await Inventory.ui.delete(page, inventoryName);
   });
 
-  test('can run ad-hoc command against group hosts', { tag: ['@not_mock'] }, async ({ page }) => {
-    test.setTimeout(90000);
-    const organizationName = await Organization.ui.create(page);
-    const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
-    const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
-      organizationName,
-    });
+  test(
+    'can run ad-hoc command against group hosts',
+    { tag: ['@not_mock', '@credential', '@executionenvironment', '@organization'] },
+    async ({ page }) => {
+      test.setTimeout(90000);
+      const organizationName = await Organization.ui.create(page);
+      const credentialName = await Credential.ui.create(page, { credentialType: 'Machine' });
+      const executionEnvironmentName = await ExecutionEnvironment.ui.create(page, {
+        organizationName,
+      });
 
-    const inventoryName = await Inventory.ui.create(page, { organizationName });
-    const hostName = await InventoryGroup.ui.createHost(page, { inventoryName });
-    const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
+      const inventoryName = await Inventory.ui.create(page, { organizationName });
+      const hostName = await InventoryGroup.ui.createHost(page, { inventoryName });
+      const groupName = await InventoryGroup.ui.createGroup(page, { inventoryName });
 
-    await page.getByRole('tab', { name: 'Back to Groups' }).click();
-    await clickTableRow({ text: groupName }, page);
-    await page.getByRole('tab', { name: 'Hosts' }).click();
+      await page.getByRole('tab', { name: 'Back to Groups' }).click();
+      await clickTableRow({ text: groupName }, page);
+      await page.getByRole('tab', { name: 'Hosts' }).click();
 
-    // Add host to the group before running command
-    await page.getByRole('button', { name: 'Add existing host' }).click();
-    const hostRow = await getTableRow(page, hostName);
-    await hostRow.getByRole('checkbox').check();
-    await page.getByRole('button', { name: 'Add host' }).click();
-    await expect(page.getByRole('link', { name: hostName })).toBeVisible();
+      // Add host to the group before running command
+      await page.getByRole('button', { name: 'Add existing host' }).click();
+      const hostRow = await getTableRow(page, hostName);
+      await hostRow.getByRole('checkbox').check();
+      await page.getByRole('button', { name: 'Add host' }).click();
+      await expect(page.getByRole('link', { name: hostName })).toBeVisible();
 
-    await page.getByRole('button', { name: 'Run command' }).click();
+      await page.getByRole('button', { name: 'Run command' }).click();
 
-    await runAdHocCommandWizard(
-      {
-        module: 'shell',
-        moduleArgs: 'echo "Hello World"',
-        verbosity: '0',
-        limit: 'all',
-        forks: 2,
-        showChanges: true,
-        becomeEnabled: true,
-        executionEnvironmentName,
-        credentialName,
-      },
-      page
-    );
+      await runAdHocCommandWizard(
+        {
+          module: 'shell',
+          moduleArgs: 'echo "Hello World"',
+          verbosity: '0',
+          limit: 'all',
+          forks: 2,
+          showChanges: true,
+          becomeEnabled: true,
+          executionEnvironmentName,
+          credentialName,
+        },
+        page
+      );
 
-    await Inventory.ui.delete(page, inventoryName);
-    await Credential.ui.delete(page, credentialName);
-    await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
-    await Organization.ui.delete(page, organizationName);
-  });
+      await Inventory.ui.delete(page, inventoryName);
+      await Credential.ui.delete(page, credentialName);
+      await ExecutionEnvironment.ui.delete(page, executionEnvironmentName);
+      await Organization.ui.delete(page, organizationName);
+    }
+  );
 });

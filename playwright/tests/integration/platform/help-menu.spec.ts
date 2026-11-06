@@ -12,7 +12,7 @@ test.afterEach(setupAfter);
 test.describe('Platform Header Toolbar - Help Menu', () => {
   test(
     'should conditionally display based on topology type',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@platform'] },
     async ({ page }) => {
       const awxConfigPromise = page.waitForResponse(
         (response) =>

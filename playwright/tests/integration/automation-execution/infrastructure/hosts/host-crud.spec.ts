@@ -13,7 +13,7 @@ import { PlatformOrganization as OrganizationType } from '@ansible/platform-ui/i
 test.beforeEach(setupBefore({ path: '/' }));
 test.afterEach(setupAfter);
 
-test.describe('Host CRUD Operations', () => {
+test.describe('Host CRUD Operations', { tag: ['@host', '@inventory', '@organization'] }, () => {
   let organization: OrganizationType;
   let inventory: InventoryType;
 

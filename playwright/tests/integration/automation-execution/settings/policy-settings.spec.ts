@@ -8,7 +8,7 @@ type PolicySettings = Record<string, string | number | boolean>;
 test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 test.setTimeout(2 * 60 * 1000);
-test.describe('Policy setting details', () => {
+test.describe('Policy setting details', { tag: ['@setting', '@policy'] }, () => {
   test('should display details', { tag: [] }, async ({ page }) => {
     await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');
 
@@ -33,7 +33,7 @@ test.describe('Policy setting details', () => {
   });
 });
 
-test.describe('Policy settings form', () => {
+test.describe('Policy settings form', { tag: ['@setting', '@policy'] }, () => {
   test('should render correct information', { tag: [] }, async ({ page }) => {
     const settingsRequest = interceptRequest(page, '*/**/settings/policyascode/');
     await navigateTo(page, 'Settings', 'Automation Execution', 'Policy');

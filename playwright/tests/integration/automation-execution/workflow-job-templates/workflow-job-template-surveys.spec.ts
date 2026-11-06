@@ -7,7 +7,7 @@ import { WorkflowJobTemplate as WorkflowJobTemplateType } from '@ansible/awx-ui/
 test.beforeEach(setupBefore({ path: '/execution/templates' }));
 test.afterEach(setupAfter);
 
-test.describe('Workflow Job Templates Surveys', () => {
+test.describe('Workflow Job Templates Surveys', { tag: ['@workflowjobtemplate'] }, () => {
   test.describe('WFJT Surveys: Create, Edit and Delete', () => {
     let workflowJobTemplate: WorkflowJobTemplateType;
 

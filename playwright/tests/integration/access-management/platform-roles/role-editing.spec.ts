@@ -9,7 +9,7 @@ import { Role, TEST_ROLE_CONFIGS } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/roles' }));
 test.afterEach(setupAfter);
 
-test.describe('Role Editing Tests', () => {
+test.describe('Role Editing Tests', { tag: ['@role'] }, () => {
   test.describe.configure({ timeout: 2 * 60 * 1000 });
 
   test.describe('Basic Role Editing', () => {
