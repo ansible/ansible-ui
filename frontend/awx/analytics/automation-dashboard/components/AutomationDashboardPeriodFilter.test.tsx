@@ -51,6 +51,23 @@ function renderStateful(initialFilterState: IFilterState) {
   return { getFilterState: () => latest };
 }
 
+/**
+ * Renders the filter with a controlled `period` (mocked setFilterState); `setPeriod` re-renders it
+ * with a new period array, like a saved report or URL change does.
+ */
+function renderControlled(period: string[]) {
+  const setFilterState = vi.fn();
+  const element = (values: string[]) => (
+    <AutomationDashboardPeriodFilter
+      filter={periodFilter}
+      filterState={{ period: values }}
+      setFilterState={setFilterState}
+    />
+  );
+  const { rerender } = render(element(period));
+  return { setFilterState, setPeriod: (values: string[]) => rerender(element(values)) };
+}
+
 /** Applies the last SetStateAction passed to a mocked setFilterState to `prev`. */
 function lastUpdate(setFilterState: ReturnType<typeof vi.fn>, prev: IFilterState): IFilterState {
   const action = setFilterState.mock.calls.at(-1)?.[0] as (prev: IFilterState) => IFilterState;
@@ -208,25 +225,68 @@ describe('AutomationDashboardPeriodFilter', () => {
     });
   });
 
-  it('keeps the end date with an empty start date when the start date is cleared', async () => {
+  it('keeps filterState and the end date when the start date is cleared', async () => {
     const user = userEvent.setup();
     const { getFilterState } = renderStateful({ period: ['custom', '2024-01-01', '2024-01-31'] });
 
     await user.clear(screen.getByLabelText('Start date'));
 
-    expect(getFilterState()).toEqual({ period: ['custom', '', '2024-01-31'] });
+    // Nothing is stored or requested until a new start date is given.
+    expect(getFilterState()).toEqual({ period: ['custom', '2024-01-01', '2024-01-31'] });
+    expect(screen.getByLabelText('Start date')).toHaveValue('');
     expect(screen.getByLabelText('End date')).toHaveValue('2024-01-31');
     expect(screen.getByLabelText('End date')).toBeDisabled();
     expect(screen.queryByRole('button', { name: 'Clear end date' })).not.toBeInTheDocument();
   });
 
-  it('drops the start date when it is cleared and there is no end date', async () => {
+  it('keeps filterState when the start date is cleared and there is no end date', async () => {
     const user = userEvent.setup();
     const { getFilterState } = renderStateful({ period: ['custom', '2024-01-01'] });
 
     await user.clear(screen.getByLabelText('Start date'));
 
-    expect(getFilterState()).toEqual({ period: ['custom'] });
+    expect(getFilterState()).toEqual({ period: ['custom', '2024-01-01'] });
+    expect(screen.getByLabelText('Start date')).toHaveValue('');
+  });
+
+  it('stores the start date only once it is complete', async () => {
+    const user = userEvent.setup();
+    const { getFilterState } = renderStateful({ period: ['custom', '2024-01-01', '2024-01-31'] });
+
+    await user.clear(screen.getByLabelText('Start date'));
+    await user.type(screen.getByLabelText('Start date'), '2024-01-1');
+    expect(getFilterState()).toEqual({ period: ['custom', '2024-01-01', '2024-01-31'] });
+    expect(screen.getByLabelText('End date')).toBeDisabled();
+
+    await user.type(screen.getByLabelText('Start date'), '5');
+    expect(getFilterState()).toEqual({ period: ['custom', '2024-01-15', '2024-01-31'] });
+    expect(screen.getByLabelText('End date')).toBeEnabled();
+  });
+
+  it('shows a range set externally while the start date is cleared (saved report loaded)', async () => {
+    const user = userEvent.setup();
+    const setFilterState = vi.fn();
+    const { rerender } = render(
+      <AutomationDashboardPeriodFilter
+        filter={periodFilter}
+        filterState={{ period: ['custom', '2024-01-01', '2024-01-31'] }}
+        setFilterState={setFilterState}
+      />
+    );
+    await user.clear(screen.getByLabelText('Start date'));
+    expect(screen.getByLabelText('Start date')).toHaveValue('');
+
+    rerender(
+      <AutomationDashboardPeriodFilter
+        filter={periodFilter}
+        filterState={{ period: ['custom', '2024-02-01', '2024-02-15'] }}
+        setFilterState={setFilterState}
+      />
+    );
+
+    expect(screen.getByLabelText('Start date')).toHaveValue('2024-02-01');
+    expect(screen.getByLabelText('End date')).toHaveValue('2024-02-15');
+    expect(setFilterState).not.toHaveBeenCalled();
   });
 
   it('clears only the end date with the clear button', async () => {
@@ -272,6 +332,80 @@ describe('AutomationDashboardPeriodFilter', () => {
       await user.click(screen.getByRole('option', { name: 'Custom' }));
 
       expect(getFilterState()).toEqual({ period: ['custom', '2024-01-01'] });
+    },
+    SLOW_SELECT_TIMEOUT
+  );
+
+  it(
+    'restores the last full custom range after the start date was cleared',
+    async () => {
+      const user = userEvent.setup();
+      const { getFilterState } = renderStateful({ period: ['custom', '2024-01-01', '2024-01-31'] });
+
+      await user.clear(screen.getByLabelText('Start date'));
+      expect(getFilterState()).toEqual({ period: ['custom', '2024-01-01', '2024-01-31'] });
+
+      await user.click(screen.getByRole('button', { name: 'Custom' }));
+      await user.click(screen.getByRole('option', { name: 'Last 7 days' }));
+      await user.click(screen.getByRole('button', { name: 'Last 7 days' }));
+      await user.click(screen.getByRole('option', { name: 'Custom' }));
+
+      expect(getFilterState()).toEqual({ period: ['custom', '2024-01-01', '2024-01-31'] });
+      expect(screen.getByLabelText('Start date')).toHaveValue('2024-01-01');
+      expect(screen.getByLabelText('End date')).toHaveValue('2024-01-31');
+    },
+    SLOW_SELECT_TIMEOUT
+  );
+
+  it('shows the start date again when the same range is set externally after clearing it', async () => {
+    const user = userEvent.setup();
+    const { setPeriod } = renderControlled(['custom', '2024-01-01', '2024-01-31']);
+    await user.clear(screen.getByLabelText('Start date'));
+
+    setPeriod(['custom', '2024-01-01', '2024-01-31']);
+
+    expect(screen.getByLabelText('Start date')).toHaveValue('2024-01-01');
+    expect(screen.getByLabelText('End date')).toBeEnabled();
+  });
+
+  it('reports whether the typed start date is incomplete', async () => {
+    const user = userEvent.setup();
+    const onStartDateIncompleteChange = vi.fn();
+    render(
+      <AutomationDashboardPeriodFilter
+        filter={periodFilter}
+        filterState={{ period: ['custom', '2024-01-01', '2024-01-31'] }}
+        setFilterState={vi.fn()}
+        onStartDateIncompleteChange={onStartDateIncompleteChange}
+      />
+    );
+
+    await user.clear(screen.getByLabelText('Start date'));
+    expect(onStartDateIncompleteChange).toHaveBeenLastCalledWith(true);
+
+    await user.click(screen.getByLabelText('Start date'));
+    await user.paste('2024-01-05');
+    expect(onStartDateIncompleteChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it(
+    'does not remember a range without a start date set externally (old URL or saved report)',
+    async () => {
+      const user = userEvent.setup();
+      const { setFilterState, setPeriod } = renderControlled([
+        'custom',
+        '2024-01-01',
+        '2024-01-31',
+      ]);
+      setPeriod(['custom', '', '2024-01-31']);
+      setPeriod(['last_7_days']);
+
+      await user.click(screen.getByRole('button', { name: 'Last 7 days' }));
+      await user.click(screen.getByRole('option', { name: 'Custom' }));
+
+      expect(lastUpdate(setFilterState, {})).toEqual({
+        period: ['custom', '2024-01-01', '2024-01-31'],
+      });
     },
     SLOW_SELECT_TIMEOUT
   );

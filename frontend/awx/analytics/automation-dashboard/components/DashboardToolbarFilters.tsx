@@ -22,6 +22,8 @@ export interface DashboardToolbarFiltersProps {
   periodFilter?: IToolbarDateRangeFilter;
   filterState: IFilterState;
   setFilterState: Dispatch<SetStateAction<IFilterState>>;
+  /** See `AutomationDashboardPeriodFilterProps.onStartDateIncompleteChange`. */
+  onStartDateIncompleteChange?: (isIncomplete: boolean) => void;
 }
 
 function isAsyncMultiSelectFilter(
@@ -36,7 +38,7 @@ function isAsyncMultiSelectFilter(
  * behind the filter toggle.
  */
 export function DashboardToolbarFilters(props: Readonly<DashboardToolbarFiltersProps>) {
-  const { periodFilter, filterState, setFilterState } = props;
+  const { periodFilter, filterState, setFilterState, onStartDateIncompleteChange } = props;
   const { t } = useTranslation();
   const filters = (props.toolbarFilters ?? []).filter(isAsyncMultiSelectFilter);
   const [firstFilter] = filters;
@@ -73,6 +75,7 @@ export function DashboardToolbarFilters(props: Readonly<DashboardToolbarFiltersP
           filter={periodFilter}
           filterState={filterState}
           setFilterState={setFilterState}
+          onStartDateIncompleteChange={onStartDateIncompleteChange}
         />
       )}
       {filters.map((filter) => (

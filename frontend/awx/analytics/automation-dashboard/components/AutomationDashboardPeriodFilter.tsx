@@ -1,8 +1,15 @@
 import { IFilterState, IToolbarDateRangeFilter } from '@ansible/ansible-ui-framework';
 import { PageSingleSelect } from '@ansible/ansible-ui-framework/PageInputs/PageSingleSelect';
-import { Button, DatePicker, Flex, ToolbarItem, isValidDate } from '@patternfly/react-core';
+import {
+  Button,
+  DatePicker,
+  Flex,
+  ToolbarItem,
+  isValidDate,
+  yyyyMMddFormat,
+} from '@patternfly/react-core';
 import { TimesCircleIcon } from '@patternfly/react-icons';
-import { Dispatch, SetStateAction, useCallback, useEffect, useId, useRef } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toCustomPeriodValues } from '../utils/filterStateUpdates';
 
@@ -15,11 +22,23 @@ function parseLocalDate(value: string): Date {
   return new Date(`${value}T00:00:00`);
 }
 
+/** True for a complete, real `YYYY-MM-DD` date (not a partially typed or empty value). */
+function isCompleteDate(value: string): boolean {
+  const date = parseLocalDate(value);
+  return isValidDate(date) && yyyyMMddFormat(date) === value;
+}
+
 export interface AutomationDashboardPeriodFilterProps {
   /** The period filter definition (presets, Custom option, default value). */
   filter: IToolbarDateRangeFilter;
   filterState: IFilterState;
   setFilterState: Dispatch<SetStateAction<IFilterState>>;
+  /**
+   * Called while the user edits the custom start date: `true` when the typed start date is empty
+   * or incomplete (filterState still holds the previous range), `false` once it is complete.
+   * The edit is discarded whenever `filterState[filter.key]` is replaced.
+   */
+  onStartDateIncompleteChange?: (isIncomplete: boolean) => void;
 }
 
 /**
@@ -30,7 +49,7 @@ export interface AutomationDashboardPeriodFilterProps {
 export function AutomationDashboardPeriodFilter(
   props: Readonly<AutomationDashboardPeriodFilterProps>
 ) {
-  const { filter, filterState, setFilterState } = props;
+  const { filter, filterState, setFilterState, onStartDateIncompleteChange } = props;
   const { key, options, isRequired, defaultValue } = filter;
   const labelId = useId();
 
@@ -55,9 +74,11 @@ export function AutomationDashboardPeriodFilter(
 
   // Remembers the last custom range so it can be restored when the user switches to a
   // preset and back to Custom. The displayed from/to stay derived from filterState.
+  // Only a range with a start date is remembered: a range without one (e.g. ['custom', '', to]
+  // from an old URL or saved report) must not overwrite the last usable range.
   const lastCustomRangeRef = useRef<{ from?: string; to?: string }>({});
   useEffect(() => {
-    if (selectedOption?.isCustom && (from || to)) {
+    if (selectedOption?.isCustom && from) {
       lastCustomRangeRef.current = { from, to };
     }
   }, [selectedOption, from, to]);
@@ -120,10 +141,12 @@ export function AutomationDashboardPeriodFilter(
         </Flex>
         {selectedOption?.isCustom && (
           <PeriodDateRange
+            periodValues={filterValues}
             customValue={selectedOption.value}
             from={from}
             to={to}
             setPeriod={setPeriod}
+            onStartDateIncompleteChange={onStartDateIncompleteChange}
           />
         )}
       </Flex>
@@ -133,22 +156,42 @@ export function AutomationDashboardPeriodFilter(
 
 function PeriodDateRange(
   props: Readonly<{
+    /** `filterState.period`; a new array (even with the same dates) discards the typed start. */
+    periodValues?: string[];
     /** The value of the Custom option (`filterState.period[0]`). */
     customValue: string;
     from?: string;
     to?: string;
     setPeriod: (values: string[]) => void;
+    onStartDateIncompleteChange?: (isIncomplete: boolean) => void;
   }>
 ) {
-  const { customValue, from, to, setPeriod } = props;
+  const { periodValues, customValue, from, to, setPeriod, onStartDateIncompleteChange } = props;
   const { t } = useTranslation();
 
-  // Clearing "from" keeps "to" (the "to" picker becomes read-only), see toCustomPeriodValues.
-  const setFrom = (value: string) => setPeriod(toCustomPeriodValues(customValue, value, to));
+  // The start date input keeps what the user typed. Only a complete start date reaches
+  // filterState, so an empty or partially typed start date sends no request and is not stored
+  // (URL, saved report) — filterState keeps the last usable range until a new start is given.
+  const [startInput, setStartInput] = useState(from ?? '');
+  // Follow a period set from outside (saved report loaded, range restored) — also when it has
+  // the same start date as before, so a cleared start date shows the loaded one again.
+  const [shownPeriod, setShownPeriod] = useState(periodValues);
+  if (periodValues !== shownPeriod) {
+    setShownPeriod(periodValues);
+    setStartInput(from ?? '');
+  }
+
+  const setFrom = (value: string) => {
+    setStartInput(value);
+    const isComplete = isCompleteDate(value);
+    onStartDateIncompleteChange?.(!isComplete);
+    if (isComplete) setPeriod(toCustomPeriodValues(customValue, value, to));
+  };
   const setTo = (value?: string) => setPeriod(toCustomPeriodValues(customValue, from, value));
 
-  const fromDate = from ? parseLocalDate(from) : undefined;
-  const isFromValid = !!fromDate && isValidDate(fromDate);
+  // The end date is editable only once the start date is complete (and therefore stored).
+  const isFromValid = isCompleteDate(startInput);
+  const fromDate = isFromValid ? parseLocalDate(startInput) : undefined;
 
   const toValidator = (date: Date) => {
     if (!fromDate) return '';
@@ -165,7 +208,7 @@ function PeriodDateRange(
       gap={{ default: 'gapSm' }}
     >
       <DatePicker
-        value={from}
+        value={startInput}
         onChange={(_event, value) => setFrom(value)}
         aria-label={t('Start date')}
         placeholder="YYYY-MM-DD"
@@ -190,7 +233,7 @@ function PeriodDateRange(
           invalidFormatText={t('Invalid date format')}
         />
         {/* Without a "from" the "to" picker is read-only, so its clear button is hidden too. */}
-        {from && to !== undefined && (
+        {isFromValid && to !== undefined && (
           <Button
             icon={<TimesCircleIcon />}
             variant="control"

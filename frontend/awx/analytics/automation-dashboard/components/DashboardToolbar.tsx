@@ -14,7 +14,7 @@ import {
   ToolbarItem,
   yyyyMMddFormat,
 } from '@patternfly/react-core';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAutomationDashboardToolbarActions } from '../common/useAutomationDashboardToolbarActions';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
@@ -137,9 +137,21 @@ export function DashboardToolbar(
     [removeFilterSet, setFilterState]
   );
 
+  // True while the custom start date input is empty or incomplete. filterState still holds the
+  // previous range then, so the report actions are disabled like for an invalid range. Reset
+  // whenever the period is replaced — the period filter discards the typed start date then too.
+  const period = periodFilter ? filterState?.[periodFilter.key] : undefined;
+  const [isStartDateIncomplete, setIsStartDateIncomplete] = useState(false);
+  const [trackedPeriod, setTrackedPeriod] = useState(period);
+  if (period !== trackedPeriod) {
+    setTrackedPeriod(period);
+    setIsStartDateIncomplete(false);
+  }
+
   const toolbarActions = useAutomationDashboardToolbarActions({
     filterState,
     toolbarFilters: validationFilters,
+    isStartDateIncomplete,
     selectedFilterSet,
     onDelete: onFilterSetDelete,
     onSave,
@@ -208,6 +220,7 @@ export function DashboardToolbar(
             periodFilter={periodFilter}
             filterState={filterState}
             setFilterState={setFilterState}
+            onStartDateIncompleteChange={setIsStartDateIncomplete}
           />
         )}
         <ToolbarGroup variant="action-group">
