@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, MockInstance, test, vi } from 'vitest';
 import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';

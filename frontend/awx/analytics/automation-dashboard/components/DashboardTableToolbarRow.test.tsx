@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';

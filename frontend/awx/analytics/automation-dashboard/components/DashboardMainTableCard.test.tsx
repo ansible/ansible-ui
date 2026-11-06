@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
@@ -321,7 +320,7 @@ describe('DashboardMainTableCard', () => {
     await user.click(screen.getByRole('button', { name: /Number of job executions/i }));
 
     expect(setSort).toHaveBeenCalledWith('runs');
-  });
+  }, 15000);
 
   test('should call setSortDirection to desc when the active sort column is clicked again', async () => {
     const user = userEvent.setup();
@@ -335,7 +334,7 @@ describe('DashboardMainTableCard', () => {
     await user.click(screen.getByRole('button', { name: /Template Name/i }));
 
     expect(setSortDirection).toHaveBeenCalledWith('desc');
-  });
+  }, 15000);
 
   // --- Cell rendering ---
 

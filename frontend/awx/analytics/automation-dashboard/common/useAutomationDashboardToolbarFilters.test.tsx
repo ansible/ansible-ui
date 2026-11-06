@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, renderHook, screen } from '@testing-library/react';
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import { useAutomationDashboardToolbarFilters } from './useAutomationDashboardToolbarFilters';
