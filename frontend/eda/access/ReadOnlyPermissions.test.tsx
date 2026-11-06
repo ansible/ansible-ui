@@ -176,7 +176,7 @@ describe('Read-Only Permissions - Action Buttons Disabled', () => {
     server.close();
   });
 
-  it('should disable delete action on Rulebook Activation when user has read-only permission', async () => {
+  it('should disable delete actions on Rulebook Activation when user has read-only permission', async () => {
     const user = userEvent.setup();
 
     server.use(
@@ -211,6 +211,9 @@ describe('Read-Only Permissions - Action Buttons Disabled', () => {
     // Verify delete action is disabled
     const deleteOption = screen.getByRole('menuitem', { name: /delete rulebook activation/i });
     expect(deleteOption).toHaveAttribute('aria-disabled', 'true');
+
+    const deleteLogsOption = screen.getByRole('menuitem', { name: /delete logs/i });
+    expect(deleteLogsOption).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('should disable edit and delete actions on Decision Environment when user has read-only permission', async () => {

@@ -2083,8 +2083,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     activationInstancesLogsList: (
       id: number,
       query?: {
+        /** Filter logs with ID greater than value. */
+        id__gt?: number;
+        /** Filter logs with ID less than value. */
+        id__lt?: number;
         /** Filter by activation instance log. */
         log?: string;
+        /** Filter logs with timestamp greater than value. */
+        log_timestamp__gt?: number;
+        /** Filter logs with timestamp less than value. */
+        log_timestamp__lt?: number;
+        /** Which field to use when ordering the results. */
+        ordering?: string;
         /** A page number within the paginated result set. */
         page?: number;
         /** Number of results to return per page. */
