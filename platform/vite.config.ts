@@ -1,16 +1,19 @@
 /// <reference types="vite-plugin-svgr/client" />
 /* eslint-disable no-restricted-exports */
 /* eslint-disable no-console */
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import selfsigned from 'selfsigned';
-import { type PluginOption, type UserConfig } from 'vite';
-import { defineConfig } from 'vitest/config';
+import { defineConfig, PluginOption, UserConfig } from 'vite';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
 import type { InlineConfig } from 'vitest/node';
 import { getVitestAliases } from '../framework/vitest.shared';
+
+const platformDir = path.dirname(fileURLToPath(import.meta.url));
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
@@ -25,7 +28,6 @@ const environment: Record<string, string> = {
   AWX_WEBSOCKET_PREFIX,
   EDA_API_PREFIX: '/api/eda/v1',
   HUB_API_PREFIX: '/api/galaxy',
-  METRICS_API_PREFIX: '/api/metrics/v1',
   DEV_SERVER_PROTOCOL,
 };
 console.log('Environment', environment);
@@ -44,12 +46,8 @@ const config: VitestUserConfig = {
     svgr(),
     monacoEditorPluginDefault({
       publicPath: '/',
-      languageWorkers: [],
-      customWorkers: [
-        { label: 'editorWorkerService', entry: 'monaco-editor/editor/editor.worker' },
-        { label: 'json', entry: 'monaco-editor/language/json/json.worker' },
-        { label: 'yaml', entry: 'monaco-yaml' },
-      ],
+      languageWorkers: ['json', 'editorWorkerService'],
+      customWorkers: [{ label: 'yaml', entry: 'monaco-yaml' }],
     }),
     viteStaticCopy({ targets: [{ src: '../locales', dest: '' }] }) as PluginOption,
     compression(),
@@ -119,7 +117,16 @@ const config: VitestUserConfig = {
         inline: ['@patternfly/react-styles'],
       },
     },
-    alias: getVitestAliases(),
+    alias: [
+      ...getVitestAliases(),
+      {
+        find: /^monaco-editor$/,
+        replacement: path.join(
+          platformDir,
+          '../node_modules/monaco-editor/esm/vs/editor/editor.api'
+        ),
+      },
+    ],
   },
 };
 
