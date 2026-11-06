@@ -86,12 +86,14 @@ const mockOnSave = vi.fn();
 function renderActions(
   filterState: IFilterState | undefined,
   selectedFilterSet: IDashboardFilterSet | undefined,
-  toolbarFilters?: IToolbarFilter[]
+  toolbarFilters?: IToolbarFilter[],
+  isStartDateIncomplete?: boolean
 ) {
   return renderHook(() =>
     useAutomationDashboardToolbarActions({
       filterState,
       toolbarFilters,
+      isStartDateIncomplete,
       selectedFilterSet,
       onDelete: mockOnDelete,
       onSave: mockOnSave,
@@ -253,6 +255,23 @@ describe('useAutomationDashboardToolbarActions', () => {
       )[0] as Dropdown;
       const subAction = getDropdownSubAction(action, 'Update report');
       expect(subAction?.isDisabled).toBeFalsy();
+    });
+
+    test('should disable "Create new report" and "Update report" while the start date is incomplete', () => {
+      const action = renderActions(
+        validCustomRangeFilterState,
+        filterSet,
+        requiredDateRangeToolbarFilters,
+        true
+      )[0] as Dropdown;
+
+      expect(getDropdownSubAction(action, 'Create new report').isDisabled).toBe(
+        'Enter a valid custom date range before saving'
+      );
+      expect(getDropdownSubAction(action, 'Update report').isDisabled).toBe(
+        'Enter a valid custom date range before updating'
+      );
+      expect(getDropdownSubAction(action, 'Delete report').isDisabled).toBeFalsy();
     });
 
     test('should disable "Delete report" with admin-only message when user is not a superuser', () => {

@@ -370,6 +370,59 @@ describe('DashboardToolbar', () => {
       const lastCall = vi.mocked(useAutomationDashboardToolbarActions).mock.calls.at(-1)?.[0];
       expect(lastCall?.toolbarFilters).toBe(props.toolbarFilters);
     });
+
+    test('should mark the start date incomplete for the actions while it is cleared', async () => {
+      const { useAutomationDashboardToolbarActions } = await import(
+        '../common/useAutomationDashboardToolbarActions'
+      );
+      const user = userEvent.setup();
+      render(
+        <Wrapper>
+          <DashboardToolbar
+            {...buildProps({ filterState: { period: ['custom', '2024-01-01', '2024-01-31'] } })}
+            periodFilter={periodFilter}
+          />
+        </Wrapper>
+      );
+      const lastCall = () => vi.mocked(useAutomationDashboardToolbarActions).mock.calls.at(-1)?.[0];
+      expect(lastCall()?.isStartDateIncomplete).toBe(false);
+
+      await user.clear(screen.getByLabelText('Start date'));
+      expect(lastCall()?.isStartDateIncomplete).toBe(true);
+
+      await user.click(screen.getByLabelText('Start date'));
+      await user.paste('2024-01-05');
+      expect(lastCall()?.isStartDateIncomplete).toBe(false);
+    });
+
+    test('should reset the incomplete start date when the period is replaced', async () => {
+      const { useAutomationDashboardToolbarActions } = await import(
+        '../common/useAutomationDashboardToolbarActions'
+      );
+      const user = userEvent.setup();
+      const props = buildProps({ filterState: { period: ['custom', '2024-01-01', '2024-01-31'] } });
+      const { rerender } = render(
+        <Wrapper>
+          <DashboardToolbar {...props} periodFilter={periodFilter} />
+        </Wrapper>
+      );
+      await user.clear(screen.getByLabelText('Start date'));
+
+      // A saved report with the same range loaded: a new period array with the same dates.
+      rerender(
+        <Wrapper>
+          <DashboardToolbar
+            {...props}
+            periodFilter={periodFilter}
+            filterState={{ period: ['custom', '2024-01-01', '2024-01-31'] }}
+          />
+        </Wrapper>
+      );
+
+      const lastCall = vi.mocked(useAutomationDashboardToolbarActions).mock.calls.at(-1)?.[0];
+      expect(lastCall?.isStartDateIncomplete).toBe(false);
+      expect(screen.getByLabelText('Start date')).toHaveValue('2024-01-01');
+    });
   });
 
   describe('custom period default start date', () => {
