@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["../**/*", "../../../types/*.d.ts"],
+  "exclude": [
+    "../**/coverage/**",
+    "../**/node_modules/**",
+    "../**/dist/**",
+    "../**/dist-insights/**",
+    "../**/build/**",
+    "../insights/**"
+  ]
+}
