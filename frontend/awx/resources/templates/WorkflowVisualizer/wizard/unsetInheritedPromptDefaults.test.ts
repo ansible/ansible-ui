@@ -32,6 +32,20 @@ describe('unsetInheritedPromptDefaults', () => {
     expect(effectivePrompt).toEqual({});
   });
 
+  it('should omit matching tag defaults when tag overrides are absent', () => {
+    const configWithTagDefaults = {
+      defaults: { job_tags: 'deploy', skip_tags: 'slow' },
+    } as LaunchConfiguration;
+    const effectivePrompt = {
+      job_tags: [{ name: 'deploy' }],
+      skip_tags: [{ name: 'slow' }],
+    };
+
+    unsetInheritedPromptDefaults(effectivePrompt, configWithTagDefaults, {});
+
+    expect(effectivePrompt).toEqual({});
+  });
+
   it('should keep prompt fields when the node has an explicit override', () => {
     const effectivePrompt = { timeout: 3000, forks: 5 };
 

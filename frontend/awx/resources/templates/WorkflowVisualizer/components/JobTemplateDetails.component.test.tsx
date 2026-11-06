@@ -124,10 +124,10 @@ const mockNodeData: GraphNodeData = {
   survey_data: undefined as never,
 };
 
-function renderComponent(nodeData = mockNodeData) {
+function renderComponent(nodeData = mockNodeData, template = mockTemplate) {
   return render(
     <MemoryRouter>
-      <JobTemplateDetails template={mockTemplate} node={nodeData} />
+      <JobTemplateDetails template={template} node={nodeData} />
     </MemoryRouter>
   );
 }
@@ -176,6 +176,74 @@ describe('JobTemplateDetails', () => {
 
   it('should render skip tags from node values', () => {
     renderComponent();
+    expect(screen.getByText('skip1')).toBeInTheDocument();
+  });
+
+  it('should not render template defaults for explicitly empty prompt tag arrays', () => {
+    const template = {
+      ...mockTemplate,
+      ask_tags_on_launch: true,
+      ask_skip_tags_on_launch: true,
+    };
+    const node: GraphNodeData = {
+      ...mockNodeData,
+      launch_data: { job_tags: [], skip_tags: [] },
+    };
+
+    renderComponent(node, template);
+
+    for (const tag of ['tag1', 'tag2', 'skip1']) {
+      expect(screen.queryByText(tag)).not.toBeInTheDocument();
+    }
+  });
+
+  it('should not render template defaults for explicitly empty node tag strings', () => {
+    const template = {
+      ...mockTemplate,
+      ask_tags_on_launch: true,
+      ask_skip_tags_on_launch: true,
+    };
+    const node: GraphNodeData = {
+      ...mockNodeData,
+      resource: { ...mockNodeData.resource, job_tags: '', skip_tags: '' } as never,
+    };
+
+    renderComponent(node, template);
+
+    for (const tag of ['tag1', 'tag2', 'skip1']) {
+      expect(screen.queryByText(tag)).not.toBeInTheDocument();
+    }
+  });
+
+  it.each([
+    { scenario: 'null', jobTags: null, skipTags: null },
+    { scenario: 'absent', jobTags: undefined, skipTags: undefined },
+  ])('should render template defaults for inherited $scenario tags', ({ jobTags, skipTags }) => {
+    const template = {
+      ...mockTemplate,
+      ask_tags_on_launch: true,
+      ask_skip_tags_on_launch: true,
+    };
+    const node: GraphNodeData = {
+      ...mockNodeData,
+      resource: { ...mockNodeData.resource, job_tags: jobTags, skip_tags: skipTags } as never,
+    };
+
+    renderComponent(node, template);
+
+    expect(screen.getByText('tag1')).toBeInTheDocument();
+    expect(screen.getByText('skip1')).toBeInTheDocument();
+  });
+
+  it('should render template defaults when prompting is disabled', () => {
+    const node: GraphNodeData = {
+      ...mockNodeData,
+      resource: { ...mockNodeData.resource, job_tags: '', skip_tags: '' } as never,
+    };
+
+    renderComponent(node);
+
+    expect(screen.getByText('tag1')).toBeInTheDocument();
     expect(screen.getByText('skip1')).toBeInTheDocument();
   });
 

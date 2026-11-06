@@ -23,7 +23,7 @@ describe('NodeTagDetail', () => {
     expect(screen.getByText('build')).toBeInTheDocument();
   });
 
-  it('should render template tags when nodeTags are empty', () => {
+  it('should render template tags when nodeTags are empty and the value is inherited', () => {
     render(
       <NodeTagDetail
         label="Skip tags"
@@ -34,6 +34,20 @@ describe('NodeTagDetail', () => {
 
     expect(screen.getByText('skip1')).toBeInTheDocument();
     expect(screen.getByText('skip2')).toBeInTheDocument();
+  });
+
+  it('should keep explicit empty node tags instead of showing template tags', () => {
+    render(
+      <NodeTagDetail
+        label="Skip tags"
+        nodeTags={[]}
+        templateTags={[{ name: 'skip1' }, { name: 'skip2' }]}
+        inheritTemplateTagsWhenEmpty={false}
+      />
+    );
+
+    expect(screen.queryByText('skip1')).not.toBeInTheDocument();
+    expect(screen.queryByText('skip2')).not.toBeInTheDocument();
   });
 
   it('should render nothing when both nodeTags and templateTags are empty', () => {
