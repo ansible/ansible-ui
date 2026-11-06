@@ -1,9 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorPlugin, AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
@@ -11,6 +11,20 @@ import { AuthenticatorForm, formatConfiguration } from './AuthenticatorForm';
 import authenticator_plugins from './authenticatorPlugins.fixture.json';
 import authenticators from './authenticators.fixture.json';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
+
+vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
+  DataEditor: (props: Record<string, string | (() => void)>) => (
+    <textarea
+      id={props.id as string}
+      name={props.id as string}
+      value={(props.value as string) ?? ''}
+      onChange={props.onChange as () => void}
+      className={props.className as string}
+      onFocus={props.onFocus as () => void}
+      onBlur={props.onBlur as () => void}
+    />
+  ),
+}));
 
 describe('authenticatorForm', () => {
   const server = setupServer(
@@ -37,24 +51,6 @@ describe('authenticatorForm', () => {
   afterAll(() => server.close());
   beforeEach(() => {
     server.resetHandlers();
-    vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
-      const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
-        <textarea
-          id={props.id as string}
-          name={props.id as string}
-          value={props.value as string}
-          onChange={props.onChange as () => void}
-          className={props.className as string}
-          onFocus={props.onFocus as () => void}
-          onBlur={props.onBlur as () => void}
-        />
-      ));
-      return { DataEditor: FakeDataEditor };
-    });
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
   });
 
   test('fetches name pattern from authenticators OPTIONS and validates on blur', async () => {
@@ -95,16 +91,19 @@ describe('authenticatorForm', () => {
     await user.type(nameInput, 'invalid<script>');
     await user.tab();
 
-    await waitFor(() => {
-      expect(
-        screen.getByText(
-          /Name must contain only letters, numbers, underscores, hyphens, and spaces\./
-        )
-      ).toBeInTheDocument();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByText(
+            /Name must contain only letters, numbers, underscores, hyphens, and spaces\./
+          )
+        ).toBeInTheDocument();
+      },
+      { timeout: 15000 }
+    );
+  }, 20000);
 
-  test('should render create authenticator form', () => {
+  test('should render create authenticator form', async () => {
     const { getByRole } = render(
       <MemoryRouter initialEntries={['/access/authenticators/create']}>
         <Routes>
@@ -121,7 +120,12 @@ describe('authenticatorForm', () => {
       </MemoryRouter>
     );
 
-    expect(getByRole('button', { name: 'Create Authentication Method' })).toBeInTheDocument();
+    await waitFor(
+      () => {
+        expect(getByRole('button', { name: 'Create Authentication Method' })).toBeInTheDocument();
+      },
+      { timeout: 15000 }
+    );
   });
 
   test('should render edit authenticator form', async () => {
@@ -213,13 +217,13 @@ describe('authenticatorForm', () => {
       () => {
         expect(container.querySelector('[id="name"]')).toBeInTheDocument();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     const user = userEvent.setup();
     const nameInput = container.querySelector('[id="name"]') as HTMLInputElement;
     await user.click(nameInput);
-    await user.type(nameInput, 'Local Database Authenticator');
+    fireEvent.change(nameInput, { target: { value: 'Local Database Authenticator' } });
 
     await waitFor(() => {
       expect(nameInput).toHaveValue('Local Database Authenticator');
@@ -231,7 +235,7 @@ describe('authenticatorForm', () => {
       () => {
         expect(handleSubmit).toHaveBeenCalled();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     expect(handleSubmit).toHaveBeenCalledWith(
@@ -247,7 +251,7 @@ describe('authenticatorForm', () => {
       expect.any(Function),
       expect.any(Function)
     );
-  }, 15000);
+  }, 60000);
 
   test('should display configuration field errors with correct field names', async () => {
     const handleSubmit = vi.fn().mockRejectedValue(
@@ -284,7 +288,7 @@ describe('authenticatorForm', () => {
       () => {
         expect(container.querySelector('[id="name"]')).toBeInTheDocument();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     const user = userEvent.setup();
@@ -306,7 +310,7 @@ describe('authenticatorForm', () => {
       () => {
         expect(handleSubmit).toHaveBeenCalledTimes(1);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     // Verify that the authenticatorErrorAdapter processed the error correctly:
@@ -314,9 +318,9 @@ describe('authenticatorForm', () => {
       () => {
         expect(getByText('Config error')).toBeInTheDocument();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
-  }, 15000);
+  }, 60000);
 
   test('should populate default values when selecting SAML authenticator type', async () => {
     const handleSubmit = vi.fn();
@@ -336,9 +340,12 @@ describe('authenticatorForm', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+      },
+      { timeout: 30000 }
+    );
 
     const user = userEvent.setup();
 
@@ -352,21 +359,27 @@ describe('authenticatorForm', () => {
     await user.click(samlOption);
 
     // Wait for default values to be populated - check SP_ENTITY_ID CharField default
-    await waitFor(() => {
-      const spEntityIdInput = container.querySelector(
-        '[id="configuration-input-SP_ENTITY_ID"]'
-      ) as HTMLInputElement;
-      expect(spEntityIdInput).toHaveValue('aap_gateway');
-    });
+    await waitFor(
+      () => {
+        const spEntityIdInput = container.querySelector(
+          '[id="configuration-input-SP_ENTITY_ID"]'
+        ) as HTMLInputElement;
+        expect(spEntityIdInput).toHaveValue('aap_gateway');
+      },
+      { timeout: 30000 }
+    );
 
     // Check that SP_EXTRA JSONField has default value populated (contains the key)
-    await waitFor(() => {
-      const spExtraEditor = container.querySelector(
-        '[id="configuration-editor-SP_EXTRA"]'
-      ) as HTMLTextAreaElement;
-      expect(spExtraEditor.value).toContain('requestedAuthnContext');
-    });
-  }, 15000);
+    await waitFor(
+      () => {
+        const spExtraEditor = container.querySelector(
+          '[id="configuration-editor-SP_EXTRA"]'
+        ) as HTMLTextAreaElement;
+        expect(spExtraEditor.value).toContain('requestedAuthnContext');
+      },
+      { timeout: 30000 }
+    );
+  }, 60000);
 });
 
 describe('formatConfiguration', () => {

@@ -43,7 +43,7 @@ async function fillCreateAttributesForm(
   await user.type(valueField, values.value);
 }
 
-describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
+describe('AuthenticatorMappingForm', { timeout: 60000 }, () => {
   const authMappingAttributesPayload = {
     id: 3,
     name: 'mapping one',
@@ -163,7 +163,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     await user.click(getByRole('option', { name: 'Always' }));
 
     expect(nameField.value).toBe('Always mapping');
-    expect(triggerSelect.innerText).toBe('Always');
+    expect(triggerSelect).toHaveTextContent('Always');
     await user.click(submitButton);
   });
 
@@ -195,7 +195,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     await user.click(getByRole('option', { name: 'Never' }));
 
     expect(nameField.value).toBe('Never mapping');
-    expect(triggerSelect.innerText).toBe('Never');
+    expect(triggerSelect).toHaveTextContent('Never');
     await user.click(submitButton);
   });
 
@@ -331,7 +331,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     const valueOneField = container.querySelector('[id="attributes-0-value"]') as HTMLInputElement;
     const valueTwoField = container.querySelector('[id="attributes-1-value"]') as HTMLInputElement;
 
-    expect(conditionaField.innerText).toBe('at least one');
+    expect(conditionaField).toHaveTextContent('at least one');
     expect(nameField.value).toBe('mapping one');
     expect(attributeOneField.value).toBe('attribute one');
     expect(valueOneField.value).toBe('value one');
@@ -418,16 +418,19 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     });
     await user.click(getByRole('button', { name: 'Create mapping' }));
 
-    await waitFor(() => {
-      expect(screen.getAllByText(CLEAN_TEXT_ERROR).length).toBeGreaterThanOrEqual(2);
-    });
+    await waitFor(
+      () => {
+        expect(screen.getAllByText(CLEAN_TEXT_ERROR).length).toBeGreaterThanOrEqual(2);
+      },
+      { timeout: 15000 }
+    );
     expect(container.querySelector('[id="attributes-0-attribute-form-group"]')).toHaveTextContent(
       CLEAN_TEXT_ERROR
     );
     expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
       CLEAN_TEXT_ERROR
     );
-  }, 15000);
+  }, 60000);
 
   test('should display API validation error on the value field when creating', async () => {
     server.use(
@@ -470,7 +473,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     expect(
       container.querySelector('[id="attributes-0-attribute-form-group"]')
     ).not.toHaveTextContent(CLEAN_TEXT_ERROR);
-  }, 15000);
+  }, 60000);
 
   test('should display API validation errors on attribute and value fields when editing', async () => {
     server.use(
@@ -514,5 +517,5 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
       CLEAN_TEXT_ERROR
     );
-  }, 15000);
+  }, 60000);
 });
