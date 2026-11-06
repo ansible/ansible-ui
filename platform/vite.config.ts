@@ -1,6 +1,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 /* eslint-disable no-restricted-exports */
 /* eslint-disable no-console */
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
@@ -14,6 +15,40 @@ import type { InlineConfig } from 'vitest/node';
 import { getVitestAliases } from '../framework/vitest.shared';
 
 const platformDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRootDir = path.resolve(platformDir, '..');
+const rootMonacoEditorDir = path.join(repoRootDir, 'node_modules', 'monaco-editor');
+const localMonacoEditorDir = path.join(platformDir, 'node_modules', 'monaco-editor');
+
+/**
+ * `vite-plugin-monaco-editor` resolves workers with
+ * `require.resolve(join(process.cwd(), 'node_modules', 'monaco-editor/esm/vs/...'))`.
+ * The platform app runs with cwd `platform/` while dependencies are hoisted to the repo root, so
+ * create a symlink `platform/node_modules/monaco-editor` → `../../node_modules/monaco-editor`.
+ */
+function ensureMonacoEditorSymlink(): PluginOption {
+  return {
+    name: 'ensure-monaco-editor-symlink',
+    enforce: 'pre',
+    config() {
+      if (!fs.existsSync(rootMonacoEditorDir)) {
+        return;
+      }
+      fs.mkdirSync(path.dirname(localMonacoEditorDir), { recursive: true });
+      try {
+        const stat = fs.lstatSync(localMonacoEditorDir);
+        if (stat.isSymbolicLink()) {
+          fs.unlinkSync(localMonacoEditorDir);
+        } else if (stat.isDirectory()) {
+          return;
+        }
+      } catch {
+        // does not exist yet
+      }
+      const relativeTarget = path.relative(path.dirname(localMonacoEditorDir), rootMonacoEditorDir);
+      fs.symlinkSync(relativeTarget, localMonacoEditorDir);
+    },
+  };
+}
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
@@ -42,6 +77,7 @@ interface VitestUserConfig extends UserConfig {
 // https://vitejs.dev/config/
 const config: VitestUserConfig = {
   plugins: [
+    ensureMonacoEditorSymlink(),
     react(),
     svgr(),
     monacoEditorPluginDefault({
@@ -117,16 +153,7 @@ const config: VitestUserConfig = {
         inline: ['@patternfly/react-styles'],
       },
     },
-    alias: [
-      ...getVitestAliases(),
-      {
-        find: /^monaco-editor$/,
-        replacement: path.join(
-          platformDir,
-          '../node_modules/monaco-editor/esm/vs/editor/editor.api'
-        ),
-      },
-    ],
+    alias: getVitestAliases(),
   },
 };
 
