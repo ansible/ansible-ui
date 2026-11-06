@@ -56,19 +56,29 @@ function getEditDisabledReason(
 export function useAutomationDashboardToolbarActions(props: {
   filterState?: IFilterState;
   toolbarFilters?: IToolbarFilter[];
+  /** The custom start date is being edited and is not complete yet (not in filterState). */
+  isStartDateIncomplete?: boolean;
   selectedFilterSet?: IDashboardFilterSet;
   onDelete: (deletedFilterSet: IDashboardFilterSet) => void;
   onSave: (filterSet: IDashboardFilterSet) => void;
 }) {
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
-  const { filterState, toolbarFilters, selectedFilterSet, onDelete, onSave } = props;
+  const {
+    filterState,
+    toolbarFilters,
+    isStartDateIncomplete,
+    selectedFilterSet,
+    onDelete,
+    onSave,
+  } = props;
   const createToolbarFilterSet = useCreateToolbarFilterSet(onSave);
   const updateToolbarFilterSet = useUpdateToolbarFilterSet(onSave);
   const removeToolbarFilterSet = useRemoveToolbarFilterSet((deleted) => {
     if (deleted.length > 0) onDelete(deleted[0]);
   });
-  const validFilters = hasValidRequiredFilters(toolbarFilters, filterState);
+  const validFilters =
+    !isStartDateIncomplete && hasValidRequiredFilters(toolbarFilters, filterState);
 
   const superuserDisabledReason = activeAwxUser?.is_superuser
     ? undefined
