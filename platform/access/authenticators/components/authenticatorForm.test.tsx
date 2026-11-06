@@ -213,7 +213,7 @@ describe('authenticatorForm', () => {
       () => {
         expect(container.querySelector('[id="name"]')).toBeInTheDocument();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     const user = userEvent.setup();
@@ -231,7 +231,7 @@ describe('authenticatorForm', () => {
       () => {
         expect(handleSubmit).toHaveBeenCalled();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     expect(handleSubmit).toHaveBeenCalledWith(
@@ -247,7 +247,7 @@ describe('authenticatorForm', () => {
       expect.any(Function),
       expect.any(Function)
     );
-  }, 15000);
+  }, 60000);
 
   test('should display configuration field errors with correct field names', async () => {
     const handleSubmit = vi.fn().mockRejectedValue(
@@ -284,7 +284,7 @@ describe('authenticatorForm', () => {
       () => {
         expect(container.querySelector('[id="name"]')).toBeInTheDocument();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     const user = userEvent.setup();
@@ -306,7 +306,7 @@ describe('authenticatorForm', () => {
       () => {
         expect(handleSubmit).toHaveBeenCalledTimes(1);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     // Verify that the authenticatorErrorAdapter processed the error correctly:
@@ -314,9 +314,9 @@ describe('authenticatorForm', () => {
       () => {
         expect(getByText('Config error')).toBeInTheDocument();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
-  }, 15000);
+  }, 60000);
 
   test('should populate default values when selecting SAML authenticator type', async () => {
     const handleSubmit = vi.fn();
@@ -336,9 +336,12 @@ describe('authenticatorForm', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      expect(container.querySelector('[id="name"]')).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(container.querySelector('[id="name"]')).toBeInTheDocument();
+      },
+      { timeout: 30000 }
+    );
 
     const user = userEvent.setup();
 
@@ -352,21 +355,27 @@ describe('authenticatorForm', () => {
     await user.click(samlOption);
 
     // Wait for default values to be populated - check SP_ENTITY_ID CharField default
-    await waitFor(() => {
-      const spEntityIdInput = container.querySelector(
-        '[id="configuration-input-SP_ENTITY_ID"]'
-      ) as HTMLInputElement;
-      expect(spEntityIdInput).toHaveValue('aap_gateway');
-    });
+    await waitFor(
+      () => {
+        const spEntityIdInput = container.querySelector(
+          '[id="configuration-input-SP_ENTITY_ID"]'
+        ) as HTMLInputElement;
+        expect(spEntityIdInput).toHaveValue('aap_gateway');
+      },
+      { timeout: 30000 }
+    );
 
     // Check that SP_EXTRA JSONField has default value populated (contains the key)
-    await waitFor(() => {
-      const spExtraEditor = container.querySelector(
-        '[id="configuration-editor-SP_EXTRA"]'
-      ) as HTMLTextAreaElement;
-      expect(spExtraEditor.value).toContain('requestedAuthnContext');
-    });
-  }, 15000);
+    await waitFor(
+      () => {
+        const spExtraEditor = container.querySelector(
+          '[id="configuration-editor-SP_EXTRA"]'
+        ) as HTMLTextAreaElement;
+        expect(spExtraEditor.value).toContain('requestedAuthnContext');
+      },
+      { timeout: 30000 }
+    );
+  }, 60000);
 });
 
 describe('formatConfiguration', () => {

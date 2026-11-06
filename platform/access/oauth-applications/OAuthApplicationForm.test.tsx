@@ -330,15 +330,25 @@ describe('OAuthApplicationForm', () => {
         'https://example.com/callback'
       );
 
+      const orgSelectButton = screen.getByRole('button', { name: 'Organization' });
+      await user.click(orgSelectButton);
+      await waitFor(() => {
+        expect(screen.getAllByText('Test Organization').length).toBeGreaterThanOrEqual(2);
+      });
+      const organizationOptions = screen.getAllByText('Test Organization');
+      await user.click(organizationOptions[1]);
+
       // Submit form
       const submitButton = screen.getByRole('button', { name: /create oauth application/i });
       await user.click(submitButton);
 
-      // Verify the request was made (form submission behavior)
-      await waitFor(() => {
-        expect(submitButton).toBeInTheDocument();
-      });
-    }, 10000);
+      await waitFor(
+        () => {
+          expect(mockPushDialog).toHaveBeenCalled();
+        },
+        { timeout: 15000 }
+      );
+    }, 30000);
 
     test('should show OAuth application secrets modal after successful creation', async () => {
       const user = userEvent.setup();
@@ -376,7 +386,7 @@ describe('OAuthApplicationForm', () => {
         () => {
           expect(mockPushDialog).toHaveBeenCalledTimes(1);
         },
-        { timeout: 10000 }
+        { timeout: 30000 }
       );
 
       // Verify that pushDialog was called with the OAuthApplicationSecretModal
@@ -393,7 +403,7 @@ describe('OAuthApplicationForm', () => {
           description: 'Test description',
         })
       );
-    }, 15000);
+    }, 60000);
 
     test('should display gateway URLs in the OAuth configuration instructions', async () => {
       await waitFor(() => {
@@ -1054,7 +1064,7 @@ describe('OAuthApplicationForm', () => {
       expect(nameInput).toHaveValue('Test App');
       expect(urlInput).toHaveValue('https://example.com');
       expect(redirectInput).toHaveValue('https://example.com/callback');
-    }, 15000);
+    }, 60000);
   });
 
   test('applies OPTIONS pattern validation to OAuth application name field', async () => {

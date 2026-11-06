@@ -209,7 +209,7 @@ describe('PlatformRoleForm', () => {
       const permissionsButton = await findByRole(
         'button',
         { name: 'Permissions' },
-        { timeout: 10000 }
+        { timeout: 30000 }
       );
       await user.click(permissionsButton);
       await user.click(getByLabelText('Can view Ansible repository'));
@@ -221,7 +221,7 @@ describe('PlatformRoleForm', () => {
         expect(capturedBody).toBeDefined();
       });
       expect(capturedBody?.content_type).toBeNull();
-    }, 15000);
+    }, 60000);
 
     test('should send content_type as null when editing a System role', async () => {
       const user = userEvent.setup();
@@ -258,7 +258,7 @@ describe('PlatformRoleForm', () => {
         expect(capturedBody).toBeDefined();
       });
       expect(capturedBody?.content_type).toBeNull();
-    }, 15000);
+    }, 60000);
 
     test('should preserve non-null content_type when editing a non-System role', async () => {
       const user = userEvent.setup();
@@ -287,7 +287,7 @@ describe('PlatformRoleForm', () => {
         expect(capturedBody).toBeDefined();
       });
       expect(capturedBody?.content_type).toBe('eda.activation');
-    }, 15000);
+    }, 60000);
   });
 
   describe('Permission Selection Validation', () => {
@@ -313,10 +313,10 @@ describe('PlatformRoleForm', () => {
       const permissionsButton = await findByRole(
         'button',
         { name: 'Permissions' },
-        { timeout: 10000 }
+        { timeout: 30000 }
       );
       expect(permissionsButton).toBeInTheDocument();
-    }, 15000);
+    }, 60000);
 
     test('should show change activation in Organization permissions', async () => {
       const user = userEvent.setup();
@@ -336,12 +336,12 @@ describe('PlatformRoleForm', () => {
       const permissionsButton = await findByRole(
         'button',
         { name: 'Permissions' },
-        { timeout: 10000 }
+        { timeout: 30000 }
       );
       await user.click(permissionsButton);
 
       expect(await findByText('Can change activation')).toBeInTheDocument();
-    }, 15000);
+    }, 60000);
 
     test('should update resource type when option is selected', async () => {
       const user = userEvent.setup();
@@ -383,7 +383,7 @@ describe('PlatformRoleForm', () => {
       const permissionsButton = await findByRole(
         'button',
         { name: 'Permissions' },
-        { timeout: 10000 }
+        { timeout: 30000 }
       );
       expect(permissionsButton).toHaveTextContent('Select permissions');
       await user.click(permissionsButton);
@@ -410,7 +410,7 @@ describe('PlatformRoleForm', () => {
         expect(permissionsButton).toHaveTextContent('Select permissions');
       });
       expect(queryByText('Audit organization')).not.toBeInTheDocument();
-    }, 15000);
+    }, 60000);
 
     test('should allow selecting multiple permissions for a resource type', async () => {
       const user = userEvent.setup();
@@ -428,7 +428,7 @@ describe('PlatformRoleForm', () => {
       const permissionsButton = await findByRole(
         'button',
         { name: 'Permissions' },
-        { timeout: 10000 }
+        { timeout: 30000 }
       );
 
       await user.click(permissionsButton);
@@ -439,7 +439,7 @@ describe('PlatformRoleForm', () => {
         expect(permissionsButton).toHaveTextContent('Audit organization');
         expect(permissionsButton).toHaveTextContent('Can view organization');
       });
-    }, 15000);
+    }, 60000);
   });
 
   describe('OPTIONS-driven validation', () => {

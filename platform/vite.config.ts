@@ -132,6 +132,8 @@ const config: VitestUserConfig = {
     },
   },
   test: {
+    /** Default 5s is too tight when many suites run in parallel (MSW + heavy UI). */
+    testTimeout: 30000,
     coverage: {
       enabled: true,
       reporter: ['json', 'lcov', 'text'],

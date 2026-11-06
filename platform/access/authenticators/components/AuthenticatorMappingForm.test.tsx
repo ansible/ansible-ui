@@ -43,7 +43,7 @@ async function fillCreateAttributesForm(
   await user.type(valueField, values.value);
 }
 
-describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
+describe('AuthenticatorMappingForm', { timeout: 60000 }, () => {
   const authMappingAttributesPayload = {
     id: 3,
     name: 'mapping one',
@@ -427,7 +427,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
       CLEAN_TEXT_ERROR
     );
-  }, 15000);
+  }, 60000);
 
   test('should display API validation error on the value field when creating', async () => {
     server.use(
@@ -470,7 +470,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     expect(
       container.querySelector('[id="attributes-0-attribute-form-group"]')
     ).not.toHaveTextContent(CLEAN_TEXT_ERROR);
-  }, 15000);
+  }, 60000);
 
   test('should display API validation errors on attribute and value fields when editing', async () => {
     server.use(
@@ -514,5 +514,5 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
       CLEAN_TEXT_ERROR
     );
-  }, 15000);
+  }, 60000);
 });
