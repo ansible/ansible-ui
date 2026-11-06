@@ -98,6 +98,16 @@ describe('DashboardValueCard', () => {
     expect(screen.getByText('12,345', { exact: false })).toBeInTheDocument();
   });
 
+  test('should render value with test ID based on card id', () => {
+    render(
+      <MemoryRouter>
+        <DashboardValueCard {...defaultProps} />
+      </MemoryRouter>
+    );
+    expect(screen.getByTestId('test-card-value')).toBeInTheDocument();
+    expect(screen.getByTestId('test-card-value')).toHaveTextContent('12,345 EUR');
+  });
+
   describe('font size', () => {
     test('should render title at xl size', () => {
       render(

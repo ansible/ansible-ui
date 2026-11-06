@@ -18,10 +18,11 @@ type DashboardCardValueDisplayProps = Readonly<{
   valueSuffix?: string;
   formatAsCurrency?: boolean;
   fontSize: string;
+  testId?: string;
 }>;
 
 export function DashboardCardValueDisplay(props: DashboardCardValueDisplayProps) {
-  const { value, valueSuffix, formatAsCurrency, fontSize } = props;
+  const { value, valueSuffix, formatAsCurrency, fontSize, testId } = props;
 
   let displayValue: string | number = value;
   if (typeof value === 'number') {
@@ -31,7 +32,11 @@ export function DashboardCardValueDisplay(props: DashboardCardValueDisplayProps)
   }
 
   return (
-    <span style={{ fontSize, fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}>
+    <span
+      style={{ fontSize, fontWeight: '400', lineHeight: 1, marginTop: 'auto' }}
+      data-testid={testId}
+      data-cy={testId}
+    >
       {displayValue}
       {valueSuffix ? ` ${valueSuffix}` : ''}
     </span>
