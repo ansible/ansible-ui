@@ -1,12 +1,39 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import type { ITableColumn } from '@ansible/ansible-ui-framework';
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { PlatformOrganization } from '../../../interfaces/PlatformOrganization';
+import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { useDeleteOrganizations } from './useDeleteOrganizations';
 
-const mockBulkConfirmation = vi.fn();
+interface DeleteOrganizationsBulkOptions {
+  title: string;
+  confirmText: string;
+  actionButtonText: string;
+  items: PlatformOrganization[];
+  alertPrompts: string[];
+  isItemNonActionable: (organization: PlatformOrganization) => string | undefined;
+  keyFn: (item: PlatformOrganization) => string | number;
+  isDanger: boolean;
+  confirmationColumns: ITableColumn<PlatformOrganization>[];
+  actionColumns: ITableColumn<PlatformOrganization>[];
+  onComplete: (organizations: PlatformOrganization[]) => void;
+  actionFn: (organization: PlatformOrganization, signal: AbortSignal) => Promise<unknown>;
+}
+
+const { mockBulkConfirmation, mockRequestDelete } = vi.hoisted(() => ({
+  mockBulkConfirmation: vi.fn<(opts: DeleteOrganizationsBulkOptions) => void>(),
+  mockRequestDelete: vi.fn(
+    (_url: string, _signal: AbortSignal): Promise<undefined> => Promise.resolve(undefined)
+  ),
+}));
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, opts?: { count?: number }) =>
+      opts?.count !== undefined ? `${key}:${opts.count}` : key,
+  }),
+}));
 
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
@@ -16,122 +43,136 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
   };
 });
 
+vi.mock('@ansible/common-ui/crud/Data', async () => {
+  const actual = await vi.importActual<typeof import('@ansible/common-ui/crud/Data')>(
+    '@ansible/common-ui/crud/Data'
+  );
+  return {
+    ...actual,
+    requestDelete: mockRequestDelete,
+  };
+});
+
+vi.mock('./useOrganizationColumns', () => ({
+  useOrganizationColumns: (): ITableColumn<PlatformOrganization>[] => [
+    { header: 'Col', cell: () => null },
+  ],
+}));
+
+vi.mock('@ansible/common-ui/columns', async () => {
+  const actual = await vi.importActual<typeof import('@ansible/common-ui/columns')>(
+    '@ansible/common-ui/columns'
+  );
+  return {
+    ...actual,
+    useNameColumn: (): ITableColumn<PlatformOrganization> => ({ header: 'Name', cell: () => null }),
+  };
+});
+
+function buildOrg(id: number, name: string, managed = false): PlatformOrganization {
+  return {
+    id,
+    name,
+    description: '',
+    url: `/api/gateway/v1/organizations/${id}/`,
+    created: '',
+    created_by: 1,
+    modified: '',
+    modified_by: 1,
+    managed,
+    related: { created_by: '', modified_by: '', teams: '' },
+    summary_fields: {
+      created_by: { id: 1, username: 'a', first_name: '', last_name: '' },
+      modified_by: { id: 1, username: 'a', first_name: '', last_name: '' },
+    },
+  };
+}
+
+function getLastBulkCall(): DeleteOrganizationsBulkOptions {
+  expect(mockBulkConfirmation).toHaveBeenCalled();
+  const last = mockBulkConfirmation.mock.calls[mockBulkConfirmation.mock.calls.length - 1];
+  expect(last[0]).toBeDefined();
+  return last[0];
+}
+
 describe('useDeleteOrganizations', () => {
+  const onComplete = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
-  it('should return a function', () => {
-    const onComplete = vi.fn();
+
+  test('invokes bulk confirmation with sorted items and delete wiring', () => {
     const { result } = renderHook(() => useDeleteOrganizations(onComplete), {
       wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
     });
 
-    expect(typeof result.current).toBe('function');
-  });
+    const apple = buildOrg(1, 'Apple Org');
+    const zebra = buildOrg(2, 'Zebra Org');
+    const orgs = [zebra, apple];
+    result.current(orgs);
 
-  it('should call bulk confirmation when invoked', () => {
-    const onComplete = vi.fn();
-    const { result } = renderHook(() => useDeleteOrganizations(onComplete), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
+    expect(mockBulkConfirmation).toHaveBeenCalledTimes(1);
+    const opts = getLastBulkCall();
 
-    const mockOrganizations = [
-      {
-        id: 1,
-        name: 'Test Org 1',
-      },
-      {
-        id: 2,
-        name: 'Test Org 2',
-      },
-    ];
+    expect(opts.items.map((o) => o.name)).toEqual(['Apple Org', 'Zebra Org']);
+    expect(opts.isDanger).toBe(true);
+    expect(opts.onComplete).toBe(onComplete);
+    expect(opts.keyFn).toBeDefined();
+    expect(opts.confirmationColumns[0]).toMatchObject({ header: 'Col' });
+    expect(opts.actionColumns[0]).toMatchObject({ header: 'Name' });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    result.current(mockOrganizations as any);
+    expect(opts.title).toBe('Permanently delete organizations:2');
+    expect(opts.actionButtonText).toBe('Delete organizations:2');
+    expect(opts.confirmText).toBe(
+      'Yes, I confirm that I want to delete these {{count}} organizations.:2'
+    );
 
-    expect(mockBulkConfirmation).toHaveBeenCalled();
-  });
+    expect(opts.alertPrompts).toHaveLength(1);
+    expect(opts.alertPrompts[0]).toBe(
+      'Deleting these organizations could impact other resources that rely on them.:2'
+    );
 
-  it('should configure bulk confirmation with correct properties', () => {
-    const onComplete = vi.fn();
-    const { result } = renderHook(() => useDeleteOrganizations(onComplete), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
-
-    const mockOrganizations = [
-      {
-        id: 1,
-        name: 'Test Org 1',
-      },
-    ];
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    result.current(mockOrganizations as any);
-
-    expect(mockBulkConfirmation).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: expect.any(String),
-        confirmText: expect.any(String),
-        actionButtonText: expect.any(String),
-        isDanger: true,
-        onComplete: onComplete,
-      })
+    const signal = new AbortController().signal;
+    void opts.actionFn(apple, signal);
+    expect(mockRequestDelete).toHaveBeenCalledWith(
+      gatewayAPI`/organizations/${apple.id.toString()}/`,
+      signal
     );
   });
 
-  it('should pass organizations to bulk confirmation', () => {
-    const onComplete = vi.fn();
+  test('isItemNonActionable marks managed organizations as non-actionable', () => {
     const { result } = renderHook(() => useDeleteOrganizations(onComplete), {
       wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
     });
 
-    const mockOrganizations = [
-      {
-        id: 1,
-        name: 'Test Org A',
-      },
-      {
-        id: 2,
-        name: 'Test Org B',
-      },
-    ];
+    const org = buildOrg(5, 'Only Org', true);
+    result.current([org]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    result.current(mockOrganizations as any);
-
-    expect(mockBulkConfirmation).toHaveBeenCalledWith(
-      expect.objectContaining({
-        items: expect.arrayContaining([
-          expect.objectContaining({ name: 'Test Org A' }),
-          expect.objectContaining({ name: 'Test Org B' }),
-        ]),
-      })
+    const opts = getLastBulkCall();
+    expect(typeof opts.isItemNonActionable).toBe('function');
+    expect(opts.isItemNonActionable(org)).toBe(
+      'The organization cannot be deleted due to insufficient permissions.'
     );
   });
 
-  it('should sort organizations by name', () => {
-    mockBulkConfirmation.mockClear();
-    const onComplete = vi.fn();
+  test('adds second alert and counts only deletable orgs in confirm text', () => {
     const { result } = renderHook(() => useDeleteOrganizations(onComplete), {
       wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
     });
 
-    const mockOrganizations = [
-      {
-        id: 2,
-        name: 'Zebra Org',
-      },
-      {
-        id: 1,
-        name: 'Apple Org',
-      },
-    ];
+    const deletable = buildOrg(1, 'Deletable', false);
+    const locked = buildOrg(2, 'Managed Org', true);
+    result.current([deletable, locked]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    result.current(mockOrganizations as any);
+    const opts = getLastBulkCall();
 
-    const callArgs = mockBulkConfirmation.mock.calls[0][0];
-    expect(callArgs.items[0].name).toBe('Apple Org');
-    expect(callArgs.items[1].name).toBe('Zebra Org');
+    expect(opts.alertPrompts).toHaveLength(2);
+    expect(opts.alertPrompts[1]).toBe(
+      '{{count}} of the selected organizations cannot be deleted due to insufficient permissions.:1'
+    );
+    expect(opts.confirmText).toBe(
+      'Yes, I confirm that I want to delete these {{count}} organizations.:1'
+    );
   });
 });

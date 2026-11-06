@@ -48,7 +48,7 @@ export function PlatformUserPage() {
           { label: user?.username },
         ]}
         headerActions={
-          <PageActions<PlatformUser> actions={actions} position={'right'} selectedItem={user} />
+          <PageActions<PlatformUser> actions={actions} position="right" selectedItem={user} />
         }
       />
       <PageRoutedTabs

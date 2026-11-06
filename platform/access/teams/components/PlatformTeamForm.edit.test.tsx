@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -44,6 +45,15 @@ vi.mock('@ansible/common-ui/crud/useGet', async () => {
   return {
     ...actual,
     useGet: (url: string | undefined) => mockUseGet(url),
+  };
+});
+
+const mockNavigateEdit = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigateEdit,
   };
 });
 
@@ -97,6 +107,7 @@ function renderEdit() {
 describe('EditPlatformTeam', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigateEdit.mockClear();
   });
 
   it('shows loading while team is loading', () => {
@@ -130,5 +141,13 @@ describe('EditPlatformTeam', () => {
     });
     renderEdit();
     expect(screen.getByTestId('awx-error')).toBeInTheDocument();
+  });
+
+  it('navigates back on cancel', async () => {
+    mockUseGet.mockReturnValue({ data: mockTeam, isLoading: false });
+    renderEdit();
+
+    await userEvent.click(await screen.findByRole('button', { name: /^cancel$/i }));
+    expect(mockNavigateEdit).toHaveBeenCalledWith(-1);
   });
 });

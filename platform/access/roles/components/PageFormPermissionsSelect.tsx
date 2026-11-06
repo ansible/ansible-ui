@@ -19,7 +19,7 @@ export function PageFormRolePermissionsSelect(props: {
       name="permissions"
       label={t('Permissions')}
       options={Object.entries(
-        platformRoleMetadata.content_types[props?.contentType as PlatformContentTypeEnum]
+        platformRoleMetadata.content_types[props.contentType as PlatformContentTypeEnum]
           ?.permissions || {}
       ).map(([key, value]) => ({
         label: value,
@@ -27,8 +27,8 @@ export function PageFormRolePermissionsSelect(props: {
         group: groupFromRoleType(key, t),
       }))}
       placeholder={t('Select permissions')}
-      isRequired={props?.isRequired}
-      isDisabled={props?.isDisabled}
+      isRequired={props.isRequired}
+      isDisabled={props.isDisabled}
     />
   );
 }

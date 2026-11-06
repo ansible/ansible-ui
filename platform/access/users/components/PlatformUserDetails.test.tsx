@@ -59,14 +59,27 @@ vi.mock('../hooks/useUserColumns', () => ({
   useUsersColumns: () => [{ id: 'username', header: 'Username' }],
 }));
 
-vi.mock('../../authenticators/hooks/useReadableAuthenticatorTypes', () => ({
-  useReadableAuthenticatorTypes: () => ['Local'],
+const { mockReadableAuthTypes } = vi.hoisted(() => ({
+  mockReadableAuthTypes: vi.fn(() => ['Local']),
 }));
 
-const { mockUseGetItem, mockUseGet } = vi.hoisted(() => ({
+vi.mock('../../authenticators/hooks/useReadableAuthenticatorTypes', () => ({
+  useReadableAuthenticatorTypes: (results: unknown[]) => mockReadableAuthTypes(results),
+}));
+
+const { mockUseGetItem, mockUseGet, mockUseParams } = vi.hoisted(() => ({
   mockUseGetItem: vi.fn(),
   mockUseGet: vi.fn(),
+  mockUseParams: vi.fn(() => ({ id: '3' })),
 }));
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useParams: () => mockUseParams(),
+  };
+});
 
 vi.mock('@ansible/common-ui/crud/useGet', async () => {
   const actual = await vi.importActual<typeof import('@ansible/common-ui/crud/useGet')>(
@@ -158,6 +171,8 @@ function renderDetails(userId = '3') {
 describe('PlatformUserDetails', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseParams.mockReturnValue({ id: '3' });
+    mockReadableAuthTypes.mockReturnValue(['Local']);
     mockUseGetItem.mockReturnValue({ data: undefined, isLoading: true });
     mockUseGet.mockReturnValue({ data: undefined, isLoading: true });
   });
@@ -197,6 +212,63 @@ describe('PlatformUserDetails', () => {
     expect(screen.getByText('NorthOrg')).toBeInTheDocument();
     expect(screen.getByText(/Authentication method:1/)).toBeInTheDocument();
     expect(screen.getByText('Local')).toBeInTheDocument();
+  });
+
+  it('uses Users label in header when username is empty', () => {
+    mockUseGetItem.mockReturnValue({
+      data: makeUser({ username: '', is_superuser: false }),
+      isLoading: false,
+    });
+    mockUseGet.mockImplementation((url: string | undefined) => {
+      if (url?.includes('/organizations/')) {
+        return { data: { count: 0, results: [] }, isLoading: false };
+      }
+      if (url?.includes('/authenticators/')) {
+        return { data: { count: 0, results: [] }, isLoading: false };
+      }
+      return { data: undefined, isLoading: false };
+    });
+
+    renderDetails();
+
+    expect(screen.getByTestId('details-from-columns')).toBeInTheDocument();
+  });
+
+  it('keeps loading while organizations are still fetching', () => {
+    mockUseGetItem.mockReturnValue({
+      data: makeUser({ is_superuser: false }),
+      isLoading: false,
+    });
+    mockUseGet.mockImplementation((url: string | undefined) => {
+      if (url?.includes('/organizations/')) {
+        return { data: undefined, isLoading: true };
+      }
+      if (url?.includes('/authenticators/')) {
+        return { data: { count: 0, results: [] }, isLoading: false };
+      }
+      return { data: undefined, isLoading: false };
+    });
+    renderDetails();
+    expect(screen.getByTestId('loading-page')).toBeInTheDocument();
+  });
+
+  it('omits authenticator section when readable types are empty', () => {
+    mockReadableAuthTypes.mockReturnValue([]);
+    mockUseGetItem.mockReturnValue({
+      data: makeUser({ is_superuser: false }),
+      isLoading: false,
+    });
+    mockUseGet.mockImplementation((url: string | undefined) => {
+      if (url?.includes('/organizations/')) {
+        return { data: { count: 0, results: [] }, isLoading: false };
+      }
+      if (url?.includes('/authenticators/')) {
+        return { data: { count: 1, results: [makeAuthenticator(5)] }, isLoading: false };
+      }
+      return { data: undefined, isLoading: false };
+    });
+    renderDetails();
+    expect(screen.queryByText(/Authentication method/)).not.toBeInTheDocument();
   });
 
   it('does not render organization section for superusers', () => {

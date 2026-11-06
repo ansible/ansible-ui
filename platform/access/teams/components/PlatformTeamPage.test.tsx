@@ -2,6 +2,11 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
+
+const { mockPageNavigate } = vi.hoisted(() => ({
+  mockPageNavigate: vi.fn(),
+}));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -23,7 +28,12 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
     ...actual,
     LoadingPage: () => <div data-testid="loading-page">Loading</div>,
     useGetPageUrl: () => (route: string) => `/mock/${route}`,
-    usePageNavigate: () => vi.fn(),
+    usePageNavigate: () => mockPageNavigate,
+    PageActions: <T,>(props: Readonly<{ position: string; selectedItem: T }>) => (
+      <div data-testid="page-actions" data-position={props.position}>
+        actions
+      </div>
+    ),
   };
 });
 
@@ -128,5 +138,37 @@ describe('PlatformTeamPage', () => {
     expect(screen.getByText('Roles')).toBeInTheDocument();
     expect(screen.getByText('Users')).toBeInTheDocument();
     expect(screen.getByText('Administrators')).toBeInTheDocument();
+  });
+
+  it('passes right-aligned header actions for the loaded team', () => {
+    mockUseGetItem.mockReturnValue({
+      error: undefined,
+      data: team,
+      refresh: vi.fn(),
+    });
+    mockUseTeamPageActions.mockReturnValue([{ label: 'Edit' }]);
+    renderPage();
+    expect(screen.getByTestId('page-title')).toHaveTextContent('Seven');
+    expect(screen.getByTestId('page-actions')).toHaveAttribute('data-position', 'right');
+  });
+
+  it('registers team delete callback that navigates to teams list', () => {
+    mockUseGetItem.mockReturnValue({
+      error: undefined,
+      data: team,
+      refresh: vi.fn(),
+    });
+
+    let onDeleted: (() => void) | undefined;
+    mockUseTeamPageActions.mockImplementation((cb: () => void) => {
+      onDeleted = cb;
+      return [];
+    });
+
+    mockPageNavigate.mockClear();
+    renderPage();
+    expect(onDeleted).toBeDefined();
+    onDeleted!();
+    expect(mockPageNavigate).toHaveBeenCalledWith(PlatformRoute.Teams);
   });
 });

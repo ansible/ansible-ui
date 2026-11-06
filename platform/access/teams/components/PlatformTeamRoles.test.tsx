@@ -2,9 +2,92 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+  type Mock,
+} from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import { PlatformTeamRoles } from './PlatformTeamRoles';
+
+const { defaultResourceTypesData, mockUseGetResourceTypes } = vi.hoisted(
+  (): {
+    defaultResourceTypesData: {
+      count: number;
+      next: null;
+      previous: null;
+      results: { id: number; model: string; api_slug: string; service: string }[];
+    };
+    mockUseGetResourceTypes: Mock<
+      () => {
+        data: {
+          count: number;
+          next: null;
+          previous: null;
+          results: { id: number; model: string; api_slug: string; service: string }[];
+        };
+        error: undefined;
+        isLoading: boolean;
+      }
+    >;
+  } => {
+    const data = {
+      count: 3,
+      next: null as null,
+      previous: null as null,
+      results: [
+        {
+          id: 1,
+          model: 'project',
+          api_slug: 'projects',
+          service: 'awx',
+        },
+        {
+          id: 2,
+          model: 'project',
+          api_slug: 'projects',
+          service: 'eda',
+        },
+        {
+          id: 3,
+          model: 'namespace',
+          api_slug: 'namespaces',
+          service: 'galaxy',
+        },
+      ],
+    };
+    return {
+      defaultResourceTypesData: data,
+      mockUseGetResourceTypes: vi.fn(() => ({
+        data,
+        error: undefined,
+        isLoading: false,
+      })),
+    };
+  }
+);
+
+vi.mock('../../roles/hooks/useResourceType', () => ({
+  useGetResourceTypes: () => mockUseGetResourceTypes(),
+}));
+
+const { mockUseParams } = vi.hoisted(() => ({
+  mockUseParams: vi.fn<() => { id: string | undefined }>(() => ({ id: '1' })),
+}));
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useParams: () => mockUseParams(),
+  };
+});
 
 const mockTeam = {
   id: 1,
@@ -118,32 +201,6 @@ const mockEmptyTeamRoleAssignments = {
   results: [],
 };
 
-const mockResourceTypes = {
-  count: 3,
-  next: null,
-  previous: null,
-  results: [
-    {
-      id: 1,
-      model: 'project',
-      api_slug: 'projects',
-      service: 'awx',
-    },
-    {
-      id: 2,
-      model: 'project',
-      api_slug: 'projects',
-      service: 'eda',
-    },
-    {
-      id: 3,
-      model: 'namespace',
-      api_slug: 'namespaces',
-      service: 'galaxy',
-    },
-  ],
-};
-
 describe('PlatformTeamRoles', () => {
   const server = setupServer(
     // Team endpoint
@@ -165,7 +222,9 @@ describe('PlatformTeamRoles', () => {
 
     // Teams options endpoint (fallback for empty ID)
     http.options(gatewayAPI`/teams//`, () => {
-      return HttpResponse.json({ actions: { GET: true } });
+      return HttpResponse.json({
+        actions: { GET: true, PUT: true, PATCH: true },
+      });
     }),
 
     // AWX project endpoint
@@ -183,11 +242,6 @@ describe('PlatformTeamRoles', () => {
       return HttpResponse.json({ id: 3, name: 'Test Galaxy Namespace' });
     }),
 
-    // Resource types endpoint
-    http.get(gatewayAPI`/resource_types/`, () => {
-      return HttpResponse.json(mockResourceTypes);
-    }),
-
     // Service index role types endpoint
     http.get(gatewayAPI`/service-index/role-types/`, () => {
       return HttpResponse.json({ results: [] });
@@ -199,7 +253,7 @@ describe('PlatformTeamRoles', () => {
       const teamId = url.searchParams.get('team_id');
       const serviceFilter = url.searchParams.get('content_type__service');
 
-      if (teamId !== '1') {
+      if (teamId && teamId !== '1') {
         return HttpResponse.json({ count: 0, results: [] });
       }
 
@@ -224,7 +278,17 @@ describe('PlatformTeamRoles', () => {
   );
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
-  afterEach(() => server.resetHandlers());
+  beforeEach(() => {
+    mockUseParams.mockReturnValue({ id: '1' });
+    mockUseGetResourceTypes.mockImplementation(() => ({
+      data: defaultResourceTypesData,
+      error: undefined,
+      isLoading: false,
+    }));
+  });
+  afterEach(() => {
+    server.resetHandlers();
+  });
   afterAll(() => server.close());
 
   test('should display all team roles when no component filter is applied', async () => {
@@ -295,5 +359,105 @@ describe('PlatformTeamRoles', () => {
     // Verify the filter dropdown is present
     const componentFilterButton = screen.getByText('Select component').closest('button');
     expect(componentFilterButton).toBeInTheDocument();
+  });
+
+  test('renders when resource types response has no results', async () => {
+    mockUseGetResourceTypes.mockReturnValue({
+      data: { count: 0, next: null, previous: null, results: [] },
+      error: undefined,
+      isLoading: false,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/teams/1/roles']}>
+        <Routes>
+          <Route path="/teams/:id/roles" element={<PlatformTeamRoles />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Project Admin')).toBeInTheDocument();
+    });
+  });
+
+  test('renders when resource types data is undefined', async () => {
+    mockUseGetResourceTypes.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: false,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/teams/1/roles']}>
+        <Routes>
+          <Route path="/teams/:id/roles" element={<PlatformTeamRoles />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Project Admin')).toBeInTheDocument();
+    });
+  });
+
+  test('uses empty string team id when route param is missing', async () => {
+    mockUseParams.mockReturnValue({ id: undefined });
+
+    render(
+      <MemoryRouter initialEntries={['/teams/1/roles']}>
+        <Routes>
+          <Route path="/teams/:id/roles" element={<PlatformTeamRoles />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Select component')).toBeInTheDocument();
+    });
+  });
+
+  test('should show read-only empty state when team cannot be edited', async () => {
+    server.use(
+      http.options(gatewayAPI`/teams/1/`, () =>
+        HttpResponse.json({
+          actions: { GET: true },
+        })
+      )
+    );
+
+    server.use(
+      http.get(gatewayAPI`/role_team_assignments/`, () => {
+        return HttpResponse.json(mockEmptyTeamRoleAssignments);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/teams/1/roles']}>
+        <Routes>
+          <Route path="/teams/:id/roles" element={<PlatformTeamRoles />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('You do not have permission to assign a role to this team.')
+      ).toBeInTheDocument();
+    });
+  });
+
+  test('should show AwxError when team OPTIONS fails', async () => {
+    server.use(http.options(gatewayAPI`/teams/1/`, () => HttpResponse.json({}, { status: 500 })));
+
+    render(
+      <MemoryRouter initialEntries={['/teams/1/roles']}>
+        <Routes>
+          <Route path="/teams/:id/roles" element={<PlatformTeamRoles />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole('heading', { level: 4 })).toBeInTheDocument();
   });
 });

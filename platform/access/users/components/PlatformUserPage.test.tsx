@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlatformUser } from '../../../interfaces/PlatformUser';
+import { PlatformRoute } from '../../../main/PlatformRoutes';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key }),
@@ -17,13 +18,17 @@ vi.mock('@ansible/awx-ui/common/AwxError', () => ({
   ),
 }));
 
+const { mockPageNavigate } = vi.hoisted(() => ({
+  mockPageNavigate: vi.fn(),
+}));
+
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
   return {
     ...actual,
     LoadingPage: () => <div data-testid="loading-page">Loading</div>,
     useGetPageUrl: () => (route: string) => `/mock/${route}`,
-    usePageNavigate: () => vi.fn(),
+    usePageNavigate: () => mockPageNavigate,
   };
 });
 
@@ -139,6 +144,7 @@ describe('PlatformUserPage', () => {
   });
 
   it('renders header and tab labels when user loads (not viewing self)', () => {
+    mockUseUserRowActions.mockReturnValue([]);
     mockUseGetItem.mockReturnValue({
       error: undefined,
       data: gatewayUser({ id: 7 }),
@@ -147,10 +153,13 @@ describe('PlatformUserPage', () => {
     mockUsePlatformActiveUser.mockReturnValue({
       activePlatformUser: gatewayUser({ id: 1, username: 'active' }),
     });
-    mockUseUserRowActions.mockReturnValue([]);
     renderPage();
-    expect(screen.getByTestId('page-title')).toHaveTextContent('Seven');
     expect(mockUseUserRowActions).toHaveBeenCalled();
+    const rowCb = mockUseUserRowActions.mock.calls[0][0];
+    expect(typeof rowCb).toBe('function');
+    rowCb();
+    expect(mockPageNavigate).toHaveBeenCalledWith(PlatformRoute.Users);
+    expect(screen.getByTestId('page-title')).toHaveTextContent('Seven');
     expect(screen.getByText('Details')).toBeInTheDocument();
     expect(screen.getByText('Teams')).toBeInTheDocument();
     expect(screen.getByText('Roles')).toBeInTheDocument();

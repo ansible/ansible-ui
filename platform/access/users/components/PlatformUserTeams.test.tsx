@@ -41,6 +41,18 @@ const { mockUsePlatformViewImpl, minimalViewHoisted } = vi.hoisted(() => {
   };
 });
 
+const { mockUseParams } = vi.hoisted(() => ({
+  mockUseParams: vi.fn(() => ({ id: '12' })),
+}));
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useParams: () => mockUseParams(),
+  };
+});
+
 vi.mock('../../../hooks/usePlatformView', () => ({
   usePlatformView: (options: unknown): IPlatformView<PlatformTeam> =>
     mockUsePlatformViewImpl(options),
@@ -75,6 +87,7 @@ function renderTeams(userId = '12') {
 describe('PlatformUserTeams', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseParams.mockReturnValue({ id: '12' });
     mockUsePlatformViewImpl.mockImplementation(
       (_options: unknown): IPlatformView<PlatformTeam> => minimalViewHoisted
     );
@@ -92,6 +105,16 @@ describe('PlatformUserTeams', () => {
     expect(screen.getByTestId('page-table')).toHaveAttribute(
       'data-error-title',
       'Error loading teams'
+    );
+  });
+
+  it('omits list URL when route has no user id', () => {
+    mockUseParams.mockReturnValue({ id: undefined });
+    renderTeams('12');
+    expect(mockUsePlatformViewImpl).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: '',
+      })
     );
   });
 });

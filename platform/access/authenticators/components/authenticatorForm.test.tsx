@@ -1,16 +1,34 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, renderHook, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorPlugin, AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { AuthenticatorForm, formatConfiguration } from './AuthenticatorForm';
+import {
+  AuthenticatorForm,
+  buildTriggers,
+  formatConfiguration,
+  parseTrigger,
+  useSetAutoMigrateInitialValue,
+} from './AuthenticatorForm';
 import authenticator_plugins from './authenticatorPlugins.fixture.json';
 import authenticators from './authenticators.fixture.json';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import * as CrudData from '@ansible/common-ui/crud/Data';
+import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
+
+const navigateMock = vi.fn();
+
+vi.mock('react-router-dom', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...mod,
+    useNavigate: () => navigateMock,
+  };
+});
 
 vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => ({
   DataEditor: (props: Record<string, string | (() => void)>) => (
@@ -51,6 +69,7 @@ describe('authenticatorForm', () => {
   afterAll(() => server.close());
   beforeEach(() => {
     server.resetHandlers();
+    navigateMock.mockClear();
   });
 
   test('fetches name pattern from authenticators OPTIONS and validates on blur', async () => {
@@ -380,6 +399,36 @@ describe('authenticatorForm', () => {
       { timeout: 30000 }
     );
   }, 60000);
+
+  test('cancel navigates back', async () => {
+    const handleSubmit = vi.fn();
+    const { getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/create'}
+            element={
+              <AuthenticatorForm
+                plugins={authenticator_plugins as AuthenticatorPlugins}
+                handleSubmit={handleSubmit}
+              />
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+    await user.click(getByRole('button', { name: 'Cancel' }));
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith(-1);
+    });
+  });
 });
 
 describe('formatConfiguration', () => {
@@ -568,5 +617,207 @@ describe('formatConfiguration', () => {
       plugin
     );
     expect(result).toEqual({ REDIRECT_URIS: ['https://example.com', 'https://test.com'] });
+  });
+
+  test('joins URLListField default array into a string when applying create-mode defaults', () => {
+    const plugin: AuthenticatorPlugin = {
+      type: AuthenticatorTypeEnum.LDAP,
+      documentation_url: '',
+      configuration_schema: [
+        {
+          name: 'SERVER_URI',
+          help_text: 'Test',
+          required: true,
+          default: ['ldap://one', 'ldap://two'],
+          type: 'URLListField',
+          ui_field_label: 'Server URI',
+        },
+        {
+          name: 'START_TLS',
+          help_text: 'TLS',
+          required: false,
+          default: true,
+          type: 'BooleanField',
+          ui_field_label: 'Start TLS',
+        },
+      ],
+    };
+    const plugins: AuthenticatorPlugins = {
+      authenticators: [plugin],
+    };
+
+    const { container, getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/create'}
+            element={<AuthenticatorForm plugins={plugins} handleSubmit={async () => {}} />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const user = userEvent.setup();
+    const typeToggle = container.querySelector(
+      '[id="authentication-type-select-form-group-toggle"]'
+    ) as HTMLButtonElement;
+
+    return (async () => {
+      await waitFor(() => {
+        expect(typeToggle).toBeInTheDocument();
+      });
+      await user.click(typeToggle);
+      await user.click(getByRole('option', { name: /ldap/i }));
+
+      await waitFor(() => {
+        const input = container.querySelector(
+          '[id="configuration-input-SERVER_URI"]'
+        ) as HTMLInputElement;
+        expect(input).toHaveValue('ldap://one,ldap://two');
+        const tlsInput = container.querySelector(
+          '[id="configuration-input-START_TLS"]'
+        ) as HTMLInputElement;
+        expect(tlsInput.checked).toBe(true);
+      });
+    })();
+  });
+});
+
+describe('buildTriggers', () => {
+  test('builds never and always triggers', () => {
+    expect(
+      buildTriggers({
+        map_type: AuthenticatorMapType.allow,
+        name: 'n',
+        revoke: false,
+        trigger: 'never',
+      } as never)
+    ).toEqual({ never: {} });
+
+    expect(
+      buildTriggers({
+        map_type: AuthenticatorMapType.allow,
+        name: 'n',
+        revoke: false,
+        trigger: 'always',
+      } as never)
+    ).toEqual({ always: {} });
+  });
+
+  test('builds groups triggers for or and and conditionals', () => {
+    const base = {
+      map_type: AuthenticatorMapType.allow,
+      name: 'n',
+      revoke: false,
+      trigger: 'groups' as const,
+      groups_value: [{ name: 'a' }, { name: 'b' }],
+    };
+    expect(buildTriggers({ ...base, conditional: 'or' })).toEqual({
+      groups: { has_or: ['a', 'b'] },
+    });
+    expect(buildTriggers({ ...base, conditional: 'and' })).toEqual({
+      groups: { has_and: ['a', 'b'] },
+    });
+  });
+
+  test('builds attribute triggers including comma split for in comparison', () => {
+    const result = buildTriggers({
+      map_type: AuthenticatorMapType.allow,
+      name: 'n',
+      revoke: false,
+      trigger: 'attributes',
+      conditional: 'or',
+      attributes: [
+        { attribute: 'k', comparison: 'contains', value: 'v' },
+        { attribute: 'g', comparison: 'in', value: 'a,b' },
+      ],
+    } as never);
+
+    expect(result).toEqual({
+      attributes: {
+        join_condition: 'or',
+        k: { contains: 'v' },
+        g: { in: ['a', 'b'] },
+      },
+    });
+  });
+});
+
+describe('parseTrigger', () => {
+  test('parses groups, attributes, never, and always from mapping triggers', () => {
+    const groupsMapping = {
+      triggers: { groups: { has_and: ['x'] } },
+    } as AuthenticatorMap;
+
+    expect(parseTrigger(groupsMapping)).toEqual({
+      trigger: 'groups',
+      conditional: 'and',
+      groups_value: [{ name: 'x' }],
+    });
+
+    const attributesMapping = {
+      triggers: {
+        attributes: {
+          join_condition: 'or',
+          department: { equals: 'Eng' },
+          role: { in: ['a', 'b'] },
+        },
+      },
+    } as unknown as AuthenticatorMap;
+
+    const parsed = parseTrigger(attributesMapping) as {
+      trigger: string;
+      conditional: string;
+      attributes: { attribute: string; comparison: string; value: string }[];
+    };
+    expect(parsed.trigger).toBe('attributes');
+    expect(parsed.conditional).toBe('or');
+    expect(parsed.attributes).toEqual(
+      expect.arrayContaining([
+        { attribute: 'department', comparison: 'equals', value: 'Eng' },
+        { attribute: 'role', comparison: 'in', value: 'a,b' },
+      ])
+    );
+
+    expect(parseTrigger({ triggers: { never: {} } } as AuthenticatorMap)).toEqual({
+      trigger: 'never',
+    });
+    expect(parseTrigger({ triggers: { always: {} } } as AuthenticatorMap)).toEqual({
+      trigger: 'always',
+    });
+  });
+});
+
+describe('useSetAutoMigrateInitialValue', () => {
+  const legacyAuth = {
+    id: 5,
+    type: 'ansible_base.legacy.oauth2',
+    summary_fields: { auto_migrate_users_to: { id: 88, name: 'Target' } },
+  } as unknown as Authenticator;
+
+  let requestGetSpy: ReturnType<typeof vi.spyOn<typeof CrudData, 'requestGet'>>;
+
+  beforeEach(() => {
+    requestGetSpy = vi.spyOn(CrudData, 'requestGet').mockResolvedValue({
+      count: 1,
+      results: [{ id: 42, name: 'Listed' } as Authenticator],
+    }) as ReturnType<typeof vi.spyOn<typeof CrudData, 'requestGet'>>;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test('returns summary field id for legacy authenticators', async () => {
+    const { result } = renderHook(() => useSetAutoMigrateInitialValue());
+    await expect(result.current(legacyAuth)).resolves.toBe(88);
+    expect(requestGetSpy).toHaveBeenCalled();
+  });
+
+  test('returns first listed authenticator id for non-legacy', async () => {
+    const { result } = renderHook(() => useSetAutoMigrateInitialValue());
+    await expect(
+      result.current({ id: 5, type: AuthenticatorTypeEnum.Local } as Authenticator)
+    ).resolves.toBe(42);
   });
 });
