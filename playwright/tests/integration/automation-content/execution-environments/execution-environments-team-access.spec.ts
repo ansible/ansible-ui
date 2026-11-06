@@ -18,7 +18,17 @@ test.afterEach(setupAfter);
 test.describe('Hub - Execution Environments - Team Access', () => {
   test(
     'should assign team and apply role to execution environment from Team Access tab',
-    { tag: ['@not_mock', '@tier1'] },
+    {
+      tag: [
+        '@not_mock',
+        '@tier1',
+        '@containerregistryremote',
+        '@executionenvironment',
+        '@organization',
+        '@role',
+        '@team',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000); // 2 minutes timeout for this complex test
 

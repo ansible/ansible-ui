@@ -13,7 +13,7 @@ test.afterEach(setupAfter);
 
 test(
   'should create an organization with policy enforcement, edit it, and delete it',
-  { tag: ['@not_mock', '@tier1'] },
+  { tag: ['@not_mock', '@tier1', '@organization'] },
   async ({ page }) => {
     const organizationName = createE2EName();
     const opaPolicyPath = 'test/test';
@@ -101,7 +101,7 @@ test(
 
 test(
   'should delete an organization from the list view',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@organization'] },
   async ({ page }) => {
     const organizationName = await Organization.ui.create(page);
 
@@ -123,7 +123,7 @@ test(
 
 test(
   'should bulk create and delete organizations from the list toolbar',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@organization'] },
   async ({ page }) => {
     const org1Name = await Organization.ui.create(page);
     const org2Name = await Organization.ui.create(page);

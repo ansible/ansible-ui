@@ -3,7 +3,7 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { waitForBulkActionDialog } from '@ansible/playwright/commands/waitForBulkActionDialog';
 import { Team, Credential } from '@ansible/playwright/utils';
 
-test.describe('Platform Teams - Roles Tab', () => {
+test.describe('Platform Teams - Roles Tab', { tag: ['@team', '@role'] }, () => {
   let credentialName: string;
   let teamName: string;
 

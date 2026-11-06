@@ -12,7 +12,7 @@ test.afterEach(setupAfter);
 test.describe('Smart Inventory', () => {
   test(
     'can create, edit a smart inventory, assert info on details page, and delete inventory',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@inventory', '@organization'] },
     async ({ page }) => {
       const organizationName = await Organization.ui.create(page);
       const smartInvName = createE2EName('smart-inventory');

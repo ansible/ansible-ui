@@ -12,7 +12,7 @@ test.describe('Execution Environment User Access', () => {
 
   test(
     'should add user role assignment from User Access tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@executionenvironment', '@organization', '@role', '@user'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000); // 2 minutes timeout for this complex test
 

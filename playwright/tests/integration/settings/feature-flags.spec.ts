@@ -10,7 +10,7 @@ const platformUIWithoutSlash = platformUI.endsWith('/') ? platformUI.slice(0, -1
 
 test.afterEach(setupAfter);
 
-test.describe('Feature Flags - Toggle', () => {
+test.describe('Feature Flags - Toggle', { tag: ['@featureflags'] }, () => {
   test(
     'should open confirmation dialog and toggle a feature flag',
     { tag: ['@tier1'] },
@@ -78,7 +78,7 @@ test.describe('Feature Flags - Toggle', () => {
   });
 });
 
-test.describe('Feature Flags - Private Flag Visibility', () => {
+test.describe('Feature Flags - Private Flag Visibility', { tag: ['@featureflags'] }, () => {
   const createMockFlag = (overrides: Record<string, unknown> & { id: number }) => ({
     url: `/api/gateway/v1/feature_flags/${String(overrides.id)}/`,
     related: {
@@ -238,72 +238,76 @@ test.describe('Feature Flags - Private Flag Visibility', () => {
   });
 });
 
-test.describe('Feature Flags - Access Control', () => {
-  let normalUser: PlatformUser;
-  let auditorUser: PlatformUser;
-  const userPassword = 'password';
+test.describe(
+  'Feature Flags - Access Control',
+  { tag: ['@featureflags', '@team', '@user'] },
+  () => {
+    let normalUser: PlatformUser;
+    let auditorUser: PlatformUser;
+    const userPassword = 'password';
 
-  test.beforeEach(async ({ page }) => {
-    await setupBefore({ path: '/overview' })({ page });
-    normalUser = await User.api.create(page, { password: userPassword });
-    auditorUser = await User.api.create(page, {
-      password: userPassword,
-      is_platform_auditor: true,
+    test.beforeEach(async ({ page }) => {
+      await setupBefore({ path: '/overview' })({ page });
+      normalUser = await User.api.create(page, { password: userPassword });
+      auditorUser = await User.api.create(page, {
+        password: userPassword,
+        is_platform_auditor: true,
+      });
     });
-  });
 
-  test.afterEach(async ({ page }) => {
-    await User.api.delete(page, normalUser.id).catch(() => {});
-    await User.api.delete(page, auditorUser.id).catch(() => {});
-  });
+    test.afterEach(async ({ page }) => {
+      await User.api.delete(page, normalUser.id).catch(() => {});
+      await User.api.delete(page, auditorUser.id).catch(() => {});
+    });
 
-  test(
-    'should show Feature Flags page as read-only for auditor',
-    { tag: ['@tier1'] },
-    async ({ page }) => {
-      await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
-      await FeatureFlags.mock.list(page);
-      await logout(page);
-      await login(page, platformUIWithoutSlash + '/overview', {
-        username: auditorUser.username,
-        password: userPassword,
-      });
+    test(
+      'should show Feature Flags page as read-only for auditor',
+      { tag: ['@tier1'] },
+      async ({ page }) => {
+        await SettingsFeatureFlags.mock.settings(page, { runtimeFeatureFlags: true });
+        await FeatureFlags.mock.list(page);
+        await logout(page);
+        await login(page, platformUIWithoutSlash + '/overview', {
+          username: auditorUser.username,
+          password: userPassword,
+        });
 
-      await navigateTo(page, 'Settings', 'Feature Flags');
-      await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
+        await navigateTo(page, 'Settings', 'Feature Flags');
+        await expect(page.getByRole('heading', { name: 'Feature Flags' }).first()).toBeVisible();
 
-      await expect(page.getByTestId('toggle-switch')).toHaveCount(0);
-    }
-  );
-
-  test(
-    'should hide Feature Flags for normal user and show page not found on direct access',
-    { tag: ['@not_mock', '@tier1'] },
-    async ({ page }) => {
-      await logout(page);
-      await login(page, platformUIWithoutSlash + '/overview', {
-        username: normalUser.username,
-        password: userPassword,
-      });
-
-      const nav = page.locator('.pf-v6-c-nav');
-      await expect(nav).toBeVisible();
-
-      const settingsItem = nav
-        .locator('li')
-        .filter({ hasText: /^Settings/i })
-        .first();
-      await expect(settingsItem).toBeVisible();
-
-      if (!(await settingsItem.evaluate((el) => el.classList.contains('pf-m-expanded')))) {
-        await settingsItem.getByRole('button').click();
+        await expect(page.getByTestId('toggle-switch')).toHaveCount(0);
       }
+    );
 
-      const featureFlagsLink = settingsItem.locator('li').filter({ hasText: /^Feature Flags/i });
-      await expect(featureFlagsLink).toBeHidden();
+    test(
+      'should hide Feature Flags for normal user and show page not found on direct access',
+      { tag: ['@not_mock', '@tier1'] },
+      async ({ page }) => {
+        await logout(page);
+        await login(page, platformUIWithoutSlash + '/overview', {
+          username: normalUser.username,
+          password: userPassword,
+        });
 
-      await page.goto(platformUIWithoutSlash + '/settings/feature-flags');
-      await expect(page.getByText('Page not found')).toBeVisible({ timeout: 30000 });
-    }
-  );
-});
+        const nav = page.locator('.pf-v6-c-nav');
+        await expect(nav).toBeVisible();
+
+        const settingsItem = nav
+          .locator('li')
+          .filter({ hasText: /^Settings/i })
+          .first();
+        await expect(settingsItem).toBeVisible();
+
+        if (!(await settingsItem.evaluate((el) => el.classList.contains('pf-m-expanded')))) {
+          await settingsItem.getByRole('button').click();
+        }
+
+        const featureFlagsLink = settingsItem.locator('li').filter({ hasText: /^Feature Flags/i });
+        await expect(featureFlagsLink).toBeHidden();
+
+        await page.goto(platformUIWithoutSlash + '/settings/feature-flags');
+        await expect(page.getByText('Page not found')).toBeVisible({ timeout: 30000 });
+      }
+    );
+  }
+);

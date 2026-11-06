@@ -8,7 +8,7 @@ import { Role, TEST_ROLE_CONFIGS } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/roles' }));
 test.afterEach(setupAfter);
 
-test.describe('Role Deletion Tests', () => {
+test.describe('Role Deletion Tests', { tag: ['@role'] }, () => {
   test.describe('Single Role Deletion', () => {
     test(
       'should delete role from details page',

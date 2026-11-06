@@ -7,7 +7,7 @@ const userName = process.env.PLATFORM_USERNAME ?? '';
 const userPassword = process.env.PLATFORM_PASSWORD ?? '';
 const lightspeedServer = process.env.LIGHTSPEED_SERVER ?? '';
 
-test.describe('Ansible Lightspeed oauth2', () => {
+test.describe('Ansible Lightspeed oauth2', { tag: ['@aapoauth2'] }, () => {
   test.afterEach(setupAfter);
 
   test(

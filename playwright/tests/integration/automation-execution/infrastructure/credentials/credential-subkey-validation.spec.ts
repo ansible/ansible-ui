@@ -105,108 +105,112 @@ const CREDENTIAL_TYPE_WITHOUT_PATTERN = {
 
 test.afterEach(setupAfter);
 
-test.describe('Credentials - JSON Sub-Key Pattern Validation', () => {
-  test('should show validation error when input violates pattern', async ({ page }) => {
-    // Mock credential types API to return type with pattern fields
-    // Register mock BEFORE navigation so it intercepts the initial fetch
-    await page.route('**/api/controller/v2/credential_types/*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(CREDENTIAL_TYPE_WITH_PATTERN),
+test.describe(
+  'Credentials - JSON Sub-Key Pattern Validation',
+  { tag: ['@credential', '@credentialtype'] },
+  () => {
+    test('should show validation error when input violates pattern', async ({ page }) => {
+      // Mock credential types API to return type with pattern fields
+      // Register mock BEFORE navigation so it intercepts the initial fetch
+      await page.route('**/api/controller/v2/credential_types/*', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(CREDENTIAL_TYPE_WITH_PATTERN),
+        });
+      });
+
+      await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
+
+      // Fill in required top-level fields
+      await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
+
+      // Select the credential type
+      await page.getByTestId('credential-type').click();
+      await page.getByRole('option', { name: 'Custom Cloud' }).click();
+
+      // Wait for sub-form to render
+      await expect(page.getByRole('textbox', { name: 'API Endpoint' })).toBeVisible({
+        timeout: 5000,
+      });
+
+      // Type an invalid value (doesn't start with https://)
+      await page.getByRole('textbox', { name: 'API Endpoint' }).fill('http://example.com');
+
+      // Blur the field to trigger validation
+      await page.getByRole('textbox', { name: 'Region' }).click();
+
+      // Wait for validation error to appear
+      await expect(page.getByText('API endpoint must start with https://')).toBeVisible({
+        timeout: 5000,
       });
     });
 
-    await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
+    test('should not show validation error when input matches pattern', async ({ page }) => {
+      // Register mock BEFORE navigation so it intercepts the initial fetch
+      await page.route('**/api/controller/v2/credential_types/*', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(CREDENTIAL_TYPE_WITH_PATTERN),
+        });
+      });
 
-    // Fill in required top-level fields
-    await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
+      await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
 
-    // Select the credential type
-    await page.getByTestId('credential-type').click();
-    await page.getByRole('option', { name: 'Custom Cloud' }).click();
+      await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
+      await page.getByTestId('credential-type').click();
+      await page.getByRole('option', { name: 'Custom Cloud' }).click();
 
-    // Wait for sub-form to render
-    await expect(page.getByRole('textbox', { name: 'API Endpoint' })).toBeVisible({
-      timeout: 5000,
-    });
+      await expect(page.getByRole('textbox', { name: 'API Endpoint' })).toBeVisible({
+        timeout: 5000,
+      });
 
-    // Type an invalid value (doesn't start with https://)
-    await page.getByRole('textbox', { name: 'API Endpoint' }).fill('http://example.com');
+      // Type a valid value (starts with https://)
+      await page.getByRole('textbox', { name: 'API Endpoint' }).fill('https://api.example.com');
 
-    // Blur the field to trigger validation
-    await page.getByRole('textbox', { name: 'Region' }).click();
+      // Blur the field
+      await page.getByRole('textbox', { name: 'Region' }).click();
 
-    // Wait for validation error to appear
-    await expect(page.getByText('API endpoint must start with https://')).toBeVisible({
-      timeout: 5000,
-    });
-  });
-
-  test('should not show validation error when input matches pattern', async ({ page }) => {
-    // Register mock BEFORE navigation so it intercepts the initial fetch
-    await page.route('**/api/controller/v2/credential_types/*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(CREDENTIAL_TYPE_WITH_PATTERN),
+      // Ensure no validation error appears
+      await expect(page.getByText('API endpoint must start with https://')).not.toBeVisible({
+        timeout: 2000,
       });
     });
 
-    await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
+    test('should not apply validation when toggle is off (no patterns in response)', async ({
+      page,
+    }) => {
+      // Mock credential types API WITHOUT pattern fields (toggle off)
+      // Register mock BEFORE navigation so it intercepts the initial fetch
+      await page.route('**/api/controller/v2/credential_types/*', async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(CREDENTIAL_TYPE_WITHOUT_PATTERN),
+        });
+      });
 
-    await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
-    await page.getByTestId('credential-type').click();
-    await page.getByRole('option', { name: 'Custom Cloud' }).click();
+      await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
 
-    await expect(page.getByRole('textbox', { name: 'API Endpoint' })).toBeVisible({
-      timeout: 5000,
-    });
+      await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
+      await page.getByTestId('credential-type').click();
+      await page.getByRole('option', { name: 'Custom Cloud' }).click();
 
-    // Type a valid value (starts with https://)
-    await page.getByRole('textbox', { name: 'API Endpoint' }).fill('https://api.example.com');
+      await expect(page.getByRole('textbox', { name: 'API Endpoint' })).toBeVisible({
+        timeout: 5000,
+      });
 
-    // Blur the field
-    await page.getByRole('textbox', { name: 'Region' }).click();
+      // Type any value — with no pattern, nothing should be validated
+      await page.getByRole('textbox', { name: 'API Endpoint' }).fill('http://anything-goes');
 
-    // Ensure no validation error appears
-    await expect(page.getByText('API endpoint must start with https://')).not.toBeVisible({
-      timeout: 2000,
-    });
-  });
+      // Blur the field
+      await page.getByRole('textbox', { name: 'Region' }).click();
 
-  test('should not apply validation when toggle is off (no patterns in response)', async ({
-    page,
-  }) => {
-    // Mock credential types API WITHOUT pattern fields (toggle off)
-    // Register mock BEFORE navigation so it intercepts the initial fetch
-    await page.route('**/api/controller/v2/credential_types/*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(CREDENTIAL_TYPE_WITHOUT_PATTERN),
+      // No pattern error should appear
+      await expect(page.getByText('API endpoint must start with https://')).not.toBeVisible({
+        timeout: 2000,
       });
     });
-
-    await setupBefore({ path: '/execution/infrastructure/credentials/create' })({ page });
-
-    await page.getByRole('textbox', { name: 'Name', exact: true }).fill('Test Credential');
-    await page.getByTestId('credential-type').click();
-    await page.getByRole('option', { name: 'Custom Cloud' }).click();
-
-    await expect(page.getByRole('textbox', { name: 'API Endpoint' })).toBeVisible({
-      timeout: 5000,
-    });
-
-    // Type any value — with no pattern, nothing should be validated
-    await page.getByRole('textbox', { name: 'API Endpoint' }).fill('http://anything-goes');
-
-    // Blur the field
-    await page.getByRole('textbox', { name: 'Region' }).click();
-
-    // No pattern error should appear
-    await expect(page.getByText('API endpoint must start with https://')).not.toBeVisible({
-      timeout: 2000,
-    });
-  });
-});
+  }
+);

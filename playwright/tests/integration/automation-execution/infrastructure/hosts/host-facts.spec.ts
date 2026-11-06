@@ -29,39 +29,43 @@ test.describe('Host Facts Tab', () => {
     await Organization.api.delete(page, organization.id).catch(() => {});
   });
 
-  test('should view host facts in standalone host', { tag: ['@not_mock'] }, async ({ page }) => {
-    await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Hosts');
-    await clickTableRow({ text: host.name }, page);
-    await expect(page.getByRole('heading', { name: host.name, exact: true })).toBeVisible();
+  test(
+    'should view host facts in standalone host',
+    { tag: ['@not_mock', '@host', '@inventory', '@organization'] },
+    async ({ page }) => {
+      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Hosts');
+      await clickTableRow({ text: host.name }, page);
+      await expect(page.getByRole('heading', { name: host.name, exact: true })).toBeVisible();
 
-    const url = page.url();
-    const hostIdMatch = url.match(/\/hosts\/(\d+)\//);
-    const hostId = hostIdMatch ? hostIdMatch[1] : '';
+      const url = page.url();
+      const hostIdMatch = url.match(/\/hosts\/(\d+)\//);
+      const hostId = hostIdMatch ? hostIdMatch[1] : '';
 
-    // Mock the ansible_facts endpoint
-    await page.route(`**/api/controller/v2/hosts/${hostId}/ansible_facts/`, async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          ansible_dns: {
-            search: ['dev-ui.svc.cluster.local', 'svc.cluster.local', 'cluster.local'],
-            options: {
-              ndots: '5',
+      // Mock the ansible_facts endpoint
+      await page.route(`**/api/controller/v2/hosts/${hostId}/ansible_facts/`, async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            ansible_dns: {
+              search: ['dev-ui.svc.cluster.local', 'svc.cluster.local', 'cluster.local'],
+              options: {
+                ndots: '5',
+              },
+              nameservers: ['10.43.0.10'],
             },
-            nameservers: ['10.43.0.10'],
-          },
-        }),
+          }),
+        });
       });
-    });
 
-    await page.getByRole('tab', { name: 'Facts' }).click();
+      await page.getByRole('tab', { name: 'Facts' }).click();
 
-    const codeBlock = page.getByTestId('code-block-value');
-    await expect(codeBlock).toContainText('ansible_dns');
-    await expect(codeBlock).toContainText('dev-ui.svc.cluster.local');
-    await expect(codeBlock).toContainText('svc.cluster.local');
-    await expect(codeBlock).toContainText('cluster.local');
-    await expect(codeBlock).toContainText('10.43.0.10');
-  });
+      const codeBlock = page.getByTestId('code-block-value');
+      await expect(codeBlock).toContainText('ansible_dns');
+      await expect(codeBlock).toContainText('dev-ui.svc.cluster.local');
+      await expect(codeBlock).toContainText('svc.cluster.local');
+      await expect(codeBlock).toContainText('cluster.local');
+      await expect(codeBlock).toContainText('10.43.0.10');
+    }
+  );
 });

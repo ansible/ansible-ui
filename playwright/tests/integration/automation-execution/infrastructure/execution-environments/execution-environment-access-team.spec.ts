@@ -12,7 +12,7 @@ test.describe('Execution Environment Team Access', () => {
 
   test(
     'should add team role assignment from Team Access tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@executionenvironment', '@organization', '@role', '@team'] },
     async ({ page }) => {
       test.setTimeout(2 * 60 * 1000);
       const organizationName = await Organization.ui.create(page);

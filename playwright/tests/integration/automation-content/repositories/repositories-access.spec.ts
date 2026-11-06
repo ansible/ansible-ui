@@ -14,7 +14,7 @@ import { PlatformUser as UserType } from '@ansible/platform-ui/interfaces/Platfo
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
-test.describe('Hub - Repositories Access', () => {
+test.describe('Hub - Repositories Access', { tag: ['@repository', '@team', '@user'] }, () => {
   test(
     'should assign user to repository and apply role via User Access tab',
     { tag: ['@not_mock', '@tier1'] },

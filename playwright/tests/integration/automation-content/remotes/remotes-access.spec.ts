@@ -17,7 +17,7 @@ import { PlatformRole as RoleType } from '@ansible/platform-ui/interfaces/Platfo
 test.beforeEach(setupBefore({ path: '/content/administration/remotes' }));
 test.afterEach(setupAfter);
 
-test.describe('Hub - Remotes Access', () => {
+test.describe('Hub - Remotes Access', { tag: ['@remote', '@team', '@user'] }, () => {
   test(
     'should assign user to remote and apply role via User Access tab',
     { tag: ['@not_mock', '@tier1'] },

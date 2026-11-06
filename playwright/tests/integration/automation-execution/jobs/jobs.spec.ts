@@ -15,135 +15,147 @@ import { filterTable } from '../../../../commands/filterTable';
 test.beforeEach(setupBefore({ path: '/execution/jobs' }));
 test.afterEach(setupAfter);
 
-test.describe('Jobs: Relaunch', () => {
-  let organizationName: string;
-  let inventoryName: string;
-  let jobTemplateName: string;
+test.describe(
+  'Jobs: Relaunch',
+  { tag: ['@job', '@organization', '@inventory', '@jobtemplate'] },
+  () => {
+    let organizationName: string;
+    let inventoryName: string;
+    let jobTemplateName: string;
 
-  test.beforeEach(async ({ page }) => {
-    organizationName = await Organization.ui.create(page);
-    inventoryName = await Inventory.ui.create(page);
-    jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
-  });
+    test.beforeEach(async ({ page }) => {
+      organizationName = await Organization.ui.create(page);
+      inventoryName = await Inventory.ui.create(page);
+      jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
+    });
 
-  test.afterEach(async ({ page }) => {
-    // Use API-based deletion to properly cancel running jobs before cleanup
-    try {
-      await JobTemplate.api.deleteByName(page, jobTemplateName);
-    } catch {
-      // Ignore cleanup errors
-    }
-    try {
-      await Inventory.ui.delete(page, inventoryName);
-    } catch {
-      // Ignore cleanup errors
-    }
-    try {
-      await Organization.ui.delete(page, organizationName);
-    } catch {
-      // Ignore cleanup errors
-    }
-  });
+    test.afterEach(async ({ page }) => {
+      // Use API-based deletion to properly cancel running jobs before cleanup
+      try {
+        await JobTemplate.api.deleteByName(page, jobTemplateName);
+      } catch {
+        // Ignore cleanup errors
+      }
+      try {
+        await Inventory.ui.delete(page, inventoryName);
+      } catch {
+        // Ignore cleanup errors
+      }
+      try {
+        await Organization.ui.delete(page, organizationName);
+      } catch {
+        // Ignore cleanup errors
+      }
+    });
 
-  test(
-    'can relaunch the job and navigate to job output',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      test.setTimeout(4 * 60 * 1000);
-      await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: true });
+    test(
+      'can relaunch the job and navigate to job output',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        test.setTimeout(4 * 60 * 1000);
+        await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: true });
+        await navigateTo(page, 'Automation Execution', 'Jobs');
+
+        await clickTableRowAction(
+          { pageTitle: 'Jobs', text: jobTemplateName, action: 'Relaunch job' },
+          page
+        );
+
+        // Verify navigated to job output page
+        await expect(page).toHaveURL(/\/jobs\/playbook\/\d+\/output/);
+        await expectJobOutputSuccess(page, { timeout: 180_000 });
+      }
+    );
+  }
+);
+
+test.describe(
+  'Jobs: Delete',
+  { tag: ['@job', '@organization', '@inventory', '@jobtemplate'] },
+  () => {
+    let organizationName: string;
+    let inventoryName: string;
+    let jobTemplateName: string;
+
+    test.beforeEach(async ({ page }) => {
+      organizationName = await Organization.ui.create(page);
+      inventoryName = await Inventory.ui.create(page);
+      jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
+    });
+
+    test.afterEach(async ({ page }) => {
+      // Use API-based deletion to properly cancel running jobs before cleanup
+      try {
+        await JobTemplate.api.deleteByName(page, jobTemplateName);
+      } catch {
+        // Ignore cleanup errors
+      }
+      try {
+        await Inventory.ui.delete(page, inventoryName);
+      } catch {
+        // Ignore cleanup errors
+      }
+      try {
+        await Organization.ui.delete(page, organizationName);
+      } catch {
+        // Ignore cleanup errors
+      }
+    });
+
+    test('can delete a job from the jobs list row', { tag: ['@not_mock'] }, async ({ page }) => {
+      // Launch a job first
+      await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: false });
+
+      // Navigate to jobs list
       await navigateTo(page, 'Automation Execution', 'Jobs');
 
+      // Click kebab menu and delete
       await clickTableRowAction(
-        { pageTitle: 'Jobs', text: jobTemplateName, action: 'Relaunch job' },
+        {
+          pageTitle: 'Jobs',
+          text: jobTemplateName,
+          action: 'Delete job',
+          inKebab: true,
+        },
         page
       );
 
-      // Verify navigated to job output page
-      await expect(page).toHaveURL(/\/jobs\/playbook\/\d+\/output/);
-      await expectJobOutputSuccess(page, { timeout: 180_000 });
-    }
-  );
-});
+      // Confirm deletion
+      await confirmAndAssertDeletion(page);
 
-test.describe('Jobs: Delete', () => {
-  let organizationName: string;
-  let inventoryName: string;
-  let jobTemplateName: string;
+      // Verify job is removed from the list - it should no longer appear
+      await expect(page.getByRole('row', { name: jobTemplateName })).not.toBeVisible();
+    });
 
-  test.beforeEach(async ({ page }) => {
-    organizationName = await Organization.ui.create(page);
-    inventoryName = await Inventory.ui.create(page);
-    jobTemplateName = await JobTemplate.ui.create(page, { inventoryName });
-  });
+    test(
+      'can delete a job from the jobs list toolbar',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        // Launch a job first
+        await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: false });
 
-  test.afterEach(async ({ page }) => {
-    // Use API-based deletion to properly cancel running jobs before cleanup
-    try {
-      await JobTemplate.api.deleteByName(page, jobTemplateName);
-    } catch {
-      // Ignore cleanup errors
-    }
-    try {
-      await Inventory.ui.delete(page, inventoryName);
-    } catch {
-      // Ignore cleanup errors
-    }
-    try {
-      await Organization.ui.delete(page, organizationName);
-    } catch {
-      // Ignore cleanup errors
-    }
-  });
+        await navigateTo(page, 'Automation Execution', 'Jobs');
 
-  test('can delete a job from the jobs list row', { tag: ['@not_mock'] }, async ({ page }) => {
-    // Launch a job first
-    await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: false });
+        await selectTableRow({ filterLabel: 'Name', filterValue: jobTemplateName }, page);
 
-    // Navigate to jobs list
-    await navigateTo(page, 'Automation Execution', 'Jobs');
+        // Delete from toolbar
+        await page.getByRole('button', { name: 'toolbar actions' }).click();
+        await page.getByRole('menuitem', { name: 'Delete jobs' }).click();
 
-    // Click kebab menu and delete
-    await clickTableRowAction(
-      {
-        pageTitle: 'Jobs',
-        text: jobTemplateName,
-        action: 'Delete job',
-        inKebab: true,
-      },
-      page
+        // Confirm deletion
+        await confirmAndAssertDeletion(page);
+
+        // Verify job is removed from the list - it should no longer appear
+        await expect(page.getByRole('row', { name: jobTemplateName })).not.toBeVisible();
+      }
     );
-
-    // Confirm deletion
-    await confirmAndAssertDeletion(page);
-
-    // Verify job is removed from the list - it should no longer appear
-    await expect(page.getByRole('row', { name: jobTemplateName })).not.toBeVisible();
-  });
-
-  test('can delete a job from the jobs list toolbar', { tag: ['@not_mock'] }, async ({ page }) => {
-    // Launch a job first
-    await JobTemplate.ui.run(page, jobTemplateName, { inventoryName, doNotWait: false });
-
-    await navigateTo(page, 'Automation Execution', 'Jobs');
-
-    await selectTableRow({ filterLabel: 'Name', filterValue: jobTemplateName }, page);
-
-    // Delete from toolbar
-    await page.getByRole('button', { name: 'toolbar actions' }).click();
-    await page.getByRole('menuitem', { name: 'Delete jobs' }).click();
-
-    // Confirm deletion
-    await confirmAndAssertDeletion(page);
-
-    // Verify job is removed from the list - it should no longer appear
-    await expect(page.getByRole('row', { name: jobTemplateName })).not.toBeVisible();
-  });
-});
+  }
+);
 
 test.describe('Jobs: Launch and Verify Output', () => {
   test(
     'can launch a Management job, let it finish, and assert expected results on the output screen',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@job', '@systemjobtemplate'] },
     async ({ page }) => {
       test.setTimeout(4 * 60 * 1000);
       await navigateTo(page, 'Automation Execution', 'Administration', 'Management Jobs');
@@ -171,7 +183,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
 
   test(
     'can launch a Source Control Update job, let it finish, and assert expected results on the output screen',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@job', '@organization', '@project'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
       const organization = await Organization.api.create(page);
@@ -247,7 +259,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
 
   test(
     'can launch a Playbook Run job, let it finish, and assert expected results on the output screen',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@job', '@organization', '@inventory', '@jobtemplate'] },
     async ({ page }) => {
       test.setTimeout(180000);
       const organizationName = await Organization.ui.create(page);
@@ -273,7 +285,7 @@ test.describe('Jobs: Launch and Verify Output', () => {
 
   test(
     'can launch an Inventory Sync job, let it finish, and assert expected results on the output screen',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@job', '@organization', '@project', '@inventory', '@inventorysource'] },
     async ({ page }) => {
       test.setTimeout(3 * 60 * 1000);
       test.slow();

@@ -55,7 +55,7 @@ test.describe('Host Groups Tab', () => {
 
   test(
     'should associate and disassociate groups at standalone host groups tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@group', '@host', '@inventory', '@organization'] },
     async ({ page }) => {
       test.setTimeout(120000);
       await test.step('Associate group to host', async () => {

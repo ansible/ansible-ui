@@ -20,7 +20,17 @@ test.afterEach(setupAfter);
 test.describe('Inventory Host - Smart Inventory Tests', () => {
   test(
     'should run an ad-hoc command against a host in smart inventory',
-    { tag: ['@not_mock'] },
+    {
+      tag: [
+        '@not_mock',
+        '@adhoccommand',
+        '@credential',
+        '@executionenvironment',
+        '@host',
+        '@inventory',
+        '@organization',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
@@ -86,7 +96,7 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
 
   test(
     'should launch a job template using smart inventory and view job on host jobs tab',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@inventory', '@job', '@jobtemplate', '@organization', '@project'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 
@@ -135,6 +145,7 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
 
       // Select project
       await page.locator('#project-select').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(projectName);
       await page.getByRole('option', { name: projectName }).click();
 
       // Select playbook
@@ -183,7 +194,7 @@ test.describe('Inventory Host - Smart Inventory Tests', () => {
 
   test(
     'should verify edit, delete and facts are not available for smart inventory hosts',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@host', '@inventory', '@organization'] },
     async ({ page }) => {
       test.setTimeout(5 * 60 * 1000);
 

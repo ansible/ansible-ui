@@ -20,7 +20,7 @@ import { expect, test } from '@playwright/test';
 test.beforeEach(setupBefore({ path: '/decisions/projects' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Projects List', () => {
+test.describe('EDA Projects List', { tag: ['@organization', '@project'] }, () => {
   let organization: PlatformOrganization;
   let edaOrgId: number;
 
@@ -167,7 +167,7 @@ test.describe('EDA Projects List', () => {
 
   test(
     'should show alert message when syncing project with auto-restart activations',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@edacredential', '@decisionenvironment', '@activation'] },
     async ({ page }) => {
       test.setTimeout(180000);
 
@@ -255,7 +255,7 @@ test.describe('EDA Projects List', () => {
 
   test(
     'should not show alert message when syncing project without auto-restart activations',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@edacredential', '@decisionenvironment', '@activation'] },
     async ({ page }) => {
       test.setTimeout(180000);
 

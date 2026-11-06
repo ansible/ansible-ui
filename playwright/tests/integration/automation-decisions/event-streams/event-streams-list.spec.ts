@@ -13,7 +13,7 @@ import { expect, test } from '@playwright/test';
 test.beforeEach(setupBefore({ path: '/decisions/event-streams' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Event Streams - List Operations', () => {
+test.describe('EDA Event Streams - List Operations', { tag: ['@eventstream'] }, () => {
   test.beforeAll(() => {
     if (isSaaS()) {
       test.skip(true, 'Event streams not available on SaaS deployments');

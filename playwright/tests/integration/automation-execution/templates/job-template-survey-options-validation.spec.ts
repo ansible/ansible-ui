@@ -42,7 +42,7 @@ test.describe('Job template survey OPTIONS pattern validation', () => {
 
   test(
     'survey question editor shows pattern_description when nested spec OPTIONS patterns reject input',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@inventory', '@jobtemplate', '@organization', '@project'] },
     async ({ page }, testInfo) => {
       const { questionName } = await requireSurveySpecNestedPatterns(
         page,
@@ -68,7 +68,7 @@ test.describe('Job template survey OPTIONS pattern validation', () => {
 
   test(
     'launch survey step shows pattern_description when nested spec OPTIONS patterns reject text answers',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@inventory', '@jobtemplate', '@organization', '@project'] },
     async ({ page }, testInfo) => {
       const { launchText } = await requireSurveySpecNestedPatterns(page, jobTemplate.id, testInfo);
 

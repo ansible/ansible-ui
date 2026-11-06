@@ -13,7 +13,7 @@ test.afterEach(setupAfter);
 
 test(
   'Github auth form - create, edit, update and delete',
-  { tag: ['@not_mock'] },
+  { tag: ['@not_mock', '@authentication'] },
   async ({ page }) => {
     const authMethodName = await Authentication.ui.createMethod(page, {
       name: 'e2e-github-auth',

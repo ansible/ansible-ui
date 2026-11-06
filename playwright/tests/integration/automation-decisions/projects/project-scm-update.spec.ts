@@ -9,7 +9,7 @@ import { EdaProject, Organization } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/decisions/projects' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Projects - SCM Update on Launch', () => {
+test.describe('EDA Projects - SCM Update on Launch', { tag: ['@project'] }, () => {
   let organization: PlatformOrganization;
 
   test.beforeEach(async ({ page }) => {
@@ -22,7 +22,7 @@ test.describe('EDA Projects - SCM Update on Launch', () => {
 
   test(
     'should create project with scm update on launch enabled',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@organization'] },
     async ({ page }) => {
       await test.step('Navigate to create project page', async () => {
         await navigateTo(page, 'Automation Decisions', 'Projects');
@@ -134,7 +134,7 @@ test.describe('EDA Projects - SCM Update on Launch', () => {
 
   test(
     'should edit project to enable scm update on launch',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@organization'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
         organization: organization.id,
@@ -190,7 +190,7 @@ test.describe('EDA Projects - SCM Update on Launch', () => {
 
   test(
     'should create project with scm update disabled and verify cache timeout is not shown',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@organization'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
         organization: organization.id,
@@ -226,7 +226,7 @@ test.describe('EDA Projects - SCM Update on Launch', () => {
 
   test(
     'should preserve cache timeout value when editing project',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@organization'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
         organization: organization.id,

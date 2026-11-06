@@ -23,7 +23,7 @@ async function isK8sDeployment(page: Page): Promise<boolean> {
   }
 }
 
-test.describe('Instances (K8s)', () => {
+test.describe('Instances (K8s)', { tag: ['@instance'] }, () => {
   test.beforeEach(setupBefore({ path: '/' }));
   test.afterEach(setupAfter);
 

@@ -5,7 +5,11 @@ import { ExecutionEnvironment } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/execution/infrastructure/execution-environments' }));
 test.afterEach(setupAfter);
 
-test('execution environment - create and delete', async ({ page }) => {
-  const executionEnvName = await ExecutionEnvironment.ui.create(page);
-  await ExecutionEnvironment.ui.delete(page, executionEnvName);
-});
+test(
+  'execution environment - create and delete',
+  { tag: ['@executionenvironment'] },
+  async ({ page }) => {
+    const executionEnvName = await ExecutionEnvironment.ui.create(page);
+    await ExecutionEnvironment.ui.delete(page, executionEnvName);
+  }
+);

@@ -8,7 +8,7 @@ import { Organization, Notifier } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/organizations' }));
 test.afterEach(setupAfter);
 
-test.describe('Notifications Tab for Organizations', () => {
+test.describe('Notifications Tab for Organizations', { tag: ['@organization'] }, () => {
   let organizationName: string;
   let notifierName: string;
 

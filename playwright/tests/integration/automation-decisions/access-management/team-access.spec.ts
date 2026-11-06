@@ -110,150 +110,180 @@ test.describe('EDA Team Access - Assign and Remove Team Roles', () => {
   test.beforeEach(setupBefore({ path: '/' }));
   test.afterEach(setupAfter);
 
-  for (const resource of edaResources) {
-    test.describe(`${resource.name}`, () => {
-      test(`should assign teams via team access tab`, { tag: ['@not_mock'] }, async ({ page }) => {
-        test.setTimeout(3 * 60 * 1000);
-        const suffix = `${Date.now()}`;
-        let ctx: ResourceContext | undefined;
-        let teamId: number | undefined;
+  async function assignTeamsViaTeamAccess(
+    page: import('@playwright/test').Page,
+    resource: AccessTabResource
+  ) {
+    test.setTimeout(3 * 60 * 1000);
+    const suffix = `${Date.now()}`;
+    let ctx: ResourceContext | undefined;
+    let teamId: number | undefined;
 
-        try {
-          ctx = await createResourceForType(page, resource.name, suffix);
+    try {
+      ctx = await createResourceForType(page, resource.name, suffix);
 
-          const team = await Team.api.create(page, { organization: 1 });
-          teamId = team.id;
+      const team = await Team.api.create(page, { organization: 1 });
+      teamId = team.id;
 
-          await test.step('Navigate to resource and open Team Access tab', async () => {
-            await navigateTo(page, ...resource.navPath);
+      await test.step('Navigate to resource and open Team Access tab', async () => {
+        await navigateTo(page, ...resource.navPath);
 
-            if (resource.name === 'decision-environments') {
-              await page.getByRole('button', { name: 'table view' }).click();
-            }
-
-            await clickTableRow(
-              { filterLabel: 'Name', text: ctx!.objectName, clearFilters: true },
-              page
-            );
-            await expect(page.getByRole('heading', { name: ctx!.objectName })).toBeVisible();
-            await page.getByRole('tab', { name: 'Team Access' }).click();
-          });
-
-          await test.step('Run assign teams wizard', async () => {
-            await page.getByRole('link', { name: 'Assign teams' }).click();
-            await expect(page.getByRole('heading', { name: 'Select team(s)' })).toBeVisible();
-
-            await selectTableRow({ filterLabel: 'Name', filterValue: team.name }, page);
-            await page.getByRole('button', { name: 'Next', exact: true }).click();
-
-            await expect(
-              page.getByRole('heading', { name: 'Select roles to apply' })
-            ).toBeVisible();
-            await selectTableRow(
-              {
-                pageTitle: 'Select roles to apply',
-                filterLabel: 'Name',
-                filterValue: resource.role,
-              },
-              page
-            );
-            await page.getByRole('button', { name: 'Next', exact: true }).click();
-
-            await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
-            await page.getByRole('button', { name: 'Finish' }).click();
-          });
-
-          await test.step('Verify assignment succeeded', async () => {
-            await expect(page.getByRole('heading', { name: ctx!.objectName })).toBeVisible();
-            await page.getByRole('tab', { name: 'Details' }).click();
-            await page.getByRole('tab', { name: 'Team Access' }).click();
-            await expect(page.getByRole('link', { name: team.name })).toBeVisible();
-          });
-        } finally {
-          if (ctx) await cleanupResourceContext(page, ctx);
-          if (teamId) await Team.api.delete(page, teamId);
+        if (resource.name === 'decision-environments') {
+          await page.getByRole('button', { name: 'table view' }).click();
         }
+
+        await clickTableRow(
+          { filterLabel: 'Name', text: ctx!.objectName, clearFilters: true },
+          page
+        );
+        await expect(page.getByRole('heading', { name: ctx!.objectName })).toBeVisible();
+        await page.getByRole('tab', { name: 'Team Access' }).click();
       });
 
-      test(`should bulk remove team assignments`, { tag: ['@not_mock'] }, async ({ page }) => {
-        test.setTimeout(3 * 60 * 1000);
-        const suffix = `${Date.now()}`;
-        let ctx: ResourceContext | undefined;
-        let team1Id: number | undefined;
-        let team2Id: number | undefined;
-        let team3Id: number | undefined;
+      await test.step('Run assign teams wizard', async () => {
+        await page.getByRole('link', { name: 'Assign teams' }).click();
+        await expect(page.getByRole('heading', { name: 'Select team(s)' })).toBeVisible();
 
-        try {
-          ctx = await createResourceForType(page, resource.name, suffix);
+        await selectTableRow({ filterLabel: 'Name', filterValue: team.name }, page);
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
 
-          const team1 = await Team.api.create(page, { organization: 1 });
-          team1Id = team1.id;
-          const team2 = await Team.api.create(page, { organization: 1 });
-          team2Id = team2.id;
-          const team3 = await Team.api.create(page, { organization: 1 });
-          team3Id = team3.id;
+        await expect(page.getByRole('heading', { name: 'Select roles to apply' })).toBeVisible();
+        await selectTableRow(
+          {
+            pageTitle: 'Select roles to apply',
+            filterLabel: 'Name',
+            filterValue: resource.role,
+          },
+          page
+        );
+        await page.getByRole('button', { name: 'Next', exact: true }).click();
 
-          const roleDef = await getRoleDefinitionByName(page, resource.role);
-          await createRoleTeamAssignment(
-            page,
-            ctx.objectId,
-            roleDef.id,
-            team1.id,
-            resource.content_type
-          );
-          await createRoleTeamAssignment(
-            page,
-            ctx.objectId,
-            roleDef.id,
-            team2.id,
-            resource.content_type
-          );
-          await createRoleTeamAssignment(
-            page,
-            ctx.objectId,
-            roleDef.id,
-            team3.id,
-            resource.content_type
-          );
-
-          await test.step('Navigate to resource Team Access tab', async () => {
-            await navigateTo(page, ...resource.navPath);
-
-            if (resource.name === 'decision-environments') {
-              await page.getByRole('button', { name: 'table view' }).click();
-            }
-
-            await clickTableRow(
-              { filterLabel: 'Name', text: ctx!.objectName, clearFilters: true },
-              page
-            );
-            await expect(page.getByRole('heading', { name: ctx!.objectName })).toBeVisible();
-            await page.getByRole('tab', { name: 'Team Access' }).click();
-          });
-
-          await test.step('Select two teams and bulk remove', async () => {
-            const team2Row = page.locator('table tbody tr', { hasText: team2.name });
-            await team2Row.getByRole('checkbox').check();
-
-            const team3Row = page.locator('table tbody tr', { hasText: team3.name });
-            await team3Row.getByRole('checkbox').check();
-
-            await page.getByRole('button', { name: 'toolbar actions' }).click();
-            await page.getByRole('menuitem', { name: 'Remove roles' }).click();
-            await expect(page.getByRole('heading', { name: 'Remove role' })).toBeVisible();
-            await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
-            await page.getByRole('dialog').getByRole('button', { name: 'Remove role' }).click();
-
-            await expect(page.locator('table tbody tr', { hasText: team2.name })).toHaveCount(0);
-            await expect(page.locator('table tbody tr', { hasText: team3.name })).toHaveCount(0);
-          });
-        } finally {
-          if (ctx) await cleanupResourceContext(page, ctx);
-          if (team1Id) await Team.api.delete(page, team1Id);
-          if (team2Id) await Team.api.delete(page, team2Id);
-          if (team3Id) await Team.api.delete(page, team3Id);
-        }
+        await expect(page.getByRole('heading', { name: 'Review' })).toBeVisible();
+        await page.getByRole('button', { name: 'Finish' }).click();
       });
-    });
+
+      await test.step('Verify assignment succeeded', async () => {
+        await expect(page.getByRole('heading', { name: ctx!.objectName })).toBeVisible();
+        await page.getByRole('tab', { name: 'Details' }).click();
+        await page.getByRole('tab', { name: 'Team Access' }).click();
+        await expect(page.getByRole('link', { name: team.name })).toBeVisible();
+      });
+    } finally {
+      if (ctx) await cleanupResourceContext(page, ctx);
+      if (teamId) await Team.api.delete(page, teamId);
+    }
   }
+
+  async function bulkRemoveTeamAssignments(
+    page: import('@playwright/test').Page,
+    resource: AccessTabResource
+  ) {
+    test.setTimeout(3 * 60 * 1000);
+    const suffix = `${Date.now()}`;
+    let ctx: ResourceContext | undefined;
+    let team1Id: number | undefined;
+    let team2Id: number | undefined;
+    let team3Id: number | undefined;
+
+    try {
+      ctx = await createResourceForType(page, resource.name, suffix);
+
+      const team1 = await Team.api.create(page, { organization: 1 });
+      team1Id = team1.id;
+      const team2 = await Team.api.create(page, { organization: 1 });
+      team2Id = team2.id;
+      const team3 = await Team.api.create(page, { organization: 1 });
+      team3Id = team3.id;
+
+      const roleDef = await getRoleDefinitionByName(page, resource.role);
+      await createRoleTeamAssignment(
+        page,
+        ctx.objectId,
+        roleDef.id,
+        team1.id,
+        resource.content_type
+      );
+      await createRoleTeamAssignment(
+        page,
+        ctx.objectId,
+        roleDef.id,
+        team2.id,
+        resource.content_type
+      );
+      await createRoleTeamAssignment(
+        page,
+        ctx.objectId,
+        roleDef.id,
+        team3.id,
+        resource.content_type
+      );
+
+      await test.step('Navigate to resource Team Access tab', async () => {
+        await navigateTo(page, ...resource.navPath);
+
+        if (resource.name === 'decision-environments') {
+          await page.getByRole('button', { name: 'table view' }).click();
+        }
+
+        await clickTableRow(
+          { filterLabel: 'Name', text: ctx!.objectName, clearFilters: true },
+          page
+        );
+        await expect(page.getByRole('heading', { name: ctx!.objectName })).toBeVisible();
+        await page.getByRole('tab', { name: 'Team Access' }).click();
+      });
+
+      await test.step('Select two teams and bulk remove', async () => {
+        const team2Row = page.locator('table tbody tr', { hasText: team2.name });
+        await team2Row.getByRole('checkbox').check();
+
+        const team3Row = page.locator('table tbody tr', { hasText: team3.name });
+        await team3Row.getByRole('checkbox').check();
+
+        await page.getByRole('button', { name: 'toolbar actions' }).click();
+        await page.getByRole('menuitem', { name: 'Remove roles' }).click();
+        await expect(page.getByRole('heading', { name: 'Remove role' })).toBeVisible();
+        await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
+        await page.getByRole('dialog').getByRole('button', { name: 'Remove role' }).click();
+
+        await expect(page.locator('table tbody tr', { hasText: team2.name })).toHaveCount(0);
+        await expect(page.locator('table tbody tr', { hasText: team3.name })).toHaveCount(0);
+      });
+    } finally {
+      if (ctx) await cleanupResourceContext(page, ctx);
+      if (team1Id) await Team.api.delete(page, team1Id);
+      if (team2Id) await Team.api.delete(page, team2Id);
+      if (team3Id) await Team.api.delete(page, team3Id);
+    }
+  }
+
+  test.describe(
+    'credentials',
+    {
+      tag: ['@edacredential', '@organization', '@role', '@team'],
+    },
+    () => {
+      test('should assign teams via team access tab', { tag: ['@not_mock'] }, async ({ page }) => {
+        await assignTeamsViaTeamAccess(page, edaResources[0]);
+      });
+      test('should bulk remove team assignments', { tag: ['@not_mock'] }, async ({ page }) => {
+        await bulkRemoveTeamAssignments(page, edaResources[0]);
+      });
+    }
+  );
+
+  test.describe(
+    'decision-environments',
+    {
+      tag: ['@decisionenvironment', '@organization', '@role', '@team'],
+    },
+    () => {
+      test('should assign teams via team access tab', { tag: ['@not_mock'] }, async ({ page }) => {
+        await assignTeamsViaTeamAccess(page, edaResources[1]);
+      });
+      test('should bulk remove team assignments', { tag: ['@not_mock'] }, async ({ page }) => {
+        await bulkRemoveTeamAssignments(page, edaResources[1]);
+      });
+    }
+  );
 });

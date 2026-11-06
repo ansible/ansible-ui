@@ -7,7 +7,7 @@ import {
 } from '@ansible/playwright/utils/lightspeed';
 import { platformUI } from '@ansible/playwright/commands/login';
 
-test.describe('Chatbot', () => {
+test.describe('Chatbot', { tag: ['@chatbot'] }, () => {
   test.beforeEach(setupBefore({ path: '/' }));
   test.afterEach(setupAfter);
   test.setTimeout(1 * 60 * 1000);
@@ -126,7 +126,7 @@ test.describe('Chatbot', () => {
 
   test(
     'should have MCP conversation return a meaningful response',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@jobtemplate'] },
     async ({ page }) => {
       const healthResponse = await page.request.get(
         `${platformUI}/api/lightspeed/v1/health/status/chatbot/`

@@ -1,5 +1,27 @@
 # Migration Stats
 
+## Resource Tag Audit
+
+`tag-audit` reports individual Playwright tests without resource tags. It follows
+tags inherited from `test.describe`, supports several resource tags on one test,
+and groups missing tags by UI domain. Supplying the mapping artifact makes the
+audit count only tags that correspond to a mapped backend resource. For every
+untagged test it also emits candidate tags: direct use of a resource utility is
+high-confidence, while an existing spec-to-resource mapping is explicitly marked
+for review rather than applied automatically.
+
+Tests that intentionally have no backend-resource association may use
+`@platform`. This is a baseline-only classification: it satisfies the audit but
+is not selected by component-PR resource mapping, so it continues to run in the
+nightly suite.
+
+```bash
+npm run tag-audit -- --mapping /path/to/mapping.json --output /tmp/tag-audit.json
+```
+
+Use `--fail-on-missing` only after the tag rollout is complete; until then it is
+an inventory tool, not a merge gate.
+
 ## Overview
 
 The Migration Stats script analyzes git history to track the progress of migrating tests from Cypress to Playwright and from Cypress component tests to Vitest.

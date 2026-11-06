@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
-test.describe('Hub - Namespaces', () => {
+test.describe('Hub - Namespaces', { tag: ['@namespace'] }, () => {
   test(
     'should create, search and delete a namespace',
     { tag: ['@not_mock', '@tier1'] },
@@ -78,7 +78,7 @@ test.describe('Hub - Namespaces', () => {
   );
 });
 
-test.describe('Hub - Namespaces - Use Existing Namespaces', () => {
+test.describe('Hub - Namespaces - Use Existing Namespaces', { tag: ['@namespace'] }, () => {
   let namespaceName: string;
 
   test.beforeEach(async ({ page }) => {
@@ -137,7 +137,7 @@ test.describe('Hub - Namespaces - Use Existing Namespaces', () => {
   });
 });
 
-test.describe('Hub - Namespaces - Bulk Delete', () => {
+test.describe('Hub - Namespaces - Bulk Delete', { tag: ['@namespace'] }, () => {
   test('should bulk delete namespaces', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const namespace1 = await Namespace.api.create(page);
     const namespace2 = await Namespace.api.create(page);

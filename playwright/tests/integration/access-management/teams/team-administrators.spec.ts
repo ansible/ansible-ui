@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Team, User, Organization } from '@ansible/playwright/utils';
 
-test.describe('Platform Teams - Administrators Tab', () => {
+test.describe('Platform Teams - Administrators Tab', { tag: ['@team', '@user'] }, () => {
   let organizationName: string;
   let userName1: string;
   let userName2: string;

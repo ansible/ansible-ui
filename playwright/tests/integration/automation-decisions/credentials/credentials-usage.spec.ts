@@ -85,172 +85,20 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
     }
   });
 
-  test('should create RBA without credentials', async ({ page }) => {
-    test.setTimeout(180000);
+  test(
+    'should create RBA without credentials',
+    {
+      tag: ['@activation', '@decisionenvironment', '@organization', '@project', '@rulebook'],
+    },
+    async ({ page }) => {
+      test.setTimeout(180000);
 
-    const rbaName = createE2EName('rulebook-activation');
-
-    await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
-    await page.getByText('Create rulebook activation').click();
-    await expect(page.getByRole('heading', { name: 'Create rulebook activation' })).toBeVisible();
-
-    await page.getByRole('textbox', { name: 'Name', exact: true }).fill(rbaName);
-    await page
-      .getByRole('textbox', { name: 'Description', exact: true })
-      .fill('This is a new rulebook activation.');
-
-    await page.getByRole('button', { name: 'Organization' }).click();
-    await page.locator('#organization_id-search').getByRole('textbox').fill(organizationName);
-    await page.getByRole('option', { name: organizationName }).click();
-
-    await page.getByRole('button', { name: 'Project' }).click();
-    await page.locator('#project_id-search').getByRole('textbox').fill(edaProject.name);
-    await page.getByRole('option', { name: edaProject.name }).click();
-
-    await page.getByRole('button', { name: 'Rulebook', exact: true }).click();
-    await page.getByRole('option', { name: edaRulebook.name }).click();
-
-    await page.getByRole('button', { name: 'Decision Environment' }).click();
-    await page.locator('#decision_environment_id-search input').fill(edaDecisionEnvironment.name);
-    await page.getByRole('option', { name: edaDecisionEnvironment.name }).click();
-
-    await page.getByRole('button', { name: 'On failure' }).click();
-    await page.getByRole('option', { name: 'Always' }).click();
-
-    const createResponsePromise = page.waitForResponse(
-      (response) => response.url().includes('/api/eda/v1/activations/') && response.status() === 201
-    );
-
-    await page
-      .getByRole('button', {
-        name: 'Create rulebook activation',
-        exact: true,
-      })
-      .click();
-
-    const createResponse = await createResponsePromise;
-    const createdRBA = (await createResponse.json()) as ActivationRead;
-
-    try {
-      await expect(page.getByRole('heading', { name: rbaName, exact: true })).toBeVisible();
-
-      await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
-      await page.getByRole('textbox', { name: 'Type to filter' }).fill(createdRBA.name);
-      await page.getByRole('button', { name: 'apply filter' }).click();
-
-      await page
-        .getByRole('row', { name: createdRBA.name })
-        .getByLabel('kebab dropdown toggle')
-        .click();
-      await page.getByRole('menuitem', { name: 'Restart rulebook activation' }).click();
-
-      await expect(
-        page.getByRole('dialog', { name: 'Restart rulebook activations' })
-      ).toBeVisible();
-      await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
-
-      await page.getByRole('button', { name: 'Restart rulebook activations' }).click();
-
-      await expect(page.getByRole('dialog')).toContainText('Success', {
-        timeout: 15000,
-      });
-      await page.getByRole('button', { name: 'Close' }).click();
-    } finally {
-      if (createdRBA?.id) {
-        await edaAPI.delete(page, `activations/${createdRBA.id}/`).catch(() => {});
-      }
-    }
-  });
-
-  test('should not create a private project without credentials', async ({ page }) => {
-    test.setTimeout(180000);
-
-    const projectName = createE2EName('project');
-
-    await navigateTo(page, 'Automation Decisions', 'Projects');
-    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
-
-    await page.getByRole('button', { name: 'Create project', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Name' }).fill(projectName);
-    await page
-      .getByLabel('Source Control URL')
-      .fill('git@github.com:ansible/private-nonexistent-repo.git');
-
-    await page.getByRole('button', { name: 'Organization' }).click();
-    await page.locator('#organization_id-search').getByRole('textbox').fill(organizationName);
-    await page.getByRole('option', { name: organizationName }).click();
-
-    const createResponsePromise = page.waitForResponse(
-      (response) => response.url().includes('/api/eda/v1/projects/') && response.status() === 201
-    );
-
-    await page.getByRole('button', { name: 'Create project', exact: true }).click();
-
-    const createResponse = await createResponsePromise;
-    const newProject = (await createResponse.json()) as EdaProjectType;
-
-    try {
-      const syncedProject = await waitForProjectSync(page, newProject);
-
-      await expect(page.getByTestId('status')).toContainText('Failed', {
-        timeout: 30000,
-      });
-      expect(syncedProject.import_state).toBe('failed');
-    } finally {
-      if (newProject?.id) {
-        await edaAPI.delete(page, `projects/${newProject.id}/`).catch(() => {});
-      }
-    }
-  });
-
-  test('should not use a private DE without credentials', async ({ page }) => {
-    test.setTimeout(180000);
-
-    const deName = createE2EName('decision-environment');
-    let privateDEId: number | undefined;
-    let rbaId: number | undefined;
-
-    try {
-      await navigateTo(page, 'Automation Decisions', 'Decision Environments');
-      await expect(page.getByRole('heading', { name: 'Decision Environments' })).toBeVisible();
-
-      await page
-        .getByRole('button', {
-          name: 'Create decision environment',
-          exact: true,
-        })
-        .click();
-      await page.getByRole('textbox', { name: 'Name' }).fill(deName);
-
-      await page.getByRole('button', { name: 'Organization' }).click();
-      await page.locator('#organization_id-search').getByRole('textbox').fill('Default');
-      await page.getByRole('option', { name: 'Default' }).click();
-
-      await page.getByLabel('Image').fill('quay.io/abakshirht/galaxy-ng-locust:ansible2.13');
-
-      const createDEResponsePromise = page.waitForResponse(
-        (response) =>
-          response.url().includes('/api/eda/v1/decision-environments/') && response.status() === 201
-      );
-
-      await page
-        .getByRole('button', {
-          name: 'Create decision environment',
-          exact: true,
-        })
-        .click();
-
-      const createDEResponse = await createDEResponsePromise;
-      const privateDE = (await createDEResponse.json()) as EdaDecisionEnvironment;
-      privateDEId = privateDE.id;
-
-      await expect(page.getByRole('heading', { name: deName, exact: true })).toBeVisible();
+      const rbaName = createE2EName('rulebook-activation');
 
       await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
       await page.getByText('Create rulebook activation').click();
       await expect(page.getByRole('heading', { name: 'Create rulebook activation' })).toBeVisible();
 
-      const rbaName = createE2EName('rulebook-activation');
       await page.getByRole('textbox', { name: 'Name', exact: true }).fill(rbaName);
       await page
         .getByRole('textbox', { name: 'Description', exact: true })
@@ -268,13 +116,13 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
       await page.getByRole('option', { name: edaRulebook.name }).click();
 
       await page.getByRole('button', { name: 'Decision Environment' }).click();
-      await page.locator('#decision_environment_id-search input').fill(deName);
-      await page.getByRole('option', { name: deName }).click();
+      await page.locator('#decision_environment_id-search input').fill(edaDecisionEnvironment.name);
+      await page.getByRole('option', { name: edaDecisionEnvironment.name }).click();
 
       await page.getByRole('button', { name: 'On failure' }).click();
       await page.getByRole('option', { name: 'Always' }).click();
 
-      const createRBAResponsePromise = page.waitForResponse(
+      const createResponsePromise = page.waitForResponse(
         (response) =>
           response.url().includes('/api/eda/v1/activations/') && response.status() === 201
       );
@@ -286,34 +134,208 @@ test.describe('EDA Credentials Usage in Resources', { tag: ['@not_mock'] }, () =
         })
         .click();
 
-      const createRBAResponse = await createRBAResponsePromise;
-      const createdRBA = (await createRBAResponse.json()) as ActivationRead;
-      rbaId = createdRBA.id;
+      const createResponse = await createResponsePromise;
+      const createdRBA = (await createResponse.json()) as ActivationRead;
 
-      await expect(page.getByRole('heading', { name: rbaName, exact: true })).toBeVisible();
+      try {
+        await expect(page.getByRole('heading', { name: rbaName, exact: true })).toBeVisible();
 
-      // Check if workers are available before waiting for failure
-      const workersAvailable = await RulebookActivation.api.checkWorkersAvailable(
-        page,
-        createdRBA.id
-      );
-      if (!workersAvailable) {
-        test.skip(true, 'EDA workers are not available - skipping test');
-        return;
-      }
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+        await page.getByRole('textbox', { name: 'Type to filter' }).fill(createdRBA.name);
+        await page.getByRole('button', { name: 'apply filter' }).click();
 
-      await RulebookActivation.api.waitForStatus(page, createdRBA.id, 'failed');
-    } finally {
-      if (rbaId) {
-        await edaAPI.delete(page, `activations/${rbaId}/`).catch(() => {});
-      }
-      if (privateDEId) {
-        await edaAPI
-          .delete(page, `decision-environments/${privateDEId}/?force=true`)
-          .catch(() => {});
+        await page
+          .getByRole('row', { name: createdRBA.name })
+          .getByLabel('kebab dropdown toggle')
+          .click();
+        await page.getByRole('menuitem', { name: 'Restart rulebook activation' }).click();
+
+        await expect(
+          page.getByRole('dialog', { name: 'Restart rulebook activations' })
+        ).toBeVisible();
+        await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
+
+        await page.getByRole('button', { name: 'Restart rulebook activations' }).click();
+
+        await expect(page.getByRole('dialog')).toContainText('Success', {
+          timeout: 15000,
+        });
+        await page.getByRole('button', { name: 'Close' }).click();
+      } finally {
+        if (createdRBA?.id) {
+          await edaAPI.delete(page, `activations/${createdRBA.id}/`).catch(() => {});
+        }
       }
     }
-  });
+  );
+
+  test(
+    'should not create a private project without credentials',
+    {
+      tag: ['@edacredential', '@organization', '@project'],
+    },
+    async ({ page }) => {
+      test.setTimeout(180000);
+
+      const projectName = createE2EName('project');
+
+      await navigateTo(page, 'Automation Decisions', 'Projects');
+      await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
+
+      await page.getByRole('button', { name: 'Create project', exact: true }).click();
+      await page.getByRole('textbox', { name: 'Name' }).fill(projectName);
+      await page
+        .getByLabel('Source Control URL')
+        .fill('git@github.com:ansible/private-nonexistent-repo.git');
+
+      await page.getByRole('button', { name: 'Organization' }).click();
+      await page.locator('#organization_id-search').getByRole('textbox').fill(organizationName);
+      await page.getByRole('option', { name: organizationName }).click();
+
+      const createResponsePromise = page.waitForResponse(
+        (response) => response.url().includes('/api/eda/v1/projects/') && response.status() === 201
+      );
+
+      await page.getByRole('button', { name: 'Create project', exact: true }).click();
+
+      const createResponse = await createResponsePromise;
+      const newProject = (await createResponse.json()) as EdaProjectType;
+
+      try {
+        const syncedProject = await waitForProjectSync(page, newProject);
+
+        await expect(page.getByTestId('status')).toContainText('Failed', {
+          timeout: 30000,
+        });
+        expect(syncedProject.import_state).toBe('failed');
+      } finally {
+        if (newProject?.id) {
+          await edaAPI.delete(page, `projects/${newProject.id}/`).catch(() => {});
+        }
+      }
+    }
+  );
+
+  test(
+    'should not use a private DE without credentials',
+    {
+      tag: ['@activation', '@decisionenvironment', '@edacredential', '@organization'],
+    },
+    async ({ page }) => {
+      test.setTimeout(180000);
+
+      const deName = createE2EName('decision-environment');
+      let privateDEId: number | undefined;
+      let rbaId: number | undefined;
+
+      try {
+        await navigateTo(page, 'Automation Decisions', 'Decision Environments');
+        await expect(page.getByRole('heading', { name: 'Decision Environments' })).toBeVisible();
+
+        await page
+          .getByRole('button', {
+            name: 'Create decision environment',
+            exact: true,
+          })
+          .click();
+        await page.getByRole('textbox', { name: 'Name' }).fill(deName);
+
+        await page.getByRole('button', { name: 'Organization' }).click();
+        await page.locator('#organization_id-search').getByRole('textbox').fill('Default');
+        await page.getByRole('option', { name: 'Default' }).click();
+
+        await page.getByLabel('Image').fill('quay.io/abakshirht/galaxy-ng-locust:ansible2.13');
+
+        const createDEResponsePromise = page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/eda/v1/decision-environments/') &&
+            response.status() === 201
+        );
+
+        await page
+          .getByRole('button', {
+            name: 'Create decision environment',
+            exact: true,
+          })
+          .click();
+
+        const createDEResponse = await createDEResponsePromise;
+        const privateDE = (await createDEResponse.json()) as EdaDecisionEnvironment;
+        privateDEId = privateDE.id;
+
+        await expect(page.getByRole('heading', { name: deName, exact: true })).toBeVisible();
+
+        await navigateTo(page, 'Automation Decisions', 'Rulebook Activations');
+        await page.getByText('Create rulebook activation').click();
+        await expect(
+          page.getByRole('heading', { name: 'Create rulebook activation' })
+        ).toBeVisible();
+
+        const rbaName = createE2EName('rulebook-activation');
+        await page.getByRole('textbox', { name: 'Name', exact: true }).fill(rbaName);
+        await page
+          .getByRole('textbox', { name: 'Description', exact: true })
+          .fill('This is a new rulebook activation.');
+
+        await page.getByRole('button', { name: 'Organization' }).click();
+        await page.locator('#organization_id-search').getByRole('textbox').fill(organizationName);
+        await page.getByRole('option', { name: organizationName }).click();
+
+        await page.getByRole('button', { name: 'Project' }).click();
+        await page.locator('#project_id-search').getByRole('textbox').fill(edaProject.name);
+        await page.getByRole('option', { name: edaProject.name }).click();
+
+        await page.getByRole('button', { name: 'Rulebook', exact: true }).click();
+        await page.getByRole('option', { name: edaRulebook.name }).click();
+
+        await page.getByRole('button', { name: 'Decision Environment' }).click();
+        await page.locator('#decision_environment_id-search input').fill(deName);
+        await page.getByRole('option', { name: deName }).click();
+
+        await page.getByRole('button', { name: 'On failure' }).click();
+        await page.getByRole('option', { name: 'Always' }).click();
+
+        const createRBAResponsePromise = page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/eda/v1/activations/') && response.status() === 201
+        );
+
+        await page
+          .getByRole('button', {
+            name: 'Create rulebook activation',
+            exact: true,
+          })
+          .click();
+
+        const createRBAResponse = await createRBAResponsePromise;
+        const createdRBA = (await createRBAResponse.json()) as ActivationRead;
+        rbaId = createdRBA.id;
+
+        await expect(page.getByRole('heading', { name: rbaName, exact: true })).toBeVisible();
+
+        // Check if workers are available before waiting for failure
+        const workersAvailable = await RulebookActivation.api.checkWorkersAvailable(
+          page,
+          createdRBA.id
+        );
+        if (!workersAvailable) {
+          test.skip(true, 'EDA workers are not available - skipping test');
+          return;
+        }
+
+        await RulebookActivation.api.waitForStatus(page, createdRBA.id, 'failed');
+      } finally {
+        if (rbaId) {
+          await edaAPI.delete(page, `activations/${rbaId}/`).catch(() => {});
+        }
+        if (privateDEId) {
+          await edaAPI
+            .delete(page, `decision-environments/${privateDEId}/?force=true`)
+            .catch(() => {});
+        }
+      }
+    }
+  );
 });
 
 async function waitForProjectSync(

@@ -53,7 +53,17 @@ test.describe('Host Jobs Tab', () => {
 
   test(
     'should relaunch jobs from host jobs tab and bulk delete jobs',
-    { tag: ['@not_mock'] },
+    {
+      tag: [
+        '@not_mock',
+        '@host',
+        '@inventory',
+        '@job',
+        '@jobtemplate',
+        '@organization',
+        '@project',
+      ],
+    },
     async ({ page }) => {
       test.setTimeout(120000);
 

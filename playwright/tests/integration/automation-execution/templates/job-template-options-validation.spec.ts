@@ -17,7 +17,7 @@ test.afterEach(setupAfter);
 test.describe('Job template OPTIONS-driven validation (create form)', () => {
   test(
     'shows OPTIONS-driven validation error on blur for name field',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@jobtemplate'] },
     async ({ page }, testInfo) => {
       const nameField = await requireOptionsFieldPattern(page, '/job_templates/', 'name', testInfo);
 
@@ -42,7 +42,7 @@ test.describe('Job template OPTIONS-driven validation (create form)', () => {
 
   test(
     'accepts valid input without validation error on blur',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@jobtemplate'] },
     async ({ page }, testInfo) => {
       const nameField = await requireOptionsFieldPattern(page, '/job_templates/', 'name', testInfo);
 

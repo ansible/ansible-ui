@@ -8,7 +8,7 @@ import { User } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/users' }));
 test.afterEach(setupAfter);
 
-test.describe('Users - Create, Edit and Delete', () => {
+test.describe('Users - Create, Edit and Delete', { tag: ['@user'] }, () => {
   test(
     'edits a user from the list view and deletes it from the ui',
     { tag: ['@not_mock', '@tier1'] },

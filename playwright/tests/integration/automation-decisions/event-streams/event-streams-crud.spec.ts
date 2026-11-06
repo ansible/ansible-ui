@@ -12,7 +12,7 @@ import { expect, test } from '@playwright/test';
 test.beforeEach(setupBefore({ path: '/decisions/event-streams' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Event Streams - CRUD Operations', () => {
+test.describe('EDA Event Streams - CRUD Operations', { tag: ['@eventstream'] }, () => {
   test(
     'should create an event stream and assert the information on details page',
     { tag: ['@not_mock'] },

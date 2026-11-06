@@ -17,7 +17,7 @@ import { expect } from '@playwright/test';
 test.beforeEach(setupBefore());
 test.afterEach(setupAfter);
 
-test.describe('Hub - Repositories', () => {
+test.describe('Hub - Repositories', { tag: ['@repository'] }, () => {
   test(
     'should create, edit, and delete a repository',
     { tag: ['@not_mock', '@tier1'] },

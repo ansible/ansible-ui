@@ -7,7 +7,7 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Organization } from '@ansible/playwright/utils';
 import { User } from '../../../../utils/user';
 
-test.describe('Organization User Roles', () => {
+test.describe('Organization User Roles', { tag: ['@organization', '@user'] }, () => {
   let organizationName: string;
   let username: string;
 

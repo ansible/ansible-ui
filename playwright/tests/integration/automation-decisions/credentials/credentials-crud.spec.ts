@@ -20,7 +20,7 @@ test.beforeAll(() => {
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credentials' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Credentials - CRUD Operations', () => {
+test.describe('EDA Credentials - CRUD Operations', { tag: ['@edacredential'] }, () => {
   test(
     'should create a container registry credential and assert details',
     { tag: ['@not_mock'] },

@@ -8,7 +8,7 @@ import { selectTableFilter } from '@ansible/playwright/commands/selectTableFilte
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { Inventory, Credential, JobTemplate } from '@ansible/playwright/utils';
 
-test.describe('Job Templates', () => {
+test.describe('Job Templates', { tag: ['@jobtemplate', '@inventory'] }, () => {
   let inventoryName: string;
 
   test.beforeEach(async ({ page }) => {
@@ -657,7 +657,7 @@ test.describe('Job Templates', () => {
   );
 });
 
-test.describe('Job Template - Copy/Duplicate', () => {
+test.describe('Job Template - Copy/Duplicate', { tag: ['@jobtemplate', '@inventory'] }, () => {
   let inventoryName: string;
 
   test.beforeEach(async ({ page }) => {
@@ -733,89 +733,93 @@ test.describe('Job Template - Copy/Duplicate', () => {
   );
 });
 
-test.describe('Job Template - Auto-populate from Project/Inventory', () => {
-  test.beforeEach(setupBefore({ path: '/' }));
-  test.afterEach(setupAfter);
+test.describe(
+  'Job Template - Auto-populate from Project/Inventory',
+  { tag: ['@jobtemplate', '@inventory', '@project'] },
+  () => {
+    test.beforeEach(setupBefore({ path: '/' }));
+    test.afterEach(setupAfter);
 
-  test(
-    'can auto-populate job template form when creating from project page',
-    { tag: ['@not_mock', '@tier1'] },
-    async ({ page }) => {
-      // Use Demo Project which should exist by default
-      const projectName = 'Demo Project';
+    test(
+      'can auto-populate job template form when creating from project page',
+      { tag: ['@not_mock', '@tier1'] },
+      async ({ page }) => {
+        // Use Demo Project which should exist by default
+        const projectName = 'Demo Project';
 
-      // Navigate to the project details page
-      await navigateTo(page, 'Automation Execution', 'Projects');
-      await clickTableRow({ filterLabel: 'Name', text: projectName }, page);
-      await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
+        // Navigate to the project details page
+        await navigateTo(page, 'Automation Execution', 'Projects');
+        await clickTableRow({ filterLabel: 'Name', text: projectName }, page);
+        await expect(page.getByRole('heading', { name: projectName })).toBeVisible();
 
-      // Navigate to the Job Templates tab
-      await page.getByRole('tab', { name: 'Job Templates' }).click();
+        // Navigate to the Job Templates tab
+        await page.getByRole('tab', { name: 'Job Templates' }).click();
 
-      // Wait for the create button to be visible (indicating the tab has loaded)
-      await expect(
-        page.getByRole('button', { name: 'dropdown toggle', exact: true })
-      ).toBeVisible();
+        // Wait for the create button to be visible (indicating the tab has loaded)
+        await expect(
+          page.getByRole('button', { name: 'dropdown toggle', exact: true })
+        ).toBeVisible();
 
-      // Click Create job template button
-      await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
-      await page.getByRole('menuitem', { name: 'Create job template' }).click();
+        // Click Create job template button
+        await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
+        await page.getByRole('menuitem', { name: 'Create job template' }).click();
 
-      // Verify we're on the create form
-      await expect(page.getByRole('heading', { name: 'Create job template' })).toBeVisible();
+        // Verify we're on the create form
+        await expect(page.getByRole('heading', { name: 'Create job template' })).toBeVisible();
 
-      // Verify the URL contains the project_id query parameter
-      expect(page.url()).toContain('project_id=');
+        // Verify the URL contains the project_id query parameter
+        expect(page.url()).toContain('project_id=');
 
-      // Verify the project field is auto-populated
-      // Wait for the project field to load and display the selected project
-      const projectSelectButton = page.locator('#project-select');
-      await expect(projectSelectButton).toBeVisible();
+        // Verify the project field is auto-populated
+        // Wait for the project field to load and display the selected project
+        const projectSelectButton = page.locator('#project-select');
+        await expect(projectSelectButton).toBeVisible();
 
-      // The button should contain the project name (not the placeholder "Select project")
-      await expect(projectSelectButton).not.toContainText('Select project');
-      await expect(projectSelectButton).toContainText(projectName);
-    }
-  );
+        // The button should contain the project name (not the placeholder "Select project")
+        await expect(projectSelectButton).not.toContainText('Select project');
+        await expect(projectSelectButton).toContainText(projectName);
+      }
+    );
 
-  test(
-    'can auto-populate job template form when creating from inventory page',
-    { tag: ['@not_mock', '@tier1'] },
-    async ({ page }) => {
-      // Use Demo Inventory which should exist by default
-      const inventoryName = 'Demo Inventory';
+    test(
+      'can auto-populate job template form when creating from inventory page',
+      { tag: ['@not_mock', '@tier1'] },
+      async ({ page }) => {
+        // Use Demo Inventory which should exist by default
+        const inventoryName = 'Demo Inventory';
 
-      // Navigate to the inventory details page
-      await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
-      await clickTableRow({ filterLabel: 'Name', text: inventoryName }, page);
-      await expect(page.getByRole('heading', { name: inventoryName })).toBeVisible();
+        // Navigate to the inventory details page
+        await navigateTo(page, 'Automation Execution', 'Infrastructure', 'Inventories');
+        await clickTableRow({ filterLabel: 'Name', text: inventoryName }, page);
+        await expect(page.getByRole('heading', { name: inventoryName })).toBeVisible();
 
-      // Navigate to the Job Templates tab
-      await page.getByRole('tab', { name: 'Job Templates' }).click();
+        // Navigate to the Job Templates tab
+        await page.getByRole('tab', { name: 'Job Templates' }).click();
 
-      // Wait for the create button to be visible (indicating the tab has loaded)
-      await expect(
-        page.getByRole('button', { name: 'dropdown toggle', exact: true })
-      ).toBeVisible();
+        // Wait for the create button to be visible (indicating the tab has loaded)
+        await expect(
+          page.getByRole('button', { name: 'dropdown toggle', exact: true })
+        ).toBeVisible();
 
-      // Click Create job template button
-      await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
-      await page.getByRole('menuitem', { name: 'Create job template' }).click();
+        // Click Create job template button
+        await page.getByRole('button', { name: 'dropdown toggle', exact: true }).click();
+        await page.getByRole('menuitem', { name: 'Create job template' }).click();
 
-      // Verify we're on the create form
-      await expect(page.getByRole('heading', { name: 'Create job template' })).toBeVisible();
+        // Verify we're on the create form
+        await expect(page.getByRole('heading', { name: 'Create job template' })).toBeVisible();
 
-      // Verify the URL contains the inventory_id query parameter
-      expect(page.url()).toContain('inventory_id=');
+        // Verify the URL contains the inventory_id query parameter
+        expect(page.url()).toContain('inventory_id=');
 
-      // Verify the inventory field is auto-populated
-      // Wait for the inventory field to load and display the selected inventory
-      const inventorySelectButton = page.locator('#inventory');
-      await expect(inventorySelectButton).toBeVisible();
+        // Verify the inventory field is auto-populated
+        // Wait for the inventory field to load and display the selected inventory
+        const inventorySelectButton = page.locator('#inventory');
+        await expect(inventorySelectButton).toBeVisible();
 
-      // The button should contain the inventory name (not the placeholder "Select inventory")
-      await expect(inventorySelectButton).not.toContainText('Select inventory');
-      await expect(inventorySelectButton).toContainText(inventoryName);
-    }
-  );
-});
+        // The button should contain the inventory name (not the placeholder "Select inventory")
+        await expect(inventorySelectButton).not.toContainText('Select inventory');
+        await expect(inventorySelectButton).toContainText(inventoryName);
+      }
+    );
+  }
+);

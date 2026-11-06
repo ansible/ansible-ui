@@ -9,7 +9,7 @@ import { EdaCredential } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/decisions/infrastructure/credentials' }));
 test.afterEach(setupAfter);
 
-test.describe('EDA Credentials List', () => {
+test.describe('EDA Credentials List', { tag: ['@edacredential'] }, () => {
   test('should render the Credentials list page', { tag: ['@not_mock'] }, async ({ page }) => {
     await expect(page.getByTestId('page-title')).toHaveText('Credentials');
   });

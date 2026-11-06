@@ -17,93 +17,97 @@ test.beforeEach(() => {
   }
 });
 
-test.describe('EDA External Credentials - Creation and Testing', () => {
-  test(
-    'should create an external credential and test it',
-    { tag: ['@not_mock'] },
-    async ({ page }) => {
-      const credentialName = createE2EName('external-credential');
-      let credentialId: number | undefined;
+test.describe(
+  'EDA External Credentials - Creation and Testing',
+  { tag: ['@edacredential'] },
+  () => {
+    test(
+      'should create an external credential and test it',
+      { tag: ['@not_mock'] },
+      async ({ page }) => {
+        const credentialName = createE2EName('external-credential');
+        let credentialId: number | undefined;
 
-      try {
-        await test.step('Navigate and start creation', async () => {
-          await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
-          await expect(
-            page.getByRole('heading', { name: 'Credentials', exact: true })
-          ).toBeVisible();
-          await page.getByText('Create credential').click();
-        });
+        try {
+          await test.step('Navigate and start creation', async () => {
+            await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
+            await expect(
+              page.getByRole('heading', { name: 'Credentials', exact: true })
+            ).toBeVisible();
+            await page.getByText('Create credential').click();
+          });
 
-        await test.step('Fill basic credential information', async () => {
-          await page.getByPlaceholder('Enter credential name').fill(credentialName);
-          await page
-            .getByPlaceholder('Enter description')
-            .fill('This is an external credential for testing.');
-          await singleSelectByLabel('Organization', 'Default', page);
-        });
+          await test.step('Fill basic credential information', async () => {
+            await page.getByPlaceholder('Enter credential name').fill(credentialName);
+            await page
+              .getByPlaceholder('Enter description')
+              .fill('This is an external credential for testing.');
+            await singleSelectByLabel('Organization', 'Default', page);
+          });
 
-        await test.step('Select HashiCorp Vault Secret Lookup type', async () => {
-          await page.getByRole('button', { name: 'Credential type' }).click();
-          await page
-            .getByRole('textbox', { name: 'Search input' })
-            .fill('HashiCorp Vault Secret Lookup');
-          await page.getByRole('option', { name: 'HashiCorp Vault Secret Lookup' }).click();
-        });
+          await test.step('Select HashiCorp Vault Secret Lookup type', async () => {
+            await page.getByRole('button', { name: 'Credential type' }).click();
+            await page
+              .getByRole('textbox', { name: 'Search input' })
+              .fill('HashiCorp Vault Secret Lookup');
+            await page.getByRole('option', { name: 'HashiCorp Vault Secret Lookup' }).click();
+          });
 
-        await test.step('Fill credential inputs', async () => {
-          await page.getByTestId('inputs-url').fill('http://external-user.local');
-          await page.getByTestId('inputs-token').fill('test-vault-token');
-        });
+          await test.step('Fill credential inputs', async () => {
+            await page.getByTestId('inputs-url').fill('http://external-user.local');
+            await page.getByTestId('inputs-token').fill('test-vault-token');
+          });
 
-        await test.step('Verify Test button is enabled and open test modal', async () => {
-          await expect(page.getByRole('button', { name: 'Test' })).toBeEnabled();
-          await page.getByRole('button', { name: 'Test' }).click();
-        });
+          await test.step('Verify Test button is enabled and open test modal', async () => {
+            await expect(page.getByRole('button', { name: 'Test' })).toBeEnabled();
+            await page.getByRole('button', { name: 'Test' }).click();
+          });
 
-        await test.step('Verify test modal appears and cancel', async () => {
-          const dialog = page.getByRole('dialog');
-          await expect(
-            dialog.getByRole('heading', { name: 'Test external credential' })
-          ).toBeVisible();
-          await dialog.getByRole('button', { name: 'Cancel' }).click();
-        });
+          await test.step('Verify test modal appears and cancel', async () => {
+            const dialog = page.getByRole('dialog');
+            await expect(
+              dialog.getByRole('heading', { name: 'Test external credential' })
+            ).toBeVisible();
+            await dialog.getByRole('button', { name: 'Cancel' }).click();
+          });
 
-        await test.step('Create credential and verify details', async () => {
-          const createResponsePromise = page.waitForResponse(
-            (response) =>
-              response.url().includes('/eda-credentials') &&
-              response.request().method() === 'POST' &&
-              response.status() === 201
-          );
+          await test.step('Create credential and verify details', async () => {
+            const createResponsePromise = page.waitForResponse(
+              (response) =>
+                response.url().includes('/eda-credentials') &&
+                response.request().method() === 'POST' &&
+                response.status() === 201
+            );
 
-          await page.getByRole('button', { name: 'Create credential' }).click();
+            await page.getByRole('button', { name: 'Create credential' }).click();
 
-          const createResponse = await createResponsePromise;
-          const responseBody = (await createResponse.json()) as EdaCredentialInterface;
-          credentialId = responseBody.id;
+            const createResponse = await createResponsePromise;
+            const responseBody = (await createResponse.json()) as EdaCredentialInterface;
+            credentialId = responseBody.id;
 
-          await expect(
-            page.getByRole('heading', { name: credentialName, exact: true })
-          ).toBeVisible();
-          await expect(page.locator('#name')).toContainText(credentialName);
-          await expect(page.locator('#description')).toContainText(
-            'This is an external credential for testing.'
-          );
-          await expect(page.getByTestId('credential-type')).toContainText(
-            'HashiCorp Vault Secret Lookup'
-          );
-          await expect(page.getByTestId('url')).toContainText('http://external-user.local');
-        });
-      } finally {
-        if (credentialId) {
-          await EdaCredential.api.delete(page, credentialId);
+            await expect(
+              page.getByRole('heading', { name: credentialName, exact: true })
+            ).toBeVisible();
+            await expect(page.locator('#name')).toContainText(credentialName);
+            await expect(page.locator('#description')).toContainText(
+              'This is an external credential for testing.'
+            );
+            await expect(page.getByTestId('credential-type')).toContainText(
+              'HashiCorp Vault Secret Lookup'
+            );
+            await expect(page.getByTestId('url')).toContainText('http://external-user.local');
+          });
+        } finally {
+          if (credentialId) {
+            await EdaCredential.api.delete(page, credentialId);
+          }
         }
       }
-    }
-  );
-});
+    );
+  }
+);
 
-test.describe('EDA External Credentials - Linking', () => {
+test.describe('EDA External Credentials - Linking', { tag: ['@edacredential'] }, () => {
   test(
     'should disable password field when linked to external credential',
     { tag: ['@not_mock'] },
@@ -487,7 +491,7 @@ test.describe('EDA External Credentials - Linking', () => {
   );
 });
 
-test.describe('EDA External Credentials - Error Handling', () => {
+test.describe('EDA External Credentials - Error Handling', { tag: ['@edacredential'] }, () => {
   test(
     'should show appropriate error when external credential test fails',
     { tag: ['@not_mock'] },

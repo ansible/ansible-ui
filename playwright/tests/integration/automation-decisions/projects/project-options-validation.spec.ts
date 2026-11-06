@@ -17,7 +17,7 @@ test.afterEach(setupAfter);
 test.describe('EDA project OPTIONS-driven validation (create form)', () => {
   test(
     'should show OPTIONS-driven validation error on blur for name field',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@project'] },
     async ({ page }, testInfo) => {
       const nameField = await requireEdaOptionsFieldPattern(page, 'projects/', 'name', testInfo);
 
@@ -39,7 +39,7 @@ test.describe('EDA project OPTIONS-driven validation (create form)', () => {
 
   test(
     'should accept valid input without validation error on blur',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@project'] },
     async ({ page }, testInfo) => {
       const nameField = await requireEdaOptionsFieldPattern(page, 'projects/', 'name', testInfo);
 

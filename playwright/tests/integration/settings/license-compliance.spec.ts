@@ -22,66 +22,70 @@ test.describe('License Compliance', () => {
       test.skip(true, 'Test should not run on SaaS/Azure deployment');
     }
   });
-  test('checks license compliance status', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
-    // Set up response promise before triggering the request
-    const configResponsePromise = page.waitForResponse(
-      (response) =>
-        response.url().includes('/api/controller/v2/config') && response.status() === 200,
-      { timeout: 10000 }
-    );
-
-    // Reload to trigger the config API call
-    await page.reload();
-
-    // Wait for the config API response
-    const configResponse = await configResponsePromise;
-    const config = (await configResponse.json()) as Config;
-
-    // Check if license_info exists, if not, skip the test
-    if (!config.license_info) {
-      test.skip(true, 'license_info not available in config response');
-      return; // Stop execution if skipping
-    }
-
-    // TypeScript knows licenseInfo is defined after the skip check above
-    const licenseInfo = config.license_info;
-
-    if (!licenseInfo.compliant) {
-      // License is not compliant - check for banner and edit subscription flow
-      await expect(page.locator('[data-testid="subscription-grace-period-banner"]')).toContainText(
-        'Your subscription is out of compliance.'
+  test(
+    'checks license compliance status',
+    { tag: ['@not_mock', '@tier1', '@setting'] },
+    async ({ page }) => {
+      // Set up response promise before triggering the request
+      const configResponsePromise = page.waitForResponse(
+        (response) =>
+          response.url().includes('/api/controller/v2/config') && response.status() === 200,
+        { timeout: 10000 }
       );
 
-      // Navigate to subscription details
-      await navigateTo(page, 'Settings', 'Subscription');
+      // Reload to trigger the config API call
+      await page.reload();
 
-      await expect(page.locator('[data-testid="status"]')).toHaveText('Out of compliance');
+      // Wait for the config API response
+      const configResponse = await configResponsePromise;
+      const config = (await configResponse.json()) as Config;
 
-      await page.getByRole('button', { name: /^Edit subscription/ }).click();
+      // Check if license_info exists, if not, skip the test
+      if (!config.license_info) {
+        test.skip(true, 'license_info not available in config response');
+        return; // Stop execution if skipping
+      }
 
-      await expect(
-        page.getByRole('heading', { name: 'Welcome to Red Hat Ansible Automation Platform!' })
-      ).toBeVisible();
+      // TypeScript knows licenseInfo is defined after the skip check above
+      const licenseInfo = config.license_info;
 
-      await expect(page).toHaveURL(/settings\/subscription\/wizard/);
-    } else {
-      // License is compliant - verify no banner and check subscription details
-      await expect(
-        page.locator('[data-testid="subscription-grace-period-banner"]')
-      ).not.toBeVisible();
+      if (!licenseInfo.compliant) {
+        // License is not compliant - check for banner and edit subscription flow
+        await expect(
+          page.locator('[data-testid="subscription-grace-period-banner"]')
+        ).toContainText('Your subscription is out of compliance.');
 
-      // Navigate to subscription details
-      await navigateTo(page, 'Settings', 'Subscription');
+        // Navigate to subscription details
+        await navigateTo(page, 'Settings', 'Subscription');
 
-      await expect(page.locator('[data-testid="status"]')).toHaveText('Compliant');
+        await expect(page.locator('[data-testid="status"]')).toHaveText('Out of compliance');
 
-      await page.getByRole('button', { name: /^Edit subscription/ }).click();
+        await page.getByRole('button', { name: /^Edit subscription/ }).click();
 
-      await expect(
-        page.getByRole('heading', { name: 'Welcome to Red Hat Ansible Automation Platform!' })
-      ).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: 'Welcome to Red Hat Ansible Automation Platform!' })
+        ).toBeVisible();
 
-      await expect(page).toHaveURL(/settings\/subscription\/wizard/);
+        await expect(page).toHaveURL(/settings\/subscription\/wizard/);
+      } else {
+        // License is compliant - verify no banner and check subscription details
+        await expect(
+          page.locator('[data-testid="subscription-grace-period-banner"]')
+        ).not.toBeVisible();
+
+        // Navigate to subscription details
+        await navigateTo(page, 'Settings', 'Subscription');
+
+        await expect(page.locator('[data-testid="status"]')).toHaveText('Compliant');
+
+        await page.getByRole('button', { name: /^Edit subscription/ }).click();
+
+        await expect(
+          page.getByRole('heading', { name: 'Welcome to Red Hat Ansible Automation Platform!' })
+        ).toBeVisible();
+
+        await expect(page).toHaveURL(/settings\/subscription\/wizard/);
+      }
     }
-  });
+  );
 });

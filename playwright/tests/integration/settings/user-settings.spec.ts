@@ -9,7 +9,7 @@ test.afterEach(setupAfter);
 test.describe('User Settings', () => {
   test(
     'should be able to change user preferences',
-    { tag: ['@not_mock', '@tier1'] },
+    { tag: ['@not_mock', '@tier1', '@user'] },
     async ({ page }) => {
       await navigateTo(page, 'Settings', 'User Preferences');
       await expect(page.getByRole('heading', { name: 'User Preferences' })).toBeVisible();

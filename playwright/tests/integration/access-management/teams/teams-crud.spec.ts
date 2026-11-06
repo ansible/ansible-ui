@@ -8,7 +8,7 @@ import { Organization, Team } from '@ansible/playwright/utils';
 test.beforeEach(setupBefore({ path: '/access/teams' }));
 test.afterEach(setupAfter);
 
-test.describe('Platform Teams CRUD', () => {
+test.describe('Platform Teams CRUD', { tag: ['@team', '@organization'] }, () => {
   test('create team and verify it exists', { tag: ['@not_mock', '@tier1'] }, async ({ page }) => {
     const organizationName = await Organization.ui.create(page);
     const teamName = await Team.ui.create(page, { organizationName });

@@ -27,7 +27,7 @@ test.describe('Topology View', () => {
 
   test(
     'should render all nodes from mesh_visualizer endpoint',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@meshvisualizer'] },
     async ({ page }) => {
       const meshData = await awxAPI.get<MeshVisualizer>(page, '/mesh_visualizer/');
 
@@ -53,7 +53,7 @@ test.describe('Topology View', () => {
 
   test(
     'should navigate to instance detail when instance is clicked from sidebar',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@meshvisualizer', '@instance'] },
     async ({ page }) => {
       const meshData = await awxAPI.get<MeshVisualizer>(page, '/mesh_visualizer/');
       expect(meshData).not.toBeNull();
@@ -85,7 +85,7 @@ test.describe('Topology View', () => {
 
   test(
     'should navigate to instance group detail when instance group is clicked from sidebar',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@meshvisualizer', '@instance', '@instancegroup'] },
     async ({ page }) => {
       const isK8s = await isK8sDeployment(page);
       if (!isK8s) {
@@ -144,7 +144,7 @@ test.describe('Topology View', () => {
 
   test(
     'should render a large number of nodes without performance degradation',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@meshvisualizer'] },
     async ({ page }) => {
       // Generate a large set of nodes (50 nodes) to stress-test rendering
       // This validates react-topology can handle many nodes since Vitest cannot render it
@@ -199,7 +199,7 @@ test.describe('Topology View', () => {
 
   test(
     'should allow the user to select node and delete it',
-    { tag: ['@not_mock'] },
+    { tag: ['@not_mock', '@meshvisualizer', '@instance'] },
     async ({ page }) => {
       const isK8s = await isK8sDeployment(page);
       if (!isK8s) {
@@ -263,7 +263,7 @@ test.describe('Topology View', () => {
   test.describe('RBAC', () => {
     test(
       'should not show Topology View in sidebar for non-admins',
-      { tag: ['@not_mock'] },
+      { tag: ['@not_mock', '@organization', '@user'] },
       async ({ page }) => {
         let organization: Awaited<ReturnType<typeof Organization.api.create>> | undefined;
         let userCredentials: Awaited<ReturnType<typeof User.ui.create>> | undefined;
