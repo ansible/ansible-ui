@@ -43,6 +43,25 @@ const PLUGINS_WITH_PATTERN: AuthenticatorPlugins = {
   ],
 };
 
+const PLUGINS_WITH_INTEGER: AuthenticatorPlugins = {
+  authenticators: [
+    {
+      type: AuthenticatorTypeEnum.Keycloak,
+      configuration_schema: [
+        {
+          name: 'JWKS_CACHE_TIMEOUT',
+          help_text: 'How long to cache JWKS keys, in seconds.',
+          required: false,
+          default: 3600,
+          type: 'IntegerField',
+          ui_field_label: 'JWKS Cache Timeout (seconds)',
+        },
+      ],
+      documentation_url: '',
+    },
+  ],
+};
+
 /**
  * Test wrapper that provides a react-hook-form context with a pre-selected
  * authenticator type so the `PageFormHidden` gate inside the component is
@@ -186,4 +205,18 @@ describe('AuthenticatorSubForm — camelCase patternDescription integration', ()
       screen.queryByText('This field does not match the required pattern.')
     ).not.toBeInTheDocument();
   }, 15000);
+});
+
+describe('AuthenticatorSubForm — integer configuration fields', () => {
+  test('renders an IntegerField as an editable number input', () => {
+    render(
+      <SubFormTestWrapper onSubmit={vi.fn()}>
+        <AuthenticatorSubForm plugins={PLUGINS_WITH_INTEGER} />
+      </SubFormTestWrapper>
+    );
+
+    expect(
+      screen.getByRole('spinbutton', { name: 'JWKS Cache Timeout (seconds)' })
+    ).toBeInTheDocument();
+  });
 });

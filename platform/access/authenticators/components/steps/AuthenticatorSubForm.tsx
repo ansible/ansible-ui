@@ -30,6 +30,7 @@ export const textInputTypes = [
   'URLListField',
   'ChoiceField',
   'DNField',
+  'IntegerField',
   'PublicCert',
 ];
 export const dataInputTypes = [
@@ -41,6 +42,16 @@ export const dataInputTypes = [
   'UserAttrMap',
 ];
 export const textareaInputTypes = ['PrivateKey'];
+
+function getTextInputType(field: PluginConfiguration) {
+  if (field.name === 'BIND_PASSWORD') {
+    return 'password';
+  }
+  if (field.type === 'IntegerField') {
+    return 'number';
+  }
+  return undefined;
+}
 
 export function AuthenticatorSubForm(props: {
   plugins: AuthenticatorPlugins;
@@ -116,7 +127,7 @@ export function AuthenticatorSubForm(props: {
                 labelHelpTitle={field.ui_field_label ?? field.name}
                 labelHelp={field.help_text}
                 isRequired={field.required}
-                type={field.name === 'BIND_PASSWORD' ? 'password' : undefined}
+                type={getTextInputType(field)}
                 placeholder={t(`Enter ${field.ui_field_label ?? field.name}`)}
               />
             )
