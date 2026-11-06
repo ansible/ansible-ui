@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import {
   ReactNode,
   createContext,
@@ -9,7 +8,50 @@ import {
   useState,
 } from 'react';
 import { SWRConfig } from 'swr';
+import i18n from 'i18next';
 import { isRequestError } from '@ansible/common-ui/crud/RequestError';
+
+export const PAGE_SETTING_LANGUAGES = ['en', 'es', 'fr', 'ja', 'ko', 'nl', 'zh'] as const;
+export type PageSettingLanguage = (typeof PAGE_SETTING_LANGUAGES)[number];
+export type PageSettingLanguagePreference = 'browser' | PageSettingLanguage;
+
+function isPageSettingLanguagePreference(value: unknown): value is PageSettingLanguagePreference {
+  return (
+    value === 'browser' ||
+    (typeof value === 'string' && (PAGE_SETTING_LANGUAGES as readonly string[]).includes(value))
+  );
+}
+
+function setLanguageCache(language: PageSettingLanguagePreference) {
+  if (language === 'browser') {
+    localStorage.removeItem('lang');
+    document.cookie = 'lang=; Max-Age=0; path=/';
+  } else {
+    localStorage.setItem('lang', language);
+  }
+}
+
+function applyLanguage(language: PageSettingLanguagePreference) {
+  setLanguageCache(language);
+
+  if (language === 'browser') {
+    if (i18n.isInitialized) {
+      // keep the active locale on rejection; add notification if recovery UX is needed.
+      void i18n
+        .changeLanguage()
+        .catch(() => undefined)
+        .then(() => {
+          document.documentElement.lang = i18n.resolvedLanguage ?? i18n.language;
+        });
+    }
+    return;
+  }
+
+  if (i18n.isInitialized) {
+    void i18n.changeLanguage(language);
+  }
+  document.documentElement.lang = language;
+}
 
 /** Default SWR refresh interval in milliseconds. Overridden by __SWR_REFRESH_INTERVAL__ in tests. */
 export const SWR_REFRESH_INTERVAL_MS =
@@ -61,6 +103,7 @@ export interface IPageSettings {
   formLayout?: 'vertical' | 'horizontal';
   dateFormat?: 'since' | 'date-time';
   dataEditorFormat?: 'yaml' | 'json';
+  language?: PageSettingLanguagePreference;
 }
 
 export const PageSettingsContext = createContext<
@@ -96,6 +139,7 @@ export function PageSettingsProvider(props: {
       dateFormat: 'date-time',
       dataEditorFormat: 'yaml',
       ...settings,
+      language: isPageSettingLanguagePreference(settings.language) ? settings.language : 'browser',
     };
     return settings;
   });
@@ -112,6 +156,12 @@ export function PageSettingsProvider(props: {
         : 'light'
       : settings.theme;
   }, [settings.theme]);
+
+  useEffect(() => {
+    if (settings.language) {
+      applyLanguage(settings.language);
+    }
+  }, [settings.language]);
 
   useEffect(() => {
     setSettingsState((settings) => {
