@@ -322,6 +322,20 @@ describe('ScheduleSelectStep', () => {
       await waitFor(() => {
         expect(mockSetStepData).toHaveBeenCalled();
       });
+
+      await waitFor(() => {
+        expect(mockSetWizardData).toHaveBeenCalled();
+        const wizardUpdate = mockSetWizardData.mock.calls.find(
+          (call) => typeof call[0] === 'function'
+        )?.[0] as (prev: object) => object;
+        expect(wizardUpdate).toBeDefined();
+        const nextWizardData = wizardUpdate({});
+        expect(nextWizardData).toMatchObject({
+          resource: { id: 123, type: 'job_template', name: 'Test Template' },
+          resourceId: 123,
+          launch_config: { survey_enabled: false },
+        });
+      });
     });
 
     it('should fetch workflow job template launch config for workflow_job_template type', async () => {
