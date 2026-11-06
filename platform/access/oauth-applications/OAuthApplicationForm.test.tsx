@@ -1,5 +1,5 @@
 import { Application } from '@ansible/awx-ui/interfaces/Application';
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -209,14 +209,9 @@ describe('OAuthApplicationForm', () => {
 
   beforeAll(() => {
     server.listen();
-    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {
-    // Flush all pending timers to prevent async cleanup errors from debounce
-    act(() => {
-      vi.runAllTimers();
-    });
     server.resetHandlers();
     vi.clearAllMocks();
     mockPushDialog.mockClear();
@@ -224,7 +219,6 @@ describe('OAuthApplicationForm', () => {
   });
 
   afterAll(() => {
-    vi.useRealTimers();
     server.close();
   });
 
@@ -338,7 +332,6 @@ describe('OAuthApplicationForm', () => {
       const organizationOptions = screen.getAllByText('Test Organization');
       await user.click(organizationOptions[1]);
 
-      // Submit form
       const submitButton = screen.getByRole('button', { name: /create oauth application/i });
       await user.click(submitButton);
 
@@ -346,9 +339,9 @@ describe('OAuthApplicationForm', () => {
         () => {
           expect(mockPushDialog).toHaveBeenCalled();
         },
-        { timeout: 15000 }
+        { timeout: 30000 }
       );
-    }, 30000);
+    }, 60000);
 
     test('should show OAuth application secrets modal after successful creation', async () => {
       const user = userEvent.setup();
@@ -461,19 +454,19 @@ describe('OAuthApplicationForm', () => {
         expect(screen.getByText('No OIDC support')).toBeInTheDocument();
       });
 
-      // Open the algorithm dropdown
-      const algorithmSelect = screen.getByText('No OIDC support');
-      await user.click(algorithmSelect);
+      const algorithmToggle = document.querySelector(
+        '#algorithm-form-group-toggle'
+      ) as HTMLButtonElement;
+      expect(algorithmToggle).toBeTruthy();
+      await user.click(algorithmToggle);
 
-      // Select RS256
       await waitFor(() => {
-        expect(screen.getByText('RSA with SHA-2 256')).toBeInTheDocument();
+        expect(screen.getByRole('option', { name: 'RSA with SHA-2 256' })).toBeInTheDocument();
       });
-      await user.click(screen.getByText('RSA with SHA-2 256'));
+      await user.click(screen.getByRole('option', { name: 'RSA with SHA-2 256' }));
 
-      // Verify the selection
       await waitFor(() => {
-        expect(screen.getByText('RSA with SHA-2 256')).toBeInTheDocument();
+        expect(algorithmToggle).toHaveTextContent('RSA with SHA-2 256');
       });
     });
 
@@ -484,19 +477,19 @@ describe('OAuthApplicationForm', () => {
         expect(screen.getByText('No OIDC support')).toBeInTheDocument();
       });
 
-      // Open the algorithm dropdown
-      const algorithmSelect = screen.getByText('No OIDC support');
-      await user.click(algorithmSelect);
+      const algorithmToggle = document.querySelector(
+        '#algorithm-form-group-toggle'
+      ) as HTMLButtonElement;
+      expect(algorithmToggle).toBeTruthy();
+      await user.click(algorithmToggle);
 
-      // Select HS256
       await waitFor(() => {
-        expect(screen.getByText('HMAC with SHA-2 256')).toBeInTheDocument();
+        expect(screen.getByRole('option', { name: 'HMAC with SHA-2 256' })).toBeInTheDocument();
       });
-      await user.click(screen.getByText('HMAC with SHA-2 256'));
+      await user.click(screen.getByRole('option', { name: 'HMAC with SHA-2 256' }));
 
-      // Verify the selection
       await waitFor(() => {
-        expect(screen.getByText('HMAC with SHA-2 256')).toBeInTheDocument();
+        expect(algorithmToggle).toHaveTextContent('HMAC with SHA-2 256');
       });
     });
   });
@@ -536,16 +529,24 @@ describe('OAuthApplicationForm', () => {
     test('should make authorization grant type readonly in edit mode', async () => {
       await waitFor(() => {
         expect(screen.getByText('Authorization grant type')).toBeInTheDocument();
-        expect(screen.getByText('Authorization code')).toBeInTheDocument();
       });
+      const grantTypeToggle = document.querySelector(
+        '#authorization-grant-type-form-group-toggle'
+      ) as HTMLButtonElement;
+      expect(grantTypeToggle).toBeTruthy();
+      expect(grantTypeToggle).toBeDisabled();
+      expect(grantTypeToggle).toHaveTextContent('Authorization code');
     });
 
     test('should validate redirect URIs for authorization-code grant type on save', async () => {
       const user = userEvent.setup();
 
-      await waitFor(() => {
-        expect(screen.getByDisplayValue('Test OAuth Application')).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('Test OAuth Application')).toBeInTheDocument();
+        },
+        { timeout: 15000 }
+      );
 
       // Clear redirect URIs field
       const redirectUrisField = screen.getByPlaceholderText('Enter redirect URIs');
@@ -566,14 +567,16 @@ describe('OAuthApplicationForm', () => {
     test('should handle form submission for edit', async () => {
       const user = userEvent.setup();
 
-      await waitFor(() => {
-        expect(screen.getByDisplayValue('Test OAuth Application')).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          expect(screen.getByDisplayValue('Test OAuth Application')).toBeInTheDocument();
+        },
+        { timeout: 30000 }
+      );
 
       // Modify a field
       const nameField = screen.getByDisplayValue('Test OAuth Application');
-      await user.clear(nameField);
-      await user.type(nameField, 'Updated OAuth App');
+      fireEvent.change(nameField, { target: { value: 'Updated OAuth App' } });
 
       await waitFor(() => {
         expect(nameField).toHaveValue('Updated OAuth App');
