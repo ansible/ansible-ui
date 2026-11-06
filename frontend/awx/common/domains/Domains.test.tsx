@@ -1,11 +1,29 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
+import { awxAPI } from '../api/awx-utils';
 import { Domains } from './Domains';
 import { getTranslatedDomains, useDomainsStore } from './useDomains';
 
+const labelsListHandler = () =>
+  HttpResponse.json({
+    count: 0,
+    results: [],
+    next: null,
+  });
+
+const server = setupServer(
+  http.get(({ request }) => request.url.includes(awxAPI`/labels/`), labelsListHandler)
+);
+
 describe('Domains', () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
   beforeEach(() => {
     useDomainsStore.setState({
       domains: getTranslatedDomains(),
