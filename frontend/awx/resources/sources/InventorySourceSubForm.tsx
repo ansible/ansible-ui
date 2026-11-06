@@ -39,7 +39,9 @@ export function InventorySourceSubForm({ sourceTypeValues }: { sourceTypeValues:
         return {
           credential_type__namespace: 'kubernetes_bearer_token',
         };
+      case 'vmware':
       case 'vmware_esxi':
+      case 'vmware_vm':
         return {
           credential_type__namespace: 'vmware',
         };
