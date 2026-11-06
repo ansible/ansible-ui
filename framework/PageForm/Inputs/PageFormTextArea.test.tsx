@@ -80,6 +80,53 @@ describe('PageFormTextArea', () => {
       expect(textarea).toHaveValue('Default text');
     });
 
+    test('should set rows from multi-line default value (AAP-99868)', () => {
+      function WrapperWithMultiLineDefault() {
+        const methods = useForm({
+          defaultValues: { description: 'line one\nline two\nline three' },
+        });
+        return (
+          <FormProvider {...methods}>
+            <form>
+              <PageFormTextArea name="description" label="Description" />
+            </form>
+          </FormProvider>
+        );
+      }
+
+      const { container } = render(<WrapperWithMultiLineDefault />);
+      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      expect(textarea).toHaveValue('line one\nline two\nline three');
+      expect(textarea).toHaveAttribute('rows', '3');
+    });
+
+    test('should grow rows when multi-line value is set after mount (AAP-99868)', async () => {
+      function WrapperWithLateReset() {
+        const methods = useForm({ defaultValues: { description: '' } });
+        return (
+          <FormProvider {...methods}>
+            <form>
+              <PageFormTextArea name="description" label="Description" />
+              <button
+                type="button"
+                onClick={() => methods.reset({ description: 'line one\nline two' })}
+              >
+                Apply default
+              </button>
+            </form>
+          </FormProvider>
+        );
+      }
+
+      const { container } = render(<WrapperWithLateReset />);
+      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      expect(textarea).toHaveAttribute('rows', '1');
+
+      await userEvent.click(container.querySelector('button') as HTMLButtonElement);
+      expect(textarea).toHaveValue('line one\nline two');
+      expect(textarea).toHaveAttribute('rows', '2');
+    });
+
     test('should render disabled textarea', () => {
       const { container } = render(
         <DefaultWrapper>
