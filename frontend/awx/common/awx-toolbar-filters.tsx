@@ -167,6 +167,8 @@ export function useInventoryTypeToolbarFilter() {
       label: t('Inventory type'),
       type: ToolbarFilterType.MultiSelect,
       query: 'kind',
+      // Standard inventories use kind=""; keep that empty value on the query string (AAP-101072).
+      preserveEmptyValue: true,
       options: [
         { label: t('Inventory'), value: '' },
         { label: t('Smart inventory'), value: 'smart' },
