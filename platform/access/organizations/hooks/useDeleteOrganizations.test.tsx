@@ -151,9 +151,7 @@ describe('useDeleteOrganizations', () => {
 
     const opts = getLastBulkCall();
     expect(typeof opts.isItemNonActionable).toBe('function');
-    expect(opts.isItemNonActionable(org)).toBe(
-      'The organization cannot be deleted due to insufficient permissions.'
-    );
+    expect(opts.isItemNonActionable(org)).toBe('System managed organizations cannot be deleted.');
   });
 
   test('adds second alert and counts only deletable orgs in confirm text', () => {

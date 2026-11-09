@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import '@testing-library/jest-dom/vitest';
 import { render } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';

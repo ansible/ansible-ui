@@ -19,9 +19,7 @@ export function useDeleteOrganizations(
   });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
   const cannotDeleteOrganization = (organization: PlatformOrganization) =>
-    organization.managed
-      ? t('The organization cannot be deleted due to insufficient permissions.')
-      : undefined;
+    organization.managed ? t('System managed organizations cannot be deleted.') : undefined;
   const bulkAction = useBulkConfirmation<PlatformOrganization>();
   const getAlertPrompts = useCallback(
     (organizations: PlatformOrganization[], undeletableOrganizations: PlatformOrganization[]) => {

@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import '@testing-library/jest-dom/vitest';
 import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
