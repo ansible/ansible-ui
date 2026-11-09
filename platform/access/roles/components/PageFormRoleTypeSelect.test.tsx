@@ -6,7 +6,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { PageFormRoleTypeSelect } from './PageFormRoleTypeSelect';
 
 type RoleTypeSelectProps = ComponentProps<typeof PageFormRoleTypeSelect>;
-type PropsWithoutRequiredName = Omit<RoleTypeSelectProps, 'name'> & { name?: string };
 
 vi.mock('../../../../framework/PageForm/Inputs/PageFormSingleSelect', () => ({
   PageFormSingleSelect: (props: {
@@ -77,7 +76,7 @@ describe('PageFormRoleTypeSelect', () => {
 
     render(
       <Wrapper>
-        <PageFormRoleTypeSelect {...(props as PropsWithoutRequiredName)} />
+        <PageFormRoleTypeSelect {...(props as unknown as RoleTypeSelectProps)} />
       </Wrapper>
     );
 

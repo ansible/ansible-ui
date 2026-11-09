@@ -48,7 +48,7 @@ vi.mock('@ansible/common-ui/PageRoutedTabs', () => ({
 }));
 
 const { mockUseTeamPageActions, mockUseGetItem } = vi.hoisted(() => ({
-  mockUseTeamPageActions: vi.fn((_onDeleted: () => void) => []),
+  mockUseTeamPageActions: vi.fn((_onDeleted: () => void): { label: string }[] => []),
   mockUseGetItem: vi.fn(),
 }));
 

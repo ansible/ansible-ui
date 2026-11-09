@@ -60,7 +60,7 @@ vi.mock('../hooks/useUserColumns', () => ({
 }));
 
 const { mockReadableAuthTypes } = vi.hoisted(() => ({
-  mockReadableAuthTypes: vi.fn(() => ['Local']),
+  mockReadableAuthTypes: vi.fn((_results?: unknown[]) => ['Local']),
 }));
 
 vi.mock('../../authenticators/hooks/useReadableAuthenticatorTypes', () => ({

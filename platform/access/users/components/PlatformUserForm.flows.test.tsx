@@ -22,7 +22,10 @@ const {
   mockPageNavigate: vi.fn(),
   mockNavigate: vi.fn(),
   mockAlertToaster: { addAlert: vi.fn() },
-  mockAwxErrorAdapter: vi.fn(() => ({ genericErrors: [], fieldErrors: [] })),
+  mockAwxErrorAdapter: vi.fn((_err?: unknown) => ({
+    genericErrors: [] as { message: string }[],
+    fieldErrors: [] as { message: string }[],
+  })),
 }));
 
 vi.mock('@ansible/ansible-ui-framework', async () => {
@@ -105,7 +108,7 @@ vi.mock('../../../common/PlatformPageForm', () => ({
                 confirmPassword: 'b',
                 organizations: [],
                 userType: 'normal',
-              } as IUserInput,
+              } as unknown as IUserInput,
               vi.fn(),
               setFieldError
             )
@@ -130,7 +133,7 @@ vi.mock('../../../common/PlatformPageForm', () => ({
               confirmPassword: 'secret',
               organizations: [],
               userType: 'auditor',
-            } as IUserInput,
+            } as unknown as IUserInput,
             vi.fn(),
             vi.fn()
           )

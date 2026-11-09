@@ -69,7 +69,10 @@ const {
     mockPageNavigate: vi.fn(),
     mockNavigate: vi.fn(),
     mockAlertToaster: { addAlert: vi.fn() },
-    mockAwxErrorAdapter: vi.fn(() => ({ genericErrors: [], fieldErrors: [] })),
+    mockAwxErrorAdapter: vi.fn((_err?: unknown) => ({
+      genericErrors: [] as { message: string }[],
+      fieldErrors: [] as { message: string }[],
+    })),
     baseUser: user,
     mockPlatformUser: platformUser,
     mockOrgHelpers: orgState,

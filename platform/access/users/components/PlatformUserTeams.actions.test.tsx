@@ -39,7 +39,7 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
             data-testid={`toolbar-${i}`}
             onClick={() => {
               if (!('onClick' in a) || typeof a.onClick !== 'function') return;
-              if (a.label === 'Remove teams') {
+              if ('label' in a && a.label === 'Remove teams') {
                 void (a.onClick as (teams: PlatformTeam[]) => void)([
                   { id: 8, name: 'Team8' } as PlatformTeam,
                 ]);
@@ -48,7 +48,7 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
               void (a.onClick as () => void)();
             }}
           >
-            {a.label}
+            {'label' in a ? a.label : ''}
           </button>
         ))}
       </div>
@@ -85,7 +85,7 @@ const teamView = {
   selectItemsAndRefresh: vi.fn(async () => {}),
 } as unknown as IPlatformView<PlatformTeam>;
 
-const mockUsePlatformView = vi.fn(() => teamView);
+const mockUsePlatformView = vi.fn((_options?: unknown) => teamView);
 const usePlatformViewCalls: unknown[] = [];
 
 vi.mock('../../../hooks/usePlatformView', () => ({

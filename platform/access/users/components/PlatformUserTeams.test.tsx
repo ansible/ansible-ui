@@ -109,7 +109,7 @@ describe('PlatformUserTeams', () => {
   });
 
   it('omits list URL when route has no user id', () => {
-    mockUseParams.mockReturnValue({ id: undefined });
+    mockUseParams.mockReturnValue({ id: '' });
     renderTeams('12');
     expect(mockUsePlatformViewImpl).toHaveBeenCalledWith(
       expect.objectContaining({

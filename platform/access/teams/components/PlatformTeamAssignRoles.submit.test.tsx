@@ -185,7 +185,7 @@ describe('PlatformTeamAssignRoles onSubmit', () => {
             id: '5',
             name: 'ns',
             namespace: { id: '777' },
-          },
+          } as ResourceRolePair['resource'],
           role: { id: 9, name: 'RoleA' } as PlatformRole,
         },
         new AbortController().signal

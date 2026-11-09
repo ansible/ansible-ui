@@ -26,12 +26,14 @@ const { defaultResourceTypesData, mockUseGetResourceTypes } = vi.hoisted(
     };
     mockUseGetResourceTypes: Mock<
       () => {
-        data: {
-          count: number;
-          next: null;
-          previous: null;
-          results: { id: number; model: string; api_slug: string; service: string }[];
-        };
+        data:
+          | {
+              count: number;
+              next: null;
+              previous: null;
+              results: { id: number; model: string; api_slug: string; service: string }[];
+            }
+          | undefined;
         error: undefined;
         isLoading: boolean;
       }

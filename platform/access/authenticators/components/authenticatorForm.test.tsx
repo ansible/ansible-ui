@@ -3,7 +3,17 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+  type MockInstance,
+} from 'vitest';
 import { Authenticator, AuthenticatorTypeEnum } from '../../../interfaces/Authenticator';
 import { AuthenticatorPlugin, AuthenticatorPlugins } from '../../../interfaces/AuthenticatorPlugin';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
@@ -795,13 +805,13 @@ describe('useSetAutoMigrateInitialValue', () => {
     summary_fields: { auto_migrate_users_to: { id: 88, name: 'Target' } },
   } as unknown as Authenticator;
 
-  let requestGetSpy: ReturnType<typeof vi.spyOn<typeof CrudData, 'requestGet'>>;
+  let requestGetSpy: MockInstance;
 
   beforeEach(() => {
     requestGetSpy = vi.spyOn(CrudData, 'requestGet').mockResolvedValue({
       count: 1,
       results: [{ id: 42, name: 'Listed' } as Authenticator],
-    }) as ReturnType<typeof vi.spyOn<typeof CrudData, 'requestGet'>>;
+    });
   });
 
   afterEach(() => {

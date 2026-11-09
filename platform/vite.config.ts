@@ -132,8 +132,6 @@ const config: VitestUserConfig = {
     },
   },
   test: {
-    /** Parallel MSW + UI runs need more than Vitest's default 5s, especially with coverage. */
-    testTimeout: 30000,
     coverage: {
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
