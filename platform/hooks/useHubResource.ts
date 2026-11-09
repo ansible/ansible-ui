@@ -22,9 +22,9 @@ export async function getHubResource<T extends object>(
   url: string,
   platformResource?: PlatformResource
 ) {
-  const data = await requestGet<PulpItemsResponse<T>>(
-    hubAPI`/${url}?resource__ansible_id=${platformResource?.summary_fields?.resource?.ansible_id ?? ''}`
-  );
+  const data = await requestGet<PulpItemsResponse<T>>(hubAPI`/${url}/`, {
+    resource__ansible_id: platformResource?.summary_fields?.resource?.ansible_id ?? '',
+  });
   const { results } = data ?? {};
   return results && results.length ? results[0] : undefined;
 }
