@@ -3,7 +3,6 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useContext, useRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { AlertProps } from '@patternfly/react-core';
 import {
   PageAlertToasterProvider,
   PageAlertToasterContext,
@@ -13,7 +12,7 @@ import {
 
 function TestConsumer() {
   const toaster = useContext(PageAlertToasterContext);
-  const sharedAlertRef = useRef<AlertProps>({ title: 'Mutable Alert', variant: 'success' });
+  const sharedAlertRef = useRef({ title: 'Mutable Alert', variant: 'success' as const });
   return (
     <div>
       <button
@@ -88,6 +87,27 @@ function TestConsumer() {
       <button type="button" onClick={() => toaster.removeAlerts((a) => a.variant !== 'danger')}>
         Keep Danger
       </button>
+      <button
+        type="button"
+        onClick={() => {
+          const alert = { title: 'Closable', variant: 'info' as const };
+          toaster.addAlert(alert);
+          toaster.removeAlert(alert);
+        }}
+      >
+        Add And Remove By Ref
+      </button>
+      <button
+        type="button"
+        onClick={() =>
+          toaster.replaceAlert(
+            { title: 'Never Added', variant: 'warning' },
+            { title: 'Should Not Appear', variant: 'info' }
+          )
+        }
+      >
+        Replace Missing
+      </button>
     </div>
   );
 }
@@ -97,6 +117,24 @@ function HookConsumer() {
   return (
     <button type="button" onClick={() => toaster.addAlert({ title: 'From Hook', variant: 'info' })}>
       Add Via Hook
+    </button>
+  );
+}
+
+function DefaultContextConsumer() {
+  const toaster = usePageAlertToaster();
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        toaster.addAlert({ title: 'noop' });
+        toaster.removeAlert({ title: 'noop' });
+        toaster.replaceAlert({ title: 'a' }, { title: 'b' });
+        toaster.removeAlerts();
+        toaster.removeAlerts(() => true);
+      }}
+    >
+      Invoke Default Context
     </button>
   );
 }
@@ -261,6 +299,32 @@ describe('PageAlertToaster', () => {
       expect(screen.getByText('From Hook')).toBeInTheDocument();
     });
 
+    it('should remove a specific alert by object reference', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add And Remove By Ref' }));
+      expect(screen.queryByText('Closable')).not.toBeInTheDocument();
+    });
+
+    it('should leave alerts unchanged when replaceAlert finds no match', async () => {
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add' }));
+      await user.click(screen.getByRole('button', { name: 'Replace Missing' }));
+      expect(screen.getByText('Test Alert')).toBeInTheDocument();
+      expect(screen.queryByText('Should Not Appear')).not.toBeInTheDocument();
+    });
+
     it('should filter alerts when removeAlerts is called with a predicate', async () => {
       const user = userEvent.setup();
       render(
@@ -277,6 +341,15 @@ describe('PageAlertToaster', () => {
       await user.click(screen.getByRole('button', { name: 'Keep Danger' }));
       expect(screen.getByText('Test Alert')).toBeInTheDocument();
       expect(screen.queryByText('Danger Alert')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('default context', () => {
+    it('should expose no-op toaster methods outside a provider', async () => {
+      const user = userEvent.setup();
+      render(<DefaultContextConsumer />);
+      await user.click(screen.getByRole('button', { name: 'Invoke Default Context' }));
+      expect(screen.queryByTestId('alert-toaster')).not.toBeInTheDocument();
     });
   });
 });
