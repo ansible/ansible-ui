@@ -4,6 +4,10 @@ on:
   pull_request_target:
     types: [opened, edited, synchronize]
 
+concurrency:
+  group: pr-risk-analysis-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
 permissions:
   pull-requests: write
   issues: write
@@ -82,9 +86,16 @@ jobs:
           # Find and dismiss any previous "request changes" review from the bot
           REVIEW_ID=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --jq '[.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "github-actions[bot]")] | last | .id // empty')
           if [ -n "$REVIEW_ID" ]; then
-            gh api -X PUT "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals" \
+            if ! dismiss_error=$(gh api -X PUT "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals" \
               -f message="Risk analysis provided." \
-              -f event="DISMISS"
+              -f event="DISMISS" 2>&1); then
+              review_state=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID" --jq '.state')
+              if [ "$review_state" != "DISMISSED" ]; then
+                printf '%s\n' "$dismiss_error" >&2
+                exit 1
+              fi
+              echo 'Risk analysis review was already dismissed.'
+            fi
           fi
 
           # Ensure all risk labels exist in the repo
