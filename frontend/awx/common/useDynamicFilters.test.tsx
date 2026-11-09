@@ -219,5 +219,141 @@ describe('useDynamicFilters', () => {
       expect(knownAwxFilterKeys.organization.apiPath).toBe('organizations');
       expect(knownAwxFilterKeys.credential.apiPath).toBe('credentials');
     });
+
+    it('uses hostname as both label and value key for execution_node', () => {
+      const config = knownAwxFilterKeys.execution_node;
+      expect(config.apiPath).toBe('instances');
+      expect(config.labelKey).toBe('hostname');
+      expect(config.valueKey).toBe('hostname');
+    });
+
+    it('uses hostname as both label and value key for controller_node', () => {
+      const config = knownAwxFilterKeys.controller_node;
+      expect(config.apiPath).toBe('instances');
+      expect(config.labelKey).toBe('hostname');
+      expect(config.valueKey).toBe('hostname');
+    });
+
+    it('includes hybrid nodes in execution_node queryParams', () => {
+      const config = knownAwxFilterKeys.execution_node;
+      expect(config.queryParams).toBeDefined();
+      const nodeTypes = config.queryParams!.node_type;
+      expect(Array.isArray(nodeTypes)).toBe(true);
+      expect(nodeTypes).toContain('execution');
+      expect(nodeTypes).toContain('hybrid');
+    });
+
+    it('includes hybrid nodes in controller_node queryParams', () => {
+      const config = knownAwxFilterKeys.controller_node;
+      expect(config.queryParams).toBeDefined();
+      const nodeTypes = config.queryParams!.node_type;
+      expect(Array.isArray(nodeTypes)).toBe(true);
+      expect(nodeTypes).toContain('control');
+      expect(nodeTypes).toContain('hybrid');
+    });
+  });
+
+  describe('execution_node and controller_node async filters', () => {
+    it('populates execution_node options with hostname values', async () => {
+      server.use(
+        http.options(awxAPI`/unified_jobs/`, () =>
+          HttpResponse.json({
+            actions: {
+              GET: {
+                execution_node: { filterable: true, type: 'string', label: 'Execution node' },
+              },
+            },
+          })
+        ),
+        http.get(awxAPI`/instances/`, () =>
+          HttpResponse.json({
+            count: 2,
+            results: [
+              { id: 1, hostname: 'exec-node-1.example.com', node_type: 'execution' },
+              { id: 2, hostname: 'hybrid-node-1.example.com', node_type: 'hybrid' },
+            ],
+          })
+        )
+      );
+
+      const { result } = renderHook(
+        () =>
+          useDynamicToolbarFilters({
+            optionsPath: 'unified_jobs',
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.some((f) => f.key === 'execution_node')).toBe(true);
+      });
+
+      const execFilter = result.current.find((f) => f.key === 'execution_node');
+      expect(execFilter?.type).toBe(ToolbarFilterType.AsyncMultiSelect);
+
+      if (execFilter?.type === ToolbarFilterType.AsyncMultiSelect) {
+        const options = await execFilter.queryOptions({
+          search: '',
+          next: '',
+          signal: new AbortController().signal,
+        });
+        // Values should be hostnames, not IDs
+        expect(options.options).toEqual([
+          { label: 'exec-node-1.example.com', value: 'exec-node-1.example.com' },
+          { label: 'hybrid-node-1.example.com', value: 'hybrid-node-1.example.com' },
+        ]);
+      }
+    });
+
+    it('populates controller_node options with hostname values', async () => {
+      server.use(
+        http.options(awxAPI`/unified_jobs/`, () =>
+          HttpResponse.json({
+            actions: {
+              GET: {
+                controller_node: { filterable: true, type: 'string', label: 'Controller node' },
+              },
+            },
+          })
+        ),
+        http.get(awxAPI`/instances/`, () =>
+          HttpResponse.json({
+            count: 2,
+            results: [
+              { id: 3, hostname: 'control-node-1.example.com', node_type: 'control' },
+              { id: 4, hostname: 'hybrid-node-2.example.com', node_type: 'hybrid' },
+            ],
+          })
+        )
+      );
+
+      const { result } = renderHook(
+        () =>
+          useDynamicToolbarFilters({
+            optionsPath: 'unified_jobs',
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.some((f) => f.key === 'controller_node')).toBe(true);
+      });
+
+      const ctrlFilter = result.current.find((f) => f.key === 'controller_node');
+      expect(ctrlFilter?.type).toBe(ToolbarFilterType.AsyncMultiSelect);
+
+      if (ctrlFilter?.type === ToolbarFilterType.AsyncMultiSelect) {
+        const options = await ctrlFilter.queryOptions({
+          search: '',
+          next: '',
+          signal: new AbortController().signal,
+        });
+        // Values should be hostnames, not IDs
+        expect(options.options).toEqual([
+          { label: 'control-node-1.example.com', value: 'control-node-1.example.com' },
+          { label: 'hybrid-node-2.example.com', value: 'hybrid-node-2.example.com' },
+        ]);
+      }
+    });
   });
 });

@@ -151,6 +151,10 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
     (value: string, key: string) => {
       const knownAwxFilter = knownAwxFilterKeys[key] || preFilledValueKeys?.[key];
       if (knownAwxFilter) {
+        // When value and label share the same key the value is already human-readable.
+        if ((knownAwxFilter.labelKey || 'name') === (knownAwxFilter.valueKey || 'id')) {
+          return value;
+        }
         return (
           <AsyncQueryLabel
             url={awxAPI`/${knownAwxFilter.apiPath}/`}
@@ -329,14 +333,14 @@ export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
   execution_node: {
     labelKey: 'hostname',
     apiPath: 'instances',
-    valueKey: 'id',
-    queryParams: { node_type: 'execution' },
+    valueKey: 'hostname',
+    queryParams: { node_type: ['execution', 'hybrid'] },
   },
   controller_node: {
     labelKey: 'hostname',
-    valueKey: 'id',
+    valueKey: 'hostname',
     apiPath: 'instances',
-    queryParams: { node_type: 'control' },
+    queryParams: { node_type: ['control', 'hybrid'] },
   },
   inventory: { apiPath: 'inventories', labelKey: 'name', valueKey: 'id' },
   last_job: { apiPath: 'unified_jobs', labelKey: 'id', valueKey: 'id' },
