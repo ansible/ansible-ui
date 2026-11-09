@@ -25,7 +25,7 @@ const edaResources: AccessTabResource[] = [
     name: 'credentials',
     navPath: ['Automation Decisions', 'Infrastructure', 'Credentials'],
     content_type: 'eda.edacredential',
-    role: 'EDA Credential Admin',
+    role: 'Eda Credential Admin',
   },
   {
     name: 'decision-environments',
@@ -54,14 +54,21 @@ async function getRoleDefinitionByName(
   page: import('@playwright/test').Page,
   roleName: string
 ): Promise<RoleDefinition> {
-  const response = await gatewayAPI.get<{ results: RoleDefinition[] }>(
-    page,
-    `role_definitions/?name=${encodeURIComponent(roleName)}`
-  );
-  if (!response?.results?.length) {
-    throw new Error(`Role definition '${roleName}' not found`);
+  const roleNameCandidates = [
+    roleName,
+    roleName.replace(/^Eda /, 'EDA '),
+    roleName.replace(/^EDA /, 'Eda '),
+  ];
+  for (const candidate of new Set(roleNameCandidates)) {
+    const response = await gatewayAPI.get<{ results: RoleDefinition[] }>(
+      page,
+      `role_definitions/?name=${encodeURIComponent(candidate)}`
+    );
+    if (response?.results?.length) {
+      return response.results[0];
+    }
   }
-  return response.results[0];
+  throw new Error(`Role definition '${roleName}' not found`);
 }
 
 interface ResourceContext {

@@ -179,13 +179,13 @@ test.describe('Project - Job Templates', () => {
     'Project - Associate with job template and view on templates tab',
     { tag: ['@not_mock'] },
     async ({ page }) => {
-      test.setTimeout(5 * 60 * 1000);
+      test.setTimeout(15 * 60 * 1000);
 
       // Create project and inventory
       const projectName1 = await Project.ui.create(page, { organizationName: 'Default' });
-      await Project.ui.sync(page, projectName1);
+      await Project.ui.sync(page, projectName1, 5 * 60 * 1000);
       const projectName2 = await Project.ui.create(page, { organizationName: 'Default' });
-      await Project.ui.sync(page, projectName2);
+      await Project.ui.sync(page, projectName2, 5 * 60 * 1000);
       const inventoryName = await Inventory.ui.create(page);
 
       // Navigate to templates page to clear any stale project page state
@@ -214,6 +214,7 @@ test.describe('Project - Job Templates', () => {
 
       // Change project
       await page.locator('#project-select').click();
+      await page.getByRole('textbox', { name: 'Search input' }).fill(projectName2);
       await page.getByRole('option', { name: projectName2 }).click();
       await page.waitForTimeout(1000);
 

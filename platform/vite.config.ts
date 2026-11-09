@@ -69,7 +69,9 @@ console.log('Environment', environment);
 
 const proxyUrl = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
 const wsURL = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
-if (wsURL) wsURL.protocol = 'wss:';
+if (wsURL) {
+  wsURL.protocol = wsURL.protocol === 'https:' ? 'wss:' : 'ws:';
+}
 
 interface VitestUserConfig extends UserConfig {
   test: InlineConfig;
