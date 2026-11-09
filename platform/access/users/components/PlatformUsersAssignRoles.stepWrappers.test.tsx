@@ -4,6 +4,15 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { PlatformUsersAssignRoles } from './PlatformUsersAssignRoles';
 
+type WizardStep = {
+  id?: string;
+  validate?: (formData: object, context: unknown) => void;
+};
+
+const { capturedSteps } = vi.hoisted(() => ({
+  capturedSteps: { current: null as WizardStep[] | null },
+}));
+
 vi.mock('@ansible/awx-ui/common/useAwxBulkActionDialog', () => ({
   useAwxBulkActionDialog: () => vi.fn(),
 }));
@@ -14,20 +23,8 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
   );
   return {
     ...actual,
-    PageWizard: (props: {
-      steps: Array<{
-        id?: string;
-        validate?: (formData: object, context: unknown) => void;
-      }>;
-    }) => {
-      const resourcesStep = props.steps.find((s) => s.id === 'resources');
-      const rolesStep = props.steps.find((s) => s.id === 'roles');
-
-      expect(() => resourcesStep?.validate?.({}, undefined)).toThrow(
-        'Select at least one resource.'
-      );
-      expect(() => rolesStep?.validate?.({}, undefined)).toThrow('Select at least one role.');
-
+    PageWizard: (props: { steps: WizardStep[] }) => {
+      capturedSteps.current = props.steps;
       return null;
     },
     useGetPageUrl: () => () => '',
@@ -70,5 +67,13 @@ describe('PlatformUsersAssignRoles wizard step validate wrappers', () => {
         </Routes>
       </MemoryRouter>
     );
+
+    const steps = capturedSteps.current;
+    expect(steps).not.toBeNull();
+    const resourcesStep = steps?.find((s) => s.id === 'resources');
+    const rolesStep = steps?.find((s) => s.id === 'roles');
+
+    expect(() => resourcesStep?.validate?.({}, undefined)).toThrow('Select at least one resource.');
+    expect(() => rolesStep?.validate?.({}, undefined)).toThrow('Select at least one role.');
   });
 });

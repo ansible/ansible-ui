@@ -14,6 +14,15 @@ const mockTeam = {
   modified: '2025-08-12T16:21:29.389200Z',
 };
 
+type WizardStep = {
+  id?: string;
+  validate?: (formData: object, context: unknown) => void;
+};
+
+const { capturedSteps } = vi.hoisted(() => ({
+  capturedSteps: { current: null as WizardStep[] | null },
+}));
+
 vi.mock('@ansible/common-ui/crud/useGet', () => ({
   useGet: () => ({ data: mockTeam, isLoading: false }),
 }));
@@ -37,20 +46,8 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
   );
   return {
     ...actual,
-    PageWizard: (props: {
-      steps: Array<{
-        id?: string;
-        validate?: (formData: object, context: unknown) => void;
-      }>;
-    }) => {
-      const resourcesStep = props.steps.find((s) => s.id === 'resources');
-      const rolesStep = props.steps.find((s) => s.id === 'roles');
-
-      expect(() => resourcesStep?.validate?.({}, undefined)).toThrow(
-        'Select at least one resource.'
-      );
-      expect(() => rolesStep?.validate?.({}, undefined)).toThrow('Select at least one role.');
-
+    PageWizard: (props: { steps: WizardStep[] }) => {
+      capturedSteps.current = props.steps;
       return null;
     },
     useBulkActionDialog: () => vi.fn(),
@@ -66,5 +63,13 @@ describe('PlatformTeamAssignRoles wizard step wrappers', () => {
         </Routes>
       </MemoryRouter>
     );
+
+    const steps = capturedSteps.current;
+    expect(steps).not.toBeNull();
+    const resourcesStep = steps?.find((s) => s.id === 'resources');
+    const rolesStep = steps?.find((s) => s.id === 'roles');
+
+    expect(() => resourcesStep?.validate?.({}, undefined)).toThrow('Select at least one resource.');
+    expect(() => rolesStep?.validate?.({}, undefined)).toThrow('Select at least one role.');
   });
 });
