@@ -506,9 +506,5 @@
       ]
     }
   ],
-  "user_achievements": [
-    "ignition",
-    "week_warrior",
-    "reliable"
-  ]
+  "user_achievements": ["ignition", "week_warrior", "reliable"]
 }

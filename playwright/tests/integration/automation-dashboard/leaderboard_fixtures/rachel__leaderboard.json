@@ -327,9 +327,7 @@
       }
     ]
   },
-  "org_achievements": [
-    "rising"
-  ],
+  "org_achievements": ["rising"],
   "activity_levels": [
     {
       "id": "volume",
@@ -507,9 +505,5 @@
       ]
     }
   ],
-  "user_achievements": [
-    "ignition",
-    "week_warrior",
-    "accelerator"
-  ]
+  "user_achievements": ["ignition", "week_warrior", "accelerator"]
 }

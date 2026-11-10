@@ -327,10 +327,7 @@
       }
     ]
   },
-  "org_achievements": [
-    "sustained",
-    "rising"
-  ],
+  "org_achievements": ["sustained", "rising"],
   "activity_levels": [
     {
       "id": "volume",
