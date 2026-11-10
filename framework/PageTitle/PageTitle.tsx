@@ -10,18 +10,19 @@ import {
 } from 'react';
 import { PageNavigationItem } from '../PageNavigation/PageNavigationItem';
 import { useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { findNavigationItemByPath, getNavigationTitle } from './findNavigationItemByPath';
+import { useApplicationName } from './useApplicationName';
 
 const TitleContext = createContext<{
   setTitle?: Dispatch<SetStateAction<string | null>>;
-  setOverrideTitle?: Dispatch<SetStateAction<string | null>>;
 }>({});
 
 export function PageTitleProvider(
   props: Readonly<{
     navigation: PageNavigationItem[];
     children: ReactNode;
+    /** When set (e.g. by platform build), used instead of `useApplicationName()` so Vite can inject `APPLICATION_NAME`. */
+    applicationName?: string;
   }>
 ) {
   const [title, setTitle] = useState<string | null>(null);
@@ -30,13 +31,19 @@ export function PageTitleProvider(
     () => findNavigationItemByPath(props.navigation, location.pathname),
     [props.navigation, location.pathname]
   );
-  const { t } = useTranslation();
+  const applicationNameFromEnv = useApplicationName();
+  const applicationName = props.applicationName ?? applicationNameFromEnv;
 
   const pageTitle = useMemo(() => {
-    if (!currentPageNavigation) return null;
+    if (!currentPageNavigation.length) return null;
 
     return getNavigationTitle(currentPageNavigation, title);
   }, [currentPageNavigation, title]);
+
+  const documentTitle = useMemo(() => {
+    if (!pageTitle) return applicationName;
+    return `${pageTitle} | ${applicationName}`;
+  }, [applicationName, pageTitle]);
 
   const value = useMemo(
     () => ({
@@ -45,14 +52,11 @@ export function PageTitleProvider(
     [setTitle]
   );
 
-  return (
-    <TitleContext.Provider value={value}>
-      <title>
-        {pageTitle} | {t`Ansible`}
-      </title>
-      {props.children}
-    </TitleContext.Provider>
-  );
+  useEffect(() => {
+    document.title = documentTitle;
+  }, [documentTitle]);
+
+  return <TitleContext.Provider value={value}>{props.children}</TitleContext.Provider>;
 }
 
 export function usePageTitle(title: string | null | undefined) {
@@ -63,20 +67,4 @@ export function usePageTitle(title: string | null | undefined) {
       context.setTitle(title || null);
     }
   }, [context, title]);
-}
-
-export function useOverrideTitle(title: string) {
-  const context = useContext(TitleContext);
-
-  if (context.setOverrideTitle) {
-    context.setOverrideTitle(title);
-  }
-
-  useEffect(() => {
-    return () => {
-      if (context.setOverrideTitle) {
-        context.setOverrideTitle(null);
-      }
-    };
-  }, [context]);
 }

@@ -20,6 +20,7 @@ const PLATFORM_SERVER = process.env.PLATFORM_SERVER as string;
 const AWX_WEBSOCKET_PREFIX = '/api/controller/v2/websocket/';
 
 const environment: Record<string, string> = {
+  APPLICATION_NAME: process.env.APPLICATION_NAME ?? '',
   PLATFORM_SERVER,
   AWX_API_PREFIX: '/api/controller/v2',
   AWX_WEBSOCKET_PREFIX,
@@ -56,7 +57,23 @@ const config: VitestUserConfig = {
     viteStaticCopy({ targets: [{ src: '../locales', dest: '' }] }) as PluginOption,
     compression(),
   ],
-  define: { 'process.env': environment },
+  define: {
+    'process.env': environment,
+    // Member access (e.g. process.env.APPLICATION_NAME) is not always inlined in dev
+    // when only the whole process.env object is defined; set per-key defines for build-time branding.
+    'process.env.APPLICATION_NAME': JSON.stringify(environment.APPLICATION_NAME),
+    'import.meta.env.APPLICATION_NAME': JSON.stringify(environment.APPLICATION_NAME),
+  },
+  optimizeDeps: {
+    // Linked workspace packages (e.g. @ansible/ansible-ui-framework) are pre-bundled without
+    // the top-level `define` map unless the same keys are set here.
+    esbuildOptions: {
+      define: {
+        'process.env.APPLICATION_NAME': JSON.stringify(environment.APPLICATION_NAME),
+        'import.meta.env.APPLICATION_NAME': JSON.stringify(environment.APPLICATION_NAME),
+      },
+    },
+  },
   server: {
     cors: false,
     proxy: {

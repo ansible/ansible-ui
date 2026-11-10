@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, waitFor } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { PageNavigationItem } from '../PageNavigation/PageNavigationItem';
@@ -9,6 +9,10 @@ import { PageTitleProvider, usePageTitle } from './PageTitle';
 const mockElement = () => createElement('div');
 
 describe('PageTitle', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   describe('Title rendering', () => {
     it('should render title with navigation item label', () => {
       const navigation: PageNavigationItem[] = [
@@ -23,8 +27,7 @@ describe('PageTitle', () => {
         </MemoryRouter>
       );
 
-      const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe('Home | Ansible');
+      expect(document.title).toBe('Home | Ansible');
     });
 
     it('should render title with nested navigation items', () => {
@@ -52,8 +55,51 @@ describe('PageTitle', () => {
         </MemoryRouter>
       );
 
-      const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe('Profile - Settings | Ansible');
+      expect(document.title).toBe('Profile - Settings | Ansible');
+    });
+
+    it('should render nested route title in page - parent - application name format', () => {
+      const navigation: PageNavigationItem[] = [
+        {
+          id: 'execution',
+          label: 'Automation Execution',
+          path: 'execution',
+          children: [
+            {
+              id: 'schedules',
+              label: 'Schedules',
+              path: 'schedules',
+              element: mockElement(),
+            },
+          ],
+        },
+      ];
+
+      render(
+        <MemoryRouter initialEntries={['/execution/schedules']}>
+          <PageTitleProvider navigation={navigation}>
+            <div>Content</div>
+          </PageTitleProvider>
+        </MemoryRouter>
+      );
+
+      expect(document.title).toBe('Schedules - Automation Execution | Ansible');
+    });
+
+    it('should use applicationName prop when provided', () => {
+      const navigation: PageNavigationItem[] = [
+        { id: 'home', label: 'Home', path: 'home', element: mockElement() },
+      ];
+
+      render(
+        <MemoryRouter initialEntries={['/home']}>
+          <PageTitleProvider navigation={navigation} applicationName="Ansible Automation Platform">
+            <div>Content</div>
+          </PageTitleProvider>
+        </MemoryRouter>
+      );
+
+      expect(document.title).toBe('Home | Ansible Automation Platform');
     });
   });
 
@@ -88,8 +134,7 @@ describe('PageTitle', () => {
       );
 
       await waitFor(() => {
-        const titleElement = document.querySelector('title');
-        expect(titleElement?.textContent).toBe('My Custom Inventory - Inventories | Ansible');
+        expect(document.title).toBe('My Custom Inventory - Inventories | Ansible');
       });
     });
 
@@ -111,8 +156,7 @@ describe('PageTitle', () => {
         </MemoryRouter>
       );
 
-      const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe('Home | Ansible');
+      expect(document.title).toBe('Home | Ansible');
     });
 
     it('should handle undefined title', () => {
@@ -133,8 +177,7 @@ describe('PageTitle', () => {
         </MemoryRouter>
       );
 
-      const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe('Home | Ansible');
+      expect(document.title).toBe('Home | Ansible');
     });
 
     it('should use custom title when first item has no label', async () => {
@@ -167,8 +210,7 @@ describe('PageTitle', () => {
       );
 
       await waitFor(() => {
-        const titleElement = document.querySelector('title');
-        expect(titleElement?.textContent).toBe('Inventory #123 - Inventories | Ansible');
+        expect(document.title).toBe('Inventory #123 - Inventories | Ansible');
       });
     });
   });
@@ -187,8 +229,7 @@ describe('PageTitle', () => {
         </MemoryRouter>
       );
 
-      const titleElement = document.querySelector('title');
-      expect(titleElement?.textContent).toBe(' | Ansible');
+      expect(document.title).toBe('Ansible');
     });
   });
 });
