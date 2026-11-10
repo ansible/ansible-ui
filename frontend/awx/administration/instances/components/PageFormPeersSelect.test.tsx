@@ -2,8 +2,35 @@
 import { render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { Instance } from '../../../interfaces/Instance';
 import { PageFormPeersSelect } from './PageFormPeersSelect';
+
+let capturedValidate: ((value: Instance[]) => string | undefined) | undefined;
+
+vi.mock('@ansible/ansible-ui-framework/PageForm/Inputs/PageFormMultiInput', () => ({
+  PageFormMultiInput: ({
+    validate,
+    label,
+    placeholder,
+  }: {
+    validate?: (value: Instance[]) => string | undefined;
+    label?: string;
+    placeholder?: string;
+  }) => {
+    capturedValidate = validate;
+    return (
+      <div>
+        <span>{label}</span>
+        <input placeholder={placeholder} readOnly />
+      </div>
+    );
+  },
+}));
+
+vi.mock('../hooks/useSelectPeers', () => ({
+  useMultiSelectPeer: () => vi.fn(),
+}));
 
 function TestWrapper({ children }: { children: React.ReactNode }) {
   const methods = useForm();
@@ -33,5 +60,30 @@ describe('PageFormPeersSelect', () => {
     );
 
     expect(screen.getByPlaceholderText('Select peer')).toBeInTheDocument();
+  });
+
+  it('validates listener_port for single and multiple peers', () => {
+    render(
+      <TestWrapper>
+        <PageFormPeersSelect name="peers" labelHelp="Select peer instances" />
+      </TestWrapper>
+    );
+
+    expect(capturedValidate).toBeDefined();
+    expect(
+      capturedValidate?.([
+        { hostname: 'peer-a', listener_port: 27199 },
+        { hostname: 'peer-b', listener_port: 27199 },
+      ] as Instance[])
+    ).toBeUndefined();
+    expect(
+      capturedValidate?.([{ hostname: 'solo', listener_port: undefined } as Instance])
+    ).toContain('listener_port');
+    expect(
+      capturedValidate?.([
+        { hostname: 'bad-1', listener_port: undefined },
+        { hostname: 'bad-2', listener_port: undefined },
+      ] as Instance[])
+    ).toContain('bad-1');
   });
 });

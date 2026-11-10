@@ -11,7 +11,16 @@ describe('Legend', () => {
     expect(screen.getByText('Control')).toBeInTheDocument();
     expect(screen.getByText('Node status')).toBeInTheDocument();
     expect(screen.getByText('Ready')).toBeInTheDocument();
+    expect(screen.getByText('Execution')).toBeInTheDocument();
+    expect(screen.getByText('Hybrid')).toBeInTheDocument();
+    expect(screen.getByText('Hop')).toBeInTheDocument();
+    expect(screen.getByText('Provisioning')).toBeInTheDocument();
+    expect(screen.getByText('Deprovisioning')).toBeInTheDocument();
+    expect(screen.getByText('Installed')).toBeInTheDocument();
+    expect(screen.getByText('Error')).toBeInTheDocument();
     expect(screen.getByText('Link status')).toBeInTheDocument();
     expect(screen.getByText('Established')).toBeInTheDocument();
+    expect(screen.getByText('Adding')).toBeInTheDocument();
+    expect(screen.getByText('Removing')).toBeInTheDocument();
   });
 });

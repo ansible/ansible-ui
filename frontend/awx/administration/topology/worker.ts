@@ -4,16 +4,22 @@ export const SELECTOR = '#topology';
 
 interface MeshLink extends d3.SimulationLinkDatum<MeshNode> {}
 
-self.onmessage = function calculateLayout({
-  data: { nodes, links, height, width },
-}: {
+export type TopologyLayoutMessage = {
   data: {
     nodes: MeshNode[];
     links: MeshLink[];
     height: number;
     width: number;
   };
-}) {
+};
+
+export function runTopologyLayout(
+  message: TopologyLayoutMessage,
+  postMessage: (payload: unknown) => void
+) {
+  const {
+    data: { nodes, links, height, width },
+  } = message;
   const simulation = d3
     .forceSimulation(nodes)
     .force('center', d3.forceCenter(width / 2, height / 2))
@@ -33,8 +39,12 @@ self.onmessage = function calculateLayout({
     i < n;
     ++i
   ) {
-    self.postMessage({ type: 'tick', progress: i / n });
+    postMessage({ type: 'tick', progress: i / n });
     simulation.tick();
   }
-  self.postMessage({ type: 'end', nodes, links });
+  postMessage({ type: 'end', nodes, links });
+}
+
+self.onmessage = function calculateLayout(message: TopologyLayoutMessage) {
+  runTopologyLayout(message, (payload) => self.postMessage(payload));
 };
