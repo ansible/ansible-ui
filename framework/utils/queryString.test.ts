@@ -81,7 +81,7 @@ describe('queryString', () => {
       expect(filtersToSearchObj([nameFilter], { name: [] }).toString()).toBe('');
     });
 
-    it('should preserve empty string when preserveEmptyValue is set (AAP-101072)', () => {
+    it('should preserve empty string when preserveEmptyValue is set', () => {
       const kindFilter: IToolbarFilter = {
         type: ToolbarFilterType.MultiSelect,
         key: 'inventory-type',
