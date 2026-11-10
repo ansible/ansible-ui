@@ -5,10 +5,7 @@ import { AwxSelectResourcesStep } from './AwxSelectResourcesStep';
 const wizardState = vi.hoisted(() => ({
   resourceType: 'awx.project' as string,
   useAwxMultiSelectListView: vi.fn<
-    (
-      options: { url?: string },
-      field: string
-    ) => { selectedItems: never[]; pageItems: never[] }
+    (options: { url?: string }, field: string) => { selectedItems: never[]; pageItems: never[] }
   >(() => ({ selectedItems: [], pageItems: [] })),
 }));
 
