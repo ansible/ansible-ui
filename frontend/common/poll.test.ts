@@ -30,6 +30,17 @@ describe('poll', () => {
     expect(fn).toHaveBeenCalledTimes(3);
   });
 
+  it('should use default interval and attempts when omitted', async () => {
+    vi.useFakeTimers();
+    const fn = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValueOnce({ ready: true });
+    const check = vi.fn((value: { ready?: boolean }) => Boolean(value?.ready));
+
+    const resultPromise = poll(fn, check);
+    await vi.advanceTimersByTimeAsync(1000);
+    await expect(resultPromise).resolves.toEqual({ ready: true });
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
   it('should throw when max attempts are exhausted', async () => {
     vi.useFakeTimers();
     const fn = vi.fn().mockResolvedValue({ status: 'pending' });
