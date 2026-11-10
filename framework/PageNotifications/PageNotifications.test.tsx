@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { act, render, renderHook, screen, within } from '@testing-library/react';
+import { act, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect, type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -97,6 +97,9 @@ describe('PageNotifications', () => {
       </MemoryRouter>
     );
 
+    await waitFor(() => {
+      expect(screen.getByTestId('notifications-drawer')).toBeInTheDocument();
+    });
     await user.click(screen.getByRole('button', { name: 'Toggle notifications menu' }));
     await user.click(screen.getByRole('menuitem', { name: 'Mark all read' }));
 
@@ -219,6 +222,78 @@ describe('PageNotifications', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
 
     windowOpen.mockRestore();
+  });
+
+  it('closes the drawer from the header close control', async () => {
+    const user = userEvent.setup();
+    act(() => {
+      usePageNotifications.setState({ notificationsDrawerOpen: true });
+    });
+
+    render(
+      <MemoryRouter>
+        <SeedNotifications>
+          <PageNotificationsDrawer />
+        </SeedNotifications>
+      </MemoryRouter>
+    );
+
+    const closeButton = screen.getByRole('button', { name: 'Close' });
+    await user.click(closeButton);
+
+    expect(usePageNotifications.getState().notificationsDrawerOpen).toBe(false);
+  });
+
+  it('persists notification group expanded state', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <PageNotificationGroup
+          group={{
+            title: 'Jobs',
+            notifications: [{ id: 'j1', title: 'Job finished' }],
+          }}
+        />
+      </MemoryRouter>
+    );
+
+    const toggle = screen.getByRole('button', { name: /Jobs/ });
+    await user.click(toggle);
+    expect(localStorage.getItem('notifications-group-Jobs')).toBe('true');
+  });
+
+  it('marks an individual notification unread from its overflow menu', async () => {
+    const user = userEvent.setup();
+
+    const read = renderHook(() => usePageNotificationsRead());
+    act(() => {
+      read.result.current.setNotificationRead('two', true);
+    });
+
+    render(
+      <MemoryRouter>
+        <PageNotificationGroup
+          group={{
+            title: 'Items',
+            notifications: [
+              {
+                id: 'two',
+                title: 'Note two',
+                timestamp: '2024-01-02T10:00:00Z',
+                variant: 'warning',
+              },
+            ],
+          }}
+        />
+      </MemoryRouter>
+    );
+
+    const row = screen.getByText('Note two').closest('li');
+    const toggles = within(row as HTMLElement).getAllByRole('button', { hidden: true });
+    await user.click(toggles[toggles.length - 1]);
+    await user.click(screen.getByRole('menuitem', { name: 'Mark unread' }));
+
+    expect(read.result.current.isNotificationRead('two')).toBe(false);
   });
 
   it('marks an individual notification read from its overflow menu', async () => {
