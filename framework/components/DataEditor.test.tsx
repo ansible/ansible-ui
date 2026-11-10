@@ -171,7 +171,16 @@ describe('DataEditor', () => {
 
   it('surfaces marker messages as editor errors', async () => {
     vi.mocked(monaco.editor.getModelMarkers).mockReturnValue([
-      { message: 'Invalid JSON' } as monaco.editor.IMarkerData,
+      {
+        message: 'Invalid JSON',
+        owner: 'json',
+        resource: {} as monaco.Uri,
+        severity: monaco.MarkerSeverity.Error,
+        startLineNumber: 1,
+        startColumn: 1,
+        endLineNumber: 1,
+        endColumn: 1,
+      },
     ]);
 
     render(

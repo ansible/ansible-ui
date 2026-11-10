@@ -6,7 +6,7 @@ import { PageBreadcrumbsProvider, usePageBreadcrumbs } from './PageBreadcrumbs';
 function BreadcrumbWriter() {
   const { setTabBreadcrumb } = usePageBreadcrumbs();
   return (
-    <button type="button" onClick={() => setTabBreadcrumb({ label: 'Jobs', href: '/jobs' })}>
+    <button type="button" onClick={() => setTabBreadcrumb({ label: 'Jobs', to: '/jobs' })}>
       Set breadcrumb
     </button>
   );

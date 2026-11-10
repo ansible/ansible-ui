@@ -4,7 +4,7 @@ import { useOverridableState } from './useOverridableState';
 
 describe('useOverridableState', () => {
   it('uses internal state when no setter is provided', () => {
-    const { result } = renderHook(() => useOverridableState('a'));
+    const { result } = renderHook(() => useOverridableState<string>('a'));
     expect(result.current[0]).toBe('a');
 
     act(() => {
@@ -15,7 +15,7 @@ describe('useOverridableState', () => {
 
   it('delegates to a parent setter when provided', () => {
     const setValue = vi.fn();
-    const { result } = renderHook(() => useOverridableState('on', setValue));
+    const { result } = renderHook(() => useOverridableState<string>('on', setValue));
 
     act(() => {
       result.current[1]('off');
