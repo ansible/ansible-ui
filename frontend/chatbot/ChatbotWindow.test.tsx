@@ -8,7 +8,9 @@ vi.mock('@ansible/ansible-ai-connect-chatbot', () => ({
   ),
 }));
 
-const mockUsePageSettings = vi.fn(() => ({ activeTheme: 'light' as const }));
+const mockUsePageSettings = vi.fn((): { activeTheme: 'light' | 'dark' } => ({
+  activeTheme: 'light',
+}));
 vi.mock('@ansible/ansible-ui-framework', () => ({
   usePageSettings: () => mockUsePageSettings(),
 }));

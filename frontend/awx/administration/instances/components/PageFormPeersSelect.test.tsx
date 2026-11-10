@@ -77,13 +77,13 @@ describe('PageFormPeersSelect', () => {
       ] as Instance[])
     ).toBeUndefined();
     expect(
-      capturedValidate?.([{ hostname: 'solo', listener_port: undefined } as Instance])
+      capturedValidate?.([{ hostname: 'solo', listener_port: undefined } as unknown as Instance])
     ).toContain('listener_port');
     expect(
       capturedValidate?.([
         { hostname: 'bad-1', listener_port: undefined },
         { hostname: 'bad-2', listener_port: undefined },
-      ] as Instance[])
+      ] as unknown as Instance[])
     ).toContain('bad-1');
   });
 });

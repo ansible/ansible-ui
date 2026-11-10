@@ -57,14 +57,14 @@ describe('useDenyWorkflowApprovals', () => {
       options.isItemNonActionable({
         ...mockWorkflowApproval,
         status: 'pending',
-        can_approve_or_deny: false,
+        can_approve_or_deny: '',
       })
     ).toContain('insufficient permissions');
     expect(
       options.isItemNonActionable({
         ...mockWorkflowApproval,
         status: 'pending',
-        can_approve_or_deny: true,
+        can_approve_or_deny: 'true',
       })
     ).toBe('');
   });
