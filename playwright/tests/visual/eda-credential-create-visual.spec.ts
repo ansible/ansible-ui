@@ -1,20 +1,24 @@
 import { expect, test } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
-import { navigateTo } from '@ansible/playwright/commands/navigateTo';
+import { installVisualMockApi } from './visualMockApi';
+import { stabilizeVisualPage } from './visualStabilization';
 
-test.beforeEach(setupBefore({ path: '/overview' }));
+test.beforeEach(async ({ page }) => {
+  await installVisualMockApi(page, ['credentials']);
+  await setupBefore({ path: '/decisions/infrastructure/credentials/create' })({ page });
+  await stabilizeVisualPage(page);
+});
 test.afterEach(setupAfter);
 
 test.describe('EDA Credential Create Form - Visual Regression', () => {
   test(
-    'credential create form has no visual regressions',
-    { tag: ['@visual', '@not_mock'] },
+    'should have no visual regressions in the credential create form',
+    { tag: ['@visual'] },
     async ({ page }) => {
-      await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
-      await page.getByText('Create credential').click();
       await expect(
         page.getByRole('heading', { name: 'Create credential', exact: true })
       ).toBeVisible();
+      await stabilizeVisualPage(page);
 
       // Main content area screenshot (excludes sidebar to avoid layout shift flakiness)
       const mainContent = page.locator('.pf-v6-c-page__main');
@@ -26,14 +30,13 @@ test.describe('EDA Credential Create Form - Visual Regression', () => {
   );
 
   test(
-    'credential create form element has no visual regressions',
-    { tag: ['@visual', '@not_mock'] },
+    'should have no visual regressions in the credential create form element',
+    { tag: ['@visual'] },
     async ({ page }) => {
-      await navigateTo(page, 'Automation Decisions', 'Infrastructure', 'Credentials');
-      await page.getByText('Create credential').click();
       await expect(
         page.getByRole('heading', { name: 'Create credential', exact: true })
       ).toBeVisible();
+      await stabilizeVisualPage(page);
 
       const form = page.locator('form').first();
       await expect(form).toHaveScreenshot('eda-credential-create-form.png', {
