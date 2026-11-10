@@ -19,6 +19,22 @@ const repoRootDir = path.resolve(platformDir, '..');
 const rootMonacoEditorDir = path.join(repoRootDir, 'node_modules', 'monaco-editor');
 const localMonacoEditorDir = path.join(platformDir, 'node_modules', 'monaco-editor');
 
+function localMonacoSymlinkMatchesRoot(): boolean {
+  try {
+    const stat = fs.lstatSync(localMonacoEditorDir);
+    if (!stat.isSymbolicLink()) {
+      return false;
+    }
+    const linkTarget = fs.readlinkSync(localMonacoEditorDir);
+    return (
+      path.resolve(path.dirname(localMonacoEditorDir), linkTarget) ===
+      path.resolve(rootMonacoEditorDir)
+    );
+  } catch {
+    return false;
+  }
+}
+
 /**
  * `vite-plugin-monaco-editor` resolves workers with
  * `require.resolve(join(process.cwd(), 'node_modules', 'monaco-editor/esm/vs/...'))`.
@@ -33,19 +49,30 @@ function ensureMonacoEditorSymlink(): PluginOption {
       if (!fs.existsSync(rootMonacoEditorDir)) {
         return;
       }
+      if (localMonacoSymlinkMatchesRoot()) {
+        return;
+      }
       fs.mkdirSync(path.dirname(localMonacoEditorDir), { recursive: true });
       try {
         const stat = fs.lstatSync(localMonacoEditorDir);
-        if (stat.isSymbolicLink()) {
-          fs.unlinkSync(localMonacoEditorDir);
-        } else if (stat.isDirectory()) {
+        if (stat.isDirectory()) {
           return;
         }
-      } catch {
-        // does not exist yet
+        fs.unlinkSync(localMonacoEditorDir);
+      } catch (err: unknown) {
+        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+          throw err;
+        }
       }
       const relativeTarget = path.relative(path.dirname(localMonacoEditorDir), rootMonacoEditorDir);
-      fs.symlinkSync(relativeTarget, localMonacoEditorDir);
+      try {
+        fs.symlinkSync(relativeTarget, localMonacoEditorDir);
+      } catch (err: unknown) {
+        if ((err as NodeJS.ErrnoException).code === 'EEXIST' && localMonacoSymlinkMatchesRoot()) {
+          return;
+        }
+        throw err;
+      }
     },
   };
 }
