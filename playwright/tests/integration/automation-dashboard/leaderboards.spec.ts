@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 
 /**
@@ -14,6 +14,13 @@ import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
  * both earned and locked achievements.
  */
 const FIXTURE_USER = 'alice';
+
+/**
+ * `admin` is the only recorded fixture with `show_dashboard: true`, so it is the only one that
+ * renders the Dashboard/Leaderboards tabs. Used solely to cover reaching the view through the tab.
+ */
+const TABBED_FIXTURE_USER = 'admin';
+
 const FIXTURE_DIR = path.join(import.meta.dirname, 'leaderboard_fixtures');
 
 /**
@@ -22,27 +29,38 @@ const FIXTURE_DIR = path.join(import.meta.dirname, 'leaderboard_fixtures');
  * AutomationDashboardMainPage). Under that flag combination the `/leaderboards` child route does
  * not exist and deep-linking to it renders "Page not found", so navigate to the parent path.
  */
-const LEADERBOARDS_PATH = '/analytics/automation-dashboard';
+const DASHBOARD_PATH = '/analytics/automation-dashboard';
 
-function fixture(report: 'leaderboard' | 'collection_status'): string {
-  return readFileSync(path.join(FIXTURE_DIR, `${FIXTURE_USER}__${report}.json`), 'utf8');
+function fixture(user: string, report: 'leaderboard' | 'collection_status'): string {
+  return readFileSync(path.join(FIXTURE_DIR, `${user}__${report}.json`), 'utf8');
 }
 
-async function mockLeaderboardFixtures(page: Page): Promise<void> {
+async function mockLeaderboardFixtures(page: Page, user: string): Promise<void> {
   await page.route(`**/api/metrics/v1/dashboard_reports/collection_status/`, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: fixture('collection_status'),
+      body: fixture(user, 'collection_status'),
     });
   });
   await page.route(`**/api/metrics/v1/dashboard_reports/leaderboard/`, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: fixture('leaderboard'),
+      body: fixture(user, 'leaderboard'),
     });
   });
+}
+
+/**
+ * Records uncaught exceptions raised by the page. Returned by reference so an `afterEach` can
+ * fail any test whose render threw, which is the broadest "nothing is broken" check available
+ * without asserting on individual elements.
+ */
+function collectPageErrors(page: Page): string[] {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  return errors;
 }
 
 /**
@@ -51,22 +69,34 @@ async function mockLeaderboardFixtures(page: Page): Promise<void> {
  * across renders. `.page-dashboard-card` is the class `PageDashboardCard` sets on itself, which
  * makes it a stable handle; the other leaderboard cards are addressed by their own test id.
  */
-function kpiTile(page: Page, title: string) {
+function kpiTile(page: Page, title: string): Locator {
   return page.locator('.page-dashboard-card').filter({ hasText: title });
 }
 
-test.beforeEach(async ({ page }, testInfo) => {
-  // Routes must be registered before login so they also intercept the requests the page fires
-  // during its initial render.
-  await mockLeaderboardFixtures(page);
-  await setupBefore({ path: LEADERBOARDS_PATH })({ page }, testInfo);
-  // The report has rendered once the first section is on screen; every test asserts past this.
-  await expect(page.getByTestId('at-a-glance-card-title')).toBeVisible();
-});
-
-test.afterEach(setupAfter);
+/** One selectable activity-level tile ("Volume", "Breadth", "Consistency"). */
+function activityLevelTile(card: Locator, name: string): Locator {
+  return card.getByRole('button', { name: new RegExp(`^${name}`) });
+}
 
 test.describe('Automation Dashboard - Leaderboards', () => {
+  let pageErrors: string[];
+
+  test.beforeEach(async ({ page }, testInfo) => {
+    pageErrors = collectPageErrors(page);
+    // Routes must be registered before login so they also intercept the requests the page fires
+    // during its initial render.
+    await mockLeaderboardFixtures(page, FIXTURE_USER);
+    await setupBefore({ path: DASHBOARD_PATH })({ page }, testInfo);
+    // The report has rendered once the first section is on screen; every test asserts past this.
+    await expect(page.getByTestId('at-a-glance-card-title')).toBeVisible();
+  });
+
+  test.afterEach(setupAfter);
+
+  test.afterEach(() => {
+    expect(pageErrors, 'the page raised uncaught errors while rendering').toStrictEqual([]);
+  });
+
   test('should render every leaderboard section as a single untabbed view', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'At a glance' })).toBeVisible();
     await expect(page.getByTestId('automation-streak')).toBeVisible();
@@ -76,6 +106,21 @@ test.describe('Automation Dashboard - Leaderboards', () => {
 
     // show_dashboard is false for this fixture, so the Dashboard/Leaderboards tabs are not rendered.
     await expect(page.getByRole('tab')).toHaveCount(0);
+  });
+
+  test('should render the report without falling back to an error or empty state', async ({
+    page,
+  }) => {
+    // Every state AutomationLeaderboards can render instead of the report. Asserting their
+    // absence catches a section that silently degraded rather than failing a value assertion.
+    await expect(page.getByText('Unable to load leaderboards')).toHaveCount(0);
+    await expect(page.getByText('Unable to load sync status')).toHaveCount(0);
+    await expect(page.getByText('Unable to load dashboard data')).toHaveCount(0);
+    await expect(page.getByText('No leaderboard data yet')).toHaveCount(0);
+    await expect(page.getByText("Couldn't load the latest leaderboard data.")).toHaveCount(0);
+    await expect(
+      page.getByText('You do not have permission to view the Automation Dashboard or Leaderboards.')
+    ).toHaveCount(0);
   });
 
   test('should show the reporting window and the last sync timestamp', async ({ page }) => {
@@ -114,32 +159,46 @@ test.describe('Automation Dashboard - Leaderboards', () => {
     ).toBeVisible();
   });
 
-  test('should show the user standing in each activity level', async ({ page }) => {
+  test('should show the user score and rank in each activity level', async ({ page }) => {
     const card = page.getByTestId('activity-levels');
 
     await expect(card.getByRole('heading', { name: 'Volume', exact: true })).toBeVisible();
     await expect(card.getByRole('heading', { name: 'Breadth', exact: true })).toBeVisible();
     await expect(card.getByRole('heading', { name: 'Consistency', exact: true })).toBeVisible();
 
-    await expect(card.getByText('Rank 12 of 19')).toBeVisible();
-    await expect(card.getByText('Rank 5 of 19')).toBeVisible();
-    await expect(card.getByText('Rank 8 of 19')).toBeVisible();
+    // The score is the only element in a tile whose whole text is the number, so `exact` pins it
+    // to the score rather than to a digit inside the rank line.
+    const volume = activityLevelTile(card, 'Volume');
+    await expect(volume.getByText('13', { exact: true })).toBeVisible();
+    await expect(volume).toContainText('Rank 12 of 19');
+
+    const breadth = activityLevelTile(card, 'Breadth');
+    await expect(breadth.getByText('1', { exact: true })).toBeVisible();
+    await expect(breadth).toContainText('Rank 5 of 19');
+
+    const consistency = activityLevelTile(card, 'Consistency');
+    await expect(consistency.getByText('13', { exact: true })).toBeVisible();
+    await expect(consistency).toContainText('Rank 8 of 19');
   });
 
   test('should switch the ranked list when another activity level is selected', async ({
     page,
   }) => {
     const card = page.getByTestId('activity-levels');
+    // Every row of the ranked list is numbered "#1".."#10"; nothing else in the card is.
+    const rankedRows = card.getByText(/^#\d+$/);
 
     // Volume is selected on load. This user ranks 12th there, outside the top 10, so no row is
     // tagged as theirs.
     await expect(card.getByRole('heading', { name: 'Top 10 — Volume' })).toBeVisible();
+    await expect(rankedRows).toHaveCount(10);
     await expect(card.getByText('You', { exact: true })).toHaveCount(0);
 
-    await card.getByRole('button', { name: /^Breadth/ }).click();
+    await activityLevelTile(card, 'Breadth').click();
 
     // They rank 5th in Breadth, so their own row appears in the list and is tagged.
     await expect(card.getByRole('heading', { name: 'Top 10 — Breadth' })).toBeVisible();
+    await expect(rankedRows).toHaveCount(10);
     await expect(card.getByText(FIXTURE_USER, { exact: true })).toBeVisible();
     await expect(card.getByText('You', { exact: true })).toHaveCount(1);
   });
@@ -193,6 +252,22 @@ test.describe('Automation Dashboard - Leaderboards', () => {
   // already covers it, and does so more precisely by asserting the badge labels in order rather
   // than only their earned/locked states.
 
+  test('should render earned badges filled and locked badges dimmed', async ({ page }) => {
+    const card = page.getByTestId('milestone-badges-card');
+
+    // Filled vs dimmed is purely a styling difference driven by these two classes, with no
+    // user-facing attribute to assert instead; the accessible name (covered above) is what
+    // conveys the state non-visually.
+    await expect(card.locator('.achievement-badge--earned')).toHaveCount(6);
+    await expect(card.locator('.achievement-badge--locked')).toHaveCount(4);
+
+    // A badge's rule is not visible text — it is revealed on hover.
+    await card.getByRole('button', { name: /^Centurion, locked\./ }).hover();
+    await expect(page.getByRole('tooltip')).toContainText(
+      'Ran 100 or more successful jobs in the window.'
+    );
+  });
+
   test('should announce new achievements in a dismissible alert', async ({ page }) => {
     const alert = page.getByText(
       'Congratulations! You or your organization earned new achievements.'
@@ -202,5 +277,27 @@ test.describe('Automation Dashboard - Leaderboards', () => {
     await page.getByRole('button', { name: /^Close Success alert/ }).click();
 
     await expect(alert).toBeHidden();
+  });
+});
+
+test.describe('Automation Dashboard - Leaderboards tab', () => {
+  test.beforeEach(async ({ page }, testInfo) => {
+    await mockLeaderboardFixtures(page, TABBED_FIXTURE_USER);
+    await setupBefore({ path: DASHBOARD_PATH })({ page }, testInfo);
+  });
+
+  test.afterEach(setupAfter);
+
+  test('should open the leaderboards from the Leaderboards tab', async ({ page }) => {
+    // This fixture grants both views, so the page renders them as tabs.
+    await expect(page.getByRole('tab', { name: 'Dashboard' })).toBeVisible();
+    await page.getByRole('tab', { name: 'Leaderboards' }).click();
+
+    await expect(page).toHaveURL(/\/analytics\/automation-dashboard\/leaderboards$/);
+    await expect(page.getByTestId('at-a-glance-card-title')).toBeVisible();
+    await expect(page.getByTestId('automation-streak')).toBeVisible();
+    await expect(page.getByTestId('activity-levels')).toBeVisible();
+    await expect(page.getByTestId('highlights-leaderboard-card')).toBeVisible();
+    await expect(page.getByTestId('milestone-badges-card')).toBeVisible();
   });
 });
