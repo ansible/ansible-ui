@@ -132,12 +132,17 @@ test.describe('Automation Dashboard - Leaderboards', () => {
   });
 
   test('should show the At a glance metrics from the synced report', async ({ page }) => {
-    await expect(kpiTile(page, 'Jobs run').getByText('444')).toBeVisible();
-    await expect(kpiTile(page, 'Active organizations').getByText('11')).toBeVisible();
+    // `toHaveText` compares the element's whole text, so these fail on any other value. Searching
+    // the tile for the expected text instead would also match a longer number containing it —
+    // `getByText('444')` matches a tile rendering "1,444".
+    await expect(kpiTile(page, 'Jobs run').getByTestId('metric-value')).toHaveText('444');
+    await expect(kpiTile(page, 'Active organizations').getByTestId('metric-value')).toHaveText(
+      '11'
+    );
 
     const featuredTemplate = kpiTile(page, 'Featured template');
-    await expect(featuredTemplate.getByText('142 runs')).toBeVisible();
-    await expect(featuredTemplate.getByText('template-org-a')).toBeVisible();
+    await expect(featuredTemplate.getByTestId('metric-value')).toHaveText('142 runs');
+    await expect(featuredTemplate.getByText('template-org-a', { exact: true })).toBeVisible();
   });
 
   test('should show an enterprise and an organization streak with a cell per day', async ({
@@ -147,8 +152,8 @@ test.describe('Automation Dashboard - Leaderboards', () => {
 
     await expect(streak.getByRole('heading', { name: 'Enterprise' })).toBeVisible();
     await expect(streak.getByRole('heading', { name: 'Your organization' })).toBeVisible();
-    await expect(streak.getByText('30-day streak')).toBeVisible();
-    await expect(streak.getByText('14-day streak')).toBeVisible();
+    await expect(streak.getByText('30-day streak', { exact: true })).toBeVisible();
+    await expect(streak.getByText('14-day streak', { exact: true })).toBeVisible();
 
     // 30 days on each of the two strips, each day a button labelled with its run count.
     await expect(streak.getByRole('button', { name: /job run/ })).toHaveCount(60);
@@ -166,18 +171,16 @@ test.describe('Automation Dashboard - Leaderboards', () => {
     await expect(card.getByRole('heading', { name: 'Breadth', exact: true })).toBeVisible();
     await expect(card.getByRole('heading', { name: 'Consistency', exact: true })).toBeVisible();
 
-    // The score is the only element in a tile whose whole text is the number, so `exact` pins it
-    // to the score rather than to a digit inside the rank line.
     const volume = activityLevelTile(card, 'Volume');
-    await expect(volume.getByText('13', { exact: true })).toBeVisible();
+    await expect(volume.getByTestId('metric-value')).toHaveText('13');
     await expect(volume).toContainText('Rank 12 of 19');
 
     const breadth = activityLevelTile(card, 'Breadth');
-    await expect(breadth.getByText('1', { exact: true })).toBeVisible();
+    await expect(breadth.getByTestId('metric-value')).toHaveText('1');
     await expect(breadth).toContainText('Rank 5 of 19');
 
     const consistency = activityLevelTile(card, 'Consistency');
-    await expect(consistency.getByText('13', { exact: true })).toBeVisible();
+    await expect(consistency.getByTestId('metric-value')).toHaveText('13');
     await expect(consistency).toContainText('Rank 8 of 19');
   });
 
@@ -218,8 +221,8 @@ test.describe('Automation Dashboard - Leaderboards', () => {
     await expect(userOrgRow).toContainText('156');
 
     // The card header repeats the user organization's standing.
-    await expect(card.getByText("Your organization's rank: #1")).toBeVisible();
-    await expect(card.getByText('156 job runs')).toBeVisible();
+    await expect(card.getByText("Your organization's rank: #1", { exact: true })).toBeVisible();
+    await expect(card.getByText('156 job runs', { exact: true })).toBeVisible();
   });
 
   test('should mark each achievement as earned or locked', async ({ page }) => {

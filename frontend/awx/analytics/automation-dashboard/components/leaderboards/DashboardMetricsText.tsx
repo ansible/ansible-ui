@@ -6,6 +6,9 @@ export function MetricValue({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <Content
       component="p"
+      // Lets a test assert the whole rendered value rather than searching the card for the text
+      // it expects, which would also match a longer number containing it (444 inside 1,444).
+      data-testid="metric-value"
       // --pf-t--global--* tokens (defined on :root), not --pf-v6-c-title--*, which only
       // exists under a .pf-v6-c-title ancestor this <p> doesn't have.
       style={{
