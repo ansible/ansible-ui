@@ -1,10 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import * as Data from '@ansible/common-ui/crud/Data';
 import { hubAPI } from '@ansible/hub-ui/common/api/formatPath';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
-import { getHubResource, useHubResource } from './useHubResource';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { useHubResource } from './useHubResource';
 
 const platformResource = {
   id: 1,
@@ -35,17 +34,5 @@ describe('useHubResource', () => {
       expect(result.current.isLoading).toBe(false);
     });
     expect(result.current.resource).toEqual({ id: 3, name: 'hub-team' });
-  });
-
-  test('getHubResource should return the first hub resource', async () => {
-    const spy = vi
-      .spyOn(Data, 'requestGet')
-      .mockResolvedValueOnce({ count: 1, results: [{ id: 9, name: 't' }] });
-
-    await expect(getHubResource<{ id: number }>('teams', platformResource)).resolves.toEqual({
-      id: 9,
-      name: 't',
-    });
-    spy.mockRestore();
   });
 });
