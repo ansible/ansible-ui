@@ -175,7 +175,7 @@ describe('DataEditor', () => {
         message: 'Invalid JSON',
         owner: 'json',
         resource: {} as monaco.Uri,
-        severity: monaco.MarkerSeverity.Error,
+        severity: 8,
         startLineNumber: 1,
         startColumn: 1,
         endLineNumber: 1,
