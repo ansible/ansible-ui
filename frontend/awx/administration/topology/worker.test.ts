@@ -37,4 +37,27 @@ describe('topology layout worker', () => {
     expect(endMessage).toBeDefined();
     expect(endMessage.nodes).toHaveLength(2);
   });
+
+  it('should post layout results when the worker onmessage handler runs', () => {
+    const nodes: MeshNode[] = [
+      { id: 'a', hostname: 'node-a', node_type: 'execution', node_state: 'ready', x: 0, y: 0 },
+    ];
+    const postMessage = vi.fn();
+    self.postMessage = postMessage as typeof self.postMessage;
+
+    expect(self.onmessage).toBeTypeOf('function');
+    self.onmessage?.({
+      data: {
+        nodes,
+        links: [],
+        height: 200,
+        width: 300,
+      },
+    } as MessageEvent);
+
+    expect(postMessage).toHaveBeenCalled();
+    expect(
+      postMessage.mock.calls.some((call) => (call[0] as { type: string }).type === 'end')
+    ).toBe(true);
+  });
 });
