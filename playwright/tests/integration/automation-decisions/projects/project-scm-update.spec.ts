@@ -5,19 +5,27 @@ import { clickTableRow } from '@ansible/playwright/commands/clickTableRow';
 import { navigateTo } from '@ansible/playwright/commands/navigateTo';
 import { setupAfter, setupBefore } from '@ansible/playwright/commands/setup';
 import { EdaProject, Organization } from '@ansible/playwright/utils';
+import { EdaOrganization } from '@ansible/playwright/utils/edaOrganization';
 
 test.beforeEach(setupBefore({ path: '/decisions/projects' }));
 test.afterEach(setupAfter);
 
 test.describe('EDA Projects - SCM Update on Launch', () => {
   let organization: PlatformOrganization;
+  let edaOrganizationId: number;
 
   test.beforeEach(async ({ page }) => {
     organization = await Organization.api.create(page);
+    const ansibleId = organization.summary_fields?.resource?.ansible_id;
+    if (!ansibleId) {
+      throw new Error(`Platform organization "${organization.name}" missing ansible_id`);
+    }
+    const edaOrganization = await EdaOrganization.api.getByAnsibleId(page, ansibleId);
+    edaOrganizationId = edaOrganization.id;
   });
 
   test.afterEach(async ({ page }) => {
-    await Organization.api.delete(page, organization.id);
+    await Organization.api.deleteByName(page, organization.name);
   });
 
   test(
@@ -137,7 +145,7 @@ test.describe('EDA Projects - SCM Update on Launch', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
-        organization: organization.id,
+        organization: edaOrganizationId,
       });
 
       try {
@@ -193,7 +201,7 @@ test.describe('EDA Projects - SCM Update on Launch', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
-        organization: organization.id,
+        organization: edaOrganizationId,
       });
 
       try {
@@ -229,7 +237,7 @@ test.describe('EDA Projects - SCM Update on Launch', () => {
     { tag: ['@not_mock'] },
     async ({ page }) => {
       const edaProject = await EdaProject.api.create(page, {
-        organization: organization.id,
+        organization: edaOrganizationId,
       });
 
       try {
