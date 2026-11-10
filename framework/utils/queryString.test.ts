@@ -123,6 +123,22 @@ describe('queryString', () => {
       ).to.equal('or__kind=&or__kind=smart');
     });
 
+    // Multi-select returns a non-empty array, so shouldAppendFilterValue allows append even
+    // without preserveEmptyValue; empty entries inside that array are still written.
+    it('should still append empty values in multi-select or__ params without preserveEmptyValue', () => {
+      const kindFilter: IToolbarFilter = {
+        type: ToolbarFilterType.MultiSelect,
+        key: 'inventory-type',
+        label: 'Inventory type',
+        query: 'kind',
+        options: [],
+        placeholder: 'Select types',
+      };
+      expect(
+        filtersToSearchObj([kindFilter], { 'inventory-type': ['', 'smart'] }).toString()
+      ).to.equal('or__kind=&or__kind=smart');
+    });
+
     it('should build simple string', () => {
       const filters = [nameFilter];
       const state: IFilterState = {
