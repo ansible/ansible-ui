@@ -189,30 +189,9 @@ test.describe('Automation Dashboard - Leaderboards', () => {
     ).toBeVisible();
   });
 
-  test('should list earned achievements before locked ones', async ({ page }) => {
-    const card = page.getByTestId('milestone-badges-card');
-
-    const states = await card
-      .getByRole('button', { name: /, (earned|locked)\./ })
-      .evaluateAll((badges) =>
-        badges.map((badge) =>
-          (badge.getAttribute('aria-label') ?? '').includes(', earned.') ? 'earned' : 'locked'
-        )
-      );
-
-    // Your achievements (7) are rendered before your organization's (3); each shelf sorts its
-    // earned badges first.
-    expect(states.slice(0, 7)).toStrictEqual([
-      'earned',
-      'earned',
-      'earned',
-      'locked',
-      'locked',
-      'locked',
-      'locked',
-    ]);
-    expect(states.slice(7)).toStrictEqual(['earned', 'earned', 'earned']);
-  });
+  // Earned-before-locked ordering is deliberately not asserted here: MilestoneBadgesCard.test.tsx
+  // already covers it, and does so more precisely by asserting the badge labels in order rather
+  // than only their earned/locked states.
 
   test('should announce new achievements in a dismissible alert', async ({ page }) => {
     const alert = page.getByText(
