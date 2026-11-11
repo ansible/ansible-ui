@@ -39,7 +39,7 @@ describe('ClearLogsConfirmationDialog', () => {
     expect(screen.getByRole('dialog', { name: 'Permanently Delete Logs' })).toBeInTheDocument();
     const deleteButton = screen.getByRole('button', { name: 'Delete logs' });
     expect(deleteButton).toBeDisabled();
-    expect(screen.getByRole('radio', { name: 'Delete logs older than 7 days' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'Delete logs older than' })).toBeChecked();
     expect(screen.getByRole('spinbutton', { name: 'Number of days' })).toHaveValue(7);
 
     await user.click(
@@ -59,10 +59,10 @@ describe('ClearLogsConfirmationDialog', () => {
       <ClearLogsConfirmationDialog targets={[activation]} onClose={vi.fn()} onConfirm={vi.fn()} />
     );
 
-    await user.click(screen.getByRole('radio', { name: 'Delete logs older than' }));
+    await user.click(screen.getByRole('radio', { name: 'Delete logs before' }));
 
     expect(screen.getByRole('spinbutton', { name: 'Number of days' })).toBeDisabled();
-    expect(screen.getByRole('textbox', { name: 'Delete logs older than' })).toBeEnabled();
+    expect(screen.getByRole('textbox', { name: 'Delete logs before' })).toBeEnabled();
   });
 
   it('should submit the selected older-than date after validating it', async () => {
@@ -73,8 +73,8 @@ describe('ClearLogsConfirmationDialog', () => {
       <ClearLogsConfirmationDialog targets={[activation]} onClose={vi.fn()} onConfirm={onConfirm} />
     );
 
-    await user.click(screen.getByRole('radio', { name: 'Delete logs older than' }));
-    const dateInput = screen.getByRole('textbox', { name: 'Delete logs older than' });
+    await user.click(screen.getByRole('radio', { name: 'Delete logs before' }));
+    const dateInput = screen.getByRole('textbox', { name: 'Delete logs before' });
     const deleteButton = screen.getByRole('button', { name: 'Delete logs' });
 
     await user.type(dateInput, '2025-02-31');
@@ -110,8 +110,8 @@ describe('ClearLogsConfirmationDialog', () => {
     );
 
     const daysInput = screen.getByRole('spinbutton', { name: 'Number of days' });
+    await user.click(screen.getByRole('radio', { name: 'Delete logs before' }));
     await user.click(screen.getByRole('radio', { name: 'Delete logs older than' }));
-    await user.click(screen.getByRole('radio', { name: 'Delete logs older than 7 days' }));
     await user.click(screen.getByRole('button', { name: 'Increase number of days' }));
     expect(daysInput).toHaveValue(8);
     await user.click(screen.getByRole('button', { name: 'Decrease number of days' }));
@@ -157,7 +157,7 @@ describe('ClearLogsConfirmationDialog', () => {
     );
 
     await user.click(screen.getByRole('radio', { name: 'Delete all logs' }));
-    expect(screen.getByRole('textbox', { name: 'Delete logs older than' })).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Delete logs before' })).toBeDisabled();
     expect(screen.getByRole('spinbutton', { name: 'Number of days' })).toBeDisabled();
 
     await user.click(

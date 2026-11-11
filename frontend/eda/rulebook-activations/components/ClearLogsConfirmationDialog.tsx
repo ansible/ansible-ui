@@ -55,7 +55,6 @@ function ClearLogsDescription(props: Readonly<ClearLogsDescriptionProps>) {
     return (
       <Trans>
         This deletes stored database logs for the selected instance (<strong>{targetNames}</strong>
-        {/* */}
         ). Rulebook activations will continue running, and system logs on activation workers remain
         unaffected.
       </Trans>
@@ -145,12 +144,12 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
                   name="clear-logs-range"
                   isChecked={range === 'older-than'}
                   onChange={() => setRange('older-than')}
-                  label={t('Delete logs older than')}
+                  label={t('Delete logs before')}
                 />
               </FlexItem>
               <FlexItem flex={{ default: 'flex_1' }}>
                 <DatePicker
-                  aria-label={t('Delete logs older than')}
+                  aria-label={t('Delete logs before')}
                   appendTo={() => document.body}
                   isDisabled={range !== 'older-than'}
                   invalidFormatText={t('Enter a valid date in YYYY-MM-DD format')}
@@ -172,9 +171,7 @@ export function ClearLogsConfirmationDialog(props: Readonly<ClearLogsConfirmatio
                   name="clear-logs-range"
                   isChecked={range === 'keep-last'}
                   onChange={() => setRange('keep-last')}
-                  label={t('Delete logs older than {{days}} days', {
-                    days: keepLastDays === '' ? '?' : keepLastDays,
-                  })}
+                  label={t('Delete logs older than')}
                 />
               </FlexItem>
               <FlexItem>
