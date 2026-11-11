@@ -1,5 +1,4 @@
-/* eslint-disable i18next/no-literal-string */
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useContext, useRef } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -222,14 +221,15 @@ describe('PageAlertToaster', () => {
     });
 
     it('should remove a timed alert after the timeout elapses', async () => {
-      vi.useFakeTimers();
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      const user = userEvent.setup({ delay: null });
       render(
         <PageAlertToasterProvider>
           <TestConsumer />
         </PageAlertToasterProvider>
       );
 
-      fireEvent.click(screen.getByRole('button', { name: 'Add Timed' }));
+      await user.click(screen.getByRole('button', { name: 'Add Timed' }));
       expect(screen.getByText('Timed Alert')).toBeInTheDocument();
 
       await act(async () => {
@@ -270,15 +270,16 @@ describe('PageAlertToaster', () => {
     });
 
     it('should remove a replaced alert after timeout when the replacement included timeout', async () => {
-      vi.useFakeTimers();
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      const user = userEvent.setup({ delay: null });
       render(
         <PageAlertToasterProvider>
           <TestConsumer />
         </PageAlertToasterProvider>
       );
 
-      fireEvent.click(screen.getByRole('button', { name: 'Add Old For Replace Timeout' }));
-      fireEvent.click(screen.getByRole('button', { name: 'Replace With Timeout' }));
+      await user.click(screen.getByRole('button', { name: 'Add Old For Replace Timeout' }));
+      await user.click(screen.getByRole('button', { name: 'Replace With Timeout' }));
       expect(screen.getByText('With Timeout')).toBeInTheDocument();
 
       await act(async () => {

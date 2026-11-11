@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { act, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect, type ReactNode } from 'react';

@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PageDashboard } from './PageDashboard';

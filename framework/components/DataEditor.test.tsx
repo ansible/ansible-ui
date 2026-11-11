@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { act, render, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

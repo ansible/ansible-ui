@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
+import { act, render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ColumnTableOption, type ITableColumn } from '../PageTable/PageTableColumn';
@@ -83,7 +83,7 @@ describe('useManageColumns', () => {
     expect(screen.getByText('Card')).toBeInTheDocument();
 
     for (const optionButton of screen.getAllByRole('button', { name: /^pick-/ })) {
-      fireEvent.click(optionButton);
+      await user.click(optionButton);
     }
 
     await user.click(screen.getByRole('button', { name: 'Apply' }));

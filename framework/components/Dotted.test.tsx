@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { Dotted } from './Dotted';

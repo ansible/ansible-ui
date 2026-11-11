@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { render } from '@testing-library/react';
 import { InfoCircleIcon } from '@patternfly/react-icons';
 import { describe, expect, it } from 'vitest';

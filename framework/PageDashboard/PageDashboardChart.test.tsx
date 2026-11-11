@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import type { ReactElement, ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';

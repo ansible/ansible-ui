@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { act, render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
