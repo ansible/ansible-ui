@@ -1,5 +1,6 @@
 import { postRequest } from '@ansible/common-ui/crud/Data';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { DateTime } from 'luxon';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { awxAPI } from '../../../common/api/awx-utils';
@@ -29,6 +30,20 @@ export function useScheduleSteps() {
             resourceEndPoint={resourceEndPoint}
           />
         ),
+        validate: (formData: Partial<ScheduleFormWizard>) => {
+          const time = formData.startDateTime?.time?.trim() ?? '';
+          if (!DateTime.fromFormat(time, 'h:mm a').isValid) {
+            const exampleTime = time || '3:15';
+            throw new RequestError('', '', 400, '', {
+              __all__: [
+                t(
+                  'Start time must include AM or PM (for example, {{example}}).',
+                  { example: `${exampleTime} AM or ${exampleTime} PM` }
+                ),
+              ],
+            });
+          }
+        },
       },
       {
         id: 'promptStep',
