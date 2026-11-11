@@ -21,8 +21,48 @@ export function PageTitleProvider(
   props: Readonly<{
     navigation: PageNavigationItem[];
     children: ReactNode;
-    /** When set (e.g. by platform build), used instead of `useApplicationName()` so Vite can inject `APPLICATION_NAME`. */
+    /**
+     * Application name suffix for document titles. Callers that inject a build-time
+     * name (for example via bundler env) should pass it here so framework code does
+     * not rely on `process.env` in the browser.
+     */
     applicationName?: string;
+  }>
+) {
+  if (props.applicationName !== undefined) {
+    return (
+      <PageTitleProviderInner navigation={props.navigation} applicationName={props.applicationName}>
+        {props.children}
+      </PageTitleProviderInner>
+    );
+  }
+
+  return (
+    <PageTitleProviderWithDefaultName navigation={props.navigation}>
+      {props.children}
+    </PageTitleProviderWithDefaultName>
+  );
+}
+
+function PageTitleProviderWithDefaultName(
+  props: Readonly<{
+    navigation: PageNavigationItem[];
+    children: ReactNode;
+  }>
+) {
+  const applicationName = useApplicationName();
+  return (
+    <PageTitleProviderInner navigation={props.navigation} applicationName={applicationName}>
+      {props.children}
+    </PageTitleProviderInner>
+  );
+}
+
+function PageTitleProviderInner(
+  props: Readonly<{
+    navigation: PageNavigationItem[];
+    children: ReactNode;
+    applicationName: string;
   }>
 ) {
   const [title, setTitle] = useState<string | null>(null);
@@ -31,8 +71,6 @@ export function PageTitleProvider(
     () => findNavigationItemByPath(props.navigation, location.pathname),
     [props.navigation, location.pathname]
   );
-  const applicationNameFromEnv = useApplicationName();
-  const applicationName = props.applicationName ?? applicationNameFromEnv;
 
   const pageTitle = useMemo(() => {
     if (!currentPageNavigation.length) return null;
@@ -41,9 +79,9 @@ export function PageTitleProvider(
   }, [currentPageNavigation, title]);
 
   const documentTitle = useMemo(() => {
-    if (!pageTitle) return applicationName;
-    return `${pageTitle} | ${applicationName}`;
-  }, [applicationName, pageTitle]);
+    if (!pageTitle) return props.applicationName;
+    return `${pageTitle} | ${props.applicationName}`;
+  }, [props.applicationName, pageTitle]);
 
   const value = useMemo(
     () => ({

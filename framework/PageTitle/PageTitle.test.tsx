@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { PageNavigationItem } from '../PageNavigation/PageNavigationItem';
+import * as useApplicationNameModule from './useApplicationName';
 import { PageTitleProvider, usePageTitle } from './PageTitle';
 
 const mockElement = () => createElement('div');
@@ -100,6 +101,30 @@ describe('PageTitle', () => {
       );
 
       expect(document.title).toBe('Home | Ansible Automation Platform');
+    });
+
+    it('should not call useApplicationName when applicationName prop is provided', () => {
+      const useApplicationNameSpy = vi
+        .spyOn(useApplicationNameModule, 'useApplicationName')
+        .mockImplementation(() => {
+          throw new Error('useApplicationName should not run when applicationName is provided');
+        });
+
+      const navigation: PageNavigationItem[] = [
+        { id: 'home', label: 'Home', path: 'home', element: mockElement() },
+      ];
+
+      render(
+        <MemoryRouter initialEntries={['/home']}>
+          <PageTitleProvider navigation={navigation} applicationName="Custom Application">
+            <div>Content</div>
+          </PageTitleProvider>
+        </MemoryRouter>
+      );
+
+      expect(document.title).toBe('Home | Custom Application');
+      expect(useApplicationNameSpy).not.toHaveBeenCalled();
+      useApplicationNameSpy.mockRestore();
     });
   });
 

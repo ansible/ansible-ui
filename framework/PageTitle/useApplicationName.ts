@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
-/** Configurable product name for document titles and dashboard headings (build-time `APPLICATION_NAME`). */
+/** Default application display name when the host app does not pass `applicationName` to `PageTitleProvider`. */
 export function useApplicationName(): string {
   const { t } = useTranslation();
-  return process.env.APPLICATION_NAME || t('Ansible');
+  return t('Ansible');
 }
