@@ -149,8 +149,8 @@ export function mungePromptData(
       result.diff_mode = prompt.diff_mode;
     }
 
-    if (launchConfig.ask_scm_branch_on_launch && prompt.scm_branch) {
-      result.scm_branch = prompt.scm_branch;
+    if (launchConfig.ask_scm_branch_on_launch) {
+      result.scm_branch = prompt.scm_branch ?? '';
     }
 
     if (launchConfig.ask_forks_on_launch && prompt.forks !== undefined) {

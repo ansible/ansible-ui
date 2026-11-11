@@ -92,6 +92,15 @@ describe('mungePromptData', () => {
     expect(result).toHaveProperty('limit', '');
   });
 
+  it('should include an empty scm_branch when prompting is enabled', () => {
+    const prompt = { scm_branch: '' } as unknown as PromptFormValues;
+    const launchConfig = { ask_scm_branch_on_launch: true } as LaunchConfiguration;
+
+    const result = mungePromptData(prompt, launchConfig);
+
+    expect(result).toHaveProperty('scm_branch', '');
+  });
+
   it('should not include fields when launchConfig flags are false', () => {
     const prompt = {
       limit: 'web',
