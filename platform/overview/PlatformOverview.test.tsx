@@ -71,6 +71,11 @@ describe('PlatformOverview', () => {
     );
 
     expect(screen.getByText('Welcome to Ansible Automation Platform')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Empower, automate, connect: Unleash possibilities with Ansible Automation Platform.'
+      )
+    ).toBeInTheDocument();
     vi.restoreAllMocks();
   });
 

@@ -42,7 +42,9 @@ export function PlatformOverview() {
     <PageLayout>
       <PageHeader
         title={t(`Welcome to {{product}}`, { product: applicationName })}
-        description={t('Empower, automate, connect: Unleash possibilities with Ansible.')}
+        description={t('Empower, automate, connect: Unleash possibilities with {{product}}.', {
+          product: applicationName,
+        })}
         controls={
           <Button icon={<CogIcon />} variant="link" onClick={openManageDashboard}>
             Manage view
