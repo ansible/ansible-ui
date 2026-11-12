@@ -2,8 +2,77 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+  type Mock,
+} from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
+
+const mockResourceTypes = {
+  count: 3,
+  next: null,
+  previous: null,
+  results: [
+    {
+      id: 1,
+      model: 'organization',
+      api_slug: 'organizations',
+      service: 'platform',
+    },
+    {
+      id: 2,
+      model: 'project',
+      api_slug: 'projects',
+      service: 'platform',
+    },
+    {
+      id: 3,
+      model: 'team',
+      api_slug: 'teams',
+      service: 'platform',
+    },
+  ],
+};
+
+const { mockUseGetResourceTypes, mockUseParams } = vi.hoisted(
+  (): {
+    mockUseGetResourceTypes: Mock<
+      () => {
+        data: typeof mockResourceTypes | undefined;
+        error: undefined;
+        isLoading: boolean;
+      }
+    >;
+    mockUseParams: Mock<() => { id: string | undefined }>;
+  } => ({
+    mockUseGetResourceTypes: vi.fn(() => ({
+      data: mockResourceTypes,
+      error: undefined,
+      isLoading: false,
+    })),
+    mockUseParams: vi.fn(() => ({ id: '1' })),
+  })
+);
+
+vi.mock('../../roles/hooks/useResourceType', () => ({
+  useGetResourceTypes: () => mockUseGetResourceTypes(),
+}));
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useParams: () => mockUseParams(),
+  };
+});
+
 import { PlatformUserRoles } from './PlatformUserRoles';
 
 const mockUser = {
@@ -95,32 +164,6 @@ const mockEmptyRoleAssignments = {
   next: null,
   previous: null,
   results: [],
-};
-
-const mockResourceTypes = {
-  count: 3,
-  next: null,
-  previous: null,
-  results: [
-    {
-      id: 1,
-      model: 'organization',
-      api_slug: 'organizations',
-      service: 'platform',
-    },
-    {
-      id: 2,
-      model: 'project',
-      api_slug: 'projects',
-      service: 'platform',
-    },
-    {
-      id: 3,
-      model: 'team',
-      api_slug: 'teams',
-      service: 'platform',
-    },
-  ],
 };
 
 const mockUserTeams = {
@@ -220,6 +263,8 @@ describe('PlatformUserRoles - Role Explanation', () => {
       return HttpResponse.json(mockUser);
     }),
 
+    http.get(gatewayAPI`/users//`, () => HttpResponse.json(mockUser)),
+
     // User options endpoint (with proper parameter handling)
     http.options(gatewayAPI`/users/1/`, () => {
       return HttpResponse.json({
@@ -238,6 +283,16 @@ describe('PlatformUserRoles - Role Explanation', () => {
         actions: {
           GET: true,
           POST: true,
+        },
+      });
+    }),
+
+    http.options(gatewayAPI`/users//`, () => {
+      return HttpResponse.json({
+        actions: {
+          GET: true,
+          PUT: true,
+          PATCH: true,
         },
       });
     }),
@@ -292,10 +347,26 @@ describe('PlatformUserRoles - Role Explanation', () => {
     // Service index role types endpoint
     http.get(gatewayAPI`/service-index/role-types/`, () => {
       return HttpResponse.json({ results: [] });
+    }),
+
+    http.get(gatewayAPI`/role_user_assignments/`, ({ request }) => {
+      const url = new URL(request.url);
+      if (url.searchParams.get('user_id') === '') {
+        return HttpResponse.json({ count: 0, results: [] });
+      }
+      return HttpResponse.json(mockUserRoleAssignments);
     })
   );
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+  beforeEach(() => {
+    mockUseParams.mockReturnValue({ id: '1' });
+    mockUseGetResourceTypes.mockReturnValue({
+      data: mockResourceTypes,
+      error: undefined,
+      isLoading: false,
+    });
+  });
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
@@ -492,5 +563,56 @@ describe('PlatformUserRoles - Role Explanation', () => {
 
     // Verify the different username is correctly displayed in the explanation
     expect(screen.getByText(/for different-user cannot be managed here/)).toBeInTheDocument();
+  });
+
+  test('renders when resource types data is undefined', async () => {
+    mockUseGetResourceTypes.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: false,
+    });
+
+    server.use(
+      http.get(gatewayAPI`/role_user_assignments/`, () =>
+        HttpResponse.json(mockUserRoleAssignments)
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/users/1/roles']}>
+        <Routes>
+          <Route path="/users/:id/roles" element={<PlatformUserRoles />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Organization Admin')).toBeInTheDocument();
+    });
+  });
+
+  test('uses empty user id in APIs and read-only empty state when user cannot be edited', async () => {
+    mockUseParams.mockReturnValue({ id: undefined });
+
+    server.use(
+      http.get(gatewayAPI`/role_user_assignments/`, () =>
+        HttpResponse.json(mockEmptyRoleAssignments)
+      ),
+      http.options(gatewayAPI`/users//`, () => HttpResponse.json({ actions: { GET: true } }))
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/users/1/roles']}>
+        <Routes>
+          <Route path="/users/:id/roles" element={<PlatformUserRoles />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('You do not have permission to assign a role to this user.')
+      ).toBeInTheDocument();
+    });
   });
 });

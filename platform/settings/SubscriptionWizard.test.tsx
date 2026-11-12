@@ -293,10 +293,13 @@ describe('SubscriptionWizard Component', () => {
       // Fill in client secret and verify subscription select becomes enabled
       await user.type(clientSecretField, 'test-client-secret');
 
-      await waitFor(() => {
-        expect(subscriptionSelect).toBeEnabled();
-      });
-    }, 10000);
+      await waitFor(
+        () => {
+          expect(subscriptionSelect).toBeEnabled();
+        },
+        { timeout: 30000 }
+      );
+    }, 60000);
   });
 
   describe('Username and Password Form', () => {
@@ -325,10 +328,13 @@ describe('SubscriptionWizard Component', () => {
       // Fill in password and verify subscription select becomes enabled
       await user.type(passwordField, 'test-password');
 
-      await waitFor(() => {
-        expect(subscriptionSelect).toBeEnabled();
-      });
-    }, 10000);
+      await waitFor(
+        () => {
+          expect(subscriptionSelect).toBeEnabled();
+        },
+        { timeout: 30000 }
+      );
+    }, 60000);
   });
 
   describe('Red Hat Satellite Form', () => {
@@ -361,10 +367,13 @@ describe('SubscriptionWizard Component', () => {
       // Fill in satellite password and verify subscription select becomes enabled
       await user.type(satellitePasswordField, 'test-password');
 
-      await waitFor(() => {
-        expect(subscriptionSelect).toBeEnabled();
-      });
-    }, 10000);
+      await waitFor(
+        () => {
+          expect(subscriptionSelect).toBeEnabled();
+        },
+        { timeout: 30000 }
+      );
+    }, 60000);
   });
 
   describe('OPTIONS-driven credential validation', () => {

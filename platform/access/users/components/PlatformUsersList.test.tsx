@@ -85,6 +85,32 @@ describe('PlatformUsersList', () => {
     });
   });
 
+  it('shows create-user empty state when POST is allowed', async () => {
+    server.use(
+      http.get('*/users/*', () => {
+        return HttpResponse.json({ count: 0, results: [] });
+      }),
+      http.options('*/users/', () => {
+        return HttpResponse.json({
+          actions: {
+            POST: { username: { type: 'string', required: true } },
+          },
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <PlatformUsersList />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/there are currently no users added/i)).toBeInTheDocument();
+    });
+    expect(screen.getByRole('link', { name: /create user/i })).toBeInTheDocument();
+  });
+
   it('exports the PlatformUsersList component', () => {
     expect(PlatformUsersList).toBeDefined();
     expect(typeof PlatformUsersList).toBe('function');

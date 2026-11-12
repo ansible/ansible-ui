@@ -36,7 +36,7 @@ export function PlatformTeamPage() {
           { label: team.name },
         ]}
         headerActions={
-          <PageActions<PlatformTeam> actions={actions} position={'right'} selectedItem={team} />
+          <PageActions<PlatformTeam> actions={actions} position="right" selectedItem={team} />
         }
       />
       <PageRoutedTabs

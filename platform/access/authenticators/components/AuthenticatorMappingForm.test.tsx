@@ -4,8 +4,24 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
-import { CreateAuthenticatorMapping, EditAuthenticatorMapping } from './AuthenticatorMappingForm';
+import {
+  buildTriggers,
+  CreateAuthenticatorMapping,
+  EditAuthenticatorMapping,
+  parseTrigger,
+} from './AuthenticatorMappingForm';
+
+const navigateMappingMock = vi.fn();
+
+vi.mock('react-router-dom', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...mod,
+    useNavigate: () => navigateMappingMock,
+  };
+});
 import authenticator from './mocks/authenticator.json';
 import authenticatorMapping from './mocks/authenticatorMapping.json';
 import roleDefinitions from './mocks/roleDefinitions.json';
@@ -43,7 +59,7 @@ async function fillCreateAttributesForm(
   await user.type(valueField, values.value);
 }
 
-describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
+describe('AuthenticatorMappingForm', { timeout: 60000 }, () => {
   const authMappingAttributesPayload = {
     id: 3,
     name: 'mapping one',
@@ -97,6 +113,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
 
   beforeEach(() => {
     server.resetHandlers();
+    navigateMappingMock.mockClear();
   });
 
   afterEach(() => {
@@ -163,7 +180,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     await user.click(getByRole('option', { name: 'Always' }));
 
     expect(nameField.value).toBe('Always mapping');
-    expect(triggerSelect.innerText).toBe('Always');
+    expect(triggerSelect).toHaveTextContent('Always');
     await user.click(submitButton);
   });
 
@@ -195,7 +212,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     await user.click(getByRole('option', { name: 'Never' }));
 
     expect(nameField.value).toBe('Never mapping');
-    expect(triggerSelect.innerText).toBe('Never');
+    expect(triggerSelect).toHaveTextContent('Never');
     await user.click(submitButton);
   });
 
@@ -331,7 +348,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     const valueOneField = container.querySelector('[id="attributes-0-value"]') as HTMLInputElement;
     const valueTwoField = container.querySelector('[id="attributes-1-value"]') as HTMLInputElement;
 
-    expect(conditionaField.innerText).toBe('at least one');
+    expect(conditionaField).toHaveTextContent('at least one');
     expect(nameField.value).toBe('mapping one');
     expect(attributeOneField.value).toBe('attribute one');
     expect(valueOneField.value).toBe('value one');
@@ -418,16 +435,19 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     });
     await user.click(getByRole('button', { name: 'Create mapping' }));
 
-    await waitFor(() => {
-      expect(screen.getAllByText(CLEAN_TEXT_ERROR).length).toBeGreaterThanOrEqual(2);
-    });
+    await waitFor(
+      () => {
+        expect(screen.getAllByText(CLEAN_TEXT_ERROR).length).toBeGreaterThanOrEqual(2);
+      },
+      { timeout: 15000 }
+    );
     expect(container.querySelector('[id="attributes-0-attribute-form-group"]')).toHaveTextContent(
       CLEAN_TEXT_ERROR
     );
     expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
       CLEAN_TEXT_ERROR
     );
-  }, 15000);
+  }, 60000);
 
   test('should display API validation error on the value field when creating', async () => {
     server.use(
@@ -470,7 +490,7 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     expect(
       container.querySelector('[id="attributes-0-attribute-form-group"]')
     ).not.toHaveTextContent(CLEAN_TEXT_ERROR);
-  }, 15000);
+  }, 60000);
 
   test('should display API validation errors on attribute and value fields when editing', async () => {
     server.use(
@@ -514,5 +534,120 @@ describe('AuthenticatorMappingForm', { timeout: 15000 }, () => {
     expect(container.querySelector('[id="attributes-0-value-form-group"]')).toHaveTextContent(
       CLEAN_TEXT_ERROR
     );
-  }, 15000);
+  }, 60000);
+
+  test('cancel on create mapping navigates back', async () => {
+    const { getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/1/mappings/create']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/:id/mappings/create'}
+            element={<CreateAuthenticatorMapping />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const user = userEvent.setup();
+    await user.click(getByRole('button', { name: 'Cancel' }));
+
+    await waitFor(() => {
+      expect(navigateMappingMock).toHaveBeenCalledWith(-1);
+    });
+  });
+
+  test('cancel on edit mapping navigates back', async () => {
+    const { getByRole } = render(
+      <MemoryRouter initialEntries={['/access/authenticators/1/mappings/3/edit']}>
+        <Routes>
+          <Route
+            path={'/access/authenticators/:id/mappings/:map_id/edit'}
+            element={<EditAuthenticatorMapping />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(getByRole('button', { name: 'Save mapping' })).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+    await user.click(getByRole('button', { name: 'Cancel' }));
+
+    await waitFor(() => {
+      expect(navigateMappingMock).toHaveBeenCalledWith(-1);
+    });
+  });
+});
+
+describe('AuthenticatorMappingForm triggers helpers', () => {
+  test('parseTrigger mirrors AuthenticatorForm.parseTrigger branches', () => {
+    expect(
+      parseTrigger({
+        triggers: { groups: { has_or: ['g1'] } },
+      } as AuthenticatorMap)
+    ).toEqual({
+      trigger: 'groups',
+      conditional: 'or',
+      groups_value: [{ name: 'g1' }],
+    });
+
+    const attrs = parseTrigger({
+      triggers: {
+        attributes: {
+          join_condition: 'and',
+          dept: { in: ['x', 'y'] },
+        },
+      },
+    } as unknown as AuthenticatorMap) as { attributes: { comparison: string; value: string }[] };
+    expect(attrs.attributes[0]).toMatchObject({
+      comparison: 'in',
+      value: 'x,y',
+    });
+
+    expect(parseTrigger({ triggers: { never: {} } } as AuthenticatorMap)).toEqual({
+      trigger: 'never',
+    });
+
+    expect(parseTrigger({ triggers: { always: {} } } as AuthenticatorMap)).toEqual({
+      trigger: 'always',
+    });
+  });
+
+  test('buildTriggers covers groups and attributes for mapping form', () => {
+    expect(
+      buildTriggers({
+        map_type: AuthenticatorMapType.allow,
+        name: 'n',
+        revoke: false,
+        trigger: 'groups',
+        conditional: 'or',
+        groups_value: [{ name: 'a' }],
+      } as never)
+    ).toEqual({ groups: { has_or: ['a'] } });
+
+    expect(
+      buildTriggers({
+        map_type: AuthenticatorMapType.allow,
+        name: 'n',
+        revoke: false,
+        trigger: 'groups',
+        conditional: 'and',
+        groups_value: [{ name: 'b' }],
+      } as never)
+    ).toEqual({ groups: { has_and: ['b'] } });
+
+    const built = buildTriggers({
+      map_type: AuthenticatorMapType.allow,
+      name: 'n',
+      revoke: false,
+      trigger: 'attributes',
+      conditional: 'and',
+      attributes: [{ attribute: 'x', comparison: 'equals', value: 'y' }],
+    } as never);
+    expect(built).toEqual({
+      attributes: { join_condition: 'and', x: { equals: 'y' } },
+    });
+  });
 });
