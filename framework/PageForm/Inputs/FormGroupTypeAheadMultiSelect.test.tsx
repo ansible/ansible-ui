@@ -148,9 +148,8 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
         isRequired: true,
       });
 
-      const label = screen.getByText('Select Teams');
-      const requiredIndicator = label.parentElement?.querySelector('.pf-v6-c-form__label-required');
-      expect(requiredIndicator).toBeInTheDocument();
+      expect(screen.getByText('Select Teams')).toBeInTheDocument();
+      expect(screen.getByText('*')).toBeInTheDocument();
     });
   });
 
@@ -199,7 +198,7 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
       { value: 'Label 3', label: 'Label 3' },
     ];
 
-    it('disables chips and dropdown option when value is read-only', async () => {
+    it('renders read-only chips without close buttons', async () => {
       const user = userEvent.setup();
       renderComponent({
         label: 'Select labels',
@@ -232,5 +231,154 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
         expect(screen.getByTestId('select-option-Label 3')).toBeInTheDocument();
       });
     });
+  });
+
+  it('opens while typing and creates a new option for an unmatched value', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    renderComponent({ onHandleSelection });
+
+    const input = screen.getByRole('textbox');
+    await user.type(input, 'New team');
+
+    const createOption = await screen.findByRole('option', { name: 'Create "New team"' });
+    expect(input).toHaveAttribute('aria-expanded', 'true');
+    await user.click(createOption);
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'New team' });
+  });
+
+  it('offers creation alongside partial matches', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'Team');
+
+    expect(screen.getByRole('option', { name: 'Team 1' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Create "Team"' })).toBeInTheDocument();
+  });
+
+  it('ignores an empty-valued option and renders it with a stable label key', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    renderComponent({
+      onHandleSelection,
+      options: [{ value: '', label: 'Empty value option' }],
+    });
+
+    await user.click(screen.getByRole('textbox'));
+    await user.click(screen.getByRole('option', { name: 'Empty value option' }));
+
+    expect(onHandleSelection).not.toHaveBeenCalled();
+  });
+
+  it('handles Enter with no options and supports arrow navigation and Escape', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    const { rerender } = renderComponent({ options: [], onHandleSelection });
+    const input = screen.getByRole('textbox');
+
+    await user.click(input);
+    await user.keyboard('{Enter}');
+    expect(onHandleSelection).not.toHaveBeenCalled();
+
+    rerender(
+      <FormGroupTypeAheadMultiSelect {...defaultProps} onHandleSelection={onHandleSelection} />
+    );
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    expect(input).toHaveAttribute('aria-activedescendant', 'option-0');
+
+    await user.keyboard('{ArrowUp}');
+    expect(input).toHaveAttribute('aria-activedescendant', 'option-2');
+
+    await user.keyboard('{Escape}');
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+    expect(input).not.toHaveAttribute('aria-activedescendant');
+  });
+
+  it('opens and closes from the menu toggle and outside click', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+    const input = screen.getByRole('textbox');
+    const toggle = screen.getByRole('button', { name: 'Menu toggle' });
+
+    await user.click(toggle);
+    expect(input).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(screen.getByText('Select Teams'));
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('does not render chips for empty selection names', () => {
+    renderComponent({ value: [{ name: '' }] });
+
+    expect(screen.queryByTestId('selected-chip')).not.toBeInTheDocument();
+  });
+
+  it('clears all selections from the label group close control', async () => {
+    const user = userEvent.setup();
+    const onHandleClear = vi.fn();
+    renderComponent({ value: [{ name: 'Read only', isReadOnly: true }], onHandleClear });
+
+    await user.click(screen.getByRole('button', { name: 'Close label group' }));
+
+    expect(onHandleClear).toHaveBeenCalledWith();
+  });
+
+  it('converts a non-string option label before selecting it', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    const options = [{ value: 'numeric-label', label: 42 as unknown as string }];
+    renderComponent({ options, onHandleSelection });
+
+    await user.click(screen.getByRole('textbox'));
+    await user.click(screen.getByRole('option', { name: '42' }));
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: '42' });
+  });
+
+  it('selects options whose value is an object', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    const options = [{ value: { name: 'Team object' }, label: 'Team object' }];
+    renderComponent({ options, onHandleSelection });
+
+    await user.click(screen.getByRole('textbox'));
+    await user.click(screen.getByRole('option', { name: 'Team object' }));
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'Team object' });
+  });
+
+  it('does not select an option with an undefined value on Enter', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    const options = [{ value: undefined as unknown as string, label: 'Undefined value' }];
+    renderComponent({ options, onHandleSelection });
+    const input = screen.getByRole('textbox');
+
+    await user.click(input);
+    await screen.findByRole('option', { name: 'Undefined value' });
+    await user.keyboard('{Enter}');
+
+    expect(onHandleSelection).not.toHaveBeenCalled();
+  });
+
+  it('ignores a selection when its option lookup is stale', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    const options = [{ value: 'stale', label: 'Stale option' }];
+    const derivedOptions = Object.assign([{ value: 'stale', children: 'Stale option' }], {
+      find: () => undefined,
+    });
+    vi.spyOn(options, 'map').mockReturnValue(derivedOptions);
+    renderComponent({ options, onHandleSelection });
+
+    await user.click(screen.getByRole('textbox'));
+    await user.click(screen.getByRole('option', { name: 'Stale option' }));
+
+    expect(onHandleSelection).not.toHaveBeenCalled();
   });
 });
