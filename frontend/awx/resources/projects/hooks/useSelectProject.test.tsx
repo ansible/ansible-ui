@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSelectProject } from './useSelectProject';
@@ -56,7 +57,7 @@ describe('useSelectProject', () => {
 
     result.current(onSelect);
 
-    const dialogElement = mockSetDialog.mock.calls[0][0] as React.ReactElement<{
+    const dialogElement = mockSetDialog.mock.calls[0][0] as ReactElement<{
       title: string;
     }>;
     expect(dialogElement.props.title).toBe('Select project');
@@ -68,7 +69,7 @@ describe('useSelectProject', () => {
 
     result.current(onSelect);
 
-    const dialogElement = mockSetDialog.mock.calls[0][0] as React.ReactElement<{
+    const dialogElement = mockSetDialog.mock.calls[0][0] as ReactElement<{
       onSelect: (project: Project) => void;
     }>;
     expect(dialogElement.props.onSelect).toBe(onSelect);
@@ -89,7 +90,7 @@ describe('useSelectProject', () => {
 
     result.current(onSelect);
 
-    const dialogElement = mockSetDialog.mock.calls[0][0] as React.ReactElement;
+    const dialogElement = mockSetDialog.mock.calls[0][0] as ReactElement;
     expect(dialogElement).toBeTruthy();
     expect((dialogElement.type as { name?: string }).name).toBe('SelectProject');
   });
@@ -102,10 +103,10 @@ describe('useSelectProject', () => {
     result.current(onSelectFirst);
     result.current(onSelectSecond);
 
-    const firstDialog = mockSetDialog.mock.calls[0][0] as React.ReactElement<{
+    const firstDialog = mockSetDialog.mock.calls[0][0] as ReactElement<{
       onSelect: (project: Project) => void;
     }>;
-    const secondDialog = mockSetDialog.mock.calls[1][0] as React.ReactElement<{
+    const secondDialog = mockSetDialog.mock.calls[1][0] as ReactElement<{
       onSelect: (project: Project) => void;
     }>;
     expect(firstDialog.props.onSelect).toBe(onSelectFirst);

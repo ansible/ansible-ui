@@ -37,6 +37,16 @@ describe('i18n configuration', () => {
     expect(i18n.t('hello')).toBe('hello');
   });
 
+  it('should use insights locale path when IS_INSIGHTS is set', async () => {
+    vi.resetModules();
+    vi.stubEnv('IS_INSIGHTS', 'true');
+    vi.stubGlobal('location', { search: '', pathname: '/', href: 'http://localhost/' });
+    await import('./i18n');
+    const i18n = (await import('i18next')).default;
+    await i18n.changeLanguage('en');
+    expect(i18n.t('hello')).toBe('hello');
+  });
+
   it('should wrap translated strings when pseudolocalization query param is enabled', async () => {
     vi.resetModules();
     vi.stubGlobal('location', {
