@@ -231,6 +231,24 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
         expect(screen.getByTestId('select-option-Label 3')).toBeInTheDocument();
       });
     });
+
+    it('does not allow removing a read-only value through its dropdown option', async () => {
+      const user = userEvent.setup();
+      const onHandleSelection = vi.fn();
+      renderComponent({
+        options: [{ value: 'label-2', label: 'Label 2' }],
+        value: [{ name: 'Label 2', isReadOnly: true }],
+        onHandleSelection,
+      });
+
+      await user.click(screen.getByRole('textbox'));
+      const readOnlyOption = await screen.findByRole('option', { name: 'Label 2' });
+
+      expect(readOnlyOption).toBeDisabled();
+      await user.click(readOnlyOption);
+
+      expect(onHandleSelection).not.toHaveBeenCalled();
+    });
   });
 
   it('opens while typing and creates a new option for an unmatched value', async () => {
