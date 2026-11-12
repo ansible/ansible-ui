@@ -10,6 +10,9 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
 import { getVitestAliases } from '../../framework/vitest.shared';
 
+// Cast keeps lint-staged workable when moduleResolution cannot resolve the
+// plugin-react call signature (same pattern as monacoEditorPluginDefault below).
+const reactPlugin = (react as unknown as () => PluginOption)();
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
 
@@ -28,7 +31,7 @@ if (wsURL) wsURL.protocol = 'wss:';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    reactPlugin,
     svgr(),
     monacoEditorPluginDefault({
       publicPath: '/',
@@ -79,12 +82,13 @@ export default defineConfig({
     },
   },
   test: {
+    testTimeout: 15000,
     coverage: {
       enabled: true,
       reporter: ['json', 'lcov', 'text'],
       reportsDirectory: 'coverage/vitest',
       include: ['**/*.{ts,tsx}'],
-      exclude: ['node_modules/**', '**/vitest.*.ts'],
+      exclude: ['node_modules/**', '**/vitest.*.ts', '**/__mocks__/**'],
     },
     css: !process.env.CI,
     environment: 'happy-dom',

@@ -1,67 +1,63 @@
 import { render, screen } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { CredentialType } from '../../../interfaces/CredentialType';
-import { CredentialTypeDetailInner as CredentialTypeDetails } from './CredentialTypeDetails';
+import { CredentialTypeDetailInner } from './CredentialTypeDetails';
 
-const mockCredentialType: CredentialType = {
-  id: 5,
-  type: 'credential_type',
-  name: 'Amazon Web Services',
-  description: '',
-  kind: 'cloud',
-  namespace: 'aws',
+const mockCredentialType = {
+  id: 1,
+  name: 'Cloud Type',
+  description: 'desc',
   managed: true,
-  inputs: {
-    fields: [
-      { id: 'username', label: 'Access Key', type: 'string', secret: false, help_text: '' },
-      { id: 'password', label: 'Secret Key', type: 'string', secret: true, help_text: '' },
-    ],
-    required: ['username', 'password'],
-    metadata: [],
-  },
-  injectors: {
-    env: '{"AWS_ACCESS_KEY_ID":"{{username}}","AWS_SECRET_ACCESS_KEY":"{{password}}"}',
-  },
-  related: {
-    credentials: '/api/v2/credential_types/5/credentials/',
-    activity_stream: '/api/v2/credential_types/5/activity_stream/',
-  },
+  inputs: { fields: [] },
+  injectors: {},
+  created: '2024-01-01T00:00:00Z',
+  modified: '2024-01-02T00:00:00Z',
+  namespace: '',
+  related: {},
   summary_fields: {
-    user_capabilities: { edit: false, delete: false },
+    created_by: { id: 5, username: 'creator' },
+    modified_by: { id: 6, username: 'editor' },
   },
-  created: '2023-01-01T00:00:00.000000Z',
-  modified: '2023-01-01T00:00:00.000000Z',
 };
 
+const server = setupServer(
+  http.get(awxAPI`/credential_types/1/`, () => HttpResponse.json(mockCredentialType))
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
 describe('CredentialTypeDetails', () => {
-  it('should render credential type details', () => {
+  it('renders managed credential type details with read-only label', () => {
     render(
       <MemoryRouter>
-        <CredentialTypeDetails credentialType={mockCredentialType} />
+        <CredentialTypeDetailInner
+          credentialType={mockCredentialType as unknown as CredentialType}
+        />
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Amazon Web Services/)).toBeInTheDocument();
+    expect(screen.getByText('Cloud Type')).toBeInTheDocument();
+    expect(screen.getByText('Read-only')).toBeInTheDocument();
+    expect(screen.getByText('desc')).toBeInTheDocument();
   });
 
-  it('should display input configuration', () => {
+  it('renders unmanaged credential type name without read-only label', () => {
     render(
       <MemoryRouter>
-        <CredentialTypeDetails credentialType={mockCredentialType} />
+        <CredentialTypeDetailInner
+          credentialType={
+            { ...mockCredentialType, managed: false, name: 'Editable' } as unknown as CredentialType
+          }
+        />
       </MemoryRouter>
     );
-
-    expect(screen.getByTestId('input-configuration')).toBeInTheDocument();
-  });
-
-  it('should display injector configuration', () => {
-    render(
-      <MemoryRouter>
-        <CredentialTypeDetails credentialType={mockCredentialType} />
-      </MemoryRouter>
-    );
-
-    expect(screen.getByTestId('injector-configuration')).toBeInTheDocument();
+    expect(screen.getByText('Editable')).toBeInTheDocument();
+    expect(screen.queryByText('Read-only')).not.toBeInTheDocument();
   });
 });

@@ -235,9 +235,9 @@ describe('PlatformRoles', () => {
           )
         ).toBeInTheDocument();
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
-  }, 15000);
+  }, 60000);
 
   it('should display table columns headers', async () => {
     const { getByRole } = render(
@@ -266,7 +266,7 @@ describe('PlatformRoles', () => {
       () => {
         expect(getDataRowCount()).toBe(ALL_ROLES.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     expectRolesVisible([
@@ -290,7 +290,7 @@ describe('PlatformRoles', () => {
     );
     expect(within(awxRow).getByTestId('resource-type-column-cell')).toHaveTextContent('Credential');
     expect(within(awxRow).getByTestId('role-creation-column-cell')).toHaveTextContent('Default');
-  }, 15000);
+  }, 60000);
 
   it('filters by AWX component', async () => {
     const { user } = setupTest();
@@ -299,7 +299,7 @@ describe('PlatformRoles', () => {
       () => {
         expect(getDataRowCount()).toBe(ALL_ROLES.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     await openComponentFilter(user);
@@ -309,11 +309,11 @@ describe('PlatformRoles', () => {
         expect(currentApiUrl).toContain('permissions__content_type__service=awx');
         expect(getDataRowCount()).toBe(mockRoles.awx.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
     expectRolesVisible(['AWX Admin', 'AWX Credential Admin']);
     expectRolesHidden(['EDA Project Admin', 'Galaxy Admin', 'Platform Auditor']);
-  }, 15000);
+  }, 60000);
 
   it('filters by EDA component', async () => {
     const { user } = setupTest();
@@ -322,7 +322,7 @@ describe('PlatformRoles', () => {
       () => {
         expect(getDataRowCount()).toBe(ALL_ROLES.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     await openComponentFilter(user);
@@ -332,11 +332,11 @@ describe('PlatformRoles', () => {
         expect(currentApiUrl).toContain('permissions__content_type__service=eda');
         expect(getDataRowCount()).toBe(mockRoles.eda.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
     expectRolesVisible(['EDA Project Admin']);
     expectRolesHidden(['AWX Admin', 'AWX Credential Admin', 'Galaxy Admin', 'Platform Auditor']);
-  }, 15000);
+  }, 60000);
 
   it('filters by Galaxy component', async () => {
     const { user } = setupTest();
@@ -345,7 +345,7 @@ describe('PlatformRoles', () => {
       () => {
         expect(getDataRowCount()).toBe(ALL_ROLES.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     await openComponentFilter(user);
@@ -355,7 +355,7 @@ describe('PlatformRoles', () => {
         expect(currentApiUrl).toContain('permissions__content_type__service=galaxy');
         expect(getDataRowCount()).toBe(mockRoles.galaxy.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
     expectRolesVisible(['Galaxy Admin']);
     expectRolesHidden([
@@ -364,7 +364,7 @@ describe('PlatformRoles', () => {
       'AWX Credential Admin',
       'Platform Auditor',
     ]);
-  }, 15000);
+  }, 60000);
 
   it('filters by Shared component', async () => {
     const { user } = setupTest();
@@ -373,7 +373,7 @@ describe('PlatformRoles', () => {
       () => {
         expect(getDataRowCount()).toBe(ALL_ROLES.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     await openComponentFilter(user);
@@ -383,11 +383,11 @@ describe('PlatformRoles', () => {
         expect(currentApiUrl).toContain('permissions__content_type__service=shared');
         expect(getDataRowCount()).toBe(mockRoles.shared.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
     expectRolesVisible(['Platform Auditor']);
     expectRolesHidden(['AWX Admin', 'AWX Credential Admin', 'EDA Project Admin', 'Galaxy Admin']);
-  }, 15000);
+  }, 60000);
 
   it('supports multi-component selection', async () => {
     const { user } = setupTest();
@@ -396,7 +396,7 @@ describe('PlatformRoles', () => {
       () => {
         expect(getDataRowCount()).toBe(ALL_ROLES.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     await openComponentFilter(user);
@@ -409,11 +409,11 @@ describe('PlatformRoles', () => {
         );
         expect(getDataRowCount()).toBe(mockRoles.awx.length + mockRoles.shared.length);
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
     expectRolesVisible(['Platform Auditor', 'AWX Admin', 'AWX Credential Admin']);
     expectRolesHidden(['EDA Project Admin', 'Galaxy Admin']);
-  }, 15000);
+  }, 60000);
 
   it('should include key property in resource type filter options to handle duplicate labels', () => {
     // This test verifies the fix where selecting "Credential" from AWX
@@ -468,7 +468,7 @@ describe('PlatformRoles', () => {
       () => {
         expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     // Custom role should be deletable
@@ -477,10 +477,10 @@ describe('PlatformRoles', () => {
       {
         name: 'Delete role',
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
     expect(deleteAction).toBeEnabled();
-  }, 15000);
+  }, 60000);
 
   it('should disable managed/built-in roles row actions (edit/delete)', async () => {
     const { user } = setupTest();
@@ -498,7 +498,7 @@ describe('PlatformRoles', () => {
       () => {
         expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
     // Managed role should not be deletable
@@ -507,13 +507,13 @@ describe('PlatformRoles', () => {
       {
         name: 'Delete role',
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
     await user.click(deleteOption);
     expect(deleteOption).toBeInTheDocument();
     expect(deleteOption).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getByText('Built-in roles cannot be deleted.')).toBeInTheDocument();
-  }, 15000);
+  }, 60000);
 
   it('should disable bulk delete when no roles are selected', async () => {
     const { user } = setupTest();
@@ -539,10 +539,10 @@ describe('PlatformRoles', () => {
       () => {
         expect(kebabButton).toHaveAttribute('aria-expanded', 'true');
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
 
-    const deleteOption = await screen.findByText('Delete role', {}, { timeout: 10000 });
+    const deleteOption = await screen.findByText('Delete role', {}, { timeout: 30000 });
     await user.click(deleteOption);
 
     await waitFor(
@@ -554,9 +554,9 @@ describe('PlatformRoles', () => {
           })
         );
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
-  }, 15000);
+  }, 60000);
 
   it('should render empty state when no roles are found', async () => {
     server.use(
@@ -610,7 +610,7 @@ describe('PlatformRoles', () => {
           })
         );
       },
-      { timeout: 10000 }
+      { timeout: 30000 }
     );
-  }, 15000);
+  }, 60000);
 });

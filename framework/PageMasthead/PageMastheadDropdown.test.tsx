@@ -24,6 +24,7 @@ describe('PageMastheadDropdown', () => {
     );
 
     expect(screen.getByRole('button')).toBeDefined();
+    expect(screen.getByRole('button')).not.toHaveAttribute('aria-label');
   });
 
   test('should open the dropdown when the toggle is clicked', async () => {
@@ -61,7 +62,7 @@ describe('PageMastheadDropdown', () => {
         <DropdownItem key="item1">Item 1</DropdownItem>
       </PageMastheadDropdown>
     );
-    expect(screen.getByText('Help')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Help' })).toBeInTheDocument();
   });
 
   test('should hide the label on smaller screens', () => {
@@ -72,6 +73,7 @@ describe('PageMastheadDropdown', () => {
       </PageMastheadDropdown>
     );
     expect(screen.queryByText('Help')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Help' })).toBeInTheDocument();
   });
 
   test('should not render a tooltip element when tooltip prop is not provided', async () => {
@@ -98,7 +100,8 @@ describe('PageMastheadDropdown', () => {
       </PageMastheadDropdown>
     );
 
-    await user.hover(screen.getByRole('button'));
+    const toggle = screen.getByRole('button', { name: 'Open help menu' });
+    await user.hover(toggle);
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     expect(screen.getByRole('tooltip')).toHaveTextContent('Open help menu');
   });
@@ -116,7 +119,7 @@ describe('PageMastheadDropdown', () => {
       </PageMastheadDropdown>
     );
 
-    await user.hover(screen.getByRole('button'));
+    await user.hover(screen.getByRole('button', { name: 'Open help menu' }));
     const tooltip = screen.getByRole('tooltip');
     expect(tooltip).toBeInTheDocument();
     expect(tooltip).toHaveTextContent('Open help menu');

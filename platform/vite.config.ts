@@ -1,16 +1,81 @@
 /// <reference types="vite-plugin-svgr/client" />
 /* eslint-disable no-restricted-exports */
 /* eslint-disable no-console */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import selfsigned from 'selfsigned';
-import { type PluginOption, type UserConfig } from 'vite';
-import { defineConfig } from 'vitest/config';
+import { defineConfig, PluginOption, UserConfig } from 'vite';
 import compression from 'vite-plugin-compression';
 import monacoEditorPlugin, { IMonacoEditorOpts } from 'vite-plugin-monaco-editor';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
 import type { InlineConfig } from 'vitest/node';
 import { getVitestAliases } from '../framework/vitest.shared';
+
+const platformDir = path.dirname(fileURLToPath(import.meta.url));
+const repoRootDir = path.resolve(platformDir, '..');
+const rootMonacoEditorDir = path.join(repoRootDir, 'node_modules', 'monaco-editor');
+const localMonacoEditorDir = path.join(platformDir, 'node_modules', 'monaco-editor');
+
+function localMonacoSymlinkMatchesRoot(): boolean {
+  try {
+    const stat = fs.lstatSync(localMonacoEditorDir);
+    if (!stat.isSymbolicLink()) {
+      return false;
+    }
+    const linkTarget = fs.readlinkSync(localMonacoEditorDir);
+    return (
+      path.resolve(path.dirname(localMonacoEditorDir), linkTarget) ===
+      path.resolve(rootMonacoEditorDir)
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * `vite-plugin-monaco-editor` resolves workers with
+ * `require.resolve(join(process.cwd(), 'node_modules', 'monaco-editor/esm/vs/...'))`.
+ * The platform app runs with cwd `platform/` while dependencies are hoisted to the repo root, so
+ * create a symlink `platform/node_modules/monaco-editor` → `../../node_modules/monaco-editor`.
+ */
+function ensureMonacoEditorSymlink(): PluginOption {
+  return {
+    name: 'ensure-monaco-editor-symlink',
+    enforce: 'pre',
+    config() {
+      if (!fs.existsSync(rootMonacoEditorDir)) {
+        return;
+      }
+      if (localMonacoSymlinkMatchesRoot()) {
+        return;
+      }
+      fs.mkdirSync(path.dirname(localMonacoEditorDir), { recursive: true });
+      try {
+        const stat = fs.lstatSync(localMonacoEditorDir);
+        if (stat.isDirectory()) {
+          return;
+        }
+        fs.unlinkSync(localMonacoEditorDir);
+      } catch (err: unknown) {
+        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+          throw err;
+        }
+      }
+      const relativeTarget = path.relative(path.dirname(localMonacoEditorDir), rootMonacoEditorDir);
+      try {
+        fs.symlinkSync(relativeTarget, localMonacoEditorDir);
+      } catch (err: unknown) {
+        if ((err as NodeJS.ErrnoException).code === 'EEXIST' && localMonacoSymlinkMatchesRoot()) {
+          return;
+        }
+        throw err;
+      }
+    },
+  };
+}
 
 const monacoEditorPluginDefault = (monacoEditorPlugin as unknown as { default: unknown })
   .default as (options: IMonacoEditorOpts) => PluginOption;
@@ -20,6 +85,7 @@ const PLATFORM_SERVER = process.env.PLATFORM_SERVER as string;
 const AWX_WEBSOCKET_PREFIX = '/api/controller/v2/websocket/';
 
 const environment: Record<string, string> = {
+  APPLICATION_NAME: process.env.APPLICATION_NAME ?? '',
   PLATFORM_SERVER,
   AWX_API_PREFIX: '/api/controller/v2',
   AWX_WEBSOCKET_PREFIX,
@@ -32,7 +98,9 @@ console.log('Environment', environment);
 
 const proxyUrl = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
 const wsURL = PLATFORM_SERVER ? new URL(PLATFORM_SERVER) : undefined;
-if (wsURL) wsURL.protocol = 'wss:';
+if (wsURL) {
+  wsURL.protocol = wsURL.protocol === 'https:' ? 'wss:' : 'ws:';
+}
 
 interface VitestUserConfig extends UserConfig {
   test: InlineConfig;
@@ -40,21 +108,34 @@ interface VitestUserConfig extends UserConfig {
 // https://vitejs.dev/config/
 const config: VitestUserConfig = {
   plugins: [
+    ensureMonacoEditorSymlink(),
     react(),
     svgr(),
     monacoEditorPluginDefault({
       publicPath: '/',
-      languageWorkers: [],
-      customWorkers: [
-        { label: 'editorWorkerService', entry: 'monaco-editor/editor/editor.worker' },
-        { label: 'json', entry: 'monaco-editor/language/json/json.worker' },
-        { label: 'yaml', entry: 'monaco-yaml' },
-      ],
+      languageWorkers: ['json', 'editorWorkerService'],
+      customWorkers: [{ label: 'yaml', entry: 'monaco-yaml' }],
     }),
     viteStaticCopy({ targets: [{ src: '../locales', dest: '' }] }) as PluginOption,
     compression(),
   ],
-  define: { 'process.env': environment },
+  define: {
+    'process.env': environment,
+    // Member access (e.g. process.env.APPLICATION_NAME) is not always inlined in dev
+    // when only the whole process.env object is defined; set per-key defines for build-time branding.
+    'process.env.APPLICATION_NAME': JSON.stringify(environment.APPLICATION_NAME),
+    'import.meta.env.APPLICATION_NAME': JSON.stringify(environment.APPLICATION_NAME),
+  },
+  optimizeDeps: {
+    // Linked workspace packages (e.g. @ansible/ansible-ui-framework) are pre-bundled without
+    // the top-level `define` map unless the same keys are set here.
+    esbuildOptions: {
+      define: {
+        'process.env.APPLICATION_NAME': JSON.stringify(environment.APPLICATION_NAME),
+        'import.meta.env.APPLICATION_NAME': JSON.stringify(environment.APPLICATION_NAME),
+      },
+    },
+  },
   server: {
     cors: false,
     proxy: {

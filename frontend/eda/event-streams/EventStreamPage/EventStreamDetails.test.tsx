@@ -118,4 +118,47 @@ describe('EventStreamDetails', () => {
 
     expect(screen.getByText('{"event": "test", "data": "sample"}')).toBeInTheDocument();
   });
+
+  it('should display a warning when the event stream is in test mode', async () => {
+    server.use(
+      http.get(edaAPI`/event-streams/88/`, () =>
+        HttpResponse.json({
+          ...mockEventStream,
+          id: 88,
+          test_mode: true,
+          organization: undefined,
+          eda_credential: undefined,
+          last_event_received_at: null,
+          test_headers: '',
+          test_content: '',
+        })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/event-streams/88/details']}>
+        <Routes>
+          <Route path="/event-streams/:id/details" element={<EventStreamDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('This event stream is disabled.')).toBeInTheDocument();
+    });
+  });
+
+  it('should render a loading page until the event stream is available', () => {
+    server.use(http.get(edaAPI`/event-streams/99/`, () => HttpResponse.json({}, { status: 404 })));
+
+    render(
+      <MemoryRouter initialEntries={['/event-streams/99/details']}>
+        <Routes>
+          <Route path="/event-streams/:id/details" element={<EventStreamDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByText('Test Event Stream')).not.toBeInTheDocument();
+  });
 });

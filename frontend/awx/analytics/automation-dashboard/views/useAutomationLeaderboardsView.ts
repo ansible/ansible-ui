@@ -215,9 +215,9 @@ function orEmpty<T>(list: T[] | null | undefined): T[] {
   return list ?? [];
 }
 
-/** Formats "YYYY-MM-DD" as a short UTC display date, e.g. "Aug 21". */
+/** Formats "YYYY-MM-DD" as a short UTC display date in the viewer's locale, e.g. "Aug 21". */
 function formatStreakDate(isoDate: string): string {
-  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString('en-US', {
+  return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     timeZone: 'UTC',

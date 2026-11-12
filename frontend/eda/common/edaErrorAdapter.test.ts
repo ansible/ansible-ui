@@ -59,6 +59,35 @@ describe('edaErrorAdapter', () => {
     expect(result.genericErrors).toEqual([{ message: 'Error' }]);
   });
 
+  it('should use the first detail entry when detail is an array', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { detail: ['First detail', 'Second detail'] }
+    );
+    const result = edaErrorAdapter(error);
+    expect(result.genericErrors).toEqual([{ message: 'First detail' }]);
+  });
+
+  it('should ignore non-string non_field_errors and flatten nested object field errors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { non_field_errors: [42, 'real error'], extra: { nested: true } }
+    );
+    const result = edaErrorAdapter(error);
+    expect(result.genericErrors).toEqual([{ message: 'real error' }]);
+    expect(result.fieldErrors).toEqual([{ name: 'extra.nested', message: 'true' }]);
+  });
+
+  it('should return empty arrays for unknown error shapes', () => {
+    expect(edaErrorAdapter('not-an-error')).toEqual({ genericErrors: [], fieldErrors: [] });
+  });
+
   it('should deal with "errors" errors as generic errors', () => {
     const error = new RequestError(
       'Errors',
@@ -154,5 +183,18 @@ describe('useEdaErrorMessageParser', () => {
     const result = parseError(error);
     expect(result.message).toBe('Name is required');
     expect(result.parsedErrors).toEqual([{ message: 'Name is required' }]);
+  });
+
+  it('should use the fallback message when multiple errors are present', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { name: ['Name is required'], email: ['Email is invalid'] }
+    );
+    const parseError = useEdaErrorMessageParser();
+    expect(parseError(error, 'Could not save').message).toBe('Could not save');
+    expect(parseError(error).message).toBe('Unknown error');
   });
 });

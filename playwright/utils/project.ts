@@ -177,13 +177,13 @@ export const Project = {
       return copiedName;
     },
 
-    sync: async (page: Page, projectName: string): Promise<void> => {
+    sync: async (page: Page, projectName: string, timeout = 60 * 1000): Promise<void> => {
       await navigateTo(page, 'Automation Execution', 'Projects');
       await filterTable(
         { filterLabel: 'Name', filterValue: projectName, clearFilters: true },
         page
       );
-      await expectRowToContain(projectName, 'Success', page, 60 * 1000);
+      await expectRowToContain(projectName, 'Success', page, timeout);
     },
   },
 } as const;

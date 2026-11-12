@@ -227,4 +227,20 @@ describe('Create Decision Environment Form', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('should render breadcrumbs when the decision environment has not loaded', async () => {
+    server.use(
+      http.get(edaAPI`/decision-environments/99/`, () => HttpResponse.json({}, { status: 404 }))
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/decision-environments/edit/99']}>
+        <Routes>
+          <Route path="/decision-environments/edit/:id" element={<EditDecisionEnvironment />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Edit Decision Environment')).toBeInTheDocument();
+  });
 });

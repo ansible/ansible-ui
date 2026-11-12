@@ -29,4 +29,33 @@ describe('CredentialLabel', () => {
     );
     expect(container.firstChild).toBeNull();
   });
+
+  it('should render cloud credential type', () => {
+    render(
+      <MemoryRouter>
+        <CredentialLabel
+          credential={{ id: 2, name: 'Cloud cred', kind: 'aws', cloud: true, description: '' }}
+        />
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('link', { name: /Cloud.*Cloud cred/ })).toBeInTheDocument();
+  });
+
+  it('should render vault credential with vault id', () => {
+    render(
+      <MemoryRouter>
+        <CredentialLabel
+          credential={{
+            id: 3,
+            name: 'Vault',
+            kind: 'vault',
+            cloud: false,
+            description: '',
+            inputs: { vault_id: 'dev' },
+          }}
+        />
+      </MemoryRouter>
+    );
+    expect(screen.getByRole('link', { name: /Vault.*Vault \| dev/ })).toBeInTheDocument();
+  });
 });

@@ -3,9 +3,44 @@ import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { edaAPI } from '../../common/eda-utils';
+import { EdaRoute } from '../../main/EdaRoutes';
 import { EdaDecisionEnvironmentAddUsers } from './EdaDecisionEnvironmentAddUsers';
+
+const { pageNavigate, bulkDialog } = vi.hoisted(() => ({
+  pageNavigate: vi.fn(),
+  bulkDialog: vi.fn(),
+}));
+
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    usePageNavigate: () => pageNavigate,
+  };
+});
+
+vi.mock('../../common/useEdaBulkActionDialog', () => ({
+  useEdaBulkActionDialog:
+    () =>
+    (options: {
+      items: unknown[];
+      actionFn: (item: unknown) => Promise<unknown>;
+      onComplete: () => void;
+      onClose: () => void;
+      actionColumns: { header: string; cell: (item: unknown) => unknown }[];
+      keyFn: (item: unknown) => string;
+    }) => {
+      bulkDialog(options);
+      void (async () => {
+        for (const item of options.items) {
+          await options.actionFn(item);
+        }
+        options.onComplete();
+      })();
+    },
+}));
 
 const mockDecisionEnvironment = {
   id: 5,
@@ -50,6 +85,7 @@ const mockRolesResponse = {
 };
 
 let capturedRolesUrl: string | undefined;
+let capturedAssignment: unknown;
 
 const server = setupServer(
   http.get(edaAPI`/decision-environments/5/`, () => HttpResponse.json(mockDecisionEnvironment)),
@@ -57,19 +93,28 @@ const server = setupServer(
     capturedRolesUrl = request.url;
     return HttpResponse.json(mockRolesResponse);
   }),
-  http.get('*/api/gateway/v1/users/', () => HttpResponse.json(mockUsersResponse))
+  http.get('*/api/gateway/v1/users/', () => HttpResponse.json(mockUsersResponse)),
+  http.post('*/api/gateway/v1/role_user_assignments/', async ({ request }) => {
+    capturedAssignment = await request.json();
+    return HttpResponse.json({ id: 1 });
+  })
 );
 
 beforeAll(() => server.listen());
+beforeEach(() => {
+  pageNavigate.mockClear();
+  bulkDialog.mockClear();
+});
 afterEach(() => {
   server.resetHandlers();
   capturedRolesUrl = undefined;
+  capturedAssignment = undefined;
 });
 afterAll(() => server.close());
 
-function renderComponent() {
+function renderComponent(id = '5') {
   return render(
-    <MemoryRouter initialEntries={['/decision-environments/5/user-access/add-users']}>
+    <MemoryRouter initialEntries={[`/decision-environments/${id}/user-access/add-users`]}>
       <Routes>
         <Route
           path="/decision-environments/:id/user-access/add-users"
@@ -122,7 +167,7 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
   });
 
   it('should fetch roles filtered by eda.decisionenvironment content type', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     renderComponent();
 
     await waitFor(() => {
@@ -144,4 +189,103 @@ describe('EdaDecisionEnvironmentAddUsers', () => {
     expect(backButton).toBeInTheDocument();
     expect(backButton).toBeEnabled();
   });
+
+  it('should show a loading page until the decision environment is available', () => {
+    server.use(
+      http.get(edaAPI`/decision-environments/99/`, () => HttpResponse.json({}, { status: 404 }))
+    );
+    renderComponent('99');
+    expect(screen.queryByRole('heading', { name: /Assign users/i })).not.toBeInTheDocument();
+  });
+
+  it('should validate that at least one user is selected', async () => {
+    const user = userEvent.setup({ delay: null });
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Assign users/i })).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await waitFor(() => {
+      expect(screen.getByText('Select at least one user.')).toBeInTheDocument();
+    });
+  });
+
+  it('should cancel back to user access', async () => {
+    const user = userEvent.setup({ delay: null });
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Assign users/i })).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: /^Cancel$/ }));
+    expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.DecisionEnvironmentUserAccess, {
+      params: { id: 5 },
+    });
+  });
+
+  it('should validate that at least one role is selected', async () => {
+    const user = userEvent.setup({ delay: null });
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText('testuser')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('checkbox', { name: /Select row/i }));
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await waitFor(() => {
+      expect(screen.getByText('Decision Environment Admin')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await waitFor(() => {
+      expect(screen.getByText('Select at least one role.')).toBeInTheDocument();
+    });
+  });
+
+  it('should assign selected users and roles', async () => {
+    const user = userEvent.setup({ delay: null });
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText('testuser')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('checkbox', { name: /Select row/i }));
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await waitFor(() => {
+      expect(screen.getByText('Decision Environment Admin')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('checkbox', { name: /Select row/i }));
+    await user.click(screen.getByRole('button', { name: /^Next$/ }));
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /^Finish$/ })).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: /^Finish$/ }));
+
+    await waitFor(() => {
+      expect(bulkDialog).toHaveBeenCalled();
+    });
+    const options = bulkDialog.mock.calls[0][0] as {
+      items: Array<{ user: { id: number; username: string }; role: { id: number; name: string } }>;
+      actionColumns: Array<{
+        cell: (item: { user: { username: string }; role: { name: string } }) => string;
+      }>;
+      keyFn: (item: { user: { id: number }; role: { id: number } }) => string;
+      onClose: () => void;
+    };
+    expect(options.keyFn(options.items[0])).toBe('101_201');
+    expect(options.actionColumns[0].cell(options.items[0])).toBe('testuser');
+    expect(options.actionColumns[1].cell(options.items[0])).toBe('Decision Environment Admin');
+    await waitFor(() => {
+      expect(capturedAssignment).toEqual({
+        user: 101,
+        role_definition: 201,
+        content_type: 'eda.decision-environment',
+        object_id: 5,
+      });
+    });
+    options.onClose();
+    expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.DecisionEnvironmentUserAccess, {
+      params: { id: '5' },
+    });
+  }, 15_000);
 });

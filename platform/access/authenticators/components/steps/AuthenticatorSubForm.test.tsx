@@ -2,13 +2,25 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
-import { describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { postRequest, requestPatch } from '@ansible/common-ui/crud/Data';
 import { AuthenticatorTypeEnum } from '../../../../interfaces/Authenticator';
 import {
   AuthenticatorPlugins,
   PluginConfiguration,
 } from '../../../../interfaces/AuthenticatorPlugin';
-import { AuthenticatorSubForm } from './AuthenticatorSubForm';
+import { gatewayAPI } from '../../../../utils/gateway-api-utils';
+import { Configuration } from '../AuthenticatorForm';
+import { AuthenticatorSubForm, validateDetailsStep } from './AuthenticatorSubForm';
+
+vi.mock('@ansible/common-ui/crud/Data', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('@ansible/common-ui/crud/Data')>();
+  return {
+    ...mod,
+    postRequest: vi.fn(),
+    requestPatch: vi.fn(),
+  };
+});
 
 /**
  * Minimal plugins fixture whose single authenticator type carries a
@@ -38,6 +50,25 @@ const PLUGINS_WITH_PATTERN: AuthenticatorPlugins = {
     {
       type: AuthenticatorTypeEnum.Keycloak,
       configuration_schema: SCHEMA_WITH_CAMEL_CASE_DESC,
+      documentation_url: '',
+    },
+  ],
+};
+
+const PLUGINS_WITH_INTEGER: AuthenticatorPlugins = {
+  authenticators: [
+    {
+      type: AuthenticatorTypeEnum.Keycloak,
+      configuration_schema: [
+        {
+          name: 'JWKS_CACHE_TIMEOUT',
+          help_text: 'How long to cache JWKS keys, in seconds.',
+          required: false,
+          default: 3600,
+          type: 'IntegerField',
+          ui_field_label: 'JWKS Cache Timeout (seconds)',
+        },
+      ],
       documentation_url: '',
     },
   ],
@@ -186,4 +217,118 @@ describe('AuthenticatorSubForm — camelCase patternDescription integration', ()
       screen.queryByText('This field does not match the required pattern.')
     ).not.toBeInTheDocument();
   }, 15000);
+});
+
+describe('AuthenticatorSubForm — integer configuration fields', () => {
+  test('renders an IntegerField as an editable number input', () => {
+    render(
+      <SubFormTestWrapper onSubmit={vi.fn()}>
+        <AuthenticatorSubForm plugins={PLUGINS_WITH_INTEGER} />
+      </SubFormTestWrapper>
+    );
+
+    expect(
+      screen.getByRole('spinbutton', { name: 'JWKS Cache Timeout (seconds)' })
+    ).toBeInTheDocument();
+  });
+});
+
+const PLUGINS_WITH_CALLBACK: AuthenticatorPlugins = {
+  authenticators: [
+    {
+      type: 'ansible_base.authenticator_plugins.github' as AuthenticatorTypeEnum,
+      configuration_schema: [
+        {
+          name: 'CALLBACK_URL',
+          help_text: 'cb',
+          required: true,
+          type: 'CharField',
+          ui_field_label: 'Callback URL',
+        },
+      ],
+      documentation_url: '',
+    },
+  ],
+};
+
+function GithubCreateWrapper() {
+  const methods = useForm({
+    defaultValues: {
+      type: 'ansible_base.authenticator_plugins.github' as AuthenticatorTypeEnum,
+      configuration: {},
+      enabled: false,
+      create_objects: false,
+      remove_users: false,
+    },
+  });
+
+  return (
+    <FormProvider {...methods}>
+      <AuthenticatorSubForm plugins={PLUGINS_WITH_CALLBACK} />
+    </FormProvider>
+  );
+}
+
+describe('AuthenticatorSubForm — create flow OAuth callback field', () => {
+  test('hides CALLBACK_URL on create when type is github-like', () => {
+    render(<GithubCreateWrapper />);
+    expect(screen.queryByLabelText('Callback URL')).not.toBeInTheDocument();
+  });
+});
+
+describe('validateDetailsStep', () => {
+  beforeEach(() => {
+    vi.mocked(postRequest).mockReset();
+    vi.mocked(requestPatch).mockReset();
+  });
+
+  test('posts validate request on create path', async () => {
+    vi.mocked(postRequest).mockResolvedValue({});
+
+    await validateDetailsStep(
+      {
+        name: 'Test',
+        configuration: {} as Configuration,
+      },
+      { type: AuthenticatorTypeEnum.Keycloak } as never,
+      PLUGINS_WITH_INTEGER
+    );
+
+    expect(postRequest).toHaveBeenCalledWith(
+      gatewayAPI`/authenticators/?validate=True`,
+      expect.objectContaining({
+        name: 'Test',
+        type: AuthenticatorTypeEnum.Keycloak,
+      })
+    );
+    expect(requestPatch).not.toHaveBeenCalled();
+  });
+
+  test('patches validate request on edit and enriches thrown errors', async () => {
+    vi.mocked(requestPatch).mockRejectedValue(new Error('validation failed'));
+
+    await expect(
+      validateDetailsStep(
+        {
+          name: 'Patched',
+          configuration: {} as Configuration,
+        },
+        {} as never,
+        PLUGINS_WITH_INTEGER,
+        {
+          id: 9,
+          type: AuthenticatorTypeEnum.Keycloak,
+        } as never
+      )
+    ).rejects.toThrow('validation failed');
+
+    expect(requestPatch).toHaveBeenCalledWith(
+      gatewayAPI`/authenticators/9/?validate=True`,
+      expect.objectContaining({
+        name: 'Patched',
+        type: AuthenticatorTypeEnum.Keycloak,
+      })
+    );
+    expect(postRequest).not.toHaveBeenCalled();
+  });
 });

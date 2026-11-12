@@ -16,7 +16,7 @@ export function PageMastheadDropdown(props: {
   id: string;
   icon: ReactNode;
   label?: string;
-  /** Optional tooltip content used to render a tooltip around the dropdown */
+  /** Optional tooltip; pass a string for icon-only menus so the toggle has an accessible name. */
   tooltipContent?: TooltipProps['content'];
   /** Optional tooltip position. Has no effect if no `tooltipContent` prop is supplied */
   tooltipPosition?: TooltipProps['position'];
@@ -61,6 +61,21 @@ export function PageMastheadDropdown(props: {
   );
 }
 
+/** Callers should pass a string tooltipContent for icon-only menus. */
+function getToggleAriaLabel(
+  showLabel: boolean,
+  label: string | undefined,
+  tooltipContent: TooltipProps['content'] | undefined
+): string | undefined {
+  if (showLabel && label) {
+    return undefined;
+  }
+  if (typeof tooltipContent === 'string' && tooltipContent) {
+    return tooltipContent;
+  }
+  return label;
+}
+
 function Toggle({
   icon,
   id,
@@ -84,6 +99,7 @@ function Toggle({
 }) {
   const showLabel = useBreakpoint('md');
   const [isHovered, setIsHovered] = useState(false);
+  const ariaLabel = getToggleAriaLabel(showLabel, label, tooltipContent);
 
   const toggle = (
     <MenuToggle
@@ -92,6 +108,7 @@ function Toggle({
       onClick={onToggle}
       ref={toggleRef}
       variant="plain"
+      aria-label={ariaLabel}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
@@ -102,7 +119,9 @@ function Toggle({
         flexWrap={{ default: 'nowrap' }}
         spaceItems={{ default: 'spaceItemsSm' }}
       >
-        <FlexItem>{<Icon>{icon}</Icon>}</FlexItem>
+        <FlexItem>
+          <Icon aria-hidden="true">{icon}</Icon>
+        </FlexItem>
         {showLabel && label && <FlexItem wrap="nowrap">{label}</FlexItem>}
       </Flex>
     </MenuToggle>

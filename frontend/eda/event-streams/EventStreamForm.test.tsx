@@ -207,4 +207,18 @@ describe('EventStreamForm', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('should render breadcrumbs when the event stream has not loaded', async () => {
+    server.use(http.get(edaAPI`/event-streams/99/`, () => HttpResponse.json({}, { status: 404 })));
+
+    render(
+      <MemoryRouter initialEntries={['/event-streams/edit/99']}>
+        <Routes>
+          <Route path="/event-streams/edit/:id" element={<EditEventStream />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText('Edit event stream')).toBeInTheDocument();
+  });
 });

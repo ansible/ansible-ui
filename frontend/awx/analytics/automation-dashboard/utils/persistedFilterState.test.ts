@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
   dashboardFilterSetKey,

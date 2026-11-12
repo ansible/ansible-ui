@@ -1,17 +1,15 @@
 import { ITableColumn, PageDashboardCard, PageTable } from '@ansible/ansible-ui-framework';
+import { Truncate } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { DashboardTableCardProps, IDashboardTableItem } from '../types';
-import { PageLoadingTable } from '../../../../../framework/PageTable/PageLoadingTable';
+import { PageLoadingTable } from '@ansible/ansible-ui-framework/PageTable/PageLoadingTable';
 import { DEFAULT_NUMBER_LOCALE } from '../constants/common';
 
 const TRUNCATED_NAME_CELL_MAX_WIDTH = 320;
 
 const truncatedNameCellStyle: React.CSSProperties = {
   maxWidth: `${TRUNCATED_NAME_CELL_MAX_WIDTH}px`,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
 };
 
 export function DashboardTableCard(props: DashboardTableCardProps) {
@@ -35,11 +33,16 @@ export function DashboardTableCard(props: DashboardTableCardProps) {
   const { t } = useTranslation();
 
   const nameCell = (item: IDashboardTableItem) => {
-    return <div style={truncatedNameCellStyle}>{item.name}</div>;
+    // Truncate keeps the full name in the DOM and shows it in a tooltip when it's cut off.
+    return (
+      <div style={truncatedNameCellStyle}>
+        <Truncate content={item.name} />
+      </div>
+    );
   };
 
   const valueCell = (item: IDashboardTableItem) =>
-    item?.execution_count || item.execution_count === 0
+    typeof item.execution_count === 'number'
       ? item.execution_count.toLocaleString(DEFAULT_NUMBER_LOCALE)
       : '';
 

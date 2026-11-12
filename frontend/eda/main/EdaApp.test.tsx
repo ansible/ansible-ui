@@ -5,8 +5,11 @@ import { EdaApp } from './EdaApp';
 
 vi.mock('@ansible/ansible-ui-framework', () => ({
   PageApp: (props: Record<string, unknown>) => (
-    <div data-testid="page-app">{props.children as React.ReactNode}</div>
+    <div data-testid="page-app">{props.masthead as React.ReactNode}</div>
   ),
+}));
+vi.mock('./EdaMasthead', () => ({
+  EdaMasthead: () => <div data-testid="eda-masthead" />,
 }));
 vi.mock('./useEdaNavigation', () => ({
   useEdaNavigation: () => [],
@@ -20,5 +23,6 @@ describe('EdaApp', () => {
       </MemoryRouter>
     );
     expect(getByTestId('page-app')).toBeInTheDocument();
+    expect(getByTestId('eda-masthead')).toBeInTheDocument();
   });
 });

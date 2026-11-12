@@ -75,6 +75,30 @@ describe('awxErrorAdapter', () => {
     expect(result.genericErrors).toEqual([{ message: 'Error' }]);
   });
 
+  it('should use first detail entry when detail is an array', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { detail: ['First detail', 'Second detail'] }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors).toEqual([{ message: 'First detail' }]);
+  });
+
+  it('should treat string __all__ values as generic errors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { __all__: 'Global error' }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors).toEqual([{ message: 'Global error' }]);
+  });
+
   it('should deal with {error: "error msg"} as generic errors', () => {
     const error = new RequestError(
       'Validation failed',
@@ -87,6 +111,44 @@ describe('awxErrorAdapter', () => {
     expect(result.genericErrors.length).toBe(1);
     expect(result.fieldErrors.length).toBe(0);
     expect(result.genericErrors).toEqual([{ message: 'Cannot assign type of galaxy' }]);
+  });
+
+  it('should map module_args errors to generic errors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { module_args: 'Invalid module arguments' }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors).toEqual([{ message: 'Invalid module arguments' }]);
+  });
+
+  it('should map string error field to generic errors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { error: 'Plain error message' }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.genericErrors).toEqual([{ message: 'Plain error message' }]);
+  });
+
+  it('should map string field values to field errors', () => {
+    const error = new RequestError(
+      'Validation failed',
+      undefined,
+      400,
+      {},
+      { description: 'Description is too long' }
+    );
+    const result = awxErrorAdapter(error);
+    expect(result.fieldErrors).toEqual([
+      { name: 'description', message: 'Description is too long' },
+    ]);
   });
 
   it('should handle inputs as generic errors when it is an array of strings', () => {

@@ -45,26 +45,18 @@ describe('handleNumberChange', () => {
     expect(onChange).toHaveBeenCalledWith(null);
   });
 
-  test('clamps to max when the value exceeds it', () => {
+  test('preserves values outside the configured range', () => {
     const setValue = vi.fn();
     const onChange = vi.fn();
-    handleNumberChange('999', { name: 'field', max: 10, setValue, onChange });
-    expect(setValue).toHaveBeenCalledWith('field', 10);
-    expect(onChange).toHaveBeenCalledWith(10);
-  });
-
-  test('clamps to min when the value is below it', () => {
-    const setValue = vi.fn();
-    const onChange = vi.fn();
-    handleNumberChange('1', { name: 'field', min: 10, setValue, onChange });
-    expect(setValue).toHaveBeenCalledWith('field', 10);
-    expect(onChange).toHaveBeenCalledWith(10);
+    handleNumberChange('999', { name: 'field', setValue, onChange });
+    expect(setValue).toHaveBeenCalledWith('field', 999);
+    expect(onChange).toHaveBeenCalledWith(999);
   });
 
   test('passes through a value already within range', () => {
     const setValue = vi.fn();
     const onChange = vi.fn();
-    handleNumberChange('5', { name: 'field', min: 0, max: 10, setValue, onChange });
+    handleNumberChange('5', { name: 'field', setValue, onChange });
     expect(setValue).toHaveBeenCalledWith('field', 5);
     expect(onChange).toHaveBeenCalledWith(5);
   });
@@ -89,12 +81,11 @@ describe('createChangeHandler', () => {
     const handler = createChangeHandler({
       type: 'number',
       name: 'field',
-      max: 10,
       setValue,
       onChange,
     });
     handler('999');
-    expect(setValue).toHaveBeenCalledWith('field', 10);
+    expect(setValue).toHaveBeenCalledWith('field', 999);
   });
 
   test('trims leading whitespace for other field types', () => {
@@ -111,45 +102,12 @@ describe('createChangeHandler', () => {
 });
 
 describe('PageFormTextInput', () => {
-  describe('min/max value clamping for number type', () => {
-    test('should clamp value to max when typing exceeds max', async () => {
+  describe('min/max validation for number type', () => {
+    test('allows typing a number digit by digit even when intermediate values are below min', async () => {
       const user = userEvent.setup();
 
       function Wrapper() {
-        const methods = useForm({
-          defaultValues: { quantity: '' },
-          mode: 'onChange',
-        });
-
-        return (
-          <FormProvider {...methods}>
-            <form>
-              <PageFormTextInput name="quantity" label="Quantity" type="number" min={0} max={10} />
-            </form>
-          </FormProvider>
-        );
-      }
-
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-
-      await user.type(input, '999');
-
-      // The component clamps values to the max
-      await waitFor(() => {
-        expect(input.value).toBe('10');
-      });
-    });
-
-    test('should clamp value to min when typing below min', async () => {
-      const user = userEvent.setup();
-
-      function Wrapper() {
-        const methods = useForm({
-          defaultValues: { quantity: '' },
-          mode: 'onChange',
-        });
-
+        const methods = useForm({ defaultValues: { quantity: '' }, mode: 'onChange' });
         return (
           <FormProvider {...methods}>
             <form>
@@ -157,53 +115,59 @@ describe('PageFormTextInput', () => {
                 name="quantity"
                 label="Quantity"
                 type="number"
-                min={10}
-                max={100}
+                min={1000}
+                max={99999}
               />
             </form>
           </FormProvider>
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-
-      await user.type(input, '5');
-
-      // The component clamps values to the min
-      await waitFor(() => {
-        expect(input.value).toBe('10');
-      });
+      render(<Wrapper />);
+      const input = screen.getByRole('spinbutton', { name: 'Quantity' });
+      await user.type(input, '5000');
+      expect(input).toHaveValue(5000);
     });
 
-    test('should accept valid number within min/max range without clamping', async () => {
+    test.each([
+      { value: '5', error: /must be greater or equal to 10/i },
+      { value: '101', error: /cannot be greater than 100/i },
+    ])('rejects out-of-range value $value on submit', async ({ value, error }) => {
       const user = userEvent.setup();
+      const onValid = vi.fn();
 
       function Wrapper() {
-        const methods = useForm({
-          defaultValues: { quantity: '' },
-          mode: 'onChange',
-        });
-
+        const methods = useForm({ defaultValues: { quantity: '' } });
         return (
           <FormProvider {...methods}>
-            <form>
-              <PageFormTextInput name="quantity" label="Quantity" type="number" min={5} max={100} />
+            <form
+              onSubmit={(event) => {
+                void methods.handleSubmit(onValid)(event);
+              }}
+            >
+              <PageFormTextInput
+                name="quantity"
+                label="Quantity"
+                type="number"
+                min={10}
+                max={100}
+              />
+              <button type="submit">Submit</button>
             </form>
           </FormProvider>
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-
-      await user.type(input, '50');
-      await waitFor(() => {
-        expect(input.value).toBe('50');
-      });
+      render(<Wrapper />);
+      const input = screen.getByRole('spinbutton', { name: 'Quantity' });
+      await user.type(input, value);
+      expect(input).toHaveValue(Number(value));
+      await user.click(screen.getByRole('button', { name: 'Submit' }));
+      await waitFor(() => expect(screen.getByText(error)).toBeInTheDocument());
+      expect(onValid).not.toHaveBeenCalled();
     });
 
-    test('should set value to null when input is empty', async () => {
+    test('sets value to null when input is empty', async () => {
       const user = userEvent.setup();
 
       function Wrapper() {
@@ -221,13 +185,10 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="number"]') as HTMLInputElement;
-
+      render(<Wrapper />);
+      const input = screen.getByRole('spinbutton', { name: 'Quantity' });
       await user.clear(input);
-      await waitFor(() => {
-        expect(input.value).toBe('');
-      });
+      await waitFor(() => expect(input).toHaveValue(null));
     });
   });
 

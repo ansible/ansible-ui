@@ -202,10 +202,10 @@ describe('CreatePlatformOrganization', () => {
     const policyInput = await screen.findByRole('textbox', { name: /Policy enforcement/i });
     await user.type(policyInput, '/path/to/policy');
 
-    const nextButton = await screen.findByRole('button', { name: /next/i });
+    const nextButton = await screen.findByTestId('Submit');
     await user.click(nextButton);
 
-    const finishButton = await screen.findByRole('button', { name: /finish/i });
+    const finishButton = await screen.findByTestId('wizard-next');
     await user.click(finishButton);
 
     await waitFor(() => {

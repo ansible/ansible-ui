@@ -60,6 +60,9 @@ vi.mock('./components', async () => {
         {title}
       </div>
     ),
+    // Renders the empty-state props unconditionally, so the AutomationDashboard tests below only
+    // verify which copy is passed down (prop wiring). Whether the real card hides the empty state
+    // when it has rows is covered in DashboardTableCard.test.tsx.
     DashboardTableCard: ({
       id,
       title,
@@ -346,7 +349,7 @@ describe('AutomationDashboard', () => {
 
   // ─── Table card empty states ────────────────────────────────────────────────
 
-  test('should show "no data yet" empty state for table cards when itemCount is 0', () => {
+  test('should pass the "no data yet" empty-state copy to table cards when itemCount is 0', () => {
     vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
       ...mockView,
       mainTableView: { ...mockMainTableView, itemCount: 0 },
@@ -364,7 +367,7 @@ describe('AutomationDashboard', () => {
     );
   });
 
-  test('should show "no items to rank" empty state for table cards when itemCount > 0', () => {
+  test('should pass the "no items to rank" empty-state copy to table cards when itemCount > 0', () => {
     render(testWrapper());
     expect(screen.getByTestId('top-projects-card-empty-title')).toHaveTextContent(
       'No projects to rank'

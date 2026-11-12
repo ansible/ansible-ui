@@ -9,7 +9,7 @@ test.afterEach(setupAfter);
 
 // This test is taking a long time because of SWR caching and the fact that the dropdown,
 // uses SWR infinite loading which seems to be caching old values
-test('domains of interest', { tag: [] }, async ({ page }) => {
+test('should preserve domain filters across SWR list reloads', { tag: [] }, async ({ page }) => {
   test.setTimeout(2 * 60 * 1000);
 
   const inventoryName = await Inventory.ui.create(page);
@@ -59,6 +59,11 @@ test('domains of interest', { tag: [] }, async ({ page }) => {
 
   // Enable Domain A for Job Templates
   await page.getByRole('button', { name: domainA }).click();
+  await expect(page.getByRole('main')).toContainText(jobTemplateAName);
+  await expect(page.getByRole('main')).not.toContainText(jobTemplateBName);
+
+  // Zustand persists active domains while SWR reloads the template list.
+  await page.reload();
   await expect(page.getByRole('main')).toContainText(jobTemplateAName);
   await expect(page.getByRole('main')).not.toContainText(jobTemplateBName);
 

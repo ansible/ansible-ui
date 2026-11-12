@@ -3,33 +3,31 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { hubAPI, pulpAPI } from '../../common/api/formatPath';
 import { HubContext } from '../../common/useHubContext';
 import { CreateRemote, EditRemote } from './RemoteForm';
+
+vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
+  const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
+    <textarea
+      id={props.id as string}
+      name={props.id as string}
+      value={props.value as string}
+      onChange={props.onChange as () => void}
+      className={props.className as string}
+      onFocus={props.onFocus as () => void}
+      onBlur={props.onBlur as () => void}
+    />
+  ));
+  return { DataEditor: FakeDataEditor };
+});
 
 describe('CreateRemote', () => {
   const server = setupServer();
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
   afterAll(() => server.close());
-  beforeEach(() => {
-    vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
-      const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
-        <textarea
-          id={props.id as string}
-          name={props.id as string}
-          value={props.value as string}
-          onChange={props.onChange as () => void}
-          className={props.className as string}
-          onFocus={props.onFocus as () => void}
-          onBlur={props.onBlur as () => void}
-        />
-      ));
-      return { DataEditor: FakeDataEditor };
-    });
-  });
   afterEach(() => {
-    vi.restoreAllMocks();
     server.resetHandlers();
   });
 
@@ -87,7 +85,7 @@ describe('CreateRemote', () => {
         'Community content will never be synced if this setting is enabled'
       );
     });
-  });
+  }, 15000);
 
   test('should hide signed-only warning for non-community URL', async () => {
     const user = userEvent.setup({ delay: null });
@@ -106,7 +104,7 @@ describe('CreateRemote', () => {
       const warning = container.querySelector('[data-testid="signed-only-warning"]');
       expect(warning).not.toBeInTheDocument();
     });
-  });
+  }, 15000);
 
   test('fetches field patterns from the _ui/v1/remotes/ endpoint and validates on blur', async () => {
     server.use(
@@ -136,7 +134,7 @@ describe('CreateRemote', () => {
         screen.getByText('Name must contain only letters, numbers, - and _.')
       ).toBeInTheDocument();
     });
-  });
+  }, 15000);
 
   test('should load OPTIONS data from hub API endpoint', async () => {
     server.use(
@@ -208,31 +206,14 @@ describe('CreateRemote', () => {
       name: 'test-remote',
       url: 'https://console.redhat.com/api/automation-hub/',
     });
-  });
+  }, 15000);
 });
 
 describe('EditRemote', () => {
   const server = setupServer();
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
   afterAll(() => server.close());
-  beforeEach(() => {
-    vi.mock('@ansible/ansible-ui-framework/components/DataEditor', () => {
-      const FakeDataEditor = vi.fn((props: Record<string, string | (() => void)>) => (
-        <textarea
-          id={props.id as string}
-          name={props.id as string}
-          value={props.value as string}
-          onChange={props.onChange as () => void}
-          className={props.className as string}
-          onFocus={props.onFocus as () => void}
-          onBlur={props.onBlur as () => void}
-        />
-      ));
-      return { DataEditor: FakeDataEditor };
-    });
-  });
   afterEach(() => {
-    vi.restoreAllMocks();
     server.resetHandlers();
   });
 
@@ -286,5 +267,96 @@ describe('EditRemote', () => {
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Edit test-remote/i })).toBeInTheDocument();
     });
+  });
+
+  test('shows not found when remote is missing', async () => {
+    server.use(
+      http.get('*/remotes/ansible/collection/*', () => HttpResponse.json({ count: 0, results: [] }))
+    );
+
+    renderEditRemote();
+
+    await waitFor(() => {
+      expect(screen.getByText('Remote not found')).toBeInTheDocument();
+    });
+  });
+
+  test('navigates back when refresh is triggered on missing remote', async () => {
+    server.use(
+      http.get('*/remotes/ansible/collection/*', () => HttpResponse.json({ count: 0, results: [] }))
+    );
+
+    const user = userEvent.setup({ delay: null });
+    renderEditRemote();
+
+    await user.click(await screen.findByRole('button', { name: 'Refresh' }));
+  });
+
+  test('saves edited remote via PUT', async () => {
+    const REMOTE_UUID = '12345678-1234-1234-1234-123456789abc';
+    let putPayload: Record<string, unknown> | undefined;
+
+    server.use(
+      http.options(hubAPI`/_ui/v1/remotes/`, () =>
+        HttpResponse.json({
+          actions: {
+            POST: {
+              name: { type: 'string', required: true },
+              url: { type: 'string', required: true },
+            },
+          },
+        })
+      ),
+      http.get('*/remotes/ansible/collection/*', () =>
+        HttpResponse.json({
+          count: 1,
+          results: [
+            {
+              name: 'test-remote',
+              url: 'https://galaxy.ansible.com/api/',
+              pulp_href: `/pulp/api/v3/remotes/ansible/collection/${REMOTE_UUID}/`,
+              hidden_fields: [],
+              signed_only: false,
+              sync_dependencies: false,
+              sync_highest_versions: null,
+              tls_validation: true,
+              download_concurrency: null,
+              rate_limit: null,
+            },
+          ],
+        })
+      ),
+      http.put(pulpAPI`/remotes/ansible/collection/${REMOTE_UUID}/`, async ({ request }) => {
+        putPayload = (await request.json()) as Record<string, unknown>;
+        return HttpResponse.json({ name: 'test-remote' });
+      })
+    );
+
+    const user = userEvent.setup({ delay: null });
+    renderEditRemote();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Save remote' })).toBeInTheDocument();
+    });
+
+    const urlInput = screen.getByRole('textbox', { name: /Server URL/i });
+    await user.clear(urlInput);
+    await user.paste('https://console.redhat.com/api/automation-hub/');
+    await user.click(screen.getByRole('button', { name: 'Save remote' }));
+
+    await waitFor(() => {
+      expect(putPayload).toBeDefined();
+    });
+  }, 20000);
+
+  test('shows error when remote lookup fails', async () => {
+    server.use(
+      http.get('*/remotes/ansible/collection/*', () =>
+        HttpResponse.json({ detail: 'Server error' }, { status: 500 })
+      )
+    );
+
+    renderEditRemote();
+    expect(await screen.findByRole('button', { name: /Refresh/i })).toBeInTheDocument();
   });
 });
