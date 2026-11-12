@@ -60,9 +60,7 @@ describe('PlatformOverview', () => {
   });
 
   it('should use APPLICATION_NAME in the welcome heading when configured', () => {
-    vi.spyOn(applicationName, 'getBuildApplicationName').mockReturnValue(
-      'Ansible Automation Platform'
-    );
+    vi.spyOn(applicationName, 'getBuildApplicationName').mockReturnValue('Configured Name');
 
     render(
       <MemoryRouter>
@@ -70,11 +68,9 @@ describe('PlatformOverview', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Welcome to Ansible Automation Platform')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to Configured Name')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'Empower, automate, connect: Unleash possibilities with Ansible Automation Platform.'
-      )
+      screen.getByText('Empower, automate, connect: Unleash possibilities with Configured Name.')
     ).toBeInTheDocument();
     vi.restoreAllMocks();
   });
