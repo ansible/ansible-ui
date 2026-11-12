@@ -97,6 +97,14 @@ function craftRequestUrl(
   return decodedUrl;
 }
 
+/** Label and value fields for an async filter. Omitted keys fall back to the filter key. */
+function resolveAsyncFilterKeys(filter: AsyncKeyOptions, key: string) {
+  return {
+    labelKey: filter.labelKey || key,
+    valueKey: filter.valueKey || key,
+  };
+}
+
 export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
   // useRef to keep the initial props since thay should not change
   // this is used to prevent the filters from being re-calculated
@@ -117,8 +125,7 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
   >(
     async (queryOptions: PageAsyncSelectQueryOptions, key: string) => {
       const knownAwxFilter = knownAwxFilterKeys[key] || preFilledValueKeys?.[key];
-      const labelKey = knownAwxFilter.labelKey || key;
-      const valueKey = knownAwxFilter.valueKey || key;
+      const { labelKey, valueKey } = resolveAsyncFilterKeys(knownAwxFilter, key);
       const itemsResponse = await requestGet<
         AwxItemsResponse<Record<string, string | number | undefined>>
       >(
@@ -151,12 +158,13 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
     (value: string, key: string) => {
       const knownAwxFilter = knownAwxFilterKeys[key] || preFilledValueKeys?.[key];
       if (knownAwxFilter) {
+        const { labelKey, valueKey } = resolveAsyncFilterKeys(knownAwxFilter, key);
+        // The stored value is already the label when both come from the same field.
+        if (labelKey === valueKey) {
+          return value;
+        }
         return (
-          <AsyncQueryLabel
-            url={awxAPI`/${knownAwxFilter.apiPath}/`}
-            id={value}
-            field={knownAwxFilter.labelKey}
-          />
+          <AsyncQueryLabel url={awxAPI`/${knownAwxFilter.apiPath}/`} id={value} field={labelKey} />
         );
       }
       return value;
@@ -300,14 +308,14 @@ interface AsyncKeyOptions {
   apiPath: string;
 
   /**
-   * The key to be used as the label for the resource.
-   * @default 'name'
+   * Field used as the option label.
+   * When omitted, the filter key is used.
    */
   labelKey?: string;
 
   /**
-   * The key to be used as the value for the resource.
-   * @default 'id'
+   * Field stored as the option value.
+   * When omitted, the filter key is used.
    */
   valueKey?: string;
 
@@ -329,14 +337,14 @@ export const knownAwxFilterKeys: Record<string, AsyncKeyOptions> = {
   execution_node: {
     labelKey: 'hostname',
     apiPath: 'instances',
-    valueKey: 'id',
-    queryParams: { node_type: 'execution' },
+    valueKey: 'hostname',
+    queryParams: { or__node_type: ['execution', 'hybrid'] },
   },
   controller_node: {
     labelKey: 'hostname',
-    valueKey: 'id',
+    valueKey: 'hostname',
     apiPath: 'instances',
-    queryParams: { node_type: 'control' },
+    queryParams: { or__node_type: ['control', 'hybrid'] },
   },
   inventory: { apiPath: 'inventories', labelKey: 'name', valueKey: 'id' },
   last_job: { apiPath: 'unified_jobs', labelKey: 'id', valueKey: 'id' },
