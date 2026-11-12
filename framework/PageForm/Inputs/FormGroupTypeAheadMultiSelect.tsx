@@ -326,8 +326,8 @@ export function FormGroupTypeAheadMultiSelect(props: FormGroupTypeAheadMultiSele
         <SelectList id={`${id}-listbox`} data-cy="select-list">
           {selectOptions.map((option, index) => (
             <SelectOption
-              isDisabled={Boolean(
-                value.find((val) => val.name === String(option.children) && val.isReadOnly)
+              isDisabled={value.some(
+                (val) => val.name === String(option.children) && val.isReadOnly
               )}
               key={String(option.value) || String(option.children)}
               isFocused={focusedItemIndex === index}
