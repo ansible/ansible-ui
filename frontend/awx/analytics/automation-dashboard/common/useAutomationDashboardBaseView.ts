@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { RequestError } from '../../../../common/crud/RequestError';
 import { getQueryString, hasValidRequiredFilters } from '../utils/queryString';
+import { isRequestTooLargeError, shouldRetryUnlessTooLarge } from '../utils/requestTooLarge';
 
 export type IAutomationDashboardBaseView<T extends { id: number }> = IView & {
   itemCount: number | undefined;
@@ -52,7 +53,10 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
   const fetchUrl = filtersValid ? url + queryString : null;
 
   const fetcher = useFetcher();
-  const response = useSWR<AwxItemsResponse<T>>(fetchUrl, fetcher, { keepPreviousData: true });
+  const response = useSWR<AwxItemsResponse<T>>(fetchUrl, fetcher, {
+    keepPreviousData: true,
+    shouldRetryOnError: shouldRetryUnlessTooLarge,
+  });
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate().finally(() => {});
@@ -71,10 +75,19 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
     itemCountRef.current.itemCount = data?.count;
   }
 
+  // The page, size and sort the items were loaded for. After a request rejected as too large,
+  // the items of another page or sort are not shown as this one's: the items of the previous
+  // filters are shown only on the same page. Other errors keep the items as before.
+  const viewKey = `${view.page}:${view.perPage}:${view.sort}:${view.sortDirection}`;
+  const viewKeyRef = useRef(viewKey);
+  viewKeyRef.current = viewKey;
   const [items, setItems] = useState<T[] | undefined>(undefined);
+  const [itemsViewKey, setItemsViewKey] = useState<string>();
   useEffect(() => {
     setItems(data?.results);
+    setItemsViewKey(viewKeyRef.current);
   }, [data?.results]);
+  const pageItems = isRequestTooLargeError(error) && itemsViewKey !== viewKey ? undefined : items;
 
   const updateItem = useCallback(
     (item: T) => {
@@ -94,10 +107,10 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
       ...view,
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: items,
+      pageItems,
       limitFiltersToOneOrOperation: true,
       updateItem,
       error,
     };
-  }, [error, items, refresh, updateItem, view]);
+  }, [error, pageItems, refresh, updateItem, view]);
 }

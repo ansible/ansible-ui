@@ -8,6 +8,7 @@ import { IAutomationDashboardView, IJobTemplate, ReportType } from '../types';
 import { useGetReportDetails } from './useGetReportDetails';
 import { useSubscriptionCostState } from './useSubscriptionCostState';
 import { useExportCsv } from './useExportCsv';
+import { isRequestTooLargeError } from '../utils/requestTooLarge';
 import {
   IAutomationDashboardBaseView,
   useAutomationDashboardBaseView,
@@ -40,6 +41,21 @@ function isDefaultFilterState(filterState: IFilterState | undefined): boolean {
   return JSON.stringify(activeFilterState) === JSON.stringify(DEFAULT_FILTERS);
 }
 
+/**
+ * Whether a request was rejected as too large, and whether all, some or none of the dashboard's
+ * data (the table, the cards) is still the data of the previous request. A request that was not
+ * rejected shows the data of the current filters (e.g. the shorter cards request may pass while
+ * the table request is too large). Each request is `[isTooLarge, isShowingPreviousData]`.
+ */
+function getFiltersTooLarge(
+  ...requests: [isTooLarge: boolean, isShowingPreviousData: boolean][]
+): IAutomationDashboardView['filtersTooLarge'] {
+  if (!requests.some(([isTooLarge]) => isTooLarge)) return undefined;
+  const showingCount = requests.filter(([, isShowing]) => isShowing).length;
+  if (showingCount === requests.length) return { previousData: 'all' };
+  return { previousData: showingCount > 0 ? 'some' : 'none' };
+}
+
 export function useAutomationDashboardView(options: {
   toolbarFilters: IToolbarFilter[];
 }): IAutomationDashboardView {
@@ -69,6 +85,21 @@ export function useAutomationDashboardView(options: {
 
   const { filterState, setFilterState } = mainTableViewBase;
 
+  /**
+   * Counts the times the filter state was replaced as a whole (seeded for the user, "Clear all
+   * filters", a saved report). A replacement that leaves a filter's selection unchanged (e.g.
+   * empty) still cancels the running bulk action of its select. Every replacement goes through
+   * `replaceFilterState`, so none of them can miss the count.
+   */
+  const [filterResetCount, setFilterResetCount] = useState(0);
+  const replaceFilterState = useCallback(
+    (state: IFilterState) => {
+      setFilterState(state);
+      setFilterResetCount((count) => count + 1);
+    },
+    [setFilterState]
+  );
+
   // Which user the current filter state has been seeded for. Set up front when
   // the id was already known at mount (the common case — /me/ is cached).
   const [seededUserId, setSeededUserId] = useState<number | undefined>(userId);
@@ -87,13 +118,13 @@ export function useAutomationDashboardView(options: {
 
     const persisted = readPersistedFilterState(userId);
     if (persisted) {
-      setFilterState(persisted);
+      replaceFilterState(persisted);
     } else if (!isFirstSeed) {
       // A different user with nothing saved — reset rather than keep the
       // previous user's filters.
-      setFilterState({ ...DEFAULT_FILTERS });
+      replaceFilterState({ ...DEFAULT_FILTERS });
     }
-  }, [userId, seededUserId, initialSearch, toolbarFilters, setFilterState]);
+  }, [userId, seededUserId, initialSearch, toolbarFilters, replaceFilterState]);
 
   // Persist every filter change for the active user so it can be restored after
   // a tab switch.
@@ -107,23 +138,37 @@ export function useAutomationDashboardView(options: {
 
   // Override clearAllFilters to retain the required 'period' filter and call toolbar callback
   const clearAllFilters = useCallback(() => {
-    setFilterState({ period: [AutomationDashboardDateRangeFilterPresets.last_7_days] });
+    replaceFilterState({ period: [AutomationDashboardDateRangeFilterPresets.last_7_days] });
 
     // Call toolbar callback to reset dropdown
     onClearFiltersCallback.current?.();
-  }, [setFilterState]);
+  }, [replaceFilterState]);
 
   // Function to register callback from toolbar
   const registerClearCallback = useCallback((callback: () => void) => {
     onClearFiltersCallback.current = callback;
   }, []);
 
+  // A request rejected as too large (too many filter values in the URL) is shown as one alert
+  // below the filters. When there is data of a previous request, it stays and the error state
+  // is hidden; without it (e.g. the first request) the error state is shown.
+  const isTableRequestTooLarge = isRequestTooLargeError(mainTableViewBase.error);
+  const isTableShowingPreviousData =
+    isTableRequestTooLarge && mainTableViewBase.pageItems !== undefined;
   const mainTableView: IAutomationDashboardBaseView<IJobTemplate> = useMemo(
-    () => ({ ...mainTableViewBase, clearAllFilters }),
-    [mainTableViewBase, clearAllFilters]
+    () => ({
+      ...mainTableViewBase,
+      clearAllFilters,
+      error: isTableShowingPreviousData ? undefined : mainTableViewBase.error,
+    }),
+    [mainTableViewBase, clearAllFilters, isTableShowingPreviousData]
   );
 
   const detailsResponse = useGetReportDetails(toolbarFilters, filterState, QUERY_PARAMS);
+  const isDetailsRequestTooLarge = isRequestTooLargeError(detailsResponse.error);
+  const isDetailsShowingPreviousData =
+    isDetailsRequestTooLarge && detailsResponse.reportDetails !== undefined;
+
   const { costState, setCostState } = useSubscriptionCostState();
 
   const [loading, setLoading] = useState(false);
@@ -158,7 +203,7 @@ export function useAutomationDashboardView(options: {
     () => ({
       mainTableView,
       details: detailsResponse.reportDetails,
-      detailsError: detailsResponse.error,
+      detailsError: isDetailsShowingPreviousData ? undefined : detailsResponse.error,
       detailsLoading: detailsResponse.isLoading,
       costState,
       setCostState,
@@ -167,6 +212,12 @@ export function useAutomationDashboardView(options: {
       exportCsv,
       isFilterStateDefault: isFilterStateDefaultValue,
       registerClearCallback,
+      replaceFilterState,
+      filterResetCount,
+      filtersTooLarge: getFiltersTooLarge(
+        [isTableRequestTooLarge, isTableShowingPreviousData],
+        [isDetailsRequestTooLarge, isDetailsShowingPreviousData]
+      ),
     }),
     [
       mainTableView,
@@ -180,6 +231,12 @@ export function useAutomationDashboardView(options: {
       exportCsv,
       isFilterStateDefaultValue,
       registerClearCallback,
+      replaceFilterState,
+      filterResetCount,
+      isTableRequestTooLarge,
+      isTableShowingPreviousData,
+      isDetailsRequestTooLarge,
+      isDetailsShowingPreviousData,
     ]
   );
 }

@@ -1,15 +1,16 @@
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
-import {
-  PageAsyncSelectQueryOptions,
-  PageAsyncSelectQueryResult,
-} from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
+import { ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { PageAsyncSelectQueryResult } from '@ansible/ansible-ui-framework/PageInputs/PageAsyncSelectOptions';
 import { AwxItemsResponse } from '@ansible/awx-ui/common/AwxItemsResponse';
 import { AsyncQueryLabel } from '@ansible/common-ui/AsyncQueryLabel';
 import { AsyncKeyOptions, AutomationDashboardToolbarFiltersProps } from '../types';
 import { requestGet } from '@ansible/common-ui/crud/Data';
 import { metricsAPI } from '../../../common/api/metrics-utils';
+import {
+  AutomationDashboardAsyncFilter,
+  AutomationDashboardAsyncQueryOptions,
+} from './useAutomationDashboardAsyncOptions';
 
 const FILTER_KEYS: Record<string, AsyncKeyOptions> = {
   label: {
@@ -40,8 +41,12 @@ const FILTER_KEYS: Record<string, AsyncKeyOptions> = {
 
 const PAGE_SIZE = 10;
 
-function buildRequestUrl(queryOptions: PageAsyncSelectQueryOptions, optionsPath: string): string {
-  let url = metricsAPI`/${optionsPath}/?page_size=${PAGE_SIZE}`;
+function buildRequestUrl(
+  queryOptions: AutomationDashboardAsyncQueryOptions,
+  optionsPath: string,
+  pageSize: number
+): string {
+  let url = metricsAPI`/${optionsPath}/?page_size=${pageSize}`;
   if (queryOptions.next) {
     url += `&page=${queryOptions.next}`;
   }
@@ -59,26 +64,30 @@ export function useAutomationDashboardToolbarFilters(
 
   const queryResource = useCallback<
     (
-      queryOptions: PageAsyncSelectQueryOptions,
+      queryOptions: AutomationDashboardAsyncQueryOptions,
       key: string
     ) => Promise<PageAsyncSelectQueryResult<string>>
-  >(async (queryOptions: PageAsyncSelectQueryOptions, key: string) => {
+  >(async (queryOptions: AutomationDashboardAsyncQueryOptions, key: string) => {
     const field = FILTER_KEYS[key];
+    const pageSize = queryOptions.pageSize ?? PAGE_SIZE;
     const labelKey = field.labelKey ?? 'name';
     const valueKey = field.valueKey ?? 'id';
 
     const itemsResponse = await requestGet<
       AwxItemsResponse<Record<string, string | number | undefined>>
-    >(buildRequestUrl(queryOptions, field.apiPath), queryOptions.signal);
+    >(buildRequestUrl(queryOptions, field.apiPath, pageSize), queryOptions.signal);
 
     let next = '';
     let remaining = 0;
-    if (itemsResponse.results.length > 0 && itemsResponse.next) {
+    // A page with a next page is full, so its length is the page size the API used: the API may
+    // cap the requested page size (e.g. its max page size).
+    const servedPageSize = itemsResponse.results.length;
+    if (servedPageSize > 0 && itemsResponse.next) {
       const urlParams = new URLSearchParams(itemsResponse.next.split('?')[1]);
       const page = Object.fromEntries(urlParams.entries())?.page;
       if (page) {
         next = page;
-        remaining = itemsResponse.count - (Number.parseInt(page) - 1) * PAGE_SIZE;
+        remaining = Math.max(0, itemsResponse.count - (Number.parseInt(page) - 1) * servedPageSize);
       }
     }
 
@@ -105,7 +114,7 @@ export function useAutomationDashboardToolbarFilters(
 
   return useMemo(() => {
     const seenKeys = new Set<string>();
-    const toolbarFilters: IToolbarFilter[] = [];
+    const toolbarFilters: AutomationDashboardAsyncFilter[] = [];
 
     filterableFields.forEach((filterKey) => {
       if (!filterKey || seenKeys.has(filterKey)) return;
@@ -118,7 +127,6 @@ export function useAutomationDashboardToolbarFilters(
         type: ToolbarFilterType.AsyncMultiSelect,
         query: filterKey,
         placeholder: t('Select {{label}}', { label: t(field.label) }),
-        queryPlaceholder: t('Loading...'),
         queryErrorText: t('Failed to load options.'),
         queryLabel: (value: string) => queryResourceLabel(value, filterKey),
         queryOptions: (options) => queryResource(options, filterKey),

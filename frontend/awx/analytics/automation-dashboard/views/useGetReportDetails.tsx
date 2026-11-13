@@ -10,6 +10,7 @@ import {
 import { useFetcher } from '../../../../common/crud/Data';
 import useSWR from 'swr';
 import { filtersToSearchObj, hasValidRequiredFilters } from '../utils/queryString';
+import { shouldRetryUnlessTooLarge } from '../utils/requestTooLarge';
 
 const DETAILS_PATH = 'dashboard_reports/report/details/';
 
@@ -46,7 +47,10 @@ export function useGetReportDetails(
   // Defer fetch until required filters are valid
   const url = filtersValid ? metricsAPI`/${DETAILS_PATH}?${queryString}` : null;
   const fetcher = useFetcher();
-  const response = useSWR<IDashboardDetails>(url, fetcher, { keepPreviousData: true });
+  const response = useSWR<IDashboardDetails>(url, fetcher, {
+    keepPreviousData: true,
+    shouldRetryOnError: shouldRetryUnlessTooLarge,
+  });
   const { data, mutate, isLoading } = response;
 
   const refreshDetails = useCallback(async () => {
