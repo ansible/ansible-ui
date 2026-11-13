@@ -211,8 +211,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="text"]') as HTMLInputElement;
+      render(<Wrapper />);
+      const input = screen.getByRole('textbox', { name: 'Name' });
 
       await user.type(input, 'abc');
       await waitFor(() => {
@@ -238,8 +238,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="text"]') as HTMLInputElement;
+      render(<Wrapper />);
+      const input = screen.getByRole('textbox', { name: 'Name' });
 
       await user.type(input, 'this is a very long string');
       await waitFor(() => {
@@ -271,8 +271,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="text"]') as HTMLInputElement;
+      render(<Wrapper />);
+      const input = screen.getByRole('textbox', { name: 'Name' });
 
       await user.type(input, 'hello');
       await waitFor(() => {
@@ -298,8 +298,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="password"]') as HTMLInputElement;
+      render(<Wrapper />);
+      const input = screen.getByLabelText('Password');
 
       expect(input).toBeInTheDocument();
       expect(input).toHaveAttribute('autocomplete', 'new-password');
@@ -320,8 +320,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="password"]') as HTMLInputElement;
+      render(<Wrapper />);
+      const input = screen.getByLabelText('Password');
 
       expect(input).toHaveAttribute('autocomplete', 'new-password');
     });
@@ -343,8 +343,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="text"]') as HTMLInputElement;
+      render(<Wrapper />);
+      const input = screen.getByRole('textbox', { name: 'Username' });
 
       expect(input).toBeInTheDocument();
       expect(input).toHaveAttribute('autocomplete', 'off');
@@ -365,8 +365,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input[type="email"]') as HTMLInputElement;
+      render(<Wrapper />);
+      const input = screen.getByRole('textbox', { name: 'Email' });
 
       expect(input).toBeInTheDocument();
       expect(input).toHaveAttribute('autocomplete', 'email');
@@ -387,8 +387,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const input = container.querySelector('input') as HTMLInputElement;
+      render(<Wrapper />);
+      const input = screen.getByRole('textbox', { name: 'Field' });
 
       expect(input).toBeInTheDocument();
       expect(input).toHaveAttribute('autocomplete', 'off');
@@ -410,8 +410,8 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const getInput = () => container.querySelector('input') as HTMLInputElement;
+      render(<Wrapper />);
+      const getInput = () => screen.getByLabelText('Password');
       expect(getInput()).toHaveAttribute('type', 'password');
 
       await user.click(screen.getByRole('button'));
@@ -447,11 +447,11 @@ describe('PageFormTextInput', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
+      render(<Wrapper />);
       await user.click(screen.getByRole('button', { name: 'Options menu' }));
 
       expect(selectOpen).toHaveBeenCalledWith(expect.any(Function), 'Browse');
-      const input = container.querySelector('input') as HTMLInputElement;
+      const input = screen.getByRole('textbox', { name: 'Field' });
       await waitFor(() => {
         expect(input).toHaveValue('picked-value');
       });

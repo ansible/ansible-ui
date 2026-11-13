@@ -50,7 +50,7 @@ describe('PageFormTextArea', () => {
     });
 
     test('should render with placeholder', () => {
-      const { container } = render(
+      render(
         <DefaultWrapper>
           <PageFormTextArea
             name="description"
@@ -59,7 +59,7 @@ describe('PageFormTextArea', () => {
           />
         </DefaultWrapper>
       );
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
       expect(textarea).toHaveAttribute('placeholder', 'Enter description');
     });
 
@@ -75,18 +75,18 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<WrapperWithDefault />);
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<WrapperWithDefault />);
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
       expect(textarea).toHaveValue('Default text');
     });
 
     test('should render disabled textarea', () => {
-      const { container } = render(
+      render(
         <DefaultWrapper>
           <PageFormTextArea name="description" label="Description" isDisabled />
         </DefaultWrapper>
       );
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
       expect(textarea).toBeDisabled();
     });
 
@@ -102,8 +102,8 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<WrapperWithReadOnly />);
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<WrapperWithReadOnly />);
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
       expect(textarea).toHaveValue('Read Only');
       expect(textarea).toHaveAttribute('readonly');
     });
@@ -113,12 +113,12 @@ describe('PageFormTextArea', () => {
     test('should trim leading whitespace on input', async () => {
       const user = userEvent.setup();
 
-      const { container } = render(
+      render(
         <DefaultWrapper>
           <PageFormTextArea name="description" label="Description" />
         </DefaultWrapper>
       );
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
       await user.type(textarea, '  hello');
 
       await waitFor(() => {
@@ -142,8 +142,8 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<ValidationWrapper />);
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<ValidationWrapper />);
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
       await user.type(textarea, 'short');
 
       await waitFor(() => {
@@ -165,8 +165,8 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<ValidationWrapper />);
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<ValidationWrapper />);
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
       await user.type(textarea, 'this is way too long');
 
       await waitFor(() => {
@@ -205,8 +205,8 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<Wrapper />);
-      const getTextarea = () => container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<Wrapper />);
+      const getTextarea = () => screen.getByRole('textbox', { name: 'Description' });
       expect(getTextarea()).toHaveAttribute('type', 'password');
 
       await user.click(screen.getByRole('button'));
@@ -273,8 +273,8 @@ describe('PageFormTextArea', () => {
     test('should apply pattern validation when field is dirty', async () => {
       const user = userEvent.setup();
 
-      const { container } = render(<WrapperWithOptionsPattern />);
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<WrapperWithOptionsPattern />);
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
 
       // Type an invalid value (contains number)
       await user.type(textarea, 'invalid123');
@@ -290,8 +290,8 @@ describe('PageFormTextArea', () => {
     test('should skip pattern validation when field is not dirty', async () => {
       const user = userEvent.setup();
 
-      const { container } = render(<WrapperWithOptionsPattern defaultDescription="existing123" />);
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<WrapperWithOptionsPattern defaultDescription="existing123" />);
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
 
       // Blur without changing the value
       await user.click(textarea);
@@ -322,8 +322,8 @@ describe('PageFormTextArea', () => {
         );
       }
 
-      const { container } = render(<WrapperWithoutOptions />);
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<WrapperWithoutOptions />);
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
 
       // Type an invalid value (would fail pattern if it were applied)
       await user.type(textarea, 'invalid123');
@@ -341,8 +341,8 @@ describe('PageFormTextArea', () => {
     test('should pass validation when value matches pattern', async () => {
       const user = userEvent.setup();
 
-      const { container } = render(<WrapperWithOptionsPattern />);
-      const textarea = container.querySelector('textarea') as HTMLTextAreaElement;
+      render(<WrapperWithOptionsPattern />);
+      const textarea = screen.getByRole('textbox', { name: 'Description' });
 
       // Type a valid value
       await user.type(textarea, 'Valid description');
