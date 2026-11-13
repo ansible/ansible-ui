@@ -1,0 +1,510 @@
+{
+  "job_runs": 444,
+  "active_organizations": 11,
+  "featured_template": {
+    "id": 19,
+    "name": "template-org-a",
+    "run_count": 142
+  },
+  "enterprise_streak": {
+    "streak": 30,
+    "daily": [
+      {
+        "date": "2026-10-07",
+        "successful_runs": 3
+      },
+      {
+        "date": "2026-10-08",
+        "successful_runs": 1
+      },
+      {
+        "date": "2026-10-09",
+        "successful_runs": 3
+      },
+      {
+        "date": "2026-10-10",
+        "successful_runs": 3
+      },
+      {
+        "date": "2026-10-11",
+        "successful_runs": 4
+      },
+      {
+        "date": "2026-10-12",
+        "successful_runs": 5
+      },
+      {
+        "date": "2026-10-13",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-14",
+        "successful_runs": 5
+      },
+      {
+        "date": "2026-10-15",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-16",
+        "successful_runs": 5
+      },
+      {
+        "date": "2026-10-17",
+        "successful_runs": 8
+      },
+      {
+        "date": "2026-10-18",
+        "successful_runs": 5
+      },
+      {
+        "date": "2026-10-19",
+        "successful_runs": 7
+      },
+      {
+        "date": "2026-10-20",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-21",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-22",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-23",
+        "successful_runs": 15
+      },
+      {
+        "date": "2026-10-24",
+        "successful_runs": 15
+      },
+      {
+        "date": "2026-10-25",
+        "successful_runs": 16
+      },
+      {
+        "date": "2026-10-26",
+        "successful_runs": 16
+      },
+      {
+        "date": "2026-10-27",
+        "successful_runs": 25
+      },
+      {
+        "date": "2026-10-28",
+        "successful_runs": 25
+      },
+      {
+        "date": "2026-10-29",
+        "successful_runs": 27
+      },
+      {
+        "date": "2026-10-30",
+        "successful_runs": 34
+      },
+      {
+        "date": "2026-10-31",
+        "successful_runs": 33
+      },
+      {
+        "date": "2026-11-01",
+        "successful_runs": 35
+      },
+      {
+        "date": "2026-11-02",
+        "successful_runs": 35
+      },
+      {
+        "date": "2026-11-03",
+        "successful_runs": 30
+      },
+      {
+        "date": "2026-11-04",
+        "successful_runs": 38
+      },
+      {
+        "date": "2026-11-05",
+        "successful_runs": 21
+      }
+    ]
+  },
+  "org_streak": {
+    "streak": 14,
+    "daily": [
+      {
+        "date": "2026-10-07",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-08",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-09",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-10",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-11",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-12",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-13",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-14",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-15",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-16",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-17",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-18",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-19",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-20",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-21",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-22",
+        "successful_runs": 0
+      },
+      {
+        "date": "2026-10-23",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-24",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-25",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-26",
+        "successful_runs": 6
+      },
+      {
+        "date": "2026-10-27",
+        "successful_runs": 14
+      },
+      {
+        "date": "2026-10-28",
+        "successful_runs": 14
+      },
+      {
+        "date": "2026-10-29",
+        "successful_runs": 14
+      },
+      {
+        "date": "2026-10-30",
+        "successful_runs": 17
+      },
+      {
+        "date": "2026-10-31",
+        "successful_runs": 16
+      },
+      {
+        "date": "2026-11-01",
+        "successful_runs": 12
+      },
+      {
+        "date": "2026-11-02",
+        "successful_runs": 13
+      },
+      {
+        "date": "2026-11-03",
+        "successful_runs": 13
+      },
+      {
+        "date": "2026-11-04",
+        "successful_runs": 14
+      },
+      {
+        "date": "2026-11-05",
+        "successful_runs": 5
+      }
+    ],
+    "organization": {
+      "id": 2,
+      "name": "org-a",
+      "run_count": 156
+    }
+  },
+  "organization_leaderboard": {
+    "user_organization_rank": 1,
+    "total_organizations": 11,
+    "leaderboard": [
+      {
+        "rank": 1,
+        "name": "org-a",
+        "runs": 156,
+        "user_organization": true
+      },
+      {
+        "rank": 2,
+        "name": "org-c",
+        "runs": 58,
+        "user_organization": false
+      },
+      {
+        "rank": 3,
+        "name": "org-e",
+        "runs": 48,
+        "user_organization": false
+      },
+      {
+        "rank": 4,
+        "name": "org-f",
+        "runs": 40,
+        "user_organization": false
+      },
+      {
+        "rank": 5,
+        "name": "org-g",
+        "runs": 35,
+        "user_organization": false
+      },
+      {
+        "rank": 6,
+        "name": "org-d",
+        "runs": 30,
+        "user_organization": false
+      },
+      {
+        "rank": 7,
+        "name": "org-h",
+        "runs": 25,
+        "user_organization": false
+      },
+      {
+        "rank": 8,
+        "name": "org-b",
+        "runs": 17,
+        "user_organization": false
+      },
+      {
+        "rank": 9,
+        "name": "org-i",
+        "runs": 15,
+        "user_organization": false
+      },
+      {
+        "rank": 10,
+        "name": "org-j",
+        "runs": 12,
+        "user_organization": false
+      }
+    ]
+  },
+  "org_achievements": ["sustained", "rising", "top_tier"],
+  "activity_levels": [
+    {
+      "id": "volume",
+      "current_user_rank": 12,
+      "current_user_runs": 13,
+      "total_users": 19,
+      "leaderboard": [
+        {
+          "rank": 1,
+          "username": "EV",
+          "runs": 97
+        },
+        {
+          "rank": 2,
+          "username": "NO",
+          "runs": 48
+        },
+        {
+          "rank": 3,
+          "username": "OL",
+          "runs": 40
+        },
+        {
+          "rank": 4,
+          "username": "PA",
+          "runs": 35
+        },
+        {
+          "rank": 5,
+          "username": "MA",
+          "runs": 30
+        },
+        {
+          "rank": 6,
+          "username": "CH",
+          "runs": 29
+        },
+        {
+          "rank": 7,
+          "username": "QU",
+          "runs": 25
+        },
+        {
+          "rank": 8,
+          "username": "LE",
+          "runs": 24
+        },
+        {
+          "rank": 9,
+          "username": "GR",
+          "runs": 21
+        },
+        {
+          "rank": 10,
+          "username": "HE",
+          "runs": 18
+        }
+      ]
+    },
+    {
+      "id": "breadth",
+      "current_user_rank": 5,
+      "current_user_runs": 1,
+      "total_users": 19,
+      "leaderboard": [
+        {
+          "rank": 1,
+          "username": "FR",
+          "runs": 5
+        },
+        {
+          "rank": 2,
+          "username": "HE",
+          "runs": 3
+        },
+        {
+          "rank": 3,
+          "username": "IR",
+          "runs": 2
+        },
+        {
+          "rank": 4,
+          "username": "JA",
+          "runs": 2
+        },
+        {
+          "rank": 5,
+          "username": "alice",
+          "runs": 1,
+          "is_current_user": true
+        },
+        {
+          "rank": 6,
+          "username": "BO",
+          "runs": 1
+        },
+        {
+          "rank": 7,
+          "username": "CH",
+          "runs": 1
+        },
+        {
+          "rank": 8,
+          "username": "DI",
+          "runs": 1
+        },
+        {
+          "rank": 9,
+          "username": "EV",
+          "runs": 1
+        },
+        {
+          "rank": 10,
+          "username": "GR",
+          "runs": 1
+        }
+      ]
+    },
+    {
+      "id": "consistency",
+      "current_user_rank": 8,
+      "current_user_runs": 13,
+      "total_users": 19,
+      "leaderboard": [
+        {
+          "rank": 1,
+          "username": "CH",
+          "runs": 29
+        },
+        {
+          "rank": 2,
+          "username": "NO",
+          "runs": 24
+        },
+        {
+          "rank": 3,
+          "username": "MA",
+          "runs": 20
+        },
+        {
+          "rank": 4,
+          "username": "OL",
+          "runs": 20
+        },
+        {
+          "rank": 5,
+          "username": "GR",
+          "runs": 18
+        },
+        {
+          "rank": 6,
+          "username": "PA",
+          "runs": 18
+        },
+        {
+          "rank": 7,
+          "username": "EV",
+          "runs": 14
+        },
+        {
+          "rank": 8,
+          "username": "alice",
+          "runs": 13,
+          "is_current_user": true
+        },
+        {
+          "rank": 9,
+          "username": "QU",
+          "runs": 12
+        },
+        {
+          "rank": 10,
+          "username": "RA",
+          "runs": 8
+        }
+      ]
+    }
+  ],
+  "user_achievements": ["ignition", "week_warrior", "accelerator"]
+}
