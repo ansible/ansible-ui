@@ -83,4 +83,15 @@ describe('OrganizationGalaxyCredentialsOrderStep', () => {
     ) => Record<string, unknown>;
     expect(updater({})).toEqual({ mapping: { mappings: [credB, credA] } });
   });
+
+  it('renders with no credentials when wizard data is empty', () => {
+    wizardState.wizardData = {};
+    wizardState.setWizardData = vi.fn();
+    wizardState.setStepData = vi.fn();
+
+    render(<OrganizationGalaxyCredentialsOrderStep />);
+
+    expect(screen.getByText('Manage galaxy credential order')).toBeInTheDocument();
+    expect(screen.queryByTestId('row-Cred A')).not.toBeInTheDocument();
+  });
 });

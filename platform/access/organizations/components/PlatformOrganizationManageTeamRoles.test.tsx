@@ -60,6 +60,11 @@ describe('PlatformOrganizationManageTeamRoles', () => {
     // Service index role types endpoint
     http.get(gatewayAPI`/service-index/role-types/`, () => {
       return HttpResponse.json({ results: [] });
+    }),
+
+    // Role permissions (usePlatformRoleColumns)
+    http.get(gatewayAPI`/service-index/role-permissions/`, () => {
+      return HttpResponse.json({ results: [] });
     })
   );
 
@@ -187,5 +192,71 @@ describe('PlatformOrganizationManageTeamRoles', () => {
       await user.click(adminCheckbox);
       expect(adminCheckbox).toBeChecked();
     }
+  });
+
+  test('should expose save and cancel actions on the roles form', async () => {
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/teams/1/manage-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/teams/:teamId/manage-roles"
+            element={<PlatformOrganizationManageTeamRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Save roles' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+  });
+
+  test('should show help text describing inherited team roles', async () => {
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/teams/1/manage-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/teams/:teamId/manage-roles"
+            element={<PlatformOrganizationManageTeamRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Select organization roles that you want to apply to test-team/)
+      ).toBeInTheDocument();
+      expect(screen.getByText(/Users in test-team will inherit these roles/)).toBeInTheDocument();
+    });
+  });
+
+  test('should handle empty initial role assignments', async () => {
+    server.use(
+      http.get(gatewayAPI`/role_team_assignments/`, () =>
+        HttpResponse.json(mockEmptyRoleAssignments)
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/teams/1/manage-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/teams/:teamId/manage-roles"
+            element={<PlatformOrganizationManageTeamRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Selected roles')).toBeInTheDocument();
+      expect(screen.getByText('Organization Admin')).toBeInTheDocument();
+    });
+
+    const memberRoleRow = screen.getByTestId('row-id-2');
+    const checkbox = memberRoleRow.querySelector('input[type="checkbox"]');
+    expect(checkbox).not.toBeChecked();
   });
 });

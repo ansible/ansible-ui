@@ -49,4 +49,16 @@ describe('GatewayUIAuthProvider', () => {
     });
     expect(screen.getByTestId('managed-flag')).toHaveTextContent('true');
   });
+
+  it('exposes undefined auth data until ui_auth has loaded', () => {
+    server.use(http.get(gatewayAPI`/ui_auth/`, () => new Promise(() => {})));
+
+    render(
+      <GatewayUIAuthProvider>
+        <AuthConsumer />
+      </GatewayUIAuthProvider>
+    );
+
+    expect(screen.getByTestId('login-form')).toHaveTextContent('undefined');
+  });
 });

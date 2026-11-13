@@ -110,6 +110,10 @@ describe('PlatformSelectRolesStep', () => {
     ['system', 'Select system-level roles to apply.'],
     ['awx.unknown', 'Select roles to apply to all of your selected resources.'],
     ['awx.jobtemplate', 'Select roles to apply to all of your selected job templates.'],
+    ['awx.project', 'Select roles to apply to all of your selected projects.'],
+    ['awx.credential', 'Select roles to apply to all of your selected credentials.'],
+    ['eda.activation', 'Select roles to apply to all of your selected rulebook activations.'],
+    ['galaxy.namespace', 'Select roles to apply to all of your selected namespaces.'],
   ] as const)(
     'should display role selection description for resourceType %s',
     (resourceType, expectedDescription) => {

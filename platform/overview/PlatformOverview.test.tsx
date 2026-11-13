@@ -7,7 +7,7 @@ import { setupServer } from 'msw/node';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { setEdaApiPath } from '@ansible/eda-ui/common/eda-utils';
 import * as applicationName from '../applicationName';
-import { PlatformOverview } from './PlatformOverview';
+import { GalleryCardHeader, PlatformOverview } from './PlatformOverview';
 
 // Mock dependencies
 vi.mock('../main/GatewayServices', () => ({
@@ -72,6 +72,16 @@ describe('PlatformOverview', () => {
 
     expect(screen.getByText('Welcome to Ansible Automation Platform')).toBeInTheDocument();
     vi.restoreAllMocks();
+  });
+
+  it('should render gallery card headers with title and subtitle', () => {
+    render(
+      <GalleryCardHeader title="Sample title" subtitle="Sample subtitle" icon={<span>icon</span>} />
+    );
+
+    expect(screen.getByText('Sample title')).toBeInTheDocument();
+    expect(screen.getByText('Sample subtitle')).toBeInTheDocument();
+    expect(screen.getByText('icon')).toBeInTheDocument();
   });
 
   it('should render overview page normally when no sessionStorage redirect URL', () => {

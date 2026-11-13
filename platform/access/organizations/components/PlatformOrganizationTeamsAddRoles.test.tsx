@@ -38,7 +38,60 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
       ).toBeInTheDocument();
     });
 
-    expect(screen.getByRole('heading', { name: 'Select team(s)' })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Select team(s)' })).toBeInTheDocument();
+    });
+  });
+
+  it('should render loading state before organization is fetched', () => {
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/teams/assign-organization-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/teams/assign-organization-roles"
+            element={<PlatformOrganizationTeamsAddRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
+
+  it('should render breadcrumbs with organization context', async () => {
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/teams/assign-organization-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/teams/assign-organization-roles"
+            element={<PlatformOrganizationTeamsAddRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Organizations')).toBeInTheDocument();
+      expect(screen.getByText('Test Organization')).toBeInTheDocument();
+      expect(screen.getByText('Teams')).toBeInTheDocument();
+    });
+  });
+
+  it('should expose cancel control in the wizard footer', async () => {
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/teams/assign-organization-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/teams/assign-organization-roles"
+            element={<PlatformOrganizationTeamsAddRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
   });
 
   it('should show teams from other organizations in the team picker (AAP-83161)', async () => {
