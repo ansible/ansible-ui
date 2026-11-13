@@ -34,6 +34,23 @@ describe('CalculationCost', () => {
     expect(setFromCalculation).toHaveBeenCalledWith('manual_cost', expect.any(Number));
   });
 
+  it('calls setFromCalculation when automation cost changes', async () => {
+    const setFromCalculation = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <CalculationCost
+        costManual={10}
+        costAutomation={5}
+        readOnly={false}
+        setFromCalculation={setFromCalculation}
+      />
+    );
+
+    await user.clear(screen.getByLabelText('automation-cost'));
+    await user.type(screen.getByLabelText('automation-cost'), '12');
+    expect(setFromCalculation).toHaveBeenCalledWith('automation_cost', expect.any(Number));
+  });
+
   it('disables inputs in read-only mode', () => {
     render(
       <CalculationCost costManual={10} costAutomation={5} readOnly setFromCalculation={vi.fn()} />

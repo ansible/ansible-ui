@@ -97,6 +97,20 @@ describe('useSelectWorkflowJobTemplate', () => {
     expect((dialogElement.type as { name?: string }).name).toBe('SelectWorkflowJobTemplate');
   });
 
+  it('invokes parent onSelect when dialog reports a template choice', () => {
+    const { result } = renderHook(() => useSelectWorkflowJobTemplate());
+    const onSelect = vi.fn();
+    const template = { id: 8, name: 'WF Template' } as WorkflowJobTemplate;
+
+    result.current(onSelect);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0] as React.ReactElement<{
+      onSelect: (template: WorkflowJobTemplate) => void;
+    }>;
+    dialogElement.props.onSelect(template);
+    expect(onSelect).toHaveBeenCalledWith(template);
+  });
+
   it('should forward different onSelect callbacks on subsequent calls', () => {
     const { result } = renderHook(() => useSelectWorkflowJobTemplate());
     const onSelectFirst = vi.fn();

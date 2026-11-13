@@ -57,4 +57,14 @@ describe('SubscriptionUsageChart', () => {
     renderChart('two_years');
     await waitFor(() => expect(screen.getByTestId('usage-chart')).toBeInTheDocument());
   });
+
+  it('renders chart labels with no plotted values when API returns no rows', async () => {
+    server.use(
+      http.get(awxAPI`/host_metric_summary_monthly/*`, () => HttpResponse.json({ results: [] }))
+    );
+    renderChart('year');
+    await waitFor(() => expect(screen.getByTestId('usage-chart')).toBeInTheDocument());
+    expect(screen.getByTestId('usage-chart')).toHaveTextContent('Subscriptions consumed');
+    expect(screen.getByTestId('usage-chart')).toHaveTextContent('Subscription capacity');
+  });
 });

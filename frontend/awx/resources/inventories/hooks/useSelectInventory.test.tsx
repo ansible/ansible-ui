@@ -95,6 +95,20 @@ describe('useSelectInventory', () => {
     expect((dialogElement.type as { name?: string }).name).toBe('SelectInventory');
   });
 
+  it('invokes parent onSelect when dialog reports an inventory choice', () => {
+    const { result } = renderHook(() => useSelectInventory());
+    const onSelect = vi.fn();
+    const inventory = { id: 4, name: 'Prod' } as Inventory;
+
+    result.current(onSelect);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0] as ReactElement<{
+      onSelect: (inventory: Inventory) => void;
+    }>;
+    dialogElement.props.onSelect(inventory);
+    expect(onSelect).toHaveBeenCalledWith(inventory);
+  });
+
   it('should forward different onSelect callbacks on subsequent calls', () => {
     const { result } = renderHook(() => useSelectInventory());
     const onSelectFirst = vi.fn();
