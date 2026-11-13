@@ -2,6 +2,10 @@
 
 Documentation for the [Ansible UI](https://github.com/ansible/ansible-ui) repository.
 
+## Contributing
+
+- [Contributing translations](contributing/translations.md)
+
 ## Development
 
 - [Architecture](dev/architecture.md)
