@@ -7,11 +7,31 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { PageDialogProvider } from '../../../../framework/PageDialogs/PageDialog';
 import { edaAPI } from '../../common/eda-utils';
+import { EdaActiveUserContext } from '../../common/useEdaActiveUser';
 import { ActivationInstanceDetails } from './ActivationInstanceDetails';
 import activationInstanceResp from './mocks/ActivationInstance.json';
 import activationInstanceLogs from './mocks/ActivationInstanceLogs.json';
+
+vi.mock('@patternfly/react-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@patternfly/react-core')>();
+  return {
+    ...actual,
+    Modal: ({
+      children,
+      'aria-label': ariaLabel,
+    }: {
+      children: React.ReactNode;
+      'aria-label': string;
+    }) => (
+      <dialog open aria-label={ariaLabel}>
+        {children}
+      </dialog>
+    ),
+  };
+});
 
 function timeout(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -111,5 +131,196 @@ describe('ActivationInstanceDetails', () => {
         ).toBeInTheDocument();
       }
     });
+  });
+
+  test('should clear only this instance logs and reload the displayed logs after success', async () => {
+    const user = userEvent.setup();
+    let logsCleared = false;
+    let clearLogsRequestCount = 0;
+    let activationClearLogsRequestCount = 0;
+    let globalPurgeRequestCount = 0;
+    const requestedBeforeDates: string[] = [];
+    let logRequestCount = 0;
+
+    server.use(
+      http.get(edaAPI`/activation-instances/1/logs/`, () => {
+        logRequestCount += 1;
+        return logsCleared
+          ? HttpResponse.json({ count: 0, results: [] })
+          : HttpResponse.json(activationInstanceLogs);
+      }),
+      http.post(edaAPI`/activation-instances/1/clear-logs/`, async ({ request }) => {
+        const body = (await request.json()) as { before_date: string };
+        requestedBeforeDates.push(body.before_date);
+        clearLogsRequestCount += 1;
+        logsCleared = true;
+        return HttpResponse.json({ deleted: 10 });
+      }),
+      http.post(edaAPI`/activations/1/clear-logs/`, () => {
+        activationClearLogsRequestCount += 1;
+        return HttpResponse.json({ deleted: 10 });
+      }),
+      http.post(edaAPI`/logs/purge/`, () => {
+        globalPurgeRequestCount += 1;
+        return HttpResponse.json({ deleted: 10 });
+      })
+    );
+
+    const { container, getByRole, getByText, queryByRole } = render(
+      <PageDialogProvider>
+        <EdaActiveUserContext.Provider
+          value={{
+            activeEdaUser: {
+              id: 1,
+              username: 'admin',
+              is_superuser: true,
+              resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+              created_at: '2024-01-01T00:00:00Z',
+              modified_at: '2024-01-01T00:00:00Z',
+            },
+          }}
+        >
+          <MemoryRouter initialEntries={['/rulebook-activations/1/history/1/details']}>
+            <Routes>
+              <Route
+                path={`/rulebook-activations/:id/history/:instanceId/details`}
+                element={<ActivationInstanceDetails />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </EdaActiveUserContext.Provider>
+      </PageDialogProvider>
+    );
+
+    await waitFor(() => {
+      expect(getByText('Pulling image quay.io/ansible/ansible-rulebook:main')).toBeInTheDocument();
+    });
+
+    await user.click(getByRole('button', { name: 'Delete logs' }));
+
+    const confirmationDialog = getByRole('dialog', { name: 'Permanently Delete Logs' });
+    expect(confirmationDialog).toHaveTextContent(
+      'This deletes stored database logs for the selected instance (1 - prat-rba). Rulebook activations will continue running, and system logs on activation workers remain unaffected.'
+    );
+    expect(
+      within(confirmationDialog).getByText('1 - prat-rba', { selector: 'strong' })
+    ).toBeInTheDocument();
+    await user.click(
+      within(confirmationDialog).getByRole('checkbox', {
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
+      })
+    );
+    await user.click(within(confirmationDialog).getByRole('button', { name: 'Delete logs' }));
+
+    const progressDialog = await waitFor(() => getByRole('dialog', { name: 'Deleting logs' }));
+    expect(within(progressDialog).getByText('1 - prat-rba')).toBeInTheDocument();
+
+    await waitFor(() => expect(clearLogsRequestCount).toBe(1), { timeout: 2000 });
+
+    await waitFor(
+      () => {
+        expect(queryByRole('dialog', { name: 'Permanently Delete Logs' })).not.toBeInTheDocument();
+        expect(container.querySelector('.output-grid-row')).not.toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+
+    expect(clearLogsRequestCount).toBe(1);
+    expect(requestedBeforeDates).toHaveLength(1);
+    expect(requestedBeforeDates[0]).toMatch(/Z$/);
+    expect(activationClearLogsRequestCount).toBe(0);
+    expect(globalPurgeRequestCount).toBe(0);
+    expect(logRequestCount).toBe(2);
+  });
+
+  test('should allow non-admin users to open instance delete logs for backend authorization', async () => {
+    const user = userEvent.setup();
+    const { findByRole, getByRole } = render(
+      <PageDialogProvider>
+        <EdaActiveUserContext.Provider
+          value={{
+            activeEdaUser: {
+              id: 1,
+              username: 'user',
+              is_superuser: false,
+              resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+              created_at: '2024-01-01T00:00:00Z',
+              modified_at: '2024-01-01T00:00:00Z',
+            },
+          }}
+        >
+          <MemoryRouter initialEntries={['/rulebook-activations/1/history/1/details']}>
+            <Routes>
+              <Route
+                path={`/rulebook-activations/:id/history/:instanceId/details`}
+                element={<ActivationInstanceDetails />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </EdaActiveUserContext.Provider>
+      </PageDialogProvider>
+    );
+
+    await user.click(await findByRole('button', { name: 'Delete logs' }));
+    expect(getByRole('dialog', { name: 'Permanently Delete Logs' })).toBeInTheDocument();
+  });
+
+  test('should show the parsed permission error when instance delete logs is forbidden', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.post(edaAPI`/activation-instances/1/clear-logs/`, () =>
+        HttpResponse.json(
+          { detail: 'You do not have permission to delete logs for this instance.' },
+          { status: 403 }
+        )
+      )
+    );
+
+    const { getByRole, getByText } = render(
+      <PageDialogProvider>
+        <EdaActiveUserContext.Provider
+          value={{
+            activeEdaUser: {
+              id: 1,
+              username: 'user',
+              is_superuser: false,
+              resource: { ansible_id: 'abc-123', resource_type: 'shared.user' },
+              created_at: '2024-01-01T00:00:00Z',
+              modified_at: '2024-01-01T00:00:00Z',
+            },
+          }}
+        >
+          <MemoryRouter initialEntries={['/rulebook-activations/1/history/1/details']}>
+            <Routes>
+              <Route
+                path={`/rulebook-activations/:id/history/:instanceId/details`}
+                element={<ActivationInstanceDetails />}
+              />
+            </Routes>
+          </MemoryRouter>
+        </EdaActiveUserContext.Provider>
+      </PageDialogProvider>
+    );
+
+    await waitFor(() => {
+      expect(getByText('Pulling image quay.io/ansible/ansible-rulebook:main')).toBeInTheDocument();
+    });
+    await user.click(getByRole('button', { name: 'Delete logs' }));
+    const confirmationDialog = getByRole('dialog', { name: 'Permanently Delete Logs' });
+    await user.click(
+      within(confirmationDialog).getByRole('checkbox', {
+        name: 'Yes, I confirm that I want to permanently delete these logs and understand that this action cannot be undone.',
+      })
+    );
+    await user.click(within(confirmationDialog).getByRole('button', { name: 'Delete logs' }));
+
+    const progressDialog = await waitFor(() => getByRole('dialog', { name: 'Deleting logs' }));
+    expect(
+      await within(progressDialog).findByText(
+        'You do not have permission to delete logs for this instance.'
+      )
+    ).toBeInTheDocument();
+    expect(within(progressDialog).getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    expect(within(progressDialog).getByRole('button', { name: 'Close' })).toBeInTheDocument();
   });
 });
