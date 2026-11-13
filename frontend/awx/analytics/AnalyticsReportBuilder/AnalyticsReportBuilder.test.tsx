@@ -62,4 +62,21 @@ describe('AnalyticsReportBuilder helpers', () => {
     const params: AnalyticsReportBuilderBodyProps = { ...baseBuilderProps };
     expect(computeMainFilterKeys(params)).toEqual([]);
   });
+
+  it('collects every *_id option when group_by is not provided', () => {
+    const params: AnalyticsReportBuilderBodyProps = {
+      ...baseBuilderProps,
+      defaultDataParams: { inventory_id: ['9'] },
+      options: {
+        ...emptyOptions,
+        inventory_id: [],
+        template_id: [],
+      },
+    };
+    const keys = computeMainFilterKeys(params);
+    expect(keys.map((item) => item.key).sort((a, b) => a.localeCompare(b))).toEqual([
+      'inventory_id',
+      'template_id',
+    ]);
+  });
 });

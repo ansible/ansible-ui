@@ -97,6 +97,20 @@ describe('useSelectJobTemplate', () => {
     expect((dialogElement.type as { name?: string }).name).toBe('SelectJobTemplate');
   });
 
+  it('invokes parent onSelect when dialog reports a template choice', () => {
+    const { result } = renderHook(() => useSelectJobTemplate());
+    const onSelect = vi.fn();
+    const template = { id: 5, name: 'Deploy' } as JobTemplate;
+
+    result.current(onSelect);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0] as React.ReactElement<{
+      onSelect: (template: JobTemplate) => void;
+    }>;
+    dialogElement.props.onSelect(template);
+    expect(onSelect).toHaveBeenCalledWith(template);
+  });
+
   it('should forward different onSelect callbacks on subsequent calls', () => {
     const { result } = renderHook(() => useSelectJobTemplate());
     const onSelectFirst = vi.fn();
