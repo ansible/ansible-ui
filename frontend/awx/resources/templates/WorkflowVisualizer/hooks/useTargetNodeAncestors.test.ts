@@ -70,6 +70,23 @@ describe('useTargetNodeAncestors', () => {
     expect(mockSetNodeStatus).toHaveBeenCalledWith('danger');
   });
 
+  it('should mark the source as an invalid drop target', () => {
+    const sourceNode = makeNode('source');
+    const source = {
+      getId: () => 'source',
+      getGraph: () => ({
+        getNodes: () => [sourceNode],
+        getEdges: () => [],
+      }),
+    } as unknown as Node;
+
+    const { result } = renderHook(() => useTargetNodeAncestors());
+    result.current(source);
+
+    expect(mockSetNodeShape).toHaveBeenCalledWith('hexagon');
+    expect(mockSetNodeStatus).toHaveBeenCalledWith('danger');
+  });
+
   it('should mark direct children of the source as invalid drop targets', () => {
     const child = makeNode('child');
     const source = {
@@ -100,7 +117,7 @@ describe('useTargetNodeAncestors', () => {
     const { result } = renderHook(() => useTargetNodeAncestors());
     result.current(source);
 
-    expect(mockSetNodeShape).not.toHaveBeenCalled();
+    expect(mockSetNodeShape).toHaveBeenCalledWith('hexagon');
   });
 
   it('should handle diamond-shaped graphs without duplicate marking', () => {
@@ -129,6 +146,19 @@ describe('useTargetNodeAncestors', () => {
     expect(shapeCalls.length).toBeGreaterThanOrEqual(3);
   });
 
+  it('should terminate on a self-loop', () => {
+    const source = {
+      getId: () => 'A',
+      getGraph: () => ({
+        getNodes: () => [makeNode('A')],
+        getEdges: () => [makeEdge('A', 'A')],
+      }),
+    } as unknown as Node;
+
+    const { result } = renderHook(() => useTargetNodeAncestors());
+    expect(() => result.current(source)).not.toThrow();
+  });
+
   it('should handle graph with no edges', () => {
     const source = {
       getId: () => 'solo',
@@ -141,7 +171,7 @@ describe('useTargetNodeAncestors', () => {
     const { result } = renderHook(() => useTargetNodeAncestors());
     result.current(source);
 
-    expect(mockSetNodeShape).not.toHaveBeenCalled();
-    expect(mockSetNodeStatus).not.toHaveBeenCalled();
+    expect(mockSetNodeShape).toHaveBeenCalledWith('hexagon');
+    expect(mockSetNodeStatus).toHaveBeenCalledWith('danger');
   });
 });
