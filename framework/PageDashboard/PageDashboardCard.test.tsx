@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { PageDashboard } from './PageDashboard';
 import { PageDashboardCard } from './PageDashboardCard';
 
 function renderCard(props: Parameters<typeof PageDashboardCard>[0]) {
@@ -74,5 +75,43 @@ describe('PageDashboardCard', () => {
     renderCard({ id: 'compact-card-test', title: 'Inventories', isCompact: true });
 
     expect(screen.getByTestId('compact-card-test')).toHaveClass('pf-m-compact');
+  });
+
+  it('should render optional header metadata and collapse the card body', async () => {
+    const user = userEvent.setup();
+    localStorage.clear();
+
+    render(
+      <MemoryRouter>
+        <PageDashboard>
+          <PageDashboardCard
+            id="meta-card"
+            supertitle="Overview"
+            title="Jobs"
+            subtitle="Last 24 hours"
+            description="Summary description"
+            help="Inline help"
+            helpTitle="Jobs help"
+            width="xxl"
+            height="sm"
+            canCollapse
+            disableBodyPadding
+          >
+            <div>Body</div>
+          </PageDashboardCard>
+        </PageDashboard>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Overview')).toBeInTheDocument();
+    expect(screen.getByText('Last 24 hours')).toBeInTheDocument();
+    expect(screen.getByText('Body')).toBeInTheDocument();
+
+    const icons = screen.getByTestId('meta-card').querySelectorAll('svg');
+    const collapseToggle = icons[icons.length - 1] as SVGElement;
+    await user.click(collapseToggle);
+    await waitFor(() => {
+      expect(localStorage.getItem('db-meta-card-collapsed')).toBe('true');
+    });
   });
 });

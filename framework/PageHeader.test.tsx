@@ -2,8 +2,15 @@
 import { render } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
+import { PageBreadcrumbsProvider } from './PageTabs/PageBreadcrumbs';
 import { PageHeader } from './PageHeader';
+
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return { ...actual, useNavigate: () => mockNavigate };
+});
 describe('PageHeader', () => {
   test('should show the title without a help button when help is not provided', () => {
     const { getByRole, queryByRole } = render(<PageHeader title="Hello World" />);
@@ -53,6 +60,22 @@ describe('PageHeader', () => {
       <PageHeader title="Hello World" controls={<button>Controls</button>} />
     );
     expect(getByText('Controls')).toBeInTheDocument();
+  });
+
+  test('should render breadcrumbs and navigate when clicked', async () => {
+    const user = userEvent.setup();
+    const { getByRole } = render(
+      <MemoryRouter>
+        <PageBreadcrumbsProvider>
+          <PageHeader
+            breadcrumbs={[{ label: 'Home', to: '/home' }, { label: 'Current' }]}
+            title="Title"
+          />
+        </PageBreadcrumbsProvider>
+      </MemoryRouter>
+    );
+    await user.click(getByRole('link', { name: 'Home' }));
+    expect(mockNavigate).toHaveBeenCalledWith('/home');
   });
 
   test('should show header with a footer', () => {

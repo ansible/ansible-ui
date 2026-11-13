@@ -141,6 +141,24 @@ describe('PageAsyncMultiSelect', () => {
     });
   });
 
+  it('should reload options when the error toggle is clicked', async () => {
+    const user = userEvent.setup();
+    const queryOptions = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Test error'))
+      .mockImplementation(asyncSelectTestQuery);
+
+    render(<PageAsyncMultiSelectTest queryOptions={queryOptions} />);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+    await waitFor(() => {
+      expect(screen.getByText('Error loading options')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'Error loading options' }));
+    await waitFor(() => {
+      expect(screen.getByText('Option 1')).toBeInTheDocument();
+    });
+  });
+
   it('should show initial values', async () => {
     render(<PageAsyncMultiSelectTest queryOptions={asyncSelectTestQuery} defaultValues={[1, 2]} />);
 
