@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, test, expect } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, test, expect, vi } from 'vitest';
 import { ToolbarFilterType } from '../../../../../framework';
 import { useGetReportDetails } from './useGetReportDetails';
 import type { IDashboardDetails } from '../types';
@@ -130,6 +130,8 @@ describe('useGetReportDetails', () => {
         type: ToolbarFilterType.AsyncMultiSelect,
         query: 'label',
         placeholder: 'Select Label',
+        queryOptions: vi.fn(),
+        queryLabel: vi.fn(),
       };
       const organizationFilter: IToolbarFilter = {
         key: 'organization',
@@ -137,6 +139,8 @@ describe('useGetReportDetails', () => {
         type: ToolbarFilterType.AsyncMultiSelect,
         query: 'organization',
         placeholder: 'Select Organization',
+        queryOptions: vi.fn(),
+        queryLabel: vi.fn(),
       };
       const periodFilter: IToolbarFilter = {
         key: 'period',
@@ -144,6 +148,7 @@ describe('useGetReportDetails', () => {
         type: ToolbarFilterType.DateRange,
         query: 'period',
         placeholder: 'Select Period',
+        options: [{ label: 'Custom', value: 'custom', isCustom: true }],
       };
       const start = '2026-11-01T00:00:00.000Z';
       const end = '2026-11-12T23:59:59.999Z';
