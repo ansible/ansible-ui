@@ -29,7 +29,7 @@ export function useSyncProject(onComplete: (projects: EdaProject[]) => void) {
         return '';
       }
       const message = t(
-        'The following Rulebook Activations are configured to restart on project sync. \n {{activations}}',
+        'The following Rulebook Activations are configured to restart if their selected rulebooks change during this project sync: \n {{activations}}',
         {
           activations: activations.join(', '),
         }
