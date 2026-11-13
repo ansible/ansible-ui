@@ -81,6 +81,64 @@ describe('queryString', () => {
       expect(filtersToSearchObj([nameFilter], { name: [] }).toString()).toBe('');
     });
 
+    it('should preserve empty string when preserveEmptyValue is set', () => {
+      const kindFilter: IToolbarFilter = {
+        type: ToolbarFilterType.MultiSelect,
+        key: 'inventory-type',
+        label: 'Inventory type',
+        query: 'kind',
+        preserveEmptyValue: true,
+        options: [],
+        placeholder: 'Select types',
+      };
+      expect(filtersToSearchObj([kindFilter], { 'inventory-type': [''] }).toString()).to.equal(
+        'kind='
+      );
+    });
+
+    it('should drop empty string without preserveEmptyValue', () => {
+      const kindFilter: IToolbarFilter = {
+        type: ToolbarFilterType.MultiSelect,
+        key: 'inventory-type',
+        label: 'Inventory type',
+        query: 'kind',
+        options: [],
+        placeholder: 'Select types',
+      };
+      expect(filtersToSearchObj([kindFilter], { 'inventory-type': [''] }).toString()).to.equal('');
+    });
+
+    it('should include empty string in multi-select or__ params when preserveEmptyValue is set', () => {
+      const kindFilter: IToolbarFilter = {
+        type: ToolbarFilterType.MultiSelect,
+        key: 'inventory-type',
+        label: 'Inventory type',
+        query: 'kind',
+        preserveEmptyValue: true,
+        options: [],
+        placeholder: 'Select types',
+      };
+      expect(
+        filtersToSearchObj([kindFilter], { 'inventory-type': ['', 'smart'] }).toString()
+      ).to.equal('or__kind=&or__kind=smart');
+    });
+
+    // Multi-select returns a non-empty array, so shouldAppendFilterValue allows append even
+    // without preserveEmptyValue; empty entries inside that array are still written.
+    it('should still append empty values in multi-select or__ params without preserveEmptyValue', () => {
+      const kindFilter: IToolbarFilter = {
+        type: ToolbarFilterType.MultiSelect,
+        key: 'inventory-type',
+        label: 'Inventory type',
+        query: 'kind',
+        options: [],
+        placeholder: 'Select types',
+      };
+      expect(
+        filtersToSearchObj([kindFilter], { 'inventory-type': ['', 'smart'] }).toString()
+      ).to.equal('or__kind=&or__kind=smart');
+    });
+
     it('should build simple string', () => {
       const filters = [nameFilter];
       const state: IFilterState = {
