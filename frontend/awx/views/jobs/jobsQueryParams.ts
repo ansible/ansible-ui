@@ -8,7 +8,6 @@ const DEEP_LINK_QUERY_KEYS = [
   'finished__gte',
   'finished__lte',
   'labels__id',
-  'unified_job_template__project',
 ] as const;
 
 /**

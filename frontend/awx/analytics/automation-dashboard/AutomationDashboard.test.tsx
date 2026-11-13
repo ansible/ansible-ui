@@ -419,9 +419,9 @@ describe('AutomationDashboard', () => {
     expect(successfulJobsUrl.searchParams.get('organization')).toBe('21');
     expect(successfulJobsUrl.searchParams.get('type')).toBe('job');
     expect(successfulJobsUrl.searchParams.get('unified_job_template')).toBe('31');
-    expect(successfulJobsUrl.searchParams.get('unified_job_template__project')).toBe('41');
     expect(successfulJobsUrl.searchParams.get('finished__gte')).toBeTruthy();
     expect(successfulJobsUrl.searchParams.get('finished__lte')).toBeTruthy();
+    expect(successfulJobsUrl.searchParams.get('unified_job_template__project')).toBeNull();
 
     const failedJobsUrl = new URL(
       screen.getByRole('link', { name: 'See all failed jobs' }).getAttribute('href') ?? '',

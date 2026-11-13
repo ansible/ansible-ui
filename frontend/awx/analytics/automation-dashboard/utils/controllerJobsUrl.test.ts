@@ -38,7 +38,7 @@ describe('getControllerJobsUrl', () => {
     expect(params.getAll('labels__id')).toEqual(['11', '12']);
     expect(params.get('organization')).toBe('21');
     expect(params.get('unified_job_template')).toBe('31');
-    expect(params.get('unified_job_template__project')).toBe('41');
+    expect(params.get('unified_job_template__project')).toBeNull();
     expect(params.get('finished__gte')).toBe('2026-11-05T18:00:00.000Z');
     expect(params.get('finished__lte')).toBe('2026-11-12T18:00:00.000Z');
   });

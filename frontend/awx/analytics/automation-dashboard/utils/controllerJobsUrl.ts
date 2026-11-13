@@ -13,7 +13,6 @@ const CONTROLLER_FILTERS: Record<string, string> = {
   label: 'labels__id',
   organization: 'organization',
   template: 'unified_job_template',
-  project: 'unified_job_template__project',
 };
 
 function appendFilterValues(params: URLSearchParams, filterState: IFilterState | undefined) {

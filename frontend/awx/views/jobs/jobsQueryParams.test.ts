@@ -15,7 +15,6 @@ describe('getJobsDeepLinkQueryParams', () => {
       finished__gte: ['2026-11-01T00:00:00.000Z'],
       finished__lte: ['2026-11-02T00:00:00.000Z'],
       labels__id: ['11', '12'],
-      unified_job_template__project: ['41'],
     });
   });
 

@@ -357,7 +357,6 @@ describe('JobsList Component Tests', () => {
         expect(fetchedUrl?.searchParams.get('status')).toBe('successful');
         expect(fetchedUrl?.searchParams.get('organization')).toBe('21');
         expect(fetchedUrl?.searchParams.get('unified_job_template')).toBe('31');
-        expect(fetchedUrl?.searchParams.get('unified_job_template__project')).toBe('41');
         expect(fetchedUrl?.searchParams.get('labels__id')).toBe('11');
         expect(fetchedUrl?.searchParams.get('finished__gte')).toBe('2026-11-01T00:00:00.000Z');
         expect(fetchedUrl?.searchParams.get('finished__lte')).toBe('2026-11-02T00:00:00.000Z');
