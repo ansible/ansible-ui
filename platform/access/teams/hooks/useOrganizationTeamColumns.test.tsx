@@ -1,7 +1,7 @@
-/* eslint-disable i18next/no-literal-string */
+import { ITableColumn } from '@ansible/ansible-ui-framework';
 import { renderHook } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import type { ReactElement } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import { PlatformTeam } from '../../../interfaces/PlatformTeam';
 import { TeamRoleEntry } from '../../organizations/hooks/useOrganizationTeamsWithRoles';
@@ -29,89 +29,80 @@ const mockTeam = {
   users: [],
 } as unknown as PlatformTeam;
 
+function renderColumns(
+  rolesByTeamId: Map<number, TeamRoleEntry[]>,
+  options?: { disableLinks?: boolean }
+) {
+  return renderHook(() => useOrganizationTeamColumns(rolesByTeamId, options), {
+    wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+  });
+}
+
+function getColumnParts(columns: ITableColumn<PlatformTeam>[]) {
+  const [nameColumn, organizationColumn, organizationRolesColumn] = columns;
+  return { nameColumn, organizationColumn, organizationRolesColumn };
+}
+
+function cellColumn(column: ITableColumn<PlatformTeam>) {
+  if (!('cell' in column)) {
+    throw new Error('Expected column with cell renderer');
+  }
+  return column;
+}
+
 describe('useOrganizationTeamColumns', () => {
   it('returns three columns', () => {
-    const { result } = renderHook(() => useOrganizationTeamColumns(emptyRolesByTeamId), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
+    const { result } = renderColumns(emptyRolesByTeamId);
 
     expect(result.current).toHaveLength(3);
   });
 
   it('includes Name column', () => {
-    const { result } = renderHook(() => useOrganizationTeamColumns(emptyRolesByTeamId), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
+    const { result } = renderColumns(emptyRolesByTeamId);
+    const { nameColumn } = getColumnParts(result.current);
 
-    const nameColumn = result.current.find((col) => col.header === 'Name');
-    expect(nameColumn).toBeDefined();
-    expect(nameColumn?.sort).toBe('name');
-    expect(nameColumn?.defaultSort).toBe(true);
+    expect(nameColumn.sort).toBe('name');
+    expect(nameColumn.defaultSort).toBe(true);
   });
 
   it('links the team name to team details by default', () => {
-    const { result } = renderHook(() => useOrganizationTeamColumns(emptyRolesByTeamId), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
+    const { result } = renderColumns(emptyRolesByTeamId);
+    const { nameColumn } = getColumnParts(result.current);
 
-    const nameColumn = result.current.find((col) => col.header === 'Name');
-    expect(nameColumn).toBeDefined();
-    if (!nameColumn || !('cell' in nameColumn)) throw new Error('Name column missing cell');
-
-    const cell = nameColumn.cell(mockTeam) as ReactElement<{ to?: string }>;
+    const cell = cellColumn(nameColumn).cell(mockTeam) as ReactElement<{ to?: string }>;
     expect(cell.props.to).toBeDefined();
   });
 
   it('does not link the team name when links are disabled', () => {
-    const { result } = renderHook(
-      () => useOrganizationTeamColumns(emptyRolesByTeamId, { disableLinks: true }),
-      { wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter> }
-    );
+    const { result } = renderColumns(emptyRolesByTeamId, { disableLinks: true });
+    const { nameColumn } = getColumnParts(result.current);
 
-    const nameColumn = result.current.find((col) => col.header === 'Name');
-    expect(nameColumn).toBeDefined();
-    if (!nameColumn || !('cell' in nameColumn)) throw new Error('Name column missing cell');
-
-    const cell = nameColumn.cell(mockTeam) as ReactElement<{ to?: string }>;
+    const cell = cellColumn(nameColumn).cell(mockTeam) as ReactElement<{ to?: string }>;
     expect(cell.props.to).toBeUndefined();
   });
 
   it('includes Organization column', () => {
-    const { result } = renderHook(() => useOrganizationTeamColumns(emptyRolesByTeamId), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
+    const { result } = renderColumns(emptyRolesByTeamId);
+    const { organizationColumn } = getColumnParts(result.current);
 
-    const orgColumn = result.current.find((col) => col.header === 'Organization');
-    expect(orgColumn).toBeDefined();
-    expect(orgColumn?.type).toBe('text');
-    const value = (orgColumn!.value as (t: PlatformTeam) => string)(mockTeam);
+    expect(organizationColumn.type).toBe('text');
+    expect(organizationColumn.sort).toBe('organization');
+    const value = (organizationColumn.value as (t: PlatformTeam) => string)(mockTeam);
     expect(value).toBe('org_test1');
   });
 
   it('includes Organization roles column', () => {
-    const { result } = renderHook(() => useOrganizationTeamColumns(emptyRolesByTeamId), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
+    const { result } = renderColumns(emptyRolesByTeamId);
+    const { organizationRolesColumn } = getColumnParts(result.current);
 
-    const rolesColumn = result.current.find((col) => col.header === 'Organization roles');
-    expect(rolesColumn).toBeDefined();
-    if (!rolesColumn || !('cell' in rolesColumn))
-      throw new Error('Organization roles column missing cell');
-    expect(typeof rolesColumn.cell).toBe('function');
+    expect(typeof cellColumn(organizationRolesColumn).cell).toBe('function');
   });
 
   it('Organization roles column renders empty labels for team with no roles', () => {
-    const { result } = renderHook(() => useOrganizationTeamColumns(emptyRolesByTeamId), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
+    const { result } = renderColumns(emptyRolesByTeamId);
+    const { organizationRolesColumn } = getColumnParts(result.current);
 
-    // The ?? [] fallback path: team not in map returns empty array
-    const rolesColumn = result.current.find((col) => col.header === 'Organization roles');
-    expect(rolesColumn).toBeDefined();
-    if (!rolesColumn || !('cell' in rolesColumn))
-      throw new Error('Organization roles column missing cell');
-    // cell should not throw when team has no roles in the map
-    expect(() => rolesColumn.cell(mockTeam)).not.toThrow();
+    expect(() => cellColumn(organizationRolesColumn).cell(mockTeam)).not.toThrow();
   });
 
   it('Organization roles column renders labels for team with roles', () => {
@@ -119,24 +110,15 @@ describe('useOrganizationTeamColumns', () => {
       [1, [{ name: 'Organization Admin', id: 5 }]],
     ]);
 
-    const { result } = renderHook(() => useOrganizationTeamColumns(rolesByTeamId), {
-      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
-    });
+    const { result } = renderColumns(rolesByTeamId);
+    const { organizationRolesColumn } = getColumnParts(result.current);
 
-    const rolesColumn = result.current.find((col) => col.header === 'Organization roles');
-    expect(rolesColumn).toBeDefined();
-    if (!rolesColumn || !('cell' in rolesColumn))
-      throw new Error('Organization roles column missing cell');
-    expect(() => rolesColumn.cell(mockTeam)).not.toThrow();
+    expect(() => cellColumn(organizationRolesColumn).cell(mockTeam)).not.toThrow();
   });
 
   it('respects disableLinks option', () => {
-    const { result } = renderHook(
-      () => useOrganizationTeamColumns(emptyRolesByTeamId, { disableLinks: true }),
-      { wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter> }
-    );
+    const { result } = renderColumns(emptyRolesByTeamId, { disableLinks: true });
 
-    // Should still return 3 columns — disableLinks only affects the Name cell's `to` prop
     expect(result.current).toHaveLength(3);
   });
 });
