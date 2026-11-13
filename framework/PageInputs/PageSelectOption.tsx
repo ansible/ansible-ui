@@ -7,4 +7,5 @@ export interface PageSelectOption<ValueT> {
   label: string;
   description?: ReactNode;
   group?: string;
+  dividerAfter?: boolean;
 }
