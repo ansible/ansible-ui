@@ -133,6 +133,17 @@ variable2: value2`;
       expect(valueToObject('')).toBeUndefined();
     });
 
+    test('should preserve YAML when inline comments are outside of quotes', () => {
+      const yamlWithQuotedHash = `quoted: "value # not a comment"\nplain: done  # real comment`;
+      const result = valueToObject(yamlWithQuotedHash);
+      expect(result).toHaveProperty('__preserveYamlString', yamlWithQuotedHash);
+    });
+
+    test('should coerce array mode values', () => {
+      expect(valueToObject('[1, 2]', true)).toEqual([1, 2]);
+      expect(valueToObject('{"a":1}', true)).toEqual([]);
+    });
+
     // Regression tests for AAP-93178: YAML/JSON parsing broken with unusual inputs.
     // When both JSON and YAML parsing fail, valueToObject must throw rather than
     // returning the raw string. Returning the raw string causes jsyaml.dump() to
@@ -242,6 +253,19 @@ variable2: value2  # inline comment`;
     test('should handle empty objects', () => {
       expect(objectToString({}, 'yaml')).toBe('');
       expect(objectToString([], 'yaml')).toBe('');
+    });
+
+    test('should stringify Error instances', () => {
+      expect(objectToString(new Error('parse failed'), 'yaml')).toBe('parse failed');
+    });
+
+    test('should fall back to preserved YAML when JSON conversion fails', () => {
+      const preserved = { __preserveYamlString: ':\ninvalid' };
+      expect(objectToString(preserved, 'json')).toBe(':\ninvalid');
+    });
+
+    test('returns empty string for unknown language', () => {
+      expect(objectToString({ a: 1 }, 'xml' as 'yaml')).toBe('');
     });
   });
 });
@@ -365,6 +389,25 @@ describe('PageFormDataEditor Component', () => {
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith({ data: { def: 456 } }, expect.any(Object));
+    });
+  });
+
+  test('should commit edited YAML comments through handleChange', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const editedYaml = `foo: bar  # edited comment`;
+
+    render(
+      <TestWrapper defaultValue={{ vars: 'foo: bar' }} onSubmit={onSubmit}>
+        <PageFormDataEditor<ExtraVars> label="Editor" name="vars" format="yaml" />
+      </TestWrapper>
+    );
+
+    fireEvent.change(screen.getByTestId('data-editor'), { target: { value: editedYaml } });
+    await user.click(screen.getByRole('button', { name: 'Submit' }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({ vars: editedYaml }, expect.any(Object));
     });
   });
 

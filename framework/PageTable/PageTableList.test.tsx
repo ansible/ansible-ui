@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { PageActionSelection, PageActionType } from '../PageActions/PageAction';
@@ -117,6 +118,64 @@ describe('PageTableList', () => {
 
     expect(screen.getByText('First item')).toBeInTheDocument();
     expect(screen.getByText('Second item')).toBeInTheDocument();
+  });
+
+  it('should render list subtitle columns', () => {
+    const columnsWithSubtitle: ITableColumn<TestItem>[] = [
+      { header: 'Name', list: 'name', cell: (item) => item.name },
+      { header: 'Subtitle', list: 'subtitle', cell: (item) => `Sub ${item.id}` },
+    ];
+    render(
+      <MemoryRouter>
+        <PageTableList
+          {...baseProps}
+          tableColumns={columnsWithSubtitle}
+          pageItems={testItems}
+          itemCount={2}
+        />
+      </MemoryRouter>
+    );
+    expect(screen.getAllByText('Sub 1')[0]).toBeInTheDocument();
+  });
+
+  it('should select unselected rows via checkbox', async () => {
+    const user = userEvent.setup();
+    const selectItem = vi.fn();
+    render(
+      <MemoryRouter>
+        <PageTableList
+          {...baseProps}
+          pageItems={testItems}
+          itemCount={2}
+          showSelect
+          isSelected={() => false}
+          selectItem={selectItem}
+          unselectItem={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+    await user.click(document.querySelector('[data-testid="data-list-check"]') as Element);
+    expect(selectItem).toHaveBeenCalledWith(testItems[0]);
+  });
+
+  it('should toggle row selection from the data list checkbox', async () => {
+    const user = userEvent.setup();
+    const unselectItem = vi.fn();
+    render(
+      <MemoryRouter>
+        <PageTableList
+          {...baseProps}
+          pageItems={testItems}
+          itemCount={2}
+          showSelect
+          isSelected={() => true}
+          unselectItem={unselectItem}
+          selectItem={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+    await user.click(document.querySelector('[data-testid="data-list-check"]') as Element);
+    expect(unselectItem).toHaveBeenCalledWith(testItems[0]);
   });
 
   it('should use defaultSubtitle when no subtitle column', () => {

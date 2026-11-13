@@ -26,10 +26,12 @@ vi.mock('../PageSettings/PageSettingsProvider', () => ({
   }),
 }));
 
+const mockWriteToClipboard = vi.hoisted(() => vi.fn());
+
 vi.mock('../hooks/useClipboard', () => ({
   useClipboard: () => ({
     copySuccess: false,
-    writeToClipboard: vi.fn(),
+    writeToClipboard: mockWriteToClipboard,
   }),
 }));
 
@@ -109,6 +111,17 @@ describe('PageDetailCodeEditor', () => {
     );
 
     expect(screen.getByTestId('code-block-value')).toBeInTheDocument();
+  });
+
+  test('should copy the editor value when the button is clicked', async () => {
+    const user = userEvent.setup();
+    render(
+      <TestWrapper>
+        <PageDetailCodeEditor value="value: copy" />
+      </TestWrapper>
+    );
+    await user.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+    expect(mockWriteToClipboard).toHaveBeenCalledWith('value: copy');
   });
 
   test('should show copy to clipboard button by default', () => {

@@ -350,6 +350,24 @@ describe('PageAsyncSingleSelect', () => {
     });
   });
 
+  it('should reload options when the error toggle is clicked', async () => {
+    const user = userEvent.setup();
+    const queryOptions = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('Test error'))
+      .mockImplementation(asyncSelectTestQuery);
+
+    render(<PageAsyncSingleSelectTest queryOptions={queryOptions} />);
+    await user.click(screen.getByRole('button', { name: 'Select value' }));
+    await waitFor(() => {
+      expect(screen.getByText('Error loading options')).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: 'Error loading options' }));
+    await waitFor(() => {
+      expect(screen.getByText('Option 1')).toBeInTheDocument();
+    });
+  });
+
   it('should show custom error text from function when queryErrorText is a function', async () => {
     const user = userEvent.setup();
     render(

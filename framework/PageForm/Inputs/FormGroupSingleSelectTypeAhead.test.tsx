@@ -232,6 +232,47 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-enabled');
   });
 
+  it('should sync array and object value shapes', () => {
+    const { rerender } = render(
+      <FormGroupSingleSelectTypeAhead {...defaultProps} value={['option2']} />
+    );
+    expect(screen.getByRole('textbox')).toHaveValue('Option 2');
+
+    rerender(<FormGroupSingleSelectTypeAhead {...defaultProps} value={{ name: 'option1' }} />);
+    expect(screen.getByRole('textbox')).toHaveValue('Option 1');
+  });
+
+  it('should refresh the display label after options are populated', async () => {
+    const { rerender } = render(
+      <FormGroupSingleSelectTypeAhead {...defaultProps} value="option1" options={[]} />
+    );
+    rerender(
+      <FormGroupSingleSelectTypeAhead {...defaultProps} value="option1" options={mockOptions} />
+    );
+    await waitFor(() => expect(screen.getByRole('textbox')).toHaveValue('Option 1'));
+  });
+
+  it('should open the menu when Enter is pressed while closed', async () => {
+    const user = userEvent.setup();
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} />);
+    const input = screen.getByRole('textbox');
+    input.focus();
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+    await user.keyboard('{Enter}');
+    expect(input).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('should move focus upward across enabled options', async () => {
+    const user = userEvent.setup();
+    render(<FormGroupSingleSelectTypeAhead {...defaultProps} />);
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}{ArrowDown}{ArrowUp}');
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-activedescendant', 'select-create-typeahead-option1')
+    );
+  });
+
   // Test the core deletion fix - this is what was broken
   describe('Deletion Functionality', () => {
     it('should allow deleting typed characters with backspace', async () => {
@@ -317,6 +358,35 @@ describe('FormGroupSingleSelectTypeAhead', () => {
 
     // Should preserve the text without setTimeout
     expect(input).toHaveValue('test');
+  });
+
+  it('should select with Enter and sync object values', async () => {
+    const user = userEvent.setup({ delay: null });
+    const onHandleSelection = vi.fn();
+    const { rerender } = render(
+      <FormGroupSingleSelectTypeAhead {...defaultProps} onHandleSelection={onHandleSelection} />
+    );
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}{Enter}');
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'option1' });
+
+    rerender(<FormGroupSingleSelectTypeAhead {...defaultProps} value={{ name: 'option2' }} />);
+    expect(screen.getByRole('textbox')).toHaveValue('Option 2');
+  });
+
+  it('should open the menu from ArrowDown when options are disabled', async () => {
+    const user = userEvent.setup();
+    render(
+      <FormGroupSingleSelectTypeAhead
+        {...defaultProps}
+        options={[{ value: 'x', label: 'X', isDisabled: true }]}
+      />
+    );
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.keyboard('{ArrowDown}');
+    expect(input).toHaveAttribute('aria-expanded', 'true');
   });
 
   // Test menu close and immediate refocus
