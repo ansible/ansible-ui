@@ -98,7 +98,19 @@ export function PageAlertToasterProvider(props: { children: ReactNode }) {
     }
 
     function removeAlerts(filter?: (alert: AlertProps) => boolean) {
-      setToasterAlerts((alerts) => (filter ? alerts.filter(filter) : []));
+      const shouldKeepTimedAlert = new Map<AlertProps, boolean>();
+      for (const [alert, timeoutId] of alertTimeouts.current) {
+        const shouldKeep = filter?.(alert) ?? false;
+        shouldKeepTimedAlert.set(alert, shouldKeep);
+        if (!shouldKeep) {
+          clearTimeout(timeoutId);
+          alertTimeouts.current.delete(alert);
+        }
+      }
+
+      setToasterAlerts((alerts) =>
+        filter ? alerts.filter((alert) => shouldKeepTimedAlert.get(alert) ?? filter(alert)) : []
+      );
     }
     function removeAlert(alert: AlertProps) {
       clearAlertTimeout(alert);
