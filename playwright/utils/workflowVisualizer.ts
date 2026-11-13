@@ -250,9 +250,7 @@ export const WorkflowVisualizer = {
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
-      await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await WorkflowVisualizer.ui.saveAndDismissToast(page);
     },
 
     removeAllWorkflowVizNodes: async (page: Page): Promise<void> => {
@@ -264,9 +262,7 @@ export const WorkflowVisualizer = {
       await page.getByRole('menuitem', { name: 'Remove all steps' }).click();
       await page.getByRole('checkbox', { name: 'Yes, I confirm that I want to' }).check();
       await page.getByRole('button', { name: 'Remove' }).click();
-      await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(page.getByText('Success alert:Successfully')).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await WorkflowVisualizer.ui.saveAndDismissToast(page);
       await expect(
         page.getByRole('heading', { name: 'There are currently no nodes in this workflow' })
       ).toBeVisible();
