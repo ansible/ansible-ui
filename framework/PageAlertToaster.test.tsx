@@ -7,9 +7,10 @@ import {
   PageAlertToasterProvider,
   PageAlertToasterContext,
   errorToAlertProps,
+  usePageAlertToaster,
 } from './PageAlertToaster';
 
-function TestConsumer() {
+function TestConsumer(props: { onClearAll?: () => void } = {}) {
   const toaster = useContext(PageAlertToasterContext);
   const alert = { title: 'Test Alert', variant: 'success' as const };
   return (
@@ -19,9 +20,23 @@ function TestConsumer() {
       </button>
       <button
         type="button"
+        onClick={() =>
+          toaster.addAlert({ title: 'Danger Alert', variant: 'danger', timeout: 7000 })
+        }
+      >
+        Add Danger
+      </button>
+      <button
+        type="button"
         onClick={() => toaster.addAlert({ title: 'Fresh Alert', variant: 'success' })}
       >
         Add Fresh
+      </button>
+      <button
+        type="button"
+        onClick={() => toaster.addAlert({ title: 'Timed Alert', variant: 'info' })}
+      >
+        Add Timed Fresh
       </button>
       <button type="button" onClick={() => toaster.replaceAlert(alert, { title: 'Replaced' })}>
         Replace
@@ -51,17 +66,46 @@ function TestConsumer() {
       </button>
       <button
         type="button"
+        onClick={() => toaster.removeAlert({ title: 'Missing Alert', variant: 'info' })}
+      >
+        Remove Missing
+      </button>
+      <button
+        type="button"
         onClick={() => toaster.addAlert({ title: 'Timed Alert', variant: 'info', timeout: 1000 })}
       >
         Add Timed
       </button>
-      <button type="button" onClick={() => toaster.removeAlerts()}>
+      <button
+        type="button"
+        onClick={() => {
+          toaster.removeAlerts();
+          props.onClearAll?.();
+        }}
+      >
         Clear All
       </button>
-      <button type="button" onClick={() => toaster.removeAlerts((a) => a.variant !== 'danger')}>
+      <button type="button" onClick={() => toaster.removeAlerts((a) => a.variant === 'danger')}>
         Keep Danger
       </button>
     </div>
+  );
+}
+
+function DefaultContextConsumer() {
+  const toaster = usePageAlertToaster();
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        toaster.addAlert({ title: 'Default context' });
+        toaster.removeAlert({ title: 'Default context' });
+        toaster.replaceAlert({ title: 'Old' }, { title: 'New' });
+        toaster.removeAlerts();
+      }}
+    >
+      Invoke no-op defaults
+    </button>
   );
 }
 
@@ -97,6 +141,15 @@ describe('PageAlertToaster', () => {
   });
 
   describe('PageAlertToasterProvider', () => {
+    it('should expose no-op toaster methods outside the provider', async () => {
+      const user = userEvent.setup();
+      render(<DefaultContextConsumer />);
+
+      await user.click(screen.getByRole('button', { name: 'Invoke no-op defaults' }));
+
+      expect(screen.getByRole('button', { name: 'Invoke no-op defaults' })).toBeInTheDocument();
+    });
+
     it('should render children', () => {
       render(
         <PageAlertToasterProvider>
@@ -160,6 +213,28 @@ describe('PageAlertToaster', () => {
       expect(clearTimeoutSpy).toHaveBeenCalledWith(alertTimeoutId);
     });
 
+    it('should clear a timer when an equivalent alert is added without a timeout', async () => {
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+      const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add Timed For Replace' }));
+      const timeoutIndex = setTimeoutSpy.mock.calls.findIndex(([, delay]) => delay === 5000);
+      const alertTimeoutId = setTimeoutSpy.mock.results[timeoutIndex]?.value as
+        | ReturnType<typeof setTimeout>
+        | undefined;
+      await user.click(screen.getByRole('button', { name: 'Add Timed Fresh' }));
+
+      expect(alertTimeoutId).toBeDefined();
+      expect(clearTimeoutSpy).toHaveBeenCalledWith(alertTimeoutId);
+      expect(screen.getByText('Timed Alert')).toBeInTheDocument();
+    });
+
     it('should remove a timed alert when removeAlert receives fresh props', async () => {
       const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
       const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
@@ -183,7 +258,7 @@ describe('PageAlertToaster', () => {
       expect(clearTimeoutSpy).toHaveBeenCalledWith(alertTimeoutId);
     });
 
-    it('should clear auto-dismiss timers when alerts are dismissed early', async () => {
+    it('should keep a timed alert when removeAlert does not match it', async () => {
       const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
       const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
       const user = userEvent.setup();
@@ -198,11 +273,79 @@ describe('PageAlertToaster', () => {
       const alertTimeoutId = setTimeoutSpy.mock.results[timeoutIndex]?.value as
         | ReturnType<typeof setTimeout>
         | undefined;
-      expect(alertTimeoutId).toBeDefined();
+      await user.click(screen.getByRole('button', { name: 'Remove Missing' }));
 
+      expect(alertTimeoutId).toBeDefined();
+      expect(clearTimeoutSpy).not.toHaveBeenCalledWith(alertTimeoutId);
+      expect(screen.getByText('Timed Alert')).toBeInTheDocument();
+    });
+
+    it('should clear auto-dismiss timers when alerts are dismissed early', async () => {
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+      const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+      const user = userEvent.setup();
+      const alertTimeoutId: { current: ReturnType<typeof setTimeout> | undefined } = {
+        current: undefined,
+      };
+      let clearCallsAtClear = 0;
+      let timerWasClearedBeforeStateUpdate = false;
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer
+            onClearAll={() => {
+              clearCallsAtClear = clearTimeoutSpy.mock.calls.length;
+              timerWasClearedBeforeStateUpdate = clearTimeoutSpy.mock.calls.some(
+                ([timeoutId]) => timeoutId === alertTimeoutId.current
+              );
+            }}
+          />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add Timed For Replace' }));
+      const timeoutIndex = setTimeoutSpy.mock.calls.findIndex(([, delay]) => delay === 5000);
+      alertTimeoutId.current = setTimeoutSpy.mock.results[timeoutIndex]?.value as
+        | ReturnType<typeof setTimeout>
+        | undefined;
+      expect(alertTimeoutId.current).toBeDefined();
       await user.click(screen.getByRole('button', { name: 'Clear All' }));
 
-      expect(clearTimeoutSpy).toHaveBeenCalledWith(alertTimeoutId);
+      expect(timerWasClearedBeforeStateUpdate).toBe(true);
+      expect(clearCallsAtClear).toBeGreaterThan(0);
+      expect(clearTimeoutSpy).toHaveBeenCalledWith(alertTimeoutId.current);
+      expect(clearTimeoutSpy).toHaveBeenCalledWith(alertTimeoutId.current);
+      expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
+    });
+
+    it('should clear only timers for alerts removed by a filter', async () => {
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+      const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+      const user = userEvent.setup();
+      render(
+        <PageAlertToasterProvider>
+          <TestConsumer />
+        </PageAlertToasterProvider>
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Add Timed For Replace' }));
+      await user.click(screen.getByRole('button', { name: 'Add' }));
+      await user.click(screen.getByRole('button', { name: 'Add Danger' }));
+      const infoTimeoutIndex = setTimeoutSpy.mock.calls.findIndex(([, delay]) => delay === 5000);
+      const dangerTimeoutIndex = setTimeoutSpy.mock.calls.findIndex(([, delay]) => delay === 7000);
+      const infoTimeoutId = setTimeoutSpy.mock.results[infoTimeoutIndex]?.value as
+        | ReturnType<typeof setTimeout>
+        | undefined;
+      const dangerTimeoutId = setTimeoutSpy.mock.results[dangerTimeoutIndex]?.value as
+        | ReturnType<typeof setTimeout>
+        | undefined;
+      await user.click(screen.getByRole('button', { name: 'Keep Danger' }));
+
+      expect(infoTimeoutId).toBeDefined();
+      expect(dangerTimeoutId).toBeDefined();
+      expect(clearTimeoutSpy).toHaveBeenCalledWith(infoTimeoutId);
+      expect(clearTimeoutSpy).not.toHaveBeenCalledWith(dangerTimeoutId);
+      expect(screen.getByText('Danger Alert')).toBeInTheDocument();
+      expect(screen.queryByText('Test Alert')).not.toBeInTheDocument();
       expect(screen.queryByText('Timed Alert')).not.toBeInTheDocument();
     });
 
