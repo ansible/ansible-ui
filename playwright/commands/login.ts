@@ -23,7 +23,10 @@ export async function login(
   const username = options?.username ?? process.env.PLATFORM_USERNAME!;
   const password = options?.password ?? process.env.PLATFORM_PASSWORD!;
   const usernameField = page.locator('#pf-login-username-id');
-  const toolbarUser = page.getByTestId('toolbar').getByRole('button', { name: username });
+  // The username is loaded asynchronously and may not match the login value while
+  // the authenticated shell is already ready. Use the stable user-details test id
+  // to detect authentication completion instead of coupling it to dynamic text.
+  const toolbarUser = page.getByTestId('user-details').getByRole('button');
 
   // SPA bootstrap can hang on `load` (long-lived requests). DOMContentLoaded is
   // enough to start waiting for the login form or the authenticated shell.
