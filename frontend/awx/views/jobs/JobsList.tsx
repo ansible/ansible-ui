@@ -4,6 +4,7 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { CubesIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { createThrottle } from '../../common/util/createThrottle';
 import { useDomainsStore } from '../../common/domains/useDomains';
 import { awxAPI } from '../../common/api/awx-utils';
@@ -14,8 +15,9 @@ import { UnifiedJob } from '../../interfaces/UnifiedJob';
 import { useJobRowActions } from '../../views/jobs/hooks/useJobRowActions';
 import { useJobToolbarActions } from '../../views/jobs/hooks/useJobToolbarActions';
 import { useJobsFilters } from '../../views/jobs/hooks/useJobsFilters';
+import { getJobsDeepLinkQueryParams } from './jobsQueryParams';
 
-type QueryParams = { [key: string]: string };
+type QueryParams = { [key: string]: string | string[] };
 
 export type WebSocketMessage = {
   group_name?: string;
@@ -79,16 +81,25 @@ export function JobsList(props: {
   columns: ITableColumn<UnifiedJob>[];
 }) {
   const { t } = useTranslation();
+  const location = useLocation();
   const activeDomains = useDomainsStore((state) => state.activeDomains);
   const focusLabels = activeDomains.map((fa) => fa.labels.map((l) => l.name)).flat();
-  const toolbarFilters = useJobsFilters(props.queryParams ?? {});
+  const deepLinkQueryParams = useMemo(
+    () => getJobsDeepLinkQueryParams(location.search),
+    [location.search]
+  );
+  const queryParams = useMemo(
+    () => ({ ...props.queryParams, ...deepLinkQueryParams }),
+    [deepLinkQueryParams, props.queryParams]
+  );
+  const toolbarFilters = useJobsFilters(queryParams);
   const tableColumns = props.columns;
   const view = useAwxView<UnifiedJob>({
     url: awxAPI`/unified_jobs/`,
     toolbarFilters,
     tableColumns,
     queryParams: {
-      ...props?.queryParams,
+      ...queryParams,
       or__labels__name: focusLabels,
       exclude: 'artifacts,extra_vars',
     },
