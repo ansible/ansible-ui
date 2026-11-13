@@ -563,7 +563,11 @@ export function useSaveVisualizer(templateId: string) {
       const isDeleted = !node.isVisible();
       const isEdited = Boolean(nodeState?.modified) && !isDeleted;
 
-      if (isEdited) {
+      // New nodes were already included in the edge association pass before their
+      // temporary IDs were replaced with persisted IDs. Do not process them as
+      // edited nodes here; the topology element may have been replaced during
+      // creation and no longer has a parent graph.
+      if (isEdited && !newNodes.includes(node) && !newApprovalNodes.includes(node)) {
         handleEdgeModification(node);
       }
     });
