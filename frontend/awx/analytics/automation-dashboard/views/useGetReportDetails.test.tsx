@@ -7,6 +7,11 @@ import { useGetReportDetails } from './useGetReportDetails';
 import type { IDashboardDetails } from '../types';
 import type { IFilterState, IToolbarFilter } from '../../../../../framework';
 import { metricsAPI } from '../../../common/api/metrics-utils';
+import {
+  dashboardDetailsFromJobs,
+  dashboardLabelAggregationJobs,
+  getLabelFilteredJobs,
+} from './useGetReportDetails.fixtures';
 
 const dashboardDetailsFixture: IDashboardDetails = {
   total_number_of_successful_jobs: 10,
@@ -118,6 +123,77 @@ describe('useGetReportDetails', () => {
   });
 
   describe('URL construction', () => {
+    test('should return label-filtered counts without retroactively including earlier runs', async () => {
+      const labelFilter: IToolbarFilter = {
+        key: 'label',
+        label: 'Label',
+        type: ToolbarFilterType.AsyncMultiSelect,
+        query: 'label',
+        placeholder: 'Select Label',
+      };
+      const organizationFilter: IToolbarFilter = {
+        key: 'organization',
+        label: 'Organization',
+        type: ToolbarFilterType.AsyncMultiSelect,
+        query: 'organization',
+        placeholder: 'Select Organization',
+      };
+      const periodFilter: IToolbarFilter = {
+        key: 'period',
+        label: 'Period',
+        type: ToolbarFilterType.DateRange,
+        query: 'period',
+        placeholder: 'Select Period',
+      };
+      const start = '2026-11-01T00:00:00.000Z';
+      const end = '2026-11-12T23:59:59.999Z';
+      const expectedJobs = getLabelFilteredJobs(dashboardLabelAggregationJobs, {
+        labelId: 42,
+        start,
+        end,
+        organizationIds: [1, 2],
+      });
+      let capturedUrl = '';
+
+      server.use(
+        http.get(metricsAPI`/dashboard_reports/report/details/`, ({ request }) => {
+          capturedUrl = request.url;
+          const searchParams = new URL(request.url).searchParams;
+          const jobs = getLabelFilteredJobs(dashboardLabelAggregationJobs, {
+            labelId: Number(searchParams.get('label')),
+            start,
+            end,
+            organizationIds: searchParams.getAll('organization').map(Number),
+          });
+          return HttpResponse.json(dashboardDetailsFromJobs(jobs));
+        })
+      );
+
+      const { result } = renderHook(() =>
+        useGetReportDetails(
+          [labelFilter, organizationFilter, periodFilter],
+          {
+            label: ['42'],
+            organization: ['1', '2'],
+            period: ['custom', '2026-11-01', '2026-11-12'],
+          },
+          { tz: 'UTC' }
+        )
+      );
+
+      await waitFor(() => expect(result.current.reportDetails).toBeDefined());
+
+      expect(new URL(capturedUrl).searchParams.get('label')).toBe('42');
+      expect(new URL(capturedUrl).searchParams.getAll('organization')).toEqual(['1', '2']);
+      expect(result.current.reportDetails?.total_number_of_successful_jobs).toBe(
+        expectedJobs.filter((job) => job.status === 'successful').length
+      );
+      expect(result.current.reportDetails?.total_number_of_failed_jobs).toBe(
+        expectedJobs.filter((job) => job.status === 'failed').length
+      );
+      expect(expectedJobs.map((job) => job.id)).toEqual([1002, 1003]);
+    });
+
     test('should call the correct API endpoint', async () => {
       let capturedUrl = '';
 
