@@ -411,7 +411,8 @@ describe('AutomationDashboard', () => {
     render(testWrapper());
 
     const successfulJobsUrl = new URL(
-      screen.getByTestId('successful-jobs-card').querySelector('a')?.href ?? ''
+      screen.getByRole('link', { name: 'See all successful jobs' }).getAttribute('href') ?? '',
+      'https://example.test'
     );
     expect(successfulJobsUrl.searchParams.get('status')).toBe('successful');
     expect(successfulJobsUrl.searchParams.get('labels__id')).toBe('11');
@@ -422,7 +423,8 @@ describe('AutomationDashboard', () => {
     expect(successfulJobsUrl.searchParams.get('finished__lte')).toBeTruthy();
 
     const failedJobsUrl = new URL(
-      screen.getByTestId('failed-jobs-card').querySelector('a')?.href ?? ''
+      screen.getByRole('link', { name: 'See all failed jobs' }).getAttribute('href') ?? '',
+      'https://example.test'
     );
     expect(failedJobsUrl.searchParams.get('status')).toBe('failed');
     expect(failedJobsUrl.searchParams.get('labels__id')).toBe('11');
