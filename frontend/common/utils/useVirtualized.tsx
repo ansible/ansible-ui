@@ -51,10 +51,10 @@ export function useVirtualizedList<T>(
   const [minRowHeight, setMinRowHeight] = useState(24);
   const setRowHeight = useCallback(
     (index: number, height: number) => {
+      if (minRowHeight > height) setMinRowHeight(height);
       setRowHeights((heights) => {
         const existingHeight = heights[index];
         if (existingHeight === height) return heights;
-        if (minRowHeight > height) setMinRowHeight(height);
         const newHeights = { ...heights };
         newHeights[index] = height;
         return newHeights;
