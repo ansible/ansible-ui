@@ -14,6 +14,7 @@ import { useState, type CSSProperties } from 'react';
 import { useMatch } from 'react-router-dom';
 import { usePageNavBarClick, usePageNavSideBar } from './PageNavSidebar';
 import { PageNavigationItem } from './PageNavigationItem';
+import { getNavigationItemId } from './getNavigationItemId';
 
 /** Renders a sidebar navigation menu from an arroy of navigation items. */
 export function PageNavigation(props: {
@@ -71,18 +72,7 @@ function PageNavigationItemComponent(props: { item: PageNavigationItem; baseRout
     localStorage.setItem((item.id ?? item.label) + '-expanded', expanded ? 'true' : 'false');
   };
 
-  let id: string | undefined;
-  if ('id' in props.item) {
-    id = props.item.id;
-  } else if ('children' in props.item) {
-    const rootChild = props.item.children.find((child) => child.path === '');
-    if (rootChild && 'id' in rootChild) {
-      id = rootChild.id;
-    }
-  }
-  if (!id) {
-    id = props.item.label?.split(' ').join('-').toLowerCase();
-  }
+  const id = getNavigationItemId(props.item);
 
   const onClickNavItem = usePageNavBarClick();
   let route = props.baseRoute + '/' + item.path;
