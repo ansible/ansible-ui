@@ -32,7 +32,11 @@ describe('RemoteInputs', () => {
   it('renders core remote form inputs', () => {
     render(
       <FormWrapper>
-        <RemoteInputs handleOnClear={vi.fn()} shouldHideField={() => false} />
+        <RemoteInputs
+          handleOnClear={vi.fn()}
+          isCommunityRemote={false}
+          shouldHideField={() => false}
+        />
       </FormWrapper>
     );
 
@@ -46,8 +50,8 @@ describe('RemoteInputs', () => {
       <FormWrapper defaultValues={{ url: 'https://galaxy.ansible.com/api/' }}>
         <RemoteInputs
           handleOnClear={vi.fn()}
+          isCommunityRemote={true}
           shouldHideField={() => false}
-          setIsCommunityRemote={vi.fn()}
         />
       </FormWrapper>
     );
