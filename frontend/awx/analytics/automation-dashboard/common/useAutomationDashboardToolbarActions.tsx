@@ -1,6 +1,7 @@
 import {
   IFilterState,
   IPageAction,
+  IPageActionButton,
   IToolbarFilter,
   PageActionSelection,
   PageActionType,
@@ -16,6 +17,14 @@ import { useRemoveToolbarFilterSet } from './useRemoveToolbarFilterSet';
 import { useUpdateToolbarFilterSet } from './useUpdateToolbarFilterSet';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { hasValidRequiredFilters } from '../utils/queryString';
+
+/**
+ * A report action rendered in the dashboard's own report actions dropdown, which can show
+ * secondary description text under the item label.
+ */
+export interface IDashboardReportAction extends IPageActionButton {
+  description?: string;
+}
 
 /** Returns true when filterState is empty or equals the default (period = last 7 days only). */
 function isDefaultFilterState(filterState: IFilterState | undefined): boolean {
@@ -90,71 +99,67 @@ export function useAutomationDashboardToolbarActions(props: {
   // filter state must still be valid to be persisted.
   const editDisabledReason = getEditDisabledReason(superuserDisabledReason, validFilters, t);
 
-  return useMemo<IPageAction<IJobTemplate>[]>(
-    () =>
-      selectedFilterSet
-        ? [
-            {
-              type: PageActionType.Dropdown,
-              icon: PlusCircleIcon,
-              variant: ButtonVariant.primary,
-              isPinned: true,
-              selection: PageActionSelection.None,
-              label: t('Report actions'),
-              actions: [
-                {
-                  type: PageActionType.Button,
-                  icon: PlusCircleIcon,
-                  selection: PageActionSelection.None,
-                  label: t('Create new report'),
-                  isDisabled: saveDisabledReason,
-                  onClick: () => (filterState ? createToolbarFilterSet(filterState) : {}),
-                },
-                {
-                  type: PageActionType.Button,
-                  icon: PencilAltIcon,
-                  selection: PageActionSelection.None,
-                  label: t('Update report'),
-                  isDisabled: editDisabledReason,
-                  onClick: () =>
-                    filterState && selectedFilterSet
-                      ? updateToolbarFilterSet(selectedFilterSet, filterState)
-                      : {},
-                },
-                {
-                  type: PageActionType.Button,
-                  selection: PageActionSelection.None,
-                  label: t('Delete report'),
-                  onClick: () => removeToolbarFilterSet(selectedFilterSet),
-                  icon: TrashIcon,
-                  isDisabled: superuserDeleteDisabledReason,
-                  isDanger: true,
-                },
-              ],
-            },
-          ]
-        : [
-            {
-              type: PageActionType.Button,
-              icon: PlusCircleIcon,
-              variant: ButtonVariant.primary,
-              isPinned: true,
-              selection: PageActionSelection.None,
-              label: t('Create new report'),
-              isDisabled: saveDisabledReason,
-              onClick: () => (filterState ? createToolbarFilterSet(filterState) : {}),
-            },
-          ],
-    [
-      selectedFilterSet,
-      t,
-      saveDisabledReason,
-      editDisabledReason,
-      superuserDeleteDisabledReason,
-      filterState,
-      createToolbarFilterSet,
-      updateToolbarFilterSet,
-      removeToolbarFilterSet,
-    ]
-  );
+  return useMemo<IPageAction<IJobTemplate>[]>(() => {
+    const createAction: IDashboardReportAction = {
+      type: PageActionType.Button,
+      icon: PlusCircleIcon,
+      selection: PageActionSelection.None,
+      label: t('Create new report'),
+      isDisabled: saveDisabledReason,
+      onClick: () => (filterState ? createToolbarFilterSet(filterState) : {}),
+    };
+
+    if (!selectedFilterSet) {
+      return [{ ...createAction, variant: ButtonVariant.primary, isPinned: true }];
+    }
+
+    const createReportAction: IDashboardReportAction = {
+      ...createAction,
+      description: t('Save the current filter set as a new report'),
+    };
+    const updateReportAction: IDashboardReportAction = {
+      type: PageActionType.Button,
+      icon: PencilAltIcon,
+      selection: PageActionSelection.None,
+      label: t('Update report'),
+      description: t("Replace this report's saved filters with the current view"),
+      isDisabled: editDisabledReason,
+      onClick: () => (filterState ? updateToolbarFilterSet(selectedFilterSet, filterState) : {}),
+    };
+
+    return [
+      {
+        type: PageActionType.Dropdown,
+        icon: PlusCircleIcon,
+        variant: ButtonVariant.primary,
+        isPinned: true,
+        selection: PageActionSelection.None,
+        label: t('Report actions'),
+        actions: [
+          createReportAction,
+          updateReportAction,
+          { type: PageActionType.Seperator },
+          {
+            type: PageActionType.Button,
+            selection: PageActionSelection.None,
+            label: t('Delete report'),
+            onClick: () => removeToolbarFilterSet(selectedFilterSet),
+            icon: TrashIcon,
+            isDisabled: superuserDeleteDisabledReason,
+            isDanger: true,
+          },
+        ],
+      },
+    ];
+  }, [
+    selectedFilterSet,
+    t,
+    saveDisabledReason,
+    editDisabledReason,
+    superuserDeleteDisabledReason,
+    filterState,
+    createToolbarFilterSet,
+    updateToolbarFilterSet,
+    removeToolbarFilterSet,
+  ]);
 }

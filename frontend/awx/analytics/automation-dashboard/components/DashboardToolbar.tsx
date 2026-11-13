@@ -2,6 +2,8 @@ import {
   IFilterState,
   IToolbarDateRangeFilter,
   IToolbarFilter,
+  PageActionSelection,
+  PageActionType,
   PageActions,
   PageToolbarProps,
   useBreakpoint,
@@ -21,6 +23,7 @@ import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import { IDashboardFilterSet, IJobTemplate } from '../types';
 import { useFilterSetView } from '../views/useFilterSetView';
 import { isFilterStateShape } from '../utils/persistedFilterState';
+import { DashboardReportActionsDropdown } from './DashboardReportActionsDropdown';
 import { DashboardToolbarFilters } from './DashboardToolbarFilters';
 
 const DEFAULT_FILTER_STATE: IFilterState = {
@@ -165,6 +168,16 @@ export function DashboardToolbar(
     [filterSets]
   );
   const isMdOrLarger = useBreakpoint('md');
+  // Matches the breakpoint below which PageActions collapses all actions into a kebab menu.
+  const isLgOrLarger = useBreakpoint('lg');
+  // The report actions menu shows item descriptions, which the framework dropdown cannot render.
+  // Below lg, keep the framework kebab so both toolbar states collapse the same way.
+  const [reportActionsDropdown] = toolbarActions;
+  const showReportActionsDropdown =
+    isLgOrLarger &&
+    toolbarActions.length === 1 &&
+    reportActionsDropdown.type === PageActionType.Dropdown &&
+    reportActionsDropdown.selection === PageActionSelection.None;
 
   return (
     <Toolbar
@@ -211,11 +224,17 @@ export function DashboardToolbar(
           />
         )}
         <ToolbarGroup variant="action-group">
-          <PageActions
-            dropDownAriaLabel="toolbar actions"
-            actions={toolbarActions}
-            wrapper={ToolbarItem}
-          />
+          {showReportActionsDropdown ? (
+            <ToolbarItem>
+              <DashboardReportActionsDropdown action={reportActionsDropdown} />
+            </ToolbarItem>
+          ) : (
+            <PageActions
+              dropDownAriaLabel="toolbar actions"
+              actions={toolbarActions}
+              wrapper={ToolbarItem}
+            />
+          )}
         </ToolbarGroup>
       </ToolbarContent>
     </Toolbar>
