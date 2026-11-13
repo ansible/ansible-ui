@@ -17,6 +17,7 @@ import type { JobTemplate } from '../../../../interfaces/JobTemplate';
 import { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { WorkflowJobTemplate } from '../../../../interfaces/WorkflowJobTemplate';
 import { PageFormInventorySelect } from '../../../inventories/components/PageFormInventorySelect';
+import { PageFormLimitInput } from '../../components/PageFormLimitInput';
 import { parseStringToTagArray } from '../../JobTemplateFormHelpers';
 import { ConditionalField } from '../../TemplatePage/steps/ConditionalField';
 import { PromptFormValues, WizardFormValues } from '../types';
@@ -40,6 +41,8 @@ export function NodePromptsStep({
     name: 'resource',
   });
   const organizationId = template?.organization ?? null;
+  const inventory = useWatch<WizardFormValues, 'prompt.inventory'>({ name: 'prompt.inventory' });
+  const inventoryId = inventory?.id ?? template?.inventory;
 
   if (!config || !template) {
     return null;
@@ -124,14 +127,15 @@ export function NodePromptsStep({
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_limit_on_launch}>
-        <PageFormTextInput<WizardFormValues>
+        <PageFormLimitInput<WizardFormValues>
           id="limit"
           label={t('Limit')}
           labelHelpTitle={t('Limit')}
           labelHelp={t(
-            'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. Refer to Ansible documentation for more information and examples on patterns.'
+            'Provide a host pattern to further constrain the list of hosts that will be managed or affected by the playbook. Multiple patterns are allowed. Refer to Ansible documentation for more information and examples on patterns. Use the search button to browse and select hosts and groups from the selected inventory. You can still type patterns such as wildcards or negations.'
           )}
           name="prompt.limit"
+          inventoryId={inventoryId}
           placeholder={t('Add a limit to reduce number of hosts.')}
         />
       </ConditionalField>
