@@ -43,7 +43,7 @@ on:
       QUAY_TOKEN:
         required: false
       PACKAGING_GITHUB_REPOSITORY:
-        required: true
+        required: false
       PACKAGING_REPO_TOKEN:
         required: false
 
@@ -55,7 +55,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Resolve packaging source
+        id: packaging
+        run: |
+          if [ -f _packaging/docker/platform/Dockerfile ] || [ -f _packaging/docker/Dockerfile ]; then
+            echo "vendored=true" >> "$GITHUB_OUTPUT"
+            echo "Using vendored container packaging from this repository."
+          else
+            echo "vendored=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate external packaging configuration
+        if: steps.packaging.outputs.vendored != 'true'
+        env:
+          PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
+        run: |
+          if [ -z "$PACKAGING_REPO" ]; then
+            echo '::error::No vendored _packaging/docker Dockerfiles found and PACKAGING_GITHUB_REPOSITORY is not configured.'
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.packaging.outputs.vendored != 'true'
         with:
           repository: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
           ref: ${{ inputs.packaging-ref }}
