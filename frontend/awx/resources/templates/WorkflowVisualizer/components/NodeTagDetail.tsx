@@ -11,12 +11,14 @@ export function NodeTagDetail({
   label,
   nodeTags = [],
   templateTags = [],
+  inheritTemplateTagsWhenEmpty = true,
 }: {
   label: string;
   nodeTags: ITag[];
   templateTags: ITag[];
+  inheritTemplateTagsWhenEmpty?: boolean;
 }) {
-  const tags = nodeTags.length > 0 ? nodeTags : templateTags;
+  const tags = nodeTags.length > 0 || !inheritTemplateTagsWhenEmpty ? nodeTags : templateTags;
   const isMatch = arraysMatch(tags, templateTags);
 
   return (
