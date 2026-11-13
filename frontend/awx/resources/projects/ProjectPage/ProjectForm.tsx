@@ -42,6 +42,7 @@ const defaultValues: Partial<Project> = {
   scm_type: '',
   scm_update_cache_timeout: 0,
   scm_update_on_launch: false,
+  galaxy_update_on_launch: false,
   scm_url: '',
   signature_validation_credential: null,
   default_environment: null,
@@ -166,6 +167,7 @@ const scmFormFieldDefaults: { [key: string]: any } = {
   scm_delete_on_update: false,
   scm_track_submodules: false,
   scm_update_on_launch: false,
+  galaxy_update_on_launch: false,
   allow_override: false,
   scm_update_cache_timeout: 0,
 };
