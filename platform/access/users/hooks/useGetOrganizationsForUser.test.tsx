@@ -34,7 +34,7 @@ describe('useGetOrganizationsForUser', () => {
     const { result } = renderHook(() => useGetOrganizationsForUser(5));
 
     await waitFor(() => {
-      expect(result.current.orgIds.length).toBe(2);
+      expect(result.current.orgIds).toHaveLength(2);
     });
 
     const { addedOrganizationIds, removedOrganizationIds } =

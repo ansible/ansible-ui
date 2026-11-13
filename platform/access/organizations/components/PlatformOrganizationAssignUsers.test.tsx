@@ -127,7 +127,7 @@ describe('PlatformOrganizationAssignUsers', () => {
     const dialogArg = mockProgressDialog.mock.calls[0][0] as {
       items: { role: { name: string } }[];
     };
-    expect(dialogArg.items.length).toBe(2);
+    expect(dialogArg.items).toHaveLength(2);
     expect(dialogArg.items.map((item) => item.role.name)).toEqual(
       expect.arrayContaining(['Organization Member', 'Custom Role'])
     );
