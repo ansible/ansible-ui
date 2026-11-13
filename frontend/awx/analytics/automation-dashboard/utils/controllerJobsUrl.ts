@@ -12,8 +12,8 @@ const RELATIVE_PERIOD_DAYS: Record<string, number> = {
 const CONTROLLER_FILTERS: Record<string, string> = {
   label: 'labels__id',
   organization: 'organization',
-  template: 'job_template',
-  project: 'project',
+  template: 'unified_job_template',
+  project: 'unified_job_template__project',
 };
 
 function appendFilterValues(params: URLSearchParams, filterState: IFilterState | undefined) {
@@ -44,9 +44,11 @@ function appendDateBounds(
     // calendar-day arithmetic. Keep the Controller window aligned across DST.
     start = zoneNow.minus({ hours: relativeDays * 24 });
     end = zoneNow;
-  } else if (period[0] === 'custom' && period[1] && period[2]) {
+  } else if (period[0] === 'custom' && period[1]) {
     start = DateTime.fromISO(period[1], { zone: timeZone }).startOf('day');
-    end = DateTime.fromISO(period[2], { zone: timeZone }).endOf('day');
+    end = period[2]
+      ? DateTime.fromISO(period[2], { zone: timeZone }).endOf('day')
+      : zoneNow.endOf('day');
   } else {
     return;
   }
@@ -67,7 +69,7 @@ export function getControllerJobsUrl(
   timeZone: string,
   now: DateTime = DateTime.now()
 ): string {
-  const params = new URLSearchParams({ status });
+  const params = new URLSearchParams({ status, type: 'job' });
   appendFilterValues(params, filterState);
   appendDateBounds(params, filterState?.period, timeZone, now);
   return `?${params.toString()}`;

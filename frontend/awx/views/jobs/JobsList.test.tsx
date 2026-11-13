@@ -330,6 +330,43 @@ describe('JobsList Component Tests', () => {
 
     server.events.removeAllListeners();
   }, 15000);
+
+  test('applies dashboard deep-link filters to the unified jobs request', async () => {
+    let fetchedUrl: URL | undefined;
+    server.events.on('request:match', ({ request }) => {
+      const url = new URL(request.url);
+      if (url.pathname.includes('/unified_jobs/') && !url.searchParams.get('id__in')) {
+        fetchedUrl = url;
+      }
+    });
+
+    render(
+      <MemoryRouter
+        initialEntries={[
+          '/jobs?status=successful&type=job&organization=21&unified_job_template=31&unified_job_template__project=41&labels__id=11&finished__gte=2026-11-01T00%3A00%3A00.000Z&finished__lte=2026-11-02T00%3A00%3A00.000Z',
+        ]}
+      >
+        <Jobs />
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(fetchedUrl).toBeDefined();
+        expect(fetchedUrl?.searchParams.get('type')).toBe('job');
+        expect(fetchedUrl?.searchParams.get('status')).toBe('successful');
+        expect(fetchedUrl?.searchParams.get('organization')).toBe('21');
+        expect(fetchedUrl?.searchParams.get('unified_job_template')).toBe('31');
+        expect(fetchedUrl?.searchParams.get('unified_job_template__project')).toBe('41');
+        expect(fetchedUrl?.searchParams.get('labels__id')).toBe('11');
+        expect(fetchedUrl?.searchParams.get('finished__gte')).toBe('2026-11-01T00:00:00.000Z');
+        expect(fetchedUrl?.searchParams.get('finished__lte')).toBe('2026-11-02T00:00:00.000Z');
+      },
+      { timeout: 10000 }
+    );
+
+    server.events.removeAllListeners();
+  }, 15000);
 });
 
 describe('getWsAction', () => {

@@ -417,8 +417,9 @@ describe('AutomationDashboard', () => {
     expect(successfulJobsUrl.searchParams.get('status')).toBe('successful');
     expect(successfulJobsUrl.searchParams.get('labels__id')).toBe('11');
     expect(successfulJobsUrl.searchParams.get('organization')).toBe('21');
-    expect(successfulJobsUrl.searchParams.get('job_template')).toBe('31');
-    expect(successfulJobsUrl.searchParams.get('project')).toBe('41');
+    expect(successfulJobsUrl.searchParams.get('type')).toBe('job');
+    expect(successfulJobsUrl.searchParams.get('unified_job_template')).toBe('31');
+    expect(successfulJobsUrl.searchParams.get('unified_job_template__project')).toBe('41');
     expect(successfulJobsUrl.searchParams.get('finished__gte')).toBeTruthy();
     expect(successfulJobsUrl.searchParams.get('finished__lte')).toBeTruthy();
 
