@@ -273,10 +273,10 @@ describe('EditPlatformOrganization', () => {
       expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
     });
 
-    const nextButton = await screen.findByRole('button', { name: /next/i });
+    const nextButton = await screen.findByTestId('Submit');
     await user.click(nextButton);
 
-    const finishButton = await screen.findByRole('button', { name: /finish/i });
+    const finishButton = await screen.findByTestId('wizard-next');
     await user.click(finishButton);
 
     await waitFor(() => {
@@ -311,10 +311,10 @@ describe('EditPlatformOrganization', () => {
     await user.clear(nameField);
     await user.type(nameField, 'Renamed Organization');
 
-    const nextButton = await screen.findByRole('button', { name: /next/i });
+    const nextButton = await screen.findByTestId('Submit');
     await user.click(nextButton);
 
-    const finishButton = await screen.findByRole('button', { name: /finish/i });
+    const finishButton = await screen.findByTestId('wizard-next');
     await user.click(finishButton);
 
     await waitFor(() => {

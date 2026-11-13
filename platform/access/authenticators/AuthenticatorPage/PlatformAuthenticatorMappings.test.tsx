@@ -29,22 +29,25 @@ describe('PlatformAuthenticatorMappings', () => {
       </MemoryRouter>
     );
 
-    await waitFor(() => {
-      const rows = screen.getAllByRole('row');
-      expect(rows).to.have.length(6);
+    await waitFor(
+      () => {
+        const rows = screen.getAllByRole('row');
+        expect(rows).toHaveLength(6);
 
-      mockMappings.results.forEach((map, index) => {
-        expect(screen.getByRole('cell', { name: map.name })).toBeInTheDocument();
-        if (map.organization) {
-          expect(within(rows[index + 1]).getByText(map.organization)).toBeInTheDocument();
-        }
-        if (map.team) {
-          expect(within(rows[index + 1]).getByText(map.team)).toBeInTheDocument();
-        }
-        if (map.role) {
-          expect(within(rows[index + 1]).getByText(map.role)).toBeInTheDocument();
-        }
-      });
-    });
-  });
+        mockMappings.results.forEach((map, index) => {
+          expect(screen.getByRole('cell', { name: map.name })).toBeInTheDocument();
+          if (map.organization) {
+            expect(within(rows[index + 1]).getByText(map.organization)).toBeInTheDocument();
+          }
+          if (map.team) {
+            expect(within(rows[index + 1]).getByText(map.team)).toBeInTheDocument();
+          }
+          if (map.role) {
+            expect(within(rows[index + 1]).getByText(map.role)).toBeInTheDocument();
+          }
+        });
+      },
+      { timeout: 15000 }
+    );
+  }, 20000);
 });

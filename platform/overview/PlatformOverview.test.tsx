@@ -6,6 +6,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { edaAPI } from '@ansible/eda-ui/common/eda-utils';
 import { setEdaApiPath } from '@ansible/eda-ui/common/eda-utils';
+import * as applicationName from '../applicationName';
 import { PlatformOverview } from './PlatformOverview';
 
 // Mock dependencies
@@ -56,6 +57,22 @@ describe('PlatformOverview', () => {
   beforeEach(() => {
     sessionStorage.clear();
     mockLocationHref.mockClear();
+  });
+
+  it('should use APPLICATION_NAME in the welcome heading when configured', () => {
+    vi.spyOn(applicationName, 'getBuildApplicationName').mockReturnValue('Configured Name');
+
+    render(
+      <MemoryRouter>
+        <PlatformOverview />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Welcome to Configured Name')).toBeInTheDocument();
+    expect(
+      screen.getByText('Empower, automate, connect: Unleash possibilities with Configured Name.')
+    ).toBeInTheDocument();
+    vi.restoreAllMocks();
   });
 
   it('should render overview page normally when no sessionStorage redirect URL', () => {

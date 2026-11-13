@@ -73,13 +73,6 @@ describe('PlatformTeamAssignRoles', () => {
       expect(screen.getByTestId('resource-type-step')).toBeInTheDocument();
     });
 
-    // Simulate selecting "system" as resource type by setting wizard data
-    // The wizard's hidden function checks wizardData.resourceType === 'system'
-    // We need to click Next to move past the resource-type step, which sets wizardData
-    // Since we mocked the step component, we need to verify the hidden function directly
-
-    // Extract the steps config by checking the wizard navigation
-    // When resourceType is not set, all steps should be visible
     const navItems = screen.getAllByRole('listitem');
     const navTexts = navItems.map((item) => item.textContent);
     expect(navTexts).toContain('Select resources');
@@ -87,7 +80,6 @@ describe('PlatformTeamAssignRoles', () => {
 
   describe('step hidden function', () => {
     it('should hide resources step when resourceType is system', () => {
-      // Test the hidden function logic directly
       const hiddenFn = (wizardData: object) =>
         (wizardData as { resourceType: string }).resourceType === 'system';
 
@@ -99,31 +91,8 @@ describe('PlatformTeamAssignRoles', () => {
     });
   });
 
-  describe('onSubmit behavior', () => {
-    it('should omit object_id from request for system role assignments', async () => {
-      const capturedRequests: Record<string, unknown>[] = [];
-
-      server.use(
-        http.post(gatewayAPI`/role_team_assignments/`, async ({ request }) => {
-          const body = (await request.json()) as Record<string, unknown>;
-          capturedRequests.push(body);
-          return HttpResponse.json({ id: 1 }, { status: 201 });
-        })
-      );
-
-      renderComponent();
-
-      await waitFor(() => {
-        expect(screen.getByTestId('resource-type-step')).toBeInTheDocument();
-      });
-
-      // The onSubmit function constructs request data differently for system roles:
-      // - For system: { team, role_definition } (no object_id)
-      // - For non-system: { team, role_definition, object_id }
-      // This is tested via the hidden function and request construction logic above
-    });
-
-    it('should include object_id in request for non-system role assignments', () => {
+  describe('objectIdForResource', () => {
+    it('maps resource types to stable object ids', () => {
       expect(objectIdForResource('awx.jobtemplate', { id: '42', name: 'My Template' })).toBe('42');
       expect(
         objectIdForResource('galaxy.containernamespace', {
@@ -132,6 +101,14 @@ describe('PlatformTeamAssignRoles', () => {
           namespace: { id: '99' },
         })
       ).toBe('99');
+      const uuid = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
+      expect(
+        objectIdForResource('galaxy.collectionremote', {
+          id: '1',
+          name: 'rem',
+          pulp_href: `/pulp/api/v3/remotes/ansible/collection/${uuid}/`,
+        })
+      ).toBe(uuid);
     });
   });
 });

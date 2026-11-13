@@ -32,6 +32,7 @@ declare namespace NodeJS {
     NODE_ENV: string;
     BRAND: string;
     PRODUCT: string;
+    APPLICATION_NAME: string;
     DISCLAIMER: string;
     VERSION: string;
     DELAY: string;

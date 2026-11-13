@@ -47,6 +47,26 @@ describe('usePostRequest', () => {
     const { result } = renderHook(() => usePostRequest(), { wrapper: SwrTestWrapper });
     await expect(result.current('/api/error/', {})).rejects.toThrow();
   });
+
+  it('should return text/plain and blob responses', async () => {
+    server.use(
+      http.post(
+        '/api/text/',
+        () => new HttpResponse('created', { headers: { 'Content-Type': 'text/plain' } })
+      ),
+      http.post(
+        '/api/blob/',
+        () =>
+          new HttpResponse(new Blob(['ok']), {
+            headers: { 'Content-Type': 'application/octet-stream' },
+          })
+      )
+    );
+    const { result } = renderHook(() => usePostRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/text/', {})).resolves.toBe('created');
+    const blob = await result.current('/api/blob/', {});
+    expect(blob).toBeInstanceOf(Blob);
+  });
 });
 
 describe('usePutRequest', () => {
@@ -72,6 +92,26 @@ describe('usePutRequest', () => {
     const { result } = renderHook(() => usePutRequest(), { wrapper: SwrTestWrapper });
     await expect(result.current('/api/error/', {})).rejects.toThrow();
   });
+
+  it('should return null for 204 PUT', async () => {
+    server.use(http.put('/api/empty/', () => new HttpResponse(null, { status: 204 })));
+    const { result } = renderHook(() => usePutRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/empty/', {})).resolves.toBeNull();
+  });
+
+  it('should return blob body for non-json PUT response', async () => {
+    server.use(
+      http.put(
+        '/api/blob/',
+        () =>
+          new HttpResponse(new Blob(['put']), {
+            headers: { 'Content-Type': 'application/octet-stream' },
+          })
+      )
+    );
+    const { result } = renderHook(() => usePutRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/blob/', {})).resolves.toBeInstanceOf(Blob);
+  });
 });
 
 describe('usePatchRequest', () => {
@@ -94,6 +134,19 @@ describe('usePatchRequest', () => {
     server.use(http.patch('/api/json/', () => HttpResponse.json({ ok: true })));
     const { result } = renderHook(() => usePatchRequest(), { wrapper: SwrTestWrapper });
     await expect(result.current('/api/json/', { enabled: true })).resolves.toEqual({ ok: true });
+  });
+
+  it('should return text/plain and null for PATCH responses', async () => {
+    server.use(
+      http.patch(
+        '/api/text/',
+        () => new HttpResponse('patched', { headers: { 'Content-Type': 'text/plain' } })
+      ),
+      http.patch('/api/empty/', () => new HttpResponse(null, { status: 204 }))
+    );
+    const { result } = renderHook(() => usePatchRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/text/', {})).resolves.toBe('patched');
+    await expect(result.current('/api/empty/', {})).resolves.toBeNull();
   });
 });
 
@@ -119,5 +172,19 @@ describe('useDeleteRequest', () => {
     );
     const { result } = renderHook(() => useDeleteRequest(), { wrapper: SwrTestWrapper });
     await expect(result.current('/api/delete/3/')).resolves.toBe('deleted');
+  });
+
+  it('should return blob body for non-json DELETE response', async () => {
+    server.use(
+      http.delete(
+        '/api/delete/4/',
+        () =>
+          new HttpResponse(new Blob(['x']), {
+            headers: { 'Content-Type': 'application/octet-stream' },
+          })
+      )
+    );
+    const { result } = renderHook(() => useDeleteRequest(), { wrapper: SwrTestWrapper });
+    await expect(result.current('/api/delete/4/')).resolves.toBeInstanceOf(Blob);
   });
 });

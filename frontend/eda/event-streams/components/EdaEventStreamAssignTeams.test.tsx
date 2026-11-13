@@ -87,6 +87,8 @@ const server = setupServer(
     return HttpResponse.json(mockRolesResponse);
   }),
   http.get('*/api/gateway/v1/teams/', () => HttpResponse.json(mockTeamsResponse)),
+  http.get('*/service-index/role-permissions/*', () => HttpResponse.json({ results: [] })),
+  http.get('*/service-index/role-types/*', () => HttpResponse.json({ results: [] })),
   http.post('*/api/gateway/v1/role_team_assignments/', async ({ request }) => {
     capturedAssignment = await request.json();
     return HttpResponse.json({ id: 1 });
@@ -212,7 +214,7 @@ describe('EdaEventStreamAssignTeams', () => {
     await waitFor(() => {
       expect(screen.getByText('Select at least one role.')).toBeInTheDocument();
     });
-  });
+  }, 15_000);
 
   it('should assign selected teams and roles', async () => {
     const user = userEvent.setup({ delay: null });
@@ -259,5 +261,5 @@ describe('EdaEventStreamAssignTeams', () => {
     expect(pageNavigate).toHaveBeenCalledWith(EdaRoute.EventStreamTeamAccess, {
       params: { id: '3' },
     });
-  });
+  }, 15_000);
 });

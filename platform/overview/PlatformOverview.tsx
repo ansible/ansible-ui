@@ -11,12 +11,14 @@ import { CogIcon } from '@patternfly/react-icons';
 import { ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { usePlatformApplicationName } from '../usePlatformApplicationName';
 import { useHasAwxService, useHasEdaService } from '../main/GatewayServices';
 import { PlatformCountsCard } from './cards/PlatformCountsCard';
 import { useManagedPlatformOverview } from './useManagedPlatformOverview';
 
 export function PlatformOverview() {
   const { t } = useTranslation();
+  const applicationName = usePlatformApplicationName();
   const { openManageDashboard, managedResources } = useManagedPlatformOverview();
   const awxService = useHasAwxService();
   const edaService = useHasEdaService();
@@ -39,8 +41,10 @@ export function PlatformOverview() {
   return (
     <PageLayout>
       <PageHeader
-        title={t(`Welcome to Ansible`)}
-        description={t('Empower, automate, connect: Unleash possibilities with Ansible.')}
+        title={t(`Welcome to {{product}}`, { product: applicationName })}
+        description={t('Empower, automate, connect: Unleash possibilities with {{product}}.', {
+          product: applicationName,
+        })}
         controls={
           <Button icon={<CogIcon />} variant="link" onClick={openManageDashboard}>
             Manage view

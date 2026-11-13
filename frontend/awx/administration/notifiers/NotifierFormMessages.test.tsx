@@ -66,6 +66,16 @@ describe('NotifierFormMessages', () => {
     expect(screen.getByText('Start message body')).toBeInTheDocument();
   });
 
+  it('renders webhook body fields when notification_type is webhook', () => {
+    render(
+      <TestWrapper notification_type="webhook">
+        <NotifierFormMessages customize_messages={true} data={undefined} />
+      </TestWrapper>
+    );
+    expect(screen.getByText('Error message body')).toBeInTheDocument();
+    expect(screen.queryByText('Start message')).not.toBeInTheDocument();
+  });
+
   it('renders Workflow approved message label when customize_messages is true', () => {
     render(
       <TestWrapper notification_type="email">

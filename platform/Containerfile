@@ -15,24 +15,14 @@ RUN npm ci
 RUN cd platform && npm run build
 
 # Set environment variables
-# Note: PLATFORM_USERNAME and PLATFORM_PASSWORD must be passed at runtime via -e flags
 ENV PLATFORM_UI=https://localhost:4100
-ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+ENV PLATFORM_USERNAME=automation-admin
+ENV VISUAL_TEST_PATH=tests/visual/
+ENV SKIP_COVERAGE=true
 
 # Expose port 4100
 EXPOSE 4100
 
-# Entrypoint: start vite preview server (handles SPA routing), run tests
-CMD ["sh", "-c", "\
-  echo 'Starting Vite preview server on https://localhost:4100...' && \
-  cd /work/platform && \
-  npm run preview & \
-  SERVER_PID=$! && \
-  sleep 5 && \
-  echo 'Running Playwright visual tests...' && \
-  cd /work/playwright && \
-  npx playwright test tests/visual/ --project 'live chromium' --update-snapshots; \
-  TEST_EXIT=$?; \
-  kill $SERVER_PID 2>/dev/null || true; \
-  exit $TEST_EXIT \
-"]
+# Entrypoint: start Vite preview and run mock visual tests
+RUN chmod +x /work/platform/run-visual-baselines-container.sh
+CMD ["/work/platform/run-visual-baselines-container.sh"]

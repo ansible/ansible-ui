@@ -22,15 +22,69 @@ import { PlatformSelectResourceTypeStep } from '../../common/roles-wizard/Platfo
 import { PlatformSelectRolesStep } from '../../common/roles-wizard/PlatformSelectRolesStep';
 import { parsePulpIDFromURL } from '@ansible/hub-ui/common/api/hub-api-utils';
 
-interface WizardFormValues {
+export interface TeamAssignRolesWizardFormValues {
   resourceType: string;
-  resources: { id: string; name: string }[];
+  resources: { id: string; name: string; namespace?: { id?: string }; pulp_href?: string }[];
   platformRoles: PlatformRole[];
 }
 
-interface ResourceRolePair {
+export interface ResourceRolePair {
   resource: { id: string; name: string; pulp_href?: string };
   role: PlatformRole;
+}
+
+export function validateTeamAssignResourcesStep(
+  formData: object,
+  t: (key: string) => string
+): void {
+  const { resources } = formData as { resources: { id: string; name: string }[] };
+  if (!resources?.length) {
+    throw new Error(t('Select at least one resource.'));
+  }
+}
+
+export function validateTeamAssignRolesStep(formData: object, t: (key: string) => string): void {
+  const { platformRoles } = formData as { platformRoles: PlatformRole[] };
+  if (!platformRoles?.length) {
+    throw new Error(t('Select at least one role.'));
+  }
+}
+
+export function teamAssignRolesResourcesStepHidden(wizardData: object): boolean {
+  return (wizardData as TeamAssignRolesWizardFormValues).resourceType === 'system';
+}
+
+export function teamAssignRolesPairKey({ resource, role }: ResourceRolePair): string {
+  return `${resource.id}_${role.id}`;
+}
+
+export function teamAssignRolesResourceNameColumnCell(pair: ResourceRolePair): string {
+  return pair.resource.name;
+}
+
+export function teamAssignRolesRoleColumnCell(pair: ResourceRolePair): string {
+  return pair.role.name;
+}
+
+export function buildTeamAssignRolePairs(
+  data: TeamAssignRolesWizardFormValues
+): ResourceRolePair[] {
+  const { resources, platformRoles, resourceType } = data;
+  const items: ResourceRolePair[] = [];
+  const isSystemRole = resourceType === 'system';
+
+  if (isSystemRole) {
+    for (const role of platformRoles) {
+      items.push({ resource: { id: '', name: '' }, role });
+    }
+  } else {
+    for (const resource of resources) {
+      for (const role of platformRoles) {
+        items.push({ resource, role });
+      }
+    }
+  }
+  return items;
 }
 
 export function objectIdForResource(
@@ -67,24 +121,14 @@ export function PlatformTeamAssignRoles() {
       id: 'resources',
       label: t('Select resources'),
       inputs: <PlatformSelectResourcesStep userOrTeamName={team.name} />,
-      hidden: (wizardData: object) => (wizardData as WizardFormValues).resourceType === 'system',
-      validate: (formData, _) => {
-        const { resources } = formData as { resources: { id: string; name: string }[] };
-        if (!resources?.length) {
-          throw new Error(t('Select at least one resource.'));
-        }
-      },
+      hidden: teamAssignRolesResourcesStepHidden,
+      validate: (formData, _) => validateTeamAssignResourcesStep(formData, t),
     },
     {
       id: 'roles',
       label: t('Select roles to apply'),
       inputs: <PlatformSelectRolesStep />,
-      validate: (formData, _) => {
-        const { platformRoles } = formData as { platformRoles: PlatformRole[] };
-        if (!platformRoles?.length) {
-          throw new Error(t('Select at least one role.'));
-        }
-      },
+      validate: (formData, _) => validateTeamAssignRolesStep(formData, t),
     },
     {
       id: 'review',
@@ -93,22 +137,9 @@ export function PlatformTeamAssignRoles() {
     },
   ];
 
-  const onSubmit = (data: WizardFormValues): Promise<void> => {
-    const { resources, platformRoles, resourceType } = data;
-    const items: ResourceRolePair[] = [];
-    const isSystemRole = resourceType === 'system';
-
-    if (isSystemRole) {
-      for (const role of platformRoles) {
-        items.push({ resource: { id: '', name: '' }, role });
-      }
-    } else {
-      for (const resource of resources) {
-        for (const role of platformRoles) {
-          items.push({ resource, role });
-        }
-      }
-    }
+  const onSubmit = (data: TeamAssignRolesWizardFormValues): Promise<void> => {
+    const items = buildTeamAssignRolePairs(data);
+    const isSystemRole = data.resourceType === 'system';
 
     if (!items.length) {
       return new Promise<void>((resolve) => {
@@ -121,7 +152,7 @@ export function PlatformTeamAssignRoles() {
       progressDialog({
         title: t('Assign roles'),
         description: t('Assigning roles to team {{teamName}}.', { teamName: team.name }),
-        keyFn: ({ resource, role }) => `${resource.id}_${role.id}`,
+        keyFn: teamAssignRolesPairKey,
         items,
         actionColumns: [
           ...(isSystemRole
@@ -129,10 +160,10 @@ export function PlatformTeamAssignRoles() {
             : [
                 {
                   header: t('Resource name'),
-                  cell: ({ resource }: ResourceRolePair) => resource.name,
+                  cell: teamAssignRolesResourceNameColumnCell,
                 },
               ]),
-          { header: t('Role'), cell: ({ role }: ResourceRolePair) => role.name },
+          { header: t('Role'), cell: teamAssignRolesRoleColumnCell },
         ],
         actionFn: ({ resource, role }, signal) => {
           const requestData: Record<string, unknown> = {
@@ -140,7 +171,7 @@ export function PlatformTeamAssignRoles() {
             role_definition: role.id,
           };
           if (!isSystemRole) {
-            requestData.object_id = objectIdForResource(resourceType, resource);
+            requestData.object_id = objectIdForResource(data.resourceType, resource);
           }
           return postRequest(gatewayAPI`/role_team_assignments/`, requestData, signal);
         },
@@ -171,7 +202,7 @@ export function PlatformTeamAssignRoles() {
           { label: t('Assign roles') },
         ]}
       />
-      <PageWizard<WizardFormValues>
+      <PageWizard<TeamAssignRolesWizardFormValues>
         steps={steps}
         onSubmit={onSubmit}
         onCancel={() => {

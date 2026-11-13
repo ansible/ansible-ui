@@ -18,14 +18,8 @@ export function useDeleteOrganizations(
     disableSort: true,
   });
   const actionColumns = useMemo(() => [deleteActionNameColumn], [deleteActionNameColumn]);
-  // TODO: Update based on RBAC information from Organizations API
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const cannotDeleteOrganization = (organization: PlatformOrganization) => {
-    // eslint-disable-next-line no-constant-condition
-    return true //organization?.summary_fields?.user_capabilities?.delete
-      ? undefined
-      : t('The organization cannot be deleted due to insufficient permissions.');
-  };
+  const cannotDeleteOrganization = (organization: PlatformOrganization) =>
+    organization.managed ? t('System managed organizations cannot be deleted.') : undefined;
   const bulkAction = useBulkConfirmation<PlatformOrganization>();
   const getAlertPrompts = useCallback(
     (organizations: PlatformOrganization[], undeletableOrganizations: PlatformOrganization[]) => {

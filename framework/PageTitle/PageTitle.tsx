@@ -10,18 +10,59 @@ import {
 } from 'react';
 import { PageNavigationItem } from '../PageNavigation/PageNavigationItem';
 import { useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { findNavigationItemByPath, getNavigationTitle } from './findNavigationItemByPath';
+import { useApplicationName } from './useApplicationName';
 
 const TitleContext = createContext<{
   setTitle?: Dispatch<SetStateAction<string | null>>;
-  setOverrideTitle?: Dispatch<SetStateAction<string | null>>;
 }>({});
 
 export function PageTitleProvider(
   props: Readonly<{
     navigation: PageNavigationItem[];
     children: ReactNode;
+    /**
+     * Application name suffix for document titles. Callers that inject a build-time
+     * name (for example via bundler env) should pass it here so framework code does
+     * not rely on `process.env` in the browser.
+     */
+    applicationName?: string;
+  }>
+) {
+  if (props.applicationName !== undefined) {
+    return (
+      <PageTitleProviderInner navigation={props.navigation} applicationName={props.applicationName}>
+        {props.children}
+      </PageTitleProviderInner>
+    );
+  }
+
+  return (
+    <PageTitleProviderWithDefaultName navigation={props.navigation}>
+      {props.children}
+    </PageTitleProviderWithDefaultName>
+  );
+}
+
+function PageTitleProviderWithDefaultName(
+  props: Readonly<{
+    navigation: PageNavigationItem[];
+    children: ReactNode;
+  }>
+) {
+  const applicationName = useApplicationName();
+  return (
+    <PageTitleProviderInner navigation={props.navigation} applicationName={applicationName}>
+      {props.children}
+    </PageTitleProviderInner>
+  );
+}
+
+function PageTitleProviderInner(
+  props: Readonly<{
+    navigation: PageNavigationItem[];
+    children: ReactNode;
+    applicationName: string;
   }>
 ) {
   const [title, setTitle] = useState<string | null>(null);
@@ -30,13 +71,17 @@ export function PageTitleProvider(
     () => findNavigationItemByPath(props.navigation, location.pathname),
     [props.navigation, location.pathname]
   );
-  const { t } = useTranslation();
 
   const pageTitle = useMemo(() => {
-    if (!currentPageNavigation) return null;
+    if (!currentPageNavigation.length) return null;
 
     return getNavigationTitle(currentPageNavigation, title);
   }, [currentPageNavigation, title]);
+
+  const documentTitle = useMemo(() => {
+    if (!pageTitle) return props.applicationName;
+    return `${pageTitle} | ${props.applicationName}`;
+  }, [props.applicationName, pageTitle]);
 
   const value = useMemo(
     () => ({
@@ -45,14 +90,11 @@ export function PageTitleProvider(
     [setTitle]
   );
 
-  return (
-    <TitleContext.Provider value={value}>
-      <title>
-        {pageTitle} | {t`Ansible`}
-      </title>
-      {props.children}
-    </TitleContext.Provider>
-  );
+  useEffect(() => {
+    document.title = documentTitle;
+  }, [documentTitle]);
+
+  return <TitleContext.Provider value={value}>{props.children}</TitleContext.Provider>;
 }
 
 export function usePageTitle(title: string | null | undefined) {
@@ -63,20 +105,4 @@ export function usePageTitle(title: string | null | undefined) {
       context.setTitle(title || null);
     }
   }, [context, title]);
-}
-
-export function useOverrideTitle(title: string) {
-  const context = useContext(TitleContext);
-
-  if (context.setOverrideTitle) {
-    context.setOverrideTitle(title);
-  }
-
-  useEffect(() => {
-    return () => {
-      if (context.setOverrideTitle) {
-        context.setOverrideTitle(null);
-      }
-    };
-  }, [context]);
 }

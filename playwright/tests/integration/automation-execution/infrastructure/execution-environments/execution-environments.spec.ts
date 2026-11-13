@@ -307,6 +307,9 @@ test.describe('Execution Environments', () => {
       'can create a new JT using the existing EE, visit the templates tab of the EE to view the JT, delete the JT and then delete the EE',
       { tag: ['@not_mock'] },
       async ({ page }) => {
+        test.setTimeout(15 * 60 * 1000);
+        await Project.ui.sync(page, project.name, 5 * 60 * 1000);
+
         const execEnvName = createE2EName('exec-env');
         const image = 'quay.io/ansible/awx-ee:latest';
 
@@ -333,6 +336,7 @@ test.describe('Execution Environments', () => {
         await page.getByRole('option').filter({ hasText: inventory.name }).click();
 
         await page.locator('#project-select').click();
+        await page.getByRole('textbox', { name: 'Search input' }).fill(project.name);
         await page.getByRole('option', { name: project.name }).click();
         await page.getByPlaceholder('Add a project, then select a').click();
         await page.getByPlaceholder('Add a project, then select a').fill('hello');

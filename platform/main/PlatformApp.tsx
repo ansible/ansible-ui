@@ -15,8 +15,10 @@ import { usePlatformActiveUser } from './PlatformActiveUserProvider';
 import { PlatformMasthead } from './PlatformMasthead';
 import { usePlatformNavigation } from './usePlatformNavigation';
 import { PageTitleProvider } from '@ansible/ansible-ui-framework/PageTitle/PageTitle';
+import { usePlatformApplicationName } from '../usePlatformApplicationName';
 
 export function PlatformApp() {
+  const applicationName = usePlatformApplicationName();
   const navigation = usePlatformNavigation();
   const sessionResponse = useSWR<{ expires_in_seconds: number }>(
     gatewayAPI`/session/`,
@@ -158,7 +160,7 @@ export function PlatformApp() {
   const personaViewSwitcherFlag = useUIFlag(UIFlag.PersonaViewSwitcher);
 
   return (
-    <PageTitleProvider navigation={navigation}>
+    <PageTitleProvider navigation={navigation} applicationName={applicationName}>
       <PageApp
         masthead={<PlatformMasthead />}
         navigation={navigation}
