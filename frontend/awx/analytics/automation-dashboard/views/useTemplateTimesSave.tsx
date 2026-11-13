@@ -1,11 +1,15 @@
 import { usePageAlertToaster } from '@ansible/ansible-ui-framework';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
-import { IAutomationDashboardView, IJobTemplate } from '../types';
+import { IAutomationDashboardView, IJobTemplate, IPendingEditHandle } from '../types';
 import { useSerializedSave } from './useSerializedSave';
+
+/** Allowed range (minutes) for the editable template times, inline and in bulk. */
+export const TEMPLATE_TIME_MIN_MINUTES = 1;
+export const TEMPLATE_TIME_MAX_MINUTES = 1000000;
 
 export interface IJobTemplateModify {
   time_taken_manually_execute_minutes: number;
@@ -38,7 +42,13 @@ export function useTemplateTimesSave(
   // columns of a row cannot resend a stale value for the other column.
   const unsavedTemplateTimesRef = useRef(new Map<number, IJobTemplateModify>());
 
-  const enqueueTemplateSave = useSerializedSave<ITemplateTimesSave, IJobTemplateModify>({
+  // Bumped after a bulk update so the table inputs remount and drop local edits and errors.
+  const [editVersion, setEditVersion] = useState(0);
+
+  const { enqueue: enqueueTemplateSave, waitForIdle } = useSerializedSave<
+    ITemplateTimesSave,
+    IJobTemplateModify
+  >({
     save: ({ item, data }) =>
       putRequest(metricsAPI`/dashboard_reports/template_metadata/${item.id.toString()}/`, data),
     onSuccess: async (updatedData, { item }) => {
@@ -99,5 +109,47 @@ export function useTemplateTimesSave(
     enqueueTemplateSave(item.id, { item, data });
   };
 
-  return { errors, onTableInputChange };
+  // Table fields whose edit may still wait for its debounce, so it is not yet queued.
+  const pendingEditsRef = useRef(new Set<IPendingEditHandle>());
+  const registerPendingEdit = useCallback((handle: IPendingEditHandle) => {
+    pendingEditsRef.current.add(handle);
+    return () => {
+      pendingEditsRef.current.delete(handle);
+    };
+  }, []);
+
+  // Lets a bulk update wait for table edits. Debounced edits are sent right away, otherwise
+  // they would be sent after the bulk update and overwrite it. Their follow-up refreshes are
+  // not awaited: the bulk refresh starts later, and SWR discards responses of older requests.
+  const waitForPendingSaves = useCallback(() => {
+    pendingEditsRef.current.forEach((edit) => edit.flush());
+    return waitForIdle();
+  }, [waitForIdle]);
+
+  /**
+   * Shows bulk-applied values in every row right away and drops local edits and errors, so
+   * the cells reflect the new values before the refresh returns.
+   */
+  const { pageItems, updateItem } = mainTableView;
+  const applyBulkValues = useCallback(
+    (values: Partial<IJobTemplateModify>) => {
+      pageItems?.forEach((item) => updateItem({ ...item, ...values }));
+      // Before the remount: a field sends its pending edit on unmount, which would overwrite
+      // the bulk values.
+      pendingEditsRef.current.forEach((edit) => edit.discard());
+      unsavedTemplateTimesRef.current.clear();
+      setErrors(null);
+      setEditVersion((version) => version + 1);
+    },
+    [pageItems, updateItem]
+  );
+
+  return {
+    errors,
+    onTableInputChange,
+    registerPendingEdit,
+    waitForPendingSaves,
+    applyBulkValues,
+    editVersion,
+  };
 }

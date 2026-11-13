@@ -43,7 +43,8 @@ function setup() {
   const onSuccess = vi.fn();
   const onError = vi.fn();
   const { result } = renderHook(() => useSerializedSave({ save, onSuccess, onError }));
-  return { enqueue: result.current, save, onSuccess, onError, pending };
+  const { enqueue, waitForIdle } = result.current;
+  return { enqueue, waitForIdle, save, onSuccess, onError, pending };
 }
 
 describe('useSerializedSave', () => {
@@ -128,5 +129,58 @@ describe('useSerializedSave', () => {
     expect(save).toHaveBeenCalledTimes(2);
     await resolveCall(pending[1], 'saved-b');
     expect(onSuccess).toHaveBeenCalledTimes(2);
+  });
+
+  test('should resolve waitForIdle at once when nothing is queued', async () => {
+    const { waitForIdle } = setup();
+
+    await expect(waitForIdle()).resolves.toBeUndefined();
+  });
+
+  test('should resolve waitForIdle only after the queued value of every key was saved', async () => {
+    const { enqueue, waitForIdle, save, pending } = setup();
+    act(() => {
+      enqueue(1, 'a');
+      enqueue(1, 'a2');
+      enqueue(2, 'b');
+    });
+    let idle = false;
+    const waiting = waitForIdle().then(() => {
+      idle = true;
+    });
+
+    await resolveCall(pending[0], 'saved-a');
+    expect(save).toHaveBeenLastCalledWith('a2');
+    await resolveCall(pending[1], 'saved-b');
+    expect(idle).toBe(false);
+
+    await resolveCall(pending[2], 'saved-a2');
+    await waiting;
+    expect(idle).toBe(true);
+  });
+
+  test('should resolve waitForIdle and accept new values when onError throws', async () => {
+    const { enqueue, waitForIdle, save, onError, pending } = setup();
+    onError.mockImplementationOnce(() => {
+      throw new Error('adapter failed');
+    });
+    act(() => enqueue(1, 'a'));
+    const waiting = waitForIdle();
+
+    await rejectCall(pending[0], new Error('boom'));
+
+    await expect(waiting).resolves.toBeUndefined();
+    act(() => enqueue(1, 'b'));
+    expect(save).toHaveBeenLastCalledWith('b');
+  });
+
+  test('should resolve waitForIdle after a failed save', async () => {
+    const { enqueue, waitForIdle, pending } = setup();
+    act(() => enqueue(1, 'a'));
+    const waiting = waitForIdle();
+
+    await rejectCall(pending[0], new Error('boom'));
+
+    await expect(waiting).resolves.toBeUndefined();
   });
 });

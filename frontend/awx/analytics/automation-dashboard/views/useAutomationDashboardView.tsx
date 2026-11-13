@@ -127,28 +127,31 @@ export function useAutomationDashboardView(options: {
   const { costState, setCostState } = useSubscriptionCostState();
 
   const [loading, setLoading] = useState(false);
-
-  const refresh = useCallback(async () => {
+  // Refreshes and exports can overlap (e.g. a table save and a bulk update), so loading only
+  // ends when the last of them finishes, not the first.
+  const runningLoadsRef = useRef(0);
+  const whileLoading = useCallback(async (work: () => Promise<unknown>) => {
+    runningLoadsRef.current += 1;
     setLoading(true);
     try {
-      await Promise.all([detailsResponse.refreshDetails(), mainTableView.refresh()]);
+      await work();
     } finally {
-      setLoading(false);
+      runningLoadsRef.current -= 1;
+      if (runningLoadsRef.current === 0) setLoading(false);
     }
-  }, [mainTableView, detailsResponse]);
+  }, []);
+
+  const refresh = useCallback(
+    () =>
+      whileLoading(() => Promise.all([detailsResponse.refreshDetails(), mainTableView.refresh()])),
+    [mainTableView, detailsResponse, whileLoading]
+  );
 
   const exportCsvBase = useExportCsv(toolbarFilters, filterState, QUERY_PARAMS);
 
   const exportCsv = useCallback(
-    async (reportType: ReportType) => {
-      setLoading(true);
-      try {
-        await exportCsvBase(reportType);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [exportCsvBase]
+    (reportType: ReportType) => whileLoading(() => exportCsvBase(reportType)),
+    [exportCsvBase, whileLoading]
   );
 
   // Compute whether filter state is default
