@@ -615,6 +615,26 @@ describe('AuthenticatorMappingForm triggers helpers', () => {
     });
   });
 
+  test('buildTriggers covers always and never triggers', () => {
+    expect(
+      buildTriggers({
+        map_type: AuthenticatorMapType.allow,
+        name: 'n',
+        revoke: false,
+        trigger: 'always',
+      } as never)
+    ).toEqual({ always: {} });
+
+    expect(
+      buildTriggers({
+        map_type: AuthenticatorMapType.allow,
+        name: 'n',
+        revoke: false,
+        trigger: 'never',
+      } as never)
+    ).toEqual({ never: {} });
+  });
+
   test('buildTriggers covers groups and attributes for mapping form', () => {
     expect(
       buildTriggers({

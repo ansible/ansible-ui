@@ -1,8 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { SwrTestWrapper } from '../../../../framework/test-utils/swrTestWrapper';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { PlatformAuthenticatorMappingDetailsInner } from './PlatformAuthenticatorMappingDetails';
+import { AuthenticatorMap, AuthenticatorMapType } from '../../../interfaces/AuthenticatorMap';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import mockAllowMapping from './authenticatorMappingAllowDetails.fixture.json';
 import mockOrgMapping from './authenticatorMappingOrgDetails.fixture.json';
@@ -11,6 +14,40 @@ import mockMappings from './authenticatorMappings.fixture.json';
 import mockSuperuserMapping from './authenticatorMappingSuperuserDetails.fixture.json';
 import mockTeamMapping from './authenticatorMappingTeamDetails.fixture.json';
 import { PlatformAuthenticatorMappingDetails } from './PlatformAuthenticatorMappingDetails';
+
+describe('PlatformAuthenticatorMappingDetailsInner', () => {
+  test('should show revoke option and groups labels when present', () => {
+    const mapping = {
+      id: 44,
+      name: 'revoke-mapping',
+      map_type: AuthenticatorMapType.allow,
+      order: 1,
+      revoke: true,
+      organization: '',
+      role: '',
+      team: '',
+      ui_summary: 'allow map',
+      triggers: { groups: { has_and: ['group-a', 'group-b'] } },
+      url: '',
+      created: '',
+      modified: '',
+      related: {},
+      authenticator: 1,
+      summary_fields: {} as AuthenticatorMap['summary_fields'],
+    } as AuthenticatorMap;
+
+    render(
+      <MemoryRouter>
+        <PlatformAuthenticatorMappingDetailsInner mapping={mapping} />
+      </MemoryRouter>,
+      { wrapper: SwrTestWrapper }
+    );
+
+    expect(screen.getByTestId('rule-name')).toHaveTextContent('revoke-mapping');
+    expect(screen.getByTestId('when-to-run-the-rule')).toHaveTextContent('Based on groups');
+    expect(screen.getByTestId('groups')).toBeInTheDocument();
+  });
+});
 
 describe('PlatformAuthenticatorMappingDetails for Team Mapping', () => {
   const server = setupServer(
@@ -23,6 +60,7 @@ describe('PlatformAuthenticatorMappingDetails for Team Mapping', () => {
   );
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+  afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
   test('should render details for team mapping with always trigger', async () => {

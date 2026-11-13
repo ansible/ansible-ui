@@ -110,6 +110,24 @@ describe('PlatformSelectRolesStep', () => {
     expect(screen.getByText('Select system-level roles to apply.')).toBeInTheDocument();
   });
 
+  it('should use the default resource description for unknown resource types', () => {
+    mockUsePageWizard.mockReturnValue({
+      wizardData: { resourceType: 'awx.unknown' },
+      setWizardData: vi.fn(),
+      stepData: {},
+      setStepData: vi.fn(),
+      activeStep: null,
+      steps: [],
+      visibleSteps: [],
+    } as unknown as ReturnType<typeof usePageWizard>);
+
+    render(<PlatformSelectRolesStep />);
+
+    expect(
+      screen.getByText('Select roles to apply to all of your selected resources.')
+    ).toBeInTheDocument();
+  });
+
   it('should display resource-specific description for non-system types', () => {
     mockUsePageWizard.mockReturnValue({
       wizardData: { resourceType: 'awx.jobtemplate' },

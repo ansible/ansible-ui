@@ -63,6 +63,24 @@ describe('PlatformAuthenticatorDetails', () => {
     expect(screen.getByText('Off')).toBeInTheDocument();
   });
 
+  it('displays name, type, and schema-backed configuration fields', async () => {
+    server.use(
+      http.get(gatewayAPI`/authenticators/1/`, () => {
+        return HttpResponse.json({
+          ...authenticators.results[1],
+          id: 1,
+        });
+      })
+    );
+
+    renderComponent();
+
+    expect(await screen.findByText('Dev Keycloak Container')).toBeInTheDocument();
+    expect(screen.getByText('Keycloak OIDC Key')).toBeInTheDocument();
+    expect(screen.getByText('gateway_oidc_client')).toBeInTheDocument();
+    expect(screen.getByText('Additional Authenticator Fields')).toBeInTheDocument();
+  });
+
   it('displays Off when all authenticator options are disabled', async () => {
     server.use(
       http.get(gatewayAPI`/authenticators/1/`, () => {

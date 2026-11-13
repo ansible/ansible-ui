@@ -1,8 +1,8 @@
-import { describe, expect, it, afterEach } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { getBuildApplicationName } from './applicationName';
 
-function setApplicationNameForTest(value: string) {
-  (import.meta.env as { APPLICATION_NAME: string }).APPLICATION_NAME = value;
+function setApplicationNameForTest(value: string | undefined) {
+  (import.meta.env as { APPLICATION_NAME?: string }).APPLICATION_NAME = value;
 }
 
 describe('getBuildApplicationName', () => {
@@ -14,6 +14,11 @@ describe('getBuildApplicationName', () => {
 
   it('should return empty string when APPLICATION_NAME is unset', () => {
     setApplicationNameForTest('');
+    expect(getBuildApplicationName()).toBe('');
+  });
+
+  it('should return empty string when APPLICATION_NAME is undefined', () => {
+    delete (import.meta.env as { APPLICATION_NAME?: string }).APPLICATION_NAME;
     expect(getBuildApplicationName()).toBe('');
   });
 
