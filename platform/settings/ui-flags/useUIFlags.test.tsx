@@ -21,4 +21,33 @@ describe('useUIFlags', () => {
 
     setFlags(getTranslatedUIFlags());
   });
+
+  test('persist merge keeps only known flags and applies stored enabled values', () => {
+    const merged = useUIFlags.persist.getOptions().merge?.(
+      {
+        flags: [
+          {
+            id: UIFlag.PersonaViewSwitcher,
+            name: 'Stored flag',
+            description: 'Stored',
+            enabled: true,
+            status: 'beta',
+          },
+          {
+            id: 'removed-flag',
+            name: 'Removed',
+            description: 'Removed',
+            enabled: true,
+            status: 'alpha',
+          },
+        ],
+      },
+      useUIFlags.getState()
+    );
+
+    expect(merged?.flags).toHaveLength(1);
+    expect(merged?.flags[0].enabled).toBe(true);
+    expect(merged?.flags[0].id).toBe(UIFlag.PersonaViewSwitcher);
+    expect(merged?.flags[0].name).toBe('Stored flag');
+  });
 });

@@ -94,9 +94,9 @@ describe('PlatformSelectRolesStep', () => {
     expect(capturedQueryParams).not.toHaveProperty('content_type__isnull');
   });
 
-  it('should display system-level description when resourceType is system', () => {
+  function mockWizardResourceType(resourceType: string) {
     mockUsePageWizard.mockReturnValue({
-      wizardData: { resourceType: 'system' },
+      wizardData: { resourceType },
       setWizardData: vi.fn(),
       stepData: {},
       setStepData: vi.fn(),
@@ -104,27 +104,22 @@ describe('PlatformSelectRolesStep', () => {
       steps: [],
       visibleSteps: [],
     } as unknown as ReturnType<typeof usePageWizard>);
+  }
 
-    render(<PlatformSelectRolesStep />);
-
-    expect(screen.getByText('Select system-level roles to apply.')).toBeInTheDocument();
-  });
-
-  it('should display resource-specific description for non-system types', () => {
-    mockUsePageWizard.mockReturnValue({
-      wizardData: { resourceType: 'awx.jobtemplate' },
-      setWizardData: vi.fn(),
-      stepData: {},
-      setStepData: vi.fn(),
-      activeStep: null,
-      steps: [],
-      visibleSteps: [],
-    } as unknown as ReturnType<typeof usePageWizard>);
-
-    render(<PlatformSelectRolesStep />);
-
-    expect(
-      screen.getByText('Select roles to apply to all of your selected job templates.')
-    ).toBeInTheDocument();
-  });
+  it.each([
+    ['system', 'Select system-level roles to apply.'],
+    ['awx.unknown', 'Select roles to apply to all of your selected resources.'],
+    ['awx.jobtemplate', 'Select roles to apply to all of your selected job templates.'],
+    ['awx.project', 'Select roles to apply to all of your selected projects.'],
+    ['awx.credential', 'Select roles to apply to all of your selected credentials.'],
+    ['eda.activation', 'Select roles to apply to all of your selected rulebook activations.'],
+    ['galaxy.namespace', 'Select roles to apply to all of your selected namespaces.'],
+  ] as const)(
+    'should display role selection description for resourceType %s',
+    (resourceType, expectedDescription) => {
+      mockWizardResourceType(resourceType);
+      render(<PlatformSelectRolesStep />);
+      expect(screen.getByText(expectedDescription)).toBeInTheDocument();
+    }
+  );
 });

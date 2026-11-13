@@ -85,4 +85,15 @@ describe('OrganizationInstanceGroupsOrderStep', () => {
     ) => Record<string, unknown>;
     expect(updater({})).toEqual({ mapping: { mappings: [igB, igA] } });
   });
+
+  it('renders with no instance groups when wizard data is empty', () => {
+    wizardState.wizardData = {};
+    wizardState.setWizardData = vi.fn();
+    wizardState.setStepData = vi.fn();
+
+    render(<OrganizationInstanceGroupsOrderStep />);
+
+    expect(screen.getByText('Manage instance groups order')).toBeInTheDocument();
+    expect(screen.queryByTestId('row-Group A')).not.toBeInTheDocument();
+  });
 });

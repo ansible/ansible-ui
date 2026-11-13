@@ -16,6 +16,12 @@ const mockGetPageUrl = vi.fn((route: PlatformRoute, options?: { params?: { id: n
   if (route === PlatformRoute.UserDetails) {
     return `/access/users/${options?.params?.id}/details`;
   }
+  if (route === PlatformRoute.OrganizationDetails) {
+    return `/access/organizations/${options?.params?.id}/details`;
+  }
+  if (route === PlatformRoute.TeamDetails) {
+    return `/access/teams/${options?.params?.id}/details`;
+  }
   return '/fallback';
 });
 
@@ -107,6 +113,72 @@ describe('PlatformResource', () => {
     });
     expect(mockGetPageUrl).toHaveBeenCalledWith(PlatformRoute.UserDetails, {
       params: { id: 42 },
+    });
+  });
+
+  test('should navigate to the organization details route for a shared organization resource', async () => {
+    server.use(
+      http.get(
+        ({ request }) => {
+          const url = new URL(request.url);
+          return (
+            url.pathname.endsWith('/organizations/') &&
+            url.searchParams.get('resource__ansible_id') === 'org-id'
+          );
+        },
+        () => HttpResponse.json({ count: 1, results: [{ id: 9 }] })
+      )
+    );
+
+    render(<PlatformResource />, {
+      wrapper: ({ children }) => (
+        <MemoryRouter initialEntries={['/resources/shared.organization/org-id']}>
+          <Routes>
+            <Route path="/resources/:resource_type/:ansible_id" element={children} />
+            <Route
+              path="/access/organizations/:id/details"
+              element={<div>Organization details</div>}
+            />
+          </Routes>
+        </MemoryRouter>
+      ),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Organization details')).toBeInTheDocument();
+    });
+    expect(mockGetPageUrl).toHaveBeenCalledWith(PlatformRoute.OrganizationDetails, {
+      params: { id: 9 },
+    });
+  });
+
+  test('should render not found when multiple gateway matches are returned', async () => {
+    server.use(
+      http.get(
+        ({ request }) => isGatewayUserLookup(request),
+        () => HttpResponse.json({ count: 2, results: [{ id: 1 }, { id: 2 }] })
+      )
+    );
+    render(<PlatformResource />, { wrapper });
+
+    await waitFor(() => {
+      expect(screen.getByText('Resource Not Found')).toBeInTheDocument();
+    });
+  });
+
+  test('should render not found for an unsupported resource type', async () => {
+    render(<PlatformResource />, {
+      wrapper: ({ children }) => (
+        <MemoryRouter initialEntries={['/resources/unknown.type/ansible-id']}>
+          <Routes>
+            <Route path="/resources/:resource_type/:ansible_id" element={children} />
+          </Routes>
+        </MemoryRouter>
+      ),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Resource Not Found')).toBeInTheDocument();
     });
   });
 });
