@@ -176,8 +176,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
             ...survey,
           });
         }
-
-        if (jobType === 'workflow_job_templates') {
+        if (config.survey_enabled && jobType === 'workflow_job_templates') {
           const extraVarsObj = prompt?.extra_vars
             ? (JSON.parse(yamlToJson(prompt?.extra_vars)) as object)
             : {};
