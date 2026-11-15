@@ -20,7 +20,7 @@ export function usePostAccessories() {
           >
         >
     ) => {
-      if (payload?.credentials?.length) {
+      if (payload.credentials !== undefined) {
         await processCredentials(schedule.id, payload.credentials, payload.launch_config);
       }
       if (payload.instance_groups) {
