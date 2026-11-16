@@ -41,7 +41,7 @@ function wrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
-function testJob(overrides: unknown = {}): UnifiedJob {
+function testJob(overrides: Partial<UnifiedJob> = {}): UnifiedJob {
   return {
     id: 42,
     name: 'Test job',
@@ -52,12 +52,14 @@ function testJob(overrides: unknown = {}): UnifiedJob {
     finished: '2025-01-01T10:05:00.000000Z',
     launch_type: 'manual',
     summary_fields: {},
-    ...(overrides as Partial<UnifiedJob>),
+    ...overrides,
   } as UnifiedJob;
 }
 
 function credentialsColumn(columns: ITableColumn<UnifiedJob>[]) {
-  const column = columns.find((c) => c.header === 'Credentials');
+  const column = columns.find(
+    (c) => c.helpText === 'Credential(s) used to access the nodes this job will be ran against.'
+  );
   if (!column) {
     throw new Error('Credentials column not found');
   }
@@ -89,8 +91,22 @@ describe('useJobsColumns credentials', () => {
     const job = testJob({
       summary_fields: {
         credentials: [
-          { id: 1, name: 'Machine Cred', description: '', kind: 'ssh', cloud: false, kubernetes: false },
-          { id: 2, name: 'Vault Cred', description: '', kind: 'vault', cloud: false, kubernetes: false },
+          {
+            id: 1,
+            name: 'Machine Cred',
+            description: '',
+            kind: 'ssh',
+            cloud: false,
+            kubernetes: false,
+          },
+          {
+            id: 2,
+            name: 'Vault Cred',
+            description: '',
+            kind: 'vault',
+            cloud: false,
+            kubernetes: false,
+          },
         ],
       },
     });
@@ -121,6 +137,29 @@ describe('useJobsColumns credentials', () => {
     expect(columnValue(column, job)).toBe(1);
     render(<MemoryRouter>{columnCellNode(column, job)}</MemoryRouter>);
     expect(screen.getByText(/Ad Hoc Cred/)).toBeInTheDocument();
+  });
+
+  test('falls back to singular credential when credentials array is empty', () => {
+    const { result } = renderHook(() => useJobsColumns(), { wrapper });
+    const column = credentialsColumn(result.current);
+    const job = testJob({
+      type: 'ad_hoc_command',
+      summary_fields: {
+        credentials: [],
+        credential: {
+          id: 11,
+          name: 'Empty Array Fallback Cred',
+          description: '',
+          kind: 'ssh',
+          cloud: false,
+          kubernetes: false,
+        },
+      },
+    });
+
+    expect(columnValue(column, job)).toBe(1);
+    render(<MemoryRouter>{columnCellNode(column, job)}</MemoryRouter>);
+    expect(screen.getByText(/Empty Array Fallback Cred/)).toBeInTheDocument();
   });
 
   test('returns no credential value when neither field is set', () => {
