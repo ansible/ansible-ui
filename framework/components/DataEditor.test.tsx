@@ -24,6 +24,7 @@ const editorInstance = vi.hoisted(() => ({
     __focus: () => void;
     __blur: () => void;
     updateOptions: ReturnType<typeof vi.fn>;
+    setValue: ReturnType<typeof vi.fn>;
     addAction: ReturnType<typeof vi.fn>;
     dispose: ReturnType<typeof vi.fn>;
     __triggerChange: () => void;
