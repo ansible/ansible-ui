@@ -106,6 +106,7 @@ jobs:
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          sign-commits: true
           base: devel
           branch: visual-regression/weekly-refresh
           delete-branch: true
@@ -118,4 +119,9 @@ jobs:
             - Full `tests/visual` suite ran serially against the built platform UI image and deterministic mock API.
             - Baseline coverage was validated by `visual:check-baselines`.
             - This workflow is scheduled weekly and can also be run manually.
+
+            ## Risk Analysis - REQUIRED
+            - [ ] **High** — Broad platform impact
+            - [ ] **Medium** — Shared test infrastructure changes
+            - [x] **Low** — Linux screenshot baseline updates only
           labels: visual-regression
