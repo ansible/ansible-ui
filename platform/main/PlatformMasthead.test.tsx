@@ -77,8 +77,15 @@ vi.mock('./PlatformActiveUserProvider', () => ({
   }),
 }));
 
+const mockUseIsManagedCloudInstall = vi.hoisted(() => vi.fn(() => false));
+const mockPostRequest = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+
 vi.mock('./GatewayUIAuth', () => ({
-  useIsManagedCloudInstall: () => false,
+  useIsManagedCloudInstall: mockUseIsManagedCloudInstall,
+}));
+
+vi.mock('@ansible/common-ui/crud/Data', () => ({
+  postRequest: mockPostRequest,
 }));
 
 function mountMasthead(settings?: IPageSettings) {
@@ -172,6 +179,29 @@ describe('PlatformMasthead help menu', () => {
 
     await user.keyboard('{Escape}');
     expect(helpToggle).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('should hide quick starts on managed cloud installs', async () => {
+    const user = userEvent.setup();
+    mockUseIsManagedCloudInstall.mockReturnValue(true);
+    mountMasthead();
+
+    await user.click(getHelpMenuToggle());
+    expect(screen.queryByTestId('masthead-quickstarts')).not.toBeInTheDocument();
+    mockUseIsManagedCloudInstall.mockReturnValue(false);
+  });
+
+  it('should log out through the account menu and return to login', async () => {
+    const user = userEvent.setup();
+    mountMasthead();
+
+    await user.click(screen.getByRole('button', { name: 'admin' }));
+    await user.click(screen.getByRole('menuitem', { name: 'Logout' }));
+
+    await vi.waitFor(() => {
+      expect(mockPostRequest).toHaveBeenCalled();
+    });
+    expect(mockPageNavigate).toHaveBeenCalledWith(PlatformRoute.Login);
   });
 
   it('should keep help menu usable when only small breakpoints resolve', async () => {

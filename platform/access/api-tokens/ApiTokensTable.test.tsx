@@ -2,10 +2,24 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Token } from '../../interfaces/Token';
 import { gatewayAPI } from '../../utils/gateway-api-utils';
 import { ApiTokensTable } from './ApiTokensTable';
+
+const mockUsePlatformActiveUser = vi.hoisted(() =>
+  vi.fn(() => ({
+    activePlatformUser: {
+      id: 1,
+      is_superuser: true,
+      is_platform_auditor: false,
+    },
+  }))
+);
+
+vi.mock('../../main/PlatformActiveUserProvider', () => ({
+  usePlatformActiveUser: () => mockUsePlatformActiveUser(),
+}));
 
 describe('ApiTokensTable', () => {
   const mockTokens: { results: Token[]; count: number } = {
@@ -77,13 +91,20 @@ describe('ApiTokensTable', () => {
 
   beforeEach(() => {
     server.resetHandlers();
+    mockUsePlatformActiveUser.mockReturnValue({
+      activePlatformUser: {
+        id: 1,
+        is_superuser: true,
+        is_platform_auditor: false,
+      },
+    });
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  test('should render the PageTable with correct props', async () => {
+  it('should render the PageTable with correct props', async () => {
     render(
       <MemoryRouter initialEntries={['/access/api-tokens']}>
         <Routes>
@@ -99,7 +120,7 @@ describe('ApiTokensTable', () => {
     });
   });
 
-  test('should render with user-specific tokens when id param is provided', async () => {
+  it('should render with user-specific tokens when id param is provided', async () => {
     render(
       <MemoryRouter initialEntries={['/access/users/1/api-tokens']}>
         <Routes>
@@ -115,7 +136,7 @@ describe('ApiTokensTable', () => {
     });
   });
 
-  test('should display empty state when no tokens exist', async () => {
+  it('should display empty state when no tokens exist', async () => {
     server.use(
       http.get(gatewayAPI`/tokens/`, () => {
         return HttpResponse.json({ results: [], count: 0 });
@@ -139,7 +160,7 @@ describe('ApiTokensTable', () => {
     });
   });
 
-  test('should display error state when API call fails', async () => {
+  it('should display error state when API call fails', async () => {
     server.use(
       http.get(gatewayAPI`/tokens/`, () => {
         return HttpResponse.error();
@@ -163,7 +184,7 @@ describe('ApiTokensTable', () => {
     });
   });
 
-  test('should have correct table configuration', async () => {
+  it('should have correct table configuration', async () => {
     render(
       <MemoryRouter initialEntries={['/access/api-tokens']}>
         <Routes>
@@ -179,4 +200,73 @@ describe('ApiTokensTable', () => {
       expect(table).toHaveClass('pf-v6-c-table');
     });
   });
+
+  it('should render token rows after data loads', async () => {
+    render(
+      <MemoryRouter initialEntries={['/access/api-tokens']}>
+        <Routes>
+          <Route path="/access/api-tokens" element={<ApiTokensTable />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Test token description')).toBeInTheDocument();
+      expect(screen.getByText('Another test token')).toBeInTheDocument();
+    });
+  });
+
+  it('should filter by application when opened from application tokens tab', async () => {
+    let capturedUrl = '';
+    server.use(
+      http.get(gatewayAPI`/tokens/`, ({ request }) => {
+        capturedUrl = request.url;
+        return HttpResponse.json(mockTokens);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/applications/3/tokens']}>
+        <Routes>
+          <Route path="/access/applications/:applicationId/tokens" element={<ApiTokensTable />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('grid')).toBeInTheDocument();
+      expect(new URL(capturedUrl).searchParams.get('application')).toBe('3');
+    });
+  });
+
+  it.each([
+    ['superuser', { id: 99, is_superuser: true, is_platform_auditor: false }, null],
+    ['platform auditor', { id: 99, is_superuser: false, is_platform_auditor: true }, null],
+    ['regular user', { id: 42, is_superuser: false, is_platform_auditor: false }, '42'],
+  ] as const)(
+    'should scope global token list for %s',
+    async (_role, activeUser, expectedUserQuery) => {
+      let capturedUrl = '';
+      server.use(
+        http.get(gatewayAPI`/tokens/`, ({ request }) => {
+          capturedUrl = request.url;
+          return HttpResponse.json(mockTokens);
+        })
+      );
+      mockUsePlatformActiveUser.mockReturnValue({ activePlatformUser: activeUser });
+
+      render(
+        <MemoryRouter initialEntries={['/access/api-tokens']}>
+          <Routes>
+            <Route path="/access/api-tokens" element={<ApiTokensTable />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByRole('grid')).toBeInTheDocument();
+        expect(new URL(capturedUrl).searchParams.get('user')).toBe(expectedUserQuery);
+      });
+    }
+  );
 });

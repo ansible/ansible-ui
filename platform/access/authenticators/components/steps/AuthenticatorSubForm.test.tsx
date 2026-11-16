@@ -219,6 +219,37 @@ describe('AuthenticatorSubForm — camelCase patternDescription integration', ()
   }, 15000);
 });
 
+const PLUGINS_WITH_BOOLEAN: AuthenticatorPlugins = {
+  authenticators: [
+    {
+      type: AuthenticatorTypeEnum.Keycloak,
+      configuration_schema: [
+        {
+          name: 'VERIFY_SSL',
+          help_text: 'Verify SSL',
+          required: false,
+          default: true,
+          type: 'BooleanField',
+          ui_field_label: 'Verify SSL',
+        },
+      ],
+      documentation_url: '',
+    },
+  ],
+};
+
+describe('AuthenticatorSubForm — boolean configuration fields', () => {
+  test('renders a BooleanField checkbox', () => {
+    render(
+      <SubFormTestWrapper onSubmit={vi.fn()}>
+        <AuthenticatorSubForm plugins={PLUGINS_WITH_BOOLEAN} />
+      </SubFormTestWrapper>
+    );
+
+    expect(screen.getByRole('checkbox', { name: 'Verify SSL' })).toBeInTheDocument();
+  });
+});
+
 describe('AuthenticatorSubForm — integer configuration fields', () => {
   test('renders an IntegerField as an editable number input', () => {
     render(

@@ -210,4 +210,50 @@ describe('PlatformOrganizationManageUserRoles', () => {
       expect(adminCheckbox).toBeChecked();
     }
   });
+
+  test('should expose save and cancel actions on the roles form', async () => {
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/users/10/manage-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/users/:userId/manage-roles"
+            element={<PlatformOrganizationManageUserRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Save roles' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+  });
+
+  test('should handle empty initial role assignments', async () => {
+    server.use(
+      http.get(gatewayAPI`/role_user_assignments/`, () =>
+        HttpResponse.json(mockEmptyRoleAssignments)
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/users/10/manage-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/users/:userId/manage-roles"
+            element={<PlatformOrganizationManageUserRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Selected roles')).toBeInTheDocument();
+      expect(screen.getByText('Organization Admin')).toBeInTheDocument();
+    });
+
+    const memberRoleRow = screen.getByTestId('row-id-2');
+    const checkbox = memberRoleRow.querySelector('input[type="checkbox"]');
+    expect(checkbox).not.toBeChecked();
+  });
 });

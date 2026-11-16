@@ -154,4 +154,65 @@ describe('GatewaySettingsDetails Component', () => {
       expect(editButton).not.toBeInTheDocument();
     });
   });
+
+  it('should render string, number, boolean, list, and custom logo setting values', () => {
+    mockUseGatewaySettingsCategories.mockReturnValue([
+      {
+        id: 'test-category',
+        title: 'Test Category',
+        description: 'Test category description',
+        sections: [
+          {
+            title: 'Values',
+            options: {
+              string_option: { type: 'string', label: 'String Option', help_text: 'String help' },
+              number_option: { type: 'integer', label: 'Number Option', help_text: 'Number help' },
+              bool_option: { type: 'boolean', label: 'Boolean Option', help_text: 'Bool help' },
+              list_option: { type: 'list', label: 'List Option', help_text: 'List help' },
+              custom_logo: { type: 'string', label: 'Custom logo', help_text: 'Logo help' },
+            },
+          },
+        ],
+      },
+    ]);
+
+    const detailedContext = {
+      ...mockContext,
+      options: {
+        GET: {
+          string_option: { type: 'string', label: 'String Option', help_text: 'String help' },
+          number_option: { type: 'integer', label: 'Number Option', help_text: 'Number help' },
+          bool_option: { type: 'boolean', label: 'Boolean Option', help_text: 'Bool help' },
+          list_option: { type: 'list', label: 'List Option', help_text: 'List help' },
+          custom_logo: { type: 'string', label: 'Custom logo', help_text: 'Logo help' },
+        },
+        PUT: mockContext.options.PUT,
+      },
+      settings: {
+        string_option: 'alpha',
+        number_option: 42,
+        bool_option: false,
+        list_option: ['https://one.example', 'https://two.example'],
+        custom_logo: 'https://example.com/logo.png',
+      },
+    };
+
+    renderWithContext(detailedContext);
+
+    expect(screen.getByText('alpha')).toBeInTheDocument();
+    expect(screen.getByText('42')).toBeInTheDocument();
+    expect(screen.getByText('Disabled')).toBeInTheDocument();
+    expect(screen.getByText('https://one.example')).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Custom logo' })).toHaveAttribute(
+      'src',
+      'https://example.com/logo.png'
+    );
+  });
+
+  it('should return nothing when the category id is unknown', () => {
+    mockUseGatewaySettingsCategories.mockReturnValue([]);
+    const { container } = renderWithContext();
+
+    expect(container).toBeEmptyDOMElement();
+  });
 });

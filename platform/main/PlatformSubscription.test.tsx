@@ -102,4 +102,26 @@ describe('PlatformSubscription', () => {
 
     expect(screen.getByText('Content')).toBeInTheDocument();
   });
+
+  it('shows a loading state while AWX service availability is unknown', () => {
+    mockUseHasAwxService.mockReturnValue(undefined);
+
+    render(<PlatformSubscription>Content</PlatformSubscription>);
+
+    expect(screen.getByText('Loading')).toBeInTheDocument();
+    expect(screen.queryByText('Content')).not.toBeInTheDocument();
+  });
+
+  it('shows a loading state while AWX config is still loading', () => {
+    mockUseAwxConfigState.mockReturnValue({
+      awxConfig: undefined,
+      awxConfigError: undefined,
+      serviceDown: false,
+      refreshAwxConfig: mockRefreshAwxConfig,
+    });
+
+    render(<PlatformSubscription>Content</PlatformSubscription>);
+
+    expect(screen.getByText('Loading')).toBeInTheDocument();
+  });
 });

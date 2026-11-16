@@ -40,6 +40,15 @@ vi.mock('@ansible/common-ui/crud/useGet', () => ({
 }));
 
 describe('useAuthenticatorsColumns', () => {
+  it('includes order and name columns with expected headers', () => {
+    const { result } = renderHook(() => useAuthenticatorsColumns());
+    expect(result.current.map((column) => column.header)).toEqual(
+      expect.arrayContaining(['Order', 'Name', 'Authentication type', 'Created', 'Modified'])
+    );
+    const orderColumn = result.current.find((column) => column.header === 'Order');
+    expect(orderColumn?.value?.({ order: 3 } as unknown as Authenticator)).toBe(3);
+  });
+
   it('resolves authentication type labels from plugin display_name when present', () => {
     const { result } = renderHook(() => useAuthenticatorsColumns());
     const typeColumn = result.current.find((column) => column.header === 'Authentication type');

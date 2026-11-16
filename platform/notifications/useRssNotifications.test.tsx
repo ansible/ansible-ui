@@ -11,11 +11,13 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 vi.mock('@ansible/common-ui/crud/useGet');
 vi.mock('swr');
 vi.mock('@ansible/ansible-ui-framework/PageNotifications/usePageNotifications');
+vi.mock('../main/PlatformActiveUserProvider');
 vi.mock('./parseAtomFeedXml');
 
 import { usePageNotifications } from '@ansible/ansible-ui-framework/PageNotifications/usePageNotifications';
 import { useGet } from '@ansible/common-ui/crud/useGet';
 import useSWR from 'swr';
+import { usePlatformActiveUser } from '../main/PlatformActiveUserProvider';
 import { parseAtomFeedXml } from './parseAtomFeedXml';
 import { useRssNotifications } from './useRssNotifications';
 
@@ -60,6 +62,67 @@ describe('useRssNotifications', () => {
     vi.mocked(usePageNotifications).mockReturnValue({
       setNotificationGroups: mockSetNotificationGroups,
     });
+    vi.mocked(usePlatformActiveUser).mockReturnValue({
+      activePlatformUser: { is_superuser: true } as ReturnType<
+        typeof usePlatformActiveUser
+      >['activePlatformUser'],
+      refreshActivePlatformUser: vi.fn(),
+    });
+  });
+
+  test('should not request gateway settings when the active user is not a superuser', () => {
+    vi.mocked(usePlatformActiveUser).mockReturnValue({
+      activePlatformUser: { is_superuser: false } as ReturnType<
+        typeof usePlatformActiveUser
+      >['activePlatformUser'],
+      refreshActivePlatformUser: vi.fn(),
+    });
+    setupGatewaySettings({ feedUrl: 'https://example.com/feed.xml' });
+    setupSWRMock();
+
+    renderHook(() => useRssNotifications());
+
+    expect(useGet).toHaveBeenCalledWith(undefined, undefined, expect.any(Object));
+  });
+
+  test('should remove product notifications when the feed is disabled', async () => {
+    setupGatewaySettings({
+      feedUrl: 'https://example.com/feed.xml',
+      feedEnabled: false,
+    });
+    setupSWRMock();
+
+    renderHook(() => useRssNotifications());
+
+    await vi.waitFor(() => {
+      expect(mockSetNotificationGroups).toHaveBeenCalled();
+    });
+
+    const updater = mockSetNotificationGroups.mock.calls.at(-1)?.[0] as (groups: object) => object;
+    const updated = updater({ 'Product Notifications': { title: 'Product Notifications' } });
+
+    expect(updated).not.toHaveProperty('Product Notifications');
+  });
+
+  test('should remove product notifications when gateway settings fail to load', async () => {
+    vi.mocked(useGet).mockReturnValue({
+      data: undefined,
+      error: new Error('Forbidden'),
+      refresh: () => undefined,
+      isLoading: false,
+    });
+    setupSWRMock();
+
+    renderHook(() => useRssNotifications());
+
+    await vi.waitFor(() => {
+      expect(mockSetNotificationGroups).toHaveBeenCalled();
+    });
+
+    const updater = mockSetNotificationGroups.mock.calls.at(-1)?.[0] as (groups: object) => object;
+    expect(
+      updater({ 'Product Notifications': { title: 'Product Notifications' } })
+    ).not.toHaveProperty('Product Notifications');
   });
 
   test('should not fetch RSS when disabled', () => {

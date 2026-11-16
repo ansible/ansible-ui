@@ -35,4 +35,15 @@ describe('useHubResource', () => {
     });
     expect(result.current.resource).toEqual({ id: 3, name: 'hub-team' });
   });
+
+  test('should return undefined when hub returns no matches', async () => {
+    server.use(http.get(hubAPI`/teams/`, () => HttpResponse.json({ count: 0, results: [] })));
+
+    const { result } = renderHook(() => useHubResource<{ id: number }>('teams', platformResource));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+    expect(result.current.resource).toBeUndefined();
+  });
 });
