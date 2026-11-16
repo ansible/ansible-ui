@@ -98,6 +98,8 @@ describe('ScmTypeOptions', () => {
     );
 
     expect(screen.getByText('Update Galaxy cache on launch')).toBeInTheDocument();
-    expect(screen.getByRole('checkbox', { name: /Update Galaxy cache on launch/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('checkbox', { name: /Update Galaxy cache on launch/i })
+    ).toBeInTheDocument();
   });
 });
