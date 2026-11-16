@@ -119,4 +119,30 @@ describe('useCredentialsValidate', () => {
     const message = await result.current([first, second]);
     expect(message).toBeUndefined();
   });
+
+  it('ignores vault credentials without a vault id', async () => {
+    const credential = buildCredential({
+      id: 1,
+      name: 'vault',
+      kind: 'vault',
+      inputs: {},
+      summary_fields: { credential_type: { name: 'Vault', id: 2 } },
+    });
+    const { result } = renderHook(() => useCredentialsValidate());
+
+    await expect(result.current([credential])).resolves.toBeUndefined();
+  });
+
+  it('accepts a vault credential with a vault id', async () => {
+    const credential = buildCredential({
+      id: 1,
+      name: 'vault',
+      kind: 'vault',
+      inputs: { vault_id: 'vault-1' },
+      summary_fields: { credential_type: { name: 'Vault', id: 2 } },
+    });
+    const { result } = renderHook(() => useCredentialsValidate());
+
+    await expect(result.current([credential])).resolves.toBeUndefined();
+  });
 });
