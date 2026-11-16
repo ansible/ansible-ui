@@ -37,7 +37,8 @@ vi.mock('./GatewayServices', async () => {
   return {
     ...actual,
     GatewayServicesProvider: ({ children }: { children: React.ReactNode }) => children,
-    useHasAwxService: (...args: unknown[]): boolean => mockUseHasAwxService(...args),
+    useHasAwxService: (ignoreServiceDown?: boolean): boolean =>
+      mockUseHasAwxService(ignoreServiceDown),
     useHasEdaService: (): boolean => mockUseHasEdaService(),
     useHasHubService: (): boolean => mockUseHasHubService(),
   };
