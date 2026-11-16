@@ -67,6 +67,9 @@ export function InventoryHosts() {
         toolbarActions={toolbarActions}
         tableColumns={tableColumns}
         rowActions={rowActions}
+        // Constructed inventories have no Multiple toolbar actions (no delete), so PageTable
+        // would omit checkboxes; force selection so Run command can target specific hosts.
+        showSelect={params.inventory_type === 'constructed_inventory'}
         errorStateTitle={t('Error loading inventory hosts')}
         emptyState={
           canCreateHost ? (

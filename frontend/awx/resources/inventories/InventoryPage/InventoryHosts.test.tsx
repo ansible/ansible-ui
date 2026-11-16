@@ -2,9 +2,19 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
 import { InventoryHosts } from './InventoryHosts';
+
+// Node may expose experimental localStorage as unavailable; mock for useView perPage.
+globalThis.localStorage = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+  length: 0,
+  key: vi.fn(),
+} as Storage;
 
 const mockHostOptionsWithPost = {
   actions: {
@@ -28,6 +38,50 @@ const mockEmptyHostsResponse = {
   results: [],
 };
 
+const mockHostsResponse = {
+  count: 2,
+  next: null,
+  previous: null,
+  results: [
+    {
+      id: 1,
+      name: 'constructed-host-1',
+      description: '',
+      enabled: true,
+      inventory: 1,
+      created: '2025-01-01T00:00:00.000000Z',
+      modified: '2025-01-01T00:00:00.000000Z',
+      summary_fields: {
+        inventory: { id: 1, name: 'Constructed', kind: 'constructed', description: '' },
+        user_capabilities: { edit: false, delete: false },
+      },
+    },
+    {
+      id: 2,
+      name: 'constructed-host-2',
+      description: '',
+      enabled: true,
+      inventory: 1,
+      created: '2025-01-01T00:00:00.000000Z',
+      modified: '2025-01-01T00:00:00.000000Z',
+      summary_fields: {
+        inventory: { id: 1, name: 'Constructed', kind: 'constructed', description: '' },
+        user_capabilities: { edit: false, delete: false },
+      },
+    },
+  ],
+};
+
+function renderInventoryHosts(inventoryType: string) {
+  return render(
+    <MemoryRouter initialEntries={[`/inventories/1/${inventoryType}/hosts`]}>
+      <Routes>
+        <Route path="/inventories/:id/:inventory_type/hosts" element={<InventoryHosts />} />
+      </Routes>
+    </MemoryRouter>
+  );
+}
+
 describe('InventoryHosts Component Button Visibility', () => {
   const server = setupServer(
     http.options(awxAPI`/hosts/`, () => {
@@ -37,7 +91,7 @@ describe('InventoryHosts Component Button Visibility', () => {
       return HttpResponse.json(mockEmptyHostsResponse);
     }),
     http.options(awxAPI`/inventories/:id/ad_hoc_commands/`, () => {
-      return HttpResponse.json({});
+      return HttpResponse.json({ actions: { POST: {} } });
     })
   );
 
@@ -46,13 +100,7 @@ describe('InventoryHosts Component Button Visibility', () => {
   afterAll(() => server.close());
 
   test('should show Create host button for regular inventory with POST permission', async () => {
-    render(
-      <MemoryRouter initialEntries={['/inventories/1/inventory/hosts']}>
-        <Routes>
-          <Route path="/inventories/:id/:inventory_type/hosts" element={<InventoryHosts />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderInventoryHosts('inventory');
 
     await waitFor(() => {
       expect(screen.getByText('No hosts are assigned to this inventory.')).toBeInTheDocument();
@@ -61,13 +109,7 @@ describe('InventoryHosts Component Button Visibility', () => {
   });
 
   test('should not show Create host button for smart_inventory', async () => {
-    render(
-      <MemoryRouter initialEntries={['/inventories/1/smart_inventory/hosts']}>
-        <Routes>
-          <Route path="/inventories/:id/:inventory_type/hosts" element={<InventoryHosts />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderInventoryHosts('smart_inventory');
 
     await waitFor(() => {
       expect(screen.getByText('No hosts found')).toBeInTheDocument();
@@ -76,13 +118,7 @@ describe('InventoryHosts Component Button Visibility', () => {
   });
 
   test('should not show Create host button for constructed_inventory', async () => {
-    render(
-      <MemoryRouter initialEntries={['/inventories/1/constructed_inventory/hosts']}>
-        <Routes>
-          <Route path="/inventories/:id/:inventory_type/hosts" element={<InventoryHosts />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderInventoryHosts('constructed_inventory');
 
     await waitFor(() => {
       expect(screen.getByText('No hosts found')).toBeInTheDocument();
@@ -97,17 +133,28 @@ describe('InventoryHosts Component Button Visibility', () => {
       })
     );
 
-    render(
-      <MemoryRouter initialEntries={['/inventories/1/inventory/hosts']}>
-        <Routes>
-          <Route path="/inventories/:id/:inventory_type/hosts" element={<InventoryHosts />} />
-        </Routes>
-      </MemoryRouter>
-    );
+    renderInventoryHosts('inventory');
 
     await waitFor(() => {
       expect(screen.getByText('You do not have permission to create a host.')).toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /Create host/i })).not.toBeInTheDocument();
     });
+  });
+
+  test('should show host selection checkboxes for constructed_inventory (AAP-93628)', async () => {
+    server.use(
+      http.get(awxAPI`/inventories/:id/hosts/`, () => {
+        return HttpResponse.json(mockHostsResponse);
+      })
+    );
+
+    renderInventoryHosts('constructed_inventory');
+
+    await waitFor(() => {
+      expect(screen.getByText('constructed-host-1')).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId('selections-column-header')).toBeInTheDocument();
+    expect(screen.getAllByTestId('checkbox-column-cell')).toHaveLength(2);
   });
 });
