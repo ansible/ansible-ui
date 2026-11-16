@@ -44,6 +44,7 @@ vi.mock('./components', async () => {
       value,
       valueSuffix,
       linkText,
+      to,
       width,
     }: DashboardValueCardProps) => (
       <div data-testid={id} data-width={width}>
@@ -52,7 +53,7 @@ vi.mock('./components', async () => {
           {typeof value === 'number' ? value.toLocaleString(DEFAULT_NUMBER_LOCALE) : value}
           {valueSuffix ? ` ${valueSuffix}` : ''}
         </span>
-        {linkText && <span>{linkText}</span>}
+        {linkText && (to ? <a href={to}>{linkText}</a> : <span>{linkText}</span>)}
       </div>
     ),
     DashboardChartCard: ({ id, title, width }: DashboardChartCardProps) => (
@@ -102,6 +103,7 @@ vi.mock('./common/useAutomationDashboardToolbarActions', async (importOriginal) 
 });
 
 vi.mock('./views/useAutomationDashboardView', () => ({
+  QUERY_PARAMS: { tz: 'UTC' },
   useAutomationDashboardView: vi.fn(() => mockView),
 }));
 
@@ -389,6 +391,44 @@ describe('AutomationDashboard', () => {
     render(testWrapper());
     expect(screen.getByTestId('top-projects-card')).toBeInTheDocument();
     expect(screen.getByTestId('top-users-card')).toBeInTheDocument();
+  });
+
+  test('should preserve dashboard filters in Controller job links', () => {
+    vi.mocked(useAutomationDashboardView).mockReturnValueOnce({
+      ...mockView,
+      mainTableView: {
+        ...mockMainTableView,
+        filterState: {
+          period: ['custom', '2026-11-01', '2026-11-02'],
+          label: ['11'],
+          organization: ['21'],
+          template: ['31'],
+          project: ['41'],
+        },
+      },
+    });
+
+    render(testWrapper());
+
+    const successfulJobsUrl = new URL(
+      screen.getByRole('link', { name: 'See all successful jobs' }).getAttribute('href') ?? '',
+      'https://example.test'
+    );
+    expect(successfulJobsUrl.searchParams.get('status')).toBe('successful');
+    expect(successfulJobsUrl.searchParams.get('labels__id')).toBe('11');
+    expect(successfulJobsUrl.searchParams.get('organization')).toBe('21');
+    expect(successfulJobsUrl.searchParams.get('type')).toBe('job');
+    expect(successfulJobsUrl.searchParams.get('unified_job_template')).toBe('31');
+    expect(successfulJobsUrl.searchParams.get('finished__gte')).toBeTruthy();
+    expect(successfulJobsUrl.searchParams.get('finished__lte')).toBeTruthy();
+    expect(successfulJobsUrl.searchParams.get('unified_job_template__project')).toBeNull();
+
+    const failedJobsUrl = new URL(
+      screen.getByRole('link', { name: 'See all failed jobs' }).getAttribute('href') ?? '',
+      'https://example.test'
+    );
+    expect(failedJobsUrl.searchParams.get('status')).toBe('failed');
+    expect(failedJobsUrl.searchParams.get('labels__id')).toBe('11');
   });
 
   // ─── Grid column layout ────────────────────────────────────────────────────

@@ -11,9 +11,10 @@ import {
   useAutomationDashboardToolbar,
 } from './components';
 
-import { useAutomationDashboardView } from './views/useAutomationDashboardView';
+import { QUERY_PARAMS, useAutomationDashboardView } from './views/useAutomationDashboardView';
 import { DashboardToolbar } from './components/DashboardToolbar';
 import { DashboardGridRow, DashboardLayout } from './components/DashboardLayout';
+import { getControllerJobsUrl } from './utils/controllerJobsUrl';
 
 /** Breakpoint range (in grid columns) where value cards switch from 'md' to 'xs' size. */
 const WIDE_LAYOUT_MIN_COLUMNS = 16;
@@ -32,6 +33,7 @@ export function AutomationDashboard() {
 
   const view = useAutomationDashboardView({ toolbarFilters: allFilters });
   const { details } = view;
+  const jobsPageUrl = getPageUrl(AwxRoute.Jobs);
 
   const noDataString = t('No jobs have been run.');
 
@@ -51,7 +53,10 @@ export function AutomationDashboard() {
               'Number of job runs that completed without error in the selected period. Use the ratio between successful and failed jobs to track automation health and reliability over time.'
             )}
             linkText={t('See all successful jobs')}
-            to={getPageUrl(AwxRoute.Jobs) + '?status=successful'}
+            to={
+              jobsPageUrl +
+              getControllerJobsUrl('successful', view.mainTableView.filterState, QUERY_PARAMS.tz)
+            }
             value={details?.total_number_of_successful_jobs ?? noDataString}
             error={view.detailsError}
             errorStateTitle={t('Error loading successful jobs')}
@@ -64,7 +69,10 @@ export function AutomationDashboard() {
               'Number of job runs that ended in failure in the selected period. Review failed jobs to fix playbooks, credentials, or inventory issues and improve success rates.'
             )}
             linkText={t('See all failed jobs')}
-            to={getPageUrl(AwxRoute.Jobs) + '?status=failed'}
+            to={
+              jobsPageUrl +
+              getControllerJobsUrl('failed', view.mainTableView.filterState, QUERY_PARAMS.tz)
+            }
             value={details?.total_number_of_failed_jobs ?? noDataString}
             error={view.detailsError}
             errorStateTitle={t('Error loading failed jobs')}
