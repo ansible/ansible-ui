@@ -10,7 +10,10 @@ import {
 import type { IFilterState, IToolbarFilter } from '@ansible/ansible-ui-framework';
 import { AutomationDashboardDateRangeFilterPresets } from '../constants';
 import type { IDashboardFilterSet, IJobTemplate } from '../types';
-import { useAutomationDashboardToolbarActions } from './useAutomationDashboardToolbarActions';
+import {
+  IDashboardReportAction,
+  useAutomationDashboardToolbarActions,
+} from './useAutomationDashboardToolbarActions';
 
 type Dropdown = IPageActionDropdown<IJobTemplate>;
 
@@ -98,10 +101,10 @@ function renderActions(
   ).result.current;
 }
 
-function getDropdownSubAction(action: Dropdown, label: string): IPageActionButton {
+function getDropdownSubAction(action: Dropdown, label: string): IDashboardReportAction {
   expect(action.type).toBe(PageActionType.Dropdown);
   const sub = action.actions.find(
-    (a): a is IPageActionButton => a.type !== PageActionType.Seperator && a.label === label
+    (a): a is IDashboardReportAction => a.type !== PageActionType.Seperator && a.label === label
   );
   expect(sub).toBeDefined();
   return sub!;
@@ -121,6 +124,12 @@ describe('useAutomationDashboardToolbarActions', () => {
 
       expect(actions).toHaveLength(1);
       expect(actions[0].type).toBe(PageActionType.Button);
+    });
+
+    test('should not describe the standalone "Create new report" button', () => {
+      const action = renderActions(nonDefaultFilterState, undefined)[0] as IDashboardReportAction;
+
+      expect(action.description).toBeUndefined();
     });
 
     test('should label the button "Create new report"', () => {
@@ -298,10 +307,45 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(subAction?.isDisabled).toBe('Only administrators can save reports');
     });
 
-    test('should contain exactly 3 sub-actions', () => {
+    test('should contain exactly 3 sub-actions and a separator', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
       expect(action.type).toBe(PageActionType.Dropdown);
-      expect(action.actions).toHaveLength(3);
+      expect(action.actions).toHaveLength(4);
+      expect(action.actions.filter((a) => a.type !== PageActionType.Seperator)).toHaveLength(3);
+    });
+
+    test('should place the separator directly before "Delete report"', () => {
+      const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
+      const labels = action.actions.map((a) =>
+        a.type === PageActionType.Seperator ? 'separator' : a.label
+      );
+      expect(labels).toEqual(['Create new report', 'Update report', 'separator', 'Delete report']);
+    });
+
+    test('should describe "Create new report"', () => {
+      const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Create new report');
+      expect(subAction.description).toBe('Save the current filter set as a new report');
+    });
+
+    test('should describe "Update report"', () => {
+      const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Update report');
+      expect(subAction.description).toBe(
+        "Replace this report's saved filters with the current view"
+      );
+    });
+
+    test('should not describe "Delete report"', () => {
+      const action = renderActions(nonDefaultFilterState, filterSet)[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Delete report');
+      expect(subAction.description).toBeUndefined();
+    });
+
+    test('should keep the default-filters tooltip on "Create new report"', () => {
+      const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Create new report');
+      expect(subAction.isDisabled).toBe('Modify filters before saving as a report');
     });
 
     test('should include "Create new report", "Update report", "Delete report" sub-actions', () => {
