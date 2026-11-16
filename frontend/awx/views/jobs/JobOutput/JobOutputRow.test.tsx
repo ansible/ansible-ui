@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { JobEvent } from '../../../interfaces/JobEvent';
@@ -99,7 +99,7 @@ describe('JobOutputRow', () => {
       created: '2024-05-01T12:00:00Z',
     };
 
-    const { container } = render(
+    render(
       <JobOutputRow
         index={0}
         row={collapsibleRow}
@@ -111,9 +111,11 @@ describe('JobOutputRow', () => {
       />
     );
 
-    const expandButton = container.querySelector('.output-grid-row button');
-    expect(expandButton).not.toBeNull();
-    await user.click(expandButton as HTMLButtonElement);
+    const row = screen.getByText('TASK [ping] ***************').closest('.output-grid-row');
+    if (!row) {
+      throw new Error('expected job output row');
+    }
+    await user.click(within(row as HTMLElement).getByRole('button'));
     expect(setCollapsed).toHaveBeenCalledWith('event-uuid', 1, false);
   });
 });

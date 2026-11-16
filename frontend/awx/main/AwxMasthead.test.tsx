@@ -102,7 +102,7 @@ describe('AwxMasthead', () => {
       })
     );
 
-    const { container } = render(
+    render(
       <MemoryRouter>
         <PageDialogProvider>
           <AwxMasthead />
@@ -112,9 +112,13 @@ describe('AwxMasthead', () => {
 
     expect(screen.getByTestId('awx-brand')).toBeInTheDocument();
 
-    const helpMenuToggle = container.querySelector('#help-menu-menu-toggle');
-    expect(helpMenuToggle).not.toBeNull();
-    await user.click(helpMenuToggle as HTMLButtonElement);
+    const helpToggle = screen
+      .getAllByRole('button')
+      .find((button) => button.id === 'help-menu-menu-toggle');
+    if (!helpToggle) {
+      throw new Error('expected help menu toggle button');
+    }
+    await user.click(helpToggle);
     expect(screen.getByRole('menuitem', { name: 'Documentation' })).toHaveAttribute(
       'href',
       expect.stringContaining('docs')
