@@ -8,6 +8,8 @@ import { NotifierAssignTeams } from './NotifierAssignTeams';
 import {
   awxPageWizardCapture,
   awxPageWizardProgressDialog,
+  createGatewayRoleAssignmentPostHandler,
+  installAwxBulkActionDialogMock,
 } from '../../../common/test/mockAwxPageWizard';
 
 vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
@@ -17,6 +19,8 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
   );
   return createAwxPageWizardFrameworkMock(actual);
 });
+
+const gatewayRoleAssignmentPosts: unknown[] = [];
 
 vi.mock('../../../common/useAwxBulkActionDialog', () => ({
   useAwxBulkActionDialog: () => awxPageWizardProgressDialog,
@@ -38,34 +42,20 @@ const server = setupServer(
     ({ request }) => request.url.includes('/api/gateway/v1/teams'),
     () => HttpResponse.json({ count: 0, results: [], next: null, previous: null })
   ),
-  http.post(
-    ({ request }) => request.url.includes('role_team_assignments'),
-    () => HttpResponse.json({})
-  )
+  createGatewayRoleAssignmentPostHandler(gatewayRoleAssignmentPosts, 'role_team_assignments')
 );
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => {
   server.resetHandlers();
   awxPageWizardProgressDialog.mockClear();
+  gatewayRoleAssignmentPosts.length = 0;
 });
 afterAll(() => server.close());
 
 describe('NotifierAssignTeams', () => {
   it('validates teams step and submits platform role assignments', async () => {
-    awxPageWizardProgressDialog.mockImplementation(
-      (options: {
-        items: unknown[];
-        actionFn: (item: unknown) => void;
-        onComplete: () => void;
-      }) => {
-        const item = options.items[0];
-        if (item) {
-          void options.actionFn(item);
-        }
-        options.onComplete();
-      }
-    );
+    installAwxBulkActionDialogMock();
 
     render(
       <MemoryRouter initialEntries={['/notification_templates/1/team-access/assign']}>
@@ -96,6 +86,16 @@ describe('NotifierAssignTeams', () => {
     await awxPageWizardCapture.onSubmit({
       teams: [{ id: 2, name: 'Ops' }],
       platformRoles: [{ id: 3, name: 'Admin' }],
+    });
+
+    await waitFor(() => {
+      expect(gatewayRoleAssignmentPosts).toHaveLength(1);
+    });
+    expect(gatewayRoleAssignmentPosts[0]).toMatchObject({
+      team: 2,
+      role_definition: 3,
+      content_type: 'awx.notificationtemplate',
+      object_id: 1,
     });
 
     expect(awxPageWizardProgressDialog).toHaveBeenCalled();
