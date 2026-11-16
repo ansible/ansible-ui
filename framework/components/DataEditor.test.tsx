@@ -103,6 +103,7 @@ import * as monaco from 'monaco-editor';
 
 describe('DataEditor', () => {
   beforeEach(() => {
+    pageSettings.activeTheme = 'light';
     setError.mockReset();
     onChange.mockReset();
     editorFactory.mockReset();
@@ -128,18 +129,29 @@ describe('DataEditor', () => {
 
   it('switches editor theme when page settings change', async () => {
     pageSettings.activeTheme = 'dark';
-    render(
-      <DataEditor
-        name="payload"
-        language="json"
-        value="{}"
-        onChange={onChange}
-        setError={setError}
-      />
+    const editorProps = {
+      name: 'payload' as const,
+      language: 'json' as const,
+      value: '{}',
+      onChange,
+      setError,
+    };
+    const { rerender } = render(<DataEditor {...editorProps} />);
+
+    await waitFor(() =>
+      expect(editorInstance.current?.updateOptions).toHaveBeenCalledWith({
+        theme: 'data-editor-dark',
+      })
     );
 
-    await waitFor(() => expect(editorFactory).toHaveBeenCalled());
     pageSettings.activeTheme = 'light';
+    rerender(<DataEditor {...editorProps} />);
+
+    await waitFor(() =>
+      expect(editorInstance.current?.updateOptions).toHaveBeenCalledWith({
+        theme: 'data-editor-light',
+      })
+    );
   });
 
   it('syncs external value changes into the editor model', async () => {
@@ -165,7 +177,7 @@ describe('DataEditor', () => {
       />
     );
 
-    await waitFor(() => expect(editorFactory).toHaveBeenCalled());
+    await waitFor(() => expect(editorInstance.current?.setValue).toHaveBeenCalledWith('two'));
   });
 
   it('surfaces marker messages as editor errors', async () => {

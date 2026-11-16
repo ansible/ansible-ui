@@ -65,16 +65,7 @@ describe('ReorderItems', () => {
     const setItems = vi.fn();
     render(
       <ReorderItems
-        columns={[
-          {
-            header: 'Name',
-            cell: (item: Item, setItem) => (
-              <button type="button" onClick={() => setItem({ ...item, name: 'Updated' })}>
-                {item.name}
-              </button>
-            ),
-          },
-        ]}
+        columns={[{ header: 'Name', cell: (item: Item) => item.name }]}
         items={[
           { id: 'a', name: 'Alpha' },
           { id: 'b', name: 'Beta' },
@@ -109,11 +100,11 @@ describe('ReorderItems', () => {
     });
 
     fireEvent.dragOver(target, { clientX: 10, clientY: 40 });
-    fireEvent.dragEnd(source);
-    fireEvent.drop(target, { clientX: 0, clientY: 0 });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Alpha' }));
-    expect(setItems).toHaveBeenCalled();
+    expect(setItems).toHaveBeenCalledWith([
+      { id: 'b', name: 'Beta' },
+      { id: 'a', name: 'Alpha' },
+    ]);
   });
 
   it('clears drag state on drag end', () => {

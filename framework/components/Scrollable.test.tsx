@@ -105,7 +105,11 @@ describe('Scrollable', () => {
       scrollTarget.dispatchEvent(new Event('scroll', { bubbles: true }));
     });
 
-    expect(scrollTarget.scrollLeft).toBeGreaterThan(0);
-    expect(scrollTarget.scrollTop).toBeGreaterThan(0);
+    const outer = container.firstElementChild as HTMLElement;
+    const shadowElements = [...outer.children].slice(1);
+    expect(shadowElements.length).toBeGreaterThan(0);
+    expect(
+      shadowElements.some((element) => Number.parseFloat(getComputedStyle(element).opacity) > 0)
+    ).toBe(true);
   });
 });
