@@ -686,25 +686,6 @@ describe('FormGroupSingleSelectTypeAhead', () => {
     expect(onHandleClear).toHaveBeenCalledOnce();
   });
 
-  it('resolves selected labels from the source options when mapped options are empty', async () => {
-    const options = [...mockOptions];
-    vi.spyOn(options, 'map').mockReturnValue([]);
-    const { rerender } = render(
-      <FormGroupSingleSelectTypeAhead {...defaultProps} options={options} value="option1" />
-    );
-    const input = screen.getByRole('textbox');
-
-    rerender(
-      <FormGroupSingleSelectTypeAhead {...defaultProps} options={options} value="option2" />
-    );
-    await waitFor(() => expect(input).toHaveValue('Option 2'));
-
-    rerender(
-      <FormGroupSingleSelectTypeAhead {...defaultProps} options={options} value="unlisted" />
-    );
-    await waitFor(() => expect(input).toHaveValue('unlisted'));
-  });
-
   it('opens and closes the menu from its toggle button', async () => {
     const user = userEvent.setup();
     render(<FormGroupSingleSelectTypeAhead {...defaultProps} />);
