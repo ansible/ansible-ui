@@ -1,12 +1,15 @@
 import type { PageWizardStep } from '@ansible/ansible-ui-framework';
 import { vi } from 'vitest';
 
-export const awxPageWizardCapture = vi.hoisted(() => ({
-  onSubmit: undefined as ((data: unknown) => Promise<void>) | undefined,
-  steps: [] as PageWizardStep[],
-}));
+export const awxPageWizardCapture: {
+  onSubmit: ((data: unknown) => Promise<void>) | undefined;
+  steps: PageWizardStep[];
+} = {
+  onSubmit: undefined,
+  steps: [],
+};
 
-export const awxPageWizardProgressDialog = vi.hoisted(() => vi.fn());
+export const awxPageWizardProgressDialog = vi.fn();
 
 export function createAwxPageWizardFrameworkMock(
   actual: typeof import('@ansible/ansible-ui-framework')
