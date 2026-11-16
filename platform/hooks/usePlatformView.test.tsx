@@ -1,5 +1,5 @@
-/* eslint-disable i18next/no-literal-string */
 import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework';
+import { t } from 'i18next';
 import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
@@ -170,11 +170,11 @@ describe('usePlatformView', () => {
         key: 'status',
         query: 'status',
         type: ToolbarFilterType.MultiSelect,
-        label: 'Status',
-        placeholder: 'Filter by status',
+        label: t('Status'),
+        placeholder: t('Filter by status'),
         options: [
-          { value: 'active', label: 'Active' },
-          { value: 'pending', label: 'Pending' },
+          { value: 'active', label: t('Active') },
+          { value: 'pending', label: t('Pending') },
         ],
       },
     ];
@@ -201,7 +201,7 @@ describe('usePlatformView', () => {
         query: 'name__icontains',
         type: ToolbarFilterType.SingleText,
         comparison: 'contains',
-        label: 'Name',
+        label: t('Name'),
       },
     ];
     viewState.filterState = { name: ['foo, bar ,foo'] };
@@ -226,13 +226,13 @@ describe('usePlatformView', () => {
         url: '/api/gateway/v1/users/',
         tableColumns: [
           {
-            header: 'Username',
+            header: t('Username'),
             sort: 'username',
             defaultSort: true,
             defaultSortDirection: 'desc',
             cell: () => null,
           },
-          { header: 'ID', sort: 'id', cell: () => null },
+          { header: t('ID'), sort: 'id', cell: () => null },
         ],
       })
     );

@@ -12,10 +12,6 @@ const { mockPageNavigate, mockUseGetItem, mockUseMappingPageActions } = vi.hoist
   mockUseMappingPageActions: vi.fn((_onDeleted: () => void): never[] => []),
 }));
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
-}));
-
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
   return {
