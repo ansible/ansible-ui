@@ -60,16 +60,21 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
         )
       : [];
 
-    // Handle custom logo file upload
+    // Convert uploaded logo File to a data URL string before JSON PUT
     if ('custom_logo' in submitValues && submitValues.custom_logo instanceof File) {
-      const ext = submitValues.custom_logo.name.split('.').pop()?.toLowerCase();
-      if (['gif', 'jpg', 'jpeg', 'png'].includes(ext || '')) {
-        submitValues.custom_logo = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result as string);
-          reader.readAsDataURL(values.custom_logo as Blob);
-        });
+      const file = submitValues.custom_logo;
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (!['gif', 'jpg', 'jpeg', 'png'].includes(ext || '')) {
+        throw new Error(
+          t('Invalid format for custom logo. Must be a GIF, PNG, or JPEG image.')
+        );
       }
+      submitValues.custom_logo = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error(t('Failed to read custom logo file.')));
+        reader.readAsDataURL(file);
+      });
     }
 
     await requestPut(gatewayAPI`/settings/all/`, {
@@ -117,6 +122,21 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
 
               if (key === 'CSRF_TRUSTED_ORIGINS') {
                 return <CSRFTrustedOriginsInputs key={key} name={key} />;
+              }
+
+              // Gateway OPTIONS exposes custom_logo as CharField (type: string), but the
+              // value must be a data URL from an uploaded image — use the file upload control.
+              if (key === 'custom_logo') {
+                return (
+                  <PageFormFileUpload
+                    key={key}
+                    name={key}
+                    label={option.label || t('Custom logo')}
+                    labelHelp={option.help_text}
+                    isRequired={option.required}
+                    isReadOnly={option.read_only}
+                  />
+                );
               }
 
               switch (option.type) {
