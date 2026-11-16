@@ -183,6 +183,16 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
           />
         </Content>
       )}
+      {options.galaxy_update_on_launch && (
+        <Content component={ContentVariants.li}>
+          {t`Update Galaxy cache on job launch`}
+          <StandardPopover
+            header={''}
+            content={t`Bypass the ansible-galaxy response cache to fetch
+                  latest collection metadata when running a job with this project.`}
+          />
+        </Content>
+      )}
       {options.allow_override && (
         <Content component={ContentVariants.li}>
           {t`Allow branch override`}
@@ -313,6 +323,7 @@ export function ProjectDetails(props: { projectId?: string; disableScroll?: bool
         project.scm_delete_on_update ||
         project.scm_track_submodules ||
         project.scm_update_on_launch ||
+        project.galaxy_update_on_launch ||
         project.allow_override) && (
         <PageDetail label={t('Enabled options')}>{renderOptions(project)}</PageDetail>
       )}
