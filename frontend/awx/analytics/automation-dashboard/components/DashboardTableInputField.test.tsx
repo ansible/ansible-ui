@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
+import { IPendingEditHandle } from '../types';
 
 function renderInputField(props = {}) {
   return render(
@@ -302,6 +303,75 @@ describe('DashboardTableInputField', () => {
       expect(input).toHaveValue(7);
       await act(() => vi.advanceTimersByTime(600));
       expect(props.onChange).toHaveBeenCalledWith(7);
+    });
+  });
+
+  describe('registerPendingEdit', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    async function renderWithPendingEdit(onChange: (value: number) => void) {
+      let handle: IPendingEditHandle | undefined;
+      const unregister = vi.fn();
+      const registerPendingEdit = (registered: IPendingEditHandle) => {
+        handle = registered;
+        return unregister;
+      };
+      const view = renderInputField({ value: 0, onChange, registerPendingEdit });
+      const user = userEvent.setup();
+      const input = screen.getByRole('spinbutton');
+      await user.clear(input);
+      await user.type(input, '50');
+      return { ...view, getHandle: () => handle!, unregister };
+    }
+
+    test('should send a pending value on flush, and not again after the debounce or on unmount', async () => {
+      const onChange = vi.fn();
+      const { getHandle, unmount } = await renderWithPendingEdit(onChange);
+
+      getHandle().flush();
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(50);
+
+      await act(() => vi.advanceTimersByTime(600));
+      unmount();
+      expect(onChange).toHaveBeenCalledTimes(1);
+    });
+
+    test('should not send anything on flush when no edit is pending', () => {
+      const onChange = vi.fn();
+      let handle: IPendingEditHandle | undefined;
+      renderInputField({
+        value: 0,
+        onChange,
+        registerPendingEdit: (registered: IPendingEditHandle) => {
+          handle = registered;
+          return () => {};
+        },
+      });
+
+      handle!.flush();
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    test('should drop a pending value on discard, also on unmount', async () => {
+      const onChange = vi.fn();
+      const { getHandle, unmount } = await renderWithPendingEdit(onChange);
+
+      getHandle().discard();
+      await act(() => vi.advanceTimersByTime(600));
+      unmount();
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    test('should unregister on unmount', async () => {
+      const { unmount, unregister } = await renderWithPendingEdit(vi.fn());
+      unmount();
+      expect(unregister).toHaveBeenCalledTimes(1);
     });
   });
 });

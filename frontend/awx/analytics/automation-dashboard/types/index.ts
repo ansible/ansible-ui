@@ -146,6 +146,14 @@ export type DashboardChartCardProps = DashboardCommonCardProps & {
   legendLabel?: string;
 };
 
+/** Lets the owner of a field send or drop a value whose debounced onChange has not fired yet. */
+export interface IPendingEditHandle {
+  /** Hands a pending value to onChange right away. */
+  flush: () => void;
+  /** Drops a pending value, so it is not sent later, not even on unmount. */
+  discard: () => void;
+}
+
 export type DashboardTableInputFieldProps = {
   id: string;
   value: number | undefined;
@@ -158,6 +166,8 @@ export type DashboardTableInputFieldProps = {
   fullWidth?: boolean;
   readOnly?: boolean;
   error?: string;
+  /** Registers the field's pending edit with its owner; returns the unregister function. */
+  registerPendingEdit?: (handle: IPendingEditHandle) => () => void;
 };
 
 export type DashboardTableToolbarProps = {
@@ -188,11 +198,16 @@ export type IAutomationDashboardView = {
 
 export type ReportType = 'summary' | 'roi' | 'trends';
 
-// ─── Export Button Type ───────────────────────────────────────────────────────────
-export type IAutomationDashboardExportButton = {
-  exportType: 'csv' | 'html';
+// ─── Main Table Actions Type ─────────────────────────────────────────────────────
+export type IAutomationDashboardMainTableActions = {
   title: string;
   icon: ComponentClass;
-  isDisabled?: boolean;
+  /** When set, the export is disabled and this explains why in its tooltip. */
+  exportDisabledReason?: string;
   onExport: (reportType: ReportType) => Promise<void>;
+  /** Shows the "Set template defaults" action; only admins with table results may use it. */
+  canSetTemplateValues?: boolean;
+  /** When set, "Set template defaults" is disabled and this explains why in its tooltip. */
+  setTemplateValuesDisabledReason?: string;
+  onSetTemplateValues?: () => void;
 };
