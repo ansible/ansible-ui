@@ -6,6 +6,10 @@ import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { awxAPI } from '../../../common/api/awx-utils';
+import {
+  JobSummaryFields,
+  SummaryFieldCredential,
+} from '../../../interfaces/summary-fields/summary-fields';
 import { UnifiedJob } from '../../../interfaces/UnifiedJob';
 import { useJobsColumns } from './useJobsColumns';
 
@@ -41,6 +45,24 @@ function wrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
+function sf(overrides: Partial<JobSummaryFields> = {}): JobSummaryFields {
+  return {
+    user_capabilities: { delete: false, start: false },
+    ...overrides,
+  };
+}
+
+function credential(overrides: Partial<SummaryFieldCredential>): SummaryFieldCredential {
+  return {
+    id: 1,
+    name: 'Cred',
+    description: '',
+    kind: 'ssh',
+    cloud: false,
+    ...overrides,
+  };
+}
+
 function testJob(overrides: Partial<UnifiedJob> = {}): UnifiedJob {
   return {
     id: 42,
@@ -51,9 +73,19 @@ function testJob(overrides: Partial<UnifiedJob> = {}): UnifiedJob {
     started: '2025-01-01T10:00:00.000000Z',
     finished: '2025-01-01T10:05:00.000000Z',
     launch_type: 'manual',
-    summary_fields: {},
+    summary_fields: sf(),
+    related: {
+      notifications: '',
+      cancel: '',
+    },
+    launched_by: {
+      id: 1,
+      name: 'admin',
+      type: 'user',
+      url: '',
+    },
     ...overrides,
-  } as UnifiedJob;
+  };
 }
 
 function credentialsColumn(columns: ITableColumn<UnifiedJob>[]) {
@@ -89,26 +121,12 @@ describe('useJobsColumns credentials', () => {
     const { result } = renderHook(() => useJobsColumns(), { wrapper });
     const column = credentialsColumn(result.current);
     const job = testJob({
-      summary_fields: {
+      summary_fields: sf({
         credentials: [
-          {
-            id: 1,
-            name: 'Machine Cred',
-            description: '',
-            kind: 'ssh',
-            cloud: false,
-            kubernetes: false,
-          },
-          {
-            id: 2,
-            name: 'Vault Cred',
-            description: '',
-            kind: 'vault',
-            cloud: false,
-            kubernetes: false,
-          },
+          credential({ id: 1, name: 'Machine Cred', kind: 'ssh' }),
+          credential({ id: 2, name: 'Vault Cred', kind: 'vault' }),
         ],
-      },
+      }),
     });
 
     expect(columnValue(column, job)).toBe(2);
@@ -122,16 +140,9 @@ describe('useJobsColumns credentials', () => {
     const column = credentialsColumn(result.current);
     const job = testJob({
       type: 'ad_hoc_command',
-      summary_fields: {
-        credential: {
-          id: 9,
-          name: 'Ad Hoc Cred',
-          description: '',
-          kind: 'ssh',
-          cloud: false,
-          kubernetes: false,
-        },
-      },
+      summary_fields: sf({
+        credential: credential({ id: 9, name: 'Ad Hoc Cred' }),
+      }),
     });
 
     expect(columnValue(column, job)).toBe(1);
@@ -144,17 +155,10 @@ describe('useJobsColumns credentials', () => {
     const column = credentialsColumn(result.current);
     const job = testJob({
       type: 'ad_hoc_command',
-      summary_fields: {
+      summary_fields: sf({
         credentials: [],
-        credential: {
-          id: 11,
-          name: 'Empty Array Fallback Cred',
-          description: '',
-          kind: 'ssh',
-          cloud: false,
-          kubernetes: false,
-        },
-      },
+        credential: credential({ id: 11, name: 'Empty Array Fallback Cred' }),
+      }),
     });
 
     expect(columnValue(column, job)).toBe(1);
@@ -165,7 +169,7 @@ describe('useJobsColumns credentials', () => {
   test('returns no credential value when neither field is set', () => {
     const { result } = renderHook(() => useJobsColumns(), { wrapper });
     const column = credentialsColumn(result.current);
-    const job = testJob({ summary_fields: {} });
+    const job = testJob({ summary_fields: sf() });
 
     expect(columnValue(column, job)).toBeUndefined();
   });
