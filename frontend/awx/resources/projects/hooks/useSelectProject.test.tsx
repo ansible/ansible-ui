@@ -95,6 +95,20 @@ describe('useSelectProject', () => {
     expect((dialogElement.type as { name?: string }).name).toBe('SelectProject');
   });
 
+  it('invokes parent onSelect when dialog reports a project choice', () => {
+    const { result } = renderHook(() => useSelectProject());
+    const onSelect = vi.fn();
+    const project = { id: 6, name: 'My Project' } as Project;
+
+    result.current(onSelect);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0] as ReactElement<{
+      onSelect: (project: Project) => void;
+    }>;
+    dialogElement.props.onSelect(project);
+    expect(onSelect).toHaveBeenCalledWith(project);
+  });
+
   it('should forward different onSelect callbacks on subsequent calls', () => {
     const { result } = renderHook(() => useSelectProject());
     const onSelectFirst = vi.fn();

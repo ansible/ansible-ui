@@ -42,6 +42,22 @@ describe('TemplatesTable Row', () => {
     expect(screen.getByText('$80.00')).toBeInTheDocument();
   });
 
+  it('renders disabled savings styling and unchecked show switch when template is disabled', () => {
+    render(
+      <table>
+        <tbody>
+          <Row
+            template={{ ...template, enabled: 0, monetary_gain: 120 }}
+            readOnly
+            variableRow={{ key: 'host_count', value: 'Hosts' }}
+          />
+        </tbody>
+      </table>
+    );
+    expect(screen.getByText('$120.00')).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Show' })).not.toBeChecked();
+  });
+
   it('persists expanded state in local storage', async () => {
     const user = userEvent.setup();
     render(

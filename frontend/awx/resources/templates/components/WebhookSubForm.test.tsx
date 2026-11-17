@@ -92,4 +92,26 @@ describe('WebhookSubForm', () => {
 
     expect(screen.getByText('Webhook details')).toBeInTheDocument();
   });
+
+  it('should render workflow job template webhook fields', () => {
+    render(
+      <TestWrapper path="/workflow_job_templates/1/edit">
+        <WebhookSubForm templateType="workflow_job_templates" />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Webhook URL')).toBeInTheDocument();
+    expect(screen.getByTestId('credential-select')).toBeInTheDocument();
+  });
+
+  it('should still render webhook section when webhook toggle is off', () => {
+    render(
+      <TestWrapper path="/job_templates/1/edit" defaultValues={{ isWebhookEnabled: false }}>
+        <WebhookSubForm templateType="job_templates" />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Webhook details')).toBeInTheDocument();
+    expect(screen.getByText('Webhook service')).toBeInTheDocument();
+  });
 });

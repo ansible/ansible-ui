@@ -51,4 +51,29 @@ describe('TableExpandedRow', () => {
     expect(screen.getByText('10')).toBeInTheDocument();
     expect(screen.getByTestId('breakdown')).toBeInTheDocument();
   });
+
+  it('renders zero counts when all task counters are zero', () => {
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              {renderExpandedRow({
+                item: {
+                  host_task_count: 0,
+                  host_task_ok_count: 0,
+                  host_task_failed_count: 0,
+                  host_task_changed_count: 0,
+                  host_task_skipped_count: 0,
+                  host_task_unreachable_count: 0,
+                },
+              })}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    );
+    expect(screen.getByText('0')).toBeInTheDocument();
+    expect(screen.getByTestId('breakdown')).toBeInTheDocument();
+  });
 });

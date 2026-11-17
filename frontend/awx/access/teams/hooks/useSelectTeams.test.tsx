@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -23,7 +24,15 @@ describe('useSelectTeams', () => {
     vi.mocked(usePageDialog).mockReturnValue([null, setDialog]);
   });
 
-  it('opens team multi-select dialog', () => {
+  it('opens team multi-select dialog with custom title', () => {
+    const onSelect = vi.fn();
+    const { result } = renderHook(() => useSelectTeams());
+    result.current('Choose teams', onSelect);
+    const dialogElement = setDialog.mock.calls[0]?.[0] as ReactElement<{ title: string }>;
+    expect(dialogElement.props.title).toBe('Choose teams');
+  });
+
+  it('forwards selected teams to onSelect', () => {
     const onSelect = vi.fn();
     const { result } = renderHook(() => useSelectTeams());
     result.current('Choose teams', onSelect);
@@ -36,7 +45,22 @@ describe('useSelectTeams', () => {
       title: string;
       onSelect: (teams: Team[]) => void;
     };
-    props.onSelect([{ id: 1 } as Team]);
-    expect(onSelect).toHaveBeenCalledWith([{ id: 1 }]);
+    const teams = [{ id: 1, name: 'Ops' } as Team, { id: 2, name: 'Dev' } as Team];
+    props.onSelect(teams);
+    expect(onSelect).toHaveBeenCalledWith(teams);
+  });
+
+  it('returns a stable opener across re-renders', () => {
+    const { result, rerender } = renderHook(() => useSelectTeams());
+    const first = result.current;
+    rerender();
+    expect(result.current).toBe(first);
+  });
+
+  it('uses SelectTeams dialog component', () => {
+    const { result } = renderHook(() => useSelectTeams());
+    result.current('Teams', vi.fn());
+    const dialogElement = setDialog.mock.calls[0]?.[0] as ReactElement;
+    expect((dialogElement.type as { name?: string }).name).toBe('SelectTeams');
   });
 });

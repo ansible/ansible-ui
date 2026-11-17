@@ -136,6 +136,20 @@ describe('useSelectInventorySource', () => {
     expect(secondDialog.props.onSelect).toBe(onSelectSecond);
   });
 
+  it('invokes parent onSelect when dialog reports a source choice', () => {
+    const { result } = renderHook(() => useSelectInventorySource(7));
+    const onSelect = vi.fn();
+    const source = { id: 11, name: 'EC2' } as InventorySource;
+
+    result.current(onSelect);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0] as React.ReactElement<{
+      onSelect: (source: InventorySource) => void;
+    }>;
+    dialogElement.props.onSelect(source);
+    expect(onSelect).toHaveBeenCalledWith(source);
+  });
+
   it('should produce a new function reference when inventoryId changes', () => {
     const { result, rerender } = renderHook(
       ({ id }: { id?: number }) => useSelectInventorySource(id),

@@ -69,6 +69,25 @@ describe('ActivityDescription', () => {
     expect(screen.getByText('updated project')).toBeInTheDocument();
   });
 
+  it('should render delete activity with inventory detail link', () => {
+    const activity = createActivity({
+      operation: 'delete',
+      object1: 'inventory',
+      summary_fields: {
+        inventory: [{ id: '6', name: 'Removed inventory', kind: 'constructed' }],
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('deleted inventory')).toBeInTheDocument();
+    expect(screen.getByTestId('source-resource-detail')).toHaveTextContent('Removed inventory');
+  });
+
   it('should render disassociate activity with role', () => {
     const activity = createActivity({
       operation: 'disassociate',

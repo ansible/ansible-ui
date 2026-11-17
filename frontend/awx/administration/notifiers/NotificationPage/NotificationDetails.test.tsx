@@ -50,5 +50,7 @@ describe('NotificationDetails', () => {
     await waitFor(() => {
       expect(screen.getByTestId('page-title')).toHaveTextContent('Test Notifier');
     });
+    expect(screen.getByText('Test notifier description')).toBeInTheDocument();
+    expect(screen.getByText('email')).toBeInTheDocument();
   });
 });

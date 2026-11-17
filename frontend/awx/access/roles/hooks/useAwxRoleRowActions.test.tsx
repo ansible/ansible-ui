@@ -56,6 +56,16 @@ describe('useAwxRoleRowActions', () => {
     }
   });
 
+  it('runs delete for non-managed roles when user is superuser', () => {
+    const refresh = vi.fn();
+    const { result } = renderHook(() => useAwxRoleRowActions(refresh));
+    const deleteAction = result.current[2];
+    if ('onClick' in deleteAction && typeof deleteAction.onClick === 'function') {
+      (deleteAction.onClick as (role: AwxRbacRole) => void)(role({ id: 42, managed: false }));
+    }
+    expect(deleteRoles).toHaveBeenCalledWith([role({ id: 42, managed: false })]);
+  });
+
   it('disables edit and delete when user is not a superuser', () => {
     vi.mocked(useAwxActiveUser).mockReturnValue({
       activeAwxUser: { is_superuser: false },

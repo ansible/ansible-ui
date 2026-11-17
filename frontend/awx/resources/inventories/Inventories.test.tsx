@@ -66,6 +66,24 @@ describe('Inventories', () => {
     });
   });
 
+  it('should show empty state when no inventories exist', async () => {
+    server.use(
+      http.get(awxAPI`/inventories/`, () => HttpResponse.json({ count: 0, results: [] })),
+      http.options(awxAPI`/inventories/`, () =>
+        HttpResponse.json({ actions: { POST: {}, GET: {} } })
+      )
+    );
+    render(
+      <MemoryRouter>
+        <Inventories />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/There are currently no inventories added/i)).toBeInTheDocument();
+    });
+  });
+
   it('should display inventories in table', async () => {
     render(
       <MemoryRouter>

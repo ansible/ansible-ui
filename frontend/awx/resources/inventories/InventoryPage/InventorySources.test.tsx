@@ -41,4 +41,18 @@ describe('InventorySources', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('shows create source action in empty state when POST is allowed', async () => {
+    render(
+      <MemoryRouter initialEntries={['/inventories/1/inventory_sources']}>
+        <Routes>
+          <Route path="/inventories/:id/inventory_sources" element={<InventorySources />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('link', { name: 'Create source' })).toBeInTheDocument();
+    });
+  });
 });
