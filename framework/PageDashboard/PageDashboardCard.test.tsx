@@ -38,6 +38,29 @@ describe('PageDashboardCard', () => {
     expect(screen.getByRole('link', { name: 'View all' })).toBeInTheDocument();
   });
 
+  it('should render optional header and footer content', () => {
+    renderCard({
+      title: 'Inventories',
+      supertitle: 'Automation',
+      subtitle: 'Managed resources',
+      description: 'Inventory information',
+      headerControls: <button type="button">Refresh</button>,
+      linkText: 'View all',
+      to: '/inventories',
+      footerActionButton: {
+        title: 'Add inventory',
+        icon: <span data-testid="footer-icon" />,
+        onClick: vi.fn(),
+      },
+    });
+
+    expect(screen.getByText('Automation')).toBeInTheDocument();
+    expect(screen.getByText('Managed resources')).toBeInTheDocument();
+    expect(screen.getByText('Inventory information')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    expect(screen.getByTestId('footer-icon')).toBeInTheDocument();
+  });
+
   it('should not render a header when neither title nor linkText are provided', () => {
     renderCard({ children: <div>Body</div> });
 
@@ -74,5 +97,27 @@ describe('PageDashboardCard', () => {
     renderCard({ id: 'compact-card-test', title: 'Inventories', isCompact: true });
 
     expect(screen.getByTestId('compact-card-test')).toHaveClass('pf-m-compact');
+  });
+
+  it('should collapse the card and persist its state when the collapse control is clicked', async () => {
+    const user = userEvent.setup();
+    renderCard({
+      id: 'collapsible-card-test',
+      title: 'Inventories',
+      canCollapse: true,
+      children: <div>Card content</div>,
+    });
+
+    const collapseControl = screen.getByRole('button', { name: 'Collapse' });
+    expect(collapseControl).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(collapseControl);
+
+    expect(screen.queryByText('Card content')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Expand' })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
+    expect(localStorage.getItem('db-collapsible-card-test-collapsed')).toBe('true');
   });
 });
