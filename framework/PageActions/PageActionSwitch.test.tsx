@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { IPageActionSwitchSingle, PageActionSelection, PageActionType } from './PageAction';
 import { PageActionSwitch } from './PageActionSwitch';
 
@@ -89,6 +89,68 @@ describe('PageActionSwitch', () => {
     await waitFor(() => {
       expect(screen.getByRole('switch')).toBeChecked();
     });
+  });
+
+  it('shows icon-only tooltip when action provides tooltip', async () => {
+    const user = userEvent.setup();
+    const resource = { enabled: true };
+    render(
+      <PageActionSwitch
+        action={{
+          type: PageActionType.Switch,
+          selection: PageActionSelection.Single,
+          label: 'Pinned label',
+          tooltip: 'Pinned tooltip',
+          isSwitchOn: (item) => item.enabled,
+          onToggle: vi.fn(),
+          ariaLabel: () => 'switch',
+        }}
+        selectedItem={resource}
+        iconOnly
+      />
+    );
+    await user.hover(screen.getByRole('switch'));
+    expect(await screen.findByText('Pinned tooltip')).toBeInTheDocument();
+  });
+
+  it('hides icon-only labels unless showPinnedLabel is set', () => {
+    render(
+      <PageActionSwitch
+        action={{
+          type: PageActionType.Switch,
+          selection: PageActionSelection.Single,
+          label: 'Hidden label',
+          showPinnedLabel: true,
+          isSwitchOn: () => true,
+          onToggle: vi.fn(),
+          ariaLabel: () => 'switch',
+        }}
+        selectedItem={{ enabled: true }}
+        iconOnly
+      />
+    );
+    expect(screen.getByText('Hidden label')).toBeInTheDocument();
+  });
+
+  it('toggles using selection none callbacks', async () => {
+    const user = userEvent.setup();
+    const onToggle = vi.fn();
+    render(
+      <PageActionSwitch
+        action={{
+          type: PageActionType.Switch,
+          selection: PageActionSelection.None,
+          label: 'Global',
+          isSwitchOn: () => false,
+          onToggle,
+          ariaLabel: () => 'global',
+        }}
+      />
+    );
+    const toggle = document.querySelector('span.pf-v6-c-switch__toggle');
+    expect(toggle).toBeInTheDocument();
+    if (toggle) await user.click(toggle);
+    expect(onToggle).toHaveBeenCalledWith(true);
   });
 
   it('switch is enabled when isDisabled is undefined', () => {
