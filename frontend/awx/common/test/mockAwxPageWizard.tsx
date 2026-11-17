@@ -41,7 +41,7 @@ export function installAwxBulkActionDialogMock() {
   awxPageWizardProgressDialog.mockImplementation((options: AwxBulkDialogOptions) => {
     void options.items
       .reduce<Promise<void>>(
-        (chain, item) => chain.then(() => Promise.resolve(options.actionFn(item))),
+        (chain, item) => chain.then(() => options.actionFn(item)),
         Promise.resolve()
       )
       .then(() => {
