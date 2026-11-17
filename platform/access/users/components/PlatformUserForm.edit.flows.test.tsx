@@ -353,7 +353,10 @@ describe('EditPlatformUser submit branches', () => {
         return Promise.resolve({ results: [{ id: 999 }] });
       }
       if (String(params.role_definition) === '600') {
-        return Promise.resolve({ results: [{ id: 888 }] });
+        const assignmentIdByOrg: Record<string, number> = { '11': 888, '10': 889 };
+        const objectId = params.object_id !== undefined ? String(params.object_id) : '';
+        const id = assignmentIdByOrg[objectId] ?? 888;
+        return Promise.resolve({ results: [{ id }] });
       }
       return Promise.resolve({ results: [] });
     });
@@ -459,6 +462,15 @@ describe('EditPlatformUser submit branches', () => {
     const user = userEvent.setup();
     renderEdit();
     await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({
+        user: 7,
+        object_id: 11,
+        role_definition: 600,
+        content_type__api_slug: 'shared.organization',
+      })
+    );
     expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/888/`);
   });
 
@@ -467,6 +479,15 @@ describe('EditPlatformUser submit branches', () => {
     const user = userEvent.setup();
     renderEdit();
     await user.click(screen.getByTestId('superuser-org-strip'));
-    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/888/`);
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({
+        user: 7,
+        object_id: 10,
+        role_definition: 600,
+        content_type__api_slug: 'shared.organization',
+      })
+    );
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/889/`);
   });
 });

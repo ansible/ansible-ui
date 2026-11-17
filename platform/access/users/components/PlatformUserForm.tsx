@@ -254,13 +254,16 @@ export function EditPlatformUser() {
         }
         for (const removedOrganizationId of removedOrganizationIds) {
           try {
-            const orgMemberRoleAssignment = await getRequest(gatewayAPI`/role_user_assignments/`, {
+            const orgMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
               user: user?.id,
+              object_id: removedOrganizationId,
               role_definition: organizationMemberRoleData?.results?.[0]?.id || '',
+              content_type__api_slug: 'shared.organization',
             });
-            // Delete the organization member role assignment
-            await deleteRequest(
-              gatewayAPI`/role_user_assignments/${orgMemberRoleAssignment?.results?.[0].id}/`
+            await Promise.all(
+              orgMemberRoleAssignments?.results?.map((assignment) =>
+                deleteRequest(gatewayAPI`/role_user_assignments/${assignment.id}/`)
+              ) ?? []
             );
           } catch (error) {
             const { genericErrors, fieldErrors } = awxErrorAdapter(error);
@@ -282,13 +285,16 @@ export function EditPlatformUser() {
       } else if (user.is_superuser && organizationIds) {
         for (const organizationId of organizationIds) {
           try {
-            const orgMemberRoleAssignment = await getRequest(gatewayAPI`/role_user_assignments/`, {
+            const orgMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
               user: user?.id,
+              object_id: organizationId,
               role_definition: organizationMemberRoleData?.results?.[0]?.id || '',
+              content_type__api_slug: 'shared.organization',
             });
-            // Delete the organization member role assignment
-            await deleteRequest(
-              gatewayAPI`/role_user_assignments/${orgMemberRoleAssignment?.results?.[0].id}/`
+            await Promise.all(
+              orgMemberRoleAssignments?.results?.map((assignment) =>
+                deleteRequest(gatewayAPI`/role_user_assignments/${assignment.id}/`)
+              ) ?? []
             );
           } catch (error) {
             const { genericErrors, fieldErrors } = awxErrorAdapter(error);
