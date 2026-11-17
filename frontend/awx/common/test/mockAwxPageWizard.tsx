@@ -39,12 +39,14 @@ export function createAwxRoleAssignmentPostHandler(
 
 export function installAwxBulkActionDialogMock() {
   awxPageWizardProgressDialog.mockImplementation((options: AwxBulkDialogOptions) => {
-    void (async () => {
-      for (const item of options.items) {
-        await options.actionFn(item);
-      }
-      options.onComplete();
-    })();
+    void options.items
+      .reduce<Promise<void>>(
+        (chain, item) => chain.then(() => Promise.resolve(options.actionFn(item))),
+        Promise.resolve()
+      )
+      .then(() => {
+        options.onComplete();
+      });
   });
 }
 
