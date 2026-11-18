@@ -8,6 +8,9 @@ import { gatewayAPI } from '@ansible/platform-ui/utils/gateway-api-utils';
 export interface IDomain {
   name: string;
   labels: { name: string }[];
+  scope?: 'organization' | 'team' | 'user';
+  scopeId?: number;
+  scopeName?: string;
 }
 
 export interface DomainState {
@@ -38,6 +41,8 @@ interface UserPreferenceResponse {
   name: string;
   value: UserDomainPreference | null;
 }
+
+const toDomainPayload = ({ name, labels }: IDomain): IDomain => ({ name, labels });
 
 export const getTranslatedDomains = (): IDomain[] => {
   const t = i18next.t.bind(i18next);
@@ -119,7 +124,10 @@ export function useDomainsPersistence() {
 
   const saveDomains = async (domains: IDomain[], activeDomains: IDomain[]) => {
     const response = await putRequest(gatewayAPI`/me/preferences/domains/`, {
-      value: { domains, activeDomains },
+      value: {
+        domains: domains.map(toDomainPayload),
+        activeDomains: activeDomains.map(toDomainPayload),
+      },
     });
     if (response.value) {
       setDomains(response.value.domains);

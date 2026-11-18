@@ -19,7 +19,15 @@ describe('Domains', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     useDomainsStore.setState({
-      domains: [{ name: 'Network', labels: [{ name: 'network' }] }],
+      domains: [
+        {
+          name: 'Network',
+          labels: [{ name: 'network' }],
+          scope: 'team',
+          scopeId: 7,
+          scopeName: 'Platform Team',
+        },
+      ],
       userDomains: [{ name: 'Network', labels: [{ name: 'network' }] }],
       activeDomains: [],
     });
@@ -27,7 +35,15 @@ describe('Domains', () => {
       data: {
         name: 'domains',
         value: {
-          domains: [{ name: 'Network', labels: [{ name: 'network' }] }],
+          domains: [
+            {
+              name: 'Network',
+              labels: [{ name: 'network' }],
+              scope: 'team',
+              scopeId: 7,
+              scopeName: 'Platform Team',
+            },
+          ],
           userDomains: [{ name: 'Network', labels: [{ name: 'network' }] }],
           activeDomains: [],
         },
@@ -36,7 +52,15 @@ describe('Domains', () => {
     mockPut.mockResolvedValue({
       name: 'domains',
       value: {
-        domains: [{ name: 'Network', labels: [{ name: 'network' }] }],
+        domains: [
+          {
+            name: 'Network',
+            labels: [{ name: 'network' }],
+            scope: 'team',
+            scopeId: 7,
+            scopeName: 'Platform Team',
+          },
+        ],
         userDomains: [{ name: 'Network', labels: [{ name: 'network' }] }],
         activeDomains: [{ name: 'Network', labels: [{ name: 'network' }] }],
       },
@@ -66,6 +90,18 @@ describe('Domains', () => {
     expect(configureButton).toBeInTheDocument();
   });
 
+  test('shows the owning scope for effective domains', () => {
+    render(
+      <MemoryRouter>
+        <Domains />
+      </MemoryRouter>
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Network (team: Platform Team)' })
+    ).toBeInTheDocument();
+  });
+
   test('persists an active-domain selection through the Gateway API', async () => {
     render(
       <MemoryRouter>
@@ -73,7 +109,7 @@ describe('Domains', () => {
       </MemoryRouter>
     );
 
-    const networkButton = await screen.findByRole('button', { name: 'Network' });
+    const networkButton = await screen.findByRole('button', { name: /Network/ });
     fireEvent.click(networkButton);
 
     await waitFor(() => {

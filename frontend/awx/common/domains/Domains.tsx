@@ -62,7 +62,11 @@ export function Domains() {
           <FlexItem key={index}>
             <ToggleGroup>
               <ToggleGroupItem
-                text={domain.name}
+                text={
+                  domain.scopeName
+                    ? `${domain.name} (${domain.scope ? `${domain.scope}: ` : ''}${domain.scopeName})`
+                    : domain.name
+                }
                 isSelected={
                   activeDomains.find((activeDomain) => activeDomain.name === domain.name) !==
                   undefined
