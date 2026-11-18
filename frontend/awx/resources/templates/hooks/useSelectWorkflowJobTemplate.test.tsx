@@ -1,41 +1,63 @@
-import { renderHook } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useSelectWorkflowJobTemplate } from './useSelectWorkflowJobTemplate';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { WorkflowJobTemplate } from '../../../interfaces/WorkflowJobTemplate';
+import { useSelectWorkflowJobTemplate } from './useSelectWorkflowJobTemplate';
 
 const mockSetDialog = vi.fn();
+const mockFilters = [
+  { key: 'name', label: 'Name' },
+  { key: 'description', label: 'Description' },
+  { key: 'created_by', label: 'Created by' },
+  { key: 'modified_by', label: 'Modified by' },
+];
+const mockColumns = [{ header: 'Name', sort: 'name' }];
 
-vi.mock('@ansible/ansible-ui-framework', async () => {
-  const actual = await vi.importActual<Record<string, unknown>>('@ansible/ansible-ui-framework');
-  return {
-    ...actual,
-    usePageDialog: vi.fn(() => [undefined, mockSetDialog]),
-  };
-});
+const minimalView = {
+  page: 1,
+  perPage: 10,
+  itemCount: 0,
+  pageItems: [],
+  error: undefined,
+  refresh: vi.fn(),
+};
+
+const mockUseAwxView = vi.fn(() => minimalView);
+
+let capturedSingleSelectDialogProps: Record<string, unknown> | undefined;
+
+vi.mock('@ansible/ansible-ui-framework', () => ({
+  usePageDialog: (): [unknown, typeof mockSetDialog] => [undefined, mockSetDialog],
+}));
+
+vi.mock('@ansible/ansible-ui-framework/PageDialogs/SingleSelectDialog', () => ({
+  SingleSelectDialog: (props: Record<string, unknown>) => {
+    capturedSingleSelectDialogProps = props;
+    return <div data-testid="single-select-dialog-mock" />;
+  },
+}));
 
 vi.mock('../../../common/awx-toolbar-filters', () => ({
-  useNameToolbarFilter: vi.fn(() => ({ key: 'name', label: 'Name' })),
-  useDescriptionToolbarFilter: vi.fn(() => ({ key: 'description', label: 'Description' })),
-  useCreatedByToolbarFilter: vi.fn(() => ({ key: 'created_by', label: 'Created by' })),
-  useModifiedByToolbarFilter: vi.fn(() => ({ key: 'modified_by', label: 'Modified by' })),
+  useNameToolbarFilter: vi.fn(() => mockFilters[0]),
+  useDescriptionToolbarFilter: vi.fn(() => mockFilters[1]),
+  useCreatedByToolbarFilter: vi.fn(() => mockFilters[2]),
+  useModifiedByToolbarFilter: vi.fn(() => mockFilters[3]),
 }));
 
 vi.mock('../../../common/useAwxView', () => ({
-  useAwxView: vi.fn(() => ({
-    pageItems: [],
-    itemCount: 0,
-    error: undefined,
-    refresh: vi.fn(),
-  })),
+  useAwxView: (options: unknown) => mockUseAwxView(options),
 }));
 
 vi.mock('./useTemplateColumns', () => ({
-  useTemplateColumns: vi.fn(() => [{ header: 'Name', sort: 'name' }]),
+  useTemplateColumns: vi.fn(() => mockColumns),
 }));
 
 describe('useSelectWorkflowJobTemplate', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    capturedSingleSelectDialogProps = undefined;
+    mockUseAwxView.mockImplementation(() => minimalView);
   });
 
   it('should return a callable function', () => {
@@ -109,6 +131,31 @@ describe('useSelectWorkflowJobTemplate', () => {
     }>;
     dialogElement.props.onSelect(template);
     expect(onSelect).toHaveBeenCalledWith(template);
+  });
+
+  it('wires SelectWorkflowJobTemplate to workflow job templates list view', () => {
+    const onSelect = vi.fn();
+    const { result } = renderHook(() => useSelectWorkflowJobTemplate());
+
+    result.current(onSelect);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0] as ReactElement;
+    render(dialogElement);
+
+    expect(capturedSingleSelectDialogProps).toMatchObject({
+      title: 'Select workflow job template',
+      onSelect,
+      toolbarFilters: mockFilters,
+      tableColumns: mockColumns,
+      view: minimalView,
+    });
+
+    expect(mockUseAwxView).toHaveBeenCalledWith({
+      url: awxAPI`/workflow_job_templates/`,
+      toolbarFilters: mockFilters,
+      tableColumns: mockColumns,
+      disableQueryString: true,
+    });
   });
 
   it('should forward different onSelect callbacks on subsequent calls', () => {

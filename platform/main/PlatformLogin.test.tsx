@@ -1,86 +1,121 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import React from 'react';
-import { beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { gatewayAPI } from '../utils/gateway-api-utils';
 import { PlatformActiveUserProvider } from './PlatformActiveUserProvider';
 import { PlatformLogin } from './PlatformLogin';
-import { PlatformMainInternal } from './PlatformMain';
 
-global.fetch = vi.fn();
+const capturedLoginProps: Record<string, unknown>[] = [];
 
 vi.mock('@ansible/common-ui/AnsibleLogin/AnsibleLogin', () => ({
-  AnsibleLogin: ({
-    authOptions,
-    children,
-  }: {
-    authOptions?: { name: string; type: string }[];
-    children?: React.ReactNode;
-  }) => (
-    <div data-testid="ansible-login">
-      {authOptions?.map((option) => <button key={option.type}>{option.name}</button>)}
-      {children}
-    </div>
-  ),
-}));
-
-vi.mock('./PlatformActiveUserProvider', () => ({
-  PlatformActiveUserProvider: ({ children }: { children: React.ReactNode }) => children,
-  usePlatformActiveUser: () => ({ activePlatformUser: null }),
-}));
-
-vi.mock('./PlatformMain', () => ({
-  PlatformMainInternal: () => <div data-testid="platform-main-internal" />,
-}));
-
-vi.mock('@ansible/common-ui/crud/useGet', () => ({
-  useGet: (url: string) => {
-    if (url.includes('/ui_auth/')) {
-      return {
-        data: {
-          show_login_form: true,
-          ssos: [
-            {
-              name: 'Github OAuth',
-              type: 'ansible_base.authentication.authenticator_plugins.github',
-            },
-          ],
-        },
-      };
-    }
-    return { data: undefined };
+  AnsibleLogin: (props: Record<string, unknown>) => {
+    capturedLoginProps.push(props);
+    return (
+      <div data-testid="ansible-login">
+        {(props.authOptions as { name: string; type: string }[] | undefined)?.map((option) => (
+          <button key={option.type} type="button">
+            {option.name}
+          </button>
+        ))}
+        {props.brandImg as React.ReactNode}
+      </div>
+    );
   },
 }));
 
-describe('PlatformLogin', () => {
-  let fetchMock: MockInstance;
+const defaultUiAuth = {
+  show_login_form: true,
+  ssos: [
+    {
+      name: 'Github OAuth',
+      type: 'ansible_base.authentication.authenticator_plugins.github',
+    },
+  ],
+};
 
-  beforeAll(async () => {
-    await i18n.use(initReactI18next).init({
-      lng: 'en',
-      fallbackLng: 'en',
-      debug: false,
-      interpolation: { escapeValue: false },
+const server = setupServer(
+  http.get(gatewayAPI`/ui_auth/`, () => HttpResponse.json(defaultUiAuth)),
+  http.get(gatewayAPI`/me/`, () => HttpResponse.json({ count: 0, results: [] }))
+);
+
+function renderPlatformLogin() {
+  return render(
+    <PlatformActiveUserProvider>
+      <PlatformLogin>
+        <div data-testid="platform-main-internal" />
+      </PlatformLogin>
+    </PlatformActiveUserProvider>
+  );
+}
+
+describe('PlatformLogin', () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+  afterEach(() => {
+    server.resetHandlers();
+    capturedLoginProps.length = 0;
+  });
+  afterAll(() => server.close());
+
+  it('should render correct AAP SSO options', async () => {
+    renderPlatformLogin();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Github OAuth' })).toBeInTheDocument();
+    });
+    expect(screen.getByTestId('ansible-login')).toBeInTheDocument();
+  });
+
+  it('should render children when an active platform user is present', async () => {
+    server.use(
+      http.get(gatewayAPI`/me/`, () =>
+        HttpResponse.json({
+          count: 1,
+          results: [{ id: 1, username: 'admin' }],
+        })
+      )
+    );
+
+    renderPlatformLogin();
+
+    await waitFor(() => {
+      expect(screen.getByTestId('platform-main-internal')).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('ansible-login')).not.toBeInTheDocument();
+  });
+
+  it('should use a custom logo image when ui_auth provides custom_logo', async () => {
+    server.use(
+      http.get(gatewayAPI`/ui_auth/`, () =>
+        HttpResponse.json({
+          ...defaultUiAuth,
+          custom_logo: 'data:image/png;base64,abc',
+        })
+      )
+    );
+
+    renderPlatformLogin();
+
+    await waitFor(() => {
+      expect(screen.getByAltText('Custom logo')).toBeInTheDocument();
     });
   });
 
-  beforeEach(() => {
-    fetchMock = vi.mocked(fetch);
-    fetchMock.mockClear();
-
-    render(
-      <PlatformActiveUserProvider>
-        <PlatformLogin>
-          <PlatformMainInternal />
-        </PlatformLogin>
-      </PlatformActiveUserProvider>
+  it('passes login_redirect_override to AnsibleLogin', async () => {
+    server.use(
+      http.get(gatewayAPI`/ui_auth/`, () =>
+        HttpResponse.json({
+          ...defaultUiAuth,
+          login_redirect_override: 'https://sso.example.com/start',
+        })
+      )
     );
-  });
 
-  it('should render correct AAP SSO options', async () => {
+    renderPlatformLogin();
+
     await waitFor(() => {
-      const githubAuthButton = screen.getByRole('button', { name: 'Github OAuth' });
-      expect(githubAuthButton).toBeInTheDocument();
+      expect(capturedLoginProps.at(-1)?.externalLoginUrl).toBe('https://sso.example.com/start');
     });
   });
 });
