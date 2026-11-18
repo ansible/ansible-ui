@@ -133,7 +133,7 @@
     "@vitejs/plugin-react": "^4.0.0",
     "@vitest/coverage-v8": "^4.1.8",
     "@vitest/eslint-plugin": "^1.6.27",
-    "@vitest/ui": "^4.1.8",
+    "@vitest/ui": "^5.1.0",
     "babel-plugin-istanbul": "7.0.0",
     "babel-plugin-styled-components": "2.3.0",
     "concurrently": "9.1.2",
