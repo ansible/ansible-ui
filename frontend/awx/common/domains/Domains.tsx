@@ -24,11 +24,12 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { AwxPageForm } from '../../common/AwxPageForm';
 import { PageFormLabelSelect } from '../PageFormLabelSelect';
-import { IDomain, useDomainsStore } from './useDomains';
+import { IDomain, useDomainsPersistence, useDomainsStore } from './useDomains';
 
 export function Domains() {
   const { t } = useTranslation();
-  const { domains, activeDomains, toggleActiveDomain, clearActiveDomains } = useDomainsStore();
+  const { domains, userDomains, activeDomains, setActiveDomains } = useDomainsStore();
+  const { saveDomains } = useDomainsPersistence();
   const [configureOpen, setConfigureOpen] = useState(false);
   return (
     <PageSection
@@ -66,7 +67,15 @@ export function Domains() {
                   activeDomains.find((activeDomain) => activeDomain.name === domain.name) !==
                   undefined
                 }
-                onClick={() => toggleActiveDomain(domain)}
+                onClick={() => {
+                  const nextActiveDomains = activeDomains.some(
+                    (activeDomain) => activeDomain.name === domain.name
+                  )
+                    ? activeDomains.filter((activeDomain) => activeDomain.name !== domain.name)
+                    : [...activeDomains, domain];
+                  setActiveDomains(nextActiveDomains);
+                  void saveDomains(userDomains, nextActiveDomains);
+                }}
               />
             </ToggleGroup>
           </FlexItem>
@@ -83,19 +92,30 @@ export function Domains() {
               icon={<CloseIcon />}
               aria-label={t('Clear Active Domains')}
               variant="plain"
-              onClick={clearActiveDomains}
+              onClick={() => {
+                setActiveDomains([]);
+                void saveDomains(userDomains, []);
+              }}
             />
           )}
         </FlexItem>
       </Flex>
-      <ConfigureDomainsModal isOpen={configureOpen} setOpen={setConfigureOpen} />
+      <ConfigureDomainsModal
+        isOpen={configureOpen}
+        setOpen={setConfigureOpen}
+        saveDomains={saveDomains}
+      />
     </PageSection>
   );
 }
 
-function ConfigureDomainsModal(props: { isOpen: boolean; setOpen: (open: boolean) => void }) {
-  const { isOpen, setOpen } = props;
-  const { domains, setDomains } = useDomainsStore();
+function ConfigureDomainsModal(props: {
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
+  saveDomains: (domains: IDomain[], activeDomains: IDomain[]) => Promise<unknown>;
+}) {
+  const { isOpen, setOpen, saveDomains } = props;
+  const { userDomains, activeDomains, setUserDomains, setActiveDomains } = useDomainsStore();
   const { t } = useTranslation();
   return (
     <Modal
@@ -125,14 +145,21 @@ function ConfigureDomainsModal(props: { isOpen: boolean; setOpen: (open: boolean
               setError(t('Each domain name must be unique.'));
               return Promise.resolve();
             }
-            const savedDomains = data.fields.filter((fa) => !!fa.name);
-            setDomains(savedDomains);
+            const configuredDomains = data.fields as IDomain[];
+            const savedDomains = configuredDomains.filter((fa) => !!fa.name);
+            const savedDomainNames = new Set(savedDomains.map((domain) => domain.name));
+            const savedActiveDomains = activeDomains.filter((domain) =>
+              savedDomainNames.has(domain.name)
+            );
+            setUserDomains(savedDomains);
+            setActiveDomains(savedActiveDomains);
+            void saveDomains(savedDomains, savedActiveDomains);
             setOpen(false);
             return Promise.resolve();
           }}
           cancelText={t('Cancel')}
           onCancel={() => setOpen(false)}
-          defaultValue={{ fields: domains }}
+          defaultValue={{ fields: userDomains }}
           disablePadding
         >
           <ConfigureDomains />
