@@ -9,6 +9,11 @@ test.beforeEach(setupBefore({ path: '/overview' }));
 test.afterEach(setupAfter);
 
 test.describe('Gateway domain persistence', () => {
+  test.skip(
+    process.env.RUN_GATEWAY_DOMAIN_E2E !== '1',
+    'Set RUN_GATEWAY_DOMAIN_E2E=1 to run against a deployed environment'
+  );
+
   test(
     'inherits organization and team domains while isolating user domains',
     { tag: ['@not_mock', '@tier2'] },
@@ -96,6 +101,19 @@ test.describe('Gateway domain persistence', () => {
           'User only'
         );
         expect(userAAfterRelogin?.value.activeDomains).toEqual([{ name: 'User only', labels: [] }]);
+
+        await gatewayAPI.put(page, 'me/preferences/domains/', {
+          value: { domains: [], activeDomains: [] },
+        });
+        const userAFallback = await gatewayAPI.get<{
+          value: { domains: { name: string }[]; userDomains?: { name: string }[] };
+        }>(page, 'me/preferences/domains/');
+        expect(userAFallback?.value.domains.map((domain) => domain.name)).toEqual([
+          'Shared',
+          'Organization only',
+          'Team only',
+        ]);
+        expect(userAFallback?.value.userDomains ?? []).toEqual([]);
       } finally {
         await logout(page, { username: currentUsername }).catch(() => undefined);
         await login(page, platformUI).catch(() => undefined);
