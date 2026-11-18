@@ -9,7 +9,7 @@
 #
 # To use a dedicated app, configure PACKAGING_GITHUB_APP_ID (variable) and
 # PACKAGING_GITHUB_APP_PRIVATE_KEY (secret), install it on the packaging repository,
-# and set PACKAGING_USE_GITHUB_APP to true. Dispatch requests Contents: write.
+# and set PACKAGING_DISPATCH_USE_GITHUB_APP to true. Dispatch requests Contents: write.
 
 name: Trigger packaging builds
 
@@ -31,10 +31,10 @@ jobs:
         env:
           DISPATCH_TOKEN: ${{ secrets.PACKAGING_REPO_DISPATCH_TOKEN }}
           PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
-          USE_GITHUB_APP: ${{ vars.PACKAGING_USE_GITHUB_APP }}
+          USE_GITHUB_APP: ${{ vars.PACKAGING_DISPATCH_USE_GITHUB_APP }}
         run: |
           if [ "$USE_GITHUB_APP" = "true" ] && [ -z "$PACKAGING_REPO" ]; then
-            echo "::error::PACKAGING_GITHUB_REPOSITORY is required when PACKAGING_USE_GITHUB_APP is enabled."
+            echo "::error::PACKAGING_GITHUB_REPOSITORY is required when PACKAGING_DISPATCH_USE_GITHUB_APP is enabled."
             exit 1
           fi
           if [ -n "$PACKAGING_REPO" ] && { [ "$USE_GITHUB_APP" = "true" ] || [ -n "$DISPATCH_TOKEN" ]; }; then
@@ -45,7 +45,7 @@ jobs:
           fi
 
       - name: Identify packaging repository
-        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_USE_GITHUB_APP == 'true'
+        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_DISPATCH_USE_GITHUB_APP == 'true'
         id: packaging
         env:
           PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
@@ -60,7 +60,7 @@ jobs:
           printf 'owner=%s\nrepo=%s\n' "$owner" "$repo" >> "$GITHUB_OUTPUT"
 
       - name: Verify packaging token scope
-        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_USE_GITHUB_APP == 'true'
+        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_DISPATCH_USE_GITHUB_APP == 'true'
         env:
           PACKAGING_OWNER: ${{ steps.packaging.outputs.owner }}
           PACKAGING_NAME: ${{ steps.packaging.outputs.repo }}
@@ -71,7 +71,7 @@ jobs:
           fi
 
       - name: Create packaging dispatch token
-        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_USE_GITHUB_APP == 'true'
+        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_DISPATCH_USE_GITHUB_APP == 'true'
         id: packaging_app
         uses: actions/create-github-app-token@v2
         with:
@@ -82,7 +82,7 @@ jobs:
           permission-contents: write
 
       - name: Verify packaging app token
-        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_USE_GITHUB_APP == 'true'
+        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_DISPATCH_USE_GITHUB_APP == 'true'
         env:
           PACKAGING_APP_TOKEN: ${{ steps.packaging_app.outputs.token }}
         run: |

@@ -58,7 +58,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Identify packaging repository
-        if: vars.PACKAGING_USE_GITHUB_APP == 'true'
+        if: vars.PACKAGING_CHECKOUT_USE_GITHUB_APP == 'true'
         id: packaging
         env:
           PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
@@ -73,7 +73,7 @@ jobs:
           printf 'owner=%s\nrepo=%s\n' "$owner" "$repo" >> "$GITHUB_OUTPUT"
 
       - name: Verify packaging token scope
-        if: vars.PACKAGING_USE_GITHUB_APP == 'true'
+        if: vars.PACKAGING_CHECKOUT_USE_GITHUB_APP == 'true'
         env:
           PACKAGING_OWNER: ${{ steps.packaging.outputs.owner }}
           PACKAGING_NAME: ${{ steps.packaging.outputs.repo }}
@@ -84,7 +84,7 @@ jobs:
           fi
 
       - name: Create packaging checkout token
-        if: vars.PACKAGING_USE_GITHUB_APP == 'true'
+        if: vars.PACKAGING_CHECKOUT_USE_GITHUB_APP == 'true'
         id: packaging_app
         uses: actions/create-github-app-token@v2
         with:
@@ -95,7 +95,7 @@ jobs:
           permission-contents: read
 
       - name: Verify packaging app token
-        if: vars.PACKAGING_USE_GITHUB_APP == 'true'
+        if: vars.PACKAGING_CHECKOUT_USE_GITHUB_APP == 'true'
         env:
           PACKAGING_APP_TOKEN: ${{ steps.packaging_app.outputs.token }}
         run: |
