@@ -2,6 +2,7 @@ import { IToolbarFilter, ToolbarFilterType } from '@ansible/ansible-ui-framework
 import { singleSelectBrowseAdapter } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isInsightsMode } from '../../common/isInsights';
 import { useRepoQueryOptions } from '../../administration/repositories/hooks/useRepoQueryOptions';
 import { useSelectRepositorySingle } from '../../administration/repositories/hooks/useRepositorySelector';
 import { AnsibleAnsibleRepositoryResponse as Repository } from '../../interfaces/generated/AnsibleAnsibleRepositoryResponse';
@@ -26,8 +27,10 @@ export function useCollectionFilters() {
         key: 'keywords',
         label: t('Name'),
         type: ToolbarFilterType.SingleText,
-        query: 'name',
-        comparison: 'equals',
+        // Insights mode (console.redhat.com): substring search on name field only
+        // Platform mode: exact match (unchanged)
+        query: isInsightsMode() ? 'name__icontains' : 'name',
+        comparison: isInsightsMode() ? 'contains' : 'equals',
       },
       {
         key: 'namespace',
