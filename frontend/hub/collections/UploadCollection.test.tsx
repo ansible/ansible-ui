@@ -464,6 +464,14 @@ describe('useRepositoriesColumns', () => {
   });
 });
 
+describe('UploadCollection layout', () => {
+  it('should render upload form sections', () => {
+    renderUploadCollection();
+    expect(screen.getByRole('heading', { name: 'Upload collection' })).toBeInTheDocument();
+    expect(screen.getByText('Collection file')).toBeInTheDocument();
+  });
+});
+
 describe('useRepoFilters', () => {
   it('should return an array of toolbar filters', () => {
     const { result } = renderHook(() => useRepoFilters(), {

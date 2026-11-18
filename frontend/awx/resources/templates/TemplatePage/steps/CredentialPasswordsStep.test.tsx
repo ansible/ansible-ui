@@ -40,4 +40,15 @@ describe('CredentialPasswordsStep', () => {
 
     expect(screen.getByText('Vault password | prod')).toBeInTheDocument();
   });
+
+  it('renders privilege escalation password field when become_password is required', () => {
+    const config: RelaunchConfig = {
+      passwords_needed_to_start: ['become_password'],
+      retry_counts: { all: 0, failed: 0 },
+    };
+
+    render(<CredentialPasswordsStep config={config} />);
+
+    expect(screen.getByText('Privilege escalation password')).toBeInTheDocument();
+  });
 });

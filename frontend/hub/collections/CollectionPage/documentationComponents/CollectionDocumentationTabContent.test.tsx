@@ -124,4 +124,18 @@ describe('CollectionDocumentationTabContent', () => {
 
     expect(screen.getByText(/"content_name": "hello"/)).toBeInTheDocument();
   });
+
+  it('renders content from a documentation group entry', () => {
+    render(
+      <CollectionDocumentationTabContent
+        content={mockContent}
+        collection={mockCollection}
+        groups={[{ name: 'vars', contents: [mockContent] }]}
+        renderJSON={false}
+      />
+    );
+
+    expect(screen.getByText('Short description')).toBeInTheDocument();
+    expect(screen.getByText('Overview')).toBeInTheDocument();
+  });
 });

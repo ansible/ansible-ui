@@ -36,4 +36,16 @@ describe('ConstructedInventoryHint', () => {
     expect(screen.getByText(/Parameter/)).toBeInTheDocument();
     expect(screen.getByText(/Description/)).toBeInTheDocument();
   });
+
+  test('opens constructed inventory example sections', async () => {
+    const user = (await import('@testing-library/user-event')).default.setup();
+    render(<ConstructedInventoryHint />);
+
+    const expandButton = screen.getByRole('button', {
+      name: /Info alert details/i,
+    });
+    await user.click(expandButton);
+
+    expect(screen.getByText(/Constructed inventory examples/i)).toBeInTheDocument();
+  });
 });

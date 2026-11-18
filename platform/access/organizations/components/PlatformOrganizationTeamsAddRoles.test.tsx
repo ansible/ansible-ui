@@ -133,4 +133,30 @@ describe('PlatformOrganizationTeamsAddRoles', () => {
       expect(screen.getByText('team-org-test2')).toBeInTheDocument();
     });
   });
+
+  it('should keep showing loading when organization lookup returns no data', async () => {
+    server.use(
+      http.get(gatewayAPI`/organizations/1/`, () =>
+        HttpResponse.json({ detail: 'Not found.' }, { status: 404 })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/teams/assign-organization-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/teams/assign-organization-roles"
+            element={<PlatformOrganizationTeamsAddRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+    expect(
+      screen.queryByRole('heading', { name: 'Assign organization roles' })
+    ).not.toBeInTheDocument();
+  });
 });

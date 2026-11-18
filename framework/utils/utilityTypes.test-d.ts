@@ -41,3 +41,17 @@ test('SetOptional leaves unselected keys unchanged', () => {
 
   assertType<SetOptional<Foo, 'a'>>({ b: 'x' });
 });
+
+test('SetRequired and SetOptional compose on different keys', () => {
+  type Foo = {
+    a?: number;
+    b?: string;
+    c: boolean;
+  };
+
+  type WithRequiredC = SetRequired<Foo, 'b'>;
+  assertType<WithRequiredC>({ b: 'x', c: true });
+
+  type WithOptionalC = SetOptional<Foo, 'c'>;
+  assertType<WithOptionalC>({ a: 1 });
+});

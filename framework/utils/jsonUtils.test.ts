@@ -71,6 +71,20 @@ describe('jsonUtils', () => {
       const result = parseJSONPreservingLargeInts(json) as { value: string };
       expect(result.value).toBe('some string');
     });
+
+    it('keeps sub-16-digit numeric strings in JSON unchanged', () => {
+      const json = '{"id": 123456789012345}';
+      const result = parseJSONPreservingLargeInts(json) as { id: number };
+      expect(result.id).toBe(123456789012345);
+      expect(typeof result.id).toBe('number');
+    });
+
+    it('keeps safe integers at the precision limit as numbers', () => {
+      const json = `{"maxSafe": ${Number.MAX_SAFE_INTEGER}}`;
+      const result = parseJSONPreservingLargeInts(json) as { maxSafe: number };
+      expect(result.maxSafe).toBe(Number.MAX_SAFE_INTEGER);
+      expect(typeof result.maxSafe).toBe('number');
+    });
   });
 
   describe('stringifyPreservingLargeInts', () => {
@@ -117,6 +131,12 @@ describe('jsonUtils', () => {
       const obj = { value: '123abc' };
       const json = stringifyPreservingLargeInts(obj, 2);
       expect(json).toContain('"123abc"');
+    });
+
+    it('does not unquote sixteen-digit strings within the safe integer range', () => {
+      const obj = { value: '9007199254740991' };
+      const json = stringifyPreservingLargeInts(obj);
+      expect(json).toContain('"9007199254740991"');
     });
   });
 

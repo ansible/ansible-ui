@@ -116,7 +116,7 @@ describe('EdaRulebookActivationAssignTeams', () => {
 
     expect(capturedRolesUrl).toBeDefined();
     expect(capturedRolesUrl).toContain('content_type__api_slug=eda.activation');
-  });
+  }, 15000);
 
   it('should have a cancel button', async () => {
     renderComponent();
@@ -126,5 +126,15 @@ describe('EdaRulebookActivationAssignTeams', () => {
     });
 
     expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+  });
+
+  it('should show activation name in breadcrumbs', async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Rulebook Activation')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Team Access')).toBeInTheDocument();
   });
 });

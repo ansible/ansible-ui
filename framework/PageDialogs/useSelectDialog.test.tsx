@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { PageDialogProvider } from './PageDialog';
 import { IView } from '../useView';
 import { ISelected } from '../PageTable/useTableItems';
-import { SelectDialog } from './useSelectDialog';
+import { SelectDialog, useSelectDialog } from './useSelectDialog';
 import { ITableColumn } from '../PageTable/PageTableColumn';
 import { IToolbarFilter, ToolbarFilterType } from '../PageToolbar/PageToolbarFilter';
 
@@ -74,6 +74,62 @@ function createMockView(selectedItems: TestItem[] = []): SelectDialogView {
     selectAll: vi.fn(),
   } as unknown as SelectDialogView;
 }
+
+function SelectDialogHookHarness(props: {
+  view: SelectDialogView;
+  onOpen?: ReturnType<typeof vi.fn>;
+}) {
+  const { view, onOpen = vi.fn() } = props;
+  const openDialog = useSelectDialog({
+    view,
+    tableColumns,
+    toolbarFilters,
+    confirm: 'Confirm',
+    cancel: 'Cancel',
+    selected: 'Selected',
+  });
+
+  return (
+    <button type="button" onClick={() => openDialog(onOpen, 'Hook Dialog')}>
+      Open select dialog
+    </button>
+  );
+}
+
+describe('useSelectDialog', () => {
+  beforeAll(() => {
+    const portalRoot = document.createElement('div');
+    portalRoot.setAttribute('id', 'portal-root');
+    document.body.appendChild(portalRoot);
+  });
+
+  afterAll(() => {
+    const portalRoot = document.getElementById('portal-root');
+    portalRoot?.remove();
+  });
+
+  it('opens the select dialog and clears selection when closed', async () => {
+    const user = userEvent.setup();
+    const view = createMockView();
+    const unselectAll = vi.fn();
+    const viewWithSpy = { ...view, unselectAll } as unknown as SelectDialogView;
+
+    render(
+      <PageDialogProvider>
+        <SelectDialogHookHarness view={viewWithSpy} />
+      </PageDialogProvider>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Open select dialog' }));
+    expect(await screen.findByText('Hook Dialog')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => {
+      expect(screen.queryByText('Hook Dialog')).not.toBeInTheDocument();
+      expect(unselectAll).toHaveBeenCalled();
+    });
+  });
+});
 
 describe('SelectDialog', () => {
   beforeAll(() => {
@@ -376,6 +432,30 @@ describe('SelectDialog', () => {
     );
 
     expect(screen.getByText('Select Items')).toBeInTheDocument();
+  });
+
+  it('should omit chip content when table columns are empty', () => {
+    const view = createMockView([testItems[0]]);
+    render(
+      <PageDialogProvider>
+        <SelectDialog<TestItem, false>
+          title="Select Items"
+          open={true}
+          setOpen={vi.fn()}
+          onSelect={vi.fn()}
+          view={view}
+          tableColumns={[]}
+          toolbarFilters={toolbarFilters}
+          confirm="Confirm"
+          cancel="Cancel"
+          selected="Selected"
+          keyFn={(item) => item.id}
+        />
+      </PageDialogProvider>
+    );
+
+    expect(screen.getByText('Selected')).toBeInTheDocument();
+    expect(screen.queryAllByText('Item One')).toHaveLength(0);
   });
 
   it('should call unselectItem when chip is clicked', async () => {

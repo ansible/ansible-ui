@@ -48,5 +48,11 @@ describe('compare', () => {
     it('returns zero for incomparable types', () => {
       expect(compareUnknowns(true, false)).toBe(0);
     });
+
+    it('handles undefined operands', () => {
+      expect(compareUnknowns(undefined, undefined)).toBe(0);
+      expect(compareUnknowns(undefined, 'a')).toBe(1);
+      expect(compareUnknowns('a', undefined)).toBe(-1);
+    });
   });
 });

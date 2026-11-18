@@ -846,4 +846,15 @@ describe('InsightsAccessTab', () => {
       });
     });
   });
+
+  it('should render user and group select actions when lists are empty', () => {
+    render(
+      <MemoryRouter>
+        <InsightsAccessTab {...defaultProps} users={[]} groups={[]} canEditOwners={true} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('button', { name: 'Select a user' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Select a group' })).toBeInTheDocument();
+  });
 });

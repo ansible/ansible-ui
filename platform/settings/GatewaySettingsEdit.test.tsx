@@ -523,6 +523,55 @@ describe('GatewaySettingsEdit Component', () => {
       expect(screen.getByRole('button', { name: 'Enabled' })).toBeInTheDocument();
     });
 
+    it('should render file upload control for field settings type', () => {
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'platform',
+          title: 'Platform gateway settings',
+          description: 'Edit platform gateway settings',
+          sections: [
+            {
+              title: 'Branding',
+              options: {
+                custom_logo: {
+                  type: 'field',
+                  label: 'Custom logo',
+                  help_text: 'Upload a logo image.',
+                  default: null,
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+
+      const fileContext = {
+        options: {
+          GET: {
+            custom_logo: { type: 'field', label: 'Custom logo', default: null },
+          },
+          PUT: {
+            custom_logo: {
+              type: 'field',
+              label: 'Custom logo',
+              help_text: 'Upload a logo image.',
+              default: null,
+              required: false,
+              read_only: false,
+            },
+          },
+        },
+        settings: { custom_logo: null },
+        refresh: vi.fn(),
+      };
+
+      renderWithContext(fileContext);
+
+      expect(screen.getByText('Custom logo')).toBeInTheDocument();
+    });
+
     it('should show unsupported settings type for unknown option types', () => {
       mockUseGatewaySettingsCategories.mockReturnValue([
         {

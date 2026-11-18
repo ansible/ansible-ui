@@ -60,4 +60,14 @@ describe('PageFormPlatformTeamNameSelect', () => {
     expect(screen.getByTestId('query-error')).toHaveTextContent('Error loading teams');
     expect(screen.getByTestId('required')).toHaveTextContent('yes');
   });
+
+  it('marks the field optional when isRequired is not set', () => {
+    render(
+      <Wrapper>
+        <PageFormPlatformTeamNameSelect name="teamName" />
+      </Wrapper>
+    );
+
+    expect(screen.getByTestId('required')).toHaveTextContent('no');
+  });
 });

@@ -2,7 +2,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { PageFormFileUpload } from './PageFormFileUpload';
 import { PageFormOptionsContext, PageFormOptionsContextValue } from '../PageFormOptionsContext';
 
@@ -144,6 +144,45 @@ describe('PageFormFileUpload', () => {
     );
 
     expect(screen.getByText('Extra helper info')).toBeInTheDocument();
+  });
+
+  it('invokes onClearClick when the file is cleared', async () => {
+    const user = userEvent.setup();
+    const onClearClick = vi.fn();
+
+    render(
+      <TestWrapper defaultValue={{ file: 'existing' }}>
+        <PageFormFileUpload
+          name="file"
+          type="text"
+          label="File upload"
+          isClearButtonDisabled={false}
+          onClearClick={onClearClick}
+        />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getByRole('button', { name: /clear/i }));
+    expect(onClearClick).toHaveBeenCalled();
+  });
+
+  it('calls onInputChange when a file is selected', async () => {
+    const user = userEvent.setup();
+    const onInputChange = vi.fn().mockResolvedValue(undefined);
+    const file = new File(['hello'], 'hello.txt', { type: 'text/plain' });
+
+    const { container } = render(
+      <TestWrapper defaultValue={{ file: '' }}>
+        <PageFormFileUpload name="file" label="File upload" onInputChange={onInputChange} />
+      </TestWrapper>
+    );
+
+    const input = container.querySelector('input[type="file"]');
+    await user.upload(input!, file);
+
+    await waitFor(() => {
+      expect(onInputChange).toHaveBeenCalledWith(file);
+    });
   });
 });
 

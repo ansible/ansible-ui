@@ -306,4 +306,10 @@ describe('JobOutputEvents', () => {
 
     jobEventToRowsSpy.mockRestore();
   });
+
+  it('exposes scroll last navigation control', () => {
+    renderJobOutput(jobFixture);
+
+    expect(screen.getByRole('button', { name: 'Scroll last' })).toBeEnabled();
+  });
 });

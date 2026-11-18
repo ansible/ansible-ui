@@ -125,4 +125,10 @@ describe('AutomationCalculator', () => {
     renderInternal();
     await waitFor(() => expect(screen.getByText(/No results found/i)).toBeInTheDocument());
   });
+
+  it('displays savings total from loaded ROI templates', async () => {
+    renderInternal();
+    await waitFor(() => expect(screen.getByText('$350.00')).toBeInTheDocument());
+    expect(screen.getByText('Total savings')).toBeInTheDocument();
+  });
 });

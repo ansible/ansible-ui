@@ -120,6 +120,29 @@ describe('useProcessAutoMigrationUsersRequest', () => {
     });
   });
 
+  test('patches added authenticators for non-legacy type', async () => {
+    server.use(
+      http.get(gatewayAPI`/authenticators/`, ({ request }) => {
+        const url = new URL(request.url);
+        if (url.searchParams.get('auto_migrate_users_to') === '11') {
+          return HttpResponse.json({ count: 0, results: [] });
+        }
+        return HttpResponse.json({ count: 0, results: [] });
+      })
+    );
+
+    const { result } = renderHook(() => useProcessAutoMigrationUsersRequest());
+
+    await result.current(standardAuth, [linkedAuth]);
+
+    await waitFor(() => {
+      expect(patchSpy).toHaveBeenCalledWith({
+        id: '20',
+        body: { auto_migrate_users_to: 11 },
+      });
+    });
+  });
+
   test('returns early when updated authenticator is undefined', async () => {
     const { result } = renderHook(() => useProcessAutoMigrationUsersRequest());
 

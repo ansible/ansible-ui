@@ -50,4 +50,12 @@ describe('Reports', () => {
     ).toBeInTheDocument();
     expect(screen.queryByTestId('automation-calculator')).not.toBeInTheDocument();
   });
+
+  it('shows analytics error state for system auditors who are not superusers', () => {
+    renderReports({ is_superuser: false, is_system_auditor: true });
+    expect(
+      screen.getByText(/Automation Analytics is currently not enabled to send data/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('automation-calculator')).not.toBeInTheDocument();
+  });
 });

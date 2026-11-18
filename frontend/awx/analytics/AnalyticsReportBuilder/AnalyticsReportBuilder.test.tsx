@@ -79,4 +79,11 @@ describe('AnalyticsReportBuilder helpers', () => {
       'template_id',
     ]);
   });
+
+  it('preserves a custom rowKeyFn when FillDefaultProps is called', () => {
+    const rowKeyFn = (row: { id: number }) => `row-${row.id}`;
+    const props: AnalyticsReportBuilderProps = { ...baseBuilderProps, rowKeyFn };
+    FillDefaultProps(props);
+    expect(props.rowKeyFn?.({ id: 12 })).toBe('row-12');
+  });
 });

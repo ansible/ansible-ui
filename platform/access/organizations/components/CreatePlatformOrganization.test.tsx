@@ -212,4 +212,18 @@ describe('CreatePlatformOrganization', () => {
       expect(patchSpy).toHaveBeenCalled();
     });
   });
+
+  it('should show description field on the organization details step', async () => {
+    render(
+      <MemoryRouter>
+        <CreatePlatformOrganization />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /create organization/i })).toBeInTheDocument();
+    });
+
+    expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
+  });
 });

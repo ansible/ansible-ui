@@ -323,4 +323,43 @@ describe('EditPlatformOrganization', () => {
       expect(controllerPatchPayload?.description).toBe('Test Description');
     });
   });
+
+  it('should PATCH gateway organization when description changes on submit', async () => {
+    const user = userEvent.setup({ delay: null });
+    const gatewayPatchSpy = vi.fn();
+    server.use(
+      http.patch(gatewayAPI`/organizations/1/`, async ({ request }) => {
+        gatewayPatchSpy(await request.json());
+        return HttpResponse.json(mockPlatformOrganization);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/organizations/1/edit']}>
+        <Routes>
+          <Route path="/organizations/:id/edit" element={<EditPlatformOrganization />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Organization')).toBeInTheDocument();
+    });
+
+    const descriptionField = screen.getByLabelText(/description/i);
+    await user.clear(descriptionField);
+    await user.type(descriptionField, 'Updated description');
+
+    const nextButton = await screen.findByTestId('Submit');
+    await user.click(nextButton);
+
+    const finishButton = await screen.findByTestId('wizard-next');
+    await user.click(finishButton);
+
+    await waitFor(() => {
+      expect(gatewayPatchSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ description: 'Updated description' })
+      );
+    });
+  });
 });

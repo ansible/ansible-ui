@@ -95,4 +95,16 @@ describe('PageFormMultiInput', () => {
     render(<Wrapper selectTitle="Pick items" selectOpen={vi.fn()} isDisabled />);
     expect(screen.getByRole('button', { name: 'Options menu' })).toBeDisabled();
   });
+
+  it('shows collapsed chip text when more than five items are selected', () => {
+    const items = Array.from({ length: 6 }, (_, index) => ({
+      id: index + 1,
+      name: `Item ${index + 1}`,
+    }));
+
+    render(<Wrapper defaultValues={{ items }} />);
+
+    expect(screen.getByText('Item 1')).toBeInTheDocument();
+    expect(screen.getByText('1 more')).toBeInTheDocument();
+  });
 });

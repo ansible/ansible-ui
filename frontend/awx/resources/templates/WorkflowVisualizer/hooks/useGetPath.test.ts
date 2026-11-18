@@ -128,4 +128,13 @@ describe('useGetPath', () => {
     expect(path).toBeTruthy();
     expect(typeof centerPoint.y).toBe('number');
   });
+
+  it('should include start and end coordinates in generated SVG path', () => {
+    const edge = makeMockEdge(10, 20, 110, 220);
+    const { path } = useGetPath(edge);
+
+    expect(path).toMatch(/^M/);
+    expect(path).toContain('110');
+    expect(path).toContain('245');
+  });
 });

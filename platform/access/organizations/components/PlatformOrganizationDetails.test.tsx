@@ -8,8 +8,16 @@ import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import mockOrganization from './fixtures/organization.fixture.json';
 import { PlatformOrganizationDetails } from './PlatformOrganizationDetails';
 
+const mockHasAwxService = vi.hoisted(() => ({ enabled: false }));
+
 vi.mock('../../../main/GatewayServices', () => ({
-  useHasAwxService: () => false,
+  useHasAwxService: () => mockHasAwxService.enabled,
+}));
+
+vi.mock('@ansible/awx-ui/common/useAwxConfig', () => ({
+  useAwxConfig: () => ({
+    license_info: { license_type: 'open' },
+  }),
 }));
 
 describe('PlatformOrganizationDetails', () => {
@@ -18,8 +26,28 @@ describe('PlatformOrganizationDetails', () => {
   );
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    mockHasAwxService.enabled = false;
+  });
   afterAll(() => server.close());
+
+  it('shows a loading state while organization details are loading', () => {
+    server.use(http.get(gatewayAPI`/organizations/1/`, () => new Promise(() => {})));
+
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/details']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/details"
+            element={<PlatformOrganizationDetails />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
 
   it('renders organization detail fields from gateway data', async () => {
     render(

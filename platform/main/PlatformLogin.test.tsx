@@ -102,6 +102,23 @@ describe('PlatformLogin', () => {
     });
   });
 
+  it('passes undefined authOptions when ui_auth has no SSO providers', async () => {
+    server.use(
+      http.get(gatewayAPI`/ui_auth/`, () =>
+        HttpResponse.json({
+          show_login_form: true,
+          ssos: [],
+        })
+      )
+    );
+
+    renderPlatformLogin();
+
+    await waitFor(() => {
+      expect(capturedLoginProps.at(-1)?.authOptions).toBeUndefined();
+    });
+  });
+
   it('passes login_redirect_override to AnsibleLogin', async () => {
     server.use(
       http.get(gatewayAPI`/ui_auth/`, () =>

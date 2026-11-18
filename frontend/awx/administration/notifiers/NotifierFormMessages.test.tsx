@@ -84,4 +84,13 @@ describe('NotifierFormMessages', () => {
     );
     expect(screen.getByText('Workflow approved message')).toBeInTheDocument();
   });
+
+  it('renders Error message label for email notifiers when customizing messages', () => {
+    render(
+      <TestWrapper notification_type="email">
+        <NotifierFormMessages customize_messages={true} data={undefined} />
+      </TestWrapper>
+    );
+    expect(screen.getByText('Error message')).toBeInTheDocument();
+  });
 });

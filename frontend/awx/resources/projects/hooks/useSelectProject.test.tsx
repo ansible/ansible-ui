@@ -1,8 +1,9 @@
 import type { ReactElement } from 'react';
-import { renderHook } from '@testing-library/react';
+import { render, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useSelectProject } from './useSelectProject';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { Project } from '../../../interfaces/Project';
+import { useSelectProject } from './useSelectProject';
 
 const mockSetDialog = vi.fn();
 
@@ -22,13 +23,18 @@ vi.mock('./useProjectsColumns', () => ({
   useProjectsColumns: vi.fn(() => [{ header: 'Name', sort: 'name' }]),
 }));
 
+const mockUseAwxView = vi.fn(() => ({
+  page: 1,
+  perPage: 10,
+  pageItems: [],
+  selectedItems: [],
+  itemCount: 0,
+  error: undefined,
+  refresh: vi.fn(),
+}));
+
 vi.mock('../../../common/useAwxView', () => ({
-  useAwxView: vi.fn(() => ({
-    pageItems: [],
-    itemCount: 0,
-    error: undefined,
-    refresh: vi.fn(),
-  })),
+  useAwxView: (options?: unknown) => mockUseAwxView(options),
 }));
 
 describe('useSelectProject', () => {
@@ -125,5 +131,22 @@ describe('useSelectProject', () => {
     }>;
     expect(firstDialog.props.onSelect).toBe(onSelectFirst);
     expect(secondDialog.props.onSelect).toBe(onSelectSecond);
+  });
+
+  it('wires SelectProject dialog to the projects list view', () => {
+    const onSelect = vi.fn();
+    const { result } = renderHook(() => useSelectProject());
+
+    result.current(onSelect);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0] as ReactElement;
+    render(dialogElement);
+
+    expect(mockUseAwxView).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: awxAPI`/projects/`,
+        disableQueryString: true,
+      })
+    );
   });
 });

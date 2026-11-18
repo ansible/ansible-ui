@@ -1,7 +1,9 @@
-import { renderHook } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { render, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useSelectInventorySource } from './useSelectInventorySource';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { InventorySource } from '../../../interfaces/InventorySource';
+import { useSelectInventorySource } from './useSelectInventorySource';
 
 const mockSetDialog = vi.fn();
 
@@ -21,13 +23,18 @@ vi.mock('./useInventorySourceFilters', () => ({
   useInventorySourceFilters: vi.fn(() => [{ key: 'name', label: 'Name' }]),
 }));
 
+const mockUseAwxView = vi.fn(() => ({
+  page: 1,
+  perPage: 10,
+  pageItems: [],
+  selectedItems: [],
+  itemCount: 0,
+  error: undefined,
+  refresh: vi.fn(),
+}));
+
 vi.mock('../../../common/useAwxView', () => ({
-  useAwxView: vi.fn(() => ({
-    pageItems: [],
-    itemCount: 0,
-    error: undefined,
-    refresh: vi.fn(),
-  })),
+  useAwxView: (options?: unknown) => mockUseAwxView(options),
 }));
 
 describe('useSelectInventorySource', () => {
@@ -160,5 +167,22 @@ describe('useSelectInventorySource', () => {
     rerender({ id: 2 });
 
     expect(result.current).not.toBe(firstRef);
+  });
+
+  it('scopes inventory sources to a specific inventory when inventoryId is provided', () => {
+    const onSelect = vi.fn();
+    const { result } = renderHook(() => useSelectInventorySource(42));
+
+    result.current(onSelect);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0] as ReactElement;
+    render(dialogElement);
+
+    expect(mockUseAwxView).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: awxAPI`/inventories/42/inventory_sources/`,
+        disableQueryString: true,
+      })
+    );
   });
 });

@@ -67,4 +67,20 @@ describe('CollectionCategoryCarousel', () => {
     expect(screen.getByText('Application collections')).toBeInTheDocument();
     expect(screen.getByText('Go to collections')).toBeInTheDocument();
   });
+
+  it('renders empty carousel when no collections are provided', () => {
+    render(
+      <MemoryRouter>
+        <CollectionCategoryCarousel
+          category="database"
+          collections={[]}
+          searchKey="tags"
+          searchValue="database"
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Database collections')).toBeInTheDocument();
+    expect(screen.queryByText('demo.collection')).not.toBeInTheDocument();
+  });
 });

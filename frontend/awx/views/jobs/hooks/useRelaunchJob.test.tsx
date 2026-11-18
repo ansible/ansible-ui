@@ -114,4 +114,25 @@ describe('useRelaunchJob', () => {
     );
     expect(mockNavigate).not.toHaveBeenCalled();
   });
+
+  it('should relaunch a workflow job without passwords and navigate to output', async () => {
+    server.use(
+      http.get(awxAPI`/workflow_jobs/40/relaunch/`, () =>
+        HttpResponse.json({ passwords_needed_to_start: [] })
+      ),
+      http.post(awxAPI`/workflow_jobs/40/relaunch/`, () =>
+        HttpResponse.json({ id: 88, type: 'workflow_job', name: 'Relaunched wf' }, { status: 201 })
+      )
+    );
+
+    const { result } = renderHook(() => useRelaunchJob());
+    await act(async () => {
+      await result.current(jobFixture('workflow_job', 40));
+    });
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(expect.stringContaining('job_type=workflow'));
+    });
+    expect(mockAddAlert).not.toHaveBeenCalled();
+  });
 });

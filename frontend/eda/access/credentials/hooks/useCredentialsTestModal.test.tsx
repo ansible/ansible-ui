@@ -61,4 +61,31 @@ describe('useCredentialsTestModal', () => {
     const { result } = renderHook(() => useCredentialsTestModal(), { wrapper });
     expect(() => result.current(undefined)).not.toThrow();
   });
+
+  it('should render mapped credential input fields in the test modal', () => {
+    const { result } = renderHook(() => useCredentialsTestModal(), { wrapper });
+
+    const credentialType = {
+      id: 2,
+      name: 'Source Control',
+      inputs: {
+        fields: [],
+        metadata: [{ id: 'token', type: 'string', label: 'Token' }],
+        required: [],
+      },
+    } as unknown as EdaCredentialType;
+
+    act(() => {
+      result.current({
+        credentialType,
+        watchedSubFormFields: ['secret-token'],
+        credential: {
+          id: 9,
+          name: 'my-cred',
+        } as import('../../../interfaces/EdaCredential').EdaCredential,
+      });
+    });
+
+    expect(screen.getByText('Token')).toBeInTheDocument();
+  });
 });

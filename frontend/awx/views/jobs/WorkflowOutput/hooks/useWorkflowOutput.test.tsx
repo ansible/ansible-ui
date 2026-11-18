@@ -1,7 +1,19 @@
 import { useWSThrottle } from '@ansible/awx-ui/common/useWSThrottle';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { WebSocketMessage } from './useWorkflowOutput';
+import type { Job } from '../../../../interfaces/Job';
+import { useWorkflowOutput, WebSocketMessage } from './useWorkflowOutput';
+
+let websocketHandler: ((message?: WebSocketMessage) => void) | undefined;
+
+vi.mock('../../../../common/useAwxWebSocket', () => ({
+  useAwxWebSocketSubscription: (
+    _groups: unknown,
+    handler: (message?: WebSocketMessage) => void
+  ) => {
+    websocketHandler = handler;
+  },
+}));
 
 describe('useWSThrottle hook', () => {
   beforeEach(() => {
@@ -33,9 +45,7 @@ describe('useWSThrottle hook', () => {
     );
     expect(result.current).toEqual(initial);
 
-    // rerender with the same val - no updates
     rerender({ val: initial });
-    // result should still be the same
     expect(result.current).toEqual(initial);
   });
 
@@ -63,14 +73,12 @@ describe('useWSThrottle hook', () => {
       }
     );
 
-    // send a new value
     act(() => {
       val = { workflow_node_id: 2 };
       rerender({ val });
     });
     expect(result.current).toEqual({ workflow_node_id: 1 });
 
-    // after limit has passed, should return the new value
     act(() => {
       vi.advanceTimersByTime(500);
     });
@@ -86,7 +94,6 @@ describe('useWSThrottle hook', () => {
       }
     );
 
-    // send different values in quick succession
     act(() => {
       val = { workflow_node_id: 2 };
       rerender({ val });
@@ -98,11 +105,38 @@ describe('useWSThrottle hook', () => {
       rerender({ val });
     });
 
-    // still throttled, hook returns the initial value
     expect(result.current).toEqual({ workflow_node_id: 1 });
 
-    // after limit has passed, hook should return the last value
     await act(() => vi.advanceTimersByTime(500));
     expect(result.current).toEqual({ workflow_node_id: 4 });
+  });
+});
+
+describe('useWorkflowOutput', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    websocketHandler = undefined;
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('reloads the job when throttled websocket messages report a status change', () => {
+    const reloadJob = vi.fn();
+    const job = { id: 12, type: 'workflow_job', status: 'running' } as Job;
+
+    renderHook(() => useWorkflowOutput(reloadJob, job));
+
+    act(() => {
+      websocketHandler?.({
+        group_name: 'jobs',
+        unified_job_id: 12,
+        status: 'successful',
+      });
+      vi.advanceTimersByTime(500);
+    });
+
+    expect(reloadJob).toHaveBeenCalledTimes(1);
   });
 });

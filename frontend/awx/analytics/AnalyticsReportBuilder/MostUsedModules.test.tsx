@@ -119,4 +119,29 @@ describe('TableExpandedRow', () => {
     expect(screen.getByText('0')).toBeInTheDocument();
     expect(screen.getByTestId('breakdown')).toBeInTheDocument();
   });
+
+  it('lists failed task count in the expanded breakdown', () => {
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              {renderExpandedRow({
+                item: {
+                  host_task_count: 10,
+                  host_task_ok_count: 5,
+                  host_task_failed_count: 2,
+                  host_task_changed_count: 1,
+                  host_task_skipped_count: 1,
+                  host_task_unreachable_count: 1,
+                },
+              })}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    );
+    expect(screen.getByText('All Task status')).toBeInTheDocument();
+    expect(screen.getByText('Tasks')).toBeInTheDocument();
+  });
 });

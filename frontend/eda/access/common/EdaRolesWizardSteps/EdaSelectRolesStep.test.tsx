@@ -54,4 +54,21 @@ describe('EdaSelectRolesStep', () => {
       { timeout: 10000 }
     );
   });
+
+  it('should list roles returned by the API', async () => {
+    render(
+      <MemoryRouter>
+        <FormWrapper>
+          <EdaSelectRolesStep />
+        </FormWrapper>
+      </MemoryRouter>
+    );
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Admin')).toBeInTheDocument();
+      },
+      { timeout: 10000 }
+    );
+  });
 });

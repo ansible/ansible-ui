@@ -96,4 +96,22 @@ describe('OrganizationInstanceGroupsOrderStep', () => {
     expect(screen.getByText('Manage instance groups order')).toBeInTheDocument();
     expect(screen.queryByTestId('row-Group A')).not.toBeInTheDocument();
   });
+
+  it('preserves existing wizard fields when reordering instance groups', async () => {
+    const igA = { id: 1, name: 'Group A' } as InstanceGroup;
+    const igB = { id: 2, name: 'Group B' } as InstanceGroup;
+    wizardState.wizardData = { instanceGroups: [igA, igB], description: 'unchanged' };
+    wizardState.setWizardData = vi.fn();
+    wizardState.setStepData = vi.fn();
+
+    const user = userEvent.setup();
+    render(<OrganizationInstanceGroupsOrderStep />);
+
+    await user.click(screen.getByTestId('mock-reorder-swap'));
+
+    expect(wizardState.setWizardData).toHaveBeenCalledWith({
+      instanceGroups: [igB, igA],
+      description: 'unchanged',
+    });
+  });
 });

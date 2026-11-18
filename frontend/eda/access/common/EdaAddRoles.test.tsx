@@ -33,4 +33,17 @@ describe('EdaAddRoles', () => {
     expect(screen.getByText('Select roles to apply')).toBeInTheDocument();
     expect(screen.getByText('Review')).toBeInTheDocument();
   });
+
+  it('should render wizard steps for team role assignment', async () => {
+    render(
+      <MemoryRouter>
+        <EdaAddRoles id="5" type="team" resourceName="ops-team" onClose={() => {}} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Select a resource type')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Select resources')).toBeInTheDocument();
+  });
 });

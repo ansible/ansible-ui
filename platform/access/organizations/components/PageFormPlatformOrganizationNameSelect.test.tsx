@@ -60,4 +60,14 @@ describe('PageFormPlatformOrganizationNameSelect', () => {
     expect(screen.getByTestId('query-error')).toHaveTextContent('Error loading organizations');
     expect(screen.getByTestId('required')).toHaveTextContent('yes');
   });
+
+  it('marks the field optional when isRequired is not set', () => {
+    render(
+      <Wrapper>
+        <PageFormPlatformOrganizationNameSelect name="orgName" />
+      </Wrapper>
+    );
+
+    expect(screen.getByTestId('required')).toHaveTextContent('no');
+  });
 });

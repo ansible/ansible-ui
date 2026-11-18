@@ -186,4 +186,14 @@ describe('useInventoryActions', () => {
       expect((syncAction.isHidden as (inv: InventoryWithSource) => boolean)(inventory)).toBe(false);
     }
   });
+
+  test('includes a copy action on the inventory list toolbar', () => {
+    const { result } = renderHook(() =>
+      useInventoryActions({ onInventoriesDeleted: mockOnDeleted })
+    );
+    const copyAction = result.current.find(
+      (action) => 'label' in action && action.label === 'Duplicate inventory'
+    );
+    expect(copyAction).toBeDefined();
+  });
 });
