@@ -86,7 +86,7 @@ jobs:
       - name: Create packaging checkout token
         if: vars.PACKAGING_CHECKOUT_USE_GITHUB_APP == 'true'
         id: packaging_app
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
         with:
           app-id: ${{ vars.PACKAGING_GITHUB_APP_ID }}
           private-key: ${{ secrets.PACKAGING_GITHUB_APP_PRIVATE_KEY }}
