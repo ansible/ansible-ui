@@ -189,7 +189,7 @@ describe('useInventoryActions', () => {
 
   test('includes a copy action on the inventory list toolbar', () => {
     const { result } = renderHook(() =>
-      useInventoryActions({ onInventoriesDeleted: mockOnDeleted })
+      useInventoryActions({ onInventoriesDeleted: mockOnDeleted, detail: false })
     );
     const copyAction = result.current.find(
       (action) => 'label' in action && action.label === 'Duplicate inventory'

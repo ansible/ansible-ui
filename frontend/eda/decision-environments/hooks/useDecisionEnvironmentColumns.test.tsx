@@ -36,7 +36,13 @@ const decisionEnvironmentRead: EdaDecisionEnvironmentRead = {
   description: 'Runs rules',
   image_url: 'quay.io/example/env:latest',
   organization: { id: 1, name: 'Default' },
-  eda_credential: { id: 12, name: 'Registry cred' },
+  eda_credential: {
+    id: 12,
+    name: 'Registry cred',
+    inputs: {},
+    credential_type_id: 1,
+    organization_id: 1,
+  },
   created_at: '2024-01-01T00:00:00Z',
   modified_at: '2024-01-02T00:00:00Z',
 };

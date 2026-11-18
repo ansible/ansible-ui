@@ -34,7 +34,7 @@ describe('PlatformAuthenticatorMappingDetailsInner', () => {
       related: {},
       authenticator: 1,
       summary_fields: {} as AuthenticatorMap['summary_fields'],
-    } as AuthenticatorMap;
+    } as unknown as AuthenticatorMap;
 
     render(
       <MemoryRouter>
@@ -74,7 +74,7 @@ describe('PlatformAuthenticatorMappingDetailsInner', () => {
       related: {},
       authenticator: 1,
       summary_fields: {} as AuthenticatorMap['summary_fields'],
-    } as AuthenticatorMap;
+    } as unknown as AuthenticatorMap;
 
     render(
       <MemoryRouter>

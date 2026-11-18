@@ -77,9 +77,9 @@ function createMockView(selectedItems: TestItem[] = []): SelectDialogView {
 
 function SelectDialogHookHarness(props: {
   view: SelectDialogView;
-  onOpen?: ReturnType<typeof vi.fn>;
+  onOpen?: (item: TestItem) => void;
 }) {
-  const { view, onOpen = vi.fn() } = props;
+  const { view, onOpen = vi.fn<(item: TestItem) => void>() } = props;
   const openDialog = useSelectDialog({
     view,
     tableColumns,

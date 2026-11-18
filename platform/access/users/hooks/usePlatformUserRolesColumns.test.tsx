@@ -7,9 +7,8 @@ const mockGetPageUrl = vi.fn(() => '/roles/1');
 const mockGetDisplayName = vi.fn(() => 'Project');
 const mockGetComponentNames = vi.fn(() => ['Automation Execution']);
 const mockGetResourceEndpoint = vi.fn(() => '/resources/1/');
-const mockUseGetItem = vi.fn(() => ({
+const mockUseGetItem = vi.fn((): { data?: { name: string }; error?: RequestError } => ({
   data: { name: 'My Project' },
-  error: undefined as undefined,
 }));
 
 vi.mock('react-i18next', () => ({

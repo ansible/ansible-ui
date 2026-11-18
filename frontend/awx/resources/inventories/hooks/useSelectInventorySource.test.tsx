@@ -23,7 +23,7 @@ vi.mock('./useInventorySourceFilters', () => ({
   useInventorySourceFilters: vi.fn(() => [{ key: 'name', label: 'Name' }]),
 }));
 
-const mockUseAwxView = vi.fn(() => ({
+const mockUseAwxView = vi.fn((_options?: unknown) => ({
   page: 1,
   perPage: 10,
   pageItems: [],

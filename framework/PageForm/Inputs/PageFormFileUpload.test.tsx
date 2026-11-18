@@ -177,8 +177,8 @@ describe('PageFormFileUpload', () => {
       </TestWrapper>
     );
 
-    const input = container.querySelector('input[type="file"]');
-    await user.upload(input!, file);
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    await user.upload(input, file);
 
     await waitFor(() => {
       expect(onInputChange).toHaveBeenCalledWith(file);
