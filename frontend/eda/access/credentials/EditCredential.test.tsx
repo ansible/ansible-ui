@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -7,8 +8,10 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { edaAPI } from '../../common/eda-utils';
 import { EditCredential } from './EditCredential';
 
+const mockOpenCredentialsExternalTestModal = vi.fn();
+
 vi.mock('./hooks/useCredentialsTestModal', () => ({
-  useCredentialsTestModal: () => vi.fn(),
+  useCredentialsTestModal: () => mockOpenCredentialsExternalTestModal,
 }));
 
 const mockCredential = {
@@ -74,6 +77,25 @@ describe('EditCredential', () => {
     expect(screen.getByRole('button', { name: /Save credential/i })).toBeInTheDocument();
   });
 
+  it('should render loading header when credential is not yet loaded', () => {
+    server.use(
+      http.get(edaAPI`/eda-credentials/7/`, async () => {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        return HttpResponse.json(mockCredential);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/credentials/edit/7']}>
+        <Routes>
+          <Route path="/credentials/edit/:id" element={<EditCredential />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Edit Credential')).toBeInTheDocument();
+  });
+
   it('should show read-only warning when OPTIONS has no PATCH action', async () => {
     server.use(
       http.options(edaAPI`/eda-credentials/7/`, () => HttpResponse.json({ actions: { GET: {} } }))
@@ -91,6 +113,71 @@ describe('EditCredential', () => {
       expect(
         screen.getByText(/you do not have permissions to edit this credential/i)
       ).toBeInTheDocument();
+    });
+  });
+
+  it('should expose external credential test action', async () => {
+    const externalCredential = {
+      ...mockCredential,
+      credential_type: {
+        ...mockCredential.credential_type,
+        kind: 'external',
+      },
+    };
+    const externalCredentialTypes = {
+      count: 1,
+      results: [
+        {
+          ...mockCredentialTypes.results[0],
+          kind: 'external',
+        },
+      ],
+    };
+
+    server.use(
+      http.get(edaAPI`/eda-credentials/7/`, () => HttpResponse.json(externalCredential)),
+      http.get(edaAPI`/credential-types/*`, () => HttpResponse.json(externalCredentialTypes))
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/credentials/edit/7']}>
+        <Routes>
+          <Route path="/credentials/edit/:id" element={<EditCredential />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Test' })).toBeDisabled();
+    });
+  });
+
+  it('should patch credential on save', async () => {
+    let patchBody: unknown;
+    server.use(
+      http.patch(edaAPI`/eda-credentials/7/`, async ({ request }) => {
+        patchBody = await request.json();
+        return HttpResponse.json({ ...mockCredential, description: 'updated' });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/credentials/edit/7']}>
+        <Routes>
+          <Route path="/credentials/edit/:id" element={<EditCredential />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Save credential/i })).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: /Save credential/i }));
+
+    await waitFor(() => {
+      expect(patchBody).toBeDefined();
     });
   });
 });

@@ -4,9 +4,18 @@ import {
   type IFilterState,
   type IToolbarFilter,
 } from '@ansible/ansible-ui-framework';
-import { describe, expect, it, vi } from 'vitest';
-import { applyBatchedEvents, getFiltersQueryString } from './useJobOutput';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { applyBatchedEvents, getFiltersQueryString, useJobOutput } from './useJobOutput';
 import type { JobEvent } from '../../../interfaces/JobEvent';
+import type { Job } from '../../../interfaces/Job';
+import { testFixture as jobFixture } from '../jobDetails.fixture';
+
+vi.mock('../../../common/useAwxWebSocket', () => ({
+  useAwxWebSocketSubscription: () => undefined,
+}));
 
 const textFilter = {
   key: 'search',
@@ -178,5 +187,136 @@ describe('getFiltersQueryString', () => {
   it('should handle empty toolbar filters array', () => {
     const filterState: IFilterState = { search: ['hello'] };
     expect(getFiltersQueryString([], filterState)).toBe('');
+  });
+
+  it('should keep a custom date value on a date-range filter', () => {
+    const filterState: IFilterState = { created: ['2020-01-01T00:00:00.000Z'] };
+    expect(getFiltersQueryString([dateRangeFilter], filterState)).toBe(
+      'created__gte=2020-01-01T00:00:00.000Z'
+    );
+  });
+});
+
+const requestedUrls: string[] = [];
+
+const isEventsRequest = ({ request }: { request: Request }) =>
+  request.url.includes('/api/v2/') && request.url.includes('events');
+
+const server = setupServer(
+  http.get(isEventsRequest, ({ request }) => {
+    requestedUrls.push(request.url);
+    const url = new URL(request.url);
+    if (url.searchParams.get('order_by') === '-counter') {
+      return HttpResponse.json({ count: 1, results: [{ id: 1, counter: 8, stdout: 'latest' }] });
+    }
+    if (url.searchParams.has('counter__gte')) {
+      return HttpResponse.json({
+        count: 1,
+        results: [
+          {
+            id: 2,
+            counter: Number(url.searchParams.get('counter__gte')),
+            stdout: 'gap',
+          },
+        ],
+      });
+    }
+    return HttpResponse.json({
+      count: 2,
+      results: [
+        { id: 3, counter: 1, stdout: 'one' },
+        { id: 4, counter: 9, stdout: 'nine' },
+      ],
+    });
+  })
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => {
+  vi.useRealTimers();
+  server.resetHandlers();
+  requestedUrls.length = 0;
+});
+afterAll(() => server.close());
+
+function renderOutput(job: Job = jobFixture, filterState: IFilterState = {}, pageSize = 50) {
+  return renderHook(
+    ({ currentJob, filters }) => useJobOutput(currentJob, vi.fn(), [textFilter], filters, pageSize),
+    { initialProps: { currentJob: job, filters: filterState } }
+  );
+}
+
+describe('useJobOutput', () => {
+  it('loads the latest event counter', async () => {
+    const { result } = renderOutput();
+    await waitFor(() => expect(result.current.jobEventCount).toBe(8));
+  });
+
+  it('ignores a failed counter lookup', async () => {
+    server.use(
+      http.get(isEventsRequest, ({ request }) => {
+        requestedUrls.push(request.url);
+        return HttpResponse.json({}, { status: 500 });
+      })
+    );
+    const { result } = renderOutput();
+    await waitFor(() => expect(requestedUrls.length).toBeGreaterThan(0));
+    expect(result.current.jobEventCount).toBe(1);
+  });
+
+  it('fetches a page of events for a finished job and skips a second query while one is running', async () => {
+    let release: (() => void) | undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    server.use(
+      http.get(isEventsRequest, async ({ request }) => {
+        requestedUrls.push(request.url);
+        const url = new URL(request.url);
+        if (url.searchParams.get('order_by') === '-counter') {
+          return HttpResponse.json({
+            count: 1,
+            results: [{ id: 1, counter: 3, stdout: 'latest' }],
+          });
+        }
+        await gate;
+        return HttpResponse.json({
+          count: 1,
+          results: [{ id: 3, counter: 1, stdout: 'one' }],
+        });
+      })
+    );
+    const { result } = renderOutput();
+    await waitFor(() => expect(result.current.jobEventCount).toBe(3));
+    const before = requestedUrls.length;
+    act(() => {
+      result.current.queryJobOutputEvent(1);
+      result.current.queryJobOutputEvent(2);
+    });
+    await waitFor(() => expect(requestedUrls.length).toBe(before + 1));
+    expect(requestedUrls.at(-1)).toContain('order_by=counter');
+    expect(requestedUrls.at(-1)).not.toContain('search=');
+    act(() => {
+      release?.();
+    });
+    await waitFor(() => expect(result.current.getJobOutputEvent(1)?.stdout).toBe('one'));
+    const afterLoad = requestedUrls.length;
+    act(() => {
+      result.current.queryJobOutputEvent(1);
+    });
+    expect(requestedUrls.length).toBe(afterLoad);
+  });
+
+  it('stores filtered events by position and resets them when filters change', async () => {
+    const { result, rerender } = renderOutput(jobFixture, { search: ['hello'] });
+    await waitFor(() => expect(result.current.jobEventCount).toBe(8));
+    act(() => {
+      result.current.queryJobOutputEvent(1);
+    });
+    await waitFor(() => expect(result.current.getJobOutputEvent(1)?.stdout).toBe('one'));
+    expect(result.current.getJobOutputEvent(2)?.stdout).toBe('nine');
+
+    rerender({ currentJob: jobFixture, filters: { search: ['other'] } });
+    await waitFor(() => expect(result.current.jobEvents).toEqual({}));
   });
 });

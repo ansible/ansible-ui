@@ -238,6 +238,40 @@ describe('DocumentationParsers', () => {
       const textPart = parse('via switch')[0][0];
       render(<>{formatPart(textPart, params)}</>);
       expect(screen.getByText('via switch')).toBeInTheDocument();
+
+      render(
+        <>
+          {formatPart(
+            { type: dom.PartType.RETURN_VALUE, name: 'changed' } as dom.ReturnValuePart,
+            params
+          )}
+        </>
+      );
+      expect(screen.getByText('changed')).toBeInTheDocument();
+
+      render(
+        <MemoryRouter>
+          {formatPart(
+            {
+              type: dom.PartType.RETURN_VALUE,
+              name: 'changed',
+              plugin: { type: 'module', fqcn: 'ns.coll.mod' },
+            } as dom.ReturnValuePart,
+            params
+          )}
+        </MemoryRouter>
+      );
+      expect(screen.getByText('ns.coll.mod')).toBeInTheDocument();
+
+      render(
+        <MemoryRouter initialEntries={['/collections/published/ns/coll/contents']}>
+          {formatPart(
+            { type: dom.PartType.LINK, text: 'local', url: 'readme.rst' } as dom.LinkPart,
+            params
+          )}
+        </MemoryRouter>
+      );
+      expect(screen.getByRole('link', { name: 'local' })).toBeInTheDocument();
     });
   });
 
@@ -271,6 +305,18 @@ describe('DocumentationParsers', () => {
   });
 
   describe('renderPluginConfiguration', () => {
+    it('uses VALUE when an ini entry has no default', () => {
+      render(
+        <>
+          {renderPluginConfiguration({
+            name: 'cfg',
+            ini: [{ section: 'main', key: 'port' }],
+          } as IContentsOption)}
+        </>
+      );
+      expect(screen.getByText(/VALUE/)).toBeInTheDocument();
+    });
+
     it('renders ini, env, and var sections', () => {
       render(
         <>
@@ -290,6 +336,35 @@ describe('DocumentationParsers', () => {
   });
 
   describe('renderPluginLink and formatDocPath', () => {
+    it('links when a later group entry matches', () => {
+      const params = createParams({
+        groups: [
+          {
+            name: 'modules',
+            contents: [
+              {
+                content_name: 'other',
+                content_type: 'module',
+                doc_strings: null,
+                readme_file: null,
+                readme_html: null,
+              },
+              {
+                content_name: 'hello',
+                content_type: 'module',
+                doc_strings: null,
+                readme_file: null,
+                readme_html: null,
+              },
+            ],
+          },
+          { name: 'roles', contents: [] },
+        ],
+      });
+      render(<MemoryRouter>{renderPluginLink('hello module', params)}</MemoryRouter>);
+      expect(screen.getByRole('link', { name: 'hello module' })).toBeInTheDocument();
+    });
+
     it('links when module exists in groups', () => {
       render(<MemoryRouter>{renderPluginLink('hello module', createParams())}</MemoryRouter>);
       expect(screen.getByRole('link', { name: 'hello module' })).toBeInTheDocument();

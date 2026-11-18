@@ -160,6 +160,16 @@ describe('HubInsightsApp', () => {
     expect(callArg?.[0].children).toBeDefined();
   });
 
+  it('should skip navigate-only child routes when flattening navigation', () => {
+    render(
+      <MemoryRouter initialEntries={['/with-children']}>
+        <HubInsightsApp />
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByTestId('child-details')).not.toBeInTheDocument();
+  });
+
   it('should handle namespaces route', () => {
     render(
       <MemoryRouter initialEntries={['/namespaces']}>

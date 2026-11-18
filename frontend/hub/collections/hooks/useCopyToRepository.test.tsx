@@ -179,6 +179,18 @@ describe('useCopyToRepository', () => {
     expect(() => result.current(mockCollection, 'copy')).not.toThrow();
   });
 
+  test('should render default error message when provided', () => {
+    const refresh = vi.fn();
+    const { result } = renderHook(() => useCopyToRepository(refresh));
+
+    act(() => {
+      result.current(mockCollection, 'copy', 'Cannot copy this collection');
+    });
+
+    render(capturedDialog.current as React.ReactElement);
+    expect(screen.getByTestId('hub-error')).toHaveTextContent('Cannot copy this collection');
+  });
+
   test('should handle displayDefaultError parameter', () => {
     const refresh = vi.fn();
     const { result } = renderHook(() => useCopyToRepository(refresh));
@@ -317,6 +329,52 @@ describe('copyToRepositoryAction', () => {
     await expect(
       copyToRepositoryAction(collection, 'copy', [], mockContext, t)
     ).resolves.toBeUndefined();
+  });
+});
+
+describe('CopyToRepositoryModal interactions', () => {
+  const collectionWithValidPulpHref: CollectionVersionSearch = {
+    ...mockCollection,
+    repository: {
+      ...mockCollection.repository!,
+      pulp_href:
+        '/api/galaxy/pulp/api/v3/repositories/ansible/ansible/12345678-1234-1234-1234-123456789012/',
+      pulp_labels: { pipeline: 'staging' },
+    },
+  };
+
+  const server = setupServer(
+    http.get(
+      ({ request }) => request.url.includes('/v3/plugin/ansible/search/collection-versions/'),
+      () => HttpResponse.json({ meta: { count: 0 }, data: [] })
+    ),
+    http.get(
+      ({ request }) => request.url.includes('/repositories/ansible/ansible/'),
+      () => HttpResponse.json({ results: [] })
+    )
+  );
+
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+  afterAll(() => server.close());
+  afterEach(() => {
+    server.resetHandlers();
+    capturedDialog.current = null;
+  });
+
+  test('should keep select disabled until a repository is chosen', async () => {
+    const user = userEvent.setup();
+    const refresh = vi.fn();
+    const { result } = renderHook(() => useCopyToRepository(refresh));
+
+    act(() => {
+      result.current(collectionWithValidPulpHref, 'copy');
+    });
+
+    render(capturedDialog.current as React.ReactElement);
+
+    expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled();
+    await user.click(screen.getByTestId('select-repo-approved-repo'));
+    expect(screen.getByRole('button', { name: 'Select' })).toBeEnabled();
   });
 });
 

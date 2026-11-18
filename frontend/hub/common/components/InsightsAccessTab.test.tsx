@@ -1,9 +1,55 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { HubUser } from '../../interfaces/expanded/HubUser';
+import { HubContext } from '../useHubContext';
 import { InsightsAccessTab, InsightsAccessUser, InsightsAccessGroup } from './InsightsAccessTab';
+
+const server = setupServer(
+  http.get(
+    ({ request }) => request.url.includes('/pulp/api/v3/roles/'),
+    ({ request }) => {
+      const name = new URL(request.url).searchParams.get('name');
+      if (name === 'custom.broken') {
+        return HttpResponse.json({}, { status: 500 });
+      }
+      if (name === 'custom.empty') {
+        return HttpResponse.json({ count: 0, results: [] });
+      }
+      return HttpResponse.json({
+        count: 1,
+        results: [
+          {
+            name,
+            description: 'Role from the API',
+            permissions: [
+              'galaxy.upload_to_namespace',
+              'galaxy.add_collectionimport',
+              'galaxy.delete_collection',
+              'galaxy.change_collectionremote',
+              'galaxy.change_ansiblerepository',
+              'galaxy.change_container',
+              'galaxy.cancel_task',
+              'galaxy.change_synclist',
+              'galaxy.change_group',
+              'galaxy.change_user',
+              'galaxy.view_namespace',
+              'custom.unknown_thing',
+            ],
+          },
+        ],
+      });
+    }
+  )
+);
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 // Mock PatternFly Modal to avoid focus trap issues
 vi.mock('@patternfly/react-core', async () => {
@@ -856,5 +902,172 @@ describe('InsightsAccessTab', () => {
 
     expect(screen.getByRole('button', { name: 'Select a user' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Select a group' })).toBeInTheDocument();
+    expect(screen.getByText('Please add a group by using the button below.')).toBeInTheDocument();
+  });
+
+  it('hides the empty group helper when editing is not allowed', () => {
+    renderWithRouter({ canEditOwners: false });
+    expect(
+      screen.queryByText('Please add a group by using the button below.')
+    ).not.toBeInTheDocument();
+  });
+
+  it('closes the user actions menu when the toggle is clicked again', async () => {
+    const user = userEvent.setup();
+    renderWithRouter({ users: mockUsers });
+    const kebab = screen.getAllByRole('button', { name: 'User actions' })[0];
+    await user.click(kebab);
+    expect(screen.getByRole('menuitem', { name: /remove/i })).toBeInTheDocument();
+    await user.click(kebab);
+    await waitFor(() =>
+      expect(screen.queryByRole('menuitem', { name: /remove/i })).not.toBeInTheDocument()
+    );
+  });
+
+  it('groups expanded role permissions by category', async () => {
+    const user = userEvent.setup();
+    render(
+      <HubContext.Provider
+        value={{
+          featureFlags: {},
+          settings: {},
+          hasPermission: () => false,
+          user: {
+            model_permissions: {
+              'galaxy.upload_to_namespace': {
+                name: 'Upload collections',
+                ui_category: 'Collection Namespaces',
+                global_description: '',
+                has_model_permission: true,
+                object_description: '',
+              },
+            },
+          } as unknown as HubUser,
+        }}
+      >
+        <MemoryRouter initialEntries={['/namespaces/test/access?user=alice']}>
+          <InsightsAccessTab
+            {...defaultProps}
+            users={[{ name: 'alice', object_roles: ['custom.auditor', 'custom.empty'] }]}
+          />
+        </MemoryRouter>
+      </HubContext.Provider>
+    );
+
+    const expandButtons = screen.getAllByRole('button', { name: /details/i });
+    await user.click(expandButtons[0]);
+    expect(await screen.findByText('Upload collections')).toBeInTheDocument();
+    expect(screen.getByText('Collection Namespaces')).toBeInTheDocument();
+    expect(screen.getByText('Collection Imports')).toBeInTheDocument();
+    expect(screen.getByText('Collections')).toBeInTheDocument();
+    expect(screen.getByText('Remotes')).toBeInTheDocument();
+    expect(screen.getByText('Ansible Repositories')).toBeInTheDocument();
+    expect(screen.getByText('Execution Environments')).toBeInTheDocument();
+    expect(screen.getByText('Tasks')).toBeInTheDocument();
+    expect(screen.getByText('Sync Lists')).toBeInTheDocument();
+    expect(screen.getByText('Groups')).toBeInTheDocument();
+    expect(screen.getByText('Users')).toBeInTheDocument();
+    expect(screen.getByText('Other')).toBeInTheDocument();
+    expect(screen.getByText('Role from the API')).toBeInTheDocument();
+
+    await user.click(expandButtons[0]);
+    await user.click(expandButtons[1]);
+    expect(
+      await screen.findByText('No additional details available for this role.')
+    ).toBeInTheDocument();
+  });
+
+  it('shows no role details when the roles request fails', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter initialEntries={['/namespaces/test/access?user=alice']}>
+        <InsightsAccessTab
+          {...defaultProps}
+          users={[{ name: 'alice', object_roles: ['custom.broken'] }]}
+        />
+      </MemoryRouter>
+    );
+    await user.click(screen.getByRole('button', { name: /details/i }));
+    expect(
+      await screen.findByText('No additional details available for this role.')
+    ).toBeInTheDocument();
+  });
+
+  it('shows an error when adding a user fails and ignores an empty save', async () => {
+    const user = userEvent.setup();
+    const onAddUser = vi.fn().mockRejectedValue(new Error('nope'));
+    renderWithRouter({ onAddUser });
+    await user.click(screen.getAllByRole('button', { name: 'Select a user' })[0]);
+    await user.click(screen.getByTestId('wizard-save'));
+    expect(onAddUser).not.toHaveBeenCalled();
+
+    await user.click(screen.getByTestId('select-user-btn'));
+    await user.click(screen.getByTestId('select-role-btn'));
+    await user.click(screen.getByTestId('wizard-save'));
+    expect(await screen.findByText('Failed to add user. Please try again.')).toBeInTheDocument();
+  });
+
+  it('shows an error when adding a group fails', async () => {
+    const user = userEvent.setup();
+    const onAddGroup = vi.fn().mockRejectedValue(new Error('nope'));
+    renderWithRouter({ onAddGroup });
+    await user.click(screen.getAllByRole('button', { name: 'Select a group' })[0]);
+    await user.click(screen.getByTestId('select-group-btn'));
+    await user.click(screen.getByTestId('select-role-btn'));
+    await user.click(screen.getByTestId('wizard-save'));
+    expect(await screen.findByText('Failed to add group. Please try again.')).toBeInTheDocument();
+  });
+
+  it('shows an error when adding roles fails', async () => {
+    const user = userEvent.setup();
+    const onAddUserRoles = vi.fn().mockRejectedValue(new Error('nope'));
+    render(
+      <MemoryRouter initialEntries={['/namespaces/test/access?user=alice']}>
+        <InsightsAccessTab {...defaultProps} users={mockUsers} onAddUserRoles={onAddUserRoles} />
+      </MemoryRouter>
+    );
+    await user.click(screen.getByRole('button', { name: 'Add roles' }));
+    await user.click(screen.getByTestId('wizard-save'));
+    expect(onAddUserRoles).not.toHaveBeenCalled();
+    await user.click(screen.getByTestId('select-role-btn'));
+    await user.click(screen.getByTestId('wizard-save'));
+    expect(await screen.findByText('Failed to add roles. Please try again.')).toBeInTheDocument();
+  });
+
+  it('shows an error when removing a user, group, or role fails', async () => {
+    const user = userEvent.setup();
+    const onRemoveUser = vi.fn().mockRejectedValue(new Error('nope'));
+    const onRemoveGroup = vi.fn().mockRejectedValue(new Error('nope'));
+    const onRemoveUserRole = vi.fn().mockRejectedValue(new Error('nope'));
+
+    const userView = renderWithRouter({ users: mockUsers, onRemoveUser });
+    await user.click(screen.getAllByRole('button', { name: 'User actions' })[0]);
+    await user.click(screen.getByRole('menuitem', { name: /remove/i }));
+    await user.click(screen.getByRole('button', { name: /^remove$/i }));
+    expect(await screen.findByText('Failed to remove user. Please try again.')).toBeInTheDocument();
+    userView.unmount();
+
+    const groupView = renderWithRouter({ groups: mockGroups, onRemoveGroup });
+    await user.click(screen.getAllByRole('button', { name: 'Group actions' })[0]);
+    await user.click(screen.getByRole('menuitem', { name: /remove/i }));
+    await user.click(screen.getByRole('button', { name: /^remove$/i }));
+    expect(
+      await screen.findByText('Failed to remove group. Please try again.')
+    ).toBeInTheDocument();
+    groupView.unmount();
+
+    render(
+      <MemoryRouter initialEntries={['/namespaces/test/access?user=alice']}>
+        <InsightsAccessTab
+          {...defaultProps}
+          users={mockUsers}
+          onRemoveUserRole={onRemoveUserRole}
+        />
+      </MemoryRouter>
+    );
+    await user.click(screen.getAllByRole('button', { name: 'Role actions' })[0]);
+    await user.click(screen.getByRole('menuitem', { name: /remove/i }));
+    await user.click(screen.getByRole('button', { name: /^remove$/i }));
+    expect(await screen.findByText('Failed to remove role. Please try again.')).toBeInTheDocument();
   });
 });

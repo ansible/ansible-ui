@@ -3,7 +3,7 @@ import { idKeyFn } from '@ansible/common-ui/utils/nameKeyFn';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PageToolbar } from './PageToolbar';
 import {
   IFilterState,
@@ -11,14 +11,20 @@ import {
   PageToolbarFilters,
   ToolbarFilterType,
 } from './PageToolbarFilter';
+import { IToolbarAsyncMultiSelectFilter } from './PageToolbarFilters/ToolbarAsyncMultiSelectFilter';
+import { IToolbarAsyncSingleSelectFilter } from './PageToolbarFilters/ToolbarAsyncSingleSelectFilter';
+import { IToolbarDateRangeFilter } from './PageToolbarFilters/ToolbarDateRangeFilter';
+import { IToolbarMultiSelectFilter } from './PageToolbarFilters/ToolbarMultiSelectFilter';
 import { IToolbarSingleSelectFilter } from './PageToolbarFilters/ToolbarSingleSelectFilter';
 import {
   IToolbarMultiTextFilter,
   IToolbarSearchFilter,
 } from './PageToolbarFilters/ToolbarTextFilter';
 
+const mockUseBreakpoint = vi.fn((_size?: string) => false);
+
 vi.mock('../components/useBreakPoint', () => ({
-  useBreakpoint: () => false,
+  useBreakpoint: (size?: string) => mockUseBreakpoint(size),
 }));
 
 function FiltersHarness(
@@ -211,5 +217,155 @@ describe('PageToolbarFilters with PageToolbar', () => {
       ) as IFilterState;
       expect(state.ms1).toEqual(['2']);
     });
+  });
+});
+
+describe('PageToolbarFilters filter types and chips', () => {
+  beforeEach(() => {
+    mockUseBreakpoint.mockReturnValue(false);
+  });
+
+  it('shows the filter label on small screens', () => {
+    render(<FiltersHarness toolbarFilters={[createMultiTextFilter('tags', true)]} />);
+    expect(screen.getByText('Filter')).toBeInTheDocument();
+  });
+
+  it('hides pinned single-select chips when the value is shown in the control', () => {
+    const filter = createSingleSelectFilter(true);
+    render(<FiltersHarness toolbarFilters={[filter]} initialFilterState={{ status: ['1'] }} />);
+
+    expect(
+      screen.queryByText('Running', { selector: '.pf-v6-c-chip-group' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('renders pinned multi-select filter control', () => {
+    const filter: IToolbarMultiSelectFilter = {
+      type: ToolbarFilterType.MultiSelect,
+      key: 'ms',
+      query: 'ms',
+      label: 'Multi',
+      placeholder: 'Filter by multi',
+      options: [
+        { value: '1', label: 'One' },
+        { value: '2', label: 'Two' },
+      ],
+      isPinned: true,
+    };
+
+    render(<FiltersHarness toolbarFilters={[filter]} />);
+    expect(screen.getByText('Filter by multi')).toBeInTheDocument();
+  });
+
+  it('downgrades multi-select when OR limit is active', () => {
+    const filter: IToolbarMultiSelectFilter = {
+      type: ToolbarFilterType.MultiSelect,
+      key: 'ms2',
+      query: 'ms2',
+      label: 'Multi 2',
+      placeholder: 'Filter ms2',
+      options: [{ value: '1', label: 'One' }],
+    };
+
+    render(
+      <FiltersHarness
+        toolbarFilters={[createMultiTextFilter('tags', true), filter]}
+        limitFiltersToOneOrOperation
+        initialFilterState={{ tags: ['a', 'b'] }}
+      />
+    );
+
+    expect(screen.getByText('Filter ms2')).toBeInTheDocument();
+  });
+
+  it('renders date-range filter chips for active values', () => {
+    const filter: IToolbarDateRangeFilter = {
+      type: ToolbarFilterType.DateRange,
+      key: 'range',
+      query: 'range',
+      label: 'Range',
+      placeholder: 'Select range',
+      options: [{ label: 'Last 7 days', value: 'last7days' }],
+    };
+
+    render(
+      <FiltersHarness toolbarFilters={[filter]} initialFilterState={{ range: ['last7days'] }} />
+    );
+
+    expect(screen.getByText('Last 7 days')).toBeInTheDocument();
+  });
+
+  it('renders async filter chips from query labels', () => {
+    const filter: IToolbarAsyncSingleSelectFilter = {
+      type: ToolbarFilterType.AsyncSingleSelect,
+      key: 'async',
+      query: 'async',
+      label: 'Async',
+      placeholder: 'Async filter',
+      queryOptions: () =>
+        Promise.resolve({
+          options: [{ value: '1', label: 'Async One' }],
+          remaining: 0,
+          next: 2,
+        }),
+      queryLabel: (value) => `Async ${value}`,
+    };
+
+    render(<FiltersHarness toolbarFilters={[filter]} initialFilterState={{ async: ['1'] }} />);
+
+    expect(screen.getByText('Async 1')).toBeInTheDocument();
+  });
+
+  it('opens browse from async single-select footer', async () => {
+    const user = userEvent.setup();
+    const openBrowse = vi.fn();
+    const filter: IToolbarAsyncSingleSelectFilter = {
+      type: ToolbarFilterType.AsyncSingleSelect,
+      key: 'asyncBrowse',
+      query: 'asyncBrowse',
+      label: 'Async browse',
+      placeholder: 'Browse async',
+      queryOptions: () =>
+        Promise.resolve({
+          options: [{ value: '1', label: 'Browse One' }],
+          remaining: 0,
+          next: 2,
+        }),
+      queryLabel: (value) => `Browse ${value}`,
+      openBrowse,
+    };
+
+    render(<FiltersHarness toolbarFilters={[filter]} />);
+    await user.click(screen.getByText('Browse async'));
+    await user.click(screen.getByRole('button', { name: 'Browse' }));
+
+    expect(openBrowse).toHaveBeenCalled();
+  });
+
+  it('downgrades async multi-select when OR limit is active', () => {
+    const filter: IToolbarAsyncMultiSelectFilter = {
+      type: ToolbarFilterType.AsyncMultiSelect,
+      key: 'asyncMulti',
+      query: 'asyncMulti',
+      label: 'Async multi',
+      placeholder: 'Async multi',
+      queryOptions: () =>
+        Promise.resolve({
+          options: [{ value: '1', label: 'One' }],
+          remaining: 0,
+          next: 2,
+        }),
+      queryLabel: (value) => `Label ${value}`,
+    };
+
+    render(
+      <FiltersHarness
+        toolbarFilters={[createMultiTextFilter('mt', true), filter]}
+        limitFiltersToOneOrOperation
+        initialFilterState={{ mt: ['x', 'y'] }}
+      />
+    );
+
+    expect(screen.getAllByText('Async multi').length).toBeGreaterThan(0);
   });
 });

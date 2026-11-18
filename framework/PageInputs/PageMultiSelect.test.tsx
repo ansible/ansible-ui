@@ -1,9 +1,9 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactNode, useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { PageMultiSelect } from './PageMultiSelect';
 import { PageSelectOption } from './PageSelectOption';
 
@@ -187,5 +187,142 @@ describe('PageMultiSelect', () => {
       />
     );
     expect(screen.getByText('12 selected')).toBeInTheDocument();
+  });
+
+  it('clears selection using the clear icon', async () => {
+    const user = userEvent.setup();
+    render(
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValues={[testObjects[0]]}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
+
+    const clearIcon = document.querySelector('[aria-hidden="true"][role="button"]');
+    expect(clearIcon).toBeTruthy();
+    await user.click(clearIcon!);
+
+    expect(screen.getByText(placeholderText)).toBeInTheDocument();
+  });
+
+  it('removes a chip when its close button is clicked', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options}
+        defaultValues={[testObjects[0], testObjects[1]]}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
+
+    expect(container.querySelectorAll('.pf-v6-c-label')).toHaveLength(2);
+    await user.click(screen.getByRole('button', { name: /close Option 0/i }));
+    expect(container.querySelectorAll('.pf-v6-c-label')).toHaveLength(1);
+  });
+
+  it('shows grouped options in the menu', async () => {
+    const user = userEvent.setup();
+    const groupedOptions: PageSelectOption<ITestObject>[] = [
+      { label: 'Grouped', value: testObjects[0], group: 'Group A' },
+      { label: 'Other', value: testObjects[1], group: 'Group B' },
+    ];
+
+    const { container } = render(
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={groupedOptions}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
+
+    await user.click(container.querySelector('#test')!);
+    expect(await screen.findByText('Group A')).toBeInTheDocument();
+    expect(screen.getByText('Group B')).toBeInTheDocument();
+  });
+
+  it('shows loading spinner when there are no visible options', () => {
+    render(
+      <PageMultiSelect
+        id="loading"
+        placeholder="Pick"
+        values={[]}
+        onSelect={vi.fn()}
+        options={[]}
+        isLoading
+        open
+      />
+    );
+
+    expect(document.querySelector('.pf-v6-c-spinner')).toBeInTheDocument();
+  });
+
+  it('renders query labels for values missing from options', () => {
+    render(
+      <PageMultiSelect<number>
+        id="query-label"
+        placeholder="Pick"
+        values={[99]}
+        onSelect={vi.fn()}
+        options={[]}
+        queryLabel={(value) => `Value ${value}`}
+      />
+    );
+
+    expect(screen.getByText('Value 99')).toBeInTheDocument();
+  });
+
+  it('opens the menu and seeds search when typing on the toggle', async () => {
+    const { container } = render(
+      <PageMultiSelectTest
+        placeholder={placeholderText}
+        options={options.slice(0, 8)}
+        compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+      />
+    );
+
+    const toggle = container.querySelector('#test')!;
+    fireEvent.keyDown(toggle, { key: 'o' });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('search-input')).toBeInTheDocument();
+    });
+  });
+
+  it('hides clear-all icon when disableClearSelection is set', () => {
+    render(
+      <PageSection hasBodyWrapper={false}>
+        <PageMultiSelect
+          id="no-clear"
+          placeholder={placeholderText}
+          options={options}
+          values={[testObjects[0]]}
+          onSelect={vi.fn()}
+          disableClearSelection
+          compareOptionValues={(a: ITestObject, b: ITestObject) => a.id === b.id}
+        />
+      </PageSection>
+    );
+
+    expect(document.querySelector('[aria-hidden="true"][role="button"]')).not.toBeInTheDocument();
+  });
+
+  it('disables the toggle when isDisabled is set', () => {
+    render(
+      <PageSection hasBodyWrapper={false}>
+        <PageMultiSelect
+          id="disabled"
+          placeholder={placeholderText}
+          options={options}
+          values={[]}
+          onSelect={vi.fn()}
+          isDisabled="Unavailable"
+        />
+      </PageSection>
+    );
+
+    expect(screen.getByRole('button', { name: placeholderText })).toBeDisabled();
   });
 });

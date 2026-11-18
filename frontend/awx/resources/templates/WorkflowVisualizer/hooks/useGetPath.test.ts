@@ -129,6 +129,20 @@ describe('useGetPath', () => {
     expect(typeof centerPoint.y).toBe('number');
   });
 
+  it('bends upward when the target is above and to the left', () => {
+    const edge = makeMockEdge(400, 300, 40, 20);
+    const { path, centerPoint } = useGetPath(edge);
+    expect(path).toContain('Q');
+    expect(centerPoint.y).toBeGreaterThan(0);
+  });
+
+  it('bends downward when the target is below and to the left', () => {
+    const edge = makeMockEdge(500, 10, 20, 400);
+    const { path } = useGetPath(edge);
+    expect(path.startsWith('M')).toBe(true);
+    expect(path).toContain('L');
+  });
+
   it('should include start and end coordinates in generated SVG path', () => {
     const edge = makeMockEdge(10, 20, 110, 220);
     const { path } = useGetPath(edge);

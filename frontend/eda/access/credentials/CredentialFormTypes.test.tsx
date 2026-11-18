@@ -1,15 +1,26 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { FormProvider, useForm } from 'react-hook-form';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { EdaCredentialType } from '../../interfaces/EdaCredentialType';
+import { edaAPI } from '../../common/eda-utils';
 import {
   CredentialFormBooleanInput,
   CredentialFormInput,
   CredentialFormInputs,
+  CredentialFormStringInput,
   isFieldRequired,
 } from './CredentialFormTypes';
+
+const mockOpenCredentialPluginsModal = vi.fn();
+
+vi.mock('./hooks/useCredentialSecretModal', () => ({
+  useCredentialPluginsModal: () => mockOpenCredentialPluginsModal,
+}));
 
 function FormWrapper({ children }: { children: React.ReactNode }) {
   const methods = useForm({ defaultValues: { inputs: {} } });
@@ -205,5 +216,125 @@ describe('CredentialFormInput', () => {
     );
 
     expect(container.innerHTML).not.toContain('input');
+  });
+});
+
+describe('CredentialFormStringInput', () => {
+  const server = setupServer(
+    http.get(edaAPI`/eda-credentials/12/`, () =>
+      HttpResponse.json({
+        id: 12,
+        name: 'Vault Credential',
+        credential_type: { namespace: 'vault' },
+      })
+    )
+  );
+
+  beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
+  it('renders select input when string field defines choices', () => {
+    render(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="cloud"
+          required={[]}
+          field={{
+            id: 'auth_type',
+            label: 'Auth type',
+            type: 'string',
+            secret: false,
+            multiline: false,
+            choices: ['token', 'basic'],
+          }}
+        />
+      </FormWrapper>
+    );
+
+    expect(screen.getByText('Auth type')).toBeInTheDocument();
+  });
+
+  it('opens the credential plugins modal from the secret management button', async () => {
+    const user = userEvent.setup();
+    const setCredentialPluginValues = vi.fn();
+
+    render(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="cloud"
+          required={[]}
+          setCredentialPluginValues={setCredentialPluginValues}
+          field={{
+            id: 'password',
+            label: 'Password',
+            type: 'string',
+            secret: true,
+            multiline: false,
+            choices: [],
+          }}
+        />
+      </FormWrapper>
+    );
+
+    await user.click(screen.getByTestId('secret-management-input'));
+    expect(mockOpenCredentialPluginsModal).toHaveBeenCalledWith(
+      expect.objectContaining({ setCredentialPluginValues })
+    );
+  });
+
+  it('shows managed-by placeholder when accumulated plugin values reference a source credential', async () => {
+    render(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="cloud"
+          required={[]}
+          accumulatedPluginValues={[
+            {
+              id: 1,
+              input_field_name: 'password',
+              source_credential: 12,
+              metadata: {},
+            },
+          ]}
+          field={{
+            id: 'password',
+            label: 'Password',
+            type: 'string',
+            secret: true,
+            multiline: false,
+            choices: [],
+          }}
+        />
+      </FormWrapper>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText(/Value is managed by vault: Vault Credential/i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('renders multiline upload with binary format helper', () => {
+    render(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="cloud"
+          required={[]}
+          field={{
+            id: 'certificate',
+            label: 'Certificate',
+            type: 'string',
+            secret: false,
+            multiline: true,
+            format: 'binary_base64',
+            choices: [],
+          }}
+        />
+      </FormWrapper>
+    );
+
+    expect(screen.getByText('Certificate')).toBeInTheDocument();
   });
 });

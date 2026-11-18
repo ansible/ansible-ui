@@ -233,4 +233,17 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
       });
     });
   });
+
+  it('creates a new value when Enter is pressed with custom text', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    renderComponent({ onHandleSelection, value: [] });
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'Custom label');
+    await user.keyboard('{Enter}');
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'Custom label' });
+  });
 });
