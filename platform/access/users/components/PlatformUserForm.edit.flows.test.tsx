@@ -474,6 +474,28 @@ describe('EditPlatformUser submit branches', () => {
     expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/888/`);
   });
 
+  it('deletes every matching org member assignment when several are returned', async () => {
+    mockOrgHelpers.orgIds = [11];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11],
+    });
+    mockGetRequest.mockImplementation((_url, params: Record<string, string | number>) => {
+      if (String(params.role_definition) === '500') {
+        return Promise.resolve({ results: [{ id: 999 }] });
+      }
+      if (String(params.role_definition) === '600' && String(params.object_id) === '11') {
+        return Promise.resolve({ results: [{ id: 801 }, { id: 802 }] });
+      }
+      return Promise.resolve({ results: [] });
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/801/`);
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/802/`);
+  });
+
   it('strips org memberships when saving as superuser', async () => {
     Object.assign(mockPlatformUser, baseUser, { is_superuser: true });
     const user = userEvent.setup();
@@ -489,5 +511,23 @@ describe('EditPlatformUser submit branches', () => {
       })
     );
     expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/889/`);
+  });
+
+  it('deletes every org member assignment for superuser when several exist', async () => {
+    Object.assign(mockPlatformUser, baseUser, { is_superuser: true });
+    mockGetRequest.mockImplementation((_url, params: Record<string, string | number>) => {
+      if (String(params.role_definition) === '500') {
+        return Promise.resolve({ results: [{ id: 999 }] });
+      }
+      if (String(params.role_definition) === '600' && String(params.object_id) === '10') {
+        return Promise.resolve({ results: [{ id: 901 }, { id: 902 }] });
+      }
+      return Promise.resolve({ results: [] });
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('superuser-org-strip'));
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/901/`);
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/902/`);
   });
 });
