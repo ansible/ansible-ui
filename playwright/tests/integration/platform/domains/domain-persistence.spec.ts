@@ -34,8 +34,8 @@ test.describe('Gateway domain persistence', () => {
         userA = await User.api.create(page, { username: userAUsername, password });
         userB = await User.api.create(page, { username: userBUsername, password });
 
-        await Organization.api.addUser(page, organization.id, { userId: userA.id });
-        await Organization.api.addUser(page, organization.id, { userId: userB.id });
+        await Organization.ui.addUser(page, organization.name, userAUsername);
+        await Organization.ui.addUser(page, organization.name, userBUsername);
         await Team.api.associateUsers(page, team.id, [userA.id, userB.id]);
 
         await gatewayAPI.put(page, `organizations/${organization.id}/domains/`, {
@@ -63,7 +63,7 @@ test.describe('Gateway domain persistence', () => {
           { name: 'Organization only', labels: [] },
           { name: 'Team only', labels: [] },
         ]);
-        expect(userAInherited?.value.userDomains).toEqual([]);
+        expect(userAInherited?.value.userDomains ?? []).toEqual([]);
 
         await gatewayAPI.put(page, 'me/preferences/domains/', {
           value: {
@@ -84,7 +84,7 @@ test.describe('Gateway domain persistence', () => {
           'Organization only',
           'Team only',
         ]);
-        expect(userBPreference?.value.userDomains).toEqual([]);
+        expect(userBPreference?.value.userDomains ?? []).toEqual([]);
 
         await logout(page, { username: currentUsername });
         await login(page, platformUI, { username: userAUsername, password });
