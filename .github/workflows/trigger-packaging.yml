@@ -7,9 +7,9 @@
 #   PACKAGING_REPO_DISPATCH_TOKEN — PAT with permission to create repository_dispatch on the packaging repo
 #   PACKAGING_GITHUB_REPOSITORY   — packaging repo slug, e.g. org/private-aap-ui-packaging (not visible in this YAML)
 #
-# To use a dedicated app, configure PACKAGING_GITHUB_APP_ID (variable) and
-# PACKAGING_GITHUB_APP_PRIVATE_KEY (secret), install it on the packaging repository,
-# and set PACKAGING_DISPATCH_USE_GITHUB_APP to true. Dispatch requests Contents: write.
+# Uses the existing Ansible CICD App ID variable and private-key secret. The App
+# installation must include PACKAGING_GITHUB_REPOSITORY. The workflow requests a
+# Contents: write token only for that repository when the App switch is enabled.
 
 name: Trigger packaging builds
 
@@ -75,8 +75,8 @@ jobs:
         id: packaging_app
         uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
         with:
-          app-id: ${{ vars.PACKAGING_GITHUB_APP_ID }}
-          private-key: ${{ secrets.PACKAGING_GITHUB_APP_PRIVATE_KEY }}
+          app-id: ${{ vars.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_APP_ID }}
+          private-key: ${{ secrets.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_PRIVATE_KEY }}
           owner: ${{ steps.packaging.outputs.owner }}
           repositories: ${{ steps.packaging.outputs.repo }}
           permission-contents: write
