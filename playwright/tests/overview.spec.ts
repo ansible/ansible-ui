@@ -41,16 +41,22 @@ test('hosts resource counts should redirect correctly', async ({ page }) => {
       await page.locator('#hosts').getByRole('link', { name: 'Ready' }).click();
       await expect(page.getByTestId('page-title')).toContainText('Hosts');
       await expect(page).toHaveURL(/ready_status=True/);
-      await expect(page.getByText('Ready Status')).toBeVisible();
-      await expect(page.getByText('Show only ready hosts')).toBeVisible();
+      const readyToolbar = page.getByTestId('page-toolbar');
+      await expect(readyToolbar).toBeVisible({ timeout: 60_000 });
+      await expect(readyToolbar.getByText('Ready Status', { exact: true })).toBeVisible();
+      await expect(readyToolbar.getByText('Show only ready hosts', { exact: true })).toBeVisible();
     }
     await page.getByRole('link', { name: 'Overview' }).click();
     if (await page.locator('#hosts').getByRole('link', { name: 'Failed' }).isVisible()) {
       await page.locator('#hosts').getByRole('link', { name: 'Failed' }).click();
       await expect(page.getByTestId('page-title')).toContainText('Hosts');
       await expect(page).toHaveURL(/failed_status=True/);
-      await expect(page.getByText('Failed Status')).toBeVisible();
-      await expect(page.getByText('Show only failed hosts')).toBeVisible();
+      const failedToolbar = page.getByTestId('page-toolbar');
+      await expect(failedToolbar).toBeVisible({ timeout: 60_000 });
+      await expect(failedToolbar.getByText('Failed Status', { exact: true })).toBeVisible();
+      await expect(
+        failedToolbar.getByText('Show only failed hosts', { exact: true })
+      ).toBeVisible();
     }
   }
 });
