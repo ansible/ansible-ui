@@ -46,7 +46,7 @@ on:
         required: true
       PACKAGING_REPO_TOKEN:
         required: false
-      PACKAGING_GITHUB_APP_PRIVATE_KEY:
+      ANSIBLE_CICD_BOT_ORG_RW_TOKEN_PRIVATE_KEY:
         required: false
 
 jobs:
@@ -88,8 +88,8 @@ jobs:
         id: packaging_app
         uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
         with:
-          app-id: ${{ vars.PACKAGING_GITHUB_APP_ID }}
-          private-key: ${{ secrets.PACKAGING_GITHUB_APP_PRIVATE_KEY }}
+          app-id: ${{ vars.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_APP_ID }}
+          private-key: ${{ secrets.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_PRIVATE_KEY }}
           owner: ${{ steps.packaging.outputs.owner }}
           repositories: ${{ steps.packaging.outputs.repo }}
           permission-contents: read
