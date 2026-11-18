@@ -46,6 +46,8 @@ on:
         required: true
       PACKAGING_REPO_TOKEN:
         required: false
+      PACKAGING_GITHUB_APP_PRIVATE_KEY:
+        required: false
 
 jobs:
   image:
@@ -55,12 +57,60 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Identify packaging repository
+        if: vars.PACKAGING_USE_GITHUB_APP == 'true'
+        id: packaging
+        env:
+          PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
+        run: |
+          if [[ ! "$PACKAGING_REPO" =~ ^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$ ]]; then
+            echo "::error::PACKAGING_GITHUB_REPOSITORY must be owner/repo"
+            exit 1
+          fi
+          owner="${PACKAGING_REPO%/*}"
+          repo="${PACKAGING_REPO#*/}"
+          printf '::add-mask::%s\n' "$owner" "$repo"
+          printf 'owner=%s\nrepo=%s\n' "$owner" "$repo" >> "$GITHUB_OUTPUT"
+
+      - name: Verify packaging token scope
+        if: vars.PACKAGING_USE_GITHUB_APP == 'true'
+        env:
+          PACKAGING_OWNER: ${{ steps.packaging.outputs.owner }}
+          PACKAGING_NAME: ${{ steps.packaging.outputs.repo }}
+        run: |
+          if [ -z "$PACKAGING_OWNER" ] || [ -z "$PACKAGING_NAME" ]; then
+            echo "::error::Cannot scope packaging token without an owner and repository."
+            exit 1
+          fi
+
+      - name: Create packaging checkout token
+        if: vars.PACKAGING_USE_GITHUB_APP == 'true'
+        id: packaging_app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.PACKAGING_GITHUB_APP_ID }}
+          private-key: ${{ secrets.PACKAGING_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.packaging.outputs.owner }}
+          repositories: ${{ steps.packaging.outputs.repo }}
+          permission-contents: read
+
+      - name: Verify packaging app token
+        if: vars.PACKAGING_USE_GITHUB_APP == 'true'
+        env:
+          PACKAGING_APP_TOKEN: ${{ steps.packaging_app.outputs.token }}
+        run: |
+          if [ -z "$PACKAGING_APP_TOKEN" ]; then
+            echo "::error::The packaging app did not issue a checkout token."
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
         with:
           repository: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
           ref: ${{ inputs.packaging-ref }}
           path: _packaging
-          token: ${{ secrets.PACKAGING_REPO_TOKEN || github.token }}
+          token: ${{ steps.packaging_app.outputs.token || secrets.PACKAGING_REPO_TOKEN || github.token }}
+          persist-credentials: false
 
       - name: Setup node
         uses: actions/setup-node@v4
