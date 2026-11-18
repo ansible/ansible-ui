@@ -23,7 +23,7 @@ const minimalView = {
   refresh: vi.fn(),
 };
 
-const mockUseAwxView = vi.fn(() => minimalView);
+const mockUseAwxView = vi.fn((_options?: unknown) => minimalView);
 
 let capturedSingleSelectDialogProps: Record<string, unknown> | undefined;
 
@@ -46,7 +46,7 @@ vi.mock('../../../common/awx-toolbar-filters', () => ({
 }));
 
 vi.mock('../../../common/useAwxView', () => ({
-  useAwxView: (options: unknown) => mockUseAwxView(options),
+  useAwxView: (options?: unknown) => mockUseAwxView(options),
 }));
 
 vi.mock('./useTemplateColumns', () => ({
