@@ -286,13 +286,17 @@ export function EditPlatformUser() {
             });
           }
         }
-        for (const removedOrganizationId of removedOrganizationIds) {
-          await removeOrganizationMembership(user?.id, removedOrganizationId);
-        }
+        await Promise.all(
+          removedOrganizationIds.map((removedOrganizationId) =>
+            removeOrganizationMembership(user?.id, removedOrganizationId)
+          )
+        );
       } else if (user.is_superuser && organizationIds) {
-        for (const organizationId of organizationIds) {
-          await removeOrganizationMembership(user?.id, organizationId);
-        }
+        await Promise.all(
+          organizationIds.map((organizationId) =>
+            removeOrganizationMembership(user?.id, organizationId)
+          )
+        );
       }
 
       user.is_platform_auditor = userType === USER_TYPE_ENUM.Auditor;

@@ -474,6 +474,44 @@ describe('EditPlatformUser submit branches', () => {
     expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/888/`);
   });
 
+  it('removes multiple organizations in parallel when several are dropped', async () => {
+    mockOrgHelpers.orgIds = [11, 12];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11, 12],
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({ object_id: 11 })
+    );
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({ object_id: 12 })
+    );
+    expect(mockDeleteRequest).toHaveBeenCalledTimes(2);
+  });
+
+  it('skips delete when no org member assignments match the filter', async () => {
+    mockOrgHelpers.orgIds = [11];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11],
+    });
+    mockGetRequest.mockImplementation((_url, params: Record<string, string | number>) => {
+      if (String(params.role_definition) === '600') {
+        return Promise.resolve({ results: [] });
+      }
+      return Promise.resolve({ results: [{ id: 999 }] });
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockDeleteRequest).not.toHaveBeenCalled();
+  });
+
   it('deletes every matching org member assignment when several are returned', async () => {
     mockOrgHelpers.orgIds = [11];
     mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
