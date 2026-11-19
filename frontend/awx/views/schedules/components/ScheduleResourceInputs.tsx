@@ -78,6 +78,7 @@ export function ScheduleResourceInputs() {
         <PageFormDateTimePicker<ScheduleFormWizard>
           label={t('Start date/time')}
           name="startDateTime"
+          timePlaceHolder="HH:MM AM/PM"
           isRequired
         />
         <PageFormSingleSelect<ScheduleFormWizard>
