@@ -149,7 +149,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     return null;
   };
 
-  const moveItem = (arr: T[], itemId: string, toIndex: number) =>
+  const moveItem = (arr: T[], itemId: string | number, toIndex: number) =>
     moveReorderItem(arr, itemId, toIndex, keyFn);
 
   const onDragLeave: TbodyProps['onDragLeave'] = (evt) => {
