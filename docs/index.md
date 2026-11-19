@@ -9,6 +9,7 @@ Documentation for the [Ansible UI](https://github.com/ansible/ansible-ui) reposi
 - [Capitalization](dev/capitalization.md)
 - [Translations](dev/translations.md)
 - [PR checklist](dev/pr-checklist.md)
+- [SonarCloud dual-project sync](dev/sonarcloud-dual-project-sync.md)
 - [Dependency updates](dev/dependency-updates.md)
 - [Autocomplete security guide](dev/autocomplete-security-guide.md)
 

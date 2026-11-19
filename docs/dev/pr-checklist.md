@@ -32,6 +32,10 @@ Evaluate whether the PR introduces new patterns or idioms to the codebase.
 
 Ensure that the tests cover the new changes and pass without issues, and that no regression is introduced.
 
+## SonarCloud (backports)
+
+Upstream PRs use Sonar project `ansible_ansible-ui`; aap-ui backports use `ansible-automation-platform_aap-ui`. Passing upstream does not guarantee passing the backport. See [SonarCloud dual-project sync](sonarcloud-dual-project-sync.md).
+
 - For behavior changes, verify relevant current CI and focused tests are passing
   and are thorough enough to prevent regressions. Do not run application or
   Playwright tests for documentation-only changes.
