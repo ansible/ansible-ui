@@ -20,7 +20,7 @@ import { useFrameworkTranslations } from '../../useFrameworkTranslations';
 import { capitalizeFirstLetter } from '../../utils/strings';
 import { usePageFormOptionsContext } from '../PageFormOptionsContext';
 import { createFieldValidate } from '../PageFormOptionsValidation';
-import { PageFormGroup } from './PageFormGroup';
+import { PageFormGroup, PageFormHelperTextVariant } from './PageFormGroup';
 import {
   createPatternBlurHandler,
   PasswordRevealButton,
@@ -102,7 +102,8 @@ type PageFormTextInputBaseProps<
    */
   button?: ReactNode;
 
-  helperText?: string;
+  helperText?: ReactNode;
+  helperTextVariant?: PageFormHelperTextVariant;
 
   /**
    * When present, it specifies that the <input> element should be disabled.
@@ -324,6 +325,7 @@ export function PageFormTextInput<
     placeholder,
     button,
     helperText,
+    helperTextVariant,
     isDisabled,
     isReadOnly,
     isRequired,
@@ -393,6 +395,7 @@ export function PageFormTextInput<
             labelHelp={labelHelp}
             additionalControls={additionalControls}
             helperText={helperText}
+            helperTextVariant={helperTextVariant}
             helperTextInvalid={helperTextInvalid}
             isRequired={isRequired}
             fullWidth={fullWidth}
