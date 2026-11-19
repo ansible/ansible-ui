@@ -22,6 +22,7 @@ export function useCollectionFilters() {
   );
 
   return useMemo<IToolbarFilter[]>(() => {
+    const insights = isInsightsMode();
     const filters: IToolbarFilter[] = [
       {
         key: 'keywords',
@@ -29,8 +30,8 @@ export function useCollectionFilters() {
         type: ToolbarFilterType.SingleText,
         // Insights mode (console.redhat.com): substring search on name field only
         // Platform mode: exact match (unchanged)
-        query: isInsightsMode() ? 'name__icontains' : 'name',
-        comparison: isInsightsMode() ? 'contains' : 'equals',
+        query: insights ? 'name__icontains' : 'name',
+        comparison: insights ? 'contains' : 'equals',
       },
       {
         key: 'namespace',
