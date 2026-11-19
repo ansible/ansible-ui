@@ -34,6 +34,7 @@ const fullProject = {
   scm_track_submodules: true,
   scm_update_on_launch: true,
   scm_update_cache_timeout: 60,
+  galaxy_update_on_launch: true,
   allow_override: true,
   local_path: 'project_dir',
   custom_virtualenv: '/venv/custom',
@@ -199,6 +200,7 @@ describe('ProjectDetails', () => {
     expect(screen.getByText('Delete the project before syncing')).toBeInTheDocument();
     expect(screen.getByText('Track submodules latest commit on branch')).toBeInTheDocument();
     expect(screen.getByText('Update revision on job launch')).toBeInTheDocument();
+    expect(screen.getByText('Update Galaxy cache on job launch')).toBeInTheDocument();
     expect(screen.getByText('Allow branch override')).toBeInTheDocument();
   });
 
@@ -220,6 +222,7 @@ describe('ProjectDetails', () => {
             scm_delete_on_update: false,
             scm_track_submodules: false,
             scm_update_on_launch: false,
+            galaxy_update_on_launch: false,
             allow_override: false,
           })
       )
