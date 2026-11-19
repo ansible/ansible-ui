@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import { CredentialLabel } from '../../../../common/CredentialLabel';
+import { omitBlankSurveyAnswers } from '../../../../common/util/omitBlankSurveyAnswers';
 import { useVerbosityString } from '../../../../common/useVerbosityString';
 import type { Credential } from '../../../../interfaces/Credential';
 import { ExecutionEnvironment } from '../../../../interfaces/ExecutionEnvironment';
@@ -48,14 +49,15 @@ function processSurvey(
   surveyConfig: Survey | null
 ): string {
   const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
-  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+  const answeredSurvey = omitBlankSurveyAnswers(survey) as { [key: string]: string | string[] };
+  const updatedSurvey: { [key: string]: string | string[] } = { ...answeredSurvey };
 
   if (surveyConfig?.spec) {
     const passwordFields = surveyConfig.spec
       .filter((q) => q.type === 'password')
       .map((q) => q.variable);
 
-    const maskedSurveyPasswords = maskPasswords(survey, passwordFields);
+    const maskedSurveyPasswords = maskPasswords(answeredSurvey, passwordFields);
     Object.keys(maskedSurveyPasswords).forEach((passwordKey) => {
       updatedSurvey[passwordKey] = maskedSurveyPasswords[passwordKey];
     });
