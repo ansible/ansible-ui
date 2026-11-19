@@ -27,8 +27,7 @@ jobs:
       upload-artifact: true
     secrets:
       PACKAGING_GITHUB_REPOSITORY: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
-      PACKAGING_REPO_TOKEN: ${{ secrets.PACKAGING_REPO_TOKEN }}
-      PACKAGING_GITHUB_APP_PRIVATE_KEY: ${{ secrets.PACKAGING_GITHUB_APP_PRIVATE_KEY }}
+      ANSIBLE_CICD_BOT_ORG_RW_TOKEN_PRIVATE_KEY: ${{ secrets.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_PRIVATE_KEY }}
 
   refresh-baselines:
     needs: build-platform-ui

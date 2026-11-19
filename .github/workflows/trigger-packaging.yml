@@ -3,13 +3,12 @@
 # Uses actions/github-script (GitHub-maintained) → REST API:
 # https://docs.github.com/en/rest/repos/repos#create-a-repository-dispatch-event
 #
-# Secrets (repository settings → Secrets):
-#   PACKAGING_REPO_DISPATCH_TOKEN — PAT with permission to create repository_dispatch on the packaging repo
-#   PACKAGING_GITHUB_REPOSITORY   — packaging repo slug, e.g. org/private-aap-ui-packaging (not visible in this YAML)
+# Repository secret:
+#   PACKAGING_GITHUB_REPOSITORY — packaging repository slug (owner/name)
 #
-# To use a dedicated app, configure PACKAGING_GITHUB_APP_ID (variable) and
-# PACKAGING_GITHUB_APP_PRIVATE_KEY (secret), install it on the packaging repository,
-# and set PACKAGING_DISPATCH_USE_GITHUB_APP to true. Dispatch requests Contents: write.
+# Uses the existing Ansible CICD App ID variable and private-key secret. The App
+# installation must include PACKAGING_GITHUB_REPOSITORY. The workflow requests a
+# Contents: write token only for that repository when App dispatch is enabled.
 
 name: Trigger packaging builds
 
@@ -29,23 +28,21 @@ jobs:
       - name: Check packaging dispatch configuration
         id: gate
         env:
-          DISPATCH_TOKEN: ${{ secrets.PACKAGING_REPO_DISPATCH_TOKEN }}
           PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
           USE_GITHUB_APP: ${{ vars.PACKAGING_DISPATCH_USE_GITHUB_APP }}
         run: |
-          if [ "$USE_GITHUB_APP" = "true" ] && [ -z "$PACKAGING_REPO" ]; then
-            echo "::error::PACKAGING_GITHUB_REPOSITORY is required when PACKAGING_DISPATCH_USE_GITHUB_APP is enabled."
-            exit 1
-          fi
-          if [ -n "$PACKAGING_REPO" ] && { [ "$USE_GITHUB_APP" = "true" ] || [ -n "$DISPATCH_TOKEN" ]; }; then
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
-          else
+          if [ "$USE_GITHUB_APP" != "true" ]; then
             echo "enabled=false" >> "$GITHUB_OUTPUT"
-            echo '::notice::Skipping packaging dispatch: set repository secrets PACKAGING_REPO_DISPATCH_TOKEN and PACKAGING_GITHUB_REPOSITORY to enable Quay builds.'
+            echo '::notice::Packaging dispatch is disabled until PACKAGING_DISPATCH_USE_GITHUB_APP=true.'
+          elif [ -z "$PACKAGING_REPO" ]; then
+            echo "::error::PACKAGING_GITHUB_REPOSITORY is required for App dispatch."
+            exit 1
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Identify packaging repository
-        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_DISPATCH_USE_GITHUB_APP == 'true'
+        if: steps.gate.outputs.enabled == 'true'
         id: packaging
         env:
           PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
@@ -60,7 +57,7 @@ jobs:
           printf 'owner=%s\nrepo=%s\n' "$owner" "$repo" >> "$GITHUB_OUTPUT"
 
       - name: Verify packaging token scope
-        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_DISPATCH_USE_GITHUB_APP == 'true'
+        if: steps.gate.outputs.enabled == 'true'
         env:
           PACKAGING_OWNER: ${{ steps.packaging.outputs.owner }}
           PACKAGING_NAME: ${{ steps.packaging.outputs.repo }}
@@ -71,18 +68,18 @@ jobs:
           fi
 
       - name: Create packaging dispatch token
-        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_DISPATCH_USE_GITHUB_APP == 'true'
+        if: steps.gate.outputs.enabled == 'true'
         id: packaging_app
         uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
         with:
-          app-id: ${{ vars.PACKAGING_GITHUB_APP_ID }}
-          private-key: ${{ secrets.PACKAGING_GITHUB_APP_PRIVATE_KEY }}
+          app-id: ${{ vars.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_APP_ID }}
+          private-key: ${{ secrets.ANSIBLE_CICD_BOT_ORG_RW_TOKEN_PRIVATE_KEY }}
           owner: ${{ steps.packaging.outputs.owner }}
           repositories: ${{ steps.packaging.outputs.repo }}
           permission-contents: write
 
       - name: Verify packaging app token
-        if: steps.gate.outputs.enabled == 'true' && vars.PACKAGING_DISPATCH_USE_GITHUB_APP == 'true'
+        if: steps.gate.outputs.enabled == 'true'
         env:
           PACKAGING_APP_TOKEN: ${{ steps.packaging_app.outputs.token }}
         run: |
@@ -96,7 +93,7 @@ jobs:
         env:
           PACKAGING_REPO: ${{ secrets.PACKAGING_GITHUB_REPOSITORY }}
         with:
-          github-token: ${{ steps.packaging_app.outputs.token || secrets.PACKAGING_REPO_DISPATCH_TOKEN }}
+          github-token: ${{ steps.packaging_app.outputs.token }}
           script: |
             const slug = process.env.PACKAGING_REPO;
             if (!slug || !slug.includes('/')) {
