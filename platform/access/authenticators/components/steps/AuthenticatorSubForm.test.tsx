@@ -305,6 +305,145 @@ describe('AuthenticatorSubForm — create flow OAuth callback field', () => {
     render(<GithubCreateWrapper />);
     expect(screen.queryByLabelText('Callback URL')).not.toBeInTheDocument();
   });
+
+  test('hides CALLBACK_URL for google oauth create flows', () => {
+    const plugins: AuthenticatorPlugins = {
+      authenticators: [
+        {
+          type: 'ansible_base.authenticator_plugins.google_oauth2' as AuthenticatorTypeEnum,
+          configuration_schema: [
+            {
+              name: 'CALLBACK_URL',
+              help_text: 'cb',
+              required: true,
+              type: 'CharField',
+              ui_field_label: 'Callback URL',
+            },
+          ],
+          documentation_url: '',
+        },
+      ],
+    };
+
+    function GoogleCreateWrapper() {
+      const methods = useForm({
+        defaultValues: {
+          type: 'ansible_base.authenticator_plugins.google_oauth2' as AuthenticatorTypeEnum,
+          configuration: {},
+          enabled: false,
+          create_objects: false,
+          remove_users: false,
+        },
+      });
+      return (
+        <FormProvider {...methods}>
+          <AuthenticatorSubForm plugins={plugins} />
+        </FormProvider>
+      );
+    }
+
+    render(<GoogleCreateWrapper />);
+    expect(screen.queryByLabelText('Callback URL')).not.toBeInTheDocument();
+  });
+});
+
+const PLUGINS_WITH_CHOICE: AuthenticatorPlugins = {
+  authenticators: [
+    {
+      type: AuthenticatorTypeEnum.Keycloak,
+      configuration_schema: [
+        {
+          name: 'PROTOCOL',
+          help_text: 'Protocol',
+          required: true,
+          type: 'ChoiceField',
+          ui_field_label: 'Protocol',
+          choices: { oidc: 'OpenID Connect', saml: 'SAML' },
+        },
+      ],
+      documentation_url: '',
+    },
+  ],
+};
+
+const PLUGINS_WITH_SECRET_FIELDS: AuthenticatorPlugins = {
+  authenticators: [
+    {
+      type: AuthenticatorTypeEnum.Keycloak,
+      configuration_schema: [
+        {
+          name: 'BIND_PASSWORD',
+          help_text: 'Password',
+          required: true,
+          type: 'CharField',
+          ui_field_label: 'Bind password',
+        },
+        {
+          name: 'PRIVATE_KEY',
+          help_text: 'Key',
+          required: true,
+          type: 'PrivateKey',
+          ui_field_label: 'Private key',
+        },
+        {
+          name: 'EXTRA_DATA',
+          help_text: 'JSON data',
+          required: false,
+          type: 'JSONField',
+          ui_field_label: 'Extra data',
+        },
+      ],
+      documentation_url: '',
+    },
+  ],
+};
+
+describe('AuthenticatorSubForm — additional field types', () => {
+  test('renders choice, password, textarea, and data editor fields', () => {
+    render(
+      <SubFormTestWrapper onSubmit={vi.fn()}>
+        <AuthenticatorSubForm plugins={PLUGINS_WITH_SECRET_FIELDS} />
+      </SubFormTestWrapper>
+    );
+
+    expect(document.querySelector('[id="configuration-input-BIND_PASSWORD"]')).toHaveAttribute(
+      'type',
+      'password'
+    );
+    expect(document.querySelector('[id="configuration-textarea-PRIVATE_KEY"]')).toBeInTheDocument();
+    expect(document.querySelector('[id="configuration-editor-EXTRA_DATA"]')).toBeInTheDocument();
+  });
+
+  test('renders select options for ChoiceField configuration', () => {
+    render(
+      <SubFormTestWrapper onSubmit={vi.fn()}>
+        <AuthenticatorSubForm plugins={PLUGINS_WITH_CHOICE} />
+      </SubFormTestWrapper>
+    );
+
+    expect(screen.getByText('Protocol')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Select a value' })).toBeInTheDocument();
+  });
+
+  test('uses the persisted authenticator type when editing', () => {
+    render(
+      <SubFormTestWrapper onSubmit={vi.fn()}>
+        <AuthenticatorSubForm
+          plugins={PLUGINS_WITH_INTEGER}
+          authenticator={
+            {
+              id: 3,
+              type: AuthenticatorTypeEnum.Keycloak,
+            } as never
+          }
+        />
+      </SubFormTestWrapper>
+    );
+
+    expect(
+      screen.getByRole('spinbutton', { name: 'JWKS Cache Timeout (seconds)' })
+    ).toBeInTheDocument();
+  });
 });
 
 describe('validateDetailsStep', () => {

@@ -111,4 +111,18 @@ describe('useDeleteGroups', () => {
     dialogElement.props.onClose();
     expect(mockSetDialog).toHaveBeenCalledWith(undefined);
   });
+
+  test('should pass multiple groups to the delete dialog', () => {
+    const { result } = renderHook(() => useDeleteGroups(vi.fn()));
+    const groups = [
+      createMockGroup({ id: 1, name: 'Alpha' }),
+      createMockGroup({ id: 2, name: 'Beta' }),
+    ];
+
+    result.current(groups);
+
+    const dialogElement = mockSetDialog.mock.calls[0][0];
+    expect(dialogElement.props.groups).toHaveLength(2);
+    expect(dialogElement.props.groups[0].name).toBe('Alpha');
+  });
 });

@@ -149,6 +149,104 @@ describe('OrgRolesList', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('loads team organization roles when teamId and orgId are provided', async () => {
+    server.use(
+      http.get('*/role_team_assignments/*', () => {
+        return HttpResponse.json(mockRoleAssignments);
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <OrgRolesList
+          title="Team org roles"
+          isExpandable={false}
+          apiPrefixFunction={awxAPI}
+          orgId="245"
+          teamId="17"
+          listId={2}
+          setOrgListIsEmpty={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Organization Project Admin')).toBeInTheDocument();
+    });
+  });
+
+  it('loads user roles with ansible ids', async () => {
+    server.use(
+      http.get('*/role_user_assignments/*', () => {
+        return HttpResponse.json(mockRoleAssignments);
+      })
+    );
+
+    render(
+      <MemoryRouter>
+        <OrgRolesList
+          title="Ansible roles"
+          isExpandable={false}
+          apiPrefixFunction={awxAPI}
+          orgAnsibleId="org-uuid"
+          userAnsibleId="user-uuid"
+          listId={3}
+          setOrgListIsEmpty={vi.fn()}
+        />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Organization Project Admin')).toBeInTheDocument();
+    });
+  });
+
+  it('renders error state when the roles API fails', async () => {
+    server.use(http.get('*/role_user_assignments/*', () => HttpResponse.json({}, { status: 500 })));
+
+    render(
+      <MemoryRouter>
+        <OrgRolesList {...defaultProps} isExpandable={false} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Error loading roles.')).toBeInTheDocument();
+    });
+  });
+
+  it('marks org list slot as not empty when results are returned', async () => {
+    const setOrgListIsEmpty = vi.fn();
+    server.use(http.get('*/role_user_assignments/*', () => HttpResponse.json(mockRoleAssignments)));
+
+    render(
+      <MemoryRouter>
+        <OrgRolesList {...defaultProps} setOrgListIsEmpty={setOrgListIsEmpty} />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(setOrgListIsEmpty).toHaveBeenCalled();
+    });
+
+    const updater = setOrgListIsEmpty.mock.calls.at(-1)?.[0] as (state: boolean[]) => boolean[];
+    expect(updater([false, false, false])[1]).toBe(false);
+  });
+
+  it('shows a badge count on expandable section titles', async () => {
+    server.use(http.get('*/role_user_assignments/*', () => HttpResponse.json(mockRoleAssignments)));
+
+    render(
+      <MemoryRouter>
+        <OrgRolesList {...defaultProps} isExpandable />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('1')).toBeInTheDocument();
+    });
+  });
+
   it('calls setOrgListIsEmpty when results are empty', async () => {
     const setOrgListIsEmpty = vi.fn();
     server.use(

@@ -96,4 +96,25 @@ describe('useFeatureFlagColumns', () => {
     );
     expect(supportUrlCell).toHaveTextContent('Support');
   });
+
+  test('should render label group when feature flag has labels', () => {
+    const { result } = renderHook(() => useFeatureFlagColumns());
+    const labelsColumn = result.current.find((column) => column.id === 'labels');
+    const flag = createFlag({ labels: ['alpha', 'beta'] });
+
+    const { container } = render(<>{labelsColumn && renderColumnCell(labelsColumn, flag)}</>);
+    expect(container).toHaveTextContent('alpha');
+    expect(container).toHaveTextContent('beta');
+  });
+
+  test('should map disabled state in read-only mode', () => {
+    const { result } = renderHook(() => useFeatureFlagColumns({ isReadOnly: true }));
+    const stateColumn = result.current.find((column) => column.id === 'state');
+    const disabledFlag = createFlag({ state: false });
+
+    expect(stateColumn?.value?.(disabledFlag)).toBe('Disabled');
+
+    const { container } = render(<>{stateColumn && renderColumnCell(stateColumn, disabledFlag)}</>);
+    expect(container).toHaveTextContent('Disabled');
+  });
 });

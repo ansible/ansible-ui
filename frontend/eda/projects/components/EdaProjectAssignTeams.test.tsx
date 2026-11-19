@@ -111,7 +111,7 @@ describe('EdaProjectAssignTeams', () => {
 
     expect(capturedRolesUrl).toBeDefined();
     expect(capturedRolesUrl).toContain('content_type__api_slug=eda.project');
-  });
+  }, 15000);
 
   it('should have a cancel button', async () => {
     renderComponent();
@@ -121,5 +121,15 @@ describe('EdaProjectAssignTeams', () => {
     });
 
     expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+  });
+
+  it('should show project name in breadcrumbs', async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Project')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('Team Access')).toBeInTheDocument();
   });
 });

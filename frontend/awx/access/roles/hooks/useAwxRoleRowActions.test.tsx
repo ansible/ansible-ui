@@ -84,4 +84,13 @@ describe('useAwxRoleRowActions', () => {
       );
     }
   });
+
+  it('includes an edit action that resolves the role edit URL', () => {
+    const { result } = renderHook(() => useAwxRoleRowActions(vi.fn()));
+    const editAction = result.current[0];
+    expect(editAction).toMatchObject({ label: 'Edit role' });
+    if ('href' in editAction && typeof editAction.href === 'function') {
+      expect(editAction.href(role({ id: 3 }))).toBe('/roles/1/edit');
+    }
+  });
 });

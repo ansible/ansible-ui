@@ -94,4 +94,15 @@ describe('OrganizationGalaxyCredentialsOrderStep', () => {
     expect(screen.getByText('Manage galaxy credential order')).toBeInTheDocument();
     expect(screen.queryByTestId('row-Cred A')).not.toBeInTheDocument();
   });
+
+  it('uses the name column header from translations', () => {
+    const cred = { id: 1, name: 'Only Cred', credential_type: 1 } as Credential;
+    wizardState.wizardData = { galaxyCredentials: [cred] };
+    wizardState.setWizardData = vi.fn();
+    wizardState.setStepData = vi.fn();
+
+    render(<OrganizationGalaxyCredentialsOrderStep />);
+
+    expect(screen.getByTestId('row-Only Cred')).toHaveTextContent('Only Cred');
+  });
 });

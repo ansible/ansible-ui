@@ -382,6 +382,20 @@ describe('CollectionInstall', () => {
     });
   });
 
+  test('should show Install heading in default hub mode', async () => {
+    vi.mocked(isInsightsMode).mockReturnValue(false);
+
+    render(
+      <TestWrapper>
+        <CollectionInstall />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Install' })).toBeInTheDocument();
+    });
+  });
+
   describe('Insights mode - download URL conversion', () => {
     beforeEach(() => {
       vi.mocked(isInsightsMode).mockReturnValue(true);

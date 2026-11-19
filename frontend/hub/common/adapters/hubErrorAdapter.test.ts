@@ -77,6 +77,45 @@ describe('hubErrorAdapter Unit Tests', () => {
     expect(hubErrorAdapter(error)).toEqual(expectedOutput);
   });
 
+  it('should map galaxy field keys when mappedKeys is provided', () => {
+    const errorData = {
+      errors: [
+        {
+          status: '400',
+          code: 'invalid',
+          title: 'Invalid',
+          detail: 'Bad value',
+          source: { parameter: 'remote_registry' },
+        },
+      ],
+    };
+    const error = new RequestError('Test message', undefined, 400, errorData, errorData);
+
+    expect(hubErrorAdapter(error, { remote_registry: 'registry' })).toEqual({
+      genericErrors: [],
+      fieldErrors: [{ name: 'registry', message: 'Bad value' }],
+    });
+  });
+
+  it('should rename filename field errors to file', () => {
+    const error = new RequestError(
+      'Test message',
+      undefined,
+      400,
+      { filename: ['Invalid file'] },
+      { filename: ['Invalid file'] }
+    );
+
+    expect(hubErrorAdapter(error).fieldErrors).toEqual([{ name: 'file', message: 'Invalid file' }]);
+  });
+
+  it('should handle plain Error instances', () => {
+    expect(hubErrorAdapter(new Error('Network down'))).toEqual({
+      genericErrors: [{ message: 'Network down' }],
+      fieldErrors: [],
+    });
+  });
+
   it('should handle CSRF errors correctly', () => {
     const error = new RequestError(
       'Test message',

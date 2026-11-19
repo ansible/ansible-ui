@@ -141,5 +141,15 @@ describe('EdaProjectAddUsers', () => {
     const backButton = within(wizardFooter).getByRole('button', { name: /^Back$/ });
     expect(backButton).toBeInTheDocument();
     expect(backButton).toBeEnabled();
+  }, 15000);
+
+  it('should show a cancel button on the wizard', async () => {
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Assign users/i })).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
   });
 });

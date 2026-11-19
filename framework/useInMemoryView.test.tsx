@@ -131,4 +131,21 @@ describe('useInMemoryView', () => {
     expect(result.current.selectedItems).toEqual([]);
     expect(result.current.isSelected(testItems[0])).toBe(false);
   });
+
+  it('sorts using defaultSortDirection desc', () => {
+    const { result } = renderHook(
+      () =>
+        useInMemoryView<TestItem>({
+          items: testItems,
+          keyFn,
+          tableColumns: [{ header: 'Name', sort: 'name', cell: (i) => i.name }],
+          defaultSortDirection: 'desc',
+          disableQueryString: true,
+        }),
+      { wrapper: Wrapper }
+    );
+
+    expect(result.current.pageItems?.[0].name).toBe('Echo');
+    expect(result.current.pageItems?.at(-1)?.name).toBe('Alpha');
+  });
 });

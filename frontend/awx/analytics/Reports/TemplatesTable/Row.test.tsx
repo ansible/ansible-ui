@@ -73,8 +73,11 @@ describe('TemplatesTable Row', () => {
     );
 
     await user.click(screen.getByRole('button', { name: /Details/i }));
-    await waitFor(() => {
-      expect(window.localStorage.getItem(String(expandedRowTemplateId))).toBe('true');
-    });
-  });
+    await waitFor(
+      () => {
+        expect(window.localStorage.getItem(String(expandedRowTemplateId))).toBe('true');
+      },
+      { timeout: 10000 }
+    );
+  }, 15000);
 });

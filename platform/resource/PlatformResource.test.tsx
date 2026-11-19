@@ -166,6 +166,39 @@ describe('PlatformResource', () => {
     });
   });
 
+  test('should navigate to the team details route for a shared team resource', async () => {
+    server.use(
+      http.get(
+        ({ request }) => {
+          const url = new URL(request.url);
+          return (
+            url.pathname.endsWith('/teams/') &&
+            url.searchParams.get('resource__ansible_id') === 'team-ansible-id'
+          );
+        },
+        () => HttpResponse.json({ count: 1, results: [{ id: 15 }] })
+      )
+    );
+
+    render(<PlatformResource />, {
+      wrapper: ({ children }) => (
+        <MemoryRouter initialEntries={['/resources/shared.team/team-ansible-id']}>
+          <Routes>
+            <Route path="/resources/:resource_type/:ansible_id" element={children} />
+            <Route path="/access/teams/:id/details" element={<div>Team details</div>} />
+          </Routes>
+        </MemoryRouter>
+      ),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Team details')).toBeInTheDocument();
+    });
+    expect(mockGetPageUrl).toHaveBeenCalledWith(PlatformRoute.TeamDetails, {
+      params: { id: 15 },
+    });
+  });
+
   test('should render not found for an unsupported resource type', async () => {
     render(<PlatformResource />, {
       wrapper: ({ children }) => (

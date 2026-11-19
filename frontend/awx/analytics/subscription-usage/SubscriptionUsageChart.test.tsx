@@ -67,4 +67,10 @@ describe('SubscriptionUsageChart', () => {
     expect(screen.getByTestId('usage-chart')).toHaveTextContent('Subscriptions consumed');
     expect(screen.getByTestId('usage-chart')).toHaveTextContent('Subscription capacity');
   });
+
+  it('requests subscription usage data for a three-year period', async () => {
+    renderChart('three_years');
+    await waitFor(() => expect(screen.getByTestId('usage-chart')).toBeInTheDocument());
+    expect(screen.getByTestId('usage-chart')).toHaveTextContent('Subscriptions consumed');
+  });
 });

@@ -256,4 +256,34 @@ describe('PlatformOrganizationManageUserRoles', () => {
     const checkbox = memberRoleRow.querySelector('input[type="checkbox"]');
     expect(checkbox).not.toBeChecked();
   });
+
+  test('should not POST role assignments when Cancel is clicked', async () => {
+    const user = userEvent.setup();
+    const postSpy = vi.fn();
+    server.use(
+      http.post(gatewayAPI`/role_user_assignments/`, () => {
+        postSpy();
+        return HttpResponse.json({ id: 202 }, { status: 201 });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/users/10/manage-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/users/:userId/manage-roles"
+            element={<PlatformOrganizationManageUserRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(postSpy).not.toHaveBeenCalled();
+  });
 });

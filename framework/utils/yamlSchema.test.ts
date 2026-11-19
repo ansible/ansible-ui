@@ -54,6 +54,34 @@ large: 12341234123412341234123412341235`;
       expect(result.value).toBe('some string');
       expect(typeof result.value).toBe('string');
     });
+
+    it('should keep sixteen-digit integers as numbers', () => {
+      const yaml = 'value: 1234567890123456';
+      const result = safeLoad(yaml) as { value: number };
+      expect(result.value).toBe(1234567890123456);
+      expect(typeof result.value).toBe('number');
+    });
+
+    it('should leave short array integers unchanged when loading', () => {
+      const yaml = `items:
+  - 42
+  - 99`;
+      const result = safeLoad(yaml) as { items: number[] };
+      expect(result.items).toEqual([42, 99]);
+    });
+
+    it('should handle tab-indented large integer values', () => {
+      const yaml = 'value:\t12341234123412341234123412341235';
+      const result = safeLoad(yaml) as { value: string };
+      expect(result.value).toBe('12341234123412341234123412341235');
+    });
+
+    it('should preserve large integers in spaced list entries', () => {
+      const yaml = `number_list:
+  -     12341234123412341234123412341235`;
+      const result = safeLoad(yaml) as { number_list: string[] };
+      expect(result.number_list[0]).toBe('12341234123412341234123412341235');
+    });
   });
 
   describe('safeDump', () => {
@@ -94,6 +122,18 @@ large: 12341234123412341234123412341235`;
       const yaml = safeDump(obj);
       expect(yaml).toContain('some string');
     });
+
+    it('should serialize small JavaScript numbers without quotes', () => {
+      const obj = { value: 12_345 };
+      const yaml = safeDump(obj);
+      expect(yaml).toBe('value: 12345\n');
+    });
+
+    it('should keep non-large quoted digit sequences unchanged in dump output', () => {
+      const obj = { note: 'not-a-number' };
+      const yaml = safeDump(obj);
+      expect(yaml).toContain('not-a-number');
+    });
   });
 
   describe('round-trip preservation', () => {
@@ -118,6 +158,14 @@ large: 12341234123412341234123412341235`;
       const yaml = safeDump({ value: original });
       const result = safeLoad(yaml) as { value: string };
       expect(result.value).toBe(original);
+    });
+  });
+
+  describe('safeLoad no-op branches', () => {
+    it('should leave sixteen-digit mapping values untouched by the preprocessor', () => {
+      const yaml = 'count: 9007199254740991';
+      const result = safeLoad(yaml) as { count: number };
+      expect(result.count).toBe(9007199254740991);
     });
   });
 

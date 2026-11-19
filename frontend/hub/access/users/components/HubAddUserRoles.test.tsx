@@ -73,5 +73,8 @@ describe('Hub user: Add roles', () => {
     await waitFor(() => {
       expect(screen.getByTestId('wizard')).toBeInTheDocument();
     });
+
+    expect(screen.getByRole('heading', { name: 'Assign users' })).toBeInTheDocument();
+    expect(screen.getByText('vn2')).toBeInTheDocument();
   });
 });

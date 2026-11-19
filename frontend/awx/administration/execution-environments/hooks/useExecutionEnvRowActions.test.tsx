@@ -111,4 +111,25 @@ describe('useExecutionEnvRowActions', () => {
       throw new Error('expected delete action with isHidden');
     }
   });
+
+  it('exposes a duplicate action that is enabled for editable execution environments', () => {
+    const { result } = renderHook(() =>
+      useExecutionEnvRowActions({ onDelete: mockOnDelete, onCopy: mockOnCopy })
+    );
+    const duplicateAction = getButtonActionByLabel(
+      result.current,
+      'Duplicate execution environment'
+    );
+    const ee = createExecutionEnvironment({ id: 4, name: 'ee-copy', managed: false });
+    expect(duplicateAction).toBeDefined();
+    if (
+      duplicateAction &&
+      'isDisabled' in duplicateAction &&
+      typeof duplicateAction.isDisabled === 'function'
+    ) {
+      expect(
+        (duplicateAction.isDisabled as (item: typeof ee) => boolean | string | undefined)(ee)
+      ).toBeFalsy();
+    }
+  });
 });

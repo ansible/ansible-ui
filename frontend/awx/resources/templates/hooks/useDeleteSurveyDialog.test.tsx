@@ -1,13 +1,26 @@
-import { renderHook } from '@testing-library/react';
+import { render, renderHook, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
 import type { Spec } from '../../../interfaces/Survey';
 import { useDeleteSurveyDialog } from './useDeleteSurveyDialog';
 
+const dialogControls = vi.hoisted(() => ({
+  setDialog: vi.fn(),
+  addAlert: vi.fn(),
+}));
+
+const surveyDelete = vi.hoisted(() => ({
+  impl: vi.fn(),
+}));
+
 vi.mock('@ansible/ansible-ui-framework', async () => ({
   ...(await vi.importActual('@ansible/ansible-ui-framework')),
-  usePageDialog: () => [undefined, vi.fn()],
+  PageTable: () => <div>Survey questions</div>,
+  usePageDialog: () => [undefined, dialogControls.setDialog],
   usePageAlertToaster: () => ({
-    addAlert: vi.fn(),
+    addAlert: dialogControls.addAlert,
   }),
 }));
 
@@ -17,7 +30,15 @@ vi.mock('react-router-dom', async () => ({
 }));
 
 vi.mock('./useDeleteSurvey', () => ({
-  useDeleteSurvey: vi.fn(() => vi.fn()),
+  useDeleteSurvey: (props: {
+    onError: (error: unknown) => void;
+    onComplete: (questions: Spec[]) => void;
+    onClose: () => void;
+  }) => {
+    return (questions: Spec[]) => {
+      surveyDelete.impl(props, questions);
+    };
+  },
 }));
 
 vi.mock('./useSurveyColumns', () => ({
@@ -55,7 +76,25 @@ describe('useDeleteSurveyDialog', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    surveyDelete.impl.mockImplementation(
+      (
+        props: { onComplete: (questions: Spec[]) => void; onClose: () => void },
+        questions: Spec[]
+      ) => {
+        props.onComplete(questions);
+        props.onClose();
+      }
+    );
   });
+
+  function openDialog(questions: Spec[] = mockSurveyQuestions, templateType?: 'job_template') {
+    const { result } = renderHook(() => useDeleteSurveyDialog(mockOnComplete, templateType), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+    result.current(questions);
+    const dialog = dialogControls.setDialog.mock.calls[0][0] as React.ReactElement;
+    render(<MemoryRouter>{dialog}</MemoryRouter>);
+  }
 
   test('returns a function', () => {
     const { result } = renderHook(() => useDeleteSurveyDialog(mockOnComplete, 'job_template'));
@@ -93,5 +132,69 @@ describe('useDeleteSurveyDialog', () => {
     const { result } = renderHook(() => useDeleteSurveyDialog(mockOnComplete, 'job_template'));
 
     expect(() => result.current([mockSurveyQuestions[0]])).not.toThrow();
+  });
+
+  test('confirms deletion and closes the dialog', async () => {
+    const user = userEvent.setup();
+    openDialog();
+
+    expect(screen.getByRole('dialog', { name: 'Delete survey' })).toBeInTheDocument();
+    expect(screen.getByText('Survey questions')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirm delete' })).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: /Yes, I confirm that I want to remove these 2 survey questions/,
+      })
+    );
+    await user.click(screen.getByRole('button', { name: 'Confirm delete' }));
+
+    expect(mockOnComplete).toHaveBeenCalledWith(mockSurveyQuestions);
+    expect(dialogControls.setDialog).toHaveBeenCalledWith(undefined);
+  });
+
+  test('cancels without deleting and hides the question list when nothing is selected', async () => {
+    const user = userEvent.setup();
+    openDialog([]);
+
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(surveyDelete.impl).not.toHaveBeenCalled();
+    expect(dialogControls.setDialog).toHaveBeenCalledWith(undefined);
+  });
+
+  test('shows generic and field errors when deletion fails', async () => {
+    const user = userEvent.setup();
+    surveyDelete.impl.mockImplementation((props: { onError: (error: unknown) => void }) => {
+      props.onError(new Error('cannot delete'));
+      props.onError(
+        new RequestError(
+          'Bad Request',
+          undefined,
+          400,
+          { name: ['bad name'] },
+          { name: ['bad name'] }
+        )
+      );
+    });
+    openDialog(mockSurveyQuestions, 'job_template');
+
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: /Yes, I confirm that I want to remove these 2 survey questions/,
+      })
+    );
+    await user.click(screen.getByRole('button', { name: 'Confirm delete' }));
+
+    expect(dialogControls.addAlert).toHaveBeenCalledTimes(2);
+    expect(dialogControls.addAlert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variant: 'danger',
+        title: 'Failed to delete survey questions',
+      })
+    );
   });
 });

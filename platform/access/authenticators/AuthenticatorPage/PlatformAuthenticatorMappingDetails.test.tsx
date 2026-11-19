@@ -34,7 +34,7 @@ describe('PlatformAuthenticatorMappingDetailsInner', () => {
       related: {},
       authenticator: 1,
       summary_fields: {} as AuthenticatorMap['summary_fields'],
-    } as AuthenticatorMap;
+    } as unknown as AuthenticatorMap;
 
     render(
       <MemoryRouter>
@@ -46,6 +46,47 @@ describe('PlatformAuthenticatorMappingDetailsInner', () => {
     expect(screen.getByTestId('rule-name')).toHaveTextContent('revoke-mapping');
     expect(screen.getByTestId('when-to-run-the-rule')).toHaveTextContent('Based on groups');
     expect(screen.getByTestId('groups')).toBeInTheDocument();
+  });
+
+  test('should render attribute comparisons for equals, matches, ends_with, and in', () => {
+    const mapping = {
+      id: 45,
+      name: 'attr-mapping',
+      map_type: AuthenticatorMapType.role,
+      order: 1,
+      revoke: false,
+      organization: '',
+      role: '',
+      team: '',
+      ui_summary: 'role map',
+      triggers: {
+        attributes: {
+          attr_equals: { equals: 'yes' },
+          attr_matches: { matches: '.*admin.*' },
+          attr_ends: { ends_with: '@example.com' },
+          attr_in: { in: 'a,b,c' },
+        },
+        join_condition: 'or',
+      },
+      url: '',
+      created: '',
+      modified: '',
+      related: {},
+      authenticator: 1,
+      summary_fields: {} as AuthenticatorMap['summary_fields'],
+    } as unknown as AuthenticatorMap;
+
+    render(
+      <MemoryRouter>
+        <PlatformAuthenticatorMappingDetailsInner mapping={mapping} />
+      </MemoryRouter>,
+      { wrapper: SwrTestWrapper }
+    );
+
+    expect(screen.getByTestId('attr_equals-comparison')).toHaveTextContent('equals');
+    expect(screen.getByTestId('attr_matches-comparison')).toHaveTextContent('matches');
+    expect(screen.getByTestId('attr_ends-comparison')).toHaveTextContent('ends_with');
+    expect(screen.getByTestId('attr_in-comparison')).toHaveTextContent('in');
   });
 });
 

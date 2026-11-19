@@ -52,5 +52,8 @@ describe('HubAddTeamRoles', () => {
     await waitFor(() => {
       expect(screen.getByTestId('wizard')).toBeInTheDocument();
     });
+
+    expect(screen.getByRole('heading', { name: 'Add roles' })).toBeInTheDocument();
+    expect(screen.getByText('Engineering')).toBeInTheDocument();
   });
 });

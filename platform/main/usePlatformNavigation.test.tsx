@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageNavigationItem } from '@ansible/ansible-ui-framework';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { AwxRoute } from '@ansible/awx-ui/main/AwxRoutes';
 import { EdaRoute } from '@ansible/eda-ui/main/EdaRoutes';
 import { HubRoute } from '@ansible/hub-ui/main/HubRoutes';
@@ -312,5 +312,92 @@ describe('usePlatformNavigation', () => {
         PlatformRoute.Applications,
       ])
     );
+  });
+
+  test('should add sorted application links when oauth apps have URLs', async () => {
+    server.use(
+      http.get(gatewayAPI`/app_urls/`, () =>
+        HttpResponse.json({
+          count: 3,
+          results: [
+            { name: 'App B', app_url: 'https://b.example' },
+            { name: 'App A', app_url: 'https://a.example' },
+            { name: 'App B', app_url: 'https://b.example' },
+            { name: 'No URL App' },
+          ],
+        })
+      )
+    );
+
+    const { result } = renderPlatformNavigation();
+    await waitFor(() => {
+      expect(findNavigationItem(result.current, PlatformRoute.ApplicationLinks)).toBeDefined();
+    });
+    const linksGroup = findNavigationItem(result.current, PlatformRoute.ApplicationLinks);
+
+    expect(linksGroup).toMatchObject({ path: 'links', label: 'Application Links' });
+    expect(linksGroup && 'children' in linksGroup && linksGroup.children).toHaveLength(4);
+  });
+
+  test('should force administration persona when persona switcher is disabled', () => {
+    mockUseUIFlag.mockReturnValue({ enabled: false });
+    mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'operator' });
+
+    const { result } = renderPlatformNavigation();
+
+    expect(findNavigationItem(result.current, PlatformRoute.AWX)?.hidden).not.toBe(true);
+  });
+
+  test('should hide automation product sections for operator persona view', () => {
+    mockUseUIFlag.mockReturnValue({ enabled: true });
+    mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'operator' });
+
+    const { result } = renderPlatformNavigation();
+
+    expect(findNavigationItem(result.current, PlatformRoute.AWX)?.hidden).toBe(true);
+    expect(findNavigationItem(result.current, PlatformRoute.EDA)?.hidden).toBe(true);
+    expect(findNavigationItem(result.current, PlatformRoute.HUB)?.hidden).toBe(true);
+    expect(findNavigationItem(result.current, PlatformRoute.Access)?.hidden).toBe(true);
+    expect(findNavigationItem(result.current, PlatformRoute.Overview)).toBeUndefined();
+  });
+
+  test('should remove analytics for operator when awx user is superuser', () => {
+    mockUseUIFlag.mockReturnValue({ enabled: true });
+    mockUsePersonaView.mockReturnValue({ activePersonaViewId: 'operator' });
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: true } });
+
+    const { result } = renderPlatformNavigation();
+    const awxGroup = findNavigationItem(result.current, PlatformRoute.AWX);
+
+    expect(awxGroup && 'children' in awxGroup && awxGroup.children).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: AwxRoute.Analytics })])
+    );
+  });
+
+  test.each([
+    ['awx', mockUseHasAwxService, PlatformRoute.AWX],
+    ['eda', mockUseHasEdaService, PlatformRoute.EDA],
+    ['hub', mockUseHasHubService, PlatformRoute.HUB],
+  ])('should hide %s navigation when the service is unavailable', (_label, mockFn, routeId) => {
+    mockUseHasAwxService.mockReturnValue(true);
+    mockUseHasEdaService.mockReturnValue(true);
+    mockUseHasHubService.mockReturnValue(true);
+    mockFn.mockReturnValue(false);
+
+    const { result } = renderPlatformNavigation();
+
+    expect(findNavigationItem(result.current, routeId)?.hidden).toBe(true);
+  });
+
+  test('should hide subscription usage on managed cloud in analytics navigation', () => {
+    mockUseIsManagedCloudInstall.mockReturnValue(true);
+    const { result } = renderPlatformNavigation();
+    const analytics = findNavigationItem(result.current, AwxRoute.Analytics);
+
+    expect(
+      analytics &&
+        'children' in analytics &&
+        analytics.children.find((child) => child.id === AwxRoute.SubscriptionUsage)
+    ).toBeUndefined();
   });
 });

@@ -233,4 +233,32 @@ describe('FormGroupTypeAheadMultiSelect Component', () => {
       });
     });
   });
+
+  it('highlights the first option with ArrowDown and closes the menu on Escape', async () => {
+    const user = userEvent.setup();
+    renderComponent();
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    expect(screen.getByTestId('select-option-team1')).toBeInTheDocument();
+
+    await user.keyboard('{ArrowDown}');
+    await waitFor(() => expect(input).toHaveAttribute('aria-activedescendant', 'option-0'));
+
+    await user.keyboard('{Escape}');
+    expect(input).not.toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('creates a new value when Enter is pressed with custom text', async () => {
+    const user = userEvent.setup();
+    const onHandleSelection = vi.fn();
+    renderComponent({ onHandleSelection, value: [] });
+
+    const input = screen.getByRole('textbox');
+    await user.click(input);
+    await user.type(input, 'Custom label');
+    await user.keyboard('{Enter}');
+
+    expect(onHandleSelection).toHaveBeenCalledWith({ name: 'Custom label' });
+  });
 });

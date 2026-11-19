@@ -114,4 +114,15 @@ describe('WebhookSubForm', () => {
     expect(screen.getByText('Webhook details')).toBeInTheDocument();
     expect(screen.getByText('Webhook service')).toBeInTheDocument();
   });
+
+  it('should render webhook URL field when webhook is enabled on job templates', () => {
+    render(
+      <TestWrapper path="/job_templates/1/edit" defaultValues={{ isWebhookEnabled: true }}>
+        <WebhookSubForm templateType="job_templates" />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Webhook URL')).toBeInTheDocument();
+    expect(screen.getByText('Webhook service')).toBeInTheDocument();
+  });
 });

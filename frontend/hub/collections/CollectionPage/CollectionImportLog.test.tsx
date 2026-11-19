@@ -1,8 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { CollectionImportLog } from './CollectionImportLog';
 
 // Mock collection data with approved pipeline
@@ -30,6 +31,17 @@ const mockCollectionStaging = {
     name: 'staging',
     pulp_labels: {
       pipeline: 'staging',
+    },
+  },
+};
+
+// Mock collection data with unknown pipeline
+const mockCollectionUnknownPipeline = {
+  ...mockCollectionApproved,
+  repository: {
+    name: 'community',
+    pulp_labels: {
+      pipeline: 'community',
     },
   },
 };
@@ -181,13 +193,25 @@ describe('CollectionImportLog', () => {
       </TestWrapper>
     );
 
-    // Wait for the component to fully render with import log
     await waitFor(() => {
       expect(screen.getByTestId('import-log')).toBeInTheDocument();
     });
 
-    // Verify approval status section is rendered
-    expect(screen.getByText('Approval status')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getAllByText(/approved/i).length).toBeGreaterThan(0);
+    });
+  });
+
+  test('should display undetermined approval status for unknown pipeline', async () => {
+    render(
+      <TestWrapper collection={mockCollectionUnknownPipeline}>
+        <CollectionImportLog />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('could not be determined yet')).toBeInTheDocument();
+    });
   });
 
   test('should display waiting for approval status for staging pipeline', async () => {
@@ -374,6 +398,29 @@ describe('CollectionImportLog', () => {
       },
       { timeout: 5000 }
     );
+  });
+
+  test('should scroll import log when navigation arrows are used', async () => {
+    const user = userEvent.setup();
+    const scrollIntoView = vi.fn();
+    vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(scrollIntoView);
+
+    render(
+      <TestWrapper>
+        <CollectionImportLog />
+      </TestWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('import-log')).toBeInTheDocument();
+    });
+
+    const buttons = screen.getAllByRole('button');
+    await user.click(buttons[0] as HTMLElement);
+    await user.click(buttons[1] as HTMLElement);
+
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'end', behavior: 'smooth' });
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: 'start', behavior: 'smooth' });
   });
 
   test('should display error state when no imports found', async () => {

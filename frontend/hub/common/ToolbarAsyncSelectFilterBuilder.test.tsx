@@ -48,4 +48,9 @@ describe('ToolbarAsyncSelectFilterBuilder', () => {
     result.current.openBrowse(vi.fn(), [{ name: 'one' }]);
     expect(setDialog).toHaveBeenCalled();
   });
+
+  it('returns openBrowse handler from the single-select builder', () => {
+    const { result } = renderHook(() => useAsyncSingleSelectFilterBuilder(props));
+    expect(typeof result.current.openBrowse).toBe('function');
+  });
 });

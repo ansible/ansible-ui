@@ -19,4 +19,10 @@ describe('formatPath', () => {
   it('hubAPI encodes path segments', () => {
     expect(hubAPI`/_ui/v1/namespaces/${'my ns'}/`).toBe('/api/galaxy/_ui/v1/namespaces/my%20ns/');
   });
+
+  it('pulpAPI encodes dynamic repository names', () => {
+    expect(pulpAPI`/repositories/ansible/ansible/${'my repo'}/`).toBe(
+      '/api/galaxy/pulp/api/v3/repositories/ansible/ansible/my%20repo/'
+    );
+  });
 });

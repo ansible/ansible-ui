@@ -60,4 +60,12 @@ describe('getAddedAndRemovedCollections', () => {
   it('handles empty original and current lists', () => {
     expect(getAddedAndRemovedCollections([], [])).toEqual({ added: [], removed: [] });
   });
+
+  it('returns no added or removed items when lists are identical', () => {
+    const collections = [mockCollection('ns', 'stable')];
+    expect(getAddedAndRemovedCollections(collections, [...collections])).toEqual({
+      added: [],
+      removed: [],
+    });
+  });
 });

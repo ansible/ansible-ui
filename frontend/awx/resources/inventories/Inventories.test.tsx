@@ -96,4 +96,17 @@ describe('Inventories', () => {
       expect(screen.getByText('Test Inventory')).toBeInTheDocument();
     });
   });
+
+  it('should show inventory names in the table after the list loads', async () => {
+    render(
+      <MemoryRouter>
+        <Inventories />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('grid')).toBeInTheDocument();
+      expect(screen.getByText('Demo Inventory')).toBeInTheDocument();
+    });
+  });
 });

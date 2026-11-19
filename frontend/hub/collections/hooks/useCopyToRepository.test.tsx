@@ -7,8 +7,19 @@ import { CollectionVersionSearch } from '../Collection';
 import { copyToRepositoryAction, useCopyToRepository } from './useCopyToRepository';
 import { HubContext } from '../../common/useHubContext';
 
-const { capturedDialog } = vi.hoisted(() => ({
+const { capturedDialog, tableProps, hubViewOptions } = vi.hoisted(() => ({
   capturedDialog: { current: null as React.ReactNode },
+  tableProps: {
+    current: null as null | {
+      selectItem?: (item: { name: string; pulp_href?: string }) => void;
+      selectItems?: (items: { name: string; pulp_href?: string }[]) => void;
+      unselectItem?: (item: { name: string }) => void;
+      unselectAll?: () => void;
+      isSelected?: (item: { name: string }) => boolean;
+      pageItems?: { name: string; pulp_href?: string }[];
+    },
+  },
+  hubViewOptions: { current: null as null | { queryParams?: Record<string, string> } },
 }));
 
 const mockCollection: CollectionVersionSearch = {
@@ -62,25 +73,29 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
 });
 
 vi.mock('@ansible/ansible-ui-framework/PageTable/PageTable', () => ({
-  PageTable: ({
-    pageItems,
-    selectItem,
-  }: {
-    pageItems?: { name: string }[];
-    selectItem?: (item: unknown) => void;
-  }) => (
-    <div data-testid="hub-copy-to-repository-table">
-      {pageItems?.map((item) => (
-        <button
-          key={item.name}
-          data-testid={`select-repo-${item.name}`}
-          onClick={() => selectItem?.(item)}
-        >
-          {item.name}
-        </button>
-      ))}
-    </div>
-  ),
+  PageTable: (props: {
+    pageItems?: { name: string; pulp_href?: string }[];
+    selectItem?: (item: { name: string; pulp_href?: string }) => void;
+    selectItems?: (items: { name: string; pulp_href?: string }[]) => void;
+    unselectItem?: (item: { name: string }) => void;
+    unselectAll?: () => void;
+    isSelected?: (item: { name: string }) => boolean;
+  }) => {
+    tableProps.current = props;
+    return (
+      <div data-testid="hub-copy-to-repository-table">
+        {props.pageItems?.map((item) => (
+          <button
+            key={item.name}
+            data-testid={`select-repo-${item.name}`}
+            onClick={() => props.selectItem?.(item)}
+          >
+            {item.name}
+          </button>
+        ))}
+      </div>
+    );
+  },
 }));
 
 vi.mock('../../common/HubError', () => ({
@@ -118,13 +133,16 @@ vi.mock('../../administration/repositories/hooks/useRepositorySelector', () => (
 }));
 
 vi.mock('../../common/useHubView', () => ({
-  useHubView: () => ({
-    pageItems: [{ name: 'approved-repo', pulp_href: '/api/galaxy/pulp/api/v3/repos/approved/' }],
-    itemCount: 1,
-    isLoading: false,
-    error: null,
-    refresh: vi.fn(),
-  }),
+  useHubView: (options: { queryParams?: Record<string, string> }) => {
+    hubViewOptions.current = options;
+    return {
+      pageItems: [{ name: 'approved-repo', pulp_href: '/api/galaxy/pulp/api/v3/repos/approved/' }],
+      itemCount: 1,
+      isLoading: false,
+      error: null,
+      refresh: vi.fn(),
+    };
+  },
 }));
 
 describe('useCopyToRepository', () => {
@@ -177,6 +195,18 @@ describe('useCopyToRepository', () => {
     const { result } = renderHook(() => useCopyToRepository(refresh));
 
     expect(() => result.current(mockCollection, 'copy')).not.toThrow();
+  });
+
+  test('should render default error message when provided', () => {
+    const refresh = vi.fn();
+    const { result } = renderHook(() => useCopyToRepository(refresh));
+
+    act(() => {
+      result.current(mockCollection, 'copy', 'Cannot copy this collection');
+    });
+
+    render(capturedDialog.current as React.ReactElement);
+    expect(screen.getByTestId('hub-error')).toHaveTextContent('Cannot copy this collection');
   });
 
   test('should handle displayDefaultError parameter', () => {
@@ -318,6 +348,90 @@ describe('copyToRepositoryAction', () => {
       copyToRepositoryAction(collection, 'copy', [], mockContext, t)
     ).resolves.toBeUndefined();
   });
+
+  test('approves a rejected collection and posts an empty version list', async () => {
+    const collection = {
+      ...mockCollection,
+      collection_version: { ...mockCollection.collection_version!, pulp_href: '' },
+      repository: {
+        ...mockCollection.repository!,
+        pulp_href:
+          '/api/galaxy/pulp/api/v3/repositories/ansible/ansible/12345678-1234-1234-1234-123456789012/',
+        pulp_labels: { pipeline: 'rejected' },
+      },
+    } as CollectionVersionSearch;
+    let body: { collection_versions?: string[]; destination_repositories?: string[] } | undefined;
+    const server = setupServer(
+      http.post('**/move_collection_version/', async ({ request }) => {
+        body = (await request.json()) as typeof body;
+        return HttpResponse.json({});
+      })
+    );
+    server.listen({ onUnhandledRequest: 'bypass' });
+    await copyToRepositoryAction(
+      collection,
+      'approve',
+      [
+        { name: 'one', pulp_href: '/repos/one/' },
+        { name: 'two', pulp_href: '/repos/two/' },
+      ],
+      {
+        ...mockContext,
+        featureFlags: { collection_auto_sign: true, require_upload_signatures: true },
+        settings: { GALAXY_COLLECTION_SIGNING_SERVICE: 'unused' },
+      } as unknown as HubContext,
+      t
+    );
+    expect(body?.collection_versions).toEqual([]);
+    expect(body?.destination_repositories).toEqual(['/repos/one/', '/repos/two/']);
+    server.close();
+  });
+});
+
+describe('CopyToRepositoryModal interactions', () => {
+  const collectionWithValidPulpHref: CollectionVersionSearch = {
+    ...mockCollection,
+    repository: {
+      ...mockCollection.repository!,
+      pulp_href:
+        '/api/galaxy/pulp/api/v3/repositories/ansible/ansible/12345678-1234-1234-1234-123456789012/',
+      pulp_labels: { pipeline: 'staging' },
+    },
+  };
+
+  const server = setupServer(
+    http.get(
+      ({ request }) => request.url.includes('/v3/plugin/ansible/search/collection-versions/'),
+      () => HttpResponse.json({ meta: { count: 0 }, data: [] })
+    ),
+    http.get(
+      ({ request }) => request.url.includes('/repositories/ansible/ansible/'),
+      () => HttpResponse.json({ results: [] })
+    )
+  );
+
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+  afterAll(() => server.close());
+  afterEach(() => {
+    server.resetHandlers();
+    capturedDialog.current = null;
+  });
+
+  test('should keep select disabled until a repository is chosen', async () => {
+    const user = userEvent.setup();
+    const refresh = vi.fn();
+    const { result } = renderHook(() => useCopyToRepository(refresh));
+
+    act(() => {
+      result.current(collectionWithValidPulpHref, 'copy');
+    });
+
+    render(capturedDialog.current as React.ReactElement);
+
+    expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled();
+    await user.click(screen.getByTestId('select-repo-approved-repo'));
+    expect(screen.getByRole('button', { name: 'Select' })).toBeEnabled();
+  });
 });
 
 describe('CopyToRepositoryModal error handling', () => {
@@ -404,5 +518,103 @@ describe('CopyToRepositoryModal error handling', () => {
     await waitFor(() => {
       expect(screen.getByTestId('hub-error')).toBeInTheDocument();
     });
+  });
+});
+
+describe('CopyToRepositoryModal selection', () => {
+  const collectionWithValidPulpHref: CollectionVersionSearch = {
+    ...mockCollection,
+    repository: {
+      ...mockCollection.repository!,
+      pulp_href:
+        '/api/galaxy/pulp/api/v3/repositories/ansible/ansible/12345678-1234-1234-1234-123456789012/',
+      pulp_labels: { pipeline: 'staging' },
+    },
+  };
+
+  const server = setupServer(
+    http.get(
+      ({ request }) => request.url.includes('/v3/plugin/ansible/search/collection-versions/'),
+      () =>
+        HttpResponse.json({
+          meta: { count: 150 },
+          data: [
+            { repository: { name: 'approved-repo', pulp_href: '/repos/approved/' } },
+            { repository: null },
+          ],
+        })
+    ),
+    http.get(
+      ({ request }) => request.url.includes('/repositories/ansible/ansible/'),
+      () => HttpResponse.json({ results: [] })
+    ),
+    http.post(
+      ({ request }) => request.url.includes('/copy_collection_version/'),
+      () => HttpResponse.json({})
+    )
+  );
+
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+  afterAll(() => server.close());
+  afterEach(() => {
+    server.resetHandlers();
+    capturedDialog.current = null;
+  });
+
+  test('preselects known repositories, selects new ones, and copies on confirm', async () => {
+    const user = userEvent.setup();
+    const refresh = vi.fn();
+    const { result } = renderHook(() => useCopyToRepository(refresh));
+
+    act(() => {
+      result.current(collectionWithValidPulpHref, 'copy');
+    });
+    render(capturedDialog.current as React.ReactElement);
+
+    await waitFor(() => {
+      expect(screen.getByText(/more than 100 repositories/)).toBeInTheDocument();
+    });
+    expect(tableProps.current?.isSelected?.({ name: 'approved-repo' })).toBe(true);
+    expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled();
+
+    act(() => {
+      tableProps.current?.selectItems?.([
+        { name: 'approved-repo', pulp_href: '/repos/approved/' },
+        { name: 'extra', pulp_href: '/repos/extra/' },
+      ]);
+    });
+    expect(screen.getByRole('button', { name: 'Select' })).toBeEnabled();
+
+    act(() => {
+      tableProps.current?.unselectItem?.({ name: 'extra' });
+    });
+    expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled();
+
+    act(() => {
+      tableProps.current?.selectItem?.({ name: 'extra', pulp_href: '/repos/extra/' });
+    });
+    await user.click(screen.getByRole('button', { name: 'Select' }));
+    await waitFor(() => expect(refresh).toHaveBeenCalledWith([]));
+
+    act(() => {
+      tableProps.current?.unselectAll?.();
+    });
+  });
+
+  test('cancels the dialog and passes the approve repository filter', async () => {
+    const user = userEvent.setup();
+    const refresh = vi.fn();
+    const { result } = renderHook(() => useCopyToRepository(refresh));
+
+    act(() => {
+      result.current(collectionWithValidPulpHref, 'approve', 'Already copied');
+    });
+    render(capturedDialog.current as React.ReactElement);
+
+    expect(hubViewOptions.current?.queryParams).toEqual({ pulp_label_select: 'pipeline=approved' });
+    await user.click(screen.getByTestId('select-repo-approved-repo'));
+    expect(screen.getByRole('button', { name: 'Select' })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(refresh).toHaveBeenCalledWith([]);
   });
 });

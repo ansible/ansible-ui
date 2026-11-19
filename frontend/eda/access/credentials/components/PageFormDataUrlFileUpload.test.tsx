@@ -1,5 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { PageFormDataUrlFileUpload } from './PageFormDataUrlFileUpload';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -60,5 +61,31 @@ describe('PageFormDataUrlFileUpload', () => {
     );
 
     expect(screen.getByText('Certificate')).toBeInTheDocument();
+  });
+
+  it('should expose a browse control for uploading certificate data', () => {
+    render(
+      <TestWrapper>
+        <PageFormDataUrlFileUpload name="testFile" label="Upload Certificate" isRequired={false} />
+      </TestWrapper>
+    );
+
+    expect(screen.getByRole('button', { name: /browse/i })).toBeInTheDocument();
+  });
+
+  it('should allow picking a file from the file input', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <TestWrapper>
+        <PageFormDataUrlFileUpload name="testFile" label="Upload Certificate" isRequired={false} />
+      </TestWrapper>
+    );
+
+    const file = new File(['cert-body'], 'cert.pem', { type: 'application/x-pem-file' });
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    await user.upload(input, file);
+
+    expect(input.files?.[0]?.name).toBe('cert.pem');
   });
 });

@@ -5,13 +5,18 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { useParams } from 'react-router-dom';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { IAwxView } from '../../../common/useAwxView';
 import { InventoryGroup } from '../../../interfaces/InventoryGroup';
 import { useDisassociateGroups } from './useDisassociateGroups';
 import { useRelatedGroupsToolbarActions } from './useRelatedGroupsToolbarActions';
+
+const alertMocks = vi.hoisted(() => ({ addAlert: vi.fn() }));
 
 const mockRunCommandAction = {
   type: PageActionType.Button,
@@ -24,14 +29,17 @@ vi.mock('../../inventories/hooks/useInventoriesGroupsToolbarActions', () => ({
 }));
 vi.mock('./useDisassociateGroups');
 vi.mock('@ansible/common-ui/crud/useOptions');
-vi.mock('@ansible/common-ui/crud/usePostRequest', () => ({
-  usePostRequest: vi.fn(() => vi.fn().mockResolvedValue(undefined)),
-}));
 vi.mock('@ansible/ansible-ui-framework', async () => ({
   ...(await vi.importActual('@ansible/ansible-ui-framework')),
   usePageNavigate: vi.fn(),
   usePageDialog: vi.fn(),
+  usePageAlertToaster: () => ({ addAlert: alertMocks.addAlert }),
 }));
+
+const server = setupServer();
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return {
@@ -116,5 +124,85 @@ describe('useRelatedGroupsToolbarActions', () => {
     expect(mockPageNavigate).toHaveBeenCalledWith('awx-inventory-group-related-groups-create', {
       params: { inventory_type: 'inventory', id: '1', group_id: '2' },
     });
+  });
+
+  test('posts selected groups, reports failures, and disassociates the selection', async () => {
+    const posted: number[] = [];
+    server.use(
+      http.post(awxAPI`/groups/2/children/`, async ({ request }) => {
+        const body = (await request.json()) as { id: number };
+        posted.push(body.id);
+        if (body.id === 4) {
+          return HttpResponse.json({ detail: 'denied' }, { status: 400 });
+        }
+        return HttpResponse.json({ id: body.id }, { status: 201 });
+      })
+    );
+    const view = createMockView(1);
+    const { result } = renderHook(() => useRelatedGroupsToolbarActions(view));
+    const dropdown = result.current[0];
+    if ('actions' in dropdown && Array.isArray(dropdown.actions)) {
+      const createGroup = dropdown.actions[1];
+      if ('isHidden' in createGroup && typeof createGroup.isHidden === 'function') {
+        expect((createGroup.isHidden as () => boolean)()).toBe(false);
+      }
+      if ('isDisabled' in createGroup && typeof createGroup.isDisabled === 'function') {
+        expect((createGroup.isDisabled as () => string | undefined)()).toBeUndefined();
+      }
+    }
+
+    const dialog = mockSetDialog.mock.calls[0]?.[0] as {
+      props: { onSelectedGroups: (groups: InventoryGroup[]) => Promise<void> };
+    };
+    expect(dialog).toBeUndefined();
+
+    const addExisting =
+      'actions' in dropdown && Array.isArray(dropdown.actions) ? dropdown.actions[0] : undefined;
+    if (addExisting && 'onClick' in addExisting && typeof addExisting.onClick === 'function') {
+      (addExisting.onClick as () => void)();
+    }
+    const opened = mockSetDialog.mock.calls.at(-1)?.[0] as {
+      props: { onSelectedGroups: (groups: InventoryGroup[]) => Promise<void> };
+    };
+    await opened.props.onSelectedGroups([
+      { id: 3, name: 'east' } as InventoryGroup,
+      { id: 4, name: 'west' } as InventoryGroup,
+    ]);
+
+    await waitFor(() => expect(posted).toEqual([3, 4]));
+    expect(view.refresh).toHaveBeenCalled();
+    expect(alertMocks.addAlert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variant: 'danger',
+        title: 'Failed to add west to related groups',
+      })
+    );
+    expect(mockSetDialog).toHaveBeenCalledWith(undefined);
+
+    const disassociate = result.current.find(
+      (action) => 'label' in action && action.label === 'Disassociate groups'
+    );
+    if (disassociate && 'onClick' in disassociate && typeof disassociate.onClick === 'function') {
+      (disassociate.onClick as (items: InventoryGroup[]) => void)(view.selectedItems);
+    }
+    expect(mockDisassociate).toHaveBeenCalledWith(view.selectedItems);
+  });
+
+  test('disables create group without permission and requires a selection to disassociate', () => {
+    vi.mocked(useOptions).mockReturnValue({ data: { actions: {} } } as never);
+    const { result } = renderHook(() => useRelatedGroupsToolbarActions(createMockView(0)));
+    const dropdown = result.current[0];
+    if ('actions' in dropdown && Array.isArray(dropdown.actions)) {
+      const createGroup = dropdown.actions[1];
+      if ('isDisabled' in createGroup && typeof createGroup.isDisabled === 'function') {
+        expect((createGroup.isDisabled as () => string)()).toMatch(/do not have permission/i);
+      }
+    }
+    const disassociate = result.current.find(
+      (action) => 'label' in action && action.label === 'Disassociate groups'
+    );
+    expect(disassociate && 'isDisabled' in disassociate ? disassociate.isDisabled : '').toMatch(
+      /Select at least one/i
+    );
   });
 });

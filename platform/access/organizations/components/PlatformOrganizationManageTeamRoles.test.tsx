@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { gatewayAPI } from '../../../utils/gateway-api-utils';
 import mockEmptyRoleAssignments from './fixtures/emptyRoleAssignments.fixture.json';
 import mockOrganization from './fixtures/organization.fixture.json';
@@ -258,5 +258,35 @@ describe('PlatformOrganizationManageTeamRoles', () => {
     const memberRoleRow = screen.getByTestId('row-id-2');
     const checkbox = memberRoleRow.querySelector('input[type="checkbox"]');
     expect(checkbox).not.toBeChecked();
+  });
+
+  test('should not POST team role assignments when Cancel is clicked', async () => {
+    const user = userEvent.setup();
+    const postSpy = vi.fn();
+    server.use(
+      http.post(gatewayAPI`/role_team_assignments/`, () => {
+        postSpy();
+        return HttpResponse.json({ id: 303 }, { status: 201 });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/access/organizations/1/teams/1/manage-roles']}>
+        <Routes>
+          <Route
+            path="/access/organizations/:id/teams/:teamId/manage-roles"
+            element={<PlatformOrganizationManageTeamRoles />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(postSpy).not.toHaveBeenCalled();
   });
 });

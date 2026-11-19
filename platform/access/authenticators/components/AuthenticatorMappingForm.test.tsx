@@ -669,5 +669,17 @@ describe('AuthenticatorMappingForm triggers helpers', () => {
     expect(built).toEqual({
       attributes: { join_condition: 'and', x: { equals: 'y' } },
     });
+
+    const builtIn = buildTriggers({
+      map_type: AuthenticatorMapType.allow,
+      name: 'n',
+      revoke: false,
+      trigger: 'attributes',
+      conditional: 'or',
+      attributes: [{ attribute: 'dept', comparison: 'in', value: 'eng,ops' }],
+    } as never);
+    expect(builtIn).toEqual({
+      attributes: { join_condition: 'or', dept: { in: ['eng', 'ops'] } },
+    });
   });
 });
