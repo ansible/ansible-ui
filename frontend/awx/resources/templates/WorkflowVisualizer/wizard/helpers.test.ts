@@ -1,3 +1,4 @@
+import { yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
@@ -175,6 +176,11 @@ describe('processSurvey', () => {
     const result = processSurvey('my_key: from_vars', { my_key: 'from_survey' }, null);
     expect(result).toContain('from_survey');
     expect(result).not.toContain('from_vars');
+  });
+
+  test('should keep prompt extra_vars when optional survey answer is blank', () => {
+    const result = processSurvey('my_key: from_vars', { my_key: '' }, null);
+    expect(JSON.parse(yamlToJson(result))).toEqual({ my_key: 'from_vars' });
   });
 
   test('should mask only variables present in survey answers', () => {
