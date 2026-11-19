@@ -3,7 +3,6 @@ import { PageFormGroup } from '@ansible/ansible-ui-framework/PageForm/Inputs/Pag
 import { PageFormSecret } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormSecret';
 import { useIsValidUrl } from '@ansible/common-ui/validation/useIsValidUrl';
 import { Alert } from '@patternfly/react-core';
-import { useEffect, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { RemoteFormProps } from '../RemoteForm';
@@ -16,8 +15,7 @@ interface IRemoteInputs {
   collection_signing?: boolean;
   disableEditName?: boolean;
   handleOnClear: (name: string) => void;
-  isCommunityRemote?: boolean;
-  setIsCommunityRemote?: (isCommunityRemote: boolean) => void;
+  isCommunityRemote: boolean;
   shouldHideField: (name: string) => boolean;
 }
 
@@ -26,34 +24,11 @@ export function RemoteInputs({
   disableEditName,
   handleOnClear,
   isCommunityRemote,
-  setIsCommunityRemote,
   shouldHideField,
 }: Readonly<IRemoteInputs>) {
   const { t } = useTranslation();
   const isValidUrl = useIsValidUrl();
   const signedOnlyInput = useWatch({ name: 'signed_only' }) as boolean;
-  const urlInput = useWatch({ name: 'url' }) as string;
-
-  const parsedInputUrl = useMemo(() => {
-    if (urlInput === '') {
-      return '';
-    }
-
-    try {
-      return new URL(urlInput);
-    } catch {
-      return '';
-    }
-  }, [urlInput]);
-
-  useEffect(() => {
-    if (parsedInputUrl) {
-      setIsCommunityRemote &&
-        setIsCommunityRemote(parsedInputUrl.hostname === 'galaxy.ansible.com');
-    } else {
-      setIsCommunityRemote && setIsCommunityRemote(false);
-    }
-  }, [parsedInputUrl, setIsCommunityRemote]);
 
   return (
     <>
