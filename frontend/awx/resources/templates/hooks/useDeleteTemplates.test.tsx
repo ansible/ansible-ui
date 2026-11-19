@@ -232,7 +232,7 @@ describe('useCopyTemplate', () => {
     });
   });
 
-  test('should replace alert with danger on failed copy', async () => {
+  test('should add danger alert on failed copy', async () => {
     const mockPostRequest = vi.fn().mockRejectedValue(new Error('Copy failed'));
     const { usePostRequest } = await import('@ansible/common-ui/crud/usePostRequest');
     vi.mocked(usePostRequest).mockReturnValue(
@@ -244,9 +244,66 @@ describe('useCopyTemplate', () => {
     result.current(createMockJobTemplate({ id: 1, name: 'Tmpl' }));
 
     await vi.waitFor(() => {
-      expect(mockReplaceAlert).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ variant: 'danger' })
+      expect(mockAddAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'danger',
+          title: 'Failed to duplicate template',
+          children: 'Copy failed',
+        })
+      );
+      expect(mockReplaceAlert).not.toHaveBeenCalled();
+    });
+  });
+
+  test('should show fallback permission message when error has no detail', async () => {
+    const mockPostRequest = vi.fn().mockRejectedValue({ statusCode: 403 });
+    const { usePostRequest } = await import('@ansible/common-ui/crud/usePostRequest');
+    vi.mocked(usePostRequest).mockReturnValue(
+      mockPostRequest as unknown as ReturnType<typeof usePostRequest>
+    );
+
+    const { result } = renderHook(() => useCopyTemplate(mockOnComplete));
+
+    result.current(createMockJobTemplate({ id: 1, name: 'Tmpl' }));
+
+    await vi.waitFor(() => {
+      expect(mockAddAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'danger',
+          title: 'Failed to duplicate template',
+          children: expect.stringContaining('Permission denied'),
+        })
+      );
+    });
+  });
+
+  test('should surface API detail from 403 RequestError', async () => {
+    const { RequestError } = await import('@ansible/common-ui/crud/RequestError');
+    const mockPostRequest = vi.fn().mockRejectedValue(
+      new RequestError(
+        'Forbidden',
+        undefined,
+        403,
+        { detail: 'Insufficient access to Job Template credentials.' },
+        { detail: 'Insufficient access to Job Template credentials.' }
+      )
+    );
+    const { usePostRequest } = await import('@ansible/common-ui/crud/usePostRequest');
+    vi.mocked(usePostRequest).mockReturnValue(
+      mockPostRequest as unknown as ReturnType<typeof usePostRequest>
+    );
+
+    const { result } = renderHook(() => useCopyTemplate(mockOnComplete));
+
+    result.current(createMockJobTemplate({ id: 1, name: 'Tmpl' }));
+
+    await vi.waitFor(() => {
+      expect(mockAddAlert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          variant: 'danger',
+          title: 'Failed to duplicate template',
+          children: 'Insufficient access to Job Template credentials.',
+        })
       );
     });
   });
