@@ -429,6 +429,10 @@ describe('EditPlatformUser submit branches', () => {
         title: 'Failed to disassociate organization with id: 11.',
       })
     );
+    const removeArg = mockAlertToaster.addAlert.mock.calls[0][0] as {
+      children: ReactNode;
+    };
+    expect(removeArg.children).toBeTruthy();
   });
 
   it('toasts when superuser org cleanup fails', async () => {
@@ -443,6 +447,10 @@ describe('EditPlatformUser submit branches', () => {
         title: 'Failed to disassociate organization with id: 10.',
       })
     );
+    const superuserRemoveArg = mockAlertToaster.addAlert.mock.calls[0][0] as {
+      children: ReactNode;
+    };
+    expect(superuserRemoveArg.children).toBeTruthy();
   });
 
   it('navigates back on cancel', async () => {

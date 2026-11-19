@@ -194,7 +194,7 @@ export function EditPlatformUser() {
   );
 
   const removeOrganizationMembership = useCallback(
-    async (membershipUserId: number | undefined, organizationId: number) => {
+    async (membershipUserId: number, organizationId: number) => {
       try {
         const orgMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
           user: membershipUserId,
@@ -288,13 +288,13 @@ export function EditPlatformUser() {
         }
         await Promise.all(
           removedOrganizationIds.map((removedOrganizationId) =>
-            removeOrganizationMembership(user?.id, removedOrganizationId)
+            removeOrganizationMembership(user.id, removedOrganizationId)
           )
         );
       } else if (user.is_superuser && organizationIds) {
         await Promise.all(
           organizationIds.map((organizationId) =>
-            removeOrganizationMembership(user?.id, organizationId)
+            removeOrganizationMembership(user.id, organizationId)
           )
         );
       }
