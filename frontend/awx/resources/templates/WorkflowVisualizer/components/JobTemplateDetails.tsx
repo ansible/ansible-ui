@@ -29,6 +29,7 @@ import {
   resolveExecutionEnvironment,
   resolveScalar,
   resolveTagField,
+  shouldInheritTemplateTags,
 } from './resolveNodeFields';
 
 function useAggregateJobTemplateDetails({
@@ -392,11 +393,21 @@ export function JobTemplateDetails({
         label={t('Job tags')}
         nodeTags={jobTags}
         templateTags={parseStringToTagArray(template.job_tags || '')}
+        inheritTemplateTagsWhenEmpty={shouldInheritTemplateTags(
+          template.ask_tags_on_launch,
+          node.launch_data?.job_tags,
+          node.resource?.job_tags
+        )}
       />
       <NodeTagDetail
         label={t('Skip tags')}
         nodeTags={skipTags}
         templateTags={parseStringToTagArray(template.skip_tags || '')}
+        inheritTemplateTagsWhenEmpty={shouldInheritTemplateTags(
+          template.ask_skip_tags_on_launch,
+          node.launch_data?.skip_tags,
+          node.resource?.skip_tags
+        )}
       />
       <NodeCodeEditorDetail
         label={t('Variables')}

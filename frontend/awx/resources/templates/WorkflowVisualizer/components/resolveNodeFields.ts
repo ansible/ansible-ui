@@ -42,6 +42,15 @@ export function resolveExecutionEnvironment(
   return nodeEE ?? templateEE;
 }
 
+export function shouldInheritTemplateTags(
+  askOnLaunch: boolean | undefined,
+  promptTags: unknown,
+  resourceTags: unknown
+): boolean {
+  const tags = promptTags ?? resourceTags;
+  return !askOnLaunch || tags === null || tags === undefined;
+}
+
 export function resolveTagField(
   promptTags: { name: string }[] | undefined,
   acceptsOnLaunch: boolean | undefined,
