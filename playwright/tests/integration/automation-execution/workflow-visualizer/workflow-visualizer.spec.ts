@@ -169,11 +169,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(
-        page.getByRole('heading', { name: 'Success alert: Successfully' })
-      ).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await WorkflowVisualizer.ui.saveAndDismissToast(page);
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
       await page.getByText('Run on success', { exact: true }).click();
       await page.getByTestId('edge-context-menu_kebab').click();
@@ -358,11 +354,7 @@ test.describe('Workflow Viz', () => {
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Legend' }).click();
       await page.getByRole('button', { name: 'Fit to Screen' }).click();
-      await page.getByRole('button', { name: 'Save', exact: true }).click();
-      await expect(
-        page.getByRole('heading', { name: 'Success alert: Successfully' })
-      ).toBeVisible();
-      await page.getByRole('button', { name: 'Close Success alert: alert:' }).click();
+      await WorkflowVisualizer.ui.saveAndDismissToast(page);
       await expect(page.getByRole('dialog')).toBeHidden();
       await expect(page.locator('[class*="action-icon__background"]').nth(1)).toBeVisible();
       await WorkflowVisualizer.ui.deleteWorkflowJobTemplate(page, workflowJobTemplate);

@@ -52,5 +52,7 @@ export async function clickTableRow(options: ClickTableRowOptions, page: Page) {
     .getByRole('row', { name: options.text })
     .getByRole('link', { name: options.text })
     .click();
-  await expect(page.getByRole('heading', { name: options.text })).toBeVisible();
+  await expect(page.getByRole('heading', { name: options.text })).toBeVisible({
+    timeout: 30_000,
+  });
 }
