@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useCollectionFilters } from './useCollectionFilters';
+import { IToolbarSingleTextFilter } from '@ansible/ansible-ui-framework/PageToolbar/PageToolbarFilters/ToolbarTextFilter';
 
 // Mock isInsightsMode
 vi.mock('../../common/isInsights', () => ({
@@ -26,7 +27,9 @@ describe('useCollectionFilters', () => {
         wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
       });
 
-      const nameFilter = result.current.find((filter) => filter.key === 'keywords');
+      const nameFilter = result.current.find(
+        (filter) => filter.key === 'keywords'
+      ) as IToolbarSingleTextFilter;
 
       expect(nameFilter).toBeDefined();
       expect(nameFilter?.label).toBe('Name');
@@ -64,7 +67,9 @@ describe('useCollectionFilters', () => {
         wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
       });
 
-      const nameFilter = result.current.find((filter) => filter.key === 'keywords');
+      const nameFilter = result.current.find(
+        (filter) => filter.key === 'keywords'
+      ) as IToolbarSingleTextFilter;
 
       expect(nameFilter).toBeDefined();
       expect(nameFilter?.label).toBe('Name');
@@ -77,7 +82,9 @@ describe('useCollectionFilters', () => {
         wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
       });
 
-      const namespaceFilter = result.current.find((filter) => filter.key === 'namespace');
+      const namespaceFilter = result.current.find(
+        (filter) => filter.key === 'namespace'
+      ) as IToolbarSingleTextFilter;
 
       expect(namespaceFilter).toBeDefined();
       expect(namespaceFilter?.query).toBe('namespace');
@@ -89,7 +96,9 @@ describe('useCollectionFilters', () => {
         wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
       });
 
-      const tagsFilter = result.current.find((filter) => filter.key === 'tags');
+      const tagsFilter = result.current.find(
+        (filter) => filter.key === 'tags'
+      ) as IToolbarSingleTextFilter;
 
       expect(tagsFilter).toBeDefined();
       expect(tagsFilter?.query).toBe('tags');
