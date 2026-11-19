@@ -19,36 +19,30 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
 });
 
 describe('CredentialPasswordsStep', () => {
-  it('renders SSH password field when relaunch config requires ssh_password', () => {
-    const config: RelaunchConfig = {
-      passwords_needed_to_start: ['ssh_password'],
-      retry_counts: { all: 0, failed: 0 },
-    };
+  it.each([
+    {
+      passwordField: 'ssh_password',
+      expectedLabel: 'SSH password',
+    },
+    {
+      passwordField: 'vault_password.prod',
+      expectedLabel: 'Vault password | prod',
+    },
+    {
+      passwordField: 'become_password',
+      expectedLabel: 'Privilege escalation password',
+    },
+  ])(
+    'renders $expectedLabel when $passwordField is required',
+    ({ passwordField, expectedLabel }) => {
+      const config: RelaunchConfig = {
+        passwords_needed_to_start: [passwordField],
+        retry_counts: { all: 0, failed: 0 },
+      };
 
-    render(<CredentialPasswordsStep config={config} />);
+      render(<CredentialPasswordsStep config={config} />);
 
-    expect(screen.getByText('SSH password')).toBeInTheDocument();
-  });
-
-  it('renders vault password fields for vault_password entries', () => {
-    const config: RelaunchConfig = {
-      passwords_needed_to_start: ['vault_password.prod'],
-      retry_counts: { all: 0, failed: 0 },
-    };
-
-    render(<CredentialPasswordsStep config={config} />);
-
-    expect(screen.getByText('Vault password | prod')).toBeInTheDocument();
-  });
-
-  it('renders privilege escalation password field when become_password is required', () => {
-    const config: RelaunchConfig = {
-      passwords_needed_to_start: ['become_password'],
-      retry_counts: { all: 0, failed: 0 },
-    };
-
-    render(<CredentialPasswordsStep config={config} />);
-
-    expect(screen.getByText('Privilege escalation password')).toBeInTheDocument();
-  });
+      expect(screen.getByText(expectedLabel)).toBeInTheDocument();
+    }
+  );
 });

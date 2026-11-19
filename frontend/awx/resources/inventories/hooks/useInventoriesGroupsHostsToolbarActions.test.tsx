@@ -180,9 +180,9 @@ describe('useInventoriesGroupsHostsToolbarActions', () => {
     const disassociate = result.current.find(
       (action) => 'label' in action && action.label === 'Disassociate hosts'
     );
-    expect(disassociate && 'isDisabled' in disassociate ? disassociate.isDisabled : 'set').toBe(
-      undefined
-    );
+    expect(
+      disassociate && 'isDisabled' in disassociate ? disassociate.isDisabled : undefined
+    ).toBeUndefined();
     if (disassociate && 'onClick' in disassociate && typeof disassociate.onClick === 'function') {
       (disassociate.onClick as (items: AwxHost[]) => void)(view.selectedItems);
     }

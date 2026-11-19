@@ -311,7 +311,7 @@ describe('useJobOutput', () => {
       result.current.queryJobOutputEvent(1);
       result.current.queryJobOutputEvent(2);
     });
-    await waitFor(() => expect(requestedUrls.length).toBe(before + 1));
+    await waitFor(() => expect(requestedUrls).toHaveLength(before + 1));
     expect(requestedUrls.at(-1)).toContain('order_by=counter');
     expect(requestedUrls.at(-1)).not.toContain('search=');
     act(() => {
@@ -322,7 +322,7 @@ describe('useJobOutput', () => {
     act(() => {
       result.current.queryJobOutputEvent(1);
     });
-    expect(requestedUrls.length).toBe(afterLoad);
+    expect(requestedUrls).toHaveLength(afterLoad);
   });
 
   it('stores filtered events by position and resets them when filters change', async () => {
@@ -467,7 +467,7 @@ describe('useJobOutput', () => {
     await new Promise((resolve) => {
       setTimeout(resolve, 20);
     });
-    expect(requestedUrls.length).toBe(afterStop);
+    expect(requestedUrls).toHaveLength(afterStop);
   });
 
   it('ignores a failed fallback counter lookup', async () => {
