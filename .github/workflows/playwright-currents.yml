@@ -74,7 +74,7 @@ jobs:
 
   playwright-tests:
     timeout-minutes: ${{ fromJSON(inputs.TIMEOUT_MINUTES || '120') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: generate-matrix
     strategy:
       fail-fast: false
