@@ -405,4 +405,53 @@ describe('DocumentationParsers', () => {
       expect(path).toBe('/built/path');
     });
   });
+
+  describe('remaining formatter branches', () => {
+    const params = createParams();
+
+    it('dispatches every formatPart type', () => {
+      const parts = [
+        { type: dom.PartType.ERROR, message: 'err' },
+        { type: dom.PartType.BOLD, text: 'bold-switch' },
+        { type: dom.PartType.CODE, text: 'code-switch' },
+        { type: dom.PartType.HORIZONTAL_LINE },
+        { type: dom.PartType.ITALIC, text: 'italic-switch' },
+        { type: dom.PartType.LINK, text: 'link-switch', url: 'http://example.com' },
+        { type: dom.PartType.MODULE, fqcn: 'ns.coll.mod' },
+        { type: dom.PartType.RST_REF, text: 'rst-switch' },
+        { type: dom.PartType.URL, url: '/url-switch' },
+        { type: dom.PartType.TEXT, text: 'text-switch' },
+        { type: dom.PartType.ENV_VARIABLE, name: 'ENV_SWITCH' },
+        { type: dom.PartType.OPTION_NAME, name: 'opt-switch' },
+        {
+          type: dom.PartType.OPTION_NAME,
+          name: 'opt-plugin',
+          plugin: { fqcn: 'ns.coll.opt' },
+        },
+        { type: dom.PartType.OPTION_VALUE, value: 'value-switch' },
+        { type: dom.PartType.PLUGIN, plugin: { type: 'module', fqcn: 'ns.coll.plugin' } },
+        { type: dom.PartType.RETURN_VALUE, name: 'return-switch' },
+      ];
+
+      render(
+        <MemoryRouter>
+          <>
+            {parts.map((part, index) => (
+              <span key={index}>{formatPart(part as dom.Part, params)}</span>
+            ))}
+          </>
+        </MemoryRouter>
+      );
+
+      expect(screen.getByText('err')).toBeInTheDocument();
+      expect(screen.getByText('bold-switch')).toBeInTheDocument();
+      expect(screen.getByText('ns.coll.plugin')).toBeInTheDocument();
+    });
+
+    it('renders no plugin configuration sections when none are present', () => {
+      render(<>{renderPluginConfiguration({ name: 'empty' } as IContentsOption)}</>);
+      expect(screen.queryByText('ini entries:')).not.toBeInTheDocument();
+      expect(screen.queryByText(/env:/)).not.toBeInTheDocument();
+    });
+  });
 });

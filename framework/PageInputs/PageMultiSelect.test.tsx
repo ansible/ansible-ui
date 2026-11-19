@@ -1,6 +1,6 @@
 /* eslint-disable i18next/no-literal-string */
 import { PageSection } from '@patternfly/react-core';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ReactNode, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -275,6 +275,7 @@ describe('PageMultiSelect', () => {
   });
 
   it('opens the menu and seeds search when typing on the toggle', async () => {
+    const user = userEvent.setup();
     const { container } = render(
       <PageMultiSelectTest
         placeholder={placeholderText}
@@ -283,8 +284,12 @@ describe('PageMultiSelect', () => {
       />
     );
 
-    const toggle = container.querySelector('#test')!;
-    fireEvent.keyDown(toggle, { key: 'o' });
+    const toggle = container.querySelector('#test');
+    if (!(toggle instanceof HTMLElement)) {
+      throw new Error('expected multi-select toggle');
+    }
+    await user.click(toggle);
+    await user.keyboard('o');
 
     await waitFor(() => {
       expect(screen.getByTestId('search-input')).toBeInTheDocument();

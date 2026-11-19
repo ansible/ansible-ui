@@ -5,13 +5,18 @@ import {
   usePageNavigate,
 } from '@ansible/ansible-ui-framework';
 import { useOptions } from '@ansible/common-ui/crud/useOptions';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 import { useParams } from 'react-router-dom';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
+import { awxAPI } from '../../../common/api/awx-utils';
 import { IAwxView } from '../../../common/useAwxView';
 import { AwxHost } from '../../../interfaces/AwxHost';
 import { useDisassociateHosts } from '../../hosts/hooks/useDisassociateHosts';
 import { useInventoriesGroupsHostsToolbarActions } from './useInventoriesGroupsHostsToolbarActions';
+
+const alertMocks = vi.hoisted(() => ({ addAlert: vi.fn() }));
 
 const mockRunCommandAction = {
   type: PageActionType.Button,
@@ -28,7 +33,13 @@ vi.mock('@ansible/ansible-ui-framework', async () => ({
   ...(await vi.importActual('@ansible/ansible-ui-framework')),
   usePageNavigate: vi.fn(),
   usePageDialog: vi.fn(),
+  usePageAlertToaster: () => ({ addAlert: alertMocks.addAlert }),
 }));
+
+const server = setupServer();
+beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
   return {
@@ -119,6 +130,74 @@ describe('useInventoriesGroupsHostsToolbarActions', () => {
     );
     if (disassociate && 'isDisabled' in disassociate) {
       expect(disassociate.isDisabled).toMatch(/Select at least one/i);
+    }
+  });
+
+  test('opens the host dialog, posts selected hosts, and disassociates the selection', async () => {
+    const posted: number[] = [];
+    server.use(
+      http.post(awxAPI`/groups/2/hosts/`, async ({ request }) => {
+        const body = (await request.json()) as { id: number };
+        posted.push(body.id);
+        if (body.id === 8) {
+          return HttpResponse.json({ detail: 'denied' }, { status: 400 });
+        }
+        return HttpResponse.json({ id: body.id }, { status: 201 });
+      })
+    );
+    const view = createMockView(1);
+    const { result } = renderHook(() => useInventoriesGroupsHostsToolbarActions(view));
+    const dropdown = result.current[0];
+    if ('actions' in dropdown && Array.isArray(dropdown.actions)) {
+      const addExisting = dropdown.actions[0];
+      const createHost = dropdown.actions[1];
+      if ('onClick' in addExisting && typeof addExisting.onClick === 'function') {
+        (addExisting.onClick as () => void)();
+      }
+      if ('isDisabled' in createHost && typeof createHost.isDisabled === 'function') {
+        expect((createHost.isDisabled as () => string | undefined)()).toBeUndefined();
+      }
+    }
+
+    const dialog = mockSetDialog.mock.calls[0]?.[0] as {
+      props: { onSelectedHosts: (hosts: AwxHost[]) => Promise<void> };
+    };
+    await dialog.props.onSelectedHosts([
+      { id: 7, name: 'web' } as AwxHost,
+      { id: 8, name: 'db' } as AwxHost,
+    ]);
+
+    await waitFor(() => expect(posted).toEqual([7, 8]));
+    expect(view.refresh).toHaveBeenCalled();
+    expect(alertMocks.addAlert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variant: 'danger',
+        title: 'Failed to add db to related groups',
+      })
+    );
+    expect(mockSetDialog).toHaveBeenCalledWith(undefined);
+
+    const disassociate = result.current.find(
+      (action) => 'label' in action && action.label === 'Disassociate hosts'
+    );
+    expect(disassociate && 'isDisabled' in disassociate ? disassociate.isDisabled : 'set').toBe(
+      undefined
+    );
+    if (disassociate && 'onClick' in disassociate && typeof disassociate.onClick === 'function') {
+      (disassociate.onClick as (items: AwxHost[]) => void)(view.selectedItems);
+    }
+    expect(mockDisassociate).toHaveBeenCalledWith(view.selectedItems);
+  });
+
+  test('disables create host when the user cannot post hosts', () => {
+    vi.mocked(useOptions).mockReturnValue({ data: { actions: {} } } as never);
+    const { result } = renderHook(() => useInventoriesGroupsHostsToolbarActions(createMockView()));
+    const dropdown = result.current[0];
+    if ('actions' in dropdown && Array.isArray(dropdown.actions)) {
+      const createHost = dropdown.actions[1];
+      if ('isDisabled' in createHost && typeof createHost.isDisabled === 'function') {
+        expect((createHost.isDisabled as () => string)()).toMatch(/do not have permission/i);
+      }
     }
   });
 });

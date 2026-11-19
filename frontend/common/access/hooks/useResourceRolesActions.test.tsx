@@ -60,4 +60,63 @@ describe('useResourceRolesActions', () => {
       },
     });
   });
+
+  it('leaves route params unset when the details path is missing or short', () => {
+    const pageNavigate = vi.fn();
+    vi.mocked(usePageNavigate).mockReturnValue(pageNavigate);
+
+    const { result } = renderHook(() => useResourceRolesActions('manage-roles-route', undefined), {
+      wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+    });
+
+    const click = (roleAccess: RoleAccess) => {
+      const action = result.current[0];
+      if (action.type === PageActionType.Button) {
+        (action.onClick as (item: RoleAccess) => void)(roleAccess);
+      }
+    };
+
+    click({} as RoleAccess);
+    expect(pageNavigate).toHaveBeenCalledWith('manage-roles-route', {
+      params: {
+        id: undefined,
+        resource_type: undefined,
+        resource_id: undefined,
+        user_id: undefined,
+      },
+    });
+
+    pageNavigate.mockClear();
+    click({ related: { details: 'only-user' } } as RoleAccess);
+    expect(pageNavigate).toHaveBeenCalledWith('manage-roles-route', {
+      params: {
+        id: undefined,
+        resource_type: undefined,
+        resource_id: undefined,
+        user_id: undefined,
+      },
+    });
+
+    pageNavigate.mockClear();
+    click({ related: { details: 'user/extra' } } as RoleAccess);
+    expect(pageNavigate).toHaveBeenCalledWith('manage-roles-route', {
+      params: {
+        id: undefined,
+        resource_type: undefined,
+        resource_id: undefined,
+        user_id: 'user',
+      },
+    });
+
+    pageNavigate.mockClear();
+    click({ related: { details: 'resource/user/extra' } } as RoleAccess);
+    expect(pageNavigate).toHaveBeenCalledWith('manage-roles-route', {
+      params: {
+        id: undefined,
+        resource_type: undefined,
+        resource_id: 'resource',
+        user_id: 'user',
+      },
+    });
+  });
 });

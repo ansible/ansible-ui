@@ -179,4 +179,22 @@ describe('HubInsightsApp', () => {
 
     expect(screen.getByTestId('nav-namespaces')).toBeInTheDocument();
   });
+
+  it('should keep route content stable across re-renders', () => {
+    const { rerender } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <HubInsightsApp />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('collections')).toBeInTheDocument();
+
+    rerender(
+      <MemoryRouter initialEntries={['/']}>
+        <HubInsightsApp />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('collections')).toBeInTheDocument();
+  });
 });

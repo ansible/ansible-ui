@@ -7,6 +7,8 @@ import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { renderHook } from '@testing-library/react';
 import { useParams } from 'react-router-dom';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
+
+const alertMocks = vi.hoisted(() => ({ addAlert: vi.fn() }));
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { InventorySource } from '../../../interfaces/InventorySource';
 import { useCancelIventoryUpdate } from './useCancelInventoryUpdate';
@@ -22,6 +24,7 @@ vi.mock('../../../common/useAwxActiveUser');
 vi.mock('@ansible/ansible-ui-framework', async () => ({
   ...(await vi.importActual('@ansible/ansible-ui-framework')),
   usePageNavigate: vi.fn(),
+  usePageAlertToaster: () => ({ addAlert: alertMocks.addAlert }),
 }));
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
@@ -175,5 +178,154 @@ describe('useInventorySourceActions', () => {
       expect.stringContaining('/inventory_sources/15/update/'),
       {}
     );
+  });
+
+  function renderActions() {
+    return renderHook(() =>
+      useInventorySourceActions({
+        onInventorySourcesDeleted: mockOnDeleted,
+        onInvUpdateCanceled: mockOnCancel,
+      })
+    );
+  }
+
+  function button(actions: ReturnType<typeof useInventorySourceActions>, label: string) {
+    return actions.find(
+      (action) =>
+        action.type === PageActionType.Button && 'label' in action && action.label === label
+    );
+  }
+
+  test('hides sync and cancel based on permissions and the latest job status', () => {
+    const { result } = renderActions();
+    const sync = button(result.current, 'Sync inventory source');
+    const cancel = button(result.current, 'Cancel inventory update');
+    const edit = button(result.current, 'Edit inventory source');
+    const remove = button(result.current, 'Delete inventory source');
+    const capabilities = { edit: true, delete: true, start: true, schedule: true };
+
+    const noJob = createMockInventorySource({
+      summary_fields: { user_capabilities: capabilities },
+    } as Partial<InventorySource>);
+    expect(
+      sync && 'isHidden' in sync && typeof sync.isHidden === 'function'
+        ? (sync.isHidden as (item: InventorySource) => boolean)(noJob)
+        : true
+    ).toBe(false);
+    expect(
+      cancel && 'isHidden' in cancel && typeof cancel.isHidden === 'function'
+        ? (cancel.isHidden as (item: InventorySource) => boolean)(noJob)
+        : false
+    ).toBe(true);
+
+    const lastRunning = createMockInventorySource({
+      summary_fields: {
+        user_capabilities: capabilities,
+        last_job: { id: 2, status: 'pending' },
+      },
+    } as Partial<InventorySource>);
+    expect(
+      sync && 'isHidden' in sync && typeof sync.isHidden === 'function'
+        ? (sync.isHidden as (item: InventorySource) => boolean)(lastRunning)
+        : false
+    ).toBe(true);
+    expect(
+      cancel && 'isHidden' in cancel && typeof cancel.isHidden === 'function'
+        ? (cancel.isHidden as (item: InventorySource) => boolean)(lastRunning)
+        : true
+    ).toBe(false);
+
+    const lastSuccessful = createMockInventorySource({
+      summary_fields: {
+        user_capabilities: { ...capabilities, start: false, edit: false, delete: false },
+        last_job: { id: 3, status: 'successful' },
+      },
+    } as Partial<InventorySource>);
+    expect(
+      sync && 'isHidden' in sync && typeof sync.isHidden === 'function'
+        ? (sync.isHidden as (item: InventorySource) => boolean)(lastSuccessful)
+        : false
+    ).toBe(true);
+    expect(
+      sync && 'isDisabled' in sync && typeof sync.isDisabled === 'function'
+        ? (sync.isDisabled as (item: InventorySource) => string)(lastSuccessful)
+        : ''
+    ).toMatch(/insufficient permission/);
+    expect(
+      edit && 'isDisabled' in edit && typeof edit.isDisabled === 'function'
+        ? (edit.isDisabled as (item: InventorySource) => string)(lastSuccessful)
+        : ''
+    ).toMatch(/insufficient permission/);
+    expect(
+      edit && 'isDisabled' in edit && typeof edit.isDisabled === 'function'
+        ? (edit.isDisabled as (item: InventorySource) => string)(noJob)
+        : 'x'
+    ).toBe('');
+    expect(
+      remove && 'isDisabled' in remove && typeof remove.isDisabled === 'function'
+        ? (remove.isDisabled as (item: InventorySource) => string)(lastSuccessful)
+        : ''
+    ).toMatch(/insufficient permission/);
+    expect(
+      remove && 'isDisabled' in remove && typeof remove.isDisabled === 'function'
+        ? (remove.isDisabled as (item: InventorySource) => string)(noJob)
+        : 'x'
+    ).toBe('');
+  });
+
+  test('allows a system auditor to delete a source they cannot otherwise delete', () => {
+    vi.mocked(useAwxActiveUser).mockReturnValue({
+      activeAwxUser: { is_system_auditor: true },
+    } as never);
+    const { result } = renderActions();
+    const remove = button(result.current, 'Delete inventory source');
+    const source = createMockInventorySource({
+      summary_fields: {
+        user_capabilities: { edit: true, delete: false, start: true, schedule: true },
+      },
+    } as Partial<InventorySource>);
+    expect(
+      remove && 'isDisabled' in remove && typeof remove.isDisabled === 'function'
+        ? (remove.isDisabled as (item: InventorySource) => string)(source)
+        : 'x'
+    ).toBe('');
+  });
+
+  test('cancels and deletes through the row actions', () => {
+    const { result } = renderActions();
+    const source = createMockInventorySource();
+    const cancel = button(result.current, 'Cancel inventory update');
+    const remove = button(result.current, 'Delete inventory source');
+    if (cancel && 'onClick' in cancel && typeof cancel.onClick === 'function') {
+      (cancel.onClick as (item: InventorySource) => void)(source);
+    }
+    if (remove && 'onClick' in remove && typeof remove.onClick === 'function') {
+      (remove.onClick as (item: InventorySource) => void)(source);
+    }
+    expect(mockCancelUpdate).toHaveBeenCalledWith([source]);
+    expect(mockDeleteSources).toHaveBeenCalledWith([source]);
+  });
+
+  test('alerts when the inventory source sync fails', async () => {
+    mockPostRequest.mockRejectedValueOnce(new Error('boom'));
+    const { result } = renderActions();
+    const source = createMockInventorySource({ id: 15 });
+    const sync = button(result.current, 'Sync inventory source');
+    if (sync && 'onClick' in sync && typeof sync.onClick === 'function') {
+      await (sync.onClick as (item: InventorySource) => Promise<void>)(source);
+    }
+    expect(alertMocks.addAlert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variant: 'danger',
+        title: 'Failed to update inventory source',
+        children: 'boom',
+      })
+    );
+
+    mockPostRequest.mockRejectedValueOnce('nope');
+    if (sync && 'onClick' in sync && typeof sync.onClick === 'function') {
+      await (sync.onClick as (item: InventorySource) => Promise<void>)(source);
+    }
+    expect(alertMocks.addAlert).toHaveBeenCalledWith(expect.objectContaining({ children: false }));
   });
 });

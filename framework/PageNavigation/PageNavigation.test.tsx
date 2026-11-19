@@ -106,6 +106,32 @@ describe('PageNavigation', () => {
     expect(openSpy).toHaveBeenCalledWith('https://example.com', '_blank');
   });
 
+  it('expands groups by default when default-nav-expanded is set', () => {
+    localStorage.setItem('default-nav-expanded', 'true');
+    renderNavigation([
+      {
+        id: 'group',
+        label: 'Group',
+        path: 'group',
+        children: [{ id: 'child', label: 'Child', path: 'child', element: routeStub }],
+      },
+    ]);
+
+    expect(screen.getByTestId('child')).toBeInTheDocument();
+  });
+
+  it('renders grouped children when parent label is empty', () => {
+    renderNavigation([
+      {
+        label: '',
+        path: 'shell',
+        children: [{ id: 'nested', label: 'Nested', path: 'nested', element: routeStub }],
+      },
+    ]);
+
+    expect(screen.getByTestId('nested')).toBeInTheDocument();
+  });
+
   it('renders root children when path is slash', () => {
     renderNavigation([
       {

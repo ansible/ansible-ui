@@ -337,4 +337,126 @@ describe('CredentialFormStringInput', () => {
 
     expect(screen.getByText('Certificate')).toBeInTheDocument();
   });
+
+  it('renders a file upload for multiline text and clears a managed value', async () => {
+    const user = userEvent.setup();
+    const removeCredentialPluginValue = vi.fn();
+    render(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="cloud"
+          required={['certificate']}
+          removeCredentialPluginValue={removeCredentialPluginValue}
+          accumulatedPluginValues={[
+            { id: 2, input_field_name: 'certificate', source_credential: 12, metadata: {} },
+          ]}
+          field={{
+            id: 'certificate',
+            label: 'Certificate file',
+            type: 'string',
+            secret: false,
+            multiline: true,
+            choices: [],
+          }}
+        />
+      </FormWrapper>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/external secret management system/)).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole('button', { name: /clear/i }));
+    expect(removeCredentialPluginValue).toHaveBeenCalledWith('certificate');
+  });
+
+  it('hides secret management for external kinds and uses the external namespace fallback', async () => {
+    server.use(
+      http.get(edaAPI`/eda-credentials/12/`, () =>
+        HttpResponse.json({ id: 12, name: 'Vault Credential', credential_type: {} })
+      )
+    );
+    const removeCredentialPluginValue = vi.fn();
+    const user = userEvent.setup();
+
+    const { rerender } = render(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="external"
+          required={['password']}
+          field={{
+            id: 'password',
+            label: 'External password',
+            type: 'string',
+            secret: true,
+            multiline: false,
+            choices: [],
+          }}
+        />
+      </FormWrapper>
+    );
+    expect(screen.queryByTestId('secret-management-input')).not.toBeInTheDocument();
+
+    rerender(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="cloud"
+          required={['password']}
+          removeCredentialPluginValue={removeCredentialPluginValue}
+          accumulatedPluginValues={[
+            { id: 1, input_field_name: 'password', source_credential: 12, metadata: {} },
+          ]}
+          field={{
+            id: 'password',
+            label: 'Managed password',
+            type: 'string',
+            secret: false,
+            multiline: false,
+            choices: [],
+          }}
+        />
+      </FormWrapper>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText(/Value is managed by external: Vault Credential/i)
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByTestId('clear-secret-management-input'));
+    expect(removeCredentialPluginValue).toHaveBeenCalledWith('password');
+  });
+
+  it('does not open the plugin modal without a setter and ignores non-string fields', async () => {
+    mockOpenCredentialPluginsModal.mockClear();
+    const user = userEvent.setup();
+    render(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="cloud"
+          required={[]}
+          field={{
+            id: 'password',
+            label: 'Plain password',
+            type: 'string',
+            secret: true,
+            multiline: false,
+            choices: [],
+          }}
+        />
+      </FormWrapper>
+    );
+    await user.click(screen.getByTestId('secret-management-input'));
+    expect(mockOpenCredentialPluginsModal).not.toHaveBeenCalled();
+
+    render(
+      <FormWrapper>
+        <CredentialFormStringInput
+          kind="cloud"
+          required={[]}
+          field={{ id: 'flag', label: 'Flag', type: 'boolean', secret: false }}
+        />
+      </FormWrapper>
+    );
+    expect(screen.queryByText('Flag')).not.toBeInTheDocument();
+  });
 });

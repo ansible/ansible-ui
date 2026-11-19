@@ -6,6 +6,17 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDeleteCollections } from './useDeleteCollections';
 import { CollectionVersionSearch } from '../Collection';
+import { HubRoute } from '../../main/HubRoutes';
+
+const pageNavigate = vi.hoisted(() => vi.fn());
+
+vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@ansible/ansible-ui-framework')>();
+  return {
+    ...actual,
+    usePageNavigate: () => pageNavigate,
+  };
+});
 
 // Mock isInsightsMode
 vi.mock('../../common/isInsights', () => ({
@@ -36,6 +47,8 @@ let capturedBulkActionConfig: {
   title?: string;
   confirmText?: string;
   actionButtonText?: string;
+  items?: CollectionVersionSearch[];
+  onComplete?: (collections: CollectionVersionSearch[]) => void;
 } = {};
 
 vi.mock('../../common/useHubBulkConfirmation', () => ({
@@ -125,6 +138,7 @@ describe('useDeleteCollections', () => {
     server.resetHandlers();
     vi.clearAllMocks();
     capturedBulkActionConfig = {};
+    pageNavigate.mockClear();
   });
   afterAll(() => server.close());
 
@@ -219,6 +233,33 @@ describe('useDeleteCollections', () => {
           controller.signal
         );
       });
+    });
+
+    it('sorts unnamed collections and navigates after deleting a version', async () => {
+      const missingVersion = {
+        ...mockCollection,
+        collection_version: { ...mockCollection.collection_version, version: undefined },
+        repository: { ...mockCollection.repository, name: '', pulp_href: '' },
+      } as unknown as CollectionVersionSearch;
+      const unnamed = {
+        ...mockCollection,
+        collection_version: { ...mockCollection.collection_version!, name: '' },
+      } as CollectionVersionSearch;
+      const { result } = renderUseDeleteCollections(true, true);
+      result.current([unnamed, missingVersion]);
+
+      expect(capturedBulkActionConfig.confirmText).toContain('deleted only once');
+      expect(capturedBulkActionConfig.items).toHaveLength(2);
+      expect(typeof capturedBulkActionConfig.onComplete).toBe('function');
+
+      const controller = new AbortController();
+      await capturedBulkActionConfig.actionFn!(missingVersion, controller.signal);
+
+      expect(hubAPIDelete).toHaveBeenCalledWith(
+        expect.stringContaining('versions/undefined'),
+        controller.signal
+      );
+      expect(pageNavigate).toHaveBeenCalledWith(HubRoute.Collections);
     });
   });
 });

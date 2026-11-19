@@ -8,6 +8,15 @@ import { awxAPI } from '../../common/api/awx-utils';
 import { AddNotifier, EditNotifier, extractNotifierFieldMetadata } from './NotifierForm';
 
 const pageNavigate = vi.hoisted(() => vi.fn());
+const navigate = vi.hoisted(() => vi.fn());
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => navigate,
+  };
+});
 
 vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual<typeof import('@ansible/ansible-ui-framework')>(
@@ -89,6 +98,7 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => {
   server.resetHandlers();
   pageNavigate.mockClear();
+  navigate.mockClear();
 });
 afterAll(() => server.close());
 
@@ -417,6 +427,177 @@ describe('NotifierForm', () => {
         'a@example.com',
         'b@example.com',
       ]);
+    }, 15000);
+
+    it('shows a loading page until notification options arrive', async () => {
+      server.use(
+        http.options(
+          ({ request }) => request.url.includes('/notification_templates/'),
+          async () => {
+            await delay(200);
+            return HttpResponse.json(mockNotificationTemplateOptions);
+          }
+        )
+      );
+      render(
+        <MemoryRouter initialEntries={['/notifiers/create']}>
+          <Routes>
+            <Route path="/notifiers/create" element={<AddNotifier />} />
+          </Routes>
+        </MemoryRouter>
+      );
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      await waitFor(() =>
+        expect(screen.getByTestId('page-title')).toHaveTextContent('Create notifier')
+      );
+    });
+
+    it('creates an email notifier and coerces empty, integer, and boolean fields', async () => {
+      const user = userEvent.setup();
+      let body: {
+        id?: number;
+        notification_configuration?: Record<string, unknown>;
+      } = {};
+      server.use(
+        http.options(
+          ({ request }) => request.url.includes('/notification_templates/'),
+          () =>
+            HttpResponse.json({
+              actions: {
+                GET: {
+                  notification_configuration: {
+                    email: {
+                      username: { label: 'Username', type: 'string', default: '' },
+                      use_tls: { label: 'Use TLS', type: 'bool', default: false },
+                      port: { label: 'Port', type: 'int', default: 25 },
+                      host: { label: 'Host', type: 'string', default: '' },
+                    },
+                  },
+                },
+              },
+            })
+        ),
+        http.post(awxAPI`/notification_templates/`, async ({ request }) => {
+          body = (await request.json()) as typeof body;
+          return HttpResponse.json({ id: 42 }, { status: 201 });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/notifiers/create']}>
+          <Routes>
+            <Route path="/notifiers/create" element={<AddNotifier />} />
+          </Routes>
+        </MemoryRouter>
+      );
+      await screen.findByTestId('page-title');
+      await user.type(screen.getByTestId('name'), 'Created mailer');
+      await user.click(screen.getByRole('button', { name: /Organization/i }));
+      await user.click(await screen.findByRole('option', { name: 'Default' }));
+      await user.click(screen.getByRole('button', { name: /Notification type/i }));
+      await user.click(screen.getByRole('option', { name: 'Email' }));
+      await screen.findByText('Host');
+      await user.type(screen.getByTestId('notification-configuration-host'), 'smtp.example.com');
+      await user.type(screen.getByTestId('notification-configuration-recipients'), 'a@example.com');
+      await user.type(screen.getByTestId('notification-configuration-sender'), 'from@example.com');
+      await user.type(screen.getByTestId('notification-configuration-port'), '25');
+      await user.type(screen.getByTestId('notification-configuration-timeout'), '10');
+      await user.click(screen.getByTestId('Submit'));
+
+      await waitFor(
+        () =>
+          expect(pageNavigate).toHaveBeenCalledWith('awx-notification-template-details', {
+            params: { id: 42 },
+          }),
+        { timeout: 10000 }
+      );
+      expect(body.notification_configuration?.username).toBe('');
+      expect(body.notification_configuration?.use_tls).toBe(false);
+      expect(body.notification_configuration?.port).toBe(25);
+    }, 20000);
+
+    it('defaults webhook headers and keeps custom messages', async () => {
+      const user = userEvent.setup();
+      let body: { messages?: unknown; notification_configuration?: { headers?: unknown } } = {};
+      server.use(
+        http.get(awxAPI`/notification_templates/5/`, () =>
+          HttpResponse.json({
+            id: 5,
+            name: 'Hook',
+            notification_type: 'webhook',
+            organization: 1,
+            messages: { error: { message: 'kept message' } },
+            notification_configuration: {
+              url: 'https://example.com/hook',
+              http_method: 'POST',
+            },
+          })
+        ),
+        http.patch(awxAPI`/notification_templates/5/`, async ({ request }) => {
+          body = (await request.json()) as typeof body;
+          return HttpResponse.json({ id: 5 });
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/notifiers/5/edit']}>
+          <Routes>
+            <Route path="/notifiers/:id/edit" element={<EditNotifier />} />
+          </Routes>
+        </MemoryRouter>
+      );
+      expect(await screen.findByText('Target URL')).toBeInTheDocument();
+      await user.click(screen.getByTestId('Submit'));
+      await waitFor(() => expect(pageNavigate).toHaveBeenCalled());
+      expect(body.notification_configuration?.headers).toEqual({});
+      const messages = body.messages as { error?: { message?: string } } | undefined;
+      expect(messages?.error?.message).toBe('kept message');
+    }, 15000);
+
+    it('shows message errors from a failed save and still cancels', async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get(awxAPI`/notification_templates/5/`, () =>
+          HttpResponse.json({
+            id: 5,
+            name: 'Mailer',
+            notification_type: 'email',
+            organization: 1,
+            messages: null,
+            notification_configuration: {
+              host: 'smtp.example.com',
+              recipients: 'a@example.com',
+              sender: 'from@example.com',
+              port: 25,
+              timeout: 10,
+            },
+          })
+        ),
+        http.patch(awxAPI`/notification_templates/5/`, () =>
+          HttpResponse.json({ messages: { started: ['invalid message'] } }, { status: 400 })
+        )
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/notifiers/5/edit']}>
+          <Routes>
+            <Route path="/notifiers/:id/edit" element={<EditNotifier />} />
+          </Routes>
+        </MemoryRouter>
+      );
+      expect(await screen.findByText('Recipient list')).toBeInTheDocument();
+      await user.click(screen.getByTestId('Submit'));
+      expect(await screen.findByText(/invalid message/)).toBeInTheDocument();
+      expect(pageNavigate).not.toHaveBeenCalled();
+
+      server.use(
+        http.patch(awxAPI`/notification_templates/5/`, () =>
+          HttpResponse.json({ detail: 'nope' }, { status: 500 })
+        )
+      );
+      await user.click(screen.getByTestId('Submit'));
+      await user.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(navigate).toHaveBeenCalledWith(-1);
     }, 15000);
   });
 });

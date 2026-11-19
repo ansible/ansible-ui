@@ -185,6 +185,32 @@ describe('EditHubNamespace', () => {
     // Should eventually show the edit form with Save button
     expect(await screen.findByText('Save namespace', {}, { timeout: 3000 })).toBeInTheDocument();
   });
+
+  it('uses the namespace fallback title when the saved name is blank', async () => {
+    server.use(
+      http.get('*/_ui/v1/my-namespaces/blank/', () =>
+        HttpResponse.json({
+          name: '',
+          description: '',
+          company: '',
+          avatar_url: '',
+          links: [],
+          resources: '',
+        })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/namespaces/blank/edit']}>
+        <Routes>
+          <Route path="/namespaces/:id/edit" element={<EditHubNamespace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole('heading', { name: 'Namespace' })).toBeInTheDocument();
+    expect(screen.getByText('Name is not editable.')).toBeInTheDocument();
+  });
 });
 
 describe('CreateHubNamespace in Insights mode', () => {

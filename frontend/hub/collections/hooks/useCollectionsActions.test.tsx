@@ -3,6 +3,13 @@ import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { useCollectionsActions } from './useCollectionsActions';
+import { CollectionVersionSearch } from '../Collection';
+
+const actionFns = vi.hoisted(() => ({
+  deleteCollections: vi.fn(),
+  deprecateOrUndeprecate: vi.fn(),
+  signCollection: vi.fn(),
+}));
 
 // Mock PageNavigate
 const mockPageNavigate = vi.fn();
@@ -16,15 +23,15 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
 
 // Mock the dependent hooks
 vi.mock('./useDeleteCollections', () => ({
-  useDeleteCollections: () => vi.fn(),
+  useDeleteCollections: () => actionFns.deleteCollections,
 }));
 
 vi.mock('./useDeprecateOrUndeprecateCollections', () => ({
-  useDeprecateOrUndeprecateCollections: () => vi.fn(),
+  useDeprecateOrUndeprecateCollections: () => actionFns.deprecateOrUndeprecate,
 }));
 
 vi.mock('./useSignCollection', () => ({
-  useSignCollection: () => ({ signCollection: vi.fn(), canSign: true }),
+  useSignCollection: () => actionFns.signCollection,
 }));
 
 // Mock HubRoute enum
@@ -164,6 +171,45 @@ describe('useCollectionsActions', () => {
       expect(hasAction(result.current, 'Sign collections')).toBe(true);
       expect(hasAction(result.current, 'Deprecate collections')).toBe(true);
       expect(hasAction(result.current, 'Delete collections')).toBe(true);
+    });
+
+    it('hides signing when the feature flag is off', () => {
+      vi.mocked(useCanSignNamespace).mockReturnValue(false);
+      const { result } = renderUseCollectionsActions();
+      expect(hasAction(result.current, 'Sign collections')).toBe(false);
+    });
+
+    it('invokes sign, deprecate, and delete with duplicate names collapsed', () => {
+      const { result } = renderUseCollectionsActions('my-namespace');
+      const collection = (name?: string) =>
+        ({
+          collection_version: name === undefined ? undefined : { name },
+        }) as CollectionVersionSearch;
+      const collections = [
+        collection('alpha'),
+        collection('alpha'),
+        collection(''),
+        collection(undefined),
+      ];
+
+      const click = (label: string) => {
+        const action = getAction(result.current, label);
+        if (action && 'onClick' in action && typeof action.onClick === 'function') {
+          (action.onClick as (items: CollectionVersionSearch[]) => void)(collections);
+        }
+      };
+
+      click('Sign collections');
+      expect(actionFns.signCollection).toHaveBeenCalledWith(collections);
+
+      click('Deprecate collections');
+      expect(actionFns.deprecateOrUndeprecate).toHaveBeenCalledWith(collections, 'deprecate');
+
+      click('Delete collections');
+      expect(actionFns.deleteCollections).toHaveBeenCalledWith([
+        collection('alpha'),
+        collection(''),
+      ]);
     });
   });
 
