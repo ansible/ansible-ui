@@ -76,6 +76,19 @@ export type PageToolbarProps<T extends object> = {
   limitFiltersToOneOrOperation?: boolean;
 };
 
+function hasMultipleSelectionAction<T extends object>(
+  selectedItems: T[] | undefined,
+  toolbarActions: IPageAction<T>[]
+) {
+  return (
+    selectedItems !== undefined &&
+    toolbarActions.find(
+      (toolbarAction) =>
+        'selection' in toolbarAction && toolbarAction.selection === PageActionSelection.Multiple
+    )
+  );
+}
+
 export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   const {
     itemCount,
@@ -112,13 +125,7 @@ export function PageToolbar<T extends object>(props: PageToolbarProps<T>) {
   const showToolbarActions = toolbarActions !== undefined && toolbarActions.length > 0;
 
   const showSelect =
-    props.showSelect === true ||
-    (selectedItems !== undefined &&
-      toolbarActions &&
-      toolbarActions.find(
-        (toolbarAction) =>
-          'selection' in toolbarAction && toolbarAction.selection === PageActionSelection.Multiple
-      ));
+    props.showSelect === true || hasMultipleSelectionAction(selectedItems, toolbarActions);
 
   const showToolbar = showSelect || showSearchAndFilters || showToolbarActions;
   if (!showToolbar) {
