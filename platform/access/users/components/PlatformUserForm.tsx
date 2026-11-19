@@ -199,13 +199,14 @@ export function EditPlatformUser() {
         const orgMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
           user: membershipUserId,
           object_id: organizationId,
-          role_definition: organizationMemberRoleData?.results?.[0]?.id || '',
+          role_definition: organizationMemberRoleData?.results?.[0]?.id ?? '',
           content_type__api_slug: 'shared.organization',
         });
+        const roleAssignments = orgMemberRoleAssignments?.results ?? [];
         await Promise.all(
-          orgMemberRoleAssignments?.results?.map((assignment) =>
+          roleAssignments.map((assignment) =>
             deleteRequest(gatewayAPI`/role_user_assignments/${assignment.id}/`)
-          ) ?? []
+          )
         );
       } catch (error) {
         const { genericErrors, fieldErrors } = awxErrorAdapter(error);
@@ -291,7 +292,7 @@ export function EditPlatformUser() {
             removeOrganizationMembership(user.id, removedOrganizationId)
           )
         );
-      } else if (user.is_superuser && organizationIds) {
+      } else if (user.is_superuser && organizationIds.length > 0) {
         await Promise.all(
           organizationIds.map((organizationId) =>
             removeOrganizationMembership(user.id, organizationId)

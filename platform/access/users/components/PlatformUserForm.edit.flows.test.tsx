@@ -21,6 +21,8 @@ const {
   baseUser,
   mockPlatformUser,
   mockOrgHelpers,
+  mockOrganizationMemberRoles,
+  mockUserOrganizations,
 } = vi.hoisted(() => {
   const user: PlatformUser = {
     id: 7,
@@ -76,6 +78,8 @@ const {
     baseUser: user,
     mockPlatformUser: platformUser,
     mockOrgHelpers: orgState,
+    mockOrganizationMemberRoles: [{ id: 600 }] as { id: number }[],
+    mockUserOrganizations: [{ id: 10, name: 'Org' }] as { id: number; name: string }[],
   };
 });
 
@@ -131,11 +135,11 @@ vi.mock('@ansible/common-ui/crud/useGet', async () => {
         return { data: { results: [{ id: 500 }] }, isLoading: false };
       }
       if (qs?.name === 'Organization Member') {
-        return { data: { results: [{ id: 600 }] }, isLoading: false };
+        return { data: { results: mockOrganizationMemberRoles }, isLoading: false };
       }
       if (String(url).includes('/organizations/')) {
         return {
-          data: { results: [{ id: 10, name: 'Org' }] },
+          data: { results: mockUserOrganizations },
           isLoading: false,
         };
       }
@@ -343,6 +347,10 @@ describe('EditPlatformUser submit branches', () => {
       fieldErrors: [{ message: 'fld' }],
     });
     Object.assign(mockPlatformUser, baseUser);
+    mockOrganizationMemberRoles.length = 0;
+    mockOrganizationMemberRoles.push({ id: 600 });
+    mockUserOrganizations.length = 0;
+    mockUserOrganizations.push({ id: 10, name: 'Org' });
     mockOrgHelpers.orgIds = [];
     mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
       addedOrganizationIds: [],
@@ -461,6 +469,43 @@ describe('EditPlatformUser submit branches', () => {
     expect(mockNavigate).toHaveBeenCalledWith(-1);
   });
 
+  it('uses an empty role definition filter when Organization Member role is unavailable', async () => {
+    mockOrganizationMemberRoles.length = 0;
+    mockOrgHelpers.orgIds = [11];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11],
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({
+        role_definition: '',
+        object_id: 11,
+      })
+    );
+  });
+
+  it('skips delete when org member assignment lookup returns no results', async () => {
+    mockOrgHelpers.orgIds = [11];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11],
+    });
+    mockGetRequest.mockImplementation((_url, params: Record<string, string | number>) => {
+      if (String(params.role_definition) === '600') {
+        return Promise.resolve({});
+      }
+      return Promise.resolve({ results: [{ id: 999 }] });
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockDeleteRequest).not.toHaveBeenCalled();
+  });
+
   it('removes org membership for non-superuser when removal succeeds', async () => {
     mockOrgHelpers.orgIds = [11];
     mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
@@ -540,6 +585,19 @@ describe('EditPlatformUser submit branches', () => {
     await user.click(screen.getByTestId('org-remove-success'));
     expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/801/`);
     expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/802/`);
+  });
+
+  it('skips org cleanup when saving as superuser with no organizations', async () => {
+    Object.assign(mockPlatformUser, baseUser, { is_superuser: true });
+    mockUserOrganizations.length = 0;
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('superuser-org-strip'));
+    expect(mockGetRequest).not.toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({ content_type__api_slug: 'shared.organization' })
+    );
+    expect(mockPatchUser).toHaveBeenCalled();
   });
 
   it('strips org memberships when saving as superuser', async () => {
