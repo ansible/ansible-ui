@@ -15,4 +15,11 @@ export interface ToolbarFilterCommon {
 
   /** The placeholder for the filter. */
   placeholder?: string;
+
+  /**
+   * When true, a selected empty-string value is still sent on the query string.
+   * Needed when empty is a meaningful API filter (e.g. inventory kind= for standard inventories).
+   * Without this, empty values are dropped so filters like Hub "All roles" keep meaning "no filter".
+   */
+  preserveEmptyValue?: boolean;
 }

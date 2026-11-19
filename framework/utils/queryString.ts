@@ -44,13 +44,23 @@ export function paramsToSearchObj(queryParams: QueryParams) {
   return params;
 }
 
+function shouldAppendFilterValue(
+  toolbarFilter: IToolbarFilter | undefined,
+  value: string | string[] | undefined
+): boolean {
+  if (value === undefined || value === null) return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (value !== '') return true;
+  return Boolean(toolbarFilter?.preserveEmptyValue);
+}
+
 export function filtersToSearchObj(toolbarFilters: IToolbarFilter[], filterState: IFilterState) {
   const params = new URLSearchParams();
 
   for (const key in filterState) {
     const toolbarFilter = toolbarFilters?.find((filter) => filter.key === key);
     const [param, value] = getFilterParam(filterState, toolbarFilter);
-    if (param && value) {
+    if (param && shouldAppendFilterValue(toolbarFilter, value)) {
       appendFilterValues(params, param, value);
     }
     // Support for Activity Stream needing two values
