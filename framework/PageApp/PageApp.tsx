@@ -2,12 +2,22 @@ import { ChatbotSideBar } from '@ansible/chatbot/ChatbotSideBar';
 import { Page } from '@patternfly/react-core';
 import { ReactNode, useEffect, useMemo } from 'react';
 import { Outlet, Route, RouteObject, Routes } from 'react-router-dom';
+import styled from 'styled-components';
 import { PageNotFound } from '../PageEmptyStates/PageNotFound';
 import { PageNavigation } from '../PageNavigation/PageNavigation';
 import { PageNavigationItem } from '../PageNavigation/PageNavigationItem';
 import { usePageNavigationRoutesContext } from '../PageNavigation/PageNavigationRoutesProvider';
 import { PageNotificationsDrawer } from '../PageNotifications/PageNotificationsDrawer';
 import { usePageNotifications } from '../PageNotifications/usePageNotifications';
+
+// The catch-all route renders outside the Page layout, so it does not get the page background.
+// Without one it shows the body background, which the login page may set to a dark color, and the
+// dark text of PageNotFound is unreadable in the light theme.
+const PageNotFoundBackground = styled.div`
+  height: 100vh;
+  overflow: auto;
+  background-color: var(--pf-t--global--background--color--primary--default);
+`;
 
 /** Page needs an onPageResize to enable its own size tracking; we only want the side effect. */
 function noop() {}
@@ -68,7 +78,14 @@ export function PageApp(props: {
         ),
         children: navigation.filter(({ href }) => !href),
       },
-      { path: '*', element: <PageNotFound /> },
+      {
+        path: '*',
+        element: (
+          <PageNotFoundBackground data-testid="page-not-found-background">
+            <PageNotFound />
+          </PageNotFoundBackground>
+        ),
+      },
     ],
     [
       masthead,
