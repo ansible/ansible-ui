@@ -237,7 +237,7 @@ const mockApiRootResponse = {
 
 const mockAwxConfigResponse = {
   version: '4.6.0',
-  license_info: { compliant: false, time_remaining: 0 },
+  license_info: { compliant: true, time_remaining: 30 * 24 * 60 * 60 },
 };
 
 const mockGatewayPingResponse = { version: '4.6.0' };
