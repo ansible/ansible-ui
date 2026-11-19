@@ -1,6 +1,8 @@
-# Getting started
+# Developer internationalization
 
 Ansible UI leverages internationalization through the [react-i18next](https://react.i18next.com/) library. This library provides an easy way to handle translations, including pluralization.
+
+For translator-facing instructions on updating locale catalogs or proposing a new language, see [Contributing translations](../contributing/translations.md).
 
 ## Using plural and singular
 
