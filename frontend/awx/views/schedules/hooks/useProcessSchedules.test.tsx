@@ -190,10 +190,15 @@ describe('useProcessSchedule', () => {
       ),
     });
 
-    const response = await result.current(makePayload('job_template'));
+    const payload = makePayload('job_template', {
+      prompt: { limit: '' } as unknown as PromptFormValues,
+      launch_config: { ask_limit_on_launch: true } as LaunchConfiguration,
+    });
+    const response = await result.current(payload);
     expect(response.schedule).toBeDefined();
     expect(postCalls[0].method).toBe('PATCH');
     expect(postCalls[0].url).toContain('/schedules/99/');
+    expect(postCalls[0].body).toHaveProperty('limit', '');
   });
 
   it('should include prompt data for job_template with launch_config', async () => {
