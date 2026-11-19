@@ -50,7 +50,7 @@
     "@redhat-cloud-services/frontend-components-config": {
       "webpack-dev-server": {
         "selfsigned": {
-          "node-forge": "1.4.0"
+          "node-forge": "1.4.3"
         }
       }
     },
