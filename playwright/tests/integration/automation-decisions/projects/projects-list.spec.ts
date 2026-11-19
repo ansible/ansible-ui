@@ -234,7 +234,7 @@ test.describe('EDA Projects List', () => {
 
         // Verify the alert message about auto-restart activations
         await expect(confirmDialog).toContainText(
-          'The following Rulebook Activations are configured to restart on project sync.'
+          'The following Rulebook Activations are configured to restart if their selected rulebooks change during this project sync:'
         );
         await expect(confirmDialog).toContainText(activation1Name);
         await expect(confirmDialog).toContainText(activation2Name);
@@ -294,7 +294,7 @@ test.describe('EDA Projects List', () => {
 
         // Verify the alert message about auto-restart activations does NOT appear
         await expect(confirmDialog).not.toContainText(
-          'The following Rulebook Activations are configured to restart on project sync.'
+          'The following Rulebook Activations are configured to restart if their selected rulebooks change during this project sync:'
         );
 
         // Cancel the dialog
