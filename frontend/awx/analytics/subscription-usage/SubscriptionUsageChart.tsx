@@ -54,7 +54,13 @@ export function SubscriptionUsageChart(props: { period: IFilterState }) {
 
   const { data, isLoading } = useSWR<ISubscriptionUsageChartData>(
     awxAPI`/host_metric_summary_monthly/?date__gte=${calculateDateRange()}&order_by=date&page_size=100`,
-    (url: string) => fetch(url).then((r) => r.json())
+    (url: string) =>
+      fetch(url).then((response) => {
+        if (!response.ok) {
+          throw new Error(`Subscription usage request failed: ${response.status}`);
+        }
+        return response.json();
+      })
   );
 
   const dateFormatter = (date: string | undefined) => {
