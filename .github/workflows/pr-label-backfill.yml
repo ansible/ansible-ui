@@ -170,8 +170,6 @@ jobs:
           gh label create "e2e: running"      --repo "$REPO" --color "1D76DB" --description "E2E tests in progress" --force 2>/dev/null || true
           gh label create "e2e: done"         --repo "$REPO" --color "0E8A16" --description "E2E tests completed" --force 2>/dev/null || true
 
-          BOT_FILTER='select(.author.login != "dependabot[bot]" and .author.login != "red-hat-konflux[bot]" and .author.login != "app/red-hat-konflux")'
-
           gh pr list --repo "$REPO" --state open --json number,author --limit 500 \
             | jq -r ".[] | \"\(.number) \(.author.login)\"" \
             | while read -r PR_NUMBER AUTHOR; do

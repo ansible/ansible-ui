@@ -36,10 +36,10 @@ on:
       AAP_TOPOLOGY_TYPE:
         type: choice
         required: false
-        description: "AAP topology type for test skip logic"
-        default: ""
+        description: "AAP topology type for test skip logic (none disables topology-specific skips)"
+        default: "none"
         options:
-          - ""
+          - "none"
           - "saas"
           - "ocp-a"
           - "man-b"

@@ -64,9 +64,46 @@ jobs:
           fi
 
           echo "All $TOTAL commit(s) in PR #$PR_NUMBER are verified by GitHub."
-          echo "### Signed commits — passed" >> "$GITHUB_STEP_SUMMARY"
-          echo >> "$GITHUB_STEP_SUMMARY"
-          echo "All $TOTAL commit(s) are verified." >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "### Signed commits — passed"
+            echo
+            echo "All $TOTAL commit(s) are verified."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  workflow-lint:
+    name: Actionlint workflows
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm ShellCheck is available
+        run: shellcheck --version
+      - name: Download actionlint 1.7.12
+        id: actionlint
+        run: bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.12/scripts/download-actionlint.bash) 1.7.12
+        shell: bash
+      - name: Lint workflows and their shell steps
+        run: ${{ steps.actionlint.outputs.executable }} -shellcheck="$(command -v shellcheck)" -color
+        shell: bash
+
+  shellcheck:
+    name: ShellCheck scripts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check tracked shell scripts
+        run: |
+          mapfile -t SHELL_SCRIPTS < <(git ls-files -- '*.sh')
+          if (( ${#SHELL_SCRIPTS[@]} > 0 )); then
+            shellcheck "${SHELL_SCRIPTS[@]}"
+          fi
+          shellcheck -s sh .husky/pre-commit
+        shell: bash
 
   packages:
     name: Install dependencies
@@ -374,13 +411,15 @@ jobs:
       - vitest
       - vitest-coverage
       - hub-insights
+      - workflow-lint
+      - shellcheck
     if: ${{ always() }}
     steps:
       - name: Success Check
-        if: ${{ needs.signed-commits.result == 'success' && needs.checks.result == 'success' && needs.knip.result == 'success' && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' && needs.hub-insights.result == 'success' }}
+        if: ${{ needs.signed-commits.result == 'success' && needs.checks.result == 'success' && needs.knip.result == 'success' && needs.vitest-awx.result == 'success' && needs.vitest.result == 'success' && needs.vitest-coverage.result == 'success' && needs.hub-insights.result == 'success' && needs.workflow-lint.result == 'success' && needs.shellcheck.result == 'success' }}
         run: echo "All jobs succeeded"
       - name: Log dependency results
-        if: ${{ needs.signed-commits.result != 'success' || needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
+        if: ${{ needs.signed-commits.result != 'success' || needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.vitest-coverage.result != 'success' || needs.hub-insights.result != 'success' || needs.workflow-lint.result != 'success' || needs.shellcheck.result != 'success' }}
         run: |
           echo "signed-commits: ${{ needs.signed-commits.result }}"
           echo "checks: ${{ needs.checks.result }}"
@@ -389,8 +428,10 @@ jobs:
           echo "vitest: ${{ needs.vitest.result }}"
           echo "vitest-coverage: ${{ needs.vitest-coverage.result }}"
           echo "hub-insights: ${{ needs.hub-insights.result }}"
+          echo "workflow-lint: ${{ needs.workflow-lint.result }}"
+          echo "shellcheck: ${{ needs.shellcheck.result }}"
       - name: Failure or Cancelled
-        if: ${{ needs.signed-commits.result != 'success' || needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.hub-insights.result != 'success' }}
+        if: ${{ needs.signed-commits.result != 'success' || needs.checks.result != 'success' || needs.knip.result != 'success' || needs.vitest-awx.result != 'success' || needs.vitest.result != 'success' || needs.vitest-coverage.result != 'success' || needs.hub-insights.result != 'success' || needs.workflow-lint.result != 'success' || needs.shellcheck.result != 'success' }}
         run: |
           echo "One or more jobs failed or were canceled."
           exit 1

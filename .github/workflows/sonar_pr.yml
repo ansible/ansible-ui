@@ -39,7 +39,7 @@ jobs:
       - name: Extract PR Number
         id: pr
         run: |
-          echo "number=$(head -n1 pr_number.txt | awk '{print $2}')" >> $GITHUB_OUTPUT
+          echo "number=$(head -n1 pr_number.txt | awk '{print $2}')" >> "$GITHUB_OUTPUT"
 
       - name: Get PR Details
         uses: octokit/request-action@v2.x
