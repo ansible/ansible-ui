@@ -28,7 +28,7 @@ export function useCollectionFilters() {
         label: t('Name'),
         type: ToolbarFilterType.SingleText,
         query: 'keywords',
-        comparison: 'equals',
+        comparison: 'contains',
       },
       {
         key: 'namespace',
