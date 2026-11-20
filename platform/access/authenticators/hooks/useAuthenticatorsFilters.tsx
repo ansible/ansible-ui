@@ -43,7 +43,7 @@ export function useTypeToolbarFilter() {
       key: 'type',
       label: t('Authentication type'),
       type: ToolbarFilterType.MultiSelect,
-      query: 'type',
+      query: 'type__in',
       options,
       placeholder: t('Select types'),
     };
