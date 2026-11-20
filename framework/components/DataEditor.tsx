@@ -22,11 +22,13 @@ export function DataEditor(props: {
   isReadOnly?: boolean;
   className?: string;
   lineNumbers?: boolean;
+  /** Minimum editor height in pixels. By default the editor sizes itself from its line count. */
+  minHeight?: number;
   onFocus?: () => void;
   onBlur?: () => void;
 }) {
   const id = useID(props);
-  const { onFocus, onBlur, language, value, onChange, setError, isReadOnly } = props;
+  const { onFocus, onBlur, language, value, onChange, setError, isReadOnly, minHeight } = props;
 
   const [ready, setReady] = useState(false);
 
@@ -35,12 +37,21 @@ export function DataEditor(props: {
   const innerDivEl = useRef<HTMLDivElement>(null);
 
   // When content changes, we need to update the height of the outer div to match the content
-  const updateEditorHeight = useCallback((value: string) => {
-    if (!outerDivEl.current) return;
-    outerDivEl.current.style.minHeight = `${EditorLineHeight + EditorPadding}` + 'px';
-    const visibleLines = value.split('\n').length;
-    outerDivEl.current.style.height = `${visibleLines * EditorLineHeight + EditorPadding}` + 'px';
-  }, []);
+  const updateEditorHeight = useCallback(
+    (value: string) => {
+      if (!outerDivEl.current) return;
+      const baseMinHeight = EditorLineHeight + EditorPadding;
+      outerDivEl.current.style.minHeight = `${Math.max(baseMinHeight, minHeight ?? 0)}px`;
+      const visibleLines = value.split('\n').length;
+      outerDivEl.current.style.height = `${visibleLines * EditorLineHeight + EditorPadding}px`;
+    },
+    [minHeight]
+  );
+
+  // Apply sizing on mount and when minHeight changes, since an unchanged editor value never triggers it
+  useEffect(() => {
+    updateEditorHeight(value);
+  }, [updateEditorHeight, value]);
 
   // Create editor
   const editorRef = useRef<{ editor?: monaco.editor.IStandaloneCodeEditor }>({});
