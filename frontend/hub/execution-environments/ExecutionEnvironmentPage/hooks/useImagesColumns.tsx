@@ -22,12 +22,6 @@ export function useImagesColumns({
 }) {
   const { t } = useTranslation();
 
-  const instructions =
-    'podman pull ' +
-    getContainersURL({
-      name: id,
-    });
-
   const sumLayers = (layers: ImageLayer[]) => layers.reduce((acc, curr) => acc + curr.size, 0);
 
   return useMemo<ITableColumn<Image>[]>(
@@ -74,11 +68,20 @@ export function useImagesColumns({
                 <ShaLink id={id} digest={image.digest} />
               </>
             )}
-            <CopyCell minWidth={50} text={instructions} />
+            <CopyCell
+              minWidth={50}
+              text={
+                'podman pull ' +
+                getContainersURL({
+                  name: id,
+                  tag: image.tags[0],
+                })
+              }
+            />
           </DigestAndCopyCell>
         ),
       },
     ],
-    [id, instructions, t, disableLinks]
+    [id, t, disableLinks]
   );
 }
