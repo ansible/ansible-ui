@@ -130,7 +130,8 @@ variable2: value2`;
     test('should handle empty values', () => {
       expect(valueToObject(null)).toEqual({});
       expect(valueToObject(undefined)).toEqual({});
-      expect(valueToObject('')).toBeUndefined();
+      expect(valueToObject('')).toEqual({});
+      expect(valueToObject('', true)).toEqual([]);
     });
 
     test('should preserve YAML when inline comments are outside of quotes', () => {
