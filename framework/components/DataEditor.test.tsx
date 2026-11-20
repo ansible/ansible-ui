@@ -128,6 +128,26 @@ describe('DataEditor', () => {
     });
   });
 
+  it('enforces minHeight on the editor container even when the value is empty', () => {
+    const { container, rerender } = render(
+      <DataEditor name="payload" language="yaml" value="" onChange={onChange} setError={setError} />
+    );
+    const outer = container.firstElementChild as HTMLElement;
+    expect(outer.style.minHeight).toBe('33px');
+
+    rerender(
+      <DataEditor
+        name="payload"
+        language="yaml"
+        value=""
+        onChange={onChange}
+        setError={setError}
+        minHeight={300}
+      />
+    );
+    expect(outer.style.minHeight).toBe('300px');
+  });
+
   it('switches editor theme when page settings change', async () => {
     pageSettings.activeTheme = 'dark';
     const editorProps = {

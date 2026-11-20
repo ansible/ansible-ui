@@ -73,6 +73,9 @@ export type PageFormDataEditorInputProps<
 
   defaultValue?: string | object;
 
+  /** Minimum editor height in pixels. By default the editor sizes itself from its line count. */
+  minHeight?: number;
+
   enableUndo?: boolean;
   enableReset?: boolean;
 };
@@ -372,6 +375,7 @@ export function PageFormDataEditor<
                       }
                     }}
                     isReadOnly={props.isReadOnly || isSubmitting}
+                    minHeight={props.minHeight}
                     className={
                       props.isReadOnly
                         ? `pf-v6-c-form-control pf-m-disabled`
