@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "next_run": "2026-11-05T10:05:00+00:00",
+  "last_sync": "2026-11-05T09:05:23.766660Z",
+  "initial_collection_status": "completed",
+  "min_collection_timestamp": "2026-10-07T01:05:00Z",
+  "show_leaderboard": true,
+  "show_dashboard": true
+}
