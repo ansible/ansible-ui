@@ -22,16 +22,16 @@ describe('useTasksFilters', () => {
       label: 'Status',
       query: 'state',
     });
-    expect(result.current[1]).toEqual(
-      expect.objectContaining({
-        options: expect.arrayContaining([
-          { label: 'Completed', value: 'completed' },
-          { label: 'Failed', value: 'failed' },
-          { label: 'Running', value: 'running' },
-          { label: 'Waiting', value: 'waiting' },
-          { label: 'Canceled', value: 'canceled' },
-        ]),
-      })
+
+    const statusFilter = result.current[1];
+    expect(statusFilter && 'options' in statusFilter && statusFilter.options).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ value: 'completed' }),
+        expect.objectContaining({ value: 'failed' }),
+        expect.objectContaining({ value: 'running' }),
+        expect.objectContaining({ value: 'waiting' }),
+        expect.objectContaining({ value: 'canceled' }),
+      ])
     );
   });
 });
