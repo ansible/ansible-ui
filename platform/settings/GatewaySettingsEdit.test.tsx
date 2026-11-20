@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -531,11 +531,17 @@ describe('GatewaySettingsEdit Component', () => {
       renderWithContext(customLogoContext);
 
       const file = new File(['fake-image-bytes'], 'logo.png', { type: 'image/png' });
-      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-      expect(fileInput).toBeInTheDocument();
-
+      // Scope via the Custom Logo form group — PF FileUpload's hidden input is not htmlFor-linked.
+      const logoGroup = screen.getByTestId('custom-logo-form-group');
+      expect(within(logoGroup).getByText('Custom Logo')).toBeInTheDocument();
+      const fileInput = within(logoGroup)
+        .getByTestId('custom-logo')
+        .querySelector('input[type="file"]');
+      expect(fileInput).toBeInstanceOf(HTMLInputElement);
+      if (!(fileInput instanceof HTMLInputElement)) {
+        throw new Error('expected Custom Logo file input');
+      }
       await user.upload(fileInput, file);
-
       await user.click(screen.getByRole('button', { name: 'Save platform gateway settings' }));
 
       await waitFor(() => {

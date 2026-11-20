@@ -60,15 +60,10 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
         )
       : [];
 
-    // Convert uploaded logo File to a data URL string before JSON PUT
+    // Convert uploaded logo File to a data URL string before JSON PUT.
+    // Format checks happen via PageFormFileUpload validate (field-level error).
     if ('custom_logo' in submitValues && submitValues.custom_logo instanceof File) {
       const file = submitValues.custom_logo;
-      const ext = file.name.split('.').pop()?.toLowerCase();
-      if (!['gif', 'jpg', 'jpeg', 'png'].includes(ext || '')) {
-        throw new Error(
-          t('Invalid format for custom logo. Must be a GIF, PNG, or JPEG image.')
-        );
-      }
       submitValues.custom_logo = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result as string);
@@ -126,15 +121,37 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
 
               // Gateway OPTIONS exposes custom_logo as CharField (type: string), but the
               // value must be a data URL from an uploaded image — use the file upload control.
-              if (key === 'custom_logo') {
+              if (key === 'custom_logo' || option.type === 'field') {
+                const isCustomLogo = key === 'custom_logo';
                 return (
                   <PageFormFileUpload
                     key={key}
                     name={key}
-                    label={option.label || t('Custom logo')}
+                    label={option.label || (isCustomLogo ? t('Custom logo') : option.label)}
                     labelHelp={option.help_text}
                     isRequired={option.required}
                     isReadOnly={option.read_only}
+                    accept={
+                      isCustomLogo
+                        ? '.gif,.jpg,.jpeg,.png,image/gif,image/jpeg,image/png'
+                        : undefined
+                    }
+                    validate={
+                      isCustomLogo
+                        ? (value: File) => {
+                            if (!(value instanceof File)) {
+                              return undefined;
+                            }
+                            const ext = value.name.split('.').pop()?.toLowerCase();
+                            if (!['gif', 'jpg', 'jpeg', 'png'].includes(ext || '')) {
+                              return t(
+                                'Invalid format for custom logo. Must be a GIF, PNG, or JPEG image.'
+                              );
+                            }
+                            return undefined;
+                          }
+                        : undefined
+                    }
                   />
                 );
               }
@@ -219,17 +236,6 @@ export function GatewaySettingsEdit(props: Readonly<{ categoryId?: string }>) {
                       defaultValue={option.default}
                       enableUndo
                       enableReset
-                    />
-                  );
-                case 'field':
-                  return (
-                    <PageFormFileUpload
-                      key={key}
-                      name={key}
-                      label={option.label}
-                      labelHelp={option.help_text}
-                      isRequired={option.required}
-                      isReadOnly={option.read_only}
                     />
                   );
                 default:
