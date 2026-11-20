@@ -1,0 +1,6 @@
+# This legacy workflow stays visible on devel for manual runs against old
+# release branches, where its reusable Cypress workflow still exists.
+paths:
+  .github/workflows/run-e2e.yml:
+    ignore:
+      - 'could not read reusable workflow file'

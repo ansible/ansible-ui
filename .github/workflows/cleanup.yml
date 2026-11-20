@@ -19,7 +19,7 @@ jobs:
         run: |
           echo "GET Token"
           TOKEN_JSON=$(curl -ks -X POST "$PLATFORM_SERVER/api/gateway/v1/tokens/" \
-            --user $PLATFORM_USERNAME:$PLATFORM_PASSWORD)
+            --user "$PLATFORM_USERNAME:$PLATFORM_PASSWORD")
           TOKEN=$(echo "$TOKEN_JSON" | jq -r '.token')
           TOKEN_ID=$(echo "$TOKEN_JSON" | jq -r '.id')
 
@@ -76,7 +76,7 @@ jobs:
         run: |
           echo "GET Token"
           TOKEN_JSON=$(curl -ks -X POST "$PLATFORM_SERVER/api/controller/v2/tokens/" \
-            --user $PLATFORM_USERNAME:$PLATFORM_PASSWORD)
+            --user "$PLATFORM_USERNAME:$PLATFORM_PASSWORD")
           TOKEN=$(echo "$TOKEN_JSON" | jq -r '.token')
           TOKEN_ID=$(echo "$TOKEN_JSON" | jq -r '.id')
 

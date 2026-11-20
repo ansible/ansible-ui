@@ -35,7 +35,7 @@ jobs:
           BASE_DIR="${{ inputs.directory }}"
           matrix=$(find "$BASE_DIR" -type f \( -name '*.test.ts' -o -name '*.test.tsx' \) -exec dirname {} \; | sed "s|^$BASE_DIR/||" | awk -F'/' '{print $1}' | sort -u | jq -R . | jq -s -c .)
           echo "Matrix value: $matrix"
-          echo "MATRIX=$matrix" >> $GITHUB_OUTPUT
+          echo "MATRIX=$matrix" >> "$GITHUB_OUTPUT"
 
   vitest:
     name: ${{ matrix.subdirectory }}
