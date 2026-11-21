@@ -5,9 +5,6 @@ import { describe, expect, test, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { PageDetailCodeEditor } from './PageDetailCodeEditor';
 
-const writeToClipboard = vi.hoisted(() => vi.fn());
-
-// Mock dependencies
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
@@ -151,7 +148,7 @@ describe('PageDetailCodeEditor', () => {
     expect(displayed).toContain('"key"');
 
     await user.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
-    expect(writeToClipboard).toHaveBeenCalledWith(displayed);
+    expect(mockWriteToClipboard).toHaveBeenCalledWith(displayed);
   });
 
   test('copies the displayed YAML after switching to YAML', async () => {
@@ -169,7 +166,7 @@ describe('PageDetailCodeEditor', () => {
     expect(displayed).not.toContain('"key"');
 
     await user.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
-    expect(writeToClipboard).toHaveBeenCalledWith(displayed);
+    expect(mockWriteToClipboard).toHaveBeenCalledWith(displayed);
   });
 
   test('should toggle language from YAML to JSON', async () => {
