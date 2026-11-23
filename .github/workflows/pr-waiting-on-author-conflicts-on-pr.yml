@@ -1,0 +1,115 @@
+name: PR Waiting on Author (Conflicts on PR)
+
+on:
+  workflow_run:
+    workflows:
+      - PR Checks
+    types:
+      - completed
+
+permissions:
+  actions: read
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  check-single-pr:
+    name: Check PR for Conflicts
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request'
+    steps:
+      - name: Download PR number artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pr_number
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Extract PR number
+        id: pr
+        run: echo "number=$(head -n1 pr_number.txt | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Get PR author
+        id: author
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          echo "login=$AUTHOR" >> "$GITHUB_OUTPUT"
+          if [[ "$AUTHOR" == "dependabot[bot]" || "$AUTHOR" == "red-hat-konflux[bot]" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ensure labels exist
+        if: steps.author.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh label create "waiting-on-author" --repo "$REPO" --color "E4E669" --description "PR requires author attention" --force 2>/dev/null || true
+
+      - name: Wait for mergeable state
+        if: steps.author.outputs.skip != 'true'
+        id: mergeable
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          for i in 1 2 3 4 5; do
+            STATE=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json mergeable --jq '.mergeable')
+            if [ "$STATE" != "UNKNOWN" ]; then
+              echo "state=$STATE" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "state=UNKNOWN" >> "$GITHUB_OUTPUT"
+
+      - name: Handle conflicts
+        if: steps.author.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          AUTHOR: ${{ steps.author.outputs.login }}
+          STATE: ${{ steps.mergeable.outputs.state }}
+        run: |
+          EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+            --jq '.[] | select(.body | contains("<!-- waiting-on-author-conflicts -->")) | .id' | tail -1)
+
+          if [ "$STATE" = "CONFLICTING" ]; then
+            BODY="<!-- waiting-on-author-conflicts -->"$'\n'
+            BODY+="@${AUTHOR} — This PR has merge conflicts with the base branch. Please rebase or merge to resolve them."
+
+            if [ -n "$EXISTING_ID" ]; then
+              gh api "repos/$REPO/issues/comments/$EXISTING_ID" -X PATCH -f body="$BODY"
+            else
+              gh pr comment "$PR_NUMBER" --repo "$REPO" --body "$BODY"
+            fi
+
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "waiting-on-author"
+          else
+            if [ -n "$EXISTING_ID" ]; then
+              gh api "repos/$REPO/issues/comments/$EXISTING_ID" -X DELETE
+            fi
+
+            CHECKS=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+              --jq '[.[] | select(.body | contains("<!-- waiting-on-author-checks -->"))] | length')
+            SONAR=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" --paginate \
+              --jq '[.[] | select(.body | contains("<!-- waiting-on-author-sonar -->"))] | length')
+            E2E_PENDING=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
+              --jq '[.[] | select(.name == "e2e: pending")] | length')
+            E2E_FAILED=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" \
+              --jq '[.[] | select(.name == "e2e: failed")] | length')
+
+            if [ "$CHECKS" -eq 0 ] && [ "$SONAR" -eq 0 ] && [ "$E2E_PENDING" -eq 0 ] && [ "$E2E_FAILED" -eq 0 ]; then
+              gh api "repos/$REPO/issues/$PR_NUMBER/labels/waiting-on-author" -X DELETE 2>/dev/null || true
+            fi
+          fi

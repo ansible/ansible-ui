@@ -1,19 +1,94 @@
 name: PR Workspace Label
 
 on:
-  pull_request_target:
-    types: [opened, synchronize]
+  workflow_run:
+    workflows:
+      - PR Checks
+    types:
+      - completed
 
 permissions:
+  actions: read
   pull-requests: write
   contents: read
 
 jobs:
   label-workspace:
     name: Label PR Workspaces
-    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request'
     steps:
-      - uses: actions/labeler@v5
+      - name: Download PR number artifact
+        uses: actions/download-artifact@v4
         with:
-          sync-labels: true
+          name: pr_number
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Extract PR number
+        id: pr
+        run: echo "number=$(head -n1 pr_number.txt | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Skip dependabot
+        id: author
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          if [ "$AUTHOR" = "dependabot[bot]" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Sync workspace labels from changed paths
+        if: steps.author.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+
+          WORKSPACE_LABELS="controller hub eda framework platform playwright vitest"
+          MATCHED=""
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            case "$file" in
+              frontend/awx/*) MATCHED="$MATCHED controller" ;;
+            esac
+            case "$file" in
+              frontend/hub/*) MATCHED="$MATCHED hub" ;;
+            esac
+            case "$file" in
+              frontend/eda/*) MATCHED="$MATCHED eda" ;;
+            esac
+            case "$file" in
+              framework/*) MATCHED="$MATCHED framework" ;;
+            esac
+            case "$file" in
+              platform/*) MATCHED="$MATCHED platform" ;;
+            esac
+            case "$file" in
+              playwright/*) MATCHED="$MATCHED playwright" ;;
+            esac
+            case "$file" in
+              *".test.ts"|*".test.tsx") MATCHED="$MATCHED vitest" ;;
+            esac
+          done < <(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only)
+
+          for label in $WORKSPACE_LABELS; do
+            gh label create "$label" --repo "$REPO" --force 2>/dev/null || true
+          done
+
+          for label in $WORKSPACE_LABELS; do
+            if echo " $MATCHED " | grep -q " $label "; then
+              gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$label"
+            else
+              gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+            fi
+          done
