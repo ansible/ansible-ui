@@ -44,7 +44,6 @@ jobs:
       - name: Upload aap-ui jUnit test reports to the unified dashboard
         if: >-
           !cancelled()
-          && github.event_name == 'push'
           && env.UPSTREAM_REPOSITORY_ID == github.repository_id
           && github.ref_name == github.event.repository.default_branch
         uses: ansible/gh-action-record-test-results@58376e7785cbb37b4ca0c0638edf9db4e21fd0b6
