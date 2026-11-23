@@ -1,5 +1,8 @@
 name: Merge and upload jUnit component test results
 
+env:
+  UPSTREAM_REPOSITORY_ID: 546084283
+
 on:
   workflow_call:
     secrets:
@@ -38,15 +41,21 @@ jobs:
       - name: Merge component test results
         run: jrm junit-results/aapui-test-results.xml "junit-results/*.xml"
 
-      - name: Upload combined test result to platform readiness dashboard
-        working-directory: junit-results
-        run: >-
-          curl --fail-with-body -v --user "${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_USER }}:${{ secrets.PDE_ORG_RESULTS_UPLOAD_PASSWORD }}"
-          --form "xunit_xml=@aapui-test-results.xml"
-          --form "component_name=aap-ui"
-          --form "git_commit_sha=${{ github.sha }}"
-          --form "git_repository_url=https://github.com/${{ github.repository }}"
-          "${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_URL }}/api/results/upload/"
+      - name: Upload aap-ui jUnit test reports to the unified dashboard
+        if: >-
+          !cancelled()
+          && github.event_name == 'push'
+          && env.UPSTREAM_REPOSITORY_ID == github.repository_id
+          && github.ref_name == github.event.repository.default_branch
+        uses: ansible/gh-action-record-test-results@58376e7785cbb37b4ca0c0638edf9db4e21fd0b6
+        with:
+          aggregation-server-url: ${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_URL }}
+          http-auth-password: >-
+            ${{ secrets.PDE_ORG_RESULTS_UPLOAD_PASSWORD }}
+          http-auth-username: >-
+            ${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_USER }}
+          project-component-name: aap-ui
+          test-result-files: junit-results/aapui-test-results.xml
 
       - name: Cleanup test result files
         run: rm -rf ./junit-results/
