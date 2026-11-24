@@ -39,3 +39,15 @@ jobs:
           else
             echo "Risk level: LOW"
           fi
+
+      - name: Save PR number for automation workflows
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
+        run: echo "PR ${{ github.event.pull_request.number }}" > pr_number.txt
+
+      - name: Upload PR number
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr_number
+          path: pr_number.txt
+          retention-days: 1

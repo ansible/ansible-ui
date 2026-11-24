@@ -8,6 +8,7 @@ on:
       - completed
 
 permissions:
+  actions: read
   pull-requests: write
   issues: write
   contents: read
@@ -18,12 +19,27 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.event == 'pull_request'
     steps:
+      - name: Download PR number artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: pr_number
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
       - name: Extract PR number
         id: pr
         env:
           PULL_REQUESTS: ${{ toJson(github.event.workflow_run.pull_requests) }}
         run: |
-          PR_NUMBER=$(echo "$PULL_REQUESTS" | jq '.[0].number // empty')
+          PR_NUMBER=""
+          if [ -f pr_number.txt ]; then
+            PR_NUMBER=$(head -n1 pr_number.txt | awk '{print $2}')
+          fi
+          if [ -z "$PR_NUMBER" ]; then
+            PR_NUMBER=$(echo "$PULL_REQUESTS" | jq '.[0].number // empty')
+          fi
           if [ -z "$PR_NUMBER" ]; then
             echo "::error::No pull request associated with workflow run."
             exit 1
@@ -130,12 +146,27 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.event == 'pull_request'
     steps:
+      - name: Download PR number artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: pr_number
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
       - name: Extract PR number
         id: pr
         env:
           PULL_REQUESTS: ${{ toJson(github.event.workflow_run.pull_requests) }}
         run: |
-          PR_NUMBER=$(echo "$PULL_REQUESTS" | jq '.[0].number // empty')
+          PR_NUMBER=""
+          if [ -f pr_number.txt ]; then
+            PR_NUMBER=$(head -n1 pr_number.txt | awk '{print $2}')
+          fi
+          if [ -z "$PR_NUMBER" ]; then
+            PR_NUMBER=$(echo "$PULL_REQUESTS" | jq '.[0].number // empty')
+          fi
           if [ -z "$PR_NUMBER" ]; then
             echo "::error::No pull request associated with workflow run."
             exit 1

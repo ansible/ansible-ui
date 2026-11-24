@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.event == 'pull_request'
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/labeler.yml
+          sparse-checkout-cone-mode: false
+
       - name: Download PR number artifact
         uses: actions/download-artifact@v4
         with:
@@ -53,39 +58,62 @@ jobs:
         run: |
           set -euo pipefail
 
-          WORKSPACE_LABELS="controller hub eda framework platform playwright vitest"
-          MATCHED=""
+          path_matches_glob() {
+            local file="$1" glob="$2"
+            if [[ "$glob" == **/* ]]; then
+              local suffix="${glob#**/}"
+              [[ "$file" == *"$suffix" ]] && return 0
+              return 1
+            fi
+            if [[ "$glob" == */** ]]; then
+              local prefix="${glob%/**}"
+              [[ "$file" == "$prefix"/* ]] || [[ "$file" == "$prefix" ]] && return 0
+              return 1
+            fi
+            case "$file" in
+              $glob) return 0 ;;
+            esac
+            return 1
+          }
 
+          declare -a WORKSPACE_LABELS=()
+          declare -A LABEL_GLOBS=()
+          current_label=""
+
+          while IFS= read -r line; do
+            if [[ "$line" =~ ^([a-zA-Z0-9_-]+):[[:space:]]*$ ]]; then
+              current_label="${BASH_REMATCH[1]}"
+              WORKSPACE_LABELS+=("$current_label")
+            elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]\'(.+)\'[[:space:]]*$ ]] && [[ -n "$current_label" ]]; then
+              glob="${BASH_REMATCH[1]}"
+              if [ -n "${LABEL_GLOBS[$current_label]+x}" ]; then
+                LABEL_GLOBS[$current_label]="${LABEL_GLOBS[$current_label]}|$glob"
+              else
+                LABEL_GLOBS[$current_label]="$glob"
+              fi
+            fi
+          done < .github/labeler.yml
+
+          MATCHED=""
           while IFS= read -r file; do
             [ -z "$file" ] && continue
-            case "$file" in
-              frontend/awx/*) MATCHED="$MATCHED controller" ;;
-            esac
-            case "$file" in
-              frontend/hub/*) MATCHED="$MATCHED hub" ;;
-            esac
-            case "$file" in
-              frontend/eda/*) MATCHED="$MATCHED eda" ;;
-            esac
-            case "$file" in
-              framework/*) MATCHED="$MATCHED framework" ;;
-            esac
-            case "$file" in
-              platform/*) MATCHED="$MATCHED platform" ;;
-            esac
-            case "$file" in
-              playwright/*) MATCHED="$MATCHED playwright" ;;
-            esac
-            case "$file" in
-              *".test.ts"|*".test.tsx") MATCHED="$MATCHED vitest" ;;
-            esac
+            for label in "${WORKSPACE_LABELS[@]}"; do
+              IFS='|' read -ra globs <<< "${LABEL_GLOBS[$label]}"
+              for glob in "${globs[@]}"; do
+                [ -z "$glob" ] && continue
+                if path_matches_glob "$file" "$glob"; then
+                  MATCHED="$MATCHED $label"
+                  break
+                fi
+              done
+            done
           done < <(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only)
 
-          for label in $WORKSPACE_LABELS; do
+          for label in "${WORKSPACE_LABELS[@]}"; do
             gh label create "$label" --repo "$REPO" --force 2>/dev/null || true
           done
 
-          for label in $WORKSPACE_LABELS; do
+          for label in "${WORKSPACE_LABELS[@]}"; do
             if echo " $MATCHED " | grep -q " $label "; then
               gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$label"
             else
