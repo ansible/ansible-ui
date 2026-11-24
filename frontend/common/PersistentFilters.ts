@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 const PERSISTENT_FILTER_KEY = 'persistent-filter';
 
@@ -8,21 +8,14 @@ interface IFilter {
 }
 
 export function usePersistentFilters(pageKey: string) {
-  const [search, setSearch] = useState(window.location.search);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (window.location.search !== search) {
-      setSearch(window.location.search);
-    }
-  });
-
+  const search = window.location.search;
   useEffect(() => {
     const filter = {
       pageKey,
-      qs: window.location.search,
+      qs: search,
     };
     sessionStorage.setItem(PERSISTENT_FILTER_KEY, JSON.stringify(filter));
-  }, [search, pageKey]);
+  }, [pageKey, search]);
 }
 
 export function getPersistentFilters(key?: string) {

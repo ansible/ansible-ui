@@ -145,21 +145,33 @@ describe('PageTitle', () => {
         },
       ];
 
-      function TestComponent() {
-        usePageTitle('My Custom Inventory');
+      function TestComponent(props: { title: string }) {
+        usePageTitle(props.title);
         return <div>Content</div>;
       }
 
-      render(
+      const { rerender } = render(
         <MemoryRouter initialEntries={['/inventories/123']}>
           <PageTitleProvider navigation={navigation}>
-            <TestComponent />
+            <TestComponent title="My Custom Inventory" />
           </PageTitleProvider>
         </MemoryRouter>
       );
 
       await waitFor(() => {
         expect(document.title).toBe('My Custom Inventory - Inventories | Ansible');
+      });
+
+      rerender(
+        <MemoryRouter initialEntries={['/inventories/123']}>
+          <PageTitleProvider navigation={navigation}>
+            <TestComponent title="Updated Inventory" />
+          </PageTitleProvider>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(document.title).toBe('Updated Inventory - Inventories | Ansible');
       });
     });
 

@@ -76,8 +76,7 @@ describe('useExportCsv', () => {
       await result.current('summary');
     });
 
-    expect(fetchSpy).toHaveBeenCalledOnce();
-    expect(fetchSpy).toHaveBeenCalledWith(
+    expect(fetchSpy).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining('dashboard_reports/report/export/'),
       expect.anything()
     );
