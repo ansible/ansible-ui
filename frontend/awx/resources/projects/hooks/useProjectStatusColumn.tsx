@@ -56,6 +56,7 @@ export function useProjectStatusColumn(options?: {
     () => ({
       header: t('Status'),
       cell: (item) => {
+<<<<<<< HEAD
         const { tooltipContent, statusCellProps } = buildProjectStatusCellProps(
           item,
           getPageUrl,
@@ -68,6 +69,26 @@ export function useProjectStatusColumn(options?: {
           <Tooltip content={tooltipContent} position="top">
             <StatusCell {...statusCellProps} />
           </Tooltip>
+=======
+        const jobId = item.summary_fields?.current_job?.id ?? item.summary_fields?.last_job?.id;
+        return jobId ? (
+          <Tooltip content={options?.tooltip ?? ''} position="top">
+            <StatusCell
+              status={item.status}
+              to={getPageUrl(AwxRoute.JobOutput, {
+                params: {
+                  job_type: item.type,
+                  id: jobId,
+                },
+              })}
+              disableLinks={options?.disableLinks}
+            />
+          </Tooltip>
+        ) : (
+          <Tooltip content={options?.tooltipAlt ?? ''} position="top">
+            <StatusCell status={item.status} />
+          </Tooltip>
+>>>>>>> 421aa6b95 (fix: project status link missing and inventory source last job status link malformed)
         );
       },
       sort: options?.disableSort ? undefined : 'status',
