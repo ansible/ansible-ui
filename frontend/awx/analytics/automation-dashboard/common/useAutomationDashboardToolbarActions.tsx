@@ -16,6 +16,7 @@ import { useCreateToolbarFilterSet } from './useCreateToolbarFilterSet';
 import { useRemoveToolbarFilterSet } from './useRemoveToolbarFilterSet';
 import { useUpdateToolbarFilterSet } from './useUpdateToolbarFilterSet';
 import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
+import { getSelectionFilterKeys, normalizeSelectionState } from '../utils/filterSelection';
 import { hasValidRequiredFilters } from '../utils/queryString';
 
 /**
@@ -73,14 +74,15 @@ export function useAutomationDashboardToolbarActions(props: {
 }) {
   const { t } = useTranslation();
   const { activeAwxUser } = useAwxActiveUser();
-  const {
-    filterState,
-    toolbarFilters,
-    isStartDateIncomplete,
-    selectedFilterSet,
-    onDelete,
-    onSave,
-  } = props;
+  const { toolbarFilters, isStartDateIncomplete, selectedFilterSet, onDelete, onSave } = props;
+  // Values that select nothing (e.g. an exclusion without a selection, the mark of an earlier
+  // version) are neither saved nor counted as modified filters.
+  const filterState = useMemo(
+    () =>
+      props.filterState &&
+      normalizeSelectionState(props.filterState, getSelectionFilterKeys(toolbarFilters)),
+    [props.filterState, toolbarFilters]
+  );
   const createToolbarFilterSet = useCreateToolbarFilterSet(onSave);
   const updateToolbarFilterSet = useUpdateToolbarFilterSet(onSave);
   const removeToolbarFilterSet = useRemoveToolbarFilterSet((deleted) => {

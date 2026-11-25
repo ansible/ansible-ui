@@ -32,6 +32,9 @@ automation-dashboard/
 │   ├── useAutomationDashboardBaseView.ts
 │   ├── useAutomationDashboardCollectionStatus.tsx  # Collection status + canSeeDashboard/Leaderboard
 │   ├── useAutomationDashboardToolbarFilters.tsx
+│   ├── useAutomationDashboardAsyncOptions.ts  # Paged option loading for the async multi-select filter
+│   ├── useAutomationDashboardProgressiveOptions.ts  # Renders the select's options in batches of 200
+│   ├── useKeepFocusWhileDisabled.ts  # Keeps the focus of a control while it is disabled
 │   ├── useAutomationDashboardToolbarActions.tsx
 │   ├── useCreateToolbarFilterSet.tsx / useUpdateToolbarFilterSet.tsx / useRemoveToolbarFilterSet.tsx
 │   ├── useCreateEditToolbarFilterSetDialog.tsx
@@ -42,7 +45,13 @@ automation-dashboard/
 │   ├── Toolbar.tsx                  # useAutomationDashboardPeriodFilter + useAutomationDashboardToolbar hooks
 │   ├── DashboardToolbar.tsx         # Filter toolbar + "Select report" filter-set control
 │   ├── DashboardToolbarFilters.tsx  # Dashboard version of PageToolbarFilters (filters + period + chips)
+│   ├── DashboardToolbarFilterLabels.tsx  # Filter chips (PF ToolbarFilter chips with named close buttons)
 │   ├── AutomationDashboardPeriodFilter.tsx  # Period presets / Custom from–to control
+│   ├── AutomationDashboardAsyncMultiSelectFilter.tsx  # Async multi-select for template / label / organization / project (based on PageAsyncMultiSelect)
+│   ├── AutomationDashboardMultiSelect.tsx  # Multi-select with bulk selection (based on PageMultiSelect)
+│   ├── AutomationDashboardBulkSelect.tsx  # Bulk checkbox: select / deselect all (matching the search)
+│   ├── selectionChips.tsx           # Filter chips of a selection ("All", "Matching …", "Except …")
+│   ├── selectionText.ts             # Toggle summary of a selection ("All selected", "All except N", …)
 │   ├── DashboardLayout.tsx          # Scrollable grid wrapper + DashboardGridRow
 │   ├── DashboardValueCard.tsx       # KPI card
 │   ├── DashboardDetailsCard.tsx     # KPI card rendered as a PageDetail
@@ -71,8 +80,13 @@ automation-dashboard/
 ├── types/
 │   └── index.ts                     # Dashboard data models and prop types
 ├── utils/
-│   ├── queryString.ts               # Filter <-> query-string helpers
-│   ├── filterStateUpdates.ts        # Pure filter-state updates (custom period values, chip removal)
+│   ├── queryString.ts               # Period params and required-filter validation
+│   ├── filterSelection.ts           # Filter selection model (select all / search / exclusions)
+│   ├── selectionParts.ts            # The parts of a selection shown as chips, and removing one
+│   ├── selectionSummary.ts          # What the toggle tells about a selection (all, all except N, …)
+│   ├── reportQuery.ts               # JSON body and page query string of the report POST queries
+│   ├── filterStateUpdates.ts        # Custom period values
+│   ├── requestTooLarge.ts           # Detects requests the API rejects as too large (413 / 414 / 431)
 │   └── persistedFilterState.ts      # Per-user sessionStorage persistence of toolbar state
 └── views/                           # Data / state hooks
     ├── useAutomationDashboardView.tsx      # Dashboard tab: central data + export hook
@@ -291,6 +305,39 @@ The filters are rendered by `DashboardToolbarFilters` — a dashboard version of
   (PatternFly `pf-v6-u-w-100-on-md` / `pf-v6-u-w-auto-on-lg` utilities). All breakpoint switching
   uses PatternFly CSS, no JS breakpoint logic.
 
+### Filter selection
+
+The resource filters describe their selection instead of listing every selected ID
+(`utils/filterSelection.ts`), the way the report API takes it:
+
+```
+(every item if select_all  ∪  ids  ∪  matches(search))  \  (excluded  ∪  matches(excluded_search))
+```
+
+- **Select all** without a search sets `select_all_<field>`: no filter on the field, so it also
+  counts the historical runs of deleted items and shows the same totals as no filter. The options
+  are not loaded.
+- **Select all matching** adds the search term to `search_<field>`; **Deselect all matching** removes
+  it, or adds it to `excluded_search_<field>` when other parts still select its matches.
+- Deselecting an option that "select all" or a search selects adds it to `excluded_<field>`.
+- The exclusions apply last, also to explicit IDs. Selecting an option (or the matches of a search)
+  that an excluded search term still excludes is the only change that loads options: the term is
+  replaced by the IDs it excludes. The select shows a spinner meanwhile; a selection change or a
+  filter reset cancels it.
+- The search terms match like the filter options (a case-insensitive "contains" of the name) and
+  are resolved by the backend on every request, so a shared link also covers items created later.
+- The filter state keys are the API parameter names (`template`, `select_all_template`,
+  `search_template`, `excluded_template`, `excluded_search_template`; search terms URI-encoded),
+  so the page URL, the session and saved reports hold the selection the way it is sent, and links
+  stay short.
+- The toggle summarizes the selection ("All selected", "All except N", "All matching",
+  "N selected", …) and the chips show its parts; closing a chip removes that part.
+
+The report, details and CSV export are read with the POST query endpoints
+(`report/query/`, `report/details/query/`, `report/export/query/`): the filters go in a JSON body
+(`utils/reportQuery.ts`), the page, its size and the ordering stay in the query string. The SWR key
+is the url and the serialized body.
+
 The period is not part of `useAutomationDashboardToolbar()`. `AutomationDashboard` combines it with
 the other filters (`[period, ...filters]`) for the query string, required-filter validation,
 export and URL deep links. It passes the period to `DashboardToolbar` as `periodFilter` (for
@@ -326,6 +373,12 @@ Streak-cell and badge colors that PatternFly does not tokenize live in `Automati
 The central view hook consumed by the Dashboard tab. Composes the sub-hooks and returns
 `IAutomationDashboardView`. Also seeds and persists the toolbar filter state per user (see
 **Session persistence** below).
+
+A request the API rejects as too large (413, 431 or 414; with the POST query endpoints only a huge
+selection of explicit values can be) sets `filtersTooLarge`, and an alert below
+the filters asks the user to narrow them. When the request has data from a previous request, that
+data stays and the error state is hidden. Without it (e.g. the first request), the error state is
+shown.
 
 ### `useAutomationLeaderboardsView`
 

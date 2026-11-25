@@ -1,10 +1,15 @@
 import { IToolbarFilter, QueryParams, useView, IView } from '@ansible/ansible-ui-framework';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useFetcher } from '@ansible/common-ui/crud/Data';
 import useSWR from 'swr';
 import { AwxItemsResponse } from '../../../common/AwxItemsResponse';
 import { RequestError } from '../../../../common/crud/RequestError';
-import { getQueryString, hasValidRequiredFilters } from '../utils/queryString';
+import { hasValidRequiredFilters } from '../utils/queryString';
+import {
+  getReportPageQueryString,
+  getReportQueryBody,
+  postReportQuery,
+} from '../utils/reportQuery';
+import { isRequestTooLargeError, shouldRetryUnlessTooLarge } from '../utils/requestTooLarge';
 
 export type IAutomationDashboardBaseView<T extends { id: number }> = IView & {
   itemCount: number | undefined;
@@ -16,7 +21,10 @@ export type IAutomationDashboardBaseView<T extends { id: number }> = IView & {
 };
 
 export function useAutomationDashboardBaseView<T extends { id: number }>(options: {
-  /** The base url for the view. */
+  /**
+   * The url of the POST query endpoint for the view: the filters are sent in the JSON body, the
+   * page, its size and the ordering in the query string.
+   */
   url: string;
 
   /** The filters for the view. Used to manage the keys used in the browser querystrings which store the filter results. */
@@ -45,20 +53,24 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
     return hasValidRequiredFilters(toolbarFilters, view.filterState);
   }, [toolbarFilters, view.filterState]);
 
-  const queryString = getQueryString(view, toolbarFilters || [], queryParams || {});
+  const pageQueryString = getReportPageQueryString(view);
+  // A string, so the SWR key changes only when the filters do.
+  const body = useMemo(
+    () => JSON.stringify(getReportQueryBody(toolbarFilters ?? [], view.filterState, queryParams)),
+    [toolbarFilters, view.filterState, queryParams]
+  );
 
-  // Only add queryString if all required filters are valid
-  // If not valid, set url to null to prevent SWR from fetching
-  const fetchUrl = filtersValid ? url + queryString : null;
-
-  const fetcher = useFetcher();
-  const response = useSWR<AwxItemsResponse<T>>(fetchUrl, fetcher, { keepPreviousData: true });
+  // Without valid required filters there is no key, so SWR does not fetch.
+  const key = filtersValid ? [url + pageQueryString, body] : null;
+  const response = useSWR<AwxItemsResponse<T>, Error>(key, postReportQuery<AwxItemsResponse<T>>, {
+    keepPreviousData: true,
+    shouldRetryOnError: shouldRetryUnlessTooLarge,
+  });
   const { data, mutate } = response;
   const refresh = useCallback(async () => {
     await mutate().finally(() => {});
   }, [mutate]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let error: Error | undefined = response.error;
   if (error instanceof RequestError) {
     if ((error.statusCode === 404 || error.statusCode === 400) && view.page > 1) {
@@ -71,10 +83,19 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
     itemCountRef.current.itemCount = data?.count;
   }
 
+  // The page, size and sort the items were loaded for. After a request rejected as too large,
+  // the items of another page or sort are not shown as this one's: the items of the previous
+  // filters are shown only on the same page. Other errors keep the items as before.
+  const viewKey = `${view.page}:${view.perPage}:${view.sort}:${view.sortDirection}`;
+  const viewKeyRef = useRef(viewKey);
+  viewKeyRef.current = viewKey;
   const [items, setItems] = useState<T[] | undefined>(undefined);
+  const [itemsViewKey, setItemsViewKey] = useState<string>();
   useEffect(() => {
     setItems(data?.results);
+    setItemsViewKey(viewKeyRef.current);
   }, [data?.results]);
+  const pageItems = isRequestTooLargeError(error) && itemsViewKey !== viewKey ? undefined : items;
 
   // Functional update, so several items can be updated one after another in the same render.
   const updateItem = useCallback((item: T) => {
@@ -92,10 +113,10 @@ export function useAutomationDashboardBaseView<T extends { id: number }>(options
       ...view,
       refresh,
       itemCount: itemCountRef.current.itemCount,
-      pageItems: items,
+      pageItems,
       limitFiltersToOneOrOperation: true,
       updateItem,
       error,
     };
-  }, [error, items, refresh, updateItem, view]);
+  }, [error, pageItems, refresh, updateItem, view]);
 }

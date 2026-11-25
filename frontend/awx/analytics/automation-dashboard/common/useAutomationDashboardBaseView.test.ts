@@ -1,9 +1,12 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { createElement, ReactNode } from 'react';
+import { SWRConfig } from 'swr';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import {
   IToolbarDateRangeFilter,
+  IToolbarFilter,
   IToolbarSingleSelectFilter,
   ToolbarFilterType,
 } from '@ansible/ansible-ui-framework';
@@ -30,9 +33,29 @@ const mockResponse: AwxItemsResponse<TestItem> = {
   results: mockItems,
 };
 
+/**
+ * SWR retrying as in the app (the test setup turns retries off), with its own cache and a short
+ * retry interval so retries happen within a test (a retry within the deduping interval would
+ * reuse the failed request).
+ */
+function FastRetrySWRConfig(props: { children: ReactNode }) {
+  return createElement(
+    SWRConfig,
+    {
+      value: {
+        provider: () => new Map(),
+        errorRetryInterval: 10,
+        dedupingInterval: 0,
+        shouldRetryOnError: true,
+      },
+    },
+    props.children
+  );
+}
+
 // ─── MSW Server ───────────────────────────────────────────────────────────────
 
-const server = setupServer(http.get(metricsAPI`/test/`, () => HttpResponse.json(mockResponse)));
+const server = setupServer(http.post(metricsAPI`/test/`, () => HttpResponse.json(mockResponse)));
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
 afterEach(() => server.resetHandlers());
@@ -229,7 +252,7 @@ describe('useAutomationDashboardBaseView', () => {
   test('should refresh data when refresh is called', async () => {
     let callCount = 0;
     server.use(
-      http.get(metricsAPI`/test/`, () => {
+      http.post(metricsAPI`/test/`, () => {
         callCount++;
         return HttpResponse.json({
           count: 1,
@@ -256,7 +279,7 @@ describe('useAutomationDashboardBaseView', () => {
   // --- Error handling ---
 
   test('should handle 404 error and reset to page 1', async () => {
-    server.use(http.get(metricsAPI`/test/`, () => HttpResponse.json({}, { status: 404 })));
+    server.use(http.post(metricsAPI`/test/`, () => HttpResponse.json({}, { status: 404 })));
 
     const { result } = renderHook(() =>
       useAutomationDashboardBaseView<TestItem>({
@@ -270,7 +293,7 @@ describe('useAutomationDashboardBaseView', () => {
   });
 
   test('should handle 400 error and reset to page 1', async () => {
-    server.use(http.get(metricsAPI`/test/`, () => HttpResponse.json({}, { status: 400 })));
+    server.use(http.post(metricsAPI`/test/`, () => HttpResponse.json({}, { status: 400 })));
 
     const { result } = renderHook(() =>
       useAutomationDashboardBaseView<TestItem>({
@@ -285,7 +308,7 @@ describe('useAutomationDashboardBaseView', () => {
 
   test('should reset page to 1 and clear the error when a 404 occurs while on a page greater than 1', async () => {
     server.use(
-      http.get(metricsAPI`/test/`, ({ request }) => {
+      http.post(metricsAPI`/test/`, ({ request }) => {
         const page = new URL(request.url).searchParams.get('page');
         if (page === '2') return HttpResponse.json({}, { status: 404 });
         return HttpResponse.json(mockResponse);
@@ -309,7 +332,7 @@ describe('useAutomationDashboardBaseView', () => {
 
   test('should reset page to 1 and clear the error when a 400 occurs while on a page greater than 1', async () => {
     server.use(
-      http.get(metricsAPI`/test/`, ({ request }) => {
+      http.post(metricsAPI`/test/`, ({ request }) => {
         const page = new URL(request.url).searchParams.get('page');
         if (page === '2') return HttpResponse.json({}, { status: 400 });
         return HttpResponse.json(mockResponse);
@@ -333,7 +356,7 @@ describe('useAutomationDashboardBaseView', () => {
 
   test('should keep the error and stay on the same page when a 500 occurs on a page greater than 1', async () => {
     server.use(
-      http.get(metricsAPI`/test/`, ({ request }) => {
+      http.post(metricsAPI`/test/`, ({ request }) => {
         const page = new URL(request.url).searchParams.get('page');
         if (page === '2') return HttpResponse.json({}, { status: 500 });
         return HttpResponse.json(mockResponse);
@@ -351,6 +374,8 @@ describe('useAutomationDashboardBaseView', () => {
 
     await waitFor(() => expect(result.current.error).toBeDefined());
     expect(result.current.page).toBe(2);
+    // Only a request rejected as too large drops the items of another page.
+    expect(result.current.pageItems).toEqual(mockItems);
   });
 
   // --- updateItem functionality ---
@@ -415,11 +440,14 @@ describe('useAutomationDashboardBaseView', () => {
 
   // --- Query parameters ---
 
-  test('should include query parameters in the request', async () => {
+  test('should post the filters in the body and the page and ordering in the URL', async () => {
+    window.history.replaceState(null, '', '/');
     let capturedUrl = '';
+    let capturedBody: unknown;
     server.use(
-      http.get(metricsAPI`/test/`, ({ request }) => {
+      http.post(metricsAPI`/test/`, async ({ request }) => {
         capturedUrl = request.url;
+        capturedBody = await request.json();
         return HttpResponse.json(mockResponse);
       })
     );
@@ -427,14 +455,126 @@ describe('useAutomationDashboardBaseView', () => {
     const { result } = renderHook(() =>
       useAutomationDashboardBaseView<TestItem>({
         url: metricsAPI`/test/`,
-        queryParams: { tz: 'UTC', custom: 'value' },
+        toolbarFilters: [templateFilter],
+        queryParams: { tz: 'UTC' },
+        defaultFilters: { select_all_template: ['true'], excluded_template: ['2'] },
       })
     );
 
     await waitFor(() => expect(result.current.pageItems).toBeDefined());
 
-    expect(capturedUrl).toContain('tz=UTC');
-    expect(capturedUrl).toContain('custom=value');
+    expect(capturedBody).toEqual({ tz: 'UTC', select_all_template: true, excluded_template: [2] });
+    const params = new URL(capturedUrl).searchParams;
+    expect(Object.fromEntries(params)).toEqual({
+      order_by: 'template_name',
+      page: '1',
+      page_size: '10',
+    });
+  });
+
+  test('should request again when the filters change', async () => {
+    window.history.replaceState(null, '', '/');
+    const bodies: unknown[] = [];
+    server.use(
+      http.post(metricsAPI`/test/`, async ({ request }) => {
+        bodies.push(await request.json());
+        return HttpResponse.json(mockResponse);
+      })
+    );
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        toolbarFilters: [templateFilter],
+      })
+    );
+    await waitFor(() => expect(bodies).toHaveLength(1));
+
+    act(() => result.current.setFilterState({ search_template: ['deploy'] }));
+
+    await waitFor(() => expect(bodies).toEqual([{}, { search_template: ['deploy'] }]));
+  });
+
+  // --- Requests rejected as too large ---
+
+  const templateFilter: IToolbarFilter = {
+    type: ToolbarFilterType.AsyncMultiSelect,
+    key: 'template',
+    label: 'Template',
+    query: 'template',
+    placeholder: 'Filter by template',
+    queryOptions: () => Promise.resolve({ options: [], remaining: 0, next: 0 }),
+    queryLabel: (value: string) => value,
+  };
+
+  test('should keep the items of the previous request when a request is rejected as too large', async () => {
+    window.history.replaceState(null, '', '/');
+    server.use(
+      http.post(metricsAPI`/test/`, async ({ request }) =>
+        'template' in ((await request.json()) as object)
+          ? HttpResponse.json({}, { status: 413 })
+          : HttpResponse.json(mockResponse)
+      )
+    );
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        toolbarFilters: [templateFilter],
+      })
+    );
+    await waitFor(() => expect(result.current.pageItems).toEqual(mockItems));
+
+    act(() => result.current.setFilterState({ template: ['1'] }));
+
+    await waitFor(() => expect(result.current.error).toMatchObject({ statusCode: 413 }));
+    expect(result.current.pageItems).toEqual(mockItems);
+    expect(result.current.itemCount).toBe(mockResponse.count);
+  });
+
+  test('should not show the items of another page when a request is rejected as too large', async () => {
+    window.history.replaceState(null, '', '/');
+    server.use(
+      http.post(metricsAPI`/test/`, async ({ request }) =>
+        'template' in ((await request.json()) as object)
+          ? HttpResponse.json({}, { status: 413 })
+          : HttpResponse.json(mockResponse)
+      )
+    );
+    const { result } = renderHook(() =>
+      useAutomationDashboardBaseView<TestItem>({
+        url: metricsAPI`/test/`,
+        toolbarFilters: [templateFilter],
+      })
+    );
+    await waitFor(() => expect(result.current.pageItems).toEqual(mockItems));
+    act(() => result.current.setFilterState({ template: ['1'] }));
+    await waitFor(() => expect(result.current.error).toMatchObject({ statusCode: 413 }));
+
+    // The items are of page 1: page 2 is rejected too and has no items to show.
+    act(() => result.current.setPage(2));
+
+    await waitFor(() => expect(result.current.pageItems).toBeUndefined());
+    expect(result.current.error).toMatchObject({ statusCode: 413 });
+  });
+
+  test('should not retry a request rejected as too large', async () => {
+    window.history.replaceState(null, '', '/');
+    let requestCount = 0;
+    server.use(
+      http.post(metricsAPI`/test/`, () => {
+        requestCount += 1;
+        return HttpResponse.json({}, { status: 413 });
+      })
+    );
+    const { result } = renderHook(
+      () => useAutomationDashboardBaseView<TestItem>({ url: metricsAPI`/test/` }),
+      { wrapper: FastRetrySWRConfig }
+    );
+    await waitFor(() => expect(result.current.error).toMatchObject({ statusCode: 413 }));
+
+    // Longer than several retries would take with the fast retry interval.
+    await act(() => new Promise((resolve) => setTimeout(resolve, 300)));
+
+    expect(requestCount).toBe(1);
   });
 
   // --- View state management ---
@@ -461,7 +601,7 @@ describe('useAutomationDashboardBaseView', () => {
   test('should persist item count after data is undefined', async () => {
     let shouldReturnData = true;
     server.use(
-      http.get(metricsAPI`/test/`, () => {
+      http.post(metricsAPI`/test/`, () => {
         if (shouldReturnData) {
           return HttpResponse.json(mockResponse);
         }

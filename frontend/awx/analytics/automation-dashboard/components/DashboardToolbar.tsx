@@ -25,6 +25,7 @@ import { useFilterSetView } from '../views/useFilterSetView';
 import { isFilterStateShape } from '../utils/persistedFilterState';
 import { DashboardReportActionsDropdown } from './DashboardReportActionsDropdown';
 import { DashboardToolbarFilters } from './DashboardToolbarFilters';
+import { AutomationDashboardAsyncFilter } from '../common/useAutomationDashboardAsyncOptions';
 
 const DEFAULT_FILTER_STATE: IFilterState = {
   period: [AutomationDashboardDateRangeFilterPresets.last_7_days],
@@ -52,8 +53,17 @@ function parseFilterState(raw: string): IFilterState {
 
 export function DashboardToolbar(
   props: Readonly<
-    PageToolbarProps<IJobTemplate> & {
+    Omit<PageToolbarProps<IJobTemplate>, 'toolbarFilters'> & {
+      /** The filters of the filter group (the period filter is passed separately). */
+      toolbarFilters?: AutomationDashboardAsyncFilter[];
       registerClearCallback?: (callback: () => void) => void;
+      /**
+       * Replaces the filter state as a whole (a saved report) and changes `filterResetCount`, so
+       * running bulk actions of the filters are cancelled. Defaults to `setFilterState`.
+       */
+      replaceFilterState?: (filterState: IFilterState) => void;
+      /** Changes with every replacement of the filter state, including "Clear all filters". */
+      filterResetCount?: number;
       /** The period filter, rendered by the dashboard-local period control. */
       periodFilter?: IToolbarDateRangeFilter;
       /**
@@ -82,10 +92,13 @@ export function DashboardToolbar(
     filterState,
     registerClearCallback,
     clearAllFilters,
+    filterResetCount,
     toolbarFilters,
     periodFilter,
     validationFilters = toolbarFilters,
   } = props;
+
+  const replaceFilterState = props.replaceFilterState ?? setFilterState;
 
   // Register callback to reset dropdown when clearAllFilters is called
   useEffect(() => {
@@ -119,9 +132,9 @@ export function DashboardToolbar(
   const applyFilterSet = useCallback(
     (filterSet: IDashboardFilterSet) => {
       setSelectedFilterSet(filterSet);
-      setFilterState?.(parseFilterState(filterSet.filters));
+      replaceFilterState?.(parseFilterState(filterSet.filters));
     },
-    [setSelectedFilterSet, setFilterState]
+    [setSelectedFilterSet, replaceFilterState]
   );
 
   const onSave = useCallback(
@@ -135,9 +148,9 @@ export function DashboardToolbar(
   const onFilterSetDelete = useCallback(
     (deletedFilterSet: IDashboardFilterSet) => {
       removeFilterSet(deletedFilterSet);
-      setFilterState?.(DEFAULT_FILTER_STATE);
+      replaceFilterState?.(DEFAULT_FILTER_STATE);
     },
-    [removeFilterSet, setFilterState]
+    [removeFilterSet, replaceFilterState]
   );
 
   // True while the custom start date input is empty or incomplete. filterState still holds the
@@ -165,11 +178,11 @@ export function DashboardToolbar(
       setValue(selectedValue ?? undefined);
       const filterset = filterSets.find((fs) => String(fs.id) === selectedValue);
       setSelectedFilterSet(filterset);
-      setFilterState?.(
+      replaceFilterState?.(
         filterset?.filters ? parseFilterState(filterset.filters) : DEFAULT_FILTER_STATE
       );
     },
-    [setValue, filterSets, setSelectedFilterSet, setFilterState]
+    [setValue, filterSets, setSelectedFilterSet, replaceFilterState]
   );
 
   const queryLabel = useCallback(
@@ -234,6 +247,7 @@ export function DashboardToolbar(
             filterState={filterState}
             setFilterState={setFilterState}
             onStartDateIncompleteChange={setIsStartDateIncomplete}
+            filterResetCount={filterResetCount}
           />
         )}
         <ToolbarGroup variant="action-group">

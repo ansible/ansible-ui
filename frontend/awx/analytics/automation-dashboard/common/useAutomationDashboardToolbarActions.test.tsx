@@ -367,6 +367,25 @@ describe('useAutomationDashboardToolbarActions', () => {
       expect(subAction.isDisabled).toBe('Modify filters before saving as a report');
     });
 
+    test('should not count values that select nothing as modified filters', () => {
+      const templateFilter: IToolbarFilter = {
+        type: ToolbarFilterType.AsyncMultiSelect,
+        key: 'template',
+        label: 'Template',
+        query: 'template',
+        placeholder: 'Select template',
+        queryOptions: vi.fn(),
+        queryLabel: vi.fn(),
+      };
+      const action = renderActions(
+        { ...defaultFilterState, excluded_template: ['5'], template__all: ['', '1-abc'] },
+        filterSet,
+        [templateFilter]
+      )[0] as Dropdown;
+      const subAction = getDropdownSubAction(action, 'Create new report');
+      expect(subAction.isDisabled).toBe('Modify filters before saving as a report');
+    });
+
     test('should include "Create new report", "Update report", "Delete report" sub-actions', () => {
       const action = renderActions(defaultFilterState, filterSet)[0] as Dropdown;
       expect(action.type).toBe(PageActionType.Dropdown);
