@@ -112,7 +112,7 @@
     },
     "postcss": "8.5.26",
     "fflate": "0.8.3",
-    "node-forge": "1.4.1"
+    "node-forge": "1.4.3"
   },
   "devDependencies": {
     "@babel/core": "7.26.7",
