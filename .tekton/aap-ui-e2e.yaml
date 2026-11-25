@@ -15,7 +15,7 @@ metadata:
   labels:
     appstudio.openshift.io/application: '{{repo_owner}}'
     appstudio.openshift.io/component: '{{repo_owner}}-{{repo_name}}'
-    pipelines.appstudio.openshift.io/type: build
+    pipelines.appstudio.openshift.io/type: test
 spec:
   timeouts:
     pipeline: "8h"
