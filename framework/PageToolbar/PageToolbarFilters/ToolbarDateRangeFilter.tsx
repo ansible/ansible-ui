@@ -1,6 +1,6 @@
 import { Button, DatePicker, ToolbarItem, isValidDate } from '@patternfly/react-core';
 import { TimesCircleIcon } from '@patternfly/react-icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageSingleSelect } from '../../PageInputs/PageSingleSelect';
 import { ToolbarFilterType } from '../PageToolbarFilter';
@@ -70,18 +70,28 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
     return undefined;
   });
 
-  useEffect(() => {
+  function setCustomFilterValues(fromValue?: string, toValue?: string) {
     if (selectedOption?.isCustom) {
       const newValues = [selectedOption.value];
-      if (from) {
-        newValues.push(from);
-        if (to) {
-          newValues.push(to);
+      if (fromValue) {
+        newValues.push(fromValue);
+        if (toValue) {
+          newValues.push(toValue);
         }
       }
       setFilterValues(() => newValues);
     }
-  }, [selectedOption, from, to, setFilterValues]);
+  }
+
+  function onFromChange(value?: string) {
+    setFrom(value);
+    setCustomFilterValues(value, to);
+  }
+
+  function onToChange(value?: string) {
+    setTo(value);
+    setCustomFilterValues(from, value);
+  }
 
   return (
     <ToolbarItem>
@@ -94,7 +104,7 @@ export function ToolbarDateRangeFilter(props: IToolbarDateRangeFilterProps) {
         disableSortOptions
       />
       {selectedOption && selectedOption.isCustom && (
-        <DateRange to={to} setTo={setTo} from={from} setFrom={setFrom} />
+        <DateRange to={to} setTo={onToChange} from={from} setFrom={onFromChange} />
       )}
     </ToolbarItem>
   );

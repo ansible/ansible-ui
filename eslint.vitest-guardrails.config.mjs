@@ -24,15 +24,20 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
-      '@vitest': vitest,
+      vitest,
       'testing-library': testingLibrary,
       i18next,
       'react-you-might-not-need-an-effect': reactEffectPlugin,
     },
     rules: {
+      ...vitest.configs.recommended.rules,
       ...reactEffectPlugin.configs.recommended.rules,
       'i18next/no-literal-string': 'off',
-      '@vitest/expect-expect': [
+      // Defer these until existing conditional assertions, helper assertions, and skipped tests are cleaned up.
+      'vitest/no-conditional-expect': 'off',
+      'vitest/no-disabled-tests': 'off',
+      'vitest/no-standalone-expect': 'off',
+      'vitest/expect-expect': [
         'warn',
         {
           assertFunctionNames: [
@@ -43,7 +48,7 @@ export default [
           ],
         },
       ],
-      '@vitest/no-identical-title': 'warn',
+      'vitest/no-identical-title': 'warn',
       'testing-library/no-debugging-utils': 'error',
       'testing-library/prefer-user-event': 'warn',
       'testing-library/no-node-access': 'warn',

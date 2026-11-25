@@ -68,9 +68,10 @@ describe('PolicySettingsForm', () => {
       { timeout: 10000 }
     );
 
-    expect(screen.queryByRole('textbox', { name: 'Drag a file here or browse to upload' })).to.be
-      .null;
-    expect(screen.queryByRole('textbox', { name: 'OPA client key content' })).to.be.null;
+    expect(
+      screen.queryByRole('textbox', { name: 'Drag a file here or browse to upload' })
+    ).toBeNull();
+    expect(screen.queryByRole('textbox', { name: 'OPA client key content' })).toBeNull();
 
     await user.type(
       screen.getByRole('textbox', { name: /OPA server hostname/i }),

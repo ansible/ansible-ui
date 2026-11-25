@@ -1,25 +1,18 @@
 import { ToolbarToggleGroup, ToolbarToggleGroupProps } from '@patternfly/react-core';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { SetRequired } from '../utils/utilityTypes';
 
 export function PageToolbarToggleGroup(props: SetRequired<ToolbarToggleGroupProps, 'id'>) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const context = useContext(PageToolbarToggleGroupContext);
+  const [uncontrolledIsExpanded, setUncontrolledIsExpanded] = useState(false);
+  const isExpanded = context ? context.activeGroup === props.id : uncontrolledIsExpanded;
   const onToggle = (_event: React.MouseEvent) => {
-    setIsExpanded(!isExpanded);
+    if (context) {
+      context.setActiveGroup(isExpanded ? '' : props.id);
+    } else {
+      setUncontrolledIsExpanded((expanded) => !expanded);
+    }
   };
-  const { activeGroup, setActiveGroup } = useContext(PageToolbarToggleGroupContext);
-
-  useEffect(() => {
-    if (isExpanded) {
-      setActiveGroup(props.id);
-    }
-  }, [isExpanded, setActiveGroup, props.id]);
-
-  useEffect(() => {
-    if (activeGroup !== props.id) {
-      setIsExpanded(false);
-    }
-  }, [activeGroup, props.id]);
 
   return <ToolbarToggleGroup {...props} isExpanded={isExpanded} onToggle={onToggle} />;
 }
@@ -31,7 +24,6 @@ interface PageToolbarToggleGroupContextProps {
 
 // context that will clost other open groups when a new one is opened
 // Path: framework/PageToolbar/PageToolbarToggleGroup.tsx
-export const PageToolbarToggleGroupContext = createContext<PageToolbarToggleGroupContextProps>({
-  activeGroup: '',
-  setActiveGroup: () => {},
-});
+export const PageToolbarToggleGroupContext = createContext<
+  PageToolbarToggleGroupContextProps | undefined
+>(undefined);

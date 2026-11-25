@@ -47,10 +47,10 @@ describe('poll', () => {
     const check = vi.fn().mockReturnValue(false);
 
     const resultPromise = poll(fn, check, 50, 2);
-    const assertion = expect(resultPromise).rejects.toThrow(
-      'Failed to get expected response after 2 attempts'
-    );
+    const result = resultPromise.catch((error: Error) => error);
     await vi.runAllTimersAsync();
-    await assertion;
+    await expect(result).resolves.toMatchObject({
+      message: 'Failed to get expected response after 2 attempts',
+    });
   });
 });

@@ -1,21 +1,13 @@
-import {
-  createContext,
-  ReactNode,
-  useState,
-  useMemo,
-  useContext,
-  SetStateAction,
-  Dispatch,
-  useEffect,
-} from 'react';
+import { createContext, ReactNode, useMemo, useContext, useEffect, useLayoutEffect } from 'react';
 import { PageNavigationItem } from '../PageNavigation/PageNavigationItem';
 import { useLocation } from 'react-router-dom';
 import { findNavigationItemByPath, getNavigationTitle } from './findNavigationItemByPath';
 import { useApplicationName } from './useApplicationName';
 
 const TitleContext = createContext<{
-  setTitle?: Dispatch<SetStateAction<string | null>>;
-}>({});
+  currentPageNavigation: PageNavigationItem[];
+  applicationName: string;
+} | null>(null);
 
 export function PageTitleProvider(
   props: Readonly<{
@@ -65,7 +57,6 @@ function PageTitleProviderInner(
     applicationName: string;
   }>
 ) {
-  const [title, setTitle] = useState<string | null>(null);
   const location = useLocation();
   const currentPageNavigation = useMemo(
     () => findNavigationItemByPath(props.navigation, location.pathname),
@@ -75,8 +66,8 @@ function PageTitleProviderInner(
   const pageTitle = useMemo(() => {
     if (!currentPageNavigation.length) return null;
 
-    return getNavigationTitle(currentPageNavigation, title);
-  }, [currentPageNavigation, title]);
+    return getNavigationTitle(currentPageNavigation);
+  }, [currentPageNavigation]);
 
   const documentTitle = useMemo(() => {
     if (!pageTitle) return props.applicationName;
@@ -84,13 +75,11 @@ function PageTitleProviderInner(
   }, [props.applicationName, pageTitle]);
 
   const value = useMemo(
-    () => ({
-      setTitle,
-    }),
-    [setTitle]
+    () => ({ currentPageNavigation, applicationName: props.applicationName }),
+    [currentPageNavigation, props.applicationName]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.title = documentTitle;
   }, [documentTitle]);
 
@@ -99,10 +88,20 @@ function PageTitleProviderInner(
 
 export function usePageTitle(title: string | null | undefined) {
   const context = useContext(TitleContext);
+  const pageTitle = context?.currentPageNavigation.length
+    ? getNavigationTitle(context.currentPageNavigation, title)
+    : null;
+  let documentTitle: string | undefined;
+  if (context) {
+    documentTitle = context.applicationName;
+    if (pageTitle) {
+      documentTitle = `${pageTitle} | ${context.applicationName}`;
+    }
+  }
 
   useEffect(() => {
-    if (context.setTitle) {
-      context.setTitle(title || null);
+    if (documentTitle !== undefined) {
+      document.title = documentTitle;
     }
-  }, [context, title]);
+  }, [documentTitle]);
 }

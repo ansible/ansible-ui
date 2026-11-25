@@ -80,4 +80,48 @@ describe('ToolbarDateRangeFilter', () => {
     expect(screen.getByLabelText('Start date')).toBeInTheDocument();
     expect(screen.getByLabelText('End date')).toBeInTheDocument();
   });
+
+  it('should add the start date to custom filter values', async () => {
+    const user = userEvent.setup();
+    const setFilterValues = vi.fn();
+
+    render(
+      <ToolbarDateRangeFilter
+        placeholder="Select range"
+        options={defaultOptions}
+        filterValues={['custom']}
+        setFilterValues={setFilterValues}
+      />
+    );
+
+    await user.type(screen.getByLabelText('Start date'), '2026-11-20');
+
+    expect(setFilterValues).toHaveBeenCalled();
+    const updateValues = setFilterValues.mock.calls[
+      setFilterValues.mock.calls.length - 1
+    ][0] as () => string[];
+    expect(updateValues()).toEqual(['custom', '2026-11-20']);
+  });
+
+  it('should keep the start date when the end date changes', async () => {
+    const user = userEvent.setup();
+    const setFilterValues = vi.fn();
+
+    render(
+      <ToolbarDateRangeFilter
+        placeholder="Select range"
+        options={defaultOptions}
+        filterValues={['custom', '2026-11-20']}
+        setFilterValues={setFilterValues}
+      />
+    );
+
+    await user.type(screen.getByLabelText('End date'), '2026-11-24');
+
+    expect(setFilterValues).toHaveBeenCalled();
+    const updateValues = setFilterValues.mock.calls[
+      setFilterValues.mock.calls.length - 1
+    ][0] as () => string[];
+    expect(updateValues()).toEqual(['custom', '2026-11-20', '2026-11-24']);
+  });
 });

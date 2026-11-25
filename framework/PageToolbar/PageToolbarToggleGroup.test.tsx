@@ -3,8 +3,9 @@ import { Toolbar, ToolbarContent, ToolbarItem } from '@patternfly/react-core';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
+import { useState } from 'react';
 import { FilterIcon } from '@patternfly/react-icons';
-import { PageToolbarToggleGroup } from './PageToolbarToggleGroup';
+import { PageToolbarToggleGroup, PageToolbarToggleGroupContext } from './PageToolbarToggleGroup';
 
 describe('PageToolbarToggleGroup', () => {
   it('should render children within toggle group', () => {
@@ -46,5 +47,50 @@ describe('PageToolbarToggleGroup', () => {
       await user.click(toggleButton);
       expect(toggleGroup).toHaveClass('pf-m-show');
     }
+  });
+
+  it('should keep only the active context group expanded', async () => {
+    const user = userEvent.setup();
+
+    function TestToolbar() {
+      const [activeGroup, setActiveGroup] = useState('');
+
+      return (
+        <PageToolbarToggleGroupContext.Provider value={{ activeGroup, setActiveGroup }}>
+          <Toolbar>
+            <ToolbarContent>
+              <PageToolbarToggleGroup id="first-group" toggleIcon={<FilterIcon />} breakpoint="md">
+                <ToolbarItem>
+                  <span>First group</span>
+                </ToolbarItem>
+              </PageToolbarToggleGroup>
+              <PageToolbarToggleGroup id="second-group" toggleIcon={<FilterIcon />} breakpoint="md">
+                <ToolbarItem>
+                  <span>Second group</span>
+                </ToolbarItem>
+              </PageToolbarToggleGroup>
+            </ToolbarContent>
+          </Toolbar>
+          <span data-testid="active-group">{activeGroup}</span>
+        </PageToolbarToggleGroupContext.Provider>
+      );
+    }
+
+    render(<TestToolbar />);
+
+    const [firstToggle, secondToggle] = screen.getAllByRole('button', { name: 'Show Filters' });
+
+    await user.click(firstToggle);
+    expect(screen.getByTestId('active-group')).toHaveTextContent('first-group');
+    expect(firstToggle).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(secondToggle);
+    expect(screen.getByTestId('active-group')).toHaveTextContent('second-group');
+    expect(firstToggle).not.toHaveAttribute('aria-expanded', 'true');
+    expect(secondToggle).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(secondToggle);
+    expect(screen.getByTestId('active-group')).toBeEmptyDOMElement();
+    expect(secondToggle).not.toHaveAttribute('aria-expanded', 'true');
   });
 });

@@ -15,8 +15,7 @@ describe('debounce', () => {
     debounced('last');
     vi.advanceTimersByTime(200);
 
-    expect(callback).toHaveBeenCalledOnce();
-    expect(callback).toHaveBeenCalledWith('last');
+    expect(callback).toHaveBeenCalledExactlyOnceWith('last');
   });
 
   test('cancels the pending callback', () => {

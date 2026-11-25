@@ -23,6 +23,28 @@ describe('PersistentFilters', () => {
     expect(stored.qs).toBe('?name=test');
   });
 
+  it('should update the persisted search when the location changes', () => {
+    Object.defineProperty(window, 'location', {
+      value: { search: '?name=first' },
+      configurable: true,
+    });
+
+    const { rerender } = renderHook(() => usePersistentFilters('templates'));
+
+    Object.defineProperty(window, 'location', {
+      value: { search: '?name=second' },
+      configurable: true,
+    });
+    rerender();
+
+    const stored = JSON.parse(sessionStorage.getItem('persistent-filter') ?? '{}') as {
+      pageKey: string;
+      qs: string;
+    };
+    expect(stored.pageKey).toBe('templates');
+    expect(stored.qs).toBe('?name=second');
+  });
+
   it('should return stored query string for matching page key', () => {
     sessionStorage.setItem(
       'persistent-filter',
