@@ -1,5 +1,5 @@
 /* eslint-disable i18next/no-literal-string */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
@@ -41,10 +41,10 @@ function setViewportWidth(width: number) {
   window.dispatchEvent(new Event('resize'));
 }
 
-function renderApp() {
+function renderApp(initialEntry = '/') {
   const { container } = render(
     <PageFramework>
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={[initialEntry]}>
         <PageApp
           masthead={<PageMastheadToggle />}
           navigation={[{ id: 'dashboard', label: 'Dashboard', path: '', element: <div /> }]}
@@ -100,5 +100,22 @@ describe('PageApp navigation sidebar', () => {
     await user.click(screen.getByRole('button', { name: 'Global navigation' }));
 
     await waitFor(() => expect(sidebar()).toHaveClass('pf-m-collapsed'));
+  });
+});
+
+describe('PageApp unknown routes', () => {
+  const backgroundToken = '--pf-t--global--background--color--primary--default';
+
+  afterEach(() => document.documentElement.style.removeProperty(backgroundToken));
+
+  it('should render PageNotFound on the theme background', async () => {
+    // happy-dom only resolves the token when it is defined.
+    document.documentElement.style.setProperty(backgroundToken, 'rgb(1, 2, 3)');
+    renderApp('/does-not-exist');
+
+    const background = await screen.findByTestId('page-not-found-background');
+
+    expect(within(background).getByRole('heading', { name: 'Page not found' })).toBeVisible();
+    expect(background).toHaveStyle({ backgroundColor: 'rgb(1, 2, 3)', overflow: 'auto' });
   });
 });
