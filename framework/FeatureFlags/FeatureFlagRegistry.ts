@@ -1,0 +1,323 @@
+export type FeatureFlagStatus = 'proposed' | 'alpha' | 'beta' | 'production' | 'deprecated';
+
+export type FeatureFlagKind = 'release' | 'experiment' | 'operational' | 'kill-switch';
+
+export type FeatureFlagScope = 'client-only';
+
+export interface FeatureFlagDefinition {
+  readonly defaultValue: boolean;
+  readonly description: string;
+  readonly kind: FeatureFlagKind;
+  readonly owner: string;
+  readonly removalDate: string;
+  readonly scope: FeatureFlagScope;
+  readonly status: FeatureFlagStatus;
+}
+
+export type FeatureFlagDefinitions = Readonly<Record<string, FeatureFlagDefinition>>;
+
+export type FeatureFlagKey<Definitions extends FeatureFlagDefinitions> = keyof Definitions & string;
+
+export interface FeatureFlagEvaluationContext {
+  readonly environment?: string;
+  readonly targetingKey?: string;
+}
+
+export type FeatureFlagEvaluationReason = 'DEFAULT' | 'ERROR' | 'LOCAL_OVERRIDE' | 'PROVIDER';
+
+export type FeatureFlagProviderStatus = 'INITIALIZING' | 'READY' | 'ERROR';
+
+export type FeatureFlagErrorCode =
+  | 'UNKNOWN_FLAG'
+  | 'PROVIDER_CONTEXT_ERROR'
+  | 'PROVIDER_ERROR'
+  | 'PROVIDER_INVALID_RESPONSE'
+  | 'PROVIDER_NOT_READY';
+
+export interface FeatureFlagEvaluation {
+  readonly error?: FeatureFlagErrorCode;
+  readonly flagKey: string;
+  readonly reason: FeatureFlagEvaluationReason;
+  readonly value: boolean;
+}
+
+export interface FeatureFlagProvider {
+  readonly name: string;
+  evaluateBoolean(
+    flagKey: string,
+    defaultValue: boolean,
+    context?: FeatureFlagEvaluationContext
+  ): FeatureFlagEvaluation;
+  initialize?(): Promise<void> | void;
+  setContext?(context: FeatureFlagEvaluationContext): Promise<void> | void;
+  subscribe?(listener: () => void): () => void;
+}
+
+export interface LocalFeatureFlagProvider extends FeatureFlagProvider {
+  resetOverride(flagKey: string): void;
+  setOverride(flagKey: string, enabled: boolean): void;
+}
+
+export interface FeatureFlagRegistry<Definitions extends FeatureFlagDefinitions> {
+  readonly definitions: Definitions;
+  dispose(): void;
+  evaluate(flag: FeatureFlagKey<Definitions>): FeatureFlagEvaluation;
+  getContext(): FeatureFlagEvaluationContext | undefined;
+  getStatus(): FeatureFlagProviderStatus;
+  isEnabled(flag: FeatureFlagKey<Definitions>): boolean;
+  ready(): Promise<void>;
+  setContext(context: FeatureFlagEvaluationContext): Promise<void>;
+  subscribe(listener: () => void): () => void;
+}
+
+export interface FeatureFlagRegistryOptions {
+  readonly context?: FeatureFlagEvaluationContext;
+  readonly provider?: FeatureFlagProvider;
+}
+
+export interface LocalFeatureFlagProviderOptions {
+  readonly storage?: Storage;
+  readonly storageKey?: string;
+}
+
+type StoredOverrides = Record<string, boolean>;
+
+const defaultStorageKey = 'ui:feature-flags';
+
+function hasOwnProperty(value: object, key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(value, key);
+}
+
+function notifyListeners(listeners: ReadonlySet<() => void>): void {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+function getDefaultStorage(): Storage | undefined {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
+}
+
+function isStoredOverrides(value: unknown): value is StoredOverrides {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+
+  return Object.values(value).every((item) => typeof item === 'boolean');
+}
+
+function readOverrides(storage: Storage | undefined, storageKey: string): StoredOverrides {
+  if (!storage) {
+    return {};
+  }
+
+  try {
+    const storedValue = storage.getItem(storageKey);
+    if (!storedValue) {
+      return {};
+    }
+
+    const parsedValue: unknown = JSON.parse(storedValue);
+    return isStoredOverrides(parsedValue) ? parsedValue : {};
+  } catch {
+    return {};
+  }
+}
+
+function assertLocalFeatureFlagProviderEnvironment(): void {
+  const environment = process.env.NODE_ENV;
+  if (environment !== 'development' && environment !== 'test') {
+    throw new Error('The local feature flag provider is only available in development and test');
+  }
+}
+
+function createDefaultFeatureFlagProvider(): FeatureFlagProvider {
+  return {
+    name: 'default',
+    evaluateBoolean: (flagKey, defaultValue) => ({
+      flagKey,
+      reason: 'DEFAULT',
+      value: defaultValue,
+    }),
+  };
+}
+
+function isFeatureFlagEvaluation(
+  value: FeatureFlagEvaluation,
+  flagKey: string
+): value is FeatureFlagEvaluation {
+  return value.flagKey === flagKey && typeof value.value === 'boolean';
+}
+
+export function createLocalFeatureFlagProvider(
+  options: LocalFeatureFlagProviderOptions = {}
+): LocalFeatureFlagProvider {
+  assertLocalFeatureFlagProviderEnvironment();
+  const storage = options.storage ?? getDefaultStorage();
+  const storageKey = options.storageKey ?? defaultStorageKey;
+  const overrides = readOverrides(storage, storageKey);
+  const listeners = new Set<() => void>();
+
+  const persist = () => {
+    if (!storage) {
+      return;
+    }
+
+    try {
+      storage.setItem(storageKey, JSON.stringify(overrides));
+    } catch {
+      // Storage can be unavailable or full. The in-memory value remains usable.
+    }
+  };
+
+  return {
+    name: 'local-development',
+    evaluateBoolean: (flagKey, defaultValue, context) => {
+      void context;
+      if (!hasOwnProperty(overrides, flagKey)) {
+        return { flagKey, reason: 'DEFAULT', value: defaultValue };
+      }
+      return { flagKey, reason: 'LOCAL_OVERRIDE', value: overrides[flagKey] };
+    },
+    resetOverride: (flagKey) => {
+      if (!hasOwnProperty(overrides, flagKey)) {
+        return;
+      }
+      delete overrides[flagKey];
+      persist();
+      notifyListeners(listeners);
+    },
+    setOverride: (flagKey, enabled) => {
+      if (overrides[flagKey] === enabled) {
+        return;
+      }
+      overrides[flagKey] = enabled;
+      persist();
+      notifyListeners(listeners);
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+}
+
+export function createFeatureFlagRegistry<Definitions extends FeatureFlagDefinitions>(
+  definitions: Definitions,
+  options: FeatureFlagRegistryOptions = {}
+): FeatureFlagRegistry<Definitions> {
+  if (Object.values(definitions).some((definition) => definition.defaultValue)) {
+    throw new Error('Feature flags must default off');
+  }
+
+  const provider = options.provider ?? createDefaultFeatureFlagProvider();
+  const listeners = new Set<() => void>();
+  let context = options.context;
+  let providerStatus: FeatureFlagProviderStatus = provider.initialize ? 'INITIALIZING' : 'READY';
+
+  const initializeProvider = async () => {
+    if (!provider.initialize) {
+      return;
+    }
+
+    try {
+      await provider.initialize();
+      providerStatus = 'READY';
+    } catch {
+      providerStatus = 'ERROR';
+    }
+    notifyListeners(listeners);
+  };
+
+  const readyPromise = initializeProvider();
+  const unsubscribeProvider = provider.subscribe?.(() => {
+    notifyListeners(listeners);
+  });
+
+  const evaluate = (flag: FeatureFlagKey<Definitions>): FeatureFlagEvaluation => {
+    const definition = definitions[flag];
+    if (!definition) {
+      return {
+        error: 'UNKNOWN_FLAG',
+        flagKey: flag,
+        reason: 'ERROR',
+        value: false,
+      };
+    }
+
+    if (providerStatus === 'INITIALIZING') {
+      return {
+        error: 'PROVIDER_NOT_READY',
+        flagKey: flag,
+        reason: 'DEFAULT',
+        value: definition.defaultValue,
+      };
+    }
+
+    if (providerStatus === 'ERROR') {
+      return {
+        error: 'PROVIDER_ERROR',
+        flagKey: flag,
+        reason: 'ERROR',
+        value: definition.defaultValue,
+      };
+    }
+
+    try {
+      const evaluation = provider.evaluateBoolean(flag, definition.defaultValue, context);
+      if (isFeatureFlagEvaluation(evaluation, flag)) {
+        return evaluation;
+      }
+      return {
+        error: 'PROVIDER_INVALID_RESPONSE',
+        flagKey: flag,
+        reason: 'ERROR',
+        value: definition.defaultValue,
+      };
+    } catch {
+      return {
+        error: 'PROVIDER_ERROR',
+        flagKey: flag,
+        reason: 'ERROR',
+        value: definition.defaultValue,
+      };
+    }
+  };
+
+  return {
+    definitions,
+    dispose: () => {
+      unsubscribeProvider?.();
+      listeners.clear();
+    },
+    evaluate,
+    getContext: () => context,
+    getStatus: () => providerStatus,
+    isEnabled: (flag) => evaluate(flag).value,
+    ready: () => readyPromise,
+    setContext: async (nextContext) => {
+      context = nextContext;
+      try {
+        await readyPromise;
+        await provider.setContext?.(nextContext);
+      } catch {
+        providerStatus = 'ERROR';
+        notifyListeners(listeners);
+        return;
+      }
+      notifyListeners(listeners);
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
+}
