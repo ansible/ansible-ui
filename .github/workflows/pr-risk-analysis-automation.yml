@@ -1,0 +1,193 @@
+name: PR Risk Analysis Automation
+
+on:
+  workflow_run:
+    workflows:
+      - PR Risk Analysis
+    types:
+      - completed
+
+permissions:
+  actions: read
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  risk-labels-and-reviews:
+    name: Apply Risk Labels and Reviews
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts/resolve-workflow-run-pr.sh
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve pull request number
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PULL_REQUESTS_JSON: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: bash .github/scripts/resolve-workflow-run-pr.sh
+
+      - name: Skip dependabot
+        id: author
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          echo "login=$AUTHOR" >> "$GITHUB_OUTPUT"
+          if [ "$AUTHOR" = "dependabot[bot]" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check risk level is selected
+        if: steps.author.outputs.skip != 'true'
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          PR_BODY=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json body --jq '.body')
+          HIGH=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*High\*\*' || true)
+          MEDIUM=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Medium\*\*' || true)
+          LOW=$(echo "$PR_BODY" | grep -ci '\- \[x\] \*\*Low\*\*' || true)
+
+          TOTAL=$((HIGH + MEDIUM + LOW))
+
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "result=missing" >> "$GITHUB_OUTPUT"
+            echo "message=Risk Analysis is required. Please select a risk level (High, Medium, or Low) in the PR description under **Risk Analysis - REQUIRED**." >> "$GITHUB_OUTPUT"
+          elif [ "$TOTAL" -gt 1 ]; then
+            echo "result=multiple" >> "$GITHUB_OUTPUT"
+            echo "message=Please select only **one** risk level (High, Medium, or Low)." >> "$GITHUB_OUTPUT"
+          else
+            echo "result=pass" >> "$GITHUB_OUTPUT"
+            if [ "$HIGH" -eq 1 ]; then
+              echo "level=high" >> "$GITHUB_OUTPUT"
+            elif [ "$MEDIUM" -eq 1 ]; then
+              echo "level=medium" >> "$GITHUB_OUTPUT"
+            else
+              echo "level=low" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Request changes if risk level is missing
+        if: steps.author.outputs.skip != 'true' && steps.check.outputs.result != 'pass'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+          MESSAGE: ${{ steps.check.outputs.message }}
+        run: |
+          EXISTING=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --jq '[.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "github-actions[bot]")] | length')
+          if [ "$EXISTING" -eq 0 ]; then
+            gh pr review "$PR_NUMBER" --repo "$REPO" --request-changes --body "$MESSAGE"
+          fi
+          gh label create "risk:high"   --repo "$REPO" --color "D93F0B" --description "High risk PR" --force 2>/dev/null || true
+          gh label create "risk:medium" --repo "$REPO" --color "FBCA04" --description "Medium risk PR" --force 2>/dev/null || true
+          gh label create "risk:low"    --repo "$REPO" --color "0E8A16" --description "Low risk PR" --force 2>/dev/null || true
+          gh label create "missing-risk-analysis" --repo "$REPO" --color "B60205" --description "PR missing risk analysis" --force 2>/dev/null || true
+
+          for label in "risk:high" "risk:medium" "risk:low"; do
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+          done
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "missing-risk-analysis"
+
+      - name: Dismiss review and apply risk label on success
+        if: steps.author.outputs.skip != 'true' && steps.check.outputs.result == 'pass'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+          RISK_LEVEL: ${{ steps.check.outputs.level }}
+        run: |
+          REVIEW_ID=$(gh api "repos/$REPO/pulls/$PR_NUMBER/reviews" --jq '[.[] | select(.state == "CHANGES_REQUESTED" and .user.login == "github-actions[bot]")] | last | .id // empty')
+          if [ -n "$REVIEW_ID" ]; then
+            gh api -X PUT "repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals" \
+              -f message="Risk analysis provided." \
+              -f event="DISMISS"
+          fi
+
+          gh label create "risk:high"   --repo "$REPO" --color "D93F0B" --description "High risk PR" --force 2>/dev/null || true
+          gh label create "risk:medium" --repo "$REPO" --color "FBCA04" --description "Medium risk PR" --force 2>/dev/null || true
+          gh label create "risk:low"    --repo "$REPO" --color "0E8A16" --description "Low risk PR" --force 2>/dev/null || true
+          gh label create "missing-risk-analysis" --repo "$REPO" --color "B60205" --description "PR missing risk analysis" --force 2>/dev/null || true
+
+          for label in "risk:high" "risk:medium" "risk:low" "missing-risk-analysis"; do
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+          done
+
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "risk:${RISK_LEVEL}"
+
+  type-labels:
+    name: Label PR Type
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts/resolve-workflow-run-pr.sh
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve pull request number
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PULL_REQUESTS_JSON: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: bash .github/scripts/resolve-workflow-run-pr.sh
+
+      - name: Detect issue type from PR description
+        id: detect
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          if [ "$AUTHOR" = "dependabot[bot]" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          PR_BODY=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json body --jq '.body')
+          BUG=$(echo "$PR_BODY" | grep -ci '\- \[x\] Bug fix' || true)
+          ENHANCEMENT=$(echo "$PR_BODY" | grep -ci '\- \[x\] Enhancement' || true)
+
+          echo "bug=$BUG" >> "$GITHUB_OUTPUT"
+          echo "enhancement=$ENHANCEMENT" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Apply type labels
+        if: steps.detect.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
+          BUG: ${{ steps.detect.outputs.bug }}
+          ENHANCEMENT: ${{ steps.detect.outputs.enhancement }}
+        run: |
+          gh label create "bug-fix"     --repo "$REPO" --color "D93F0B" --description "Bug fix" --force 2>/dev/null || true
+          gh label create "enhancement" --repo "$REPO" --color "A2EEEF" --description "Enhancement" --force 2>/dev/null || true
+
+          if [ "$BUG" -ge 1 ]; then
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "bug-fix"
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/bug-fix" -X DELETE 2>/dev/null || true
+          fi
+
+          if [ "$ENHANCEMENT" -ge 1 ]; then
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "enhancement"
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/labels/enhancement" -X DELETE 2>/dev/null || true
+          fi

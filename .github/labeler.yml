@@ -1,3 +1,4 @@
+# Path globs for workspace labels — consumed by .github/workflows/pr-workspace-label.yml
 controller:
   - changed-files:
       - any-glob-to-any-file:

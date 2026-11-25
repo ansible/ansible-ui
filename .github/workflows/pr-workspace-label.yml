@@ -1,19 +1,123 @@
 name: PR Workspace Label
 
 on:
-  pull_request_target:
-    types: [opened, synchronize]
+  workflow_run:
+    workflows:
+      - PR Checks
+    types:
+      - completed
 
 permissions:
+  actions: read
   pull-requests: write
   contents: read
 
 jobs:
   label-workspace:
     name: Label PR Workspaces
-    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request'
     steps:
-      - uses: actions/labeler@v5
+      - uses: actions/checkout@v4
         with:
-          sync-labels: true
+          sparse-checkout: |
+            .github/labeler.yml
+            .github/scripts/resolve-workflow-run-pr.sh
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve pull request number
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PULL_REQUESTS_JSON: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: bash .github/scripts/resolve-workflow-run-pr.sh
+
+      - name: Skip dependabot
+        id: author
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          if [ "$AUTHOR" = "dependabot[bot]" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Sync workspace labels from changed paths
+        if: steps.author.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+
+          path_matches_glob() {
+            local file="$1" glob="$2"
+            if [[ "$glob" =~ /\*\*$ ]]; then
+              local prefix="${glob%/**}"
+              [[ "$file" == "$prefix"/* ]] || [[ "$file" == "$prefix" ]] && return 0
+              return 1
+            fi
+            if [[ "$glob" =~ ^\*\*/ ]]; then
+              local suffix="${glob#**/}"
+              case "$file" in
+                $suffix) return 0 ;;
+              esac
+              return 1
+            fi
+            case "$file" in
+              $glob) return 0 ;;
+            esac
+            return 1
+          }
+
+          declare -a WORKSPACE_LABELS=()
+          declare -A LABEL_GLOBS=()
+          current_label=""
+
+          while IFS= read -r line; do
+            if [[ "$line" =~ ^([a-zA-Z0-9_-]+):[[:space:]]*$ ]]; then
+              current_label="${BASH_REMATCH[1]}"
+              WORKSPACE_LABELS+=("$current_label")
+            elif [[ "$line" =~ ^[[:space:]]*-[[:space:]]\'(.+)\'[[:space:]]*$ ]] && [[ -n "$current_label" ]]; then
+              glob="${BASH_REMATCH[1]}"
+              if [ -n "${LABEL_GLOBS[$current_label]+x}" ]; then
+                LABEL_GLOBS[$current_label]="${LABEL_GLOBS[$current_label]}|$glob"
+              else
+                LABEL_GLOBS[$current_label]="$glob"
+              fi
+            fi
+          done < .github/labeler.yml
+
+          MATCHED=""
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            for label in "${WORKSPACE_LABELS[@]}"; do
+              IFS='|' read -ra globs <<< "${LABEL_GLOBS[$label]}"
+              for glob in "${globs[@]}"; do
+                [ -z "$glob" ] && continue
+                if path_matches_glob "$file" "$glob"; then
+                  MATCHED="$MATCHED $label"
+                  break
+                fi
+              done
+            done
+          done < <(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only)
+
+          for label in "${WORKSPACE_LABELS[@]}"; do
+            gh label create "$label" --repo "$REPO" --force 2>/dev/null || true
+          done
+
+          for label in "${WORKSPACE_LABELS[@]}"; do
+            if echo " $MATCHED " | grep -q " $label "; then
+              gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$label"
+            else
+              gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
+            fi
+          done

@@ -1,10 +1,14 @@
 name: PR Size Label
 
 on:
-  pull_request_target:
-    types: [opened, synchronize]
+  workflow_run:
+    workflows:
+      - PR Checks
+    types:
+      - completed
 
 permissions:
+  actions: read
   pull-requests: write
   issues: write
   contents: read
@@ -12,21 +16,49 @@ permissions:
 jobs:
   label-size:
     name: Label PR Size
-    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request'
     steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts/resolve-workflow-run-pr.sh
+          sparse-checkout-cone-mode: false
+
+      - name: Resolve pull request number
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PULL_REQUESTS_JSON: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: bash .github/scripts/resolve-workflow-run-pr.sh
+
+      - name: Skip dependabot
+        id: author
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          AUTHOR=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json author --jq '.author.login')
+          if [ "$AUTHOR" = "dependabot[bot]" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Count changed lines (excluding tests)
+        if: steps.author.outputs.skip != 'true'
         id: count
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
           REPO: ${{ github.repository }}
         run: |
           LINES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" \
             | awk '
               /^diff --git/ {
                 file = $0
-                # Skip test and spec files (Vitest / Playwright)
                 skip = (file ~ /\.(test|spec)\.(ts|tsx|js|jsx)/) || \
                        (file ~ /\/playwright\//) || \
                        (file ~ /\/__tests__\//) || \
@@ -44,6 +76,7 @@ jobs:
           echo "Changed lines (excluding tests): $LINES"
 
       - name: Determine size label
+        if: steps.author.outputs.skip != 'true'
         id: size
         env:
           LINES: ${{ steps.count.outputs.lines }}
@@ -59,23 +92,21 @@ jobs:
           fi
 
       - name: Apply size label
+        if: steps.author.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
           REPO: ${{ github.repository }}
           SIZE_LABEL: ${{ steps.size.outputs.label }}
         run: |
-          # Ensure all size labels exist in the repo
           gh label create "size/XS" --repo "$REPO" --color "3CBF00" --description "Extra small PR" --force 2>/dev/null || true
           gh label create "size/S"  --repo "$REPO" --color "5D9801" --description "Small PR" --force 2>/dev/null || true
           gh label create "size/M"  --repo "$REPO" --color "7F7203" --description "Medium PR" --force 2>/dev/null || true
           gh label create "size/L"  --repo "$REPO" --color "A14C05" --description "Large PR" --force 2>/dev/null || true
 
-          # Remove any existing size labels
           for label in "size/XS" "size/S" "size/M" "size/L"; do
             gh api "repos/$REPO/issues/$PR_NUMBER/labels/$label" -X DELETE 2>/dev/null || true
           done
 
-          # Apply the new size label
           gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$SIZE_LABEL"
           echo "Applied label: $SIZE_LABEL (${{ steps.count.outputs.lines }} changed lines)"
