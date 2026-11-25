@@ -66,7 +66,9 @@ jobs:
             fi
             if [[ "$glob" =~ ^\*\*/ ]]; then
               local suffix="${glob#**/}"
-              [[ "$file" == *"$suffix" ]] && return 0
+              case "$file" in
+                $suffix) return 0 ;;
+              esac
               return 1
             fi
             case "$file" in
