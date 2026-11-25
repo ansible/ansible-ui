@@ -34,7 +34,7 @@ jobs:
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          for i in 1 2 3 4 5; do
+          for _ in 1 2 3 4 5; do
             STATE=$(gh pr view "$PR_NUMBER" --repo "$REPO" --json mergeable --jq '.mergeable')
             if [ "$STATE" != "UNKNOWN" ]; then
               echo "state=$STATE" >> "$GITHUB_OUTPUT"

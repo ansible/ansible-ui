@@ -39,10 +39,10 @@ on:
         required: false
         default: '120'
       AAP_TOPOLOGY_TYPE:
-        description: 'AAP topology type (saas, ocp-a, man-b, or empty)'
+        description: 'AAP topology type (saas, ocp-a, man-b, or none)'
         type: string
         required: false
-        default: ''
+        default: 'none'
 
     secrets:
       PLATFORM_USERNAME:
@@ -68,13 +68,13 @@ jobs:
         id: set-matrix
         run: |
           PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || '4' }}
-          matrix=$(seq 1 $PARALLEL_TESTS | jq -s -c .)
-          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          matrix=$(seq 1 "$PARALLEL_TESTS" | jq -s -c .)
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           echo "Generated matrix for $PARALLEL_TESTS parallel tests: $matrix"
 
   playwright-tests:
     timeout-minutes: ${{ fromJSON(inputs.TIMEOUT_MINUTES || '120') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: generate-matrix
     strategy:
       fail-fast: false
@@ -116,18 +116,20 @@ jobs:
 
     - name: Setup environment variables
       run: |
-        echo "PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER || 'https://localhost:4100' }}" >> $GITHUB_ENV
-        echo "PLATFORM_UI=${{ inputs.PLATFORM_UI || 'https://localhost:4100' }}" >> $GITHUB_ENV
-        echo "PLATFORM_USERNAME=${{ inputs.PLATFORM_USERNAME || secrets.PLATFORM_USERNAME }}" >> $GITHUB_ENV
-        echo "PLATFORM_PASSWORD=${{ inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD }}" >> $GITHUB_ENV
-        echo "ANALYTICS_USER=${{ secrets.ANALYTICS_USER }}" >> $GITHUB_ENV
-        echo "ANALYTICS_PASSWORD=${{ secrets.ANALYTICS_PASSWORD }}" >> $GITHUB_ENV
-        echo "TAGS=${{ inputs.TAGS }}" >> $GITHUB_ENV
-        echo "NOT_TAGS=${{ inputs.NOT_TAGS }}" >> $GITHUB_ENV
-        # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}" >> $GITHUB_ENV
-        # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}" >> $GITHUB_ENV
-        echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || '4' }}" >> $GITHUB_ENV
-        echo "AAP_TOPOLOGY_TYPE=${{ inputs.AAP_TOPOLOGY_TYPE }}" >> $GITHUB_ENV
+        {
+          echo "PLATFORM_SERVER=${{ inputs.PLATFORM_SERVER || 'https://localhost:4100' }}"
+          echo "PLATFORM_UI=${{ inputs.PLATFORM_UI || 'https://localhost:4100' }}"
+          echo "PLATFORM_USERNAME=${{ inputs.PLATFORM_USERNAME || secrets.PLATFORM_USERNAME }}"
+          echo "PLATFORM_PASSWORD=${{ inputs.PLATFORM_PASSWORD || secrets.PLATFORM_PASSWORD }}"
+          echo "ANALYTICS_USER=${{ secrets.ANALYTICS_USER }}"
+          echo "ANALYTICS_PASSWORD=${{ secrets.ANALYTICS_PASSWORD }}"
+          echo "TAGS=${{ inputs.TAGS }}"
+          echo "NOT_TAGS=${{ inputs.NOT_TAGS }}"
+          # echo "PROJECT=${{ inputs.PROJECT || 'live chromium' }}"
+          # echo "BROWSER=${{ inputs.BROWSER || 'chromium' }}"
+          echo "PARALLEL_TESTS=${{ inputs.PARALLEL_TESTS || '4' }}"
+          echo "AAP_TOPOLOGY_TYPE=${{ inputs.AAP_TOPOLOGY_TYPE }}"
+        } >> "$GITHUB_ENV"
 
     - name: Setup coverage directory
       working-directory: ./playwright
@@ -152,7 +154,7 @@ jobs:
           --project-id="${CURRENTS_PROJECT_ID}" \
           --ci-build-id="${CURRENTS_CI_BUILD_ID}" \
           -- \
-          --shard=${SHARD} \
+          --shard="${SHARD}" \
           --project="${PROJECT}"
 
     - name: Upload test results
@@ -239,7 +241,7 @@ jobs:
         if [ -d ".nyc_output" ] && [ "$(ls -A .nyc_output)" ]; then
           echo "Generating combined NYC coverage report..."
           npm run coverage:fix-paths
-          npx nyc report --cwd=$(pwd)
+          npx nyc report --cwd="$PWD"
         else
           echo "No coverage data found for NYC report"
         fi
@@ -256,11 +258,13 @@ jobs:
     - name: Publish test summary
       if: always()
       run: |
-        echo "## 🎭 Playwright Test Results with Coverage" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "✅ Tests completed and results published to [Currents.dev Dashboard](https://app.currents.dev)" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Test Artifacts" >> $GITHUB_STEP_SUMMARY
-        echo "- **Combined Coverage Report**: HTML coverage report in \`combined-coverage-report\` artifact" >> $GITHUB_STEP_SUMMARY
-        echo "- **Test Results**: Traces, screenshots, and videos in \`playwright-test-results-shard-*\` artifacts" >> $GITHUB_STEP_SUMMARY
-        echo "- **Detailed Analysis**: Available on Currents.dev dashboard" >> $GITHUB_STEP_SUMMARY
+        {
+          echo "## 🎭 Playwright Test Results with Coverage"
+          echo ""
+          echo "✅ Tests completed and results published to [Currents.dev Dashboard](https://app.currents.dev)"
+          echo ""
+          echo "### Test Artifacts"
+          echo "- **Combined Coverage Report**: HTML coverage report in \`combined-coverage-report\` artifact"
+          echo "- **Test Results**: Traces, screenshots, and videos in \`playwright-test-results-shard-*\` artifacts"
+          echo "- **Detailed Analysis**: Available on Currents.dev dashboard"
+        } >> "$GITHUB_STEP_SUMMARY"
