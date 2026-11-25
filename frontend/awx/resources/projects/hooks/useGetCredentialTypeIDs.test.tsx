@@ -85,6 +85,6 @@ describe('useGetCredentialTypeIDs', () => {
       expect(result.current['scm']).toBeDefined();
     });
 
-    expect(result.current['scm']).toBe(2);
+    expect(result.current).toStrictEqual({ scm: 2 });
   });
 });
