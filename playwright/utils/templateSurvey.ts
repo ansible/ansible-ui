@@ -304,11 +304,11 @@ export function createTemplateSurveyHelper(templateType: TemplateType) {
         const launchResponsePromise = page.waitForResponse(
           (response) =>
             response.url().includes('/launch/') &&
-            response.request().method() === 'POST' &&
-            response.status() === 201
+            response.request().method() === 'POST'
         );
         await page.getByRole('button', { name: /^Finish/ }).click();
         const launchResponse = await launchResponsePromise;
+        expect(launchResponse.status()).toBe(201);
         const job = (await launchResponse.json()) as Job;
 
         if (job.type === 'job') {
