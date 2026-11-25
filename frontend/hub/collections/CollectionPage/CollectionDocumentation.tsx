@@ -15,6 +15,7 @@ import { useOutletContext, useParams } from 'react-router-dom';
 import { pulpAPI } from '../../common/api/formatPath';
 import { HubError } from '../../common/HubError';
 import { CollectionVersionSearch, IContents } from '../Collection';
+import { findDocumentationFile, getDocumentationRouteName } from './documentationFiles';
 import { CollectionDocumentationTabContent } from './documentationComponents/CollectionDocumentationTabContent';
 import { CollectionDocumentationTabPanel } from './documentationComponents/CollectionDocumentationTabPanel';
 
@@ -82,10 +83,13 @@ export function CollectionDocumentation() {
       | [] = [];
     if (data?.results[0]?.docs_blob) {
       const { docs_blob } = data.results[0];
-      files = (docs_blob.documentation_files ?? []).map(({ name }) => ({
-        label: name.charAt(0).toUpperCase() + name.slice(1).split('.')[0],
-        name: name.split('.')[0],
-      }));
+      files = (docs_blob.documentation_files ?? []).map(({ name }) => {
+        const routeName = getDocumentationRouteName(name);
+        return {
+          label: routeName.charAt(0).toUpperCase() + routeName.slice(1),
+          name: routeName,
+        };
+      });
     }
     return [
       ...files,
@@ -127,9 +131,7 @@ export function CollectionDocumentation() {
     html = dataItem.docs_blob.collection_readme?.html || '';
   }
   if (!content_type && content_name) {
-    html =
-      dataItem.docs_blob.documentation_files?.find((c) => c.name.startsWith(content_name))?.html ||
-      '';
+    html = findDocumentationFile(dataItem.docs_blob.documentation_files, content_name)?.html || '';
   }
 
   // if the content has html, lets use that instead of content frontent generation
