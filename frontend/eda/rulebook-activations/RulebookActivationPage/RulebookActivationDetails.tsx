@@ -234,6 +234,11 @@ export function RulebookActivationDetails() {
         <PageDetail label={t('Log level')} helpText={logLevelHelpBlock}>
           {logLevelName(rulebookActivation?.log_level || LogLevelEnum.Error, t)}
         </PageDetail>
+        {rulebookActivation.log_level === LogLevelEnum.Debug && (
+          <PageDetail label={t('Store debug logs in database')}>
+            {rulebookActivation.store_debug_logs ? t('Enabled') : t('Disabled')}
+          </PageDetail>
+        )}
         <PageDetail label={t('Service name')} helpText={t('Optional service name.')}>
           {rulebookActivation?.k8s_service_name}
         </PageDetail>
