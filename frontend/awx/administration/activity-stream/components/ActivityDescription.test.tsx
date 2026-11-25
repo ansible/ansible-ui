@@ -11,6 +11,10 @@ vi.mock('@ansible/ansible-ui-framework', async (importOriginal) => {
     useGetPageUrl:
       () => (routeId: string, opts?: { params?: Record<string, string | number | undefined> }) => {
         const id = opts?.params?.id;
+        const inventoryType = opts?.params?.inventory_type;
+        if (id !== undefined && inventoryType !== undefined) {
+          return `/test/${routeId}/${id}?inventory_type=${inventoryType}`;
+        }
         if (id !== undefined) return `/test/${routeId}/${id}`;
         return `/test/${routeId}`;
       },
@@ -86,6 +90,119 @@ describe('ActivityDescription', () => {
 
     expect(screen.getByText('deleted inventory')).toBeInTheDocument();
     expect(screen.getByTestId('source-resource-detail')).toHaveTextContent('Removed inventory');
+  });
+
+  it('should render inventory activity when the inventory kind is missing', () => {
+    const activity = createActivity({
+      operation: 'update',
+      object1: 'inventory',
+      summary_fields: {
+        inventory: [{ id: '3', name: 'Demo Inventory' }],
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: 'Demo Inventory' })).toHaveAttribute(
+      'href',
+      '/test/awx-inventory-details/3?inventory_type=inventory'
+    );
+  });
+
+  it('should use a host hostname when the activity has no host name', () => {
+    const activity = createActivity({
+      operation: 'create',
+      object1: 'host',
+      summary_fields: {
+        host: [{ id: '5', hostname: 'node-5.example.test' }],
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: 'node-5.example.test' })).toBeInTheDocument();
+  });
+
+  it('should render workflow job activity with its detail link', () => {
+    const activity = createActivity({
+      operation: 'create',
+      object1: 'workflow_job',
+      summary_fields: {
+        workflow_job: [{ id: '7', name: 'Workflow job' }],
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: 'Workflow job' })).toBeInTheDocument();
+  });
+
+  it('should fall back to a summary when an activity type has no route', () => {
+    const activity = createActivity({
+      operation: 'create',
+      object1: 'schedule',
+      summary_fields: {
+        schedule: [{ id: '9', name: 'Demo Schedule' }],
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('created schedule Demo Schedule')).toBeInTheDocument();
+  });
+
+  it('should render association and disassociation summaries without routes', () => {
+    for (const operation of ['associate', 'disassociate']) {
+      const activity = createActivity({
+        operation,
+        object1: 'schedule',
+        object2: 'setting',
+        summary_fields: {
+          schedule: [{ id: '9', name: 'Demo Schedule' }],
+          setting: [{ id: '10', name: 'Demo Setting' }],
+        },
+      });
+
+      const { unmount } = render(
+        <MemoryRouter>
+          <ActivityDescription activity={activity} />
+        </MemoryRouter>
+      );
+
+      const operationText = operation === 'associate' ? 'associated' : 'disassociated';
+      expect(
+        screen.getByText((content) => content.includes(`${operationText} schedule Demo Schedule`))
+      ).toBeInTheDocument();
+      unmount();
+    }
+  });
+
+  it('should use the fallback summary for an unknown operation', () => {
+    const activity = createActivity({ operation: 'archive' });
+
+    render(
+      <MemoryRouter>
+        <ActivityDescription activity={activity} />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Event summary not available')).toBeInTheDocument();
   });
 
   it('should render disassociate activity with role', () => {

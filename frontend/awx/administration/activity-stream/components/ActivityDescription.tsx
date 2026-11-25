@@ -72,6 +72,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
   const targetResourceName = getResourceName(activity, activity.object2);
   const targetResourceObj = getResourceObject(activity, activity.object2);
   const sourceResourceObj = getResourceObject(activity, activity.object1);
+  const inventoryType = INVENTORYURLPATHS[sourceResourceObj?.kind ?? ''];
   const roleResource = getResourceObject(activity, 'role');
   const eventText = generateEventText(activity);
 
@@ -124,7 +125,7 @@ export const ActivityDescription: React.FC<ActivityStreamDescriptionProps> = ({
                     to={getPageUrl(sourceResourceRoute, {
                       params: {
                         id: sourceResourceObj.id,
-                        inventory_type: INVENTORYURLPATHS[sourceResourceObj.kind],
+                        inventory_type: inventoryType,
                       },
                     })}
                     data-cy="source-resource-detail"
