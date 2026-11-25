@@ -12,7 +12,7 @@ import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { userEvent } from '@testing-library/user-event';
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import type { Survey, Spec } from '../../../interfaces/Survey';
 import { awxAPI } from '../../../common/api/awx-utils';
 
@@ -1570,5 +1570,163 @@ describe('TemplateSurveyForm', () => {
         'String Choices Question'
       );
     });
+  });
+
+  describe('Conditions, category and page', () => {
+    const baseQuestion: Spec = {
+      question_name: 'Environment',
+      question_description: '',
+      required: false,
+      type: 'text',
+      variable: 'env',
+      min: 0,
+      max: 1024,
+      default: '',
+      choices: '',
+      new_question: false,
+    };
+
+    const conditionalSurvey: Survey = {
+      name: 'Conditional survey',
+      description: '',
+      spec: [
+        baseQuestion,
+        { ...baseQuestion, question_name: 'Debug', variable: 'debug' },
+        {
+          ...baseQuestion,
+          question_name: 'Database host',
+          variable: 'db_host',
+          category: 'Database',
+          page: 2,
+          conditions: [
+            { variable: 'env', operator: 'in', value: ['dev', 'staging'] },
+            { variable: 'debug', operator: 'is_set' },
+          ],
+          condition_logic: 'or',
+        },
+      ],
+    };
+
+    beforeEach(() => {
+      server.use(
+        http.options(awxAPI`/job_templates/123/survey_spec/`, () =>
+          HttpResponse.json({ actions: { POST: {} } })
+        )
+      );
+    });
+
+    function capturePost() {
+      const captured: { body?: Survey } = {};
+      server.use(
+        http.post(awxAPI`/job_templates/123/survey_spec/`, async ({ request }) => {
+          captured.body = (await request.json()) as Survey;
+          return HttpResponse.json({});
+        })
+      );
+      return captured;
+    }
+
+    test(
+      'loads existing conditions, category and page into the editor',
+      { timeout: 20000 },
+      async () => {
+        renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'db_host' });
+
+        await waitFor(() => {
+          expect(screen.getAllByText('Only show when')).toHaveLength(2);
+        });
+        expect(screen.getByLabelText('Category')).toHaveValue('Database');
+        expect(screen.getByLabelText('Page')).toHaveValue(2);
+        expect(screen.getByText('Match conditions')).toBeInTheDocument();
+        // List values are shown comma-separated; is_set has no value input.
+        expect(screen.getAllByLabelText('Value')).toHaveLength(1);
+        expect(screen.getByLabelText('Value')).toHaveValue('dev, staging');
+      }
+    );
+
+    test('saves conditions, category and page with the question', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      const captured = capturePost();
+      renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'db_host' });
+
+      await waitFor(() => expect(screen.getByLabelText('Value')).toBeInTheDocument());
+      await user.clear(screen.getByLabelText('Value'));
+      await user.type(screen.getByLabelText('Value'), 'dev, prod');
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => expect(captured.body).toBeDefined());
+      const saved = captured.body?.spec.find((q) => q.variable === 'db_host');
+      expect(saved?.category).toBe('Database');
+      expect(saved?.page).toBe(2);
+      expect(saved?.condition_logic).toBe('or');
+      expect(saved?.conditions).toEqual([
+        { variable: 'env', operator: 'in', value: ['dev', 'prod'] },
+        { variable: 'debug', operator: 'is_set' },
+      ]);
+    });
+
+    test('removes a condition row', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      const captured = capturePost();
+      renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'db_host' });
+
+      await waitFor(() => expect(screen.getAllByText('Only show when')).toHaveLength(2));
+      await user.click(screen.getAllByRole('button', { name: 'Remove condition' })[1]);
+
+      await waitFor(() => expect(screen.getAllByText('Only show when')).toHaveLength(1));
+      // The AND/OR selector only appears with more than one condition.
+      expect(screen.queryByText('Match conditions')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+      await waitFor(() => expect(captured.body).toBeDefined());
+      const saved = captured.body?.spec.find((q) => q.variable === 'db_host');
+      expect(saved?.conditions).toEqual([
+        { variable: 'env', operator: 'in', value: ['dev', 'staging'] },
+      ]);
+    });
+
+    test('adds a condition row', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'env' });
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Add condition' })).toBeInTheDocument();
+      });
+      expect(screen.queryByText('Only show when')).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: 'Add condition' }));
+
+      await waitFor(() => expect(screen.getByText('Only show when')).toBeInTheDocument());
+      expect(screen.getByLabelText('Value')).toBeInTheDocument();
+    });
+
+    test('does not store conditions for a question without them', { timeout: 20000 }, async () => {
+      const user = userEvent.setup();
+      const captured = capturePost();
+      renderSurveyForm(server, conditionalSurvey, { mode: 'edit', questionVariable: 'env' });
+
+      await waitFor(() => expect(screen.getByLabelText('Category')).toBeInTheDocument());
+      await user.click(screen.getByRole('button', { name: /save survey question/i }));
+
+      await waitFor(() => expect(captured.body).toBeDefined());
+      const saved = captured.body?.spec.find((q) => q.variable === 'env');
+      expect(saved?.conditions).toBeUndefined();
+      expect(saved?.condition_logic).toBeUndefined();
+      expect(saved?.category).toBeUndefined();
+    });
+
+    test(
+      'hides the conditions editor when there are no other questions',
+      { timeout: 20000 },
+      async () => {
+        renderSurveyForm(server, createSurveyWithTextQuestion(), {
+          mode: 'edit',
+          questionVariable: 'text_variable',
+        });
+
+        await waitFor(() => expect(screen.getByLabelText('Category')).toBeInTheDocument());
+        expect(screen.queryByRole('button', { name: 'Add condition' })).not.toBeInTheDocument();
+      }
+    );
   });
 });

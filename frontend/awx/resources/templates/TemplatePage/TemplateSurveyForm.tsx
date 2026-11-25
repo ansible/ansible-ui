@@ -30,6 +30,11 @@ import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsRes
 import { Spec, Survey } from '../../../interfaces/Survey';
 import { AwxRoute } from '../../../main/AwxRoutes';
 import {
+  SurveyConditions,
+  getConditionalFormValues,
+  toConditionalSpecFields,
+} from './SurveyConditionsEditor';
+import {
   getFormattedChoices,
   isMultiSelect,
   validateMax,
@@ -103,6 +108,7 @@ export function TemplateSurveyForm(props: IProps) {
     () => surveySpecOptionsToPageFormData(surveySpecOptions),
     [surveySpecOptions]
   );
+  const surveyVariables = useMemo(() => survey?.spec?.map((s) => s.variable) ?? [], [survey?.spec]);
 
   if (error) return <AwxError error={error} handleRefresh={refresh} />;
 
@@ -139,6 +145,7 @@ export function TemplateSurveyForm(props: IProps) {
     choices: question?.choices ?? [],
     formattedChoices,
     new_question: !question,
+    ...getConditionalFormValues(question),
   };
 
   const onSubmit: PageFormSubmitHandler<FormSpec & { 'add-choice'?: string }> = async (
@@ -184,6 +191,7 @@ export function TemplateSurveyForm(props: IProps) {
       question_name: newQuestion.question_name,
       question_description: newQuestion.question_description,
       choices: newQuestion.choices,
+      ...toConditionalSpecFields(newQuestion),
     };
 
     const isDuplicate = updatedSurvey.spec.some((q) => q.variable === newQuestion.variable);
@@ -250,15 +258,21 @@ export function TemplateSurveyForm(props: IProps) {
       disableSubmitOnEnter
       optionsData={surveyOptionsData}
     >
-      <TemplateSurveyInputs />
+      <TemplateSurveyInputs surveyVariables={surveyVariables} />
     </AwxPageForm>
   );
 }
 
-function TemplateSurveyInputs() {
+function TemplateSurveyInputs({ surveyVariables }: Readonly<{ surveyVariables: string[] }>) {
   const { t } = useTranslation();
 
   const answerType = useWatch({ name: 'type' }) as string;
+  const currentVariable = useWatch({ name: 'variable' }) as string;
+
+  const otherVariables = useMemo(
+    () => surveyVariables.filter((v) => v !== currentVariable),
+    [surveyVariables, currentVariable]
+  );
 
   return (
     <>
@@ -322,6 +336,27 @@ function TemplateSurveyInputs() {
           name="required"
         />
       </PageFormGroup>
+
+      <PageFormTextInput
+        id="question-category"
+        name="category"
+        type="text"
+        label={t`Category`}
+        placeholder={t('Enter category name')}
+        labelHelp={t`Group this question under a category heading.`}
+      />
+
+      <PageFormTextInput
+        id="question-page"
+        name="page"
+        type="number"
+        min={1}
+        label={t`Page`}
+        placeholder="1"
+        labelHelp={t`Which wizard page this question appears on. Questions on different pages become separate wizard steps.`}
+      />
+
+      {otherVariables.length > 0 && <SurveyConditions otherVariables={otherVariables} />}
 
       {answerType && <SelectedAnswerType answer={answerType} />}
     </>
