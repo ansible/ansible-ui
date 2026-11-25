@@ -3,6 +3,7 @@ import { requestGet } from '@ansible/common-ui/crud/Data';
 import { AwxItemsResponse } from '../../../../common/AwxItemsResponse';
 import { awxAPI } from '../../../../common/api/awx-utils';
 import type { InstanceGroup } from '../../../../interfaces/InstanceGroup';
+import { omitBlankSurveyAnswers } from '../../../../common/util/omitBlankSurveyAnswers';
 import { stringIsUUID } from '../../../../common/util/strings';
 import type { LaunchConfiguration } from '../../../../interfaces/LaunchConfiguration';
 import { Survey } from '../../../../interfaces/Survey';
@@ -164,14 +165,15 @@ export function processSurvey(
   surveyConfig: Survey | null
 ): string {
   const extraVarsObj = extra_vars ? (JSON.parse(yamlToJson(extra_vars)) as object) : {};
-  const updatedSurvey: { [key: string]: string | string[] } = { ...survey };
+  const answeredSurvey = omitBlankSurveyAnswers(survey) as { [key: string]: string | string[] };
+  const updatedSurvey: { [key: string]: string | string[] } = { ...answeredSurvey };
 
   if (surveyConfig?.spec) {
     const passwordFields = surveyConfig.spec
       .filter((q) => q.type === 'password')
       .map((q) => q.variable);
 
-    const maskedSurveyPasswords = maskPasswords(survey, passwordFields);
+    const maskedSurveyPasswords = maskPasswords(answeredSurvey, passwordFields);
     Object.keys(maskedSurveyPasswords).forEach((passwordKey) => {
       updatedSurvey[passwordKey] = maskedSurveyPasswords[passwordKey];
     });

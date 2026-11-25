@@ -21,6 +21,7 @@ import {
   useAwxErrorMessageParser,
 } from '../../../common/adapters/awxErrorAdapter';
 import { awxAPI } from '../../../common/api/awx-utils';
+import { omitBlankSurveyAnswers } from '../../../common/util/omitBlankSurveyAnswers';
 import { Credential } from '../../../interfaces/Credential';
 import { JobTemplate } from '../../../interfaces/JobTemplate';
 import { ActionsResponse, OptionsResponse } from '../../../interfaces/OptionsResponse';
@@ -173,7 +174,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
             : {};
           setValue('extra_vars', {
             ...extraVarsObj,
-            ...survey,
+            ...omitBlankSurveyAnswers(survey),
           });
         }
 
@@ -184,7 +185,7 @@ export function LaunchTemplate({ jobType }: { jobType: string }) {
 
           payload = {
             ...payload,
-            extra_vars: { ...extraVarsObj, ...survey },
+            extra_vars: { ...extraVarsObj, ...omitBlankSurveyAnswers(survey) },
           };
         }
 
