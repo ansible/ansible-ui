@@ -111,4 +111,22 @@ describe('useAwxMultiSelectListView', () => {
       })
     );
   });
+
+  it('passes an unavailable endpoint through to the AWX view', () => {
+    wizardState.wizardData = {};
+    wizardState.stepData = {};
+    wizardState.activeStep = null;
+    mockUseAwxView.mockClear();
+
+    renderHook(
+      () => useAwxMultiSelectListView<TeamRow>({ ...viewOptions, url: undefined }, 'teams'),
+      { wrapper: TestWrapper }
+    );
+
+    expect(mockUseAwxView).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: undefined,
+      })
+    );
+  });
 });
