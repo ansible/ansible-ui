@@ -332,9 +332,11 @@ describe('useSetTemplateValuesDialog', () => {
     expect(patchBodies).toEqual([
       { time_taken_manually_execute_minutes: 45, time_taken_create_automation_minutes: 30 },
     ]);
+    // The PATCH reply has a count, but the toast does not show it
     expect(
-      await screen.findByText('Template defaults applied. Updated templates: 3')
+      await screen.findByText('Template defaults applied to all templates.')
     ).toBeInTheDocument();
+    expect(screen.queryByText(/Updated templates/)).not.toBeInTheDocument();
     await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
     expect(applyBulkValues).toHaveBeenCalledWith({
       time_taken_manually_execute_minutes: 45,
@@ -391,7 +393,7 @@ describe('useSetTemplateValuesDialog', () => {
     expect(refresh).not.toHaveBeenCalled();
   });
 
-  test('should show a generic toast when the PATCH returns no content', async () => {
+  test('should show the same toast when the PATCH returns no content', async () => {
     const user = userEvent.setup();
     mockBulkPatch(server, () => new HttpResponse(null, { status: 204 }));
     const dialog = await openDialog(user);
@@ -399,7 +401,9 @@ describe('useSetTemplateValuesDialog', () => {
     await fillSetTemplateValuesDialog(user, dialog, { manual: '45', create: '30' });
     await clickApply(user, dialog);
 
-    expect(await screen.findByText('Template defaults applied.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Template defaults applied to all templates.')
+    ).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
