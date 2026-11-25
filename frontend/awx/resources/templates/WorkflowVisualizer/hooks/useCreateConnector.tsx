@@ -15,6 +15,9 @@ export function useCreateConnector() {
       if (!isNode(target)) {
         return;
       }
+      if (source.getId() === target.getId()) {
+        return;
+      }
       if (!model.edges) {
         model.edges = [];
       }

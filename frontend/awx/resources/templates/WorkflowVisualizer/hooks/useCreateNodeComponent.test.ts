@@ -86,12 +86,39 @@ describe('useCreateNodeComponent', () => {
     const source = { getId: () => 'src' };
     const target = {
       _isNode: true,
+      getId: () => 'target',
       getNodeStatus: () => 'danger',
       getTargetEdges: () => [],
     };
 
     handler(source, target);
 
+    expect(mockCreateConnectorFn).not.toHaveBeenCalled();
+  });
+
+  it('should reject a self-drop before changing the target root edge', () => {
+    renderHook(() => useCreateNodeComponent());
+
+    const handler = (
+      withCreateConnector as unknown as { _handler: (...args: unknown[]) => unknown }
+    )._handler;
+    const source = { getId: () => 'node' };
+    const edgeSetVisible = vi.fn();
+    const target = {
+      _isNode: true,
+      getId: () => 'node',
+      getNodeStatus: () => 'default',
+      getTargetEdges: () => [
+        {
+          getSource: () => ({ getId: () => START_NODE_ID }),
+          setVisible: edgeSetVisible,
+        },
+      ],
+    };
+
+    handler(source, target);
+
+    expect(edgeSetVisible).not.toHaveBeenCalled();
     expect(mockCreateConnectorFn).not.toHaveBeenCalled();
   });
 
@@ -104,6 +131,7 @@ describe('useCreateNodeComponent', () => {
     const source = { getId: () => 'src' };
     const target = {
       _isNode: true,
+      getId: () => 'target',
       getNodeStatus: () => 'default',
       getTargetEdges: () => [],
     };
@@ -123,6 +151,7 @@ describe('useCreateNodeComponent', () => {
     const edgeSetVisible = vi.fn();
     const target = {
       _isNode: true,
+      getId: () => 'target',
       getNodeStatus: () => 'default',
       getTargetEdges: () => [
         {
@@ -148,6 +177,7 @@ describe('useCreateNodeComponent', () => {
     const edgeSetVisible = vi.fn();
     const target = {
       _isNode: true,
+      getId: () => 'target',
       getNodeStatus: () => 'default',
       getTargetEdges: () => [
         {
@@ -174,6 +204,7 @@ describe('useCreateNodeComponent', () => {
     const edge2SetVisible = vi.fn();
     const target = {
       _isNode: true,
+      getId: () => 'target',
       getNodeStatus: () => 'default',
       getTargetEdges: () => [
         { getSource: () => ({ getId: () => START_NODE_ID }), setVisible: edge1SetVisible },
