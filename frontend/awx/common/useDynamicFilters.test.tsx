@@ -220,6 +220,109 @@ describe('useDynamicFilters', () => {
         expect(requestedUrls.some((url) => url.includes('id__gt=5'))).toBe(true);
       }
     });
+
+    it('does not query when an ID search contains non-digits', async () => {
+      const requestedUrls: string[] = [];
+      server.use(
+        http.options(awxAPI`/unified_job_templates/`, () =>
+          HttpResponse.json({
+            actions: {
+              GET: {
+                id: { filterable: true, type: 'integer', label: 'ID' },
+                name: { filterable: true, type: 'string', label: 'Name' },
+              },
+            },
+          })
+        ),
+        http.get(awxAPI`/unified_job_templates/`, ({ request }) => {
+          requestedUrls.push(request.url);
+          const idSearch = new URL(request.url).searchParams.get('id__icontains');
+          if (idSearch && !/^\d+$/.test(idSearch)) {
+            return HttpResponse.json(
+              { id: [`${idSearch} value must be an integer.`] },
+              { status: 400 }
+            );
+          }
+          if (idSearch === '12') {
+            return HttpResponse.json({
+              count: 1,
+              results: [{ id: 12, name: 'Demo Job Template' }],
+            });
+          }
+          return HttpResponse.json({ count: 0, results: [] });
+        })
+      );
+
+      const { result } = renderHook(
+        () =>
+          useDynamicToolbarFilters({
+            optionsPath: 'unified_job_templates',
+            preFilledValueKeys: {
+              id: {
+                apiPath: 'unified_job_templates',
+                queryParams: { type: 'job_template,workflow_job_template' },
+              },
+              name: { apiPath: 'unified_job_templates' },
+            },
+          }),
+        { wrapper }
+      );
+
+      await waitFor(() => {
+        expect(result.current.some((filter) => filter.key === 'id')).toBe(true);
+      });
+
+      const idFilter = result.current.find((filter) => filter.key === 'id');
+      const nameFilter = result.current.find((filter) => filter.key === 'name');
+      expect(idFilter?.type).toBe(ToolbarFilterType.AsyncMultiSelect);
+      expect(nameFilter?.type).toBe(ToolbarFilterType.AsyncMultiSelect);
+
+      if (idFilter?.type !== ToolbarFilterType.AsyncMultiSelect) {
+        return;
+      }
+      if (nameFilter?.type !== ToolbarFilterType.AsyncMultiSelect) {
+        return;
+      }
+
+      await expect(
+        idFilter.queryOptions({
+          search: 'abc',
+          next: '',
+          signal: new AbortController().signal,
+        })
+      ).resolves.toEqual({ remaining: 0, options: [], next: '' });
+      expect(requestedUrls).toEqual([]);
+
+      await expect(
+        idFilter.queryOptions({
+          search: '1a',
+          next: '',
+          signal: new AbortController().signal,
+        })
+      ).resolves.toEqual({ remaining: 0, options: [], next: '' });
+      expect(requestedUrls).toEqual([]);
+
+      await expect(
+        idFilter.queryOptions({
+          search: '12',
+          next: '',
+          signal: new AbortController().signal,
+        })
+      ).resolves.toEqual({
+        remaining: 0,
+        options: [{ label: '12', value: '12' }],
+        next: '12',
+      });
+      expect(requestedUrls.some((url) => url.includes('id__icontains=12'))).toBe(true);
+
+      requestedUrls.length = 0;
+      await nameFilter.queryOptions({
+        search: 'abc',
+        next: '',
+        signal: new AbortController().signal,
+      });
+      expect(requestedUrls.some((url) => url.includes('name__icontains=abc'))).toBe(true);
+    });
   });
 
   describe('knownAwxFilterKeys', () => {

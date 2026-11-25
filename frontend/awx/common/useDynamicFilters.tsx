@@ -105,6 +105,15 @@ function resolveAsyncFilterKeys(filter: AsyncKeyOptions, key: string) {
   };
 }
 
+/**
+ * ID lookups are sent as `id__icontains`. Controller rejects any non-integer
+ * value with HTTP 400, and the async select then replaces the search box with
+ * its query error. Digits, including an ID that does not exist, are queried.
+ */
+function isQueryableIdSearch(labelKey: string, search: string | undefined) {
+  return labelKey !== 'id' || !search || /^\d+$/.test(search);
+}
+
 export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
   // useRef to keep the initial props since thay should not change
   // this is used to prevent the filters from being re-calculated
@@ -126,6 +135,9 @@ export function useDynamicToolbarFilters(props: DynamicToolbarFiltersProps) {
     async (queryOptions: PageAsyncSelectQueryOptions, key: string) => {
       const knownAwxFilter = knownAwxFilterKeys[key] || preFilledValueKeys?.[key];
       const { labelKey, valueKey } = resolveAsyncFilterKeys(knownAwxFilter, key);
+      if (!isQueryableIdSearch(labelKey, queryOptions.search)) {
+        return { remaining: 0, options: [], next: '' };
+      }
       const itemsResponse = await requestGet<
         AwxItemsResponse<Record<string, string | number | undefined>>
       >(
