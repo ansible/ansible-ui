@@ -9,6 +9,7 @@ import { PageFormCreatableSelect } from '@ansible/ansible-ui-framework/PageForm/
 import { yamlToJson } from '@ansible/ansible-ui-framework/utils/codeEditorUtils';
 import { useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { PageFormCredentialSelect } from '../../../../access/credentials/components/PageFormCredentialSelect';
 import { PageFormSelectExecutionEnvironment } from '../../../../administration/execution-environments/components/PageFormSelectExecutionEnvironment';
 import { PageFormInstanceGroupSelect } from '../../../../administration/instance-groups/components/PageFormInstanceGroupSelect';
@@ -26,6 +27,20 @@ type NodePromptStepData = {
   prompt: PromptFormValues;
   launch_config: LaunchConfiguration;
 };
+
+// DataEditor sizes itself from its line count (inline height), so an empty value collapses to one line.
+// Enforce a usable minimum size for the prompt variables editor.
+const VariablesEditorContainer = styled.div`
+  .pf-v6-c-form-control {
+    min-height: 300px !important;
+  }
+`;
+
+// The wizard step already renders inside a PageFormGrid; without spanning every column this nested
+// grid collapses into a single narrow track.
+const PromptsGrid = styled(PageFormGrid)`
+  grid-column: 1 / -1;
+`;
 
 export function NodePromptsStep({
   preventCredentialsThatNeedPasswordsOnLaunch = false,
@@ -46,7 +61,7 @@ export function NodePromptsStep({
   }
 
   return (
-    <PageFormGrid isVertical singleColumn>
+    <PromptsGrid isVertical singleColumn>
       <ConditionalField isHidden={!config.ask_inventory_on_launch}>
         <PageFormInventorySelect<WizardFormValues> name="prompt.inventory.id" isRequired />
       </ConditionalField>
@@ -220,22 +235,24 @@ export function NodePromptsStep({
         />
       </ConditionalField>
       <ConditionalField isHidden={!config.ask_variables_on_launch}>
-        <PageFormDataEditor<WizardFormValues>
-          labelHelpTitle={t('Variables')}
-          labelHelp={t(`Optional extra variables to be applied to job template`)}
-          label={t('Variables')}
-          name="prompt.extra_vars"
-          format="yaml"
-          validate={(value) => {
-            try {
-              yamlToJson(value);
-              return true;
-            } catch (e) {
-              return e instanceof Error ? e.message : 'Invalid YAML';
-            }
-          }}
-        />
+        <VariablesEditorContainer>
+          <PageFormDataEditor<WizardFormValues>
+            labelHelpTitle={t('Variables')}
+            labelHelp={t(`Optional extra variables to be applied to job template`)}
+            label={t('Variables')}
+            name="prompt.extra_vars"
+            format="yaml"
+            validate={(value) => {
+              try {
+                yamlToJson(value);
+                return true;
+              } catch (e) {
+                return e instanceof Error ? e.message : 'Invalid YAML';
+              }
+            }}
+          />
+        </VariablesEditorContainer>
       </ConditionalField>
-    </PageFormGrid>
+    </PromptsGrid>
   );
 }
