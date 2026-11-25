@@ -227,3 +227,25 @@ describe('review step validate', () => {
     expect(typeof body['rrule']).toBe('string');
   });
 });
+
+
+describe('details step validate', () => {
+  let validate: ((formData: object, wizardData: object) => Promise<void> | void) | undefined;
+  beforeEach(() => {
+    const { result } = renderHook(() => useScheduleSteps());
+    validate = getStep(result.current(), 'details').validate;
+    expect(validate).toBeDefined();
+  });
+
+  it('throws when AM/PM is missing', () => {
+    expect(() =>
+      validate!({ startDateTime: { date: '2024-01-01', time: '3:15' } } as object, {})
+    ).toThrow(RequestError);
+  });
+
+  it('does not throw when AM/PM is present', () => {
+    expect(() =>
+      validate!({ startDateTime: { date: '2024-01-01', time: '3:15 PM' } } as object, {})
+    ).not.toThrow();
+  });
+});
