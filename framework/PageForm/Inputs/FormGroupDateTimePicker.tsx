@@ -9,7 +9,7 @@ import {
   InputGroupItem,
 } from '@patternfly/react-core';
 
-import React, { FormEvent } from 'react';
+import { FormEvent } from 'react';
 import { PageFormGroup, PageFormGroupProps } from './PageFormGroup';
 export type FormGroupDateTimePickerProps = Omit<
   DatePickerProps,
@@ -17,14 +17,7 @@ export type FormGroupDateTimePickerProps = Omit<
 > &
   Omit<TimePickerProps, 'onChange' | 'placeholder' | 'value'> &
   PageFormGroupProps & {
-    onTimeChange: (
-      event: React.FormEvent<HTMLInputElement>,
-      time: string,
-      hour?: number,
-      minute?: number,
-      seconds?: number,
-      isValid?: boolean
-    ) => void;
+    onTimeChange: NonNullable<TimePickerProps['onChange']>;
     timePlaceHolder?: string;
     timeValue: string;
     onDateChange: (date: string) => void;
