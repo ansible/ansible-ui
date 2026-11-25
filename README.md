@@ -151,3 +151,5 @@ If you encounter abusive behavior, please refer to the [policy violations](https
   - [News & Announcements](https://forum.ansible.com/c/news/5): track project-wide announcements including social events. The [Bullhorn newsletter](https://docs.ansible.com/projects/ansible/latest/community/communication.html#the-bullhorn), which is used to announce releases and important changes, can also be found here.
 
 For more information about communication, see the [Ansible communication guide](https://docs.ansible.com/projects/ansible/latest/community/communication.html).
+
+<!-- devel baseline test run: 2026-09-11 14:09 UTC-4 -->
