@@ -85,4 +85,30 @@ describe('RepositoryManageUsers', () => {
       })
     ).toBeInTheDocument();
   });
+
+  it('shows loading state while repository data is loading', () => {
+    mockUseGet.mockImplementation(() => ({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+      refresh: vi.fn(),
+    }));
+
+    render(
+      <MemoryRouter
+        initialEntries={[
+          '/repositories/test-repo/user-access/galaxy.ansiblerepository/12345678-1234-1234-1234-123456789abc/1/manage',
+        ]}
+      >
+        <Routes>
+          <Route
+            path="/repositories/:id/user-access/:resource_type/:resource_id/:user_id/manage"
+            element={<RepositoryManageUsers />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeInTheDocument();
+  });
 });

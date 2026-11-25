@@ -55,4 +55,20 @@ describe('InventorySources', () => {
       expect(screen.getByRole('link', { name: 'Create source' })).toBeInTheDocument();
     });
   });
+
+  it('renders empty inventory sources message for the inventory', async () => {
+    render(
+      <MemoryRouter initialEntries={['/inventories/99/inventory_sources']}>
+        <Routes>
+          <Route path="/inventories/:id/inventory_sources" element={<InventorySources />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('There are currently no sources assigned to this inventory.')
+      ).toBeInTheDocument();
+    });
+  });
 });

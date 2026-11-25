@@ -1,10 +1,27 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { MemoryRouter } from 'react-router-dom';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { CollectionVersionSearch } from '../Collection';
 import { CollectionPage } from './CollectionPage';
+
+const { mockPageNavigate, mockAddAlert, mockRemoveAlerts, mockOpenBrowse, mockUseHubContext } =
+  vi.hoisted(() => ({
+    mockPageNavigate: vi.fn(),
+    mockAddAlert: vi.fn(),
+    mockRemoveAlerts: vi.fn(),
+    mockOpenBrowse: vi.fn(),
+    mockUseHubContext: vi.fn(() => ({
+      featureFlags: {
+        display_signatures: true,
+      },
+      settings: {},
+      user: null,
+      hasPermission: () => false,
+    })),
+  }));
 
 const mockCollection: CollectionVersionSearch = {
   collection_version: {
@@ -44,24 +61,17 @@ vi.mock('@ansible/ansible-ui-framework', async () => {
   const actual = await vi.importActual('@ansible/ansible-ui-framework');
   return {
     ...actual,
-    usePageNavigate: () => vi.fn(),
+    usePageNavigate: () => mockPageNavigate,
     useGetPageUrl: () => (route: string) => `/mock-url/${route}`,
     usePageAlertToaster: () => ({
-      addAlert: vi.fn(),
-      removeAlerts: vi.fn(),
+      addAlert: mockAddAlert,
+      removeAlerts: mockRemoveAlerts,
     }),
   };
 });
 
 vi.mock('../../common/useHubContext', () => ({
-  useHubContext: () => ({
-    featureFlags: {
-      display_signatures: true,
-    },
-    settings: {},
-    user: null,
-    hasPermission: () => false,
-  }),
+  useHubContext: () => mockUseHubContext(),
 }));
 
 // Mock isInsightsMode
@@ -78,7 +88,9 @@ vi.mock('../hooks/useCollectionActions', () => ({
 
 vi.mock('../hooks/useCollectionVersionSelector', () => ({
   useSelectCollectionVersionSingle: () => ({
-    openBrowse: vi.fn(),
+    openBrowse: (...args: unknown[]) => {
+      mockOpenBrowse(...args);
+    },
   }),
 }));
 
@@ -96,7 +108,19 @@ describe('CollectionPage', () => {
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
   afterAll(() => server.close());
-  afterEach(() => server.resetHandlers());
+  afterEach(() => {
+    server.resetHandlers();
+    mockPageNavigate.mockReset();
+    mockAddAlert.mockReset();
+    mockRemoveAlerts.mockReset();
+    mockOpenBrowse.mockReset();
+    mockUseHubContext.mockReturnValue({
+      featureFlags: { display_signatures: true },
+      settings: {},
+      user: null,
+      hasPermission: () => false,
+    });
+  });
 
   test('should render loading state initially', () => {
     render(
@@ -404,5 +428,154 @@ describe('CollectionPage', () => {
       expect(screen.queryByText('Docs site')).not.toBeInTheDocument();
       expect(screen.queryByText('Create issue')).not.toBeInTheDocument();
     });
+  });
+
+  test('hides signature status when the feature flag is off', async () => {
+    mockUseHubContext.mockReturnValue({
+      featureFlags: { display_signatures: false },
+      settings: {},
+      user: null,
+      hasPermission: () => false,
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+        <CollectionPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+      ).toBeInTheDocument();
+    });
+    expect(screen.queryByText('Signed')).not.toBeInTheDocument();
+    expect(screen.queryByText('Unsigned')).not.toBeInTheDocument();
+  });
+
+  test('loads version options and applies a browsed version', async () => {
+    const user = userEvent.setup();
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/v3/plugin/ansible/search/collection-versions/'),
+        ({ request }) => {
+          if (request.url.includes('version=2.0.0')) {
+            return HttpResponse.json({
+              meta: { count: 1 },
+              data: [
+                {
+                  ...mockCollection,
+                  collection_version: {
+                    ...mockCollection.collection_version,
+                    version: '2.0.0',
+                  },
+                },
+              ],
+            });
+          }
+          if (request.url.includes('offset=')) {
+            return HttpResponse.json({
+              meta: { count: 2 },
+              data: [
+                { ...mockCollection, is_highest: true, is_signed: true },
+                {
+                  ...mockCollection,
+                  is_highest: false,
+                  is_signed: false,
+                  collection_version: {
+                    ...mockCollection.collection_version,
+                    version: '0.9.0',
+                    pulp_created: '2023-01-01T00:00:00Z',
+                  },
+                },
+              ],
+            });
+          }
+          return HttpResponse.json(mockCollectionResponse);
+        }
+      )
+    );
+    mockOpenBrowse.mockImplementation((onSelect: (item: CollectionVersionSearch) => void) => {
+      onSelect({
+        ...mockCollection,
+        collection_version: {
+          ...mockCollection.collection_version,
+          version: '2.0.0',
+        },
+      } as CollectionVersionSearch);
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+        <CollectionPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+      ).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: /1\.0\.0/ }));
+    await waitFor(() => expect(screen.getAllByText(/latest/).length).toBeGreaterThan(0));
+    expect(screen.getAllByText(/unsigned/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/0\.9\.0/)).toBeInTheDocument();
+
+    await user.click(screen.getByTestId('browse-collection-version-button'));
+    await waitFor(() => expect(screen.getByText('2.0.0')).toBeInTheDocument());
+  });
+
+  test('alerts when a newer collection version is uploaded', async () => {
+    const user = userEvent.setup();
+    let allowUpgrade = false;
+    server.use(
+      http.get(
+        ({ request }) => request.url.includes('/v3/plugin/ansible/search/collection-versions/'),
+        ({ request }) => {
+          if (request.url.includes('order_by=-version') && !request.url.includes('offset=')) {
+            const count = allowUpgrade ? 2 : 1;
+            return HttpResponse.json({
+              meta: { count },
+              data:
+                count === 1
+                  ? [mockCollection]
+                  : [
+                      {
+                        ...mockCollection,
+                        collection_version: {
+                          ...mockCollection.collection_version,
+                          version: '2.0.0',
+                          pulp_created: '2024-06-01T00:00:00Z',
+                        },
+                      },
+                      mockCollection,
+                    ],
+            });
+          }
+          return HttpResponse.json(mockCollectionResponse);
+        }
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/collections/published/testnamespace/testcollection']}>
+        <CollectionPage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: 'testnamespace.testcollection' })
+      ).toBeInTheDocument();
+    });
+    allowUpgrade = true;
+
+    await waitFor(() => expect(mockAddAlert).toHaveBeenCalled(), { timeout: 5000 });
+    const alert = mockAddAlert.mock.calls[0][0] as { title: React.ReactElement };
+    render(alert.title);
+    await user.click(screen.getByRole('button', { name: 'here' }));
+    expect(mockPageNavigate).toHaveBeenCalled();
+    expect(mockRemoveAlerts).toHaveBeenCalled();
   });
 });

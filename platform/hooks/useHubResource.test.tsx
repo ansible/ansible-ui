@@ -46,4 +46,21 @@ describe('useHubResource', () => {
     });
     expect(result.current.resource).toBeUndefined();
   });
+
+  test('should query with an empty ansible id when platform resource is omitted', async () => {
+    server.use(
+      http.get(hubAPI`/teams/`, ({ request }) => {
+        const url = new URL(request.url);
+        expect(url.searchParams.get('resource__ansible_id')).toBe('');
+        return HttpResponse.json({ count: 0, results: [] });
+      })
+    );
+
+    const { result } = renderHook(() => useHubResource<{ id: number }>('teams'));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+    expect(result.current.resource).toBeUndefined();
+  });
 });

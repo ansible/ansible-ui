@@ -364,4 +364,17 @@ describe('PlatformOrganizationForm', () => {
       expect(screen.queryByText(/must contain only/)).not.toBeInTheDocument();
     });
   });
+
+  test('renders description field on create organization form', async () => {
+    render(
+      <MemoryRouter>
+        <CreatePlatformOrganization />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Description/i)).toBeInTheDocument();
+    });
+    expect(PlatformOrganizationForm).toBeDefined();
+  });
 });

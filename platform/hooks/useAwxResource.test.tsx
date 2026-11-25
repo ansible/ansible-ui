@@ -77,4 +77,20 @@ describe('useAwxResource', () => {
 
     expect(resource).toEqual({ id: 7, name: 'loaded' });
   });
+
+  test('should return undefined from getAwxResource when no results are returned', async () => {
+    server.use(
+      http.get(
+        ({ request }) => {
+          const url = new URL(request.url);
+          return url.pathname.endsWith('/users');
+        },
+        () => HttpResponse.json({ count: 0, results: [] })
+      )
+    );
+
+    const resource = await getAwxResource<{ id: number }>('users', platformResource);
+
+    expect(resource).toBeUndefined();
+  });
 });

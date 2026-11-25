@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { t } from 'i18next';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi, beforeAll, afterAll, beforeEach } from 'vitest';
@@ -15,15 +16,21 @@ vi.mock('../main/GatewayServices', () => ({
   useHasEdaService: () => true,
 }));
 
+const openManageDashboard = vi.fn();
+
 vi.mock('./useManagedPlatformOverview', () => ({
   useManagedPlatformOverview: () => ({
-    openManageDashboard: vi.fn(),
+    openManageDashboard,
     managedResources: [
       { id: 'counts', name: 'Resource counts' },
       { id: 'job_activity', name: 'Job activity' },
+      { id: 'recent_jobs', name: 'Recent jobs' },
+      { id: 'recent_projects', name: 'Recent projects' },
+      { id: 'recent_inventories', name: 'Recent inventories' },
       { id: 'recent-rulebook-activations' },
       { id: 'recent-rule-audits' },
       { id: 'recent-decision-environments' },
+      { id: 'unknown-card', name: 'Unknown' },
     ],
   }),
 }));
@@ -37,6 +44,18 @@ vi.mock('./cards/PlatformCountsCard', () => ({
 
 vi.mock('@ansible/awx-ui/overview/cards/AwxJobActivityCard', () => ({
   AwxJobActivityCard: () => <div data-testid="awx-job-activity-card">{t('Job Activity Card')}</div>,
+}));
+
+vi.mock('@ansible/awx-ui/overview/cards/AwxRecentJobsCard', () => ({
+  AwxRecentJobsCard: () => <div data-testid="awx-recent-jobs-card">Jobs</div>,
+}));
+
+vi.mock('@ansible/awx-ui/overview/cards/AwxRecentProjectsCard', () => ({
+  AwxRecentProjectsCard: () => <div data-testid="awx-recent-projects-card">Projects</div>,
+}));
+
+vi.mock('@ansible/awx-ui/overview/cards/AwxRecentInventoriesCard', () => ({
+  AwxRecentInventoriesCard: () => <div data-testid="awx-recent-inventories-card">Inventories</div>,
 }));
 
 // Mock window.location for redirects
@@ -198,6 +217,22 @@ describe('PlatformOverview', () => {
 
     // Should not redirect again since sessionStorage was cleared
     expect(mockLocationHref).not.toHaveBeenCalled();
+  });
+
+  it('should open manage dashboard and render AWX/EDA overview cards when services are enabled', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <PlatformOverview />
+      </MemoryRouter>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Manage view' }));
+    expect(openManageDashboard).toHaveBeenCalled();
+    expect(screen.getByTestId('awx-recent-jobs-card')).toBeInTheDocument();
+    expect(screen.getByTestId('awx-recent-projects-card')).toBeInTheDocument();
+    expect(screen.getByTestId('awx-recent-inventories-card')).toBeInTheDocument();
+    expect(screen.queryByText('Unknown')).not.toBeInTheDocument();
   });
 
   it('should render dashboard cards when no redirect needed', () => {

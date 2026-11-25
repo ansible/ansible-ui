@@ -70,4 +70,30 @@ describe('RemoteManageUsers', () => {
       })
     ).toBeInTheDocument();
   });
+
+  it('shows loading state while remote data is loading', () => {
+    mockUseGet.mockImplementation(() => ({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+      refresh: vi.fn(),
+    }));
+
+    render(
+      <MemoryRouter
+        initialEntries={[
+          '/remotes/test-remote/user-access/galaxy.collectionremote/12345678-1234-1234-1234-123456789abc/1/manage',
+        ]}
+      >
+        <Routes>
+          <Route
+            path="/remotes/:id/user-access/:resource_type/:resource_id/:user_id/manage"
+            element={<RemoteManageUsers />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeInTheDocument();
+  });
 });

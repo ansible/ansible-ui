@@ -82,4 +82,41 @@ describe('HubNamespaceAssignTeams', () => {
       expect(screen.getByTestId('wizard')).toBeInTheDocument();
     });
   });
+
+  it('shows a loading page while the namespace is requested', () => {
+    server.use(
+      http.get('*/_ui/v1/namespaces/*', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 40));
+        return HttpResponse.json(mockNamespace);
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/namespaces/demo/team-access/assign']}>
+        <Routes>
+          <Route path="/namespaces/:id/team-access/assign" element={<HubNamespaceAssignTeams />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
+
+  it('shows an error when the namespace cannot be loaded', async () => {
+    server.use(
+      http.get('*/_ui/v1/namespaces/*', () =>
+        HttpResponse.json({ detail: 'Not found' }, { status: 404 })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/namespaces/demo/team-access/assign']}>
+        <Routes>
+          <Route path="/namespaces/:id/team-access/assign" element={<HubNamespaceAssignTeams />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+  });
 });

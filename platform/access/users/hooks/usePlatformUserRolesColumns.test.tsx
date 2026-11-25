@@ -7,7 +7,9 @@ const mockGetPageUrl = vi.fn(() => '/roles/1');
 const mockGetDisplayName = vi.fn(() => 'Project');
 const mockGetComponentNames = vi.fn(() => ['Automation Execution']);
 const mockGetResourceEndpoint = vi.fn(() => '/resources/1/');
-const mockUseGetItem = vi.fn(() => ({ data: { name: 'My Project' }, error: undefined }));
+const mockUseGetItem = vi.fn((): { data?: { name: string }; error?: RequestError } => ({
+  data: { name: 'My Project' },
+}));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -43,7 +45,8 @@ vi.mock('@ansible/common-ui/crud/useGet', () => ({
   useGetItem: () => mockUseGetItem(),
 }));
 
-import { usePlatformUserRolesColumns } from './usePlatformUserRolesColumns';
+import { RequestError } from '@ansible/common-ui/crud/RequestError';
+import { useAsyncQueryField, usePlatformUserRolesColumns } from './usePlatformUserRolesColumns';
 
 const assignment: UserAssignment = {
   id: 1,
@@ -103,5 +106,43 @@ describe('usePlatformUserRolesColumns', () => {
     if ('to' in roleColumn && typeof roleColumn.to === 'function') {
       expect(roleColumn.to(assignment)).toBeUndefined();
     }
+  });
+
+  test('useAsyncQueryField returns undefined when id is undefined', () => {
+    const { result } = renderHook(() =>
+      useAsyncQueryField({ url: '/resources/', id: undefined, field: 'name' })
+    );
+    expect(result.current).toBeUndefined();
+  });
+
+  test('useAsyncQueryField falls back to id on 404 RequestError', () => {
+    mockUseGetItem.mockReturnValueOnce({
+      data: undefined,
+      error: new RequestError('Not found', undefined, 404, undefined, undefined),
+    });
+
+    const { result } = renderHook(() =>
+      useAsyncQueryField({ url: '/resources/', id: 55, field: 'name' })
+    );
+    expect(result.current).toBe('55');
+  });
+
+  test('useAsyncQueryField returns resourceName on 403 RequestError', () => {
+    mockUseGetItem.mockReturnValueOnce({
+      data: undefined,
+      error: new RequestError('Forbidden', undefined, 403, undefined, undefined),
+    });
+
+    const { result } = renderHook(() =>
+      useAsyncQueryField({ url: '/resources/', id: 55, field: 'name', resourceName: 'Fallback' })
+    );
+    expect(result.current).toBe('Fallback');
+  });
+
+  test('name column exposes list and card keys', () => {
+    const { result } = renderHook(() => usePlatformUserRolesColumns());
+    const nameColumn = result.current[0] as ITableColumn<UserAssignment>;
+    expect(nameColumn.list).toBe('name');
+    expect(nameColumn.card).toBe('name');
   });
 });

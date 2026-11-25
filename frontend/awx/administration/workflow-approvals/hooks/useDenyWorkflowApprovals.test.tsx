@@ -68,4 +68,20 @@ describe('useDenyWorkflowApprovals', () => {
       })
     ).toBe('');
   });
+
+  it('posts deny action to each selected workflow approval', () => {
+    const postRequest = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(usePostRequest).mockReturnValue(postRequest);
+    const onComplete = vi.fn();
+    const { result } = renderHook(() => useDenyWorkflowApprovals(onComplete));
+
+    result.current([mockWorkflowApproval]);
+
+    const options = mockConfirmation.mock.calls[0][0] as {
+      actionFn: (item: WorkflowApproval) => Promise<void>;
+    };
+    void options.actionFn(mockWorkflowApproval);
+
+    expect(postRequest).toHaveBeenCalledWith(expect.stringContaining('/workflow_approvals/'), {});
+  });
 });

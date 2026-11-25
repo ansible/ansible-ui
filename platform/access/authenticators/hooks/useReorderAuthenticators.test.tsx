@@ -78,4 +78,25 @@ describe('ReorderItemsModal', () => {
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(mockSetDialog).toHaveBeenCalledWith(undefined);
   });
+
+  it('syncs displayed items when the items prop changes', () => {
+    const onApplyChanges = vi.fn();
+
+    const { rerender } = render(
+      <ReorderItemsModal items={[authA]} onApplyChanges={onApplyChanges} onComplete={vi.fn()} />
+    );
+
+    expect(screen.getByText('Alpha')).toBeInTheDocument();
+    expect(screen.queryByText('Beta')).not.toBeInTheDocument();
+
+    rerender(
+      <ReorderItemsModal
+        items={[authA, authB]}
+        onApplyChanges={onApplyChanges}
+        onComplete={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('Beta')).toBeInTheDocument();
+  });
 });

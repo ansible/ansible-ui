@@ -243,6 +243,12 @@ describe('useAnalyticsView', () => {
     expect(postRequestUrls).toHaveLength(0);
   });
 
+  it('encodes query string values for getQueryString helper', () => {
+    expect(getQueryString({ reportName: 'demo report', page: '2' })).toBe(
+      'reportName=demo%20report&page=2'
+    );
+  });
+
   it('applies builder filter keys and sort query parameters', async () => {
     mockUseView.mockReturnValue({
       page: 1,

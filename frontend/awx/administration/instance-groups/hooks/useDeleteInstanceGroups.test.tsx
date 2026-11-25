@@ -100,6 +100,37 @@ describe('useDeleteInstanceGroups', () => {
     expect(options.isItemNonActionable(createMockInstanceGroup())).toBeUndefined();
   });
 
+  it('warns when deleting multiple instance groups at once', async () => {
+    const onComplete = vi.fn();
+    const { result } = renderHook(() => useDeleteInstanceGroups(onComplete));
+
+    void result.current([
+      createMockInstanceGroup({ id: 1, name: 'A' }),
+      createMockInstanceGroup({ id: 2, name: 'B' }),
+    ]);
+    await waitFor(() => expect(mockBulkAction).toHaveBeenCalled());
+
+    const callArgs = mockBulkAction.mock.calls[0]?.[0] as { alertPrompts: string[] };
+    expect(callArgs.alertPrompts[0]).toContain('could impact other resources');
+  });
+
+  it('includes undeletable selection count in alert prompts', async () => {
+    const onComplete = vi.fn();
+    const { result } = renderHook(() => useDeleteInstanceGroups(onComplete));
+
+    void result.current([
+      createMockInstanceGroup(),
+      createMockInstanceGroup({
+        id: 2,
+        summary_fields: { user_capabilities: { delete: false } },
+      } as InstanceGroup),
+    ]);
+    await waitFor(() => expect(mockBulkAction).toHaveBeenCalled());
+
+    const callArgs = mockBulkAction.mock.calls[0]?.[0] as { alertPrompts: string[] };
+    expect(callArgs.alertPrompts.some((prompt) => prompt.includes('cannot be deleted'))).toBe(true);
+  });
+
   it('adds related-resource alert when a single deletable group is in use', async () => {
     server.use(
       http.get(awxAPI`/organizations/`, () => HttpResponse.json({ count: 1, results: [{}] })),
@@ -118,5 +149,41 @@ describe('useDeleteInstanceGroups', () => {
     const callArgs = mockBulkAction.mock.calls[0]?.[0] as { alertPrompts: string[] };
     expect(callArgs.alertPrompts[0]).toContain('currently being used');
     expect(callArgs.alertPrompts[0]).toContain('2 templates');
+  });
+
+  it('lists organizations and inventories in the related-resource alert', async () => {
+    server.use(
+      http.get(awxAPI`/organizations/`, () => HttpResponse.json({ count: 1, results: [{}] })),
+      http.get(awxAPI`/inventories/`, () => HttpResponse.json({ count: 2, results: [{}, {}] })),
+      http.get(awxAPI`/unified_job_templates/`, () => HttpResponse.json({ count: 0, results: [] }))
+    );
+
+    const onComplete = vi.fn();
+    const { result } = renderHook(() => useDeleteInstanceGroups(onComplete));
+
+    void result.current([createMockInstanceGroup()]);
+    await waitFor(() => expect(mockBulkAction).toHaveBeenCalled());
+
+    const callArgs = mockBulkAction.mock.calls[0]?.[0] as { alertPrompts: string[] };
+    expect(callArgs.alertPrompts[0]).toContain('organizations');
+    expect(callArgs.alertPrompts[0]).toContain('inventories');
+  });
+
+  it('uses mixed container group copy when selection includes non-container groups', async () => {
+    const onComplete = vi.fn();
+    const { result } = renderHook(() => useDeleteInstanceGroups(onComplete));
+
+    void result.current([
+      createMockInstanceGroup({ is_container_group: true }),
+      createMockInstanceGroup({ id: 2, is_container_group: false }),
+    ]);
+    await waitFor(() => expect(mockBulkAction).toHaveBeenCalled());
+
+    expect(mockBulkAction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Permanently delete instance groups',
+        actionButtonText: 'Delete instance group',
+      })
+    );
   });
 });

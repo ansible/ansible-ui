@@ -14,15 +14,20 @@ import { useAssociateInstanceToIG } from './useAssociateInstanceToIG';
 import { useDisassociateInstanceFromIG } from './useDisassociateInstanceFromIG';
 import { useRunHealthCheckToolbarAction } from '../../../instances/hooks/useInstanceToolbarActions';
 
+const crud = vi.hoisted(() => ({
+  useOptions: vi.fn(() => ({ data: { actions: { POST: {} } } })),
+  useGetItem: vi.fn(() => ({ data: { name: 'default' } })),
+}));
+
 vi.mock('./useAssociateInstanceModal');
 vi.mock('./useAssociateInstanceToIG');
 vi.mock('./useDisassociateInstanceFromIG');
 vi.mock('../../../instances/hooks/useInstanceToolbarActions');
 vi.mock('@ansible/common-ui/crud/useOptions', () => ({
-  useOptions: () => ({ data: { actions: { POST: {} } } }),
+  useOptions: () => crud.useOptions(),
 }));
 vi.mock('@ansible/common-ui/crud/useGet', () => ({
-  useGetItem: () => ({ data: { name: 'default' } }),
+  useGetItem: () => crud.useGetItem(),
 }));
 
 const mockView = {
@@ -41,6 +46,44 @@ function getButtonActionByLabel(
     (action): action is Extract<IPageAction<Instance>, { type: PageActionType.Button }> =>
       action.type === PageActionType.Button && 'label' in action && action.label === label
   );
+}
+
+function invokeButtonClick(
+  action: Extract<IPageAction<Instance>, { type: PageActionType.Button }> | undefined,
+  item?: Instance | Instance[]
+) {
+  if (!action || typeof action.onClick !== 'function') {
+    return;
+  }
+  if (item === undefined) {
+    (action.onClick as () => void)();
+    return;
+  }
+  if (Array.isArray(item)) {
+    (action.onClick as (items: Instance[]) => void)(item);
+    return;
+  }
+  (action.onClick as (item: Instance) => void)(item);
+}
+
+function buttonIsDisabled(
+  action: Extract<IPageAction<Instance>, { type: PageActionType.Button }> | undefined,
+  item?: Instance | Instance[]
+): string | undefined {
+  if (!action || !('isDisabled' in action)) {
+    return undefined;
+  }
+  const { isDisabled } = action;
+  if (typeof isDisabled === 'function') {
+    if (item === undefined) {
+      return (isDisabled as () => string | undefined)();
+    }
+    if (Array.isArray(item)) {
+      return (isDisabled as (items: Instance[]) => string | undefined)(item);
+    }
+    return (isDisabled as (item: Instance) => string | undefined)(item);
+  }
+  return isDisabled;
 }
 
 function renderToolbarHook() {
@@ -66,6 +109,8 @@ describe('useIGInstanceToolbarActions', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    crud.useOptions.mockReturnValue({ data: { actions: { POST: {} } } });
+    crud.useGetItem.mockReturnValue({ data: { name: 'default' } });
     vi.mocked(useAssociateInstanceModal).mockReturnValue(mockOpenAssociate);
     vi.mocked(useAssociateInstanceToIG).mockReturnValue(mockAssociateToIG);
     vi.mocked(useDisassociateInstanceFromIG).mockReturnValue(mockDisassociate);
@@ -99,5 +144,59 @@ describe('useIGInstanceToolbarActions', () => {
       onAssociate: mockAssociateToIG,
       instanceGroupId: '1',
     });
+  });
+
+  it('enables associate when the user can post and disables it otherwise', () => {
+    const allowed = renderToolbarHook();
+    const allowedAction = getButtonActionByLabel(allowed.result.current, 'Associate instance');
+    expect(buttonIsDisabled(allowedAction)).toBe('');
+
+    crud.useOptions.mockReturnValue({ data: { actions: {} } } as ReturnType<
+      typeof crud.useOptions
+    >);
+    const denied = renderToolbarHook();
+    const deniedAction = getButtonActionByLabel(denied.result.current, 'Associate instance');
+    expect(buttonIsDisabled(deniedAction)).toMatch(/do not have permission to associate/i);
+  });
+
+  it('disassociates selected instances and explains control plane restrictions', () => {
+    const { result } = renderToolbarHook();
+    const disassociate = getButtonActionByLabel(result.current, 'Disassociate instance');
+    const execution = {
+      hostname: 'exec-1',
+      type: 'instance',
+      node_type: 'execution',
+    } as Instance;
+    invokeButtonClick(disassociate, [execution]);
+    expect(mockDisassociate).toHaveBeenCalledWith([execution]);
+    expect(buttonIsDisabled(disassociate, [execution])).toBe('');
+
+    crud.useGetItem.mockReturnValue({ data: { name: 'controlplane' } });
+    const controlPlane = renderToolbarHook();
+    const controlAction = getButtonActionByLabel(
+      controlPlane.result.current,
+      'Disassociate instance'
+    );
+    const blocked = [
+      { hostname: 'ctrl-1', type: 'instance', node_type: 'control' },
+      { hostname: 'hybrid-1', type: 'instance', node_type: 'hybrid' },
+      {
+        hostname: 'hop-1',
+        type: 'hop',
+        node_type: 'execution',
+        summary_fields: { user_capabilities: { delete: false } },
+      },
+      {
+        hostname: 'hop-2',
+        type: 'hop',
+        node_type: 'execution',
+        summary_fields: { user_capabilities: { delete: true } },
+      },
+    ] as Instance[];
+
+    expect(buttonIsDisabled(controlAction, blocked)).toBe(
+      'You do not have permission to disassociate the following: ctrl-1, hybrid-1, hop-1'
+    );
+    expect(buttonIsDisabled(controlAction, [execution])).toBe('');
   });
 });

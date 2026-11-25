@@ -238,6 +238,40 @@ describe('DocumentationParsers', () => {
       const textPart = parse('via switch')[0][0];
       render(<>{formatPart(textPart, params)}</>);
       expect(screen.getByText('via switch')).toBeInTheDocument();
+
+      render(
+        <>
+          {formatPart(
+            { type: dom.PartType.RETURN_VALUE, name: 'changed' } as dom.ReturnValuePart,
+            params
+          )}
+        </>
+      );
+      expect(screen.getByText('changed')).toBeInTheDocument();
+
+      render(
+        <MemoryRouter>
+          {formatPart(
+            {
+              type: dom.PartType.RETURN_VALUE,
+              name: 'changed',
+              plugin: { type: 'module', fqcn: 'ns.coll.mod' },
+            } as dom.ReturnValuePart,
+            params
+          )}
+        </MemoryRouter>
+      );
+      expect(screen.getByText('ns.coll.mod')).toBeInTheDocument();
+
+      render(
+        <MemoryRouter initialEntries={['/collections/published/ns/coll/contents']}>
+          {formatPart(
+            { type: dom.PartType.LINK, text: 'local', url: 'readme.rst' } as dom.LinkPart,
+            params
+          )}
+        </MemoryRouter>
+      );
+      expect(screen.getByRole('link', { name: 'local' })).toBeInTheDocument();
     });
   });
 
@@ -271,6 +305,18 @@ describe('DocumentationParsers', () => {
   });
 
   describe('renderPluginConfiguration', () => {
+    it('uses VALUE when an ini entry has no default', () => {
+      render(
+        <>
+          {renderPluginConfiguration({
+            name: 'cfg',
+            ini: [{ section: 'main', key: 'port' }],
+          } as IContentsOption)}
+        </>
+      );
+      expect(screen.getByText(/VALUE/)).toBeInTheDocument();
+    });
+
     it('renders ini, env, and var sections', () => {
       render(
         <>
@@ -290,6 +336,35 @@ describe('DocumentationParsers', () => {
   });
 
   describe('renderPluginLink and formatDocPath', () => {
+    it('links when a later group entry matches', () => {
+      const params = createParams({
+        groups: [
+          {
+            name: 'modules',
+            contents: [
+              {
+                content_name: 'other',
+                content_type: 'module',
+                doc_strings: null,
+                readme_file: null,
+                readme_html: null,
+              },
+              {
+                content_name: 'hello',
+                content_type: 'module',
+                doc_strings: null,
+                readme_file: null,
+                readme_html: null,
+              },
+            ],
+          },
+          { name: 'roles', contents: [] },
+        ],
+      });
+      render(<MemoryRouter>{renderPluginLink('hello module', params)}</MemoryRouter>);
+      expect(screen.getByRole('link', { name: 'hello module' })).toBeInTheDocument();
+    });
+
     it('links when module exists in groups', () => {
       render(<MemoryRouter>{renderPluginLink('hello module', createParams())}</MemoryRouter>);
       expect(screen.getByRole('link', { name: 'hello module' })).toBeInTheDocument();
@@ -328,6 +403,55 @@ describe('DocumentationParsers', () => {
         query: { content_type: 'module', content_name: 'hello' },
       });
       expect(path).toBe('/built/path');
+    });
+  });
+
+  describe('remaining formatter branches', () => {
+    const params = createParams();
+
+    it('dispatches every formatPart type', () => {
+      const parts = [
+        { type: dom.PartType.ERROR, message: 'err' },
+        { type: dom.PartType.BOLD, text: 'bold-switch' },
+        { type: dom.PartType.CODE, text: 'code-switch' },
+        { type: dom.PartType.HORIZONTAL_LINE },
+        { type: dom.PartType.ITALIC, text: 'italic-switch' },
+        { type: dom.PartType.LINK, text: 'link-switch', url: 'http://example.com' },
+        { type: dom.PartType.MODULE, fqcn: 'ns.coll.mod' },
+        { type: dom.PartType.RST_REF, text: 'rst-switch' },
+        { type: dom.PartType.URL, url: '/url-switch' },
+        { type: dom.PartType.TEXT, text: 'text-switch' },
+        { type: dom.PartType.ENV_VARIABLE, name: 'ENV_SWITCH' },
+        { type: dom.PartType.OPTION_NAME, name: 'opt-switch' },
+        {
+          type: dom.PartType.OPTION_NAME,
+          name: 'opt-plugin',
+          plugin: { fqcn: 'ns.coll.opt' },
+        },
+        { type: dom.PartType.OPTION_VALUE, value: 'value-switch' },
+        { type: dom.PartType.PLUGIN, plugin: { type: 'module', fqcn: 'ns.coll.plugin' } },
+        { type: dom.PartType.RETURN_VALUE, name: 'return-switch' },
+      ];
+
+      render(
+        <MemoryRouter>
+          <>
+            {parts.map((part, index) => (
+              <span key={index}>{formatPart(part as dom.Part, params)}</span>
+            ))}
+          </>
+        </MemoryRouter>
+      );
+
+      expect(screen.getByText('err')).toBeInTheDocument();
+      expect(screen.getByText('bold-switch')).toBeInTheDocument();
+      expect(screen.getByText('ns.coll.plugin')).toBeInTheDocument();
+    });
+
+    it('renders no plugin configuration sections when none are present', () => {
+      render(<>{renderPluginConfiguration({ name: 'empty' } as IContentsOption)}</>);
+      expect(screen.queryByText('ini entries:')).not.toBeInTheDocument();
+      expect(screen.queryByText(/env:/)).not.toBeInTheDocument();
     });
   });
 });

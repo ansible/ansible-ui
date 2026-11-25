@@ -39,6 +39,7 @@ vi.mock('@ansible/common-ui/crud/useGet', () => ({
   }),
 }));
 
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { HubNamespaceManageUsers } from './HubNamespaceManageUsers';
 
 describe('HubNamespaceManageUsers', () => {
@@ -62,5 +63,29 @@ describe('HubNamespaceManageUsers', () => {
         name: 'Manage roles directly assigned to hub-user for demo-ns',
       })
     ).toBeInTheDocument();
+  });
+
+  it('shows loading page while namespace request is in flight', () => {
+    vi.mocked(useGet).mockImplementation(() => ({
+      data: undefined,
+      error: undefined,
+      refresh: vi.fn(),
+      isLoading: true,
+    }));
+
+    render(
+      <MemoryRouter
+        initialEntries={['/namespaces/demo-ns/res-1/user-access/galaxy.namespace/1/manage']}
+      >
+        <Routes>
+          <Route
+            path="/namespaces/:id/:resource_id/user-access/:resource_type/:user_id/manage"
+            element={<HubNamespaceManageUsers />}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeInTheDocument();
   });
 });

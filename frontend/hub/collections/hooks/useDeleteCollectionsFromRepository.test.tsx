@@ -11,6 +11,8 @@ import { useDeleteCollectionsFromRepository } from './useDeleteCollectionsFromRe
 let capturedBulkActionConfig: {
   actionFn?: (collection: CollectionVersionSearch) => Promise<unknown>;
   title?: string;
+  confirmText?: string;
+  items?: CollectionVersionSearch[];
 } = {};
 
 vi.mock('../../common/useHubBulkConfirmation', () => ({
@@ -123,5 +125,23 @@ describe('useDeleteCollectionsFromRepository', () => {
       base_version: '/versions/1/',
     });
     expect(taskPollCount).toBeGreaterThan(0);
+  });
+
+  it('includes multiple collections in the bulk delete title', () => {
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter>{children}</MemoryRouter>
+    );
+
+    const { result } = renderHook(() => useDeleteCollectionsFromRepository(), { wrapper });
+    const secondCollection = {
+      ...mockCollection,
+      collection_version: { ...mockCollection.collection_version!, name: 'othercol' },
+    };
+
+    result.current([mockCollection, secondCollection]);
+
+    expect(capturedBulkActionConfig.title).toContain('delete');
+    expect(capturedBulkActionConfig.confirmText).toContain('2');
+    expect(capturedBulkActionConfig.items).toHaveLength(2);
   });
 });

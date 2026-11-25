@@ -58,6 +58,28 @@ describe('ToolbarTextMultiFilter', () => {
 
     expect(screen.getByPlaceholderText('starts with')).toBeInTheDocument();
   });
+
+  it('uses the endsWith comparison placeholder', () => {
+    render(<ToolbarTextMultiFilter addFilter={vi.fn()} comparison="endsWith" />);
+    expect(screen.getByPlaceholderText('ends with')).toBeInTheDocument();
+  });
+
+  it('uses the equals comparison placeholder', () => {
+    render(<ToolbarTextMultiFilter addFilter={vi.fn()} comparison="equals" />);
+    expect(screen.getByPlaceholderText('equals')).toBeInTheDocument();
+  });
+
+  it('uses the iregex comparison placeholder', () => {
+    render(<ToolbarTextMultiFilter addFilter={vi.fn()} comparison="iregex" />);
+    expect(screen.getByPlaceholderText('iregex')).toBeInTheDocument();
+  });
+
+  it('prefers a custom placeholder over the comparison default', () => {
+    render(
+      <ToolbarTextMultiFilter addFilter={vi.fn()} comparison="contains" placeholder="Type here" />
+    );
+    expect(screen.getByPlaceholderText('Type here')).toBeInTheDocument();
+  });
 });
 
 describe('ToolbarSingleTextFilter', () => {
@@ -98,6 +120,26 @@ describe('ToolbarSingleTextFilter', () => {
 
     expect(setValue).toHaveBeenCalledWith('');
     expect(screen.getByRole('textbox')).toHaveValue('');
+  });
+
+  it('uses comparison-based placeholder when none is provided', () => {
+    render(
+      <ToolbarSingleTextFilter setValue={vi.fn()} value="" hasKey={false} comparison="endsWith" />
+    );
+    expect(screen.getByPlaceholderText('ends with')).toBeInTheDocument();
+  });
+
+  it('prefers a custom placeholder for single text filters', () => {
+    render(
+      <ToolbarSingleTextFilter
+        setValue={vi.fn()}
+        value=""
+        hasKey={false}
+        comparison="contains"
+        placeholder="Search"
+      />
+    );
+    expect(screen.getByPlaceholderText('Search')).toBeInTheDocument();
   });
 
   it('should clear input when hasKey becomes false', () => {

@@ -30,6 +30,7 @@ vi.mock('./components/HubNamespaceErrorAdapter', () => ({
 
 describe('CreateHubNamespace', () => {
   const server = setupServer(
+    http.options('*/_ui/v1/namespaces/', () => HttpResponse.json({ actions: { POST: {} } })),
     http.post('*/_ui/v1/namespaces/', () =>
       HttpResponse.json({
         name: 'created-namespace',
@@ -107,6 +108,7 @@ describe('CreateHubNamespace', () => {
 
 describe('EditHubNamespace', () => {
   const server = setupServer(
+    http.options('*/_ui/v1/namespaces/', () => HttpResponse.json({ actions: { POST: {} } })),
     http.get('*/_ui/v1/my-namespaces/existing-namespace/', () =>
       HttpResponse.json({
         name: 'existing-namespace',
@@ -130,6 +132,47 @@ describe('EditHubNamespace', () => {
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
 
+  it('should show loading page while namespace is fetched', () => {
+    server.use(
+      http.get('*/_ui/v1/my-namespaces/slow-namespace/', async () => {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        return HttpResponse.json({
+          name: 'slow-namespace',
+          description: 'Delayed',
+          links: [],
+        });
+      })
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/namespaces/slow-namespace/edit']}>
+        <Routes>
+          <Route path="/namespaces/:id/edit" element={<EditHubNamespace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
+
+  it('should render error state when namespace fetch fails', async () => {
+    server.use(
+      http.get('*/_ui/v1/my-namespaces/broken-namespace/', () =>
+        HttpResponse.json({ detail: 'Not found' }, { status: 404 })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/namespaces/broken-namespace/edit']}>
+        <Routes>
+          <Route path="/namespaces/:id/edit" element={<EditHubNamespace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole('heading', { name: /Not Found/i })).toBeInTheDocument();
+  });
+
   it('should render the edit namespace page with data', async () => {
     render(
       <MemoryRouter initialEntries={['/namespaces/existing-namespace/edit']}>
@@ -141,6 +184,32 @@ describe('EditHubNamespace', () => {
 
     // Should eventually show the edit form with Save button
     expect(await screen.findByText('Save namespace', {}, { timeout: 3000 })).toBeInTheDocument();
+  });
+
+  it('uses the namespace fallback title when the saved name is blank', async () => {
+    server.use(
+      http.get('*/_ui/v1/my-namespaces/blank/', () =>
+        HttpResponse.json({
+          name: '',
+          description: '',
+          company: '',
+          avatar_url: '',
+          links: [],
+          resources: '',
+        })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/namespaces/blank/edit']}>
+        <Routes>
+          <Route path="/namespaces/:id/edit" element={<EditHubNamespace />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByRole('heading', { name: 'Namespace' })).toBeInTheDocument();
+    expect(screen.getByText('Name is not editable.')).toBeInTheDocument();
   });
 });
 

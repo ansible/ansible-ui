@@ -13,6 +13,24 @@ function renderColumnCell(column: ITableColumn<IUIFlag>, item: IUIFlag): ReactNo
 }
 
 describe('useUIFlagColumns', () => {
+  test('should expose name and description values for table filtering', () => {
+    const { result } = renderHook(() => useUIFlagColumns());
+    const flag = {
+      id: UIFlag.PersonaViewSwitcher,
+      name: 'My flag',
+      description: 'Flag description',
+      enabled: true,
+      status: 'beta' as const,
+    };
+    const nameColumn = result.current.find((column) => column.id === 'name');
+    const descriptionColumn = result.current.find((column) => column.id === 'description');
+
+    expect(nameColumn?.value?.(flag)).toBe('My flag');
+    expect(descriptionColumn?.value?.(flag)).toBe('Flag description');
+    expect(nameColumn?.sort).toBe('name');
+    expect(descriptionColumn?.table).toBe('description');
+  });
+
   test('should define name, description, and status columns', () => {
     const { result } = renderHook(() => useUIFlagColumns());
 
@@ -34,6 +52,7 @@ describe('useUIFlagColumns', () => {
     expect(statusColumn?.value?.(alphaFlag)).toEqual(['Alpha']);
     expect(statusColumn?.value?.({ ...alphaFlag, status: 'beta' })).toEqual(['Beta']);
     expect(statusColumn?.value?.({ ...alphaFlag, status: 'production' })).toEqual(['Production']);
+    expect(statusColumn?.value?.({ ...alphaFlag, status: 'unknown' as 'alpha' })).toEqual([]);
   });
 
   test('should render status labels for each lifecycle state', () => {

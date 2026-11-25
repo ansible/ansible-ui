@@ -347,6 +347,83 @@ describe('useRssNotifications', () => {
     );
   });
 
+  test('should skip unpublished notifications and use alternate link href', async () => {
+    const feedUrl = 'https://example.com/feed.xml';
+    const feedContent = '<xml>sample feed</xml>';
+
+    setupGatewaySettings({ feedUrl });
+    setupSWRMock(feedContent);
+
+    const past = new Date(Date.now() - 60_000).toISOString();
+
+    const parsedFeed = {
+      feed: {
+        title: 'Test Feed',
+        entry: [
+          {
+            id: 'notification-unpublished',
+            title: 'Hidden Notification',
+            content: { _: 'Hidden description' },
+            link: [{ $: { rel: 'alternate', href: 'https://example.com/hidden' } }],
+            updated: '2024-01-01T00:00:00Z',
+            'aap:notification': {
+              'aap:unpublish': past,
+            },
+          },
+          {
+            id: 'notification-visible',
+            title: 'Visible Notification',
+            content: 'Visible description',
+            link: 'https://example.com/visible',
+            updated: '2024-01-02T00:00:00Z',
+            'aap:notification': {
+              'aap:deployment_type': 'standalone',
+            },
+          },
+        ],
+      },
+    };
+
+    vi.mocked(parseAtomFeedXml).mockReturnValue(parsedFeed);
+
+    renderHook(() => useRssNotifications());
+
+    await vi.waitFor(() => {
+      expect(mockSetNotificationGroups).toHaveBeenCalled();
+    });
+
+    const callArgs = mockSetNotificationGroups.mock.calls[0][0];
+    const updatedGroups = callArgs({});
+    const notifications = updatedGroups['Product Notifications'].notifications;
+
+    expect(notifications).toHaveLength(1);
+    expect(notifications[0]).toMatchObject({
+      id: 'notification-visible',
+      title: 'Visible Notification',
+      to: 'https://example.com/visible',
+    });
+  });
+
+  test('should log and ignore parse failures', async () => {
+    const feedUrl = 'https://example.com/feed.xml';
+    const feedContent = '<xml>broken feed</xml>';
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    setupGatewaySettings({ feedUrl });
+    setupSWRMock(feedContent);
+    vi.mocked(parseAtomFeedXml).mockImplementation(() => {
+      throw new Error('invalid xml');
+    });
+
+    renderHook(() => useRssNotifications());
+
+    await vi.waitFor(() => {
+      expect(consoleError).toHaveBeenCalledWith('Error parsing RSS feed:', expect.any(Error));
+    });
+
+    consoleError.mockRestore();
+  });
+
   test('should handle array deployment types', async () => {
     const feedUrl = 'https://example.com/feed.xml';
     const feedContent = '<xml>sample feed</xml>';

@@ -60,4 +60,25 @@ describe('RelaunchTemplate', () => {
     expect(screen.getAllByText('Credential Passwords').length).toBeGreaterThan(0);
     expect(screen.getByText('SSH password')).toBeInTheDocument();
   });
+
+  it('renders vault password fields when relaunch requires vault credentials', async () => {
+    server.use(
+      http.get(awxAPI`/jobs/:id/relaunch/`, () =>
+        HttpResponse.json({
+          passwords_needed_to_start: ['vault_password.ops'],
+          retry_counts: { all: 0, failed: 0 },
+        })
+      )
+    );
+
+    render(
+      <MemoryRouter initialEntries={['/jobs/1/relaunch']}>
+        <Routes>
+          <Route path="/jobs/:id/relaunch" element={<RelaunchTemplate />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText('Vault password | ops')).toBeInTheDocument());
+  });
 });

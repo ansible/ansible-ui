@@ -52,6 +52,49 @@ describe('TableExpandedRow', () => {
     expect(screen.getByTestId('breakdown')).toBeInTheDocument();
   });
 
+  it('renders breakdown with zero defaults when item is null', () => {
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              {renderExpandedRow({
+                item: null as unknown as ExpandedRowProps['item'],
+              })}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    );
+    expect(screen.getByText('0')).toBeInTheDocument();
+    expect(screen.getByTestId('breakdown')).toBeInTheDocument();
+  });
+
+  it('uses optional chaining defaults for missing task count fields', () => {
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              {renderExpandedRow({
+                item: {
+                  host_task_count: 3,
+                  host_task_ok_count: undefined as unknown as number,
+                  host_task_failed_count: undefined as unknown as number,
+                  host_task_changed_count: undefined as unknown as number,
+                  host_task_skipped_count: undefined as unknown as number,
+                  host_task_unreachable_count: undefined as unknown as number,
+                },
+              })}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    );
+    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByTestId('breakdown')).toBeInTheDocument();
+  });
+
   it('renders zero counts when all task counters are zero', () => {
     render(
       <table>
@@ -75,5 +118,30 @@ describe('TableExpandedRow', () => {
     );
     expect(screen.getByText('0')).toBeInTheDocument();
     expect(screen.getByTestId('breakdown')).toBeInTheDocument();
+  });
+
+  it('lists failed task count in the expanded breakdown', () => {
+    render(
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              {renderExpandedRow({
+                item: {
+                  host_task_count: 10,
+                  host_task_ok_count: 5,
+                  host_task_failed_count: 2,
+                  host_task_changed_count: 1,
+                  host_task_skipped_count: 1,
+                  host_task_unreachable_count: 1,
+                },
+              })}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    );
+    expect(screen.getByText('All Task status')).toBeInTheDocument();
+    expect(screen.getByText('Tasks')).toBeInTheDocument();
   });
 });

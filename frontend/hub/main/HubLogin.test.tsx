@@ -74,4 +74,21 @@ describe('HubLogin', () => {
 
     expect(screen.getByRole('progressbar', { name: 'Contents' })).toBeInTheDocument();
   });
+
+  it('renders custom brand image on the login page', async () => {
+    vi.mocked(useHubActiveUser).mockReturnValue({
+      activeHubUser: null,
+      refreshActiveHubUser: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter>
+        <HubLogin brandImg={<span>Automation Hub</span>}>{null}</HubLogin>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Automation Hub')).toBeInTheDocument();
+    });
+  });
 });

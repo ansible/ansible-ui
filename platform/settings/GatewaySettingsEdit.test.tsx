@@ -26,6 +26,12 @@ vi.mock('./GatewaySettingsCategories', () => ({
   useGatewaySettingsCategories: vi.fn(),
 }));
 
+const mockOpenRevertAllModal = vi.fn();
+
+vi.mock('./useRevertAllGatewaySettingsModal', () => ({
+  useRevertAllGatewaySettingsModal: () => mockOpenRevertAllModal,
+}));
+
 vi.mock('@ansible/common-ui/crud/Data', () => ({
   requestPut: vi.fn(),
 }));
@@ -453,6 +459,251 @@ describe('GatewaySettingsEdit Component', () => {
 
       await waitFor(() => {
         expect(mockRequestPut).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Category and settings types', () => {
+    it('should render null when the category id is not found', () => {
+      const { container } = renderWithContext(adminContext, 'unknown-category');
+      expect(container).toBeEmptyDOMElement();
+    });
+
+    it('should render boolean settings using a select input', () => {
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'platform',
+          title: 'Platform gateway settings',
+          description: 'Edit platform gateway settings',
+          sections: [
+            {
+              title: 'Platform gateway',
+              options: {
+                analytics_collection_enabled: {
+                  type: 'boolean',
+                  label: 'Analytics collection enabled',
+                  help_text: 'Collect analytics.',
+                  default: true,
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+
+      const booleanContext = {
+        options: {
+          GET: {
+            analytics_collection_enabled: {
+              type: 'boolean',
+              label: 'Analytics collection enabled',
+              default: true,
+            },
+          },
+          PUT: {
+            analytics_collection_enabled: {
+              type: 'boolean',
+              label: 'Analytics collection enabled',
+              help_text: 'Collect analytics.',
+              default: true,
+              required: false,
+              read_only: false,
+            },
+          },
+        },
+        settings: { analytics_collection_enabled: true },
+        refresh: vi.fn(),
+      };
+
+      renderWithContext(booleanContext);
+
+      expect(screen.getByText('Analytics collection enabled')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Enabled' })).toBeInTheDocument();
+    });
+
+    it('should render file upload control for field settings type', () => {
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'platform',
+          title: 'Platform gateway settings',
+          description: 'Edit platform gateway settings',
+          sections: [
+            {
+              title: 'Branding',
+              options: {
+                custom_logo: {
+                  type: 'field',
+                  label: 'Custom logo',
+                  help_text: 'Upload a logo image.',
+                  default: null,
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+
+      const fileContext = {
+        options: {
+          GET: {
+            custom_logo: { type: 'field', label: 'Custom logo', default: null },
+          },
+          PUT: {
+            custom_logo: {
+              type: 'field',
+              label: 'Custom logo',
+              help_text: 'Upload a logo image.',
+              default: null,
+              required: false,
+              read_only: false,
+            },
+          },
+        },
+        settings: { custom_logo: null },
+        refresh: vi.fn(),
+      };
+
+      renderWithContext(fileContext);
+
+      expect(screen.getByText('Custom logo')).toBeInTheDocument();
+    });
+
+    it('should show unsupported settings type for unknown option types', () => {
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'platform',
+          title: 'Platform gateway settings',
+          description: 'Edit platform gateway settings',
+          sections: [
+            {
+              title: 'Platform gateway',
+              options: {
+                mystery_option: {
+                  type: 'unknown_type',
+                  label: 'Mystery',
+                  help_text: '',
+                  default: null,
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+
+      const unknownTypeContext = {
+        options: {
+          GET: {
+            mystery_option: { type: 'unknown_type', label: 'Mystery', default: null },
+          },
+          PUT: {
+            mystery_option: {
+              type: 'unknown_type',
+              label: 'Mystery',
+              help_text: '',
+              default: null,
+              required: false,
+              read_only: false,
+            },
+          },
+        },
+        settings: { mystery_option: null },
+        refresh: vi.fn(),
+      };
+
+      renderWithContext(unknownTypeContext);
+
+      expect(screen.getByText('Unsupported settings type')).toBeInTheDocument();
+    });
+
+    it('should call revert-all modal opener when revert button is clicked', async () => {
+      const user = userEvent.setup();
+      renderWithContext();
+
+      await user.click(screen.getByRole('button', { name: 'Revert all to default' }));
+
+      expect(mockOpenRevertAllModal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          onComplete: expect.any(Function) as () => void,
+        })
+      );
+    });
+  });
+
+  describe('CSRF trusted origins', () => {
+    beforeEach(() => {
+      mockUseGatewaySettingsCategories.mockReturnValue([
+        {
+          id: 'platform',
+          title: 'Platform gateway settings',
+          description: 'Edit platform gateway settings',
+          sections: [
+            {
+              title: 'Platform gateway',
+              options: {
+                CSRF_TRUSTED_ORIGINS: {
+                  type: 'list',
+                  label: 'CSRF trusted origins',
+                  help_text: '',
+                  default: [],
+                  required: false,
+                  read_only: false,
+                },
+              },
+            },
+          ],
+        },
+      ]);
+    });
+
+    const csrfContext = {
+      options: {
+        GET: {
+          CSRF_TRUSTED_ORIGINS: {
+            type: 'list',
+            label: 'CSRF trusted origins',
+            default: [],
+          },
+        },
+        PUT: {
+          CSRF_TRUSTED_ORIGINS: {
+            type: 'list',
+            label: 'CSRF trusted origins',
+            help_text: '',
+            default: [],
+            required: false,
+            read_only: false,
+          },
+        },
+      },
+      settings: { CSRF_TRUSTED_ORIGINS: ['https://trusted.example.com'] },
+      refresh: vi.fn(),
+    };
+
+    it('should render CSRF trusted origins inputs and submit trimmed values', async () => {
+      const user = userEvent.setup();
+      const mockRequestPut = vi.mocked(await import('@ansible/common-ui/crud/Data')).requestPut;
+      mockRequestPut.mockResolvedValue({});
+
+      renderWithContext(csrfContext);
+
+      expect(screen.getByText('CSRF trusted origins list')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('https://trusted.example.com')).toBeInTheDocument();
+
+      await user.click(screen.getByRole('button', { name: 'Save platform gateway settings' }));
+
+      await waitFor(() => {
+        expect(mockRequestPut).toHaveBeenCalledWith(
+          '/settings/all/',
+          expect.objectContaining({
+            CSRF_TRUSTED_ORIGINS: ['https://trusted.example.com'],
+          })
+        );
       });
     });
   });
