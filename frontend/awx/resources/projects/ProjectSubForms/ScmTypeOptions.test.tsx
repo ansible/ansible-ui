@@ -89,4 +89,17 @@ describe('ScmTypeOptions', () => {
 
     expect(screen.getByText('Track submodules')).toBeInTheDocument();
   });
+
+  it('should render Update Galaxy cache on launch checkbox', () => {
+    render(
+      <TestWrapper>
+        <ScmTypeOptions />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('Update Galaxy cache on launch')).toBeInTheDocument();
+    expect(
+      screen.getByRole('checkbox', { name: /Update Galaxy cache on launch/i })
+    ).toBeInTheDocument();
+  });
 });

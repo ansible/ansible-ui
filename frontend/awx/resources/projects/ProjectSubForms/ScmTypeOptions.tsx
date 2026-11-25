@@ -44,6 +44,15 @@ export function ScmTypeOptions(props: { hideAllowOverride?: boolean }) {
         )}
         name="scm_update_on_launch"
       />
+      <PageFormCheckbox<Project>
+        id="option-galaxy-update-on-launch"
+        label={t('Update Galaxy cache on launch')}
+        labelHelpTitle={t('Update Galaxy cache on launch')}
+        labelHelp={t(
+          'Bypass the ansible-galaxy response cache to fetch latest collection metadata when a job is launched that uses the project.'
+        )}
+        name="galaxy_update_on_launch"
+      />
       {!props.hideAllowOverride && (
         <PageFormCheckbox<Project>
           id="option-allow-override"
