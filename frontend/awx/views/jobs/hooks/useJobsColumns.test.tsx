@@ -1,0 +1,176 @@
+import { ITableColumn } from '@ansible/ansible-ui-framework';
+import { SwrTestWrapper } from '@ansible/ansible-ui-framework/test-utils/swrTestWrapper';
+import { render, renderHook, screen } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import { MemoryRouter } from 'react-router-dom';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
+import { awxAPI } from '../../../common/api/awx-utils';
+import {
+  JobSummaryFields,
+  SummaryFieldCredential,
+} from '../../../interfaces/summary-fields/summary-fields';
+import { UnifiedJob } from '../../../interfaces/UnifiedJob';
+import { useJobsColumns } from './useJobsColumns';
+
+vi.mock('@ansible/ansible-ui-framework/PageNavigation/useGetPageUrl', () => ({
+  useGetPageUrl: () => (route: string, options?: { params?: Record<string, unknown> }) => {
+    const params = options?.params ?? {};
+    const paramStr = Object.entries(params)
+      .map(([k, v]) => `${k}=${String(v)}`)
+      .join('&');
+    return `/${route}?${paramStr}`;
+  },
+}));
+
+const server = setupServer(
+  http.options(awxAPI`/inventory_sources/`, () =>
+    HttpResponse.json({
+      actions: {
+        GET: {
+          source: {
+            choices: [['aws', 'Amazon Web Services']],
+          },
+        },
+      },
+    })
+  )
+);
+
+function wrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <SwrTestWrapper>
+      <MemoryRouter>{children}</MemoryRouter>
+    </SwrTestWrapper>
+  );
+}
+
+function sf(overrides: Partial<JobSummaryFields> = {}): JobSummaryFields {
+  return {
+    user_capabilities: { delete: false, start: false },
+    ...overrides,
+  };
+}
+
+function credential(overrides: Partial<SummaryFieldCredential>): SummaryFieldCredential {
+  return {
+    id: 1,
+    name: 'Cred',
+    description: '',
+    kind: 'ssh',
+    cloud: false,
+    ...overrides,
+  };
+}
+
+function testJob(overrides: Partial<UnifiedJob> = {}): UnifiedJob {
+  return {
+    id: 42,
+    name: 'Test job',
+    status: 'successful',
+    type: 'job',
+    job_type: 'run',
+    started: '2025-01-01T10:00:00.000000Z',
+    finished: '2025-01-01T10:05:00.000000Z',
+    launch_type: 'manual',
+    summary_fields: sf(),
+    related: {
+      notifications: '',
+      cancel: '',
+    },
+    launched_by: {
+      id: 1,
+      name: 'admin',
+      type: 'user',
+      url: '',
+    },
+    ...overrides,
+  };
+}
+
+function credentialsColumn(columns: ITableColumn<UnifiedJob>[]) {
+  const column = columns.find(
+    (c) => c.helpText === 'Credential(s) used to access the nodes this job will be ran against.'
+  );
+  if (!column) {
+    throw new Error('Credentials column not found');
+  }
+  return column;
+}
+
+function columnCellNode(column: ITableColumn<UnifiedJob>, job: UnifiedJob): React.ReactNode {
+  if (!('cell' in column) || typeof column.cell !== 'function') {
+    throw new Error('Expected column cell to be a function');
+  }
+  return column.cell(job);
+}
+
+function columnValue(column: ITableColumn<UnifiedJob>, job: UnifiedJob): unknown {
+  if (!('value' in column) || typeof column.value !== 'function') {
+    return undefined;
+  }
+  return column.value(job);
+}
+
+describe('useJobsColumns credentials', () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+  afterEach(() => server.resetHandlers());
+  afterAll(() => server.close());
+
+  test('uses summary_fields.credentials when present', () => {
+    const { result } = renderHook(() => useJobsColumns(), { wrapper });
+    const column = credentialsColumn(result.current);
+    const job = testJob({
+      summary_fields: sf({
+        credentials: [
+          credential({ id: 1, name: 'Machine Cred', kind: 'ssh' }),
+          credential({ id: 2, name: 'Vault Cred', kind: 'vault' }),
+        ],
+      }),
+    });
+
+    expect(columnValue(column, job)).toBe(2);
+    render(<MemoryRouter>{columnCellNode(column, job)}</MemoryRouter>);
+    expect(screen.getByText(/Machine Cred/)).toBeInTheDocument();
+    expect(screen.getByText(/Vault Cred/)).toBeInTheDocument();
+  });
+
+  test('falls back to singular summary_fields.credential for ad hoc jobs', () => {
+    const { result } = renderHook(() => useJobsColumns(), { wrapper });
+    const column = credentialsColumn(result.current);
+    const job = testJob({
+      type: 'ad_hoc_command',
+      summary_fields: sf({
+        credential: credential({ id: 9, name: 'Ad Hoc Cred' }),
+      }),
+    });
+
+    expect(columnValue(column, job)).toBe(1);
+    render(<MemoryRouter>{columnCellNode(column, job)}</MemoryRouter>);
+    expect(screen.getByText(/Ad Hoc Cred/)).toBeInTheDocument();
+  });
+
+  test('falls back to singular credential when credentials array is empty', () => {
+    const { result } = renderHook(() => useJobsColumns(), { wrapper });
+    const column = credentialsColumn(result.current);
+    const job = testJob({
+      type: 'ad_hoc_command',
+      summary_fields: sf({
+        credentials: [],
+        credential: credential({ id: 11, name: 'Empty Array Fallback Cred' }),
+      }),
+    });
+
+    expect(columnValue(column, job)).toBe(1);
+    render(<MemoryRouter>{columnCellNode(column, job)}</MemoryRouter>);
+    expect(screen.getByText(/Empty Array Fallback Cred/)).toBeInTheDocument();
+  });
+
+  test('returns no credential value when neither field is set', () => {
+    const { result } = renderHook(() => useJobsColumns(), { wrapper });
+    const column = credentialsColumn(result.current);
+    const job = testJob({ summary_fields: sf() });
+
+    expect(columnValue(column, job)).toBeUndefined();
+  });
+});
