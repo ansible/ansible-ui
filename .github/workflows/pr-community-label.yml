@@ -20,17 +20,19 @@ jobs:
       && github.repository == 'ansible/ansible-ui'
     runs-on: ubuntu-latest
     steps:
-      - name: Download PR number artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/checkout@v4
         with:
-          name: pr_number
-          path: .
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
+          sparse-checkout: .github/scripts/resolve-workflow-run-pr.sh
+          sparse-checkout-cone-mode: false
 
-      - name: Extract PR number
+      - name: Resolve pull request number
         id: pr
-        run: echo "number=$(head -n1 pr_number.txt | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PULL_REQUESTS_JSON: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: bash .github/scripts/resolve-workflow-run-pr.sh
 
       - name: Add community label for fork PRs
         env:

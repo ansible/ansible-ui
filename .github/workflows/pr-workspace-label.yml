@@ -20,20 +20,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: .github/labeler.yml
+          sparse-checkout: |
+            .github/labeler.yml
+            .github/scripts/resolve-workflow-run-pr.sh
           sparse-checkout-cone-mode: false
 
-      - name: Download PR number artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: pr_number
-          path: .
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
-
-      - name: Extract PR number
+      - name: Resolve pull request number
         id: pr
-        run: echo "number=$(head -n1 pr_number.txt | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PULL_REQUESTS_JSON: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: bash .github/scripts/resolve-workflow-run-pr.sh
 
       - name: Skip dependabot
         id: author
@@ -60,14 +59,14 @@ jobs:
 
           path_matches_glob() {
             local file="$1" glob="$2"
-            if [[ "$glob" == **/* ]]; then
-              local suffix="${glob#**/}"
-              [[ "$file" == *"$suffix" ]] && return 0
-              return 1
-            fi
-            if [[ "$glob" == */** ]]; then
+            if [[ "$glob" =~ /\*\*$ ]]; then
               local prefix="${glob%/**}"
               [[ "$file" == "$prefix"/* ]] || [[ "$file" == "$prefix" ]] && return 0
+              return 1
+            fi
+            if [[ "$glob" =~ ^\*\*/ ]]; then
+              local suffix="${glob#**/}"
+              [[ "$file" == *"$suffix" ]] && return 0
               return 1
             fi
             case "$file" in
