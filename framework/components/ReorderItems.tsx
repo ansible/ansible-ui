@@ -90,7 +90,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
   } = props;
 
   const [itemStartIndex, setStartItemIndex] = useState<number | null>(null);
-  const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
+  const [draggedItemId, setDraggedItemId] = useState<string | number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
@@ -133,7 +133,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     if (
       !curListItem ||
       !(bodyRef.current && bodyRef.current.contains(curListItem)) ||
-      curListItem.id === draggedItemId
+      (draggedItemId !== null && curListItem.id === String(draggedItemId))
     ) {
       return null;
     } else {
@@ -141,7 +141,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
       const newDraggedItemIndex = Array.from(bodyRef.current.children).findIndex(
         (item) => item.id === dragId
       );
-      if (newDraggedItemIndex !== itemStartIndex && draggedItemId) {
+      if (newDraggedItemIndex !== itemStartIndex && draggedItemId !== null) {
         const tempItemOrder = moveItem([...items], draggedItemId, newDraggedItemIndex);
         setItems(tempItemOrder);
       }
@@ -149,7 +149,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     return null;
   };
 
-  const moveItem = (arr: T[], itemId: string, toIndex: number) =>
+  const moveItem = (arr: T[], itemId: string | number, toIndex: number) =>
     moveReorderItem(arr, itemId, toIndex, keyFn);
 
   const onDragLeave: TbodyProps['onDragLeave'] = (evt) => {
@@ -167,16 +167,14 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
     setIsDragging(false);
   };
 
-  const onDragStart: TrProps['onDragStart'] = (evt) => {
+  const onDragStart = (evt: React.DragEvent<HTMLTableRowElement>, itemId: string | number) => {
     if (bodyRef.current) {
       evt.dataTransfer.effectAllowed = 'move';
-      const newDraggedItemId = evt.currentTarget.id;
-
       const originalStartIndex = Array.from(bodyRef.current.children).findIndex(
         (item) => item.id === evt.currentTarget.id
       );
       evt.currentTarget.setAttribute('aria-pressed', 'true');
-      setDraggedItemId(newDraggedItemId);
+      setDraggedItemId(itemId);
       setStartItemIndex(originalStartIndex);
     }
   };
@@ -228,7 +226,7 @@ export function ReorderItems<T extends object>(props: ReorderItemsProps<T>) {
               draggable
               onDrop={onDrop}
               onDragEnd={onDragEnd}
-              onDragStart={onDragStart}
+              onDragStart={(evt) => onDragStart(evt, key)}
             >
               <Td draggableRow={{ id: `draggable-row-${key.toString()}` }} />
               {isSelectableWithCheckbox && (
