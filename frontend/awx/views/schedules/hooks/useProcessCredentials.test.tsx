@@ -84,7 +84,7 @@ function makeLaunchConfig(overrides: Partial<LaunchConfiguration> = {}): LaunchC
 
 describe('useProcessCredentials', () => {
   it('should associate new credentials and disassociate removed ones', async () => {
-    const config = makeLaunchConfig();
+    const config = makeLaunchConfig({ ask_credential_on_launch: true });
 
     const { result } = renderHook(() => useProcessCredentials());
 
@@ -104,12 +104,37 @@ describe('useProcessCredentials', () => {
       (c) => (c.body as Record<string, unknown>).disassociate === undefined
     );
 
-    expect(disassociateCalls.length).toBeGreaterThan(0);
-    expect(associateCalls.some((c) => (c.body as Record<string, unknown>).id === 3)).toBe(true);
+    expect(disassociateCalls).toHaveLength(1);
+    expect((disassociateCalls[0].body as Record<string, unknown>).id).toBe(2);
+    expect(associateCalls).toHaveLength(1);
+    expect((associateCalls[0].body as Record<string, unknown>).id).toBe(3);
   });
 
-  it('should disassociate all when credentials list is empty', async () => {
-    const config = makeLaunchConfig();
+  it('should associate a template-default credential when the schedule has none (AAP-89449)', async () => {
+    server.use(
+      http.get(awxAPI`/schedules/:id/credentials/`, () =>
+        HttpResponse.json({ count: 0, results: [] })
+      )
+    );
+
+    const config = makeLaunchConfig({ ask_credential_on_launch: true });
+    const { result } = renderHook(() => useProcessCredentials());
+
+    await result.current(
+      42,
+      [{ id: 10, name: 'Default Cred', credential_type: 1 }] as unknown as Credential[],
+      config
+    );
+
+    const associateCalls = postCalls.filter(
+      (c) => (c.body as Record<string, unknown>).disassociate === undefined
+    );
+    expect(associateCalls).toHaveLength(1);
+    expect((associateCalls[0].body as Record<string, unknown>).id).toBe(10);
+  });
+
+  it('should disassociate all when credentials list is empty and ask is true', async () => {
+    const config = makeLaunchConfig({ ask_credential_on_launch: true });
 
     const { result } = renderHook(() => useProcessCredentials());
 
@@ -118,11 +143,25 @@ describe('useProcessCredentials', () => {
     const disassociateCalls = postCalls.filter(
       (c) => (c.body as Record<string, unknown>).disassociate === true
     );
-    expect(disassociateCalls.length).toBeGreaterThan(0);
+    expect(disassociateCalls).toHaveLength(2);
   });
 
-  it('should handle null launch_config credentials gracefully', async () => {
+  it('should disassociate all existing credentials when ask_credential_on_launch is false', async () => {
+    const config = makeLaunchConfig({ ask_credential_on_launch: false });
+
+    const { result } = renderHook(() => useProcessCredentials());
+
+    await result.current(42, [] as unknown as Credential[], config);
+
+    const disassociateCalls = postCalls.filter(
+      (c) => (c.body as Record<string, unknown>).disassociate === true
+    );
+    expect(disassociateCalls).toHaveLength(2);
+  });
+
+  it('should associate credentials when ask is true even if defaults are empty', async () => {
     const config = makeLaunchConfig({
+      ask_credential_on_launch: true,
       defaults: {
         ...makeLaunchConfig().defaults,
         credentials: [],
@@ -152,6 +191,7 @@ describe('useProcessCredentials', () => {
     );
 
     const config = makeLaunchConfig({
+      ask_credential_on_launch: true,
       defaults: {
         ...makeLaunchConfig().defaults,
         credentials: [],
