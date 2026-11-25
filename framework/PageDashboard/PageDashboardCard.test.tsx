@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PageDashboard } from './PageDashboard';
 import { PageDashboardCard } from './PageDashboardCard';
 
@@ -13,9 +13,26 @@ function renderCard(props: Parameters<typeof PageDashboardCard>[0]) {
   );
 }
 
+const storage = new Map<string, string>();
+const localStorageMock = {
+  clear: () => storage.clear(),
+  getItem: (key: string) => storage.get(key) ?? null,
+  setItem: (key: string, value: string) => storage.set(key, String(value)),
+  removeItem: (key: string) => storage.delete(key),
+  key: (index: number) => Array.from(storage.keys())[index] ?? null,
+  get length() {
+    return storage.size;
+  },
+};
+
 describe('PageDashboardCard', () => {
   beforeEach(() => {
-    localStorage.clear();
+    localStorageMock.clear();
+    vi.stubGlobal('localStorage', localStorageMock);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('should not render the link when linkText is not provided', () => {
@@ -37,6 +54,29 @@ describe('PageDashboardCard', () => {
     renderCard({ linkText: 'View all', to: '/inventories' });
 
     expect(screen.getByRole('link', { name: 'View all' })).toBeInTheDocument();
+  });
+
+  it('should render optional header and footer content', () => {
+    renderCard({
+      title: 'Inventories',
+      supertitle: 'Automation',
+      subtitle: 'Managed resources',
+      description: 'Inventory information',
+      headerControls: <button type="button">Refresh</button>,
+      linkText: 'View all',
+      to: '/inventories',
+      footerActionButton: {
+        title: 'Add inventory',
+        icon: <span data-testid="footer-icon" />,
+        onClick: vi.fn(),
+      },
+    });
+
+    expect(screen.getByText('Automation')).toBeInTheDocument();
+    expect(screen.getByText('Managed resources')).toBeInTheDocument();
+    expect(screen.getByText('Inventory information')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
+    expect(screen.getByTestId('footer-icon')).toBeInTheDocument();
   });
 
   it('should not render a header when neither title nor linkText are provided', () => {
@@ -79,7 +119,7 @@ describe('PageDashboardCard', () => {
 
   it('should render optional header metadata and collapse the card body', async () => {
     const user = userEvent.setup();
-    localStorage.clear();
+    localStorageMock.clear();
 
     render(
       <MemoryRouter>
@@ -107,11 +147,16 @@ describe('PageDashboardCard', () => {
     expect(screen.getByText('Last 24 hours')).toBeInTheDocument();
     expect(screen.getByText('Body')).toBeInTheDocument();
 
-    const icons = screen.getByTestId('meta-card').querySelectorAll('svg');
-    const collapseToggle = icons[icons.length - 1] as SVGElement;
+    const collapseToggle = screen.getByRole('button', { name: 'Collapse' });
+    expect(collapseToggle).toHaveAttribute('aria-expanded', 'true');
     await user.click(collapseToggle);
     await waitFor(() => {
       expect(localStorage.getItem('db-meta-card-collapsed')).toBe('true');
     });
+    expect(screen.queryByText('Body')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Expand' })).toHaveAttribute(
+      'aria-expanded',
+      'false'
+    );
   });
 });
