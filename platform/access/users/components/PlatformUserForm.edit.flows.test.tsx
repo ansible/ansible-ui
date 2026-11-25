@@ -21,6 +21,8 @@ const {
   baseUser,
   mockPlatformUser,
   mockOrgHelpers,
+  mockOrganizationMemberRoles,
+  mockUserOrganizations,
 } = vi.hoisted(() => {
   const user: PlatformUser = {
     id: 7,
@@ -76,6 +78,8 @@ const {
     baseUser: user,
     mockPlatformUser: platformUser,
     mockOrgHelpers: orgState,
+    mockOrganizationMemberRoles: [{ id: 600 }] as { id: number }[],
+    mockUserOrganizations: [{ id: 10, name: 'Org' }] as { id: number; name: string }[],
   };
 });
 
@@ -131,11 +135,11 @@ vi.mock('@ansible/common-ui/crud/useGet', async () => {
         return { data: { results: [{ id: 500 }] }, isLoading: false };
       }
       if (qs?.name === 'Organization Member') {
-        return { data: { results: [{ id: 600 }] }, isLoading: false };
+        return { data: { results: mockOrganizationMemberRoles }, isLoading: false };
       }
       if (String(url).includes('/organizations/')) {
         return {
-          data: { results: [{ id: 10, name: 'Org' }] },
+          data: { results: mockUserOrganizations },
           isLoading: false,
         };
       }
@@ -343,6 +347,10 @@ describe('EditPlatformUser submit branches', () => {
       fieldErrors: [{ message: 'fld' }],
     });
     Object.assign(mockPlatformUser, baseUser);
+    mockOrganizationMemberRoles.length = 0;
+    mockOrganizationMemberRoles.push({ id: 600 });
+    mockUserOrganizations.length = 0;
+    mockUserOrganizations.push({ id: 10, name: 'Org' });
     mockOrgHelpers.orgIds = [];
     mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
       addedOrganizationIds: [],
@@ -353,7 +361,10 @@ describe('EditPlatformUser submit branches', () => {
         return Promise.resolve({ results: [{ id: 999 }] });
       }
       if (String(params.role_definition) === '600') {
-        return Promise.resolve({ results: [{ id: 888 }] });
+        const assignmentIdByOrg: Record<string, number> = { '11': 888, '10': 889 };
+        const objectId = params.object_id !== undefined ? String(params.object_id) : '';
+        const id = assignmentIdByOrg[objectId] ?? 888;
+        return Promise.resolve({ results: [{ id }] });
       }
       return Promise.resolve({ results: [] });
     });
@@ -426,6 +437,10 @@ describe('EditPlatformUser submit branches', () => {
         title: 'Failed to disassociate organization with id: 11.',
       })
     );
+    const removeArg = mockAlertToaster.addAlert.mock.calls[0][0] as {
+      children: ReactNode;
+    };
+    expect(removeArg.children).toBeTruthy();
   });
 
   it('toasts when superuser org cleanup fails', async () => {
@@ -440,6 +455,10 @@ describe('EditPlatformUser submit branches', () => {
         title: 'Failed to disassociate organization with id: 10.',
       })
     );
+    const superuserRemoveArg = mockAlertToaster.addAlert.mock.calls[0][0] as {
+      children: ReactNode;
+    };
+    expect(superuserRemoveArg.children).toBeTruthy();
   });
 
   it('navigates back on cancel', async () => {
@@ -448,6 +467,43 @@ describe('EditPlatformUser submit branches', () => {
     renderEdit();
     await user.click(screen.getByTestId('edit-cancel'));
     expect(mockNavigate).toHaveBeenCalledWith(-1);
+  });
+
+  it('uses an empty role definition filter when Organization Member role is unavailable', async () => {
+    mockOrganizationMemberRoles.length = 0;
+    mockOrgHelpers.orgIds = [11];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11],
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({
+        role_definition: '',
+        object_id: 11,
+      })
+    );
+  });
+
+  it('skips delete when org member assignment lookup returns no results', async () => {
+    mockOrgHelpers.orgIds = [11];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11],
+    });
+    mockGetRequest.mockImplementation((_url, params: Record<string, string | number>) => {
+      if (String(params.role_definition) === '600') {
+        return Promise.resolve({});
+      }
+      return Promise.resolve({ results: [{ id: 999 }] });
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockDeleteRequest).not.toHaveBeenCalled();
   });
 
   it('removes org membership for non-superuser when removal succeeds', async () => {
@@ -459,7 +515,89 @@ describe('EditPlatformUser submit branches', () => {
     const user = userEvent.setup();
     renderEdit();
     await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({
+        user: 7,
+        object_id: 11,
+        role_definition: 600,
+        content_type__api_slug: 'shared.organization',
+      })
+    );
     expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/888/`);
+  });
+
+  it('removes multiple organizations in parallel when several are dropped', async () => {
+    mockOrgHelpers.orgIds = [11, 12];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11, 12],
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({ object_id: 11 })
+    );
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({ object_id: 12 })
+    );
+    expect(mockDeleteRequest).toHaveBeenCalledTimes(2);
+  });
+
+  it('skips delete when no org member assignments match the filter', async () => {
+    mockOrgHelpers.orgIds = [11];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11],
+    });
+    mockGetRequest.mockImplementation((_url, params: Record<string, string | number>) => {
+      if (String(params.role_definition) === '600') {
+        return Promise.resolve({ results: [] });
+      }
+      return Promise.resolve({ results: [{ id: 999 }] });
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockDeleteRequest).not.toHaveBeenCalled();
+  });
+
+  it('deletes every matching org member assignment when several are returned', async () => {
+    mockOrgHelpers.orgIds = [11];
+    mockOrgHelpers.getAddedAndRemovedOrganizationIds = () => ({
+      addedOrganizationIds: [],
+      removedOrganizationIds: [11],
+    });
+    mockGetRequest.mockImplementation((_url, params: Record<string, string | number>) => {
+      if (String(params.role_definition) === '500') {
+        return Promise.resolve({ results: [{ id: 999 }] });
+      }
+      if (String(params.role_definition) === '600' && String(params.object_id) === '11') {
+        return Promise.resolve({ results: [{ id: 801 }, { id: 802 }] });
+      }
+      return Promise.resolve({ results: [] });
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('org-remove-success'));
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/801/`);
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/802/`);
+  });
+
+  it('skips org cleanup when saving as superuser with no organizations', async () => {
+    Object.assign(mockPlatformUser, baseUser, { is_superuser: true });
+    mockUserOrganizations.length = 0;
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('superuser-org-strip'));
+    expect(mockGetRequest).not.toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({ content_type__api_slug: 'shared.organization' })
+    );
+    expect(mockPatchUser).toHaveBeenCalled();
   });
 
   it('strips org memberships when saving as superuser', async () => {
@@ -467,6 +605,33 @@ describe('EditPlatformUser submit branches', () => {
     const user = userEvent.setup();
     renderEdit();
     await user.click(screen.getByTestId('superuser-org-strip'));
-    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/888/`);
+    expect(mockGetRequest).toHaveBeenCalledWith(
+      gatewayAPI`/role_user_assignments/`,
+      expect.objectContaining({
+        user: 7,
+        object_id: 10,
+        role_definition: 600,
+        content_type__api_slug: 'shared.organization',
+      })
+    );
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/889/`);
+  });
+
+  it('deletes every org member assignment for superuser when several exist', async () => {
+    Object.assign(mockPlatformUser, baseUser, { is_superuser: true });
+    mockGetRequest.mockImplementation((_url, params: Record<string, string | number>) => {
+      if (String(params.role_definition) === '500') {
+        return Promise.resolve({ results: [{ id: 999 }] });
+      }
+      if (String(params.role_definition) === '600' && String(params.object_id) === '10') {
+        return Promise.resolve({ results: [{ id: 901 }, { id: 902 }] });
+      }
+      return Promise.resolve({ results: [] });
+    });
+    const user = userEvent.setup();
+    renderEdit();
+    await user.click(screen.getByTestId('superuser-org-strip'));
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/901/`);
+    expect(mockDeleteRequest).toHaveBeenCalledWith(gatewayAPI`/role_user_assignments/902/`);
   });
 });

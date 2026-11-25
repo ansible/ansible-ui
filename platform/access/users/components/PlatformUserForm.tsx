@@ -193,6 +193,41 @@ export function EditPlatformUser() {
     [organizationsData]
   );
 
+  const removeOrganizationMembership = useCallback(
+    async (membershipUserId: number, organizationId: number) => {
+      try {
+        const orgMemberRoleAssignments = await getRequest(gatewayAPI`/role_user_assignments/`, {
+          user: membershipUserId,
+          object_id: organizationId,
+          role_definition: organizationMemberRoleData?.results?.[0]?.id ?? '',
+          content_type__api_slug: 'shared.organization',
+        });
+        const roleAssignments = orgMemberRoleAssignments?.results ?? [];
+        await Promise.all(
+          roleAssignments.map((assignment) =>
+            deleteRequest(gatewayAPI`/role_user_assignments/${assignment.id}/`)
+          )
+        );
+      } catch (error) {
+        const { genericErrors, fieldErrors } = awxErrorAdapter(error);
+        alertToaster.addAlert({
+          variant: 'danger',
+          title: t('Failed to disassociate organization with id: {{organizationId}}.', {
+            organizationId,
+          }),
+          timeout: 5000,
+          children: (
+            <>
+              {genericErrors?.map((err) => err.message)}
+              {fieldErrors?.map((err) => err.message)}
+            </>
+          ),
+        });
+      }
+    },
+    [alertToaster, deleteRequest, getRequest, organizationMemberRoleData?.results, t]
+  );
+
   const onSubmit: PageFormSubmitHandler<IUserInput> = useCallback(
     async (userInput: IUserInput, setError, setFieldError) => {
       const { confirmPassword, organizations, userType, ...user } = userInput;
@@ -252,61 +287,17 @@ export function EditPlatformUser() {
             });
           }
         }
-        for (const removedOrganizationId of removedOrganizationIds) {
-          try {
-            const orgMemberRoleAssignment = await getRequest(gatewayAPI`/role_user_assignments/`, {
-              user: user?.id,
-              role_definition: organizationMemberRoleData?.results?.[0]?.id || '',
-            });
-            // Delete the organization member role assignment
-            await deleteRequest(
-              gatewayAPI`/role_user_assignments/${orgMemberRoleAssignment?.results?.[0].id}/`
-            );
-          } catch (error) {
-            const { genericErrors, fieldErrors } = awxErrorAdapter(error);
-            alertToaster.addAlert({
-              variant: 'danger',
-              title: t('Failed to disassociate organization with id: {{organizationId}}.', {
-                organizationId: removedOrganizationId,
-              }),
-              timeout: 5000,
-              children: (
-                <>
-                  {genericErrors?.map((err) => err.message)}
-                  {fieldErrors?.map((err) => err.message)}
-                </>
-              ),
-            });
-          }
-        }
-      } else if (user.is_superuser && organizationIds) {
-        for (const organizationId of organizationIds) {
-          try {
-            const orgMemberRoleAssignment = await getRequest(gatewayAPI`/role_user_assignments/`, {
-              user: user?.id,
-              role_definition: organizationMemberRoleData?.results?.[0]?.id || '',
-            });
-            // Delete the organization member role assignment
-            await deleteRequest(
-              gatewayAPI`/role_user_assignments/${orgMemberRoleAssignment?.results?.[0].id}/`
-            );
-          } catch (error) {
-            const { genericErrors, fieldErrors } = awxErrorAdapter(error);
-            alertToaster.addAlert({
-              variant: 'danger',
-              title: t('Failed to disassociate organization with id: {{organizationId}}.', {
-                organizationId: organizationId,
-              }),
-              timeout: 5000,
-              children: (
-                <>
-                  {genericErrors?.map((err) => err.message)}
-                  {fieldErrors?.map((err) => err.message)}
-                </>
-              ),
-            });
-          }
-        }
+        await Promise.all(
+          removedOrganizationIds.map((removedOrganizationId) =>
+            removeOrganizationMembership(user.id, removedOrganizationId)
+          )
+        );
+      } else if (user.is_superuser && organizationIds.length > 0) {
+        await Promise.all(
+          organizationIds.map((organizationId) =>
+            removeOrganizationMembership(user.id, organizationId)
+          )
+        );
       }
 
       user.is_platform_auditor = userType === USER_TYPE_ENUM.Auditor;
@@ -323,6 +314,7 @@ export function EditPlatformUser() {
       pageNavigate,
       patchUser,
       platformAuditorRoleData?.results,
+      removeOrganizationMembership,
       t,
       userId,
     ]
