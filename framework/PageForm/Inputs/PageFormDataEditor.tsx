@@ -669,7 +669,11 @@ export function valueToObject(
         const parsed = safeLoad(rawString);
         // Whitespace-only strings (e.g. a lone space while typing in JSON mode) load as
         // `undefined` but must not commit as empty extra_vars and wipe saved content.
-        if ((parsed === undefined || parsed === null) && rawString.length > 0) {
+        if (rawString.length === 0) {
+          // A cleared editor is an empty object or array. A whitespace-only
+          // value is handled below and must still be rejected.
+          value = emptyArrayOrObject;
+        } else if ((parsed === undefined || parsed === null) && rawString.length > 0) {
           if (isEmptyYamlDocumentMarker(rawString)) {
             value = emptyArrayOrObject;
           } else {
