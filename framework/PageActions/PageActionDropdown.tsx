@@ -122,6 +122,13 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
   const isKebab = Boolean(!label && !icon);
   const CustomIcon = icon;
 
+  let menuToggleVariant = ButtonVariant.plain;
+  if (isPrimary) menuToggleVariant = ButtonVariant.primary;
+  if (isSecondary) menuToggleVariant = ButtonVariant.secondary;
+
+  let menuToggleAriaLabel = isKebab ? 'kebab dropdown toggle' : 'dropdown toggle';
+  if (props.ariaLabel) menuToggleAriaLabel = props.ariaLabel;
+
   const getToolTipContent = () => {
     if (isDisabled) {
       return isDisabled;
@@ -177,14 +184,8 @@ export function PageActionDropdown<T extends object>(props: PageActionDropdownPr
               id={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               className={isKebab ? 'toggle-kebab' : 'toggle-dropdown'}
               aria-disabled={Boolean(isDisabled)}
-              aria-label={
-                props.ariaLabel
-                  ? props.ariaLabel
-                  : isKebab
-                    ? 'kebab dropdown toggle'
-                    : 'dropdown toggle'
-              }
-              variant={isSecondary ? 'secondary' : isPrimary ? 'primary' : 'plain'}
+              aria-label={menuToggleAriaLabel}
+              variant={menuToggleVariant}
               onClick={() => setDropdownOpen(!dropdownOpen)}
               isExpanded={dropdownOpen}
               icon={CustomIcon ? <CustomIcon /> : undefined}

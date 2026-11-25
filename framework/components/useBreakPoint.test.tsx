@@ -86,6 +86,20 @@ describe('useBreakPoint', () => {
     expect(renderHook(() => useBreakpoint('xxl')).result.current).toBe(true);
   });
 
+  it('treats larger window sizes as meeting smaller breakpoints', () => {
+    window.innerWidth = 1600;
+    const { result } = renderHook(() => useBreakpoint('xl'));
+
+    expect(result.current).toBe(true);
+
+    act(() => {
+      window.innerWidth = 1200;
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    expect(result.current).toBe(false);
+  });
+
   it('tracks window orientation', () => {
     window.innerWidth = 1200;
     window.innerHeight = 800;
