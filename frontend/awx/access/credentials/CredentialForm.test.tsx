@@ -1757,6 +1757,29 @@ describe('CredentialForm', () => {
       }
     }, 20000);
 
+    it('does not request a source credential when an input source has no ID', async () => {
+      const undefinedSourceRequest = vi.fn();
+      server.use(
+        http.get(awxAPI`/credentials/undefined/`, () => {
+          undefinedSourceRequest();
+          return HttpResponse.json(mockCredential);
+        })
+      );
+
+      render(
+        <MemoryRouter initialEntries={['/credentials/1/edit']}>
+          <Routes>
+            <Route path="/credentials/:id/edit" element={<EditCredential />} />
+          </Routes>
+        </MemoryRouter>
+      );
+
+      await waitFor(() => expect(screen.getByTestId('name')).toHaveValue('Test Credential'));
+      await waitFor(() => expect(screen.getByText('Password')).toBeInTheDocument());
+
+      expect(undefinedSourceRequest).not.toHaveBeenCalled();
+    });
+
     it('should clear plugin-managed field and DELETE the source when submitting', async () => {
       // Lines 872-879 — clearFieldValue() body
       // Lines 424, 426, 429 — pluginsToDeletePayload path in onSubmit
@@ -1813,6 +1836,12 @@ describe('CredentialForm', () => {
         },
         { timeout: 10000 }
       );
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Password')).toHaveValue(
+          'Value is managed by vault: My Vault Cred'
+        );
+      });
 
       // The "Clear" button appears when accumulatedPluginValues has an entry for this field
       await waitFor(

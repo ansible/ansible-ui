@@ -119,4 +119,52 @@ describe('useCredentialsValidate', () => {
     const message = await result.current([first, second]);
     expect(message).toBeUndefined();
   });
+
+  it('ignores vault credentials without a vault id', async () => {
+    const credential = buildCredential({
+      id: 1,
+      name: 'vault',
+      kind: 'vault',
+      inputs: {},
+      summary_fields: { credential_type: { name: 'Vault', id: 2 } },
+    });
+    const { result } = renderHook(() => useCredentialsValidate());
+
+    await expect(result.current([credential])).resolves.toBeUndefined();
+  });
+
+  it('accepts a vault credential with a vault id', async () => {
+    const credential = buildCredential({
+      id: 1,
+      name: 'vault',
+      kind: 'vault',
+      inputs: { vault_id: 'vault-1' },
+      summary_fields: { credential_type: { name: 'Vault', id: 2 } },
+    });
+    const { result } = renderHook(() => useCredentialsValidate());
+
+    await expect(result.current([credential])).resolves.toBeUndefined();
+  });
+
+  it('detects duplicate numeric vault ids', async () => {
+    const first = buildCredential({
+      id: 1,
+      name: 'vault-a',
+      kind: 'vault',
+      inputs: { vault_id: 42 },
+      summary_fields: { credential_type: { name: 'Vault', id: 2 } },
+    });
+    const second = buildCredential({
+      id: 2,
+      name: 'vault-b',
+      kind: 'vault',
+      inputs: { vault_id: 42 },
+      summary_fields: { credential_type: { name: 'Vault', id: 2 } },
+    });
+    const { result } = renderHook(() => useCredentialsValidate());
+
+    await expect(result.current([first, second])).resolves.toMatch(
+      /multiple vault credentials of the same vault id/
+    );
+  });
 });
