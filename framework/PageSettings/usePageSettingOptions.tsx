@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PageSelectOption } from '../PageInputs/PageSelectOption';
+import { PAGE_SETTING_LANGUAGES } from './PageSettingsProvider';
 
 export interface IPageSettingsOption {
   name: string;
@@ -7,11 +8,40 @@ export interface IPageSettingsOption {
   helpText: string;
   options: PageSelectOption<string | number>[];
   defaultValue: string | number;
+  disableSortOptions?: boolean;
+}
+
+const englishLanguageNames = new Intl.DisplayNames('en', { type: 'language' });
+
+function getEnglishLanguageName(language: string): string {
+  return englishLanguageNames.of(language) ?? language;
+}
+
+function getLanguageLabel(language: string): string {
+  const englishName = getEnglishLanguageName(language);
+  const nativeName = new Intl.DisplayNames(language, { type: 'language' }).of(language);
+  return nativeName && nativeName !== englishName ? `${englishName} (${nativeName})` : englishName;
 }
 
 export function usePageSettingsOptions(): IPageSettingsOption[] {
   const { t } = useTranslation();
   return [
+    {
+      name: 'language',
+      label: t('Language'),
+      helpText: t('Select the language used by the interface.'),
+      options: [
+        { label: t('Follow browser'), value: 'browser', dividerAfter: true },
+        ...[...PAGE_SETTING_LANGUAGES]
+          .sort((a, b) => getEnglishLanguageName(a).localeCompare(getEnglishLanguageName(b), 'en'))
+          .map((language) => ({
+            label: getLanguageLabel(language),
+            value: language,
+          })),
+      ],
+      defaultValue: 'browser',
+      disableSortOptions: true,
+    },
     {
       name: 'refreshInterval',
       label: t('Refresh interval'),
