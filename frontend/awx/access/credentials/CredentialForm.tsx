@@ -12,7 +12,7 @@ import { PageFormTextInput } from '@ansible/ansible-ui-framework/PageForm/Inputs
 import { PageFormSubmitHandler } from '@ansible/ansible-ui-framework/PageForm/PageForm';
 import { PageFormSection } from '@ansible/ansible-ui-framework/PageForm/Utils/PageFormSection';
 import { useDeleteRequest } from '@ansible/common-ui/crud/useDeleteRequest';
-import { useGet, useGetItem } from '@ansible/common-ui/crud/useGet';
+import { useGet } from '@ansible/common-ui/crud/useGet';
 import { usePatchRequest } from '@ansible/common-ui/crud/usePatchRequest';
 import { usePostRequest } from '@ansible/common-ui/crud/usePostRequest';
 import { Alert, Button, ButtonVariant, Icon, Tooltip } from '@patternfly/react-core';
@@ -44,6 +44,7 @@ import {
   useCredentialPluginsModal,
 } from './CredentialPlugins/hooks/useCredentialPluginsDialog';
 import { useCredentialsTestModal } from './hooks/useCredentialsTestModal';
+import { useGetSourceCredential } from './hooks/useGetSourceCredential';
 
 interface CredentialForm extends Omit<Credential, 'inputs'> {
   user?: number;
@@ -142,9 +143,8 @@ export function CreateCredential() {
     {} as CredentialTypes
   );
 
-  const isExternalCredential =
-    !!parsedCredentialTypes &&
-    parsedCredentialTypes?.[selectedCredentialTypeId]?.kind === 'external';
+  const selectedCredentialType = parsedCredentialTypes?.[selectedCredentialTypeId];
+  const isExternalCredential = selectedCredentialType?.kind === 'external';
 
   const onSubmit: PageFormSubmitHandler<CredentialForm> = async (credential) => {
     const credentialTypeInputs = parsedCredentialTypes?.[credential?.credential_type]?.inputs;
@@ -230,10 +230,7 @@ export function CreateCredential() {
               onClick={(e) => {
                 e.preventDefault();
                 openCredentialsExternalTestModal({
-                  credentialType:
-                    parsedCredentialTypes !== undefined
-                      ? parsedCredentialTypes?.[selectedCredentialTypeId]
-                      : ({} as CredentialType),
+                  credentialType: selectedCredentialType,
                   watchedSubFormFields: watchedSubFormFields,
                 });
               }}
@@ -340,10 +337,10 @@ export function EditCredential() {
     {} as CredentialTypes
   );
 
-  const isExternalCredential =
-    !!parsedCredentialTypes && credential !== undefined
-      ? parsedCredentialTypes?.[credential.credential_type]?.kind === 'external'
-      : null;
+  const selectedCredentialType = credential
+    ? parsedCredentialTypes?.[credential.credential_type]
+    : undefined;
+  const isExternalCredential = selectedCredentialType?.kind === 'external';
 
   const promptPassword: Prompts = useMemo(() => {
     const promptPasswordObj: Prompts = {};
@@ -514,10 +511,7 @@ export function EditCredential() {
                 e.preventDefault();
                 openCredentialsExternalTestModal({
                   credential: credential,
-                  credentialType:
-                    parsedCredentialTypes !== undefined
-                      ? parsedCredentialTypes?.[credential?.credential_type]
-                      : ({} as CredentialType),
+                  credentialType: selectedCredentialType,
                   watchedSubFormFields: watchedSubFormFields,
                 });
               }}
@@ -870,11 +864,6 @@ function CredentialTextInput({
     name: `ask_${field.id}`,
     defaultValue: fieldInitialValue === ASK_VALUE,
   }) as boolean;
-
-  const useGetSourceCredential = (id: number) => {
-    const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
-    return data;
-  };
 
   const sourceCredential = useGetSourceCredential(
     accumulatedPluginValues.filter((cp) => cp.input_field_name === field.id)[0]?.source_credential

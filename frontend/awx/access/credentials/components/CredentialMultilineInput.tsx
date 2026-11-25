@@ -1,14 +1,12 @@
 import { PageFormFileUpload } from '@ansible/ansible-ui-framework/PageForm/Inputs/PageFormFileUpload';
-import { useGetItem } from '@ansible/common-ui/crud/useGet';
 import { Button, Tooltip } from '@patternfly/react-core';
 import { KeyIcon, UndoIcon } from '@patternfly/react-icons';
 import { useCallback, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { awxAPI } from '../../../common/api/awx-utils';
-import { Credential } from '../../../interfaces/Credential';
 import { CredentialInputField, CredentialType } from '../../../interfaces/CredentialType';
 import { CredentialPluginsInputSource } from '../CredentialPlugins/hooks/useCredentialPluginsDialog';
+import { useGetSourceCredential } from '../hooks/useGetSourceCredential';
 
 export function CredentialMultilineInput({
   field,
@@ -42,10 +40,6 @@ export function CredentialMultilineInput({
     setAccumulatedPluginValues?.(
       accumulatedPluginValues.filter((cp) => cp.input_field_name !== field.id)
     );
-  };
-  const useGetSourceCredential = (id: number) => {
-    const { data } = useGetItem<Credential>(awxAPI`/credentials/`, id);
-    return data;
   };
   const sourceCredential = useGetSourceCredential(
     accumulatedPluginValues.filter((cp) => cp.input_field_name === field.id)[0]?.source_credential
