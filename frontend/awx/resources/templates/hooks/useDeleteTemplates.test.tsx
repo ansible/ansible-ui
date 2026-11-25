@@ -34,6 +34,9 @@ vi.mock('@ansible/common-ui/columns', () => ({
 
 const deleteSpy = vi.fn<(url: string) => void>();
 const server = setupServer(
+  http.get('*/workflow_job_template_nodes/', () =>
+    HttpResponse.json({ count: 0, results: [], next: null, previous: null })
+  ),
   http.delete('*', ({ request }) => {
     deleteSpy(new URL(request.url).pathname);
     return new HttpResponse(null, { status: 204 });
@@ -82,49 +85,49 @@ describe('useDeleteTemplates', () => {
     vi.mocked(useAwxBulkConfirmation).mockReturnValue(mockBulkAction);
   });
 
-  test('should use singular title for single job_template', () => {
+  test('should use singular title for single job_template', async () => {
     const templates = [createMockJobTemplate()];
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 
-    result.current(templates);
+    await result.current(templates);
 
     const callArgs = mockBulkAction.mock.calls[0][0] as Record<string, unknown>;
     expect(callArgs.title).toMatch(/permanently delete job template/i);
   });
 
-  test('should use singular title for single workflow_job_template', () => {
+  test('should use singular title for single workflow_job_template', async () => {
     const templates = [createMockWorkflowTemplate()];
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 
-    result.current(templates);
+    await result.current(templates);
 
     const callArgs = mockBulkAction.mock.calls[0][0] as Record<string, unknown>;
     expect(callArgs.title).toMatch(/permanently delete workflow job template/i);
   });
 
-  test('should use plural title for multiple templates', () => {
+  test('should use plural title for multiple templates', async () => {
     const templates = [createMockJobTemplate(), createMockWorkflowTemplate()];
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 
-    result.current(templates);
+    await result.current(templates);
 
     const callArgs = mockBulkAction.mock.calls[0][0] as Record<string, unknown>;
     expect(callArgs.title).toMatch(/permanently delete templates/i);
   });
 
-  test('should mark as danger', () => {
+  test('should mark as danger', async () => {
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 
-    result.current([createMockJobTemplate()]);
+    await result.current([createMockJobTemplate()]);
 
     const callArgs = mockBulkAction.mock.calls[0][0] as Record<string, unknown>;
     expect(callArgs.isDanger).toBe(true);
   });
 
-  test('should pass onComplete callback', () => {
+  test('should pass onComplete callback', async () => {
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 
-    result.current([createMockJobTemplate()]);
+    await result.current([createMockJobTemplate()]);
 
     const callArgs = mockBulkAction.mock.calls[0][0] as Record<string, unknown>;
     expect(callArgs.onComplete).toBe(mockOnComplete);
@@ -133,7 +136,7 @@ describe('useDeleteTemplates', () => {
   test('should call requestDelete for job_template with correct URL', async () => {
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 
-    result.current([createMockJobTemplate({ id: 10 })]);
+    await result.current([createMockJobTemplate({ id: 10 })]);
 
     const callArgs = mockBulkAction.mock.calls[0][0] as {
       actionFn: (item: JobTemplate | WorkflowJobTemplate, signal: AbortSignal) => Promise<unknown>;
@@ -147,7 +150,7 @@ describe('useDeleteTemplates', () => {
   test('should call requestDelete for workflow_job_template with correct URL', async () => {
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 
-    result.current([createMockWorkflowTemplate({ id: 20 })]);
+    await result.current([createMockWorkflowTemplate({ id: 20 })]);
 
     const callArgs = mockBulkAction.mock.calls[0][0] as {
       actionFn: (item: JobTemplate | WorkflowJobTemplate, signal: AbortSignal) => Promise<unknown>;
@@ -158,20 +161,72 @@ describe('useDeleteTemplates', () => {
     expect(deleteSpy).toHaveBeenCalledWith(expect.stringContaining('/workflow_job_templates/20/'));
   });
 
-  test('should sort templates by name', () => {
+  test('should sort templates by name', async () => {
     const templates = [
       createMockJobTemplate({ id: 1, name: 'Zulu' }),
       createMockWorkflowTemplate({ id: 2, name: 'Alpha' }),
     ];
     const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
 
-    result.current(templates);
+    await result.current(templates);
 
     const callArgs = mockBulkAction.mock.calls[0][0] as {
       items: (JobTemplate | WorkflowJobTemplate)[];
     };
     expect(callArgs.items[0].name).toBe('Alpha');
     expect(callArgs.items[1].name).toBe('Zulu');
+  });
+
+  test('should warn when a job template is used by workflow job template nodes', async () => {
+    server.use(
+      http.get('*/workflow_job_template_nodes/', () =>
+        HttpResponse.json({ count: 1, results: [{ id: 99 }], next: null, previous: null })
+      )
+    );
+    const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
+
+    await result.current([createMockJobTemplate({ id: 10 })]);
+
+    const callArgs = mockBulkAction.mock.calls[0][0] as { alertPrompts?: string[] };
+    expect(callArgs.alertPrompts).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/currently being used by other resources/i),
+        expect.stringMatching(/Workflow Job Template Nodes \[1\]/i),
+      ])
+    );
+  });
+
+  test('should not warn when a job template is unused', async () => {
+    const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
+
+    await result.current([createMockJobTemplate({ id: 10 })]);
+
+    const callArgs = mockBulkAction.mock.calls[0][0] as { alertPrompts?: string[] };
+    expect(callArgs.alertPrompts).toBeUndefined();
+  });
+
+  test('should still open confirmation when workflow node count lookup fails', async () => {
+    server.use(
+      http.get('*/workflow_job_template_nodes/', () =>
+        HttpResponse.json({ detail: 'error' }, { status: 500 })
+      )
+    );
+    const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
+
+    await result.current([createMockJobTemplate({ id: 10 })]);
+
+    expect(mockBulkAction).toHaveBeenCalledTimes(1);
+    const callArgs = mockBulkAction.mock.calls[0][0] as { alertPrompts?: string[] };
+    expect(callArgs.alertPrompts).toBeUndefined();
+  });
+
+  test('should warn generally when deleting multiple templates', async () => {
+    const { result } = renderHook(() => useDeleteTemplates(mockOnComplete));
+
+    await result.current([createMockJobTemplate(), createMockWorkflowTemplate()]);
+
+    const callArgs = mockBulkAction.mock.calls[0][0] as { alertPrompts?: string[] };
+    expect(callArgs.alertPrompts).toEqual([expect.stringMatching(/could impact other resources/i)]);
   });
 });
 
