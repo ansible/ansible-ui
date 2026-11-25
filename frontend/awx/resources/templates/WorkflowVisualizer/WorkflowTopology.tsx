@@ -138,12 +138,18 @@ export const WorkflowTopology = ({ data: { workflowNodes = [], template } }: Top
         })
     );
     newVisualization.fromModel(graphModel, false);
-    newVisualization.addEventListener(SELECTION_EVENT, handleSelectedNode);
     return newVisualization;
-  }, [baselineComponentFactory, handleSelectedNode]);
+  }, [baselineComponentFactory]);
 
   const visualizationRef = useRef<Visualization>(createVisualization());
   const visualization = visualizationRef.current;
+
+  useEffect(() => {
+    visualization.addEventListener(SELECTION_EVENT, handleSelectedNode);
+    return () => {
+      visualization.removeEventListener(SELECTION_EVENT, handleSelectedNode);
+    };
+  }, [handleSelectedNode, visualization]);
 
   useEffect(() => {
     const edges: EdgeModel[] = [];
