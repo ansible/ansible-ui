@@ -144,14 +144,14 @@ function SetTemplateValuesFormFooter(
 
 function SetTemplateValuesDialog(
   props: Readonly<{
-    onApplied: (updated: number | undefined, values: SetTemplateValuesFormValues) => void;
+    onApplied: (values: SetTemplateValuesFormValues) => void;
     waitForPendingSaves: () => Promise<void>;
   }>
 ) {
   const { onApplied, waitForPendingSaves } = props;
   const { t } = useTranslation();
   const { popDialog } = usePageDialogs();
-  const patchRequest = usePatchRequest<SetTemplateValuesFormValues, { updated?: number } | null>();
+  const patchRequest = usePatchRequest<SetTemplateValuesFormValues, unknown>();
   const title = t('Set template default values');
   // The opener clears the cached defaults, so this always waits for fresh values: the form
   // reads its default values only on mount, so it is mounted once they are loaded.
@@ -197,10 +197,9 @@ function SetTemplateValuesDialog(
     isSendingRef.current = true;
     setIsSending(true);
     try {
-      const response = await patchRequest(metricsAPI`/dashboard_reports/template_metadata/`, data);
+      await patchRequest(metricsAPI`/dashboard_reports/template_metadata/`, data);
       popDialog();
-      // Guard against a 204 or non-JSON reply, which usePatchRequest returns as null or a Blob
-      onApplied(typeof response?.updated === 'number' ? response.updated : undefined, data);
+      onApplied(data);
     } finally {
       isSendingRef.current = false;
       setIsSending(false);
@@ -314,14 +313,11 @@ export function useSetTemplateValuesDialog(
   const alertToaster = usePageAlertToaster();
 
   const onApplied = useCallback(
-    async (updated: number | undefined, values: SetTemplateValuesFormValues) => {
+    async (values: SetTemplateValuesFormValues) => {
       alertToaster.addAlert({
         variant: 'success',
-        // Phrased without a plural noun, since the count can be 1
-        title:
-          updated === undefined
-            ? t('Template defaults applied.')
-            : t('Template defaults applied. Updated templates: {{updated}}', { updated }),
+        // No count: the API counts every template, while the report lists only those with runs
+        title: t('Template defaults applied to all templates.'),
         timeout: 2000,
       });
       // Right away, so the table shows the new values and later cell edits are not wiped
@@ -356,7 +352,7 @@ export function useSetTemplateValuesDialog(
     void mutate(TEMPLATE_DEFAULTS_URL, undefined);
     pushDialog(
       <SetTemplateValuesDialog
-        onApplied={(updated, values) => void onAppliedRef.current(updated, values)}
+        onApplied={(values) => void onAppliedRef.current(values)}
         waitForPendingSaves={waitForPendingSaves}
       />
     );
