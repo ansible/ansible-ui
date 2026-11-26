@@ -255,7 +255,7 @@ describe('useCopyTemplate', () => {
     });
   });
 
-  test('should show fallback permission message when error has no detail', async () => {
+  test('should show generic fallback message when error has no detail', async () => {
     const mockPostRequest = vi.fn().mockRejectedValue({ statusCode: 403 });
     const { usePostRequest } = await import('@ansible/common-ui/crud/usePostRequest');
     vi.mocked(usePostRequest).mockReturnValue(
@@ -271,7 +271,7 @@ describe('useCopyTemplate', () => {
         expect.objectContaining({
           variant: 'danger',
           title: 'Failed to duplicate template',
-          children: expect.stringContaining('Permission denied'),
+          children: expect.stringContaining('Unable to duplicate this template'),
         })
       );
     });
