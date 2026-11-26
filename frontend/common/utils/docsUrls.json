@@ -4,10 +4,10 @@
   "teams": "html/access_management_and_authentication/gw-managing-access#assembly-controller-teams_gw-manage-rbac",
   "users": "html/access_management_and_authentication/gw-managing-access#assembly-controller-users_gw-manage-rbac",
   "activityStream": "html/using_automation_execution/assembly-controller-activity-stream",
-  "applications": "html/access_management_and_authentication/gw-token-based-authentication",
+  "applications": "secure-assembly_gw_token_based_authentication",
   "roles": "html/access_management_and_authentication/assembly-gw-roles",
   "authenticationMethods": "html/access_management_and_authentication/gw-configure-authentication#gw-config-authentication-type",
-  "oAuthApplications": "html/access_management_and_authentication/gw-token-based-authentication",
+  "oAuthApplications": "secure-assembly_gw_token_based_authentication",
 
   "//": "Controller documentation routes",
   "credentialTypes": "html/using_automation_execution/assembly-controller-custom-credentials",
