@@ -165,6 +165,8 @@ export type DashboardTableInputFieldProps = {
   labelHelp?: string;
   fullWidth?: boolean;
   readOnly?: boolean;
+  /** Why a `readOnly` field cannot be edited. Shown in a tooltip; the field stays focusable. */
+  disabledReason?: string;
   error?: string;
   /** Registers the field's pending edit with its owner; returns the unregister function. */
   registerPendingEdit?: (handle: IPendingEditHandle) => () => void;

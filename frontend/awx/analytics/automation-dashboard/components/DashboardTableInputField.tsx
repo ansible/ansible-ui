@@ -5,6 +5,7 @@ import {
   HelperText,
   HelperTextItem,
   TextInput,
+  Tooltip,
 } from '@patternfly/react-core';
 import { useEffect, useRef, useState } from 'react';
 import { DashboardTableInputFieldProps } from '../types';
@@ -23,6 +24,7 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
     fullWidth,
     type,
     readOnly,
+    disabledReason,
     error: errorMsg,
     onChange,
     registerPendingEdit,
@@ -30,6 +32,9 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
   const { t } = useTranslation();
   const [value, setValue] = useState<string | number | undefined>('');
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  // The reason only applies to a read-only field; it never makes an editable field read-only.
+  const showDisabledReason = readOnly === true && !!disabledReason;
 
   // Valid value typed by the user but not yet handed to onChange (debounce pending).
   const pendingValueRef = useRef<number | undefined>(undefined);
@@ -133,8 +138,13 @@ export function DashboardTableInputField(props: DashboardTableInputFieldProps) {
           max={max}
           autoComplete={'off'}
           data-testid={id}
-          isDisabled={readOnly === true}
+          ref={inputRef}
+          // With a reason the field is read-only instead of disabled, so it can be
+          // focused and hovered to show the reason.
+          isDisabled={readOnly === true && !showDisabledReason}
+          readOnlyVariant={showDisabledReason ? 'default' : undefined}
         />
+        {showDisabledReason && <Tooltip content={disabledReason} triggerRef={inputRef} />}
         {(error || errorMsg) && (
           <FormHelperText>
             <HelperText>

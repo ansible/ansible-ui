@@ -73,6 +73,10 @@ async function triggerInputChange(testId: string, value: string) {
   return { user, input };
 }
 
+const ADMIN_ONLY_REASON = 'Only administrators can change cost settings';
+const SWITCH_LABEL = 'Include time taken to create automation in calculations';
+const getSwitch = () => screen.getByTestId('switch-time-taken-automation-toggle');
+
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('DashboardTableToolbarRow', () => {
@@ -117,12 +121,110 @@ describe('DashboardTableToolbarRow', () => {
   });
 
   // --- Inputs disabled ---
-  test('should disable cost inputs and switch when not superuser', () => {
+  test('should make cost inputs read-only and disable the switch when not superuser', () => {
     mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
     renderRow();
-    expect(screen.getByTestId('engineer_avg_hourly_rate')).toBeDisabled();
-    expect(screen.getByTestId('monthly_subscription_cost')).toBeDisabled();
-    expect(screen.getByTestId('switch-time-taken-automation-toggle')).toBeDisabled();
+    // Read-only instead of disabled, so the fields can be focused to show the reason.
+    for (const testId of ['engineer_avg_hourly_rate', 'monthly_subscription_cost']) {
+      const input = screen.getByTestId(testId);
+      expect(input).not.toBeDisabled();
+      expect(input).toHaveAttribute('readonly');
+    }
+    expect(getSwitch()).toBeDisabled();
+  });
+
+  test('should disable cost inputs and switch without a reason while loading as superuser', async () => {
+    const user = userEvent.setup();
+    renderRow(buildProps({ costState: undefined }));
+    const input = screen.getByTestId('engineer_avg_hourly_rate');
+    expect(input).toBeDisabled();
+    expect(input).not.toHaveAttribute('readonly');
+    expect(getSwitch()).toBeDisabled();
+    expect(getSwitch()).not.toHaveAccessibleDescription();
+    await user.hover(input);
+    expect(screen.queryByText(ADMIN_ONLY_REASON)).toBeNull();
+  });
+
+  test('should disable cost inputs and switch without a reason while the user loads', async () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: undefined });
+    const user = userEvent.setup();
+    renderRow();
+    const input = screen.getByTestId('engineer_avg_hourly_rate');
+    expect(input).toBeDisabled();
+    expect(input).not.toHaveAttribute('readonly');
+    expect(getSwitch()).toBeDisabled();
+    expect(getSwitch()).not.toHaveAccessibleDescription();
+    await user.hover(screen.getByText(SWITCH_LABEL));
+    expect(screen.queryByRole('tooltip')).toBeNull();
+    expect(screen.queryByTestId('switch-time-taken-automation-disabled-reason-help')).toBeNull();
+  });
+
+  test('should show the reason in a tooltip when focusing a cost input as non-superuser', async () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    const user = userEvent.setup();
+    renderRow();
+    const input = screen.getByTestId('monthly_subscription_cost');
+    await user.click(input);
+    expect(input).toHaveFocus();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(ADMIN_ONLY_REASON);
+    expect(input).toHaveAccessibleDescription(ADMIN_ONLY_REASON);
+  });
+
+  test('should show the reason in a tooltip when hovering the switch as non-superuser', async () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    const user = userEvent.setup();
+    renderRow();
+    const toggle = getSwitch();
+    await user.hover(screen.getByText(SWITCH_LABEL));
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(ADMIN_ONLY_REASON);
+    // The disabled switch cannot be focused, so the reason is also its description.
+    expect(toggle).toHaveAccessibleDescription(ADMIN_ONLY_REASON);
+  });
+
+  test('should show the reason when the switch help button is focused as non-superuser', async () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    const user = userEvent.setup();
+    renderRow();
+    const help = screen.getByRole('button', { name: ADMIN_ONLY_REASON });
+    // The disabled switch cannot be focused, so keyboard users reach the reason here.
+    // Tab past the inputs and their help buttons; the button is the last focusable element.
+    for (let i = 0; i < 10 && document.activeElement !== help; i++) {
+      await user.tab();
+    }
+    expect(help).toHaveFocus();
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(ADMIN_ONLY_REASON);
+  });
+
+  test('should show the reason when there is no active user', async () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: null });
+    const user = userEvent.setup();
+    renderRow();
+    const input = screen.getByTestId('monthly_subscription_cost');
+    expect(input).toHaveAttribute('readonly');
+    await user.click(input);
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(ADMIN_ONLY_REASON);
+    expect(getSwitch()).toHaveAccessibleDescription(ADMIN_ONLY_REASON);
+  });
+
+  test('should show no reason tooltip for superuser', async () => {
+    const user = userEvent.setup();
+    renderRow();
+    const input = screen.getByTestId('monthly_subscription_cost');
+    expect(input).not.toHaveAttribute('readonly');
+    await user.click(input);
+    await user.hover(screen.getByText(SWITCH_LABEL));
+    expect(screen.queryByRole('tooltip')).toBeNull();
+    expect(getSwitch()).not.toHaveAccessibleDescription();
+    expect(screen.queryByTestId('switch-time-taken-automation-disabled-reason-help')).toBeNull();
+  });
+
+  test('should not change a cost input when typing as non-superuser', async () => {
+    mockUseAwxActiveUser.mockReturnValue({ activeAwxUser: { is_superuser: false } });
+    const user = userEvent.setup();
+    renderRow();
+    const input = screen.getByTestId('engineer_avg_hourly_rate');
+    await user.type(input, '9');
+    expect(input).toHaveValue(50);
   });
 
   test('should not call put when not superuser', async () => {
@@ -137,13 +239,12 @@ describe('DashboardTableToolbarRow', () => {
     renderRow();
     const input = screen.getByTestId('engineer_avg_hourly_rate');
 
-    // Dispatch a change event directly on the disabled input, bypassing the
-    // browser-level disabled guard.  The debounce fires after 600 ms and calls
+    // Dispatch a change event directly on the read-only input, bypassing the
+    // browser-level read-only guard.  The debounce fires after 600 ms and calls
     // toolbarChangeHandler, which must return early because controlsDisabled is
     // true (is_superuser: false).  This proves the in-component guard — not
-    // merely the disabled attribute — is what prevents the PUT.
-    // Must dispatch change on a disabled input to prove the in-component guard blocks PUT.
-    // fireEvent.change is intentional: disabled inputs reject userEvent
+    // merely the readonly attribute — is what prevents the PUT.
+    // fireEvent.change is intentional: read-only inputs reject userEvent typing.
     fireEvent.change(input, { target: { value: '75' } });
 
     // Wait beyond the debounce (600 ms) to let any scheduled PUT fire.
