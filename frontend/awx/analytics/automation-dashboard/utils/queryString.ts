@@ -128,7 +128,10 @@ export function getPeriodFilterParam(filterState: IFilterState, filter: IToolbar
       return [
         [filter.query, values[0]],
         ['start_date', values[1]],
-        ['end_date', new Date(Date.now()).toISOString().split('T')[0]], // Use current date as end_date if not provided
+        // No end date means "until today": the same local date isRequiredFilterValid compares
+        // against. The API rejects start_date > end_date, so a UTC date could fall before a
+        // start date that is valid locally (east of UTC, between local and UTC midnight).
+        ['end_date', yyyyMMddFormat(new Date())],
       ];
     }
     if (values.length === 3) {

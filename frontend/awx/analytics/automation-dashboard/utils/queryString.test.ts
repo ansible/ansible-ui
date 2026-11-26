@@ -369,7 +369,7 @@ describe('queryString', () => {
       expect(params.get('period')).toBeNull();
     });
 
-    test('should handle custom period with start_date only (uses current date as end_date)', () => {
+    test('should handle custom period with start_date only (sends an ISO end_date)', () => {
       const filterState: IFilterState = { period: ['custom', '2024-01-01'] };
       const filters: IToolbarFilter[] = [customPeriodFilter];
 
@@ -377,11 +377,40 @@ describe('queryString', () => {
 
       expect(params.get('period')).toBe('custom');
       expect(params.get('start_date')).toBe('2024-01-01');
-      expect(params.get('end_date')).toBeTruthy();
-      // Verify end_date is current date
-      const endDate = params.get('end_date');
-      const today = new Date().toISOString().split('T')[0];
-      expect(endDate).toBe(today);
+      expect(params.get('end_date')).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    });
+
+    describe('default end_date is the local date, the same "today" as the validation', () => {
+      const startOnlyParams = (start: string) =>
+        filtersToSearchObj([customPeriodFilter], { period: ['custom', start] });
+
+      afterEach(() => {
+        vi.unstubAllEnvs();
+        vi.useRealTimers();
+      });
+
+      test('east of UTC just after local midnight, a start date of today is sent with today as end', () => {
+        vi.stubEnv('TZ', 'Europe/Ljubljana'); // UTC+1
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-11-26T23:30:00Z')); // 00:30 local on the next day
+        const localToday = '2026-11-27';
+        expect(
+          isRequiredFilterValid(
+            { ...customPeriodFilter, isRequired: true },
+            { period: ['custom', localToday] }
+          )
+        ).toBe(true);
+        const params = startOnlyParams(localToday);
+        expect(params.get('start_date')).toBe(localToday);
+        expect(params.get('end_date')).toBe(localToday);
+      });
+
+      test('west of UTC in the evening, end_date is not already tomorrow', () => {
+        vi.stubEnv('TZ', 'America/Los_Angeles'); // UTC-8
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date('2026-11-27T05:00:00Z')); // 2026-11-26 21:00 local
+        expect(startOnlyParams('2026-11-20').get('end_date')).toBe('2026-11-26');
+      });
     });
 
     test('should handle custom period with start_date and end_date', () => {
@@ -697,14 +726,12 @@ describe('queryString', () => {
     });
 
     describe('timezones west of UTC', () => {
-      const originalTz = process.env.TZ;
-
       beforeEach(() => {
-        process.env.TZ = 'America/Los_Angeles'; // UTC-8
+        vi.stubEnv('TZ', 'America/Los_Angeles'); // UTC-8
       });
 
       afterEach(() => {
-        process.env.TZ = originalTz;
+        vi.unstubAllEnvs();
       });
 
       test('should return true for a required custom DateRange filter with a valid ISO start date', () => {
