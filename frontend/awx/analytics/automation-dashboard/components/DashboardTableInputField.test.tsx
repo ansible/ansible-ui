@@ -225,6 +225,57 @@ describe('DashboardTableInputField', () => {
     });
   });
 
+  describe('disabledReason', () => {
+    const REASON = 'Not allowed';
+
+    test('should be disabled without a reason when readOnly', () => {
+      renderInputField({ readOnly: true });
+      const input = screen.getByRole('spinbutton');
+      expect(input).toBeDisabled();
+      expect(input).not.toHaveAttribute('readonly');
+    });
+
+    test('should be read-only and focusable, and show the reason on focus', async () => {
+      const user = userEvent.setup();
+      renderInputField({ readOnly: true, disabledReason: REASON });
+      const input = screen.getByRole('spinbutton');
+      expect(input).not.toBeDisabled();
+      expect(input).toHaveAttribute('readonly');
+      await user.tab();
+      expect(input).toHaveFocus();
+      expect(await screen.findByRole('tooltip')).toHaveTextContent(REASON);
+      expect(input).toHaveAccessibleDescription(REASON);
+    });
+
+    test('should show the reason on hover', async () => {
+      const user = userEvent.setup();
+      renderInputField({ readOnly: true, disabledReason: REASON });
+      await user.hover(screen.getByRole('spinbutton'));
+      expect(await screen.findByRole('tooltip')).toHaveTextContent(REASON);
+    });
+
+    test('should not call onChange when typing into the read-only field', async () => {
+      const onChange = vi.fn();
+      const user = userEvent.setup();
+      renderInputField({ value: 5, readOnly: true, disabledReason: REASON, onChange });
+      const input = screen.getByRole('spinbutton');
+      await user.type(input, '7');
+      expect(input).toHaveValue(5);
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    test('should stay editable and show no reason when not readOnly', async () => {
+      const user = userEvent.setup();
+      renderInputField({ readOnly: false, disabledReason: REASON });
+      const input = screen.getByRole('spinbutton');
+      expect(input).not.toBeDisabled();
+      expect(input).not.toHaveAttribute('readonly');
+      await user.tab();
+      expect(input).toHaveFocus();
+      expect(input).not.toHaveAccessibleDescription(REASON);
+    });
+  });
+
   describe('pending edits (AAP-87021)', () => {
     beforeEach(() => {
       vi.useFakeTimers({ shouldAdvanceTime: true });

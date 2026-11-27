@@ -1,9 +1,10 @@
-import { Flex, FlexItem, Switch } from '@patternfly/react-core';
+import { Button, Flex, FlexItem, Icon, Switch, Tooltip } from '@patternfly/react-core';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import { useTranslation } from 'react-i18next';
 import { DashboardTableInputField } from './DashboardTableInputField';
 import { DashboardTableToolbarProps, ISubscriptionCosts } from '../types';
 import { usePageAlertToaster } from '../../../../../framework';
-import { useRef, useState } from 'react';
+import { CSSProperties, useRef, useState } from 'react';
 import { awxErrorAdapter } from '../../../common/adapters/awxErrorAdapter';
 import { metricsAPI } from '../../../common/api/metrics-utils';
 import { usePutRequest } from '../../../../common/crud/usePutRequest';
@@ -11,6 +12,9 @@ import { useAwxActiveUser } from '../../../common/useAwxActiveUser';
 import { useSerializedSave } from '../views/useSerializedSave';
 
 const SWITCH_ID = 'switch-time-taken-automation';
+const HELP_ICON_STYLE = {
+  '--pf-v6-c-icon__content--m-custom--Color': 'var(--pf-t--global--text--color--link--default)',
+} as CSSProperties;
 
 export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
   const { costState, setCostState, refresh } = props;
@@ -23,6 +27,13 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
   );
 
   const controlsDisabled = !costState || !activeAwxUser?.is_superuser;
+  // No reason while the active user is still loading (undefined), so an administrator
+  // does not briefly see it; the controls are plainly disabled then.
+  const disabledReason =
+    activeAwxUser === undefined || activeAwxUser?.is_superuser
+      ? undefined
+      : t('Only administrators can change cost settings');
+  const switchWrapperRef = useRef<HTMLDivElement>(null);
 
   // Local edits not yet confirmed by the server. Every PUT is built on top of
   // them, so a quick edit of another field cannot resend a stale value. The ref
@@ -124,6 +135,7 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
             toolbarChangeHandler(value, 'engineer_avg_hourly_rate');
           }}
           readOnly={controlsDisabled}
+          disabledReason={disabledReason}
           error={errors?.engineer_avg_hourly_rate}
         />
       </FlexItem>
@@ -141,23 +153,58 @@ export function DashboardTableToolbarRow(props: DashboardTableToolbarProps) {
             toolbarChangeHandler(value, 'monthly_subscription_cost');
           }}
           readOnly={controlsDisabled}
+          disabledReason={disabledReason}
           error={errors?.monthly_subscription_cost}
         />
       </FlexItem>
       <FlexItem alignSelf={{ default: 'alignSelfCenter' }}>
-        <Switch
-          id={SWITCH_ID + '-toggle'}
-          data-testid={SWITCH_ID + '-toggle'}
-          label={t('Include time taken to create automation in calculations')}
-          isChecked={
-            (unsavedCostState ?? costState)?.include_template_creation_time_in_costs === true
-          }
-          onChange={(_e, value) => {
-            toolbarChangeHandler(value, 'include_template_creation_time_in_costs');
-          }}
-          hasCheckIcon
-          isDisabled={controlsDisabled}
-        />
+        {/* A disabled switch cannot be focused and not every browser sends it mouse events,
+            so the tooltip is on its wrapper, the reason is also its description, and a
+            help button next to it shows the reason to keyboard users. */}
+        <Flex
+          alignItems={{ default: 'alignItemsCenter' }}
+          columnGap={{ default: 'columnGapSm' }}
+          flexWrap={{ default: 'nowrap' }}
+        >
+          <div ref={switchWrapperRef}>
+            <Switch
+              id={SWITCH_ID + '-toggle'}
+              data-testid={SWITCH_ID + '-toggle'}
+              label={t('Include time taken to create automation in calculations')}
+              isChecked={
+                (unsavedCostState ?? costState)?.include_template_creation_time_in_costs === true
+              }
+              onChange={(_e, value) => {
+                toolbarChangeHandler(value, 'include_template_creation_time_in_costs');
+              }}
+              hasCheckIcon
+              isDisabled={controlsDisabled}
+              aria-describedby={disabledReason ? SWITCH_ID + '-disabled-reason' : undefined}
+            />
+          </div>
+          {disabledReason && (
+            <>
+              <span id={SWITCH_ID + '-disabled-reason'} hidden>
+                {disabledReason}
+              </span>
+              <Tooltip content={disabledReason} triggerRef={switchWrapperRef} aria="none" />
+              <Tooltip content={disabledReason} aria="none">
+                <Button
+                  variant="plain"
+                  hasNoPadding
+                  aria-label={disabledReason}
+                  data-testid={SWITCH_ID + '-disabled-reason-help'}
+                  icon={
+                    // Same look as the help icons next to the cost input labels.
+                    <Icon size="sm" status="custom" style={HELP_ICON_STYLE}>
+                      <OutlinedQuestionCircleIcon />
+                    </Icon>
+                  }
+                />
+              </Tooltip>
+            </>
+          )}
+        </Flex>
       </FlexItem>
     </Flex>
   );
